@@ -22,8 +22,5 @@
     "fast-check": "^4.1.1",
     "jsdom": "^26.1.0",
     "vitest": "^3.2.1"
-  },
-  "overrides": {
-    "zod": "3.24.4"
   }
 }
