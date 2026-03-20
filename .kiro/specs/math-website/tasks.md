@@ -127,13 +127,13 @@ Build a static math learning website using Astro + Starlight with Obsidian conte
 - [x] 8. Checkpoint - Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 9. Create homepage and content structure
-  - [ ] 9.1 Create `src/content/docs/index.mdx` homepage
+- [x] 9. Create homepage and content structure
+  - [x] 9.1 Create `src/content/docs/index.mdx` homepage
     - Add hero section with tagline "Math Made Clear for Adults – Start Fresh, No Judgment"
     - Add grid of subject area cards linking to: Arithmetic, Algebra Basics, Linear Algebra, Graphics Math, AI Art Math, Esoteric Patterns
     - Set supportive, non-intimidating introductory copy
     - _Requirements: 8.1, 8.2, 8.3_
-  - [ ] 9.2 Create Obsidian vault directory structure and sample lesson
+  - [x] 9.2 Create Obsidian vault directory structure and sample lesson
     - Create `obsidian-vault/` with subdirectories: `Arithmetic/`, `Algebra Basics/`, `Linear Algebra/`, `Graphics Math/`, `AI Art Math/`, `Esoteric Patterns/`
     - Create a sample lesson `obsidian-vault/Arithmetic/adding-fractions.md` following the lesson structure convention:
       - "What You'll Learn" section
@@ -145,14 +145,14 @@ Build a static math learning website using Astro + Starlight with Obsidian conte
     - Include YAML frontmatter with `title`, `description`, `sidebar.order`
     - _Requirements: 2.1, 2.2, 2.3, 2.4, 3.1–3.6, 4.1, 4.2, 9.1, 9.2_
 
-- [ ] 10. Create Netlify configuration
-  - [ ] 10.1 Create `netlify.toml` with build settings
+- [x] 10. Create Netlify configuration
+  - [x] 10.1 Create `netlify.toml` with build settings
     - Set build command to `npm run build`
     - Set publish directory to `dist`
     - Set `NODE_VERSION = "20"` in build environment
     - _Requirements: 11.1, 11.2_
 
-- [ ] 11. Final checkpoint - Ensure all tests pass
+- [x] 11. Final checkpoint - Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
 ## Notes

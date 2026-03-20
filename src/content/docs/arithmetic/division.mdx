@@ -1,0 +1,152 @@
+---
+title: Division of Whole Numbers
+description: Learn long division with remainders and how to interpret results
+sidebar:
+  order: 4
+---
+
+import Quiz from "../../../components/Quiz.astro";
+
+## What You'll Learn
+
+In this lesson you'll start with what division really means using small numbers, then build up to the long division algorithm for bigger problems.
+
+## The Basics
+
+**Division** means splitting something into equal groups, or figuring out how many times one number fits inside another. It's the opposite of multiplication.
+
+If you have 12 cookies and want to share them equally among 3 friends, each person gets $12 \div 3 = 4$ cookies. You can check: $4 \times 3 = 12$. That's division — finding the size of each group.
+
+Here are a few single-digit examples:
+
+- $8 \div 2 = 4$ — eight split into two groups of four
+- $15 \div 5 = 3$ — five goes into fifteen three times
+- $18 \div 3 = 6$
+- $24 \div 6 = 4$
+
+Some handy patterns:
+
+- Anything divided by 1 stays the same: $9 \div 1 = 9$
+- Anything divided by itself is 1: $7 \div 7 = 1$
+- Zero divided by anything is 0: $0 \div 5 = 0$
+- You can never divide by 0 — it's undefined (there's no way to split something into zero groups)
+
+Division and multiplication are inverses. If you know $6 \times 8 = 48$, then you also know $48 \div 8 = 6$ and $48 \div 6 = 8$. Your multiplication facts double as division facts.
+
+**Remainders** happen when a number doesn't split evenly. If you have 13 cookies for 4 people, each gets 3 with 1 left over: $13 \div 4 = 3$ remainder $1$. That leftover is the remainder.
+
+## Long Division
+
+Once you're comfortable with basic division facts, the same idea scales up to bigger numbers using the **long division** algorithm. It's a step-by-step process: Divide, Multiply, Subtract, Bring down.
+
+**The steps:**
+
+1. **Divide**: How many times does the divisor go into the first digits?
+2. **Multiply**: Multiply the quotient digit by the divisor.
+3. **Subtract**: Subtract from the current partial dividend.
+4. **Bring down** the next digit and repeat.
+5. **Remainder**: Whatever is left over if the division isn't exact.
+
+Example: $456 \div 6$
+
+$$
+\begin{array}{r|rrr}
+  & & 7 & 6 \\
+  \hline
+  6 & 4 & 5 & 6 \\
+  & {-}4 & 2 & \\
+  \hline
+  & & 3 & 6 \\
+  & & {-}3 & 6 \\
+  \hline
+  & & & 0
+\end{array}
+$$
+
+- 6 into 45 = 7 → $7 \times 6 = 42$, subtract → 3
+- Bring down 6 → 36
+- 6 into 36 = 6 → $6 \times 6 = 36$, subtract → 0
+
+Quotient: $76$, remainder $0$.
+
+If there's a remainder: $457 \div 6 = 76$ remainder $1$ (because $6 \times 76 + 1 = 457$).
+
+**Check**: Quotient $\times$ divisor $+$ remainder $=$ dividend.
+
+## Worked Example
+
+Divide $8{,}736 \div 24$.
+
+$$
+\begin{array}{r|rrrr}
+  & & 3 & 6 & 4 \\
+  \hline
+  24 & 8 & 7 & 3 & 6 \\
+  & {-}7 & 2 & & \\
+  \hline
+  & 1 & 5 & 3 & \\
+  & {-}1 & 4 & 4 & \\
+  \hline
+  & & & 9 & 6 \\
+  & & & {-}9 & 6 \\
+  \hline
+  & & & & 0
+\end{array}
+$$
+
+1. 24 into 87 = 3 → $3 \times 24 = 72$, subtract → 15
+2. Bring down 3 → 153
+3. 24 into 153 = 6 → $6 \times 24 = 144$, subtract → 9
+4. Bring down 6 → 96
+5. 24 into 96 = 4 → $4 \times 24 = 96$, subtract → 0
+
+Quotient: $364$, remainder $0$.
+
+**Check**: $364 \times 24 = 8{,}736$ ✓
+
+## Real-World Application
+
+Division figures shares, rates, or quantities: Split 840 dollars among 4 people = 210 dollars each; miles per gallon ($420$ miles $\div$ $15$ gallons $= 28$ mpg); or items per box ($96$ cookies $\div$ $12 = 8$ per box). It answers "how many" or "how much each" questions in budgeting, work, or planning.
+
+:::note[You've Got This]
+Long division is a step-by-step process — take it one digit at a time, guess conservatively, and always check by multiplying back. If remainders confuse you, just remember they mean "left over." Practice on paper and you'll master it quickly.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="arithmetic-division-whole"
+  questions={[
+    {
+      id: "q1",
+      text: "What is 864 ÷ 12?",
+      options: ["82", "70", "72", "74"],
+      correctIndex: 2,
+      explanation:
+        "12 into 86 = 7 (7×12=84), subtract 2; bring down 4 → 24; 12×2=24 → quotient 72.",
+    },
+    {
+      id: "q2",
+      text: "Divide 500 ÷ 8. What is the quotient and remainder?",
+      options: ["60 r 4", "63 r 0", "62 r 4", "62 r 6"],
+      correctIndex: 2,
+      explanation:
+        "8 into 50 = 6 (48), subtract 2; bring down 0 → 20; 8×2=16, subtract → remainder 4. So 62 r 4.",
+    },
+    {
+      id: "q3",
+      text: "A total bill of 240 dollars is split equally among 6 friends. How much does each person pay?",
+      options: ["45 dollars", "40 dollars", "50 dollars", "30 dollars"],
+      correctIndex: 1,
+      explanation: "240 ÷ 6 = 40 (6×40=240, exact).",
+    },
+    {
+      id: "q4",
+      text: "What is 1,575 ÷ 25?",
+      options: ["65", "60", "70", "63"],
+      correctIndex: 3,
+      explanation:
+        "25 into 157 = 6 (6×25=150), subtract 7; bring down 5 → 75; 25×3=75 → quotient 63.",
+    },
+  ]}
+/>

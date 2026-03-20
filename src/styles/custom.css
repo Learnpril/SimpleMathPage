@@ -219,3 +219,17 @@ starlight-toc {
   color: var(--quiz-incorrect);
   background-color: color-mix(in srgb, var(--quiz-incorrect) 8%, transparent);
 }
+
+/* ---------- Mobile: fit full site title on screen ---------- */
+@media (max-width: 600px) {
+  .site-title {
+    font-size: 1rem !important;
+    white-space: normal !important;
+  }
+  .site-title img {
+    height: 1.75rem !important;
+  }
+  .title-wrapper {
+    overflow: visible !important;
+  }
+}

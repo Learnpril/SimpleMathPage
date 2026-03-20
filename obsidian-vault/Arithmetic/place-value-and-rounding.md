@@ -1,0 +1,91 @@
+---
+title: Place Value & Rounding
+description: Understand how digits work in whole numbers and how to round to make estimates easier
+sidebar:
+  order: 1
+---
+
+## What You'll Learn
+
+In this lesson you'll learn how place value organizes numbers, how to read and write large numbers, and how to round numbers to the nearest 10, 100, or 1000. This helps with quick mental math and real-life estimates.
+
+## The Concept
+
+**Place value** tells us what each digit in a number means based on its position. From right to left:
+
+- Ones place
+- Tens place
+- Hundreds place
+- Thousands place, and so on
+
+Example: In 4,728:
+
+- 4 is in the thousands place ($4 \times 1000 = 4000$)
+- 7 is in the hundreds place ($7 \times 100 = 700$)
+- 2 is in the tens place ($2 \times 10 = 20$)
+- 8 is in the ones place ($8 \times 1 = 8$)
+
+Total: $4000 + 700 + 20 + 8 = 4728$
+
+**Rounding** simplifies numbers for estimates. Look at the digit to the right of the place you're rounding to:
+
+- If it's 5 or higher, round up.
+- If it's less than 5, round down.
+
+Examples:
+
+- Round 4728 to nearest hundred: Look at tens digit (2 < 5) → 4700
+- Round 4728 to nearest thousand: Look at hundreds digit (7 ≥ 5) → 5000
+
+## Worked Example
+
+Round 3,649 to the nearest hundred, then to the nearest thousand.
+
+1. Nearest hundred: Look at tens digit (4 < 5) → round down → 3,600
+
+2. Nearest thousand: Look at hundreds digit (6 ≥ 5) → round up → 4,000
+
+Check: 3,649 is between 3,600 and 3,700 (closer to 3,600), and between 3,000 and 4,000 (closer to 4,000 after rounding up on 6).
+
+## Real-World Application
+
+Place value helps read prices, bills, or salaries accurately (e.g., $47,289 in monthly sales means forty-seven thousand two hundred eighty-nine dollars). Rounding is used constantly for quick estimates: "Gas is about $3.80 a gallon" (rounding $3.79), "I'll need around $500 for groceries this month" (rounding $487), or "The population is roughly 320,000" (rounding 318,742). These shortcuts save time in budgeting, shopping, or planning.
+
+:::note[You've Got This]
+Numbers can feel overwhelming when they're big, but place value just breaks them into manageable chunks — like reading an address one part at a time. Start with small numbers, say them out loud, and practice rounding in daily life (gas prices, receipts). You'll be estimating like a pro in no time.
+:::
+
+## Quiz
+
+import Quiz from "../../components/Quiz.astro"
+
+<Quiz client:load quizId="arithmetic-place-value" questions={[
+{
+id: "q1",
+text: "In the number 5,927, what is the value of the digit 9?",
+options: ["9", "90", "900", "9,000"],
+correctIndex: 2,
+explanation: "The 9 is in the hundreds place, so its value is 9 × 100 = 900."
+},
+{
+id: "q2",
+text: "Round 7,346 to the nearest hundred.",
+options: ["7,300", "7,400", "7,000", "7,350"],
+correctIndex: 0,
+explanation: "Look at the tens digit (4). Since 4 < 5, round down to 7,300."
+},
+{
+id: "q3",
+text: "What is the place value of the digit 4 in 82,419?",
+options: ["4,000", "40", "400", "4"],
+correctIndex: 2,
+explanation: "The 4 is in the hundreds place (82,419 = 80,000 + 2,000 + 400 + 10 + 9)."
+},
+{
+id: "q4",
+text: "A store has 6,872 items in stock. Rounded to the nearest thousand, about how many are there?",
+options: ["6,900", "6,000", "7,000", "6,800"],
+correctIndex: 2,
+explanation: "Look at the hundreds digit (8). Since 8 ≥ 5, round up from 6,000 to 7,000."
+}
+]} />

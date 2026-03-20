@@ -1,0 +1,123 @@
+---
+title: Introduction to Fractions
+description: Understand what fractions are, how to read them, and the different types
+sidebar:
+  order: 5
+---
+
+import Quiz from "../../../components/Quiz.astro";
+
+## What You'll Learn
+
+In this lesson you'll learn what a fraction is, how to read and write one, and the different types of fractions you'll encounter.
+
+## What Is a Fraction?
+
+A **fraction** represents a part of a whole. Think of cutting a pizza into equal slices. If you cut it into 4 equal slices and eat 1, you've eaten $\frac{1}{4}$ of the pizza.
+
+Every fraction has two parts:
+
+- The **numerator** (top number) — how many parts you have
+- The **denominator** (bottom number) — how many equal parts the whole is divided into
+
+$$
+\frac{\text{numerator}}{\text{denominator}} = \frac{\text{parts you have}}{\text{total equal parts}}
+$$
+
+Some examples:
+
+- $\frac{1}{2}$ — one out of two equal parts (half)
+- $\frac{3}{4}$ — three out of four equal parts (three quarters)
+- $\frac{2}{3}$ — two out of three equal parts
+- $\frac{5}{5}$ — five out of five parts, which is the whole thing — so $\frac{5}{5} = 1$
+
+## Types of Fractions
+
+A few things worth knowing:
+
+- If the numerator is smaller than the denominator, the fraction is less than 1 (like $\frac{3}{8}$). These are called **proper fractions**.
+- If the numerator equals the denominator, the fraction equals 1 (like $\frac{4}{4}$).
+- If the numerator is larger than the denominator, the fraction is greater than 1 (like $\frac{7}{4}$). These are called **improper fractions** and can be written as mixed numbers — $\frac{7}{4} = 1\frac{3}{4}$.
+
+**Mixed numbers** combine a whole number with a fraction. To convert an improper fraction to a mixed number, divide the numerator by the denominator:
+
+- $\frac{7}{4}$: $7 \div 4 = 1$ remainder $3$, so $\frac{7}{4} = 1\frac{3}{4}$
+- $\frac{11}{3}$: $11 \div 3 = 3$ remainder $2$, so $\frac{11}{3} = 3\frac{2}{3}$
+
+To go the other way (mixed number to improper fraction), multiply the whole number by the denominator and add the numerator:
+
+- $2\frac{1}{5} = \frac{2 \times 5 + 1}{5} = \frac{11}{5}$
+
+## Equivalent Fractions
+
+**Equivalent fractions** are different ways of writing the same amount. $\frac{1}{2}$, $\frac{2}{4}$, and $\frac{3}{6}$ all represent the same value — half.
+
+You get equivalent fractions by multiplying (or dividing) both the numerator and denominator by the same number:
+
+$$
+\frac{1}{2} = \frac{1 \times 2}{2 \times 2} = \frac{2}{4} = \frac{1 \times 3}{2 \times 3} = \frac{3}{6}
+$$
+
+**Simplifying** a fraction means dividing both parts by their greatest common factor (GCF). For example, $\frac{6}{8}$: the GCF of 6 and 8 is 2, so $\frac{6}{8} = \frac{6 \div 2}{8 \div 2} = \frac{3}{4}$.
+
+## Comparing Fractions
+
+To compare fractions with the same denominator, just compare the numerators: $\frac{3}{7} < \frac{5}{7}$ because 3 is less than 5.
+
+For different denominators, find a common denominator first. Which is bigger, $\frac{2}{3}$ or $\frac{3}{5}$?
+
+- Convert both to fifteenths: $\frac{2}{3} = \frac{10}{15}$ and $\frac{3}{5} = \frac{9}{15}$
+- $\frac{10}{15} > \frac{9}{15}$, so $\frac{2}{3} > \frac{3}{5}$
+
+## Real-World Application
+
+Fractions are everywhere in daily life. Recipes call for $\frac{1}{2}$ cup or $\frac{3}{4}$ teaspoon. A sale might be $\frac{1}{3}$ off. You might work $\frac{3}{4}$ of a shift or split a bill into $\frac{1}{4}$ shares. Understanding fractions means you can handle measurements, portions, and splits without second-guessing.
+
+:::note[You've Got This]
+Fractions can feel intimidating at first, but they're just a way of describing parts of something. The numerator counts, the denominator names the size of the parts. Once that clicks, everything else — adding, comparing, simplifying — builds naturally from there. Take it one piece at a time.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="arithmetic-intro-fractions"
+  questions={[
+    {
+      id: "q1",
+      text: "In the fraction 3/8, what does the 8 represent?",
+      options: [
+        "How many parts you have",
+        "The whole number",
+        "How many equal parts the whole is divided into",
+        "The remainder",
+      ],
+      correctIndex: 2,
+      explanation:
+        "The denominator (bottom number) tells you how many equal parts the whole is divided into.",
+    },
+    {
+      id: "q2",
+      text: "Which of these is an improper fraction?",
+      options: ["2/5", "3/3", "7/4", "1/2"],
+      correctIndex: 2,
+      explanation:
+        "7/4 is improper because the numerator (7) is larger than the denominator (4), making it greater than 1.",
+    },
+    {
+      id: "q3",
+      text: "What is 2 1/3 as an improper fraction?",
+      options: ["3/3", "7/3", "5/3", "8/3"],
+      correctIndex: 1,
+      explanation:
+        "Multiply the whole number by the denominator and add the numerator: 2×3 + 1 = 7, so 7/3.",
+    },
+    {
+      id: "q4",
+      text: "Which fraction is equivalent to 1/2?",
+      options: ["2/3", "3/6", "2/5", "1/3"],
+      correctIndex: 1,
+      explanation:
+        "1/2 = 3/6 because 1×3 = 3 and 2×3 = 6. Both represent the same amount — half.",
+    },
+  ]}
+/>

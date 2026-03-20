@@ -1,4 +1,14 @@
 
 export default new Map([
-["src/content/docs/index.mdx", () => import("astro:content-layer-deferred-module?astro%3Acontent-layer-deferred-module=&fileName=src%2Fcontent%2Fdocs%2Findex.mdx&astroContentModuleFlag=true")]]);
+["src/content/docs/algebra-basics/variables-and-expressions.mdx", () => import("astro:content-layer-deferred-module?astro%3Acontent-layer-deferred-module=&fileName=src%2Fcontent%2Fdocs%2Falgebra-basics%2Fvariables-and-expressions.mdx&astroContentModuleFlag=true")],
+["src/content/docs/arithmetic/addition-and-subtraction.mdx", () => import("astro:content-layer-deferred-module?astro%3Acontent-layer-deferred-module=&fileName=src%2Fcontent%2Fdocs%2Farithmetic%2Faddition-and-subtraction.mdx&astroContentModuleFlag=true")],
+["src/content/docs/arithmetic/adding-fractions.mdx", () => import("astro:content-layer-deferred-module?astro%3Acontent-layer-deferred-module=&fileName=src%2Fcontent%2Fdocs%2Farithmetic%2Fadding-fractions.mdx&astroContentModuleFlag=true")],
+["src/content/docs/index.mdx", () => import("astro:content-layer-deferred-module?astro%3Acontent-layer-deferred-module=&fileName=src%2Fcontent%2Fdocs%2Findex.mdx&astroContentModuleFlag=true")],
+["src/content/docs/arithmetic/division.mdx", () => import("astro:content-layer-deferred-module?astro%3Acontent-layer-deferred-module=&fileName=src%2Fcontent%2Fdocs%2Farithmetic%2Fdivision.mdx&astroContentModuleFlag=true")],
+["src/content/docs/arithmetic/introduction-to-fractions.mdx", () => import("astro:content-layer-deferred-module?astro%3Acontent-layer-deferred-module=&fileName=src%2Fcontent%2Fdocs%2Farithmetic%2Fintroduction-to-fractions.mdx&astroContentModuleFlag=true")],
+["src/content/docs/arithmetic/multiplication.mdx", () => import("astro:content-layer-deferred-module?astro%3Acontent-layer-deferred-module=&fileName=src%2Fcontent%2Fdocs%2Farithmetic%2Fmultiplication.mdx&astroContentModuleFlag=true")],
+["src/content/docs/arithmetic/multiplying-fractions.mdx", () => import("astro:content-layer-deferred-module?astro%3Acontent-layer-deferred-module=&fileName=src%2Fcontent%2Fdocs%2Farithmetic%2Fmultiplying-fractions.mdx&astroContentModuleFlag=true")],
+["src/content/docs/arithmetic/dividing-fractions.mdx", () => import("astro:content-layer-deferred-module?astro%3Acontent-layer-deferred-module=&fileName=src%2Fcontent%2Fdocs%2Farithmetic%2Fdividing-fractions.mdx&astroContentModuleFlag=true")],
+["src/content/docs/arithmetic/place-value-and-rounding.mdx", () => import("astro:content-layer-deferred-module?astro%3Acontent-layer-deferred-module=&fileName=src%2Fcontent%2Fdocs%2Farithmetic%2Fplace-value-and-rounding.mdx&astroContentModuleFlag=true")],
+["src/content/docs/arithmetic/subtracting-fractions.mdx", () => import("astro:content-layer-deferred-module?astro%3Acontent-layer-deferred-module=&fileName=src%2Fcontent%2Fdocs%2Farithmetic%2Fsubtracting-fractions.mdx&astroContentModuleFlag=true")]]);
 		

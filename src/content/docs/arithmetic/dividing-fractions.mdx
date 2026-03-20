@@ -1,0 +1,85 @@
+---
+title: Dividing Fractions
+description: Learn to divide fractions by multiplying by the reciprocal
+sidebar:
+  order: 9
+---
+
+import Quiz from "../../../components/Quiz.astro";
+
+## What You'll Learn
+
+In this lesson you'll learn the "keep-change-flip" rule for dividing fractions, how to handle whole numbers and mixed numbers, and why it works.
+
+## The Concept
+
+**Dividing fractions** finds how many times one fraction fits into another. Rule: "Keep the first fraction, change $\div$ to $\times$, flip the second fraction (reciprocal)."
+
+$$
+\frac{a}{b} \div \frac{c}{d} = \frac{a}{b} \times \frac{d}{c}
+$$
+
+Example: $\frac{3}{4} \div \frac{2}{5} = \frac{3}{4} \times \frac{5}{2} = \frac{15}{8} = 1 \frac{7}{8}$
+
+Why? Dividing is "how many of the second fit into the first" — multiplying by the reciprocal gives that count.
+
+- Whole number $\div$ fraction: $6 \div \frac{2}{3} = \frac{6}{1} \times \frac{3}{2} = \frac{18}{2} = 9$
+- Fraction $\div$ whole: $\frac{2}{3} \div 4 = \frac{2}{3} \times \frac{1}{4} = \frac{2}{12} = \frac{1}{6}$
+
+Mixed numbers: Convert to improper first.
+
+## Worked Example
+
+Divide $\frac{5}{6} \div \frac{3}{8}$.
+
+1. Keep $\frac{5}{6}$, change $\div$ to $\times$, flip $\frac{3}{8}$ to $\frac{8}{3}$
+2. $\frac{5}{6} \times \frac{8}{3} = \frac{40}{18} = \frac{20}{9} = 2 \frac{2}{9}$
+
+Now: $3 \frac{1}{2} \div 1 \frac{1}{4}$
+
+1. Convert to improper: $\frac{7}{2} \div \frac{5}{4}$
+2. $\frac{7}{2} \times \frac{4}{5} = \frac{28}{10} = \frac{14}{5} = 2 \frac{4}{5}$
+
+## Real-World Application
+
+Dividing fractions solves "how many" questions: How many $\frac{1}{3}$-cup servings in $2 \frac{1}{2}$ cups? ($2 \frac{1}{2} \div \frac{1}{3} = 7 \frac{1}{2}$ servings). Or fabric: 5 yards $\div$ $\frac{3}{4}$ yard per piece $= 6 \frac{2}{3}$ pieces. Or rates: speed = distance $\div$ time (e.g., 60 miles $\div$ $1 \frac{1}{2}$ hours $= 40$ mph).
+
+:::note[You've Got This]
+"Keep-change-flip" is a reliable trick — remember it like a dance step. Practice flipping the second fraction and multiplying. If mixed numbers confuse you, convert them first. You'll use this for recipes, measurements, and sharing — it gets intuitive fast.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="arithmetic-dividing-fractions"
+  questions={[
+    {
+      id: "q1",
+      text: "What is 1/2 ÷ 1/4?",
+      options: ["2", "1/8", "1/2", "4"],
+      correctIndex: 0,
+      explanation: "1/2 × 4/1 = 4/2 = 2.",
+    },
+    {
+      id: "q2",
+      text: "Divide 3/5 ÷ 2/3.",
+      options: ["9/15", "9/10", "1/2", "6/5"],
+      correctIndex: 1,
+      explanation: "3/5 × 3/2 = 9/10.",
+    },
+    {
+      id: "q3",
+      text: "A tank holds 4 1/2 gallons. How many 3/4-gallon containers can it fill?",
+      options: ["6", "5", "6 1/2", "5 1/2"],
+      correctIndex: 0,
+      explanation: "4 1/2 ÷ 3/4 = 9/2 × 4/3 = 36/6 = 6 containers.",
+    },
+    {
+      id: "q4",
+      text: "Divide 2 2/3 ÷ 1 1/3.",
+      options: ["2", "3", "1 1/2", "2 1/2"],
+      correctIndex: 0,
+      explanation: "8/3 ÷ 4/3 = 8/3 × 3/4 = 24/12 = 2.",
+    },
+  ]}
+/>

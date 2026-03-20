@@ -1,0 +1,114 @@
+---
+title: Subtracting Fractions
+description: Learn to subtract fractions with like and unlike denominators, including borrowing with mixed numbers
+sidebar:
+  order: 7
+---
+
+import Quiz from "../../../components/Quiz.astro";
+
+## What You'll Learn
+
+In this lesson you'll learn how to subtract fractions step by step — first with the same denominator, then different ones, and handling mixed numbers when borrowing is needed. This builds directly on adding fractions.
+
+## The Concept
+
+**Subtracting fractions with the same denominator** is straightforward — just subtract the numerators:
+
+$$
+\frac{a}{c} - \frac{b}{c} = \frac{a - b}{c}
+$$
+
+For example: $\frac{5}{8} - \frac{2}{8} = \frac{3}{8}$.
+
+**Subtracting fractions with different denominators** requires a common denominator — just like adding. The least common denominator (LCD) is the smallest number that both denominators divide into evenly.
+
+The general formula is:
+
+$$
+\frac{a}{b} - \frac{c}{d} = \frac{a \times d - c \times b}{b \times d}
+$$
+
+After subtracting, always check whether the result can be simplified by dividing the numerator and denominator by their greatest common factor.
+
+**Mixed numbers** (whole + fraction): Subtract whole numbers first, then fractions. If the first fraction is smaller than the second, borrow 1 from the whole number — this adds $\frac{d}{d}$ (a full "1" in fraction form) to the fraction part.
+
+Example: $3 \frac{1}{4} - 1 \frac{3}{4}$
+Can't do $\frac{1}{4} - \frac{3}{4}$, so borrow: $2 \frac{5}{4} - 1 \frac{3}{4} = 1 \frac{2}{4} = 1 \frac{1}{2}$
+
+## Worked Example
+
+Let's subtract $\frac{3}{4} - \frac{1}{6}$ step by step.
+
+1. **Find the LCD.** The denominators are 4 and 6. The smallest number both divide into is 12.
+
+2. **Convert each fraction.**
+
+$$
+\frac{3}{4} = \frac{3 \times 3}{4 \times 3} = \frac{9}{12}
+$$
+
+$$
+\frac{1}{6} = \frac{1 \times 2}{6 \times 2} = \frac{2}{12}
+$$
+
+3. **Subtract the numerators.**
+
+$$
+\frac{9}{12} - \frac{2}{12} = \frac{7}{12}
+$$
+
+4. **Simplify if possible.** 7 and 12 share no common factors, so $\frac{7}{12}$ is already in simplest form.
+
+Now a mixed number example: $4 \frac{2}{3} - 2 \frac{5}{6}$
+
+1. **Find the LCD.** Denominators are 3 and 6. LCD is 6.
+2. **Convert:** $4 \frac{4}{6} - 2 \frac{5}{6}$
+3. **Can't subtract** $\frac{4}{6} - \frac{5}{6}$, so **borrow:** $3 \frac{10}{6} - 2 \frac{5}{6}$
+4. **Subtract:** $3 \frac{10}{6} - 2 \frac{5}{6} = 1 \frac{5}{6}$
+
+## Real-World Application
+
+Subtracting fractions appears in cooking (subtracting used amounts from a recipe), budgeting (remaining time/money after spending part), or measurements (cutting material). Example: You have $2 \frac{3}{4}$ yards of fabric and use $1 \frac{1}{2}$ yards → $2 \frac{3}{4} - 1 \frac{1}{2} = 1 \frac{1}{4}$ yards left. Or a tank has $\frac{5}{8}$ full gas and you use $\frac{1}{4}$ → $\frac{5}{8} - \frac{2}{8} = \frac{3}{8}$ remaining.
+
+:::note[You've Got This]
+Subtracting fractions is just like adding but in reverse — find the common ground (denominator) and take away. When borrowing feels tricky, remember it's like trading a dollar for quarters to make change. Practice a few problems, check by adding back, and it'll click quickly.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="arithmetic-subtracting-fractions"
+  questions={[
+    {
+      id: "q1",
+      text: "What is 5/6 - 2/6?",
+      options: ["3/6", "7/6", "3/12", "7/12"],
+      correctIndex: 0,
+      explanation:
+        "Subtract numerators since denominators match: 5 - 2 = 3, keep denominator 6 → 3/6 (simplifies to 1/2).",
+    },
+    {
+      id: "q2",
+      text: "Subtract 3/4 - 1/8. What is the result?",
+      options: ["5/8", "2/8", "4/8", "6/8"],
+      correctIndex: 0,
+      explanation: "Common denominator 8: 3/4 = 6/8, then 6/8 - 1/8 = 5/8.",
+    },
+    {
+      id: "q3",
+      text: "A recipe calls for 2 1/3 cups of flour. You have 3 1/2 cups. How much more do you have?",
+      options: ["1 1/6 cups", "1 1/3 cups", "1 1/2 cups", "2/3 cup"],
+      correctIndex: 0,
+      explanation:
+        "3 1/2 - 2 1/3: Common denom 6 → 3 3/6 - 2 2/6 = 1 1/6 cups more.",
+    },
+    {
+      id: "q4",
+      text: "Subtract 4 5/12 - 2 7/12. What is the result?",
+      options: ["2 2/12", "1 10/12", "2 10/12", "1 8/12"],
+      correctIndex: 1,
+      explanation: "Borrow: 3 17/12 - 2 7/12 = 1 10/12 (simplifies to 1 5/6).",
+    },
+  ]}
+/>

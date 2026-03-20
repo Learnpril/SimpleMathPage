@@ -1,15 +1,46 @@
 ---
 title: Mom's Basement University
-description: Mom's Basement University – Start Fresh, No Judgment
+description: Math Made Clear for Adults – Start Fresh, No Judgment
 ---
 
 import { Image } from "astro:assets";
 import mascot from "../../assets/mascot.png";
+import { Card, CardGrid } from "@astrojs/starlight/components";
 
-<div style="text-align: center; display: flex; justify-content: center;">
+<div style="text-align: center; display: flex; flex-direction: column; align-items: center; margin-bottom: 2rem;">
   <Image src={mascot} alt="Einstein eating chicken nuggets" width={450} />
+  <p style="font-size: 1.15rem; font-style: italic; margin-top: 1rem;">
+    Learn math for free from the comfort of your mom's basement!
+  </p>
 </div>
 
-<p style="text-align: center;">
-  <em>Learn math for free from the comfort of your mom's basement!</em>
-</p>
+## Explore Subjects
+
+<CardGrid>
+  <Card title="Arithmetic" icon="pencil">
+    The fundamentals — addition, subtraction, fractions, decimals, and more.
+    Everyone starts somewhere, and this is a great place. [Start Arithmetic
+    →](/arithmetic/place-value-and-rounding/)
+  </Card>
+  <Card title="Algebra Basics" icon="puzzle">
+    Variables, expressions, and equations. Learn to think in symbols and solve
+    for the unknown. [Start Algebra
+    →](/algebra-basics/variables-and-expressions/)
+  </Card>
+  <Card title="Linear Algebra" icon="bars">
+    Vectors, matrices, and transformations. The math behind data science,
+    graphics, and machine learning. [Start Linear Algebra →](/linear-algebra/)
+  </Card>
+  <Card title="Graphics Math" icon="sun">
+    The geometry and trigonometry that power video games, 3D rendering, and
+    visual effects. [Start Graphics Math →](/graphics-math/)
+  </Card>
+  <Card title="AI Art Math" icon="star">
+    The math concepts behind generative art, neural networks, and creative AI
+    tools. [Start AI Art Math →](/ai-art-math/)
+  </Card>
+  <Card title="Esoteric Patterns" icon="random">
+    Fractals, cellular automata, strange attractors, and other beautiful
+    mathematical curiosities. [Start Esoteric Patterns →](/esoteric-patterns/)
+  </Card>
+</CardGrid>
