@@ -1,0 +1,87 @@
+---
+title: Evaluating Expressions
+description: Learn how to substitute values into algebraic expressions and calculate the result
+sidebar:
+  order: 2
+---
+
+import Quiz from "../../../components/Quiz.astro";
+
+## What You'll Learn
+
+In this lesson you'll learn how to evaluate algebraic expressions by replacing variables with given numbers and following the order of operations.
+
+## The Concept
+
+**Evaluating an expression** means plugging in a specific value for each variable and computing the result — just like following a recipe with exact amounts.
+
+Steps:
+
+1. Replace every instance of the variable with the given number (use parentheses if needed to avoid confusion).
+2. Follow order of operations: Parentheses → Exponents → Multiply/Divide (left to right) → Add/Subtract (left to right).
+
+Example: Evaluate $2x + 3y$ when $x = 5$ and $y = 4$
+
+$$
+2(5) + 3(4) = 10 + 12 = 22
+$$
+
+Another: $5 + 4n$ when $n = 3$
+
+$$
+5 + 4(3) = 5 + 12 = 17
+$$
+
+## Worked Example
+
+Evaluate $7 - 2a + b$ when $a = 6$ and $b = 9$.
+
+1. Substitute: $7 - 2(6) + 9$
+2. Multiply first: $7 - 12 + 9$
+3. Add/subtract left to right: $-5 + 9 = 4$
+
+Final result: $4$
+
+## Real-World Application
+
+Evaluating expressions helps calculate costs or totals when you know the values. Example: Monthly phone bill = 30 dollars base + 0.05 dollars per text. If you send 400 texts: $30 + 0.05(400) = 30 + 20 = 50$ dollars. Or fuel cost = 3.50 dollars per gallon × $g$ gallons — plug in $g = 12$ for 42 dollars.
+
+:::note[You've Got This]
+Evaluating is just "follow the recipe with real numbers." Write out each step, use parentheses around substituted values, and double-check order of operations. Practice with simple bills or budgets — it'll feel like second nature soon.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="pre-algebra-evaluating-expressions"
+  questions={[
+    {
+      id: "q1",
+      text: "Evaluate 3x + 8 when x = 7.",
+      options: ["29", "21", "15", "31"],
+      correctIndex: 0,
+      explanation: "3(7) + 8 = 21 + 8 = 29.",
+    },
+    {
+      id: "q2",
+      text: "What is 12 - 5y when y = 2?",
+      options: ["2", "22", "10", "7"],
+      correctIndex: 0,
+      explanation: "12 - 5(2) = 12 - 10 = 2.",
+    },
+    {
+      id: "q3",
+      text: "A rental fee is 25 dollars plus 4 dollars per hour. Cost for 6 hours?",
+      options: ["49 dollars", "54 dollars", "29 dollars", "45 dollars"],
+      correctIndex: 0,
+      explanation: "25 + 4(6) = 25 + 24 = 49 dollars.",
+    },
+    {
+      id: "q4",
+      text: "Evaluate 2a + 3b - c when a = 4, b = 5, c = 10.",
+      options: ["13", "21", "9", "19"],
+      correctIndex: 0,
+      explanation: "2(4) + 3(5) - 10 = 8 + 15 - 10 = 13.",
+    },
+  ]}
+/>

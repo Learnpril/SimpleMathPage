@@ -1,0 +1,95 @@
+---
+title: The Distributive Property
+description: Learn how to multiply a number by a group of terms inside parentheses
+sidebar:
+  order: 5
+---
+
+import Quiz from "../../../components/Quiz.astro";
+
+## What You'll Learn
+
+In this lesson you'll learn the distributive property and how to use it to expand or simplify expressions.
+
+## The Concept
+
+The **distributive property** says you can multiply a number by each term inside parentheses:
+
+$$
+a(b + c) = ab + ac
+$$
+
+Also works for subtraction and negatives:
+
+$$
+3(4 - 2x) = 3(4) - 3(2x) = 12 - 6x
+$$
+
+- Multiply the outside number by every term inside.
+- Keep the signs ($+$ or $-$) as they are.
+- Don't forget to distribute to every term.
+
+Example: $5(2x + 3) = 10x + 15$
+
+## Worked Example
+
+Expand $4(3y - 5)$.
+
+1. $4 \times 3y = 12y$
+2. $4 \times (-5) = -20$
+3. Result: $12y - 20$
+
+Now with negative: $-2(x + 7)$
+
+1. $-2 \times x = -2x$
+2. $-2 \times 7 = -14$
+3. $-2x - 14$
+
+## Real-World Application
+
+The distributive property helps break down costs or totals. Example: A plan costs 3 dollars per day for 5 days plus a 10-dollar fee: $3(5) + 10 = 15 + 10 = 25$ dollars. Or splitting a 120-dollar bill among 4 people with 5 dollars extra each: $4(30 + 5) = 4 \times 30 + 4 \times 5 = 120 + 20 = 140$ dollars total.
+
+:::note[You've Got This]
+Distributing is just "sharing" the multiplier with every term inside — like handing out money to each person in a group. Write it out step by step and double-check signs. Practice with small numbers and you'll use it naturally in budgeting or splitting costs.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="pre-algebra-distributive-property"
+  questions={[
+    {
+      id: "q1",
+      text: "Use distributive property: 6(2x + 3).",
+      options: ["12x + 18", "12x + 3", "6x + 18", "8x + 9"],
+      correctIndex: 0,
+      explanation: "6 × 2x = 12x, 6 × 3 = 18 → 12x + 18.",
+    },
+    {
+      id: "q2",
+      text: "Expand 5(4 - y).",
+      options: ["20 - 5y", "20 + 5y", "9 - y", "20 - y"],
+      correctIndex: 0,
+      explanation: "5 × 4 = 20, 5 × (-y) = -5y → 20 - 5y.",
+    },
+    {
+      id: "q3",
+      text: "A fee is 8 dollars per person for 3 people plus 12 dollars flat. Simplified?",
+      options: [
+        "All are equivalent",
+        "24 + 12 dollars",
+        "8(3) + 12 dollars",
+        "36 dollars",
+      ],
+      correctIndex: 3,
+      explanation: "8(3) + 12 = 24 + 12 = 36 dollars.",
+    },
+    {
+      id: "q4",
+      text: "Distribute -3(x - 2).",
+      options: ["-3x + 6", "-3x - 6", "3x - 6", "-3x + 2"],
+      correctIndex: 0,
+      explanation: "-3 × x = -3x, -3 × (-2) = 6 → -3x + 6.",
+    },
+  ]}
+/>

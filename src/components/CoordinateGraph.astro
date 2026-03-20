@@ -1,0 +1,195 @@
+---
+interface Point {
+  x: number;
+  y: number;
+  label?: string;
+}
+
+interface Line {
+  slope: number;
+  intercept: number;
+  color?: string;
+  label?: string;
+}
+
+interface Props {
+  points?: Point[];
+  lines?: Line[];
+  xMin?: number;
+  xMax?: number;
+  yMin?: number;
+  yMax?: number;
+  width?: number;
+  height?: number;
+  title?: string;
+}
+
+const {
+  points = [],
+  lines = [],
+  xMin = -6,
+  xMax = 6,
+  yMin = -6,
+  yMax = 6,
+  width = 400,
+  height = 400,
+  title,
+} = Astro.props;
+
+const padding = 40;
+const plotW = width - padding * 2;
+const plotH = height - padding * 2;
+
+function toSvgX(x: number) {
+  return padding + ((x - xMin) / (xMax - xMin)) * plotW;
+}
+function toSvgY(y: number) {
+  return padding + ((yMax - y) / (yMax - yMin)) * plotH;
+}
+
+const xTicks: number[] = [];
+for (let i = Math.ceil(xMin); i <= Math.floor(xMax); i++) xTicks.push(i);
+const yTicks: number[] = [];
+for (let i = Math.ceil(yMin); i <= Math.floor(yMax); i++) yTicks.push(i);
+
+function linePoints(slope: number, intercept: number) {
+  const pts: { x: number; y: number }[] = [];
+  for (let px = xMin; px <= xMax; px += 0.1) {
+    const py = slope * px + intercept;
+    if (py >= yMin && py <= yMax) {
+      pts.push({ x: px, y: py });
+    }
+  }
+  return pts;
+}
+
+const lineColors = ["#58a6ff", "#f78166", "#7ee787", "#d2a8ff"];
+const lineColorsLight = ["#0969da", "#cf222e", "#1a7f37", "#8250df"];
+---
+
+<figure class="coordinate-graph" role="img" aria-label={title || "Coordinate plane graph"}>
+  {title && <figcaption class="graph-title">{title}</figcaption>}
+  <svg
+    viewBox={`0 0 ${width} ${height}`}
+    width={width}
+    height={height}
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    {/* Grid lines */}
+    {xTicks.map((x) => (
+      <line
+        class={x === 0 ? "graph-axis" : "graph-grid"}
+        x1={toSvgX(x)} y1={padding} x2={toSvgX(x)} y2={height - padding}
+        stroke-width={x === 0 ? 1.5 : 0.5}
+      />
+    ))}
+    {yTicks.map((y) => (
+      <line
+        class={y === 0 ? "graph-axis" : "graph-grid"}
+        x1={padding} y1={toSvgY(y)} x2={width - padding} y2={toSvgY(y)}
+        stroke-width={y === 0 ? 1.5 : 0.5}
+      />
+    ))}
+
+    {/* Axis arrows */}
+    <line class="graph-axis" x1={padding} y1={toSvgY(0)} x2={width - padding + 8} y2={toSvgY(0)} stroke-width="1.5" marker-end="url(#arrow)" />
+    <line class="graph-axis" x1={toSvgX(0)} y1={height - padding} x2={toSvgX(0)} y2={padding - 8} stroke-width="1.5" marker-end="url(#arrow)" />
+    <defs>
+      <marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+        <path class="graph-arrow" d="M0,0 L8,4 L0,8 Z" />
+      </marker>
+    </defs>
+
+    {/* Axis labels */}
+    <text class="graph-label" x={width - padding + 12} y={toSvgY(0) + 4} font-size="13" font-family="sans-serif">x</text>
+    <text class="graph-label" x={toSvgX(0) + 6} y={padding - 12} font-size="13" font-family="sans-serif">y</text>
+
+    {/* Tick labels */}
+    {xTicks.filter((x) => x !== 0).map((x) => (
+      <text class="graph-tick" x={toSvgX(x)} y={toSvgY(0) + 16} font-size="11" font-family="sans-serif" text-anchor="middle">{x}</text>
+    ))}
+    {yTicks.filter((y) => y !== 0).map((y) => (
+      <text class="graph-tick" x={toSvgX(0) - 8} y={toSvgY(y) + 4} font-size="11" font-family="sans-serif" text-anchor="end">{y}</text>
+    ))}
+
+    {/* Lines */}
+    {lines.map((line, li) => {
+      const pts = linePoints(line.slope, line.intercept);
+      const darkColor = line.color || lineColors[li % lineColors.length];
+      const lightColor = lineColorsLight[li % lineColorsLight.length];
+      if (pts.length < 2) return null;
+      const pathD = pts.map((p, i) => `${i === 0 ? "M" : "L"}${toSvgX(p.x).toFixed(1)},${toSvgY(p.y).toFixed(1)}`).join(" ");
+      return (
+        <g class="graph-line" style={`--line-dark:${darkColor};--line-light:${lightColor}`}>
+          <path d={pathD} stroke-width="2.5" fill="none" />
+          {line.label && (
+            <text
+              x={toSvgX(pts[pts.length - 1].x) - 4}
+              y={toSvgY(pts[pts.length - 1].y) - 8}
+              font-size="12" font-family="sans-serif" font-weight="bold"
+            >{line.label}</text>
+          )}
+        </g>
+      );
+    })}
+
+    {/* Points */}
+    {points.map((p) => (
+      <g class="graph-point">
+        <circle cx={toSvgX(p.x)} cy={toSvgY(p.y)} r="5" stroke-width="1.5" />
+        {p.label && (
+          <text
+            x={toSvgX(p.x) + 8} y={toSvgY(p.y) - 8}
+            font-size="12" font-family="sans-serif" font-weight="bold"
+          >{p.label}</text>
+        )}
+      </g>
+    ))}
+  </svg>
+</figure>
+
+<style>
+  .coordinate-graph {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 1.5rem 0;
+  }
+  .graph-title {
+    font-size: 0.95rem;
+    color: var(--sl-color-gray-3);
+    margin-bottom: 0.5rem;
+    font-style: italic;
+  }
+
+  /* ---- Dark mode (default) ---- */
+  .coordinate-graph svg {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    background: #1a1a2e;
+  }
+  .graph-grid { stroke: #333; }
+  .graph-axis { stroke: #888; }
+  .graph-arrow { fill: #888; }
+  .graph-label { fill: #aaa; }
+  .graph-tick { fill: #aaa; }
+  .graph-point circle { fill: #f0c674; stroke: #fff; }
+  .graph-point text { fill: #f0c674; }
+  .graph-line path { stroke: var(--line-dark); }
+  .graph-line text { fill: var(--line-dark); }
+
+  /* ---- Light mode ---- */
+  :global([data-theme="light"]) .coordinate-graph svg {
+    background: #f8f9fa;
+  }
+  :global([data-theme="light"]) .graph-grid { stroke: #ccc; }
+  :global([data-theme="light"]) .graph-axis { stroke: #222; }
+  :global([data-theme="light"]) .graph-arrow { fill: #222; }
+  :global([data-theme="light"]) .graph-label { fill: #222; }
+  :global([data-theme="light"]) .graph-tick { fill: #333; }
+  :global([data-theme="light"]) .graph-point circle { fill: #0550ae; stroke: #fff; }
+  :global([data-theme="light"]) .graph-point text { fill: #0550ae; }
+  :global([data-theme="light"]) .graph-line path { stroke: var(--line-light); }
+  :global([data-theme="light"]) .graph-line text { fill: var(--line-light); }
+</style>

@@ -1,0 +1,119 @@
+---
+title: Absolute Value Equations
+description: Learn how to solve basic equations involving absolute value
+sidebar:
+  order: 14
+---
+
+import Quiz from "../../../components/Quiz.astro";
+
+## What You'll Learn
+
+In this lesson you'll learn what absolute value means and how to solve simple absolute value equations.
+
+## The Concept
+
+**Absolute value** $|x|$ is the distance from 0 on a number line — always positive or zero.
+
+$|x| = 5$ means $x = 5$ or $x = -5$ (two solutions).
+
+Solving $|\text{expression}| = \text{number}$:
+
+1. Set up two cases: expression $= \text{number}$ or expression $= -\text{number}$
+2. Solve each equation separately.
+
+Example: $|x + 3| = 7$
+
+$$
+\begin{aligned}
+x + 3 &= 7 & x + 3 &= {-}7 \\
+x &= 4 & x &= {-}10
+\end{aligned}
+$$
+
+Solutions: $x = 4$ or $x = -10$
+
+Check: $|4 + 3| = |7| = 7$ ✓ and $|-10 + 3| = |-7| = 7$ ✓
+
+Note: If $|\text{expression}| = \text{negative number}$ → no solution (absolute value can't be negative).
+
+## Worked Example
+
+Solve $|2x - 4| = 10$.
+
+**Case 1:**
+
+$$
+\begin{aligned}
+2x - 4 &= 10 \\
+2x &= 14 \\
+x &= 7
+\end{aligned}
+$$
+
+**Case 2:**
+
+$$
+\begin{aligned}
+2x - 4 &= {-}10 \\
+2x &= {-}6 \\
+x &= {-}3
+\end{aligned}
+$$
+
+Check: $|2(7) - 4| = |14 - 4| = 10$ ✓ and $|2(-3) - 4| = |-6 - 4| = |-10| = 10$ ✓
+
+## Real-World Application
+
+Absolute value represents distances or differences without direction:
+
+- Temperature 5 degrees from target: $|t - 72| = 5$ → $t = 77$ or $t = 67$
+- Budget overrun/underrun: $|\text{spent} - \text{budget}| \leq 20$ dollars
+- Error tolerance: $|\text{measurement} - \text{true value}| < 0.05$
+
+These help with tolerances, errors, or ranges in measurements and finance.
+
+:::note[You've Got This]
+Absolute value means "distance from zero" — so equations have two solutions (positive and negative directions). Set up both cases, solve, and always check both answers. Practice with distances or budgets — it makes sense quickly.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="pre-algebra-absolute-value-equations"
+  questions={[
+    {
+      id: "q1",
+      text: "Solve |x| = 6.",
+      options: ["x = 6 or x = -6", "x = 6 only", "x = -6 only", "no solution"],
+      correctIndex: 0,
+      explanation: "Absolute value = 6 means x = 6 or x = -6.",
+    },
+    {
+      id: "q2",
+      text: "Solve |x - 5| = 3.",
+      options: ["x = 8 or x = 2", "x = 5 only", "x = 8 only", "no solution"],
+      correctIndex: 0,
+      explanation: "x - 5 = 3 → x = 8; x - 5 = -3 → x = 2.",
+    },
+    {
+      id: "q3",
+      text: "Solve |2x + 1| = 9.",
+      options: [
+        "x = 4 or x = -5",
+        "x = 4 only",
+        "x = -5 only",
+        "x = 5 or x = -4",
+      ],
+      correctIndex: 0,
+      explanation: "2x + 1 = 9 → x = 4; 2x + 1 = -9 → x = -5.",
+    },
+    {
+      id: "q4",
+      text: "A temperature is within 4 degrees of 70°F. Which equation?",
+      options: ["|t - 70| ≤ 4", "|t - 70| = 4", "|t + 70| = 4", "|t - 70| > 4"],
+      correctIndex: 0,
+      explanation: "Within 4 degrees means |t - 70| ≤ 4 (range from 66 to 74).",
+    },
+  ]}
+/>

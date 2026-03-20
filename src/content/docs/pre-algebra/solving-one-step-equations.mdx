@@ -1,0 +1,170 @@
+---
+title: Solving One-Step Equations
+description: Learn how to solve simple equations by using inverse operations to isolate the variable
+sidebar:
+  order: 7
+---
+
+import Quiz from "../../../components/Quiz.astro";
+
+## What You'll Learn
+
+In this lesson you'll learn how to solve one-step equations by using inverse (opposite) operations to get the variable alone on one side.
+
+## The Concept
+
+A **one-step equation** has the variable with only one operation applied (plus, minus, multiply, divide).
+
+To solve, do the **inverse operation** on both sides to keep the equation balanced:
+
+- Addition → Subtract
+- Subtraction → Add
+- Multiplication → Divide
+- Division → Multiply
+
+Goal: Isolate the variable (get it by itself on one side, with 1 as coefficient).
+
+Examples:
+
+$$
+\begin{aligned}
+x + 7 &= 12 \\
+x + 7 - 7 &= 12 - 7 \\
+x &= 5
+\end{aligned}
+$$
+
+$$
+\begin{aligned}
+4y &= 20 \\
+4y \div 4 &= 20 \div 4 \\
+y &= 5
+\end{aligned}
+$$
+
+$$
+\begin{aligned}
+z - 3 &= 9 \\
+z - 3 + 3 &= 9 + 3 \\
+z &= 12
+\end{aligned}
+$$
+
+$$
+\begin{aligned}
+w \div 6 &= 8 \\
+w \div 6 \times 6 &= 8 \times 6 \\
+w &= 48
+\end{aligned}
+$$
+
+Always do the same thing to both sides — that's what keeps it fair.
+
+## Worked Example
+
+Solve each:
+
+**1.** $x + 9 = 15$
+
+$$
+\begin{aligned}
+x + 9 &= 15 \\
+x + 9 - 9 &= 15 - 9 \\
+x &= 6
+\end{aligned}
+$$
+
+**2.** $3n = 24$
+
+$$
+\begin{aligned}
+3n &= 24 \\
+3n \div 3 &= 24 \div 3 \\
+n &= 8
+\end{aligned}
+$$
+
+**3.** $m - 5 = 11$
+
+$$
+\begin{aligned}
+m - 5 &= 11 \\
+m - 5 + 5 &= 11 + 5 \\
+m &= 16
+\end{aligned}
+$$
+
+Check: Plug back in to verify (e.g., for $x = 6$: $6 + 9 = 15$ — correct).
+
+## Real-World Application
+
+One-step equations solve everyday "unknown" problems:
+
+You have some money $x$ and add 25 dollars — now have 70 dollars:
+
+$$
+\begin{aligned}
+x + 25 &= 70 \\
+x &= 45 \text{ dollars}
+\end{aligned}
+$$
+
+A tank holds 120 gallons. You use some amount and have 45 left:
+
+$$
+\begin{aligned}
+120 - y &= 45 \\
+y &= 75 \text{ gallons used}
+\end{aligned}
+$$
+
+Pay rate is 15 dollars per hour. You earned 120 dollars:
+
+$$
+\begin{aligned}
+15h &= 120 \\
+h &= 8 \text{ hours worked}
+\end{aligned}
+$$
+
+These quick solves help track spending, budgets, or amounts in recipes/work.
+
+:::note[You've Got This]
+Solving one-step equations is like undoing a single step — if something was added, subtract it; if multiplied, divide. Do the opposite on both sides and check your answer by plugging back in. Start with simple numbers and you'll solve these in your head soon.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="pre-algebra-solving-one-step-equations"
+  questions={[
+    {
+      id: "q1",
+      text: "Solve x + 12 = 35.",
+      options: ["x = 23", "x = 47", "x = 25", "x = 17"],
+      correctIndex: 0,
+      explanation: "Subtract 12 from both sides: x = 35 - 12 = 23.",
+    },
+    {
+      id: "q2",
+      text: "Solve 7y = 56.",
+      options: ["y = 7", "y = 8", "y = 49", "y = 63"],
+      correctIndex: 1,
+      explanation: "Divide both sides by 7: y = 56 ÷ 7 = 8.",
+    },
+    {
+      id: "q3",
+      text: "Solve m - 18 = 42.",
+      options: ["m = 60", "m = 24", "m = 30", "m = 66"],
+      correctIndex: 0,
+      explanation: "Add 18 to both sides: m = 42 + 18 = 60.",
+    },
+    {
+      id: "q4",
+      text: "You earned 15 dollars per hour and made 120 dollars total. How many hours did you work?",
+      options: ["8 hours", "9 hours", "10 hours", "7 hours"],
+      correctIndex: 0,
+      explanation: "15h = 120. Divide both sides by 15: h = 8 hours.",
+    },
+  ]}
+/>

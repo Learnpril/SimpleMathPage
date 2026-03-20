@@ -1,0 +1,151 @@
+---
+title: Integers and Signed Numbers
+description: Learn how to add, subtract, multiply, and divide positive and negative integers
+sidebar:
+  order: 3
+---
+
+import Quiz from "../../../components/Quiz.astro";
+
+## What You'll Learn
+
+In this lesson you'll learn how positive and negative numbers (signed integers) work on a number line and the rules for operating with them.
+
+## The Concept
+
+**Integers** are whole numbers including negatives, zero, and positives: ..., $-3, -2, -1, 0, 1, 2, 3$...
+
+**Signed numbers** show direction or change (e.g., $-5$ dollars = debt, $+5$ dollars = gain).
+
+Rules:
+
+**Addition/Subtraction** (use number line or rules):
+
+- Same signs: Add absolute values, keep sign.
+
+$$
+\begin{aligned}
+5 + 3 &= 8 \\
+({-}5) + ({-}3) &= {-}8
+\end{aligned}
+$$
+
+- Different signs: Subtract absolute values, keep sign of larger number.
+
+$$
+\begin{aligned}
+7 + ({-}4) &= 3 \\
+({-}7) + 4 &= {-}3
+\end{aligned}
+$$
+
+**Multiplication/Division**:
+
+- Same signs → positive result
+
+$$
+\begin{aligned}
+6 \times 4 &= 24 \\
+({-}6) \times ({-}4) &= 24
+\end{aligned}
+$$
+
+- Different signs → negative result
+
+$$
+\begin{aligned}
+6 \times ({-}4) &= {-}24 \\
+({-}6) \div 3 &= {-}2
+\end{aligned}
+$$
+
+Zero rules: Any number $\times 0 = 0$, division by zero is undefined.
+
+## Worked Example
+
+**1.** $-8 + 12$
+
+$$
+\begin{aligned}
+{-}8 + 12 &= 4 \quad \text{(different signs: subtract 8 from 12, positive)}
+\end{aligned}
+$$
+
+**2.** $-15 - (-7)$
+
+$$
+\begin{aligned}
+{-}15 - ({-}7) &= {-}15 + 7 \\
+&= {-}8 \quad \text{(subtracting negative = adding)}
+\end{aligned}
+$$
+
+**3.** $(-9) \times (-4)$
+
+$$
+({-}9) \times ({-}4) = 36 \quad \text{(same signs → positive)}
+$$
+
+**4.** $24 \div (-6)$
+
+$$
+24 \div ({-}6) = {-}4 \quad \text{(different signs → negative)}
+$$
+
+Check: Use the number line or opposite operation (e.g., $-8 + 12 = 4$ → $4 - 12 = -8$, correct).
+
+## Real-World Application
+
+Signed numbers appear in banking (overdraft = negative balance), temperature ($-10$°C), elevation (below sea level), debt/credit, stock changes, or sports scores.
+
+Example: Account starts at 200 dollars, you spend 350 dollars:
+
+$$
+200 + ({-}350) = {-}150 \text{ dollars (overdrawn by 150 dollars)}
+$$
+
+Or temperature drops from 5°C to $-3$°C:
+
+$$
+{-}3 - 5 = {-}8\text{°C change}
+$$
+
+:::note[You've Got This]
+Signed numbers are just arrows on a number line — positive right, negative left. The rules feel tricky at first, but remember: same signs stay positive, different signs become negative. Practice with real situations like bank balances or temperatures — it will click fast.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="pre-algebra-integers-signed-numbers"
+  questions={[
+    {
+      id: "q1",
+      text: "What is -12 + 18?",
+      options: ["6", "-6", "30", "-30"],
+      correctIndex: 0,
+      explanation: "Different signs: subtract 12 from 18 = 6 (positive).",
+    },
+    {
+      id: "q2",
+      text: "Calculate -7 - (-3).",
+      options: ["-10", "-4", "4", "10"],
+      correctIndex: 1,
+      explanation: "-7 - (-3) = -7 + 3 = -4.",
+    },
+    {
+      id: "q3",
+      text: "What is (-8) × (-5)?",
+      options: ["-40", "40", "-13", "13"],
+      correctIndex: 1,
+      explanation: "Same signs → positive: 8 × 5 = 40.",
+    },
+    {
+      id: "q4",
+      text: "A temperature drops from 8°C to -5°C. What is the change?",
+      options: ["-13°C", "13°C", "-3°C", "3°C"],
+      correctIndex: 0,
+      explanation: "-5 - 8 = -13°C (drop is negative).",
+    },
+  ]}
+/>

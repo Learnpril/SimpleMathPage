@@ -1,0 +1,154 @@
+---
+title: Solving Two-Step Equations
+description: Learn how to solve equations that require two inverse operations to isolate the variable
+sidebar:
+  order: 8
+---
+
+import Quiz from "../../../components/Quiz.astro";
+
+## What You'll Learn
+
+In this lesson you'll learn how to solve two-step equations by using two inverse operations in the correct order to get the variable alone.
+
+## The Concept
+
+A **two-step equation** has two operations applied to the variable (e.g., multiply then add, or subtract then divide).
+
+To solve:
+
+1. Undo the **addition/subtraction** first (because it's attached to the variable term).
+2. Then undo the **multiplication/division** (to get the coefficient to 1).
+
+Always do the same operation to both sides. Follow reverse order of operations (undo PEMDAS backwards: add/subtract before multiply/divide).
+
+Examples:
+
+$$
+\begin{aligned}
+3x + 5 &= 20 \\
+3x &= 15 \\
+x &= 5
+\end{aligned}
+$$
+
+$$
+\begin{aligned}
+4y - 12 &= 8 \\
+4y &= 20 \\
+y &= 5
+\end{aligned}
+$$
+
+$$
+\begin{aligned}
+2(z + 7) &= 18 \\
+z + 7 &= 9 \\
+z &= 2
+\end{aligned}
+$$
+
+Check your solution by substituting back into the original equation.
+
+## Worked Example
+
+Solve $5x - 8 = 17$.
+
+Step 1 — Add 8 to both sides (undo subtraction):
+
+$$
+\begin{aligned}
+5x - 8 + 8 &= 17 + 8 \\
+5x &= 25
+\end{aligned}
+$$
+
+Step 2 — Divide both sides by 5 (undo multiplication):
+
+$$
+\begin{aligned}
+5x \div 5 &= 25 \div 5 \\
+x &= 5
+\end{aligned}
+$$
+
+Check: $5(5) - 8 = 25 - 8 = 17$ ✓
+
+Another: Solve $2y + 9 = 3$.
+
+$$
+\begin{aligned}
+2y + 9 &= 3 \\
+2y &= 3 - 9 = {-}6 \\
+y &= {-}6 \div 2 = {-}3
+\end{aligned}
+$$
+
+Check: $2(-3) + 9 = -6 + 9 = 3$ ✓
+
+## Real-World Application
+
+Two-step equations solve many everyday "unknown" problems with multiple parts:
+
+You pay a 15-dollar flat fee plus 2 dollars per mile for a ride. Total cost is 35 dollars. How many miles?
+
+$$
+\begin{aligned}
+15 + 2m &= 35 \\
+2m &= 20 \\
+m &= 10 \text{ miles}
+\end{aligned}
+$$
+
+A savings account starts with some amount $x$. You add 50 dollars and then double it to reach 180 dollars:
+
+$$
+\begin{aligned}
+2(x + 50) &= 180 \\
+x + 50 &= 90 \\
+x &= 40 \text{ dollars}
+\end{aligned}
+$$
+
+These are common in budgeting, travel, work rates, or splitting costs.
+
+:::note[You've Got This]
+Two-step equations are just "undo one thing, then undo another." Always undo addition/subtraction first, then multiplication/division. Work slowly, show every step, and always check by plugging back in. Practice with real bills or ride costs — you'll solve them confidently soon.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="pre-algebra-solving-two-step-equations"
+  questions={[
+    {
+      id: "q1",
+      text: "Solve 4x + 7 = 23.",
+      options: ["x = 4", "x = 5", "x = 6", "x = 3"],
+      correctIndex: 0,
+      explanation: "Subtract 7: 4x = 16. Divide by 4: x = 4.",
+    },
+    {
+      id: "q2",
+      text: "Solve 3y - 12 = 9.",
+      options: ["y = 7", "y = 5", "y = 3", "y = 9"],
+      correctIndex: 0,
+      explanation: "Add 12: 3y = 21. Divide by 3: y = 7.",
+    },
+    {
+      id: "q3",
+      text: "A parking fee is 5 dollars base plus 3 dollars per hour. You paid 20 dollars. How many hours?",
+      options: ["5 hours", "4 hours", "6 hours", "3 hours"],
+      correctIndex: 0,
+      explanation:
+        "5 + 3h = 20. Subtract 5: 3h = 15. Divide by 3: h = 5 hours.",
+    },
+    {
+      id: "q4",
+      text: "Solve 2(z - 4) = 10.",
+      options: ["z = 9", "z = 7", "z = 5", "z = 14"],
+      correctIndex: 0,
+      explanation: "Divide by 2: z - 4 = 5. Add 4: z = 9.",
+    },
+  ]}
+/>

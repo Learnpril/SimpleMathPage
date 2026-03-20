@@ -1,0 +1,100 @@
+---
+title: Exponents & Powers
+description: Learn about exponents, negative exponents, zero exponent, and basic scientific notation
+sidebar:
+  order: 11
+---
+
+import Quiz from "../../../components/Quiz.astro";
+
+## What You'll Learn
+
+In this lesson you'll learn what exponents mean, the rules for positive/negative/zero exponents, and how to use scientific notation for large/small numbers.
+
+## The Concept
+
+An **exponent** shows repeated multiplication: $4^3 = 4 \times 4 \times 4 = 64$
+
+Rules:
+
+- $a^1 = a$
+- $a^0 = 1$ (any non-zero number to power 0)
+- $a^{-n} = \frac{1}{a^n}$ (negative exponent = reciprocal)
+
+Example:
+
+$$
+2^{-3} = \frac{1}{2^3} = \frac{1}{8}
+$$
+
+Multiplying powers: $a^m \times a^n = a^{m+n}$
+
+Dividing: $a^m \div a^n = a^{m-n}$
+
+Power of a power: $(a^m)^n = a^{m \times n}$
+
+**Scientific notation**: Write numbers as $a \times 10^b$ where $1 \leq |a| < 10$.
+
+- $4500 = 4.5 \times 10^3$
+- $0.00032 = 3.2 \times 10^{-4}$
+
+## Worked Example
+
+$$
+\begin{aligned}
+3^4 &= 3 \times 3 \times 3 \times 3 = 81 \\
+5^0 &= 1 \\
+2^{-2} &= \frac{1}{2^2} = \frac{1}{4} \\
+6 \times 10^5 &= 600{,}000
+\end{aligned}
+$$
+
+Simplify $4^3 \times 4^2$:
+
+$$
+4^3 \times 4^2 = 4^{3+2} = 4^5 = 1024
+$$
+
+## Real-World Application
+
+Exponents appear in growth (population doubles = $\times 2$ each period), interest (compound = $P \times (1 + r)^t$), scientific measurements ($3.2 \times 10^{-4}$ grams), or computing ($2^{10}$ bytes = 1 kilobyte). Understanding powers helps with large/small numbers and patterns.
+
+:::note[You've Got This]
+Exponents are just "repeated multiplying" — positive = big numbers, negative = fractions, zero = 1. The rules are shortcuts for multiplying/dividing powers. Practice with small exponents and real examples (growth, measurements) — it becomes intuitive fast.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="pre-algebra-exponents-powers"
+  questions={[
+    {
+      id: "q1",
+      text: "What is 5⁰?",
+      options: ["0", "1", "5", "25"],
+      correctIndex: 1,
+      explanation: "Any non-zero number to the power 0 is 1.",
+    },
+    {
+      id: "q2",
+      text: "Calculate 3⁻².",
+      options: ["-9", "1/9", "9", "-1/9"],
+      correctIndex: 1,
+      explanation: "3⁻² = 1 / 3² = 1/9.",
+    },
+    {
+      id: "q3",
+      text: "Simplify 2⁴ × 2³.",
+      options: ["2⁷", "2¹²", "2¹", "4⁷"],
+      correctIndex: 0,
+      explanation: "Add exponents: 2⁴⁺³ = 2⁷.",
+    },
+    {
+      id: "q4",
+      text: "Write 0.00045 in scientific notation.",
+      options: ["4.5 × 10⁻⁴", "4.5 × 10⁻⁵", "4.5 × 10⁴", "45 × 10⁻⁵"],
+      correctIndex: 0,
+      explanation: "Move decimal 4 places right: 4.5 × 10⁻⁴.",
+    },
+  ]}
+/>

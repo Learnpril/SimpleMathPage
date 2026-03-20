@@ -1,0 +1,116 @@
+---
+title: Algebraic Proportions & Ratios
+description: Learn how to set up and solve ratios and proportions using equations
+sidebar:
+  order: 13
+---
+
+import Quiz from "../../../components/Quiz.astro";
+
+## What You'll Learn
+
+In this lesson you'll learn what ratios and proportions are and how to solve for unknowns in proportion problems.
+
+## The Concept
+
+A **ratio** compares two quantities (e.g., $3:4$ or $\frac{3}{4}$).
+
+A **proportion** is two equal ratios: $\frac{a}{b} = \frac{c}{d}$
+
+To solve a proportion for an unknown:
+
+1. Cross-multiply: $a \times d = b \times c$
+2. Solve the resulting equation.
+
+Example: $\frac{3}{5} = \frac{x}{20}$
+
+$$
+\begin{aligned}
+3 \times 20 &= 5 \times x \\
+60 &= 5x \\
+x &= 12
+\end{aligned}
+$$
+
+Also useful: unit rates (e.g., 120 miles / 2 hours = 60 miles per hour).
+
+## Worked Example
+
+Solve $\frac{4}{9} = \frac{12}{x}$.
+
+$$
+\begin{aligned}
+4 \times x &= 9 \times 12 \\
+4x &= 108 \\
+x &= 27
+\end{aligned}
+$$
+
+Check: $\frac{4}{9} = \frac{12}{27}$ (both simplify to $\frac{4}{9}$ — correct).
+
+Another: A recipe uses 2 cups flour for 12 cookies. How much for 30 cookies?
+
+$$
+\begin{aligned}
+\frac{2}{12} &= \frac{x}{30} \\
+2 \times 30 &= 12x \\
+60 &= 12x \\
+x &= 5 \text{ cups}
+\end{aligned}
+$$
+
+## Real-World Application
+
+Proportions solve scaling problems:
+
+- Recipe adjustment (2 cups sugar for 8 servings → how much for 20 servings?)
+- Maps (1 inch = 50 miles → 3 inches = 150 miles)
+- Rates (45 dollars for 5 hours → rate per hour)
+- Mixing solutions (3 parts water to 1 part juice → how much juice for 12 parts water?)
+
+These are common in cooking, travel, work, and budgeting.
+
+:::note[You've Got This]
+Proportions are just "equal ratios" — cross-multiply to solve for the unknown. Set up the ratio the same way on both sides of the equals sign. Practice with recipes or gas mileage — you'll see how useful this is in daily life.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="pre-algebra-algebraic-proportions-ratios"
+  questions={[
+    {
+      id: "q1",
+      text: "Solve 5/8 = x/24.",
+      options: ["x = 15", "x = 10", "x = 20", "x = 12"],
+      correctIndex: 0,
+      explanation: "5 × 24 = 8x → 120 = 8x → x = 15.",
+    },
+    {
+      id: "q2",
+      text: "If 3 apples cost 1.50 dollars, how much for 10 apples?",
+      options: [
+        "5.00 dollars",
+        "4.50 dollars",
+        "3.00 dollars",
+        "15.00 dollars",
+      ],
+      correctIndex: 0,
+      explanation: "1.50/3 = 0.50 per apple. 10 × 0.50 = 5.00 dollars.",
+    },
+    {
+      id: "q3",
+      text: "A map scale is 1 inch = 40 miles. How far is 2.5 inches?",
+      options: ["100 miles", "80 miles", "160 miles", "40 miles"],
+      correctIndex: 0,
+      explanation: "2.5 × 40 = 100 miles.",
+    },
+    {
+      id: "q4",
+      text: "Solve 7/4 = 21/y.",
+      options: ["y = 12", "y = 3", "y = 28", "y = 6"],
+      correctIndex: 0,
+      explanation: "7y = 4 × 21 = 84 → y = 12.",
+    },
+  ]}
+/>

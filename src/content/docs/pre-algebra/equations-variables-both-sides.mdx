@@ -1,0 +1,139 @@
+---
+title: Equations with Variables on Both Sides
+description: Learn how to solve equations where the variable appears on both sides by moving terms to isolate it
+sidebar:
+  order: 9
+---
+
+import Quiz from "../../../components/Quiz.astro";
+
+## What You'll Learn
+
+In this lesson you'll learn how to solve equations where the variable is on both sides by collecting like terms and using inverse operations to isolate the variable.
+
+## The Concept
+
+**Equations with variables on both sides** have the variable in terms on the left and right (e.g., $3x + 5 = 2x + 12$).
+
+To solve:
+
+1. Move all variable terms to one side (usually left) by adding or subtracting the same term from both sides.
+2. Move constants to the other side.
+3. Simplify and solve the resulting one- or two-step equation.
+
+Key rule: Whatever you do to one side, do to the other — keep the equation balanced.
+
+Example:
+
+$$
+\begin{aligned}
+3x + 5 &= 2x + 12 \\
+3x - 2x + 5 &= 12 \\
+x + 5 &= 12 \\
+x &= 7
+\end{aligned}
+$$
+
+Check: $3(7) + 5 = 26$ and $2(7) + 12 = 26$ — equal, correct.
+
+## Worked Example
+
+Solve $5x - 8 = 2x + 7$.
+
+$$
+\begin{aligned}
+5x - 8 &= 2x + 7 \\
+5x - 2x - 8 &= 7 \\
+3x - 8 &= 7 \\
+3x &= 15 \\
+x &= 5
+\end{aligned}
+$$
+
+Check: Left: $5(5) - 8 = 17$. Right: $2(5) + 7 = 17$ — matches.
+
+Another: Solve $4(y + 3) = 2y + 18$.
+
+$$
+\begin{aligned}
+4(y + 3) &= 2y + 18 \\
+4y + 12 &= 2y + 18 \\
+2y + 12 &= 18 \\
+2y &= 6 \\
+y &= 3
+\end{aligned}
+$$
+
+Check: $4(3 + 3) = 4(6) = 24$ and $2(3) + 18 = 24$ — matches.
+
+## Real-World Application
+
+These equations solve problems with two related amounts:
+
+You have two savings plans. Plan A: 200 dollars plus 50 dollars per month. Plan B: 100 dollars plus 70 dollars per month. When will they equal?
+
+$$
+\begin{aligned}
+200 + 50m &= 100 + 70m \\
+200 - 100 &= 70m - 50m \\
+100 &= 20m \\
+m &= 5 \text{ months}
+\end{aligned}
+$$
+
+Two phone plans. Plan 1: 40 dollars base + 0.05 dollars per text. Plan 2: 30 dollars base + 0.10 dollars per text. When are they equal?
+
+$$
+\begin{aligned}
+40 + 0.05t &= 30 + 0.10t \\
+40 - 30 &= 0.10t - 0.05t \\
+10 &= 0.05t \\
+t &= 200 \text{ texts}
+\end{aligned}
+$$
+
+These help compare options, set goals, or find break-even points in budgeting or work.
+
+:::note[You've Got This]
+The key is moving the variable terms to one side first — it's like gathering all the x's together. Choose the smaller coefficient to subtract (keeps numbers smaller). Work step by step, check your answer by substituting back, and practice with real comparisons (plans, costs). You'll solve these naturally soon.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="pre-algebra-equations-variables-both-sides"
+  questions={[
+    {
+      id: "q1",
+      text: "Solve 6x + 4 = 2x + 16.",
+      options: ["x = 3", "x = 4", "x = 5", "x = 2"],
+      correctIndex: 0,
+      explanation:
+        "Subtract 2x: 4x + 4 = 16. Subtract 4: 4x = 12. Divide by 4: x = 3.",
+    },
+    {
+      id: "q2",
+      text: "Solve 7y - 5 = 3y + 11.",
+      options: ["y = 4", "y = 3", "y = 6", "y = 2"],
+      correctIndex: 0,
+      explanation:
+        "Subtract 3y: 4y - 5 = 11. Add 5: 4y = 16. Divide by 4: y = 4.",
+    },
+    {
+      id: "q3",
+      text: "A gym has two plans. Plan A: 25 dollars base + 10 dollars per class. Plan B: 15 dollars base + 15 dollars per class. How many classes until equal?",
+      options: ["2 classes", "3 classes", "1 class", "4 classes"],
+      correctIndex: 0,
+      explanation:
+        "25 + 10c = 15 + 15c. Subtract 10c: 25 = 15 + 5c. Subtract 15: 10 = 5c. Divide by 5: c = 2 classes.",
+    },
+    {
+      id: "q4",
+      text: "Solve 4(z + 3) = 2z + 20.",
+      options: ["z = 4", "z = 7", "z = 5", "z = 2"],
+      correctIndex: 0,
+      explanation:
+        "Distribute: 4z + 12 = 2z + 20. Subtract 2z: 2z + 12 = 20. Subtract 12: 2z = 8. Divide by 2: z = 4.",
+    },
+  ]}
+/>

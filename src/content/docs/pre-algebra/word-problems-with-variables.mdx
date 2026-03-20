@@ -1,0 +1,146 @@
+---
+title: Word Problems with Equations
+description: Learn how to translate real-world word problems into equations and solve them
+sidebar:
+  order: 12
+---
+
+import Quiz from "../../../components/Quiz.astro";
+
+## What You'll Learn
+
+In this lesson you'll learn how to take everyday word problems, turn them into algebraic equations, and solve for the unknown value.
+
+## The Concept
+
+**Word problems** describe real situations with unknowns. Your job is to translate the words into an equation, then solve it.
+
+Key steps:
+
+1. Read carefully and identify what is unknown (this becomes your variable, e.g., let $x$ = number of hours).
+2. Look for key words/phrases that signal operations:
+   - "is," "equals," "total" → $=$
+   - "more than," "increased by" → $+$
+   - "less than," "decreased by" → $-$
+   - "times," "per," "of" → $\times$
+   - "divided by," "per" (rate) → $\div$
+3. Write the equation using the variable.
+4. Solve using steps from previous lessons (one-step, two-step, or variables on both sides).
+5. Check: Does the answer make sense in the problem context?
+
+Example: A shirt costs 18 dollars plus 7% tax. Total is 19.26 dollars. How much was the tax?
+
+$$
+\begin{aligned}
+\text{Let } t &= \text{tax amount} \\
+18 + t &= 19.26 \\
+t &= 1.26 \text{ dollars}
+\end{aligned}
+$$
+
+## Worked Example
+
+You drive at 60 miles per hour for some time $h$ hours and cover 180 miles. How long did you drive?
+
+$$
+\begin{aligned}
+\text{distance} &= \text{rate} \times \text{time} \\
+180 &= 60 \times h \\
+h &= 180 \div 60 \\
+h &= 3 \text{ hours}
+\end{aligned}
+$$
+
+Check: $60 \text{ mph} \times 3 \text{ hours} = 180 \text{ miles}$ — correct.
+
+Another: A meal costs 45 dollars before tip. You leave a 15% tip and pay 51.75 dollars total. Did you tip correctly?
+
+$$
+\begin{aligned}
+\text{Let } t &= \text{tip amount} \\
+45 + t &= 51.75 \\
+t &= 51.75 - 45 \\
+t &= 6.75 \text{ dollars}
+\end{aligned}
+$$
+
+Check tip percent: $6.75 \div 45 = 0.15 = 15\%$ — yes, correct.
+
+## Real-World Application
+
+Word problems with equations are everywhere in adult life:
+
+Budgeting: "Rent is 950 dollars and you have 1200 dollars total — how much left for food?"
+
+$$
+\begin{aligned}
+1200 - f &= 950 \\
+f &= 250 \text{ dollars}
+\end{aligned}
+$$
+
+Work: "You earn 18 dollars per hour and made 234 dollars. How many hours?"
+
+$$
+\begin{aligned}
+18h &= 234 \\
+h &= 13 \text{ hours}
+\end{aligned}
+$$
+
+Shopping: "A jacket is on sale for 20% off the original 80 dollars price. How much do you save?"
+
+$$
+s = 0.20 \times 80 = 16 \text{ dollars}
+$$
+
+Travel: "You have 300 miles to go at 65 mph. How long will it take?"
+
+$$
+\begin{aligned}
+300 &= 65t \\
+t &\approx 4.6 \text{ hours}
+\end{aligned}
+$$
+
+These skills help you set up and solve problems about money, time, work, and planning without guessing.
+
+:::note[You've Got This]
+Word problems can feel tricky at first, but they're just stories with missing numbers. Read slowly, underline the unknown and key words, write the equation, and solve like any other problem. Practice with real receipts, bills, or work hours — you'll start seeing the patterns quickly.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="pre-algebra-word-problems-equations"
+  questions={[
+    {
+      id: "q1",
+      text: "A book costs 25 dollars plus 8% tax. Total is 27 dollars. How much tax?",
+      options: ["2 dollars", "27 dollars", "25 dollars", "8 dollars"],
+      correctIndex: 0,
+      explanation: "Let t = tax. 25 + t = 27 → t = 2 dollars.",
+    },
+    {
+      id: "q2",
+      text: "You work h hours at 15 dollars per hour and earn 120 dollars. How many hours?",
+      options: ["8 hours", "9 hours", "7 hours", "10 hours"],
+      correctIndex: 0,
+      explanation: "15h = 120 → h = 120 ÷ 15 = 8 hours.",
+    },
+    {
+      id: "q3",
+      text: "A trip is 240 miles at 60 miles per hour. How long will it take?",
+      options: ["4 hours", "5 hours", "3 hours", "6 hours"],
+      correctIndex: 0,
+      explanation: "240 = 60t → t = 240 ÷ 60 = 4 hours.",
+    },
+    {
+      id: "q4",
+      text: "A meal is 50 dollars. You leave a 20% tip. How much tip?",
+      options: ["10 dollars", "20 dollars", "70 dollars", "15 dollars"],
+      correctIndex: 0,
+      explanation: "Tip = 0.20 × 50 = 10 dollars.",
+    },
+  ]}
+/>

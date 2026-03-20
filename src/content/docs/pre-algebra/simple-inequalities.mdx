@@ -1,0 +1,134 @@
+---
+title: Simple Inequalities
+description: Learn how to solve and graph basic inequalities, including flipping the inequality sign
+sidebar:
+  order: 10
+---
+
+import Quiz from "../../../components/Quiz.astro";
+
+## What You'll Learn
+
+In this lesson you'll learn what inequalities are, how to solve them using inverse operations, and when to flip the inequality sign.
+
+## The Concept
+
+An **inequality** compares two values using $<$ (less than), $>$ (greater than), $\leq$ (less than or equal), or $\geq$ (greater than or equal).
+
+Solving inequalities works like equations — use inverse operations to isolate the variable — but with one key rule:
+
+When you **multiply or divide both sides by a negative number**, flip the inequality sign.
+
+Examples:
+
+$$
+\begin{aligned}
+x + 5 &> 12 \\
+x &> 7 \quad \text{(no flip)}
+\end{aligned}
+$$
+
+$$
+\begin{aligned}
+3x &\leq 18 \\
+x &\leq 6 \quad \text{(no flip)}
+\end{aligned}
+$$
+
+$$
+\begin{aligned}
+{-}2x &< 10 \\
+x &> {-}5 \quad \text{(flip: divided by }{-}2\text{)}
+\end{aligned}
+$$
+
+$$
+\begin{aligned}
+4 - y &\geq 9 \\
+{-}y &\geq 5 \\
+y &\leq {-}5 \quad \text{(flip: multiplied by }{-}1\text{)}
+\end{aligned}
+$$
+
+Graphing: Use an open circle (○) for $<$ or $>$, closed circle (●) for $\leq$ or $\geq$, and shade the direction of the solution.
+
+## Worked Example
+
+Solve and graph each:
+
+**1.** $2x - 7 < 5$
+
+$$
+\begin{aligned}
+2x - 7 &< 5 \\
+2x &< 12 \\
+x &< 6
+\end{aligned}
+$$
+
+Graph: open circle at 6, shade left (all numbers less than 6).
+
+**2.** $-3y + 4 \geq 13$
+
+$$
+\begin{aligned}
+{-}3y + 4 &\geq 13 \\
+{-}3y &\geq 9 \\
+y &\leq {-}3 \quad \text{(flip: divided by }{-}3\text{)}
+\end{aligned}
+$$
+
+Graph: closed circle at $-3$, shade left (all numbers less than or equal to $-3$).
+
+Check: Pick a test point in the shaded area and verify it satisfies the original inequality.
+
+## Real-World Application
+
+Inequalities describe ranges and limits in everyday life:
+
+- Budget: You can spend less than 200 dollars on groceries → $g < 200$
+- Work: Need at least 40 hours for full benefits → $h \geq 40$
+- Speed limit: Drive no faster than 65 mph → $s \leq 65$
+- Savings goal: Need more than 500 dollars for a trip → $s > 500$
+
+These help set boundaries, compare options, and make decisions about money, time, or resources.
+
+:::note[You've Got This]
+Inequalities are just equations with a range instead of one answer — solve like normal, but remember to flip when multiplying/dividing by negatives. The sign flip is the only new thing — practice it a few times and it'll become automatic. Test your solution with a number from the shaded side — it'll confirm you're right.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="pre-algebra-simple-inequalities"
+  questions={[
+    {
+      id: "q1",
+      text: "Solve x + 8 > 15.",
+      options: ["x > 7", "x < 7", "x > 23", "x < 23"],
+      correctIndex: 0,
+      explanation: "Subtract 8 from both sides: x > 7.",
+    },
+    {
+      id: "q2",
+      text: "Solve -4y ≤ 12.",
+      options: ["y ≥ -3", "y ≤ -3", "y > 3", "y < 3"],
+      correctIndex: 0,
+      explanation: "Divide by -4 and flip the sign: y ≥ -3.",
+    },
+    {
+      id: "q3",
+      text: "You need more than 50 dollars for a gift. Write the inequality.",
+      options: ["d > 50", "d < 50", "d ≥ 50", "d ≤ 50"],
+      correctIndex: 0,
+      explanation: "More than means greater than: d > 50.",
+    },
+    {
+      id: "q4",
+      text: "Solve 6 - 2z < 4.",
+      options: ["z > 1", "z < 1", "z > -1", "z < -1"],
+      correctIndex: 0,
+      explanation: "Subtract 6: -2z < -2. Divide by -2 and flip: z > 1.",
+    },
+  ]}
+/>
