@@ -5,7 +5,11 @@ export default defineConfig({
   integrations: [
     starlight({
       title: "Mom's Basement University",
-      customCss: ["@fontsource/tagesschrift", "./src/styles/custom.css"],
+      favicon: "/favicon.png",
+      logo: {
+        src: "./src/assets/logo.png",
+      },
+      customCss: ["./src/styles/custom.css"],
       head: [
         {
           tag: "link",
@@ -26,7 +30,7 @@ export default defineConfig({
           tag: "link",
           attrs: {
             rel: "stylesheet",
-            href: "https://fonts.googleapis.com/css?family=Merriweather:300,400,700,300italic,400italic&display=swap",
+            href: "https://fonts.googleapis.com/css?family=Libre+Baskerville:400,400italic,700&display=swap",
           },
         },
       ],

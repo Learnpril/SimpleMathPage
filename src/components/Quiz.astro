@@ -1,0 +1,215 @@
+---
+import type { QuizQuestion } from "../lib/quiz-types";
+import { validateQuizData } from "../lib/quiz-validation";
+
+interface Props {
+  quizId: string;
+  questions: QuizQuestion[];
+}
+
+const { quizId, questions } = Astro.props;
+const validation = validateQuizData({ quizId, questions });
+---
+
+{validation.valid ? (
+  <div class="quiz-container" data-quiz-id={quizId} data-questions={JSON.stringify(questions)}>
+    {questions.map((q, qi) => (
+      <fieldset class="quiz-question" data-question-id={q.id}>
+        <legend>{q.text}</legend>
+        <ul class="quiz-options" role="radiogroup" aria-label={`Options for: ${q.text}`}>
+          {q.options.map((opt, oi) => (
+            <li class="quiz-option" role="radio" aria-checked="false" tabindex={oi === 0 ? "0" : "-1"}
+                data-question-id={q.id} data-option-index={String(oi)}>
+              <label>
+                <span class="quiz-option-letter">{String.fromCharCode(65 + oi)}.</span>
+                <span class="quiz-option-text">{opt}</span>
+              </label>
+            </li>
+          ))}
+        </ul>
+        <div class="quiz-feedback" aria-live="polite" data-feedback-for={q.id}></div>
+      </fieldset>
+    ))}
+    <div class="quiz-score" aria-live="polite" data-quiz-score hidden></div>
+    <div style="text-align:center;margin-top:1rem;">
+      <button class="quiz-btn" data-quiz-retry hidden>Retry Quiz</button>
+    </div>
+  </div>
+) : (
+  <div class="quiz-error" role="alert">
+    <p><strong>Quiz Error:</strong> This quiz could not be loaded.</p>
+    <ul>
+      {validation.errors.map((e) => <li>{e.message}</li>)}
+    </ul>
+  </div>
+)}
+
+<script>
+  import { loadQuizState, saveQuizState, clearQuizState } from "../lib/quiz-state";
+  import { computeScore } from "../lib/quiz-scoring";
+  import { getAnswerFeedback } from "../lib/quiz-feedback";
+  import type { QuizQuestion, QuizState } from "../lib/quiz-types";
+
+  function initQuiz(container: HTMLElement) {
+    const quizId = container.dataset.quizId!;
+    const questions: QuizQuestion[] = JSON.parse(container.dataset.questions!);
+    const answered = new Set<string>();
+
+    // --- helpers ---
+    function currentState(): QuizState {
+      const answers: Record<string, number> = {};
+      for (const q of questions) {
+        const sel = container.querySelector(
+          `.quiz-option[data-question-id="${q.id}"][data-selected="true"]`
+        ) as HTMLElement | null;
+        if (sel) answers[q.id] = Number(sel.dataset.optionIndex);
+      }
+      const { score, total } = computeScore(questions, answers);
+      return { answers, completed: answered.size === questions.length, score, total, timestamp: Date.now() };
+    }
+
+    function persist() {
+      saveQuizState(quizId, currentState());
+    }
+
+    function showFeedback(questionId: string, optionIndex: number) {
+      const question = questions.find((q) => q.id === questionId)!;
+      const fb = getAnswerFeedback(question, optionIndex);
+      const el = container.querySelector(`[data-feedback-for="${questionId}"]`) as HTMLElement;
+      el.textContent = (fb.correct ? "✓ Correct. " : "✗ Incorrect. ") + fb.explanation;
+      el.setAttribute("data-correct", String(fb.correct));
+
+      // mark correct/incorrect on options
+      const opts = container.querySelectorAll(`.quiz-option[data-question-id="${questionId}"]`);
+      opts.forEach((o) => {
+        const idx = Number((o as HTMLElement).dataset.optionIndex);
+        if (idx === question.correctIndex) {
+          o.setAttribute("data-correct", "true");
+        } else if (idx === optionIndex && !fb.correct) {
+          o.setAttribute("data-correct", "false");
+        }
+      });
+    }
+
+    function selectOption(questionId: string, optionIndex: number) {
+      if (answered.has(questionId)) return; // already answered
+      answered.add(questionId);
+
+      // mark selected
+      const opts = container.querySelectorAll(`.quiz-option[data-question-id="${questionId}"]`);
+      opts.forEach((o) => {
+        const el = o as HTMLElement;
+        const isSelected = Number(el.dataset.optionIndex) === optionIndex;
+        el.setAttribute("data-selected", String(isSelected));
+        el.setAttribute("aria-checked", String(isSelected));
+        // disable further interaction
+        el.setAttribute("tabindex", "-1");
+        el.style.pointerEvents = "none";
+      });
+
+      showFeedback(questionId, optionIndex);
+      persist();
+
+      // check completion
+      if (answered.size === questions.length) {
+        showScore();
+      }
+    }
+
+    function showScore() {
+      const state = currentState();
+      const scoreEl = container.querySelector("[data-quiz-score]") as HTMLElement;
+      scoreEl.textContent = `You scored ${state.score} out of ${state.total}`;
+      scoreEl.hidden = false;
+      const retryBtn = container.querySelector("[data-quiz-retry]") as HTMLElement;
+      retryBtn.hidden = false;
+      persist();
+    }
+
+    function retry() {
+      clearQuizState(quizId);
+      answered.clear();
+
+      // reset all options
+      container.querySelectorAll(".quiz-option").forEach((o, i) => {
+        const el = o as HTMLElement;
+        el.removeAttribute("data-selected");
+        el.removeAttribute("data-correct");
+        el.setAttribute("aria-checked", "false");
+        el.style.pointerEvents = "";
+      });
+
+      // reset tabindex: first option in each group gets 0
+      container.querySelectorAll(".quiz-question").forEach((fs) => {
+        const opts = fs.querySelectorAll(".quiz-option");
+        opts.forEach((o, i) => (o as HTMLElement).setAttribute("tabindex", i === 0 ? "0" : "-1"));
+      });
+
+      // clear feedback
+      container.querySelectorAll(".quiz-feedback").forEach((el) => {
+        (el as HTMLElement).textContent = "";
+        el.removeAttribute("data-correct");
+      });
+
+      // hide score & retry
+      (container.querySelector("[data-quiz-score]") as HTMLElement).hidden = true;
+      (container.querySelector("[data-quiz-retry]") as HTMLElement).hidden = true;
+    }
+
+    // --- event listeners ---
+    container.addEventListener("click", (e) => {
+      const option = (e.target as HTMLElement).closest(".quiz-option") as HTMLElement | null;
+      if (!option) return;
+      selectOption(option.dataset.questionId!, Number(option.dataset.optionIndex));
+    });
+
+    container.addEventListener("keydown", (e) => {
+      const target = e.target as HTMLElement;
+
+      // retry button
+      if (target.matches("[data-quiz-retry]") && (e.key === "Enter" || e.key === " ")) {
+        e.preventDefault();
+        retry();
+        return;
+      }
+
+      // option navigation
+      if (!target.classList.contains("quiz-option")) return;
+      const questionId = target.dataset.questionId!;
+      const opts = Array.from(
+        container.querySelectorAll(`.quiz-option[data-question-id="${questionId}"]`)
+      ) as HTMLElement[];
+      const idx = opts.indexOf(target);
+
+      if (e.key === "ArrowDown" || e.key === "ArrowRight") {
+        e.preventDefault();
+        const next = opts[(idx + 1) % opts.length];
+        target.setAttribute("tabindex", "-1");
+        next.setAttribute("tabindex", "0");
+        next.focus();
+      } else if (e.key === "ArrowUp" || e.key === "ArrowLeft") {
+        e.preventDefault();
+        const prev = opts[(idx - 1 + opts.length) % opts.length];
+        target.setAttribute("tabindex", "-1");
+        prev.setAttribute("tabindex", "0");
+        prev.focus();
+      } else if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        selectOption(questionId, Number(target.dataset.optionIndex));
+      }
+    });
+
+    container.querySelector("[data-quiz-retry]")!.addEventListener("click", retry);
+
+    // --- restore saved state ---
+    const saved = loadQuizState(quizId);
+    if (saved && saved.answers) {
+      for (const [qId, optIdx] of Object.entries(saved.answers)) {
+        selectOption(qId, optIdx);
+      }
+    }
+  }
+
+  // init all quiz containers on the page
+  document.querySelectorAll<HTMLElement>(".quiz-container").forEach(initQuiz);
+</script>

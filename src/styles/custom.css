@@ -8,13 +8,14 @@
   --sl-color-bg: #f8f9fa;
   --sl-color-bg-sidebar: #f1f3f5;
 
-  /* Accent — blue */
-  --sl-color-accent-low: #0d6efd20;
-  --sl-color-accent: #0d6efd;
-  --sl-color-accent-high: #0a58ca;
+  /* Accent — teal */
+  --sl-color-accent-low: hsl(174, 88%, 90%);
+  --sl-color-accent: hsl(174, 80%, 35%);
+  --sl-color-accent-high: hsl(174, 80%, 25%);
+  --sl-color-text-accent: hsl(174, 80%, 35%);
 
   /* Typography — serif for a math-book feel */
-  --sl-font: "Merriweather", "Georgia", "Times New Roman", serif;
+  --sl-font: "Libre Baskerville", Georgia, "Times New Roman", serif;
 
   /* Quiz tokens */
   --quiz-correct: #198754;
@@ -27,6 +28,11 @@
 :root[data-theme="dark"] {
   --sl-color-bg: #121212;
   --sl-color-bg-sidebar: #1e1e1e;
+
+  --sl-color-accent-low: hsl(224, 54%, 20%);
+  --sl-color-accent: hsl(224, 100%, 70%);
+  --sl-color-accent-high: hsl(224, 100%, 85%);
+  --sl-color-text-accent: hsl(224, 100%, 70%);
 
   --quiz-correct: #20c997;
   --quiz-incorrect: #f06595;
@@ -56,16 +62,39 @@
    Quiz Component Styles
    =========================== */
 
-/* Large headings — scratchy handwritten feel */
+/* Page title heading — centered */
+.sl-markdown-content h1,
+.content-panel h1,
+[data-page-title],
+main h1:first-of-type {
+  text-align: center !important;
+}
 .sl-markdown-content h1,
 .sl-markdown-content h2,
 .sl-markdown-content h3 {
-  font-family: "Tagesschrift", cursive !important;
+  font-family: "Libre Baskerville", Georgia, serif !important;
 }
 
-/* Site title — handwritten too */
+/* Make logo twice as big */
+.site-title img {
+  height: 3rem !important;
+  width: auto;
+}
+
+/* Tighten gap between logo and title text */
 .site-title {
-  font-family: "Tagesschrift", cursive !important;
+  gap: 0.25rem !important;
+}
+
+/* Site title */
+.site-title {
+  font-family: "Libre Baskerville", Georgia, serif !important;
+}
+
+/* Right sidebar — thinner and pushed right */
+starlight-toc {
+  width: 10rem;
+  margin-inline-start: auto;
 }
 
 /* Fieldset — one per question */

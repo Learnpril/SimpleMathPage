@@ -3,4 +3,13 @@ title: Mom's Basement University
 description: Mom's Basement University – Start Fresh, No Judgment
 ---
 
-Welcome to Mom's Basement University. Content is on the way.
+import { Image } from "astro:assets";
+import mascot from "../../assets/mascot.png";
+
+<div style="text-align: center; display: flex; justify-content: center;">
+  <Image src={mascot} alt="Einstein eating chicken nuggets" width={450} />
+</div>
+
+<p style="text-align: center;">
+  <em>Learn math for free from the comfort of your mom's basement!</em>
+</p>

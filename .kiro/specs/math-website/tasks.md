@@ -32,8 +32,8 @@ Build a static math learning website using Astro + Starlight with Obsidian conte
     - Style quiz component elements (fieldset, options, feedback, buttons)
     - _Requirements: 10.1, 10.2, 10.3, 10.5, 10.6_
 
-- [ ] 3. Implement quiz data validation
-  - [ ] 3.1 Create `src/lib/quiz-validation.ts` with validation functions
+- [x] 3. Implement quiz data validation
+  - [x] 3.1 Create `src/lib/quiz-validation.ts` with validation functions
     - Implement `validateQuizData(data: QuizData): ValidationResult` that checks:
       - Quiz has 3–8 questions
       - Each question has exactly 4 options
@@ -54,8 +54,8 @@ Build a static math learning website using Astro + Starlight with Obsidian conte
     - Test quiz with exactly 3 and exactly 8 questions accepted
     - _Requirements: 5.1, 5.2, 5.3_
 
-- [ ] 4. Implement quiz state manager
-  - [ ] 4.1 Create `src/lib/quiz-state.ts` with localStorage read/write utilities
+- [x] 4. Implement quiz state manager
+  - [x] 4.1 Create `src/lib/quiz-state.ts` with localStorage read/write utilities
     - Implement `getStorageKey(quizId: string): string` returning `"quiz-state:{quizId}"`
     - Implement `loadQuizState(quizId: string): QuizState | null` with JSON parse and shape validation
     - Implement `saveQuizState(quizId: string, state: QuizState): void` with error handling for quota/unavailability
@@ -78,16 +78,16 @@ Build a static math learning website using Astro + Starlight with Obsidian conte
     - Test malformed stored JSON is discarded
     - _Requirements: 6.1, 6.2, 6.3_
 
-- [ ] 5. Checkpoint - Ensure all tests pass
+- [x] 5. Checkpoint - Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 6. Implement quiz scoring logic
-  - [ ] 6.1 Create `src/lib/quiz-scoring.ts` with score computation
+- [x] 6. Implement quiz scoring logic
+  - [x] 6.1 Create `src/lib/quiz-scoring.ts` with score computation
     - Implement `computeScore(questions: QuizQuestion[], answers: Record<string, number>): { score: number; total: number }`
     - Score equals count of questions where `answers[question.id] === question.correctIndex`
     - Total equals number of questions
     - _Requirements: 5.6, 13.2_
-  - [ ] 6.2 Create `src/lib/quiz-feedback.ts` with answer feedback logic
+  - [x] 6.2 Create `src/lib/quiz-feedback.ts` with answer feedback logic
     - Implement `getAnswerFeedback(question: QuizQuestion, selectedIndex: number): { correct: boolean; explanation: string }`
     - Return `correct: true` if `selectedIndex === question.correctIndex`, else `correct: false`
     - Always include the question's explanation text
@@ -101,12 +101,12 @@ Build a static math learning website using Astro + Starlight with Obsidian conte
     - For random questions and selected indices, verify feedback matches correctIndex comparison
     - **Validates: Requirements 5.4, 5.5**
 
-- [ ] 7. Implement Quiz Astro component
-  - [ ] 7.1 Create shared TypeScript types in `src/lib/quiz-types.ts`
+- [x] 7. Implement Quiz Astro component
+  - [x] 7.1 Create shared TypeScript types in `src/lib/quiz-types.ts`
     - Define `QuizQuestion`, `QuizData`, `QuizState`, `ValidationResult` interfaces
     - Export all types for use across quiz modules
     - _Requirements: 13.1, 13.2_
-  - [ ] 7.2 Create `src/components/Quiz.astro` island component
+  - [x] 7.2 Create `src/components/Quiz.astro` island component
     - Accept `quizId` and `questions` props
     - Validate quiz data on render; show error message if invalid
     - Render each question as a `<fieldset>` with `<legend>` for question text
@@ -124,7 +124,7 @@ Build a static math learning website using Astro + Starlight with Obsidian conte
     - For random valid quiz data, verify rendered HTML contains fieldset, legend, label, ARIA attributes, and aria-live region
     - **Validates: Requirements 7.2, 7.4**
 
-- [ ] 8. Checkpoint - Ensure all tests pass
+- [x] 8. Checkpoint - Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
 - [ ] 9. Create homepage and content structure
