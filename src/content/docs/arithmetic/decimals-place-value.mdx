@@ -1,0 +1,97 @@
+---
+title: Understanding Decimals & Place Value
+description: Learn what decimals mean, read and write them, and understand place value after the decimal point
+sidebar:
+  order: 10
+---
+
+import Quiz from "../../../components/Quiz.astro";
+
+## What You'll Learn
+
+In this lesson you'll learn what decimal numbers represent, how to read and write them correctly, and the place value of digits after the decimal point (tenths, hundredths, thousandths).
+
+## The Concept
+
+**Decimals** are another way to show parts of a whole — like fractions but using powers of 10. The decimal point separates whole numbers from fractional parts.
+
+Place value after the decimal (left to right):
+
+- Tenths (first digit after point): $0.1 = \frac{1}{10}$
+- Hundredths (second): $0.01 = \frac{1}{100}$
+- Thousandths (third): $0.001 = \frac{1}{1000}$
+
+Example: $3.456$ means:
+
+- 3 whole units
+- 4 tenths ($4 \times 0.1 = 0.4$)
+- 5 hundredths ($5 \times 0.01 = 0.05$)
+- 6 thousandths ($6 \times 0.001 = 0.006$)
+
+Total: $3 + 0.4 + 0.05 + 0.006 = 3.456$
+
+To read: Say "and" at the decimal point, then name the last place.
+$3.456$ = "three and four hundred fifty-six thousandths"
+
+## Worked Example
+
+Write and read $0.875$.
+
+- 8 tenths, 7 hundredths, 5 thousandths
+- As fraction: $\frac{875}{1000} = \frac{7}{8}$
+- Read: "eight hundred seventy-five thousandths"
+
+Compare $0.875$ and $0.87$:
+
+- $0.875$ has 5 thousandths extra → $0.875 > 0.87$
+
+## Real-World Application
+
+Decimals are everywhere in money (42 dollars and 75 cents = 42.75), gas prices (3.89 per gallon), measurements (5.25 feet), or batting averages (0.312). Understanding place value helps you read receipts, price tags, or sports stats accurately without confusion.
+
+:::note[You've Got This]
+Decimals are just fractions with powers of 10 — think of the point as a divider. Say the number out loud a few times (like "two point three five" for 2.35) and practice reading prices or measurements around you. It'll feel natural fast.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="arithmetic-decimals-place-value"
+  questions={[
+    {
+      id: "q1",
+      text: "In 4.827, what place is the digit 2 in?",
+      options: ["Tenths", "Hundredths", "Thousandths", "Ones"],
+      correctIndex: 1,
+      explanation:
+        "After the decimal: 8 is tenths, 2 is hundredths, 7 is thousandths.",
+    },
+    {
+      id: "q2",
+      text: "What is 0.65 in words?",
+      options: [
+        "Sixty-five hundredths",
+        "Sixty-five thousandths",
+        "Six and five tenths",
+        "Sixty-five tenths",
+      ],
+      correctIndex: 0,
+      explanation:
+        "0.65 = 65 hundredths. The last digit is in the hundredths place.",
+    },
+    {
+      id: "q3",
+      text: "Which is larger: 3.09 or 3.1?",
+      options: ["3.09", "3.1", "They are equal", "Cannot tell"],
+      correctIndex: 1,
+      explanation: "3.1 = 3.10, and 3.10 > 3.09 (one extra hundredth).",
+    },
+    {
+      id: "q4",
+      text: "A gas price is 3.789 per gallon. What is the value of the 8?",
+      options: ["8 tenths", "8 hundredths", "80 hundredths", "8 thousandths"],
+      correctIndex: 1,
+      explanation: "3.789 → 7 is tenths, 8 is hundredths, 9 is thousandths.",
+    },
+  ]}
+/>

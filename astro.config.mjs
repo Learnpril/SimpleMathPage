@@ -22,8 +22,8 @@ export default defineConfig({
           autogenerate: { directory: "arithmetic" },
         },
         {
-          label: "Algebra Basics",
-          autogenerate: { directory: "algebra-basics" },
+          label: "Pre-Algebra",
+          autogenerate: { directory: "pre-algebra" },
         },
         {
           label: "Linear Algebra",

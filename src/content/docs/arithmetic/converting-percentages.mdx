@@ -1,0 +1,82 @@
+---
+title: Converting Between Percent, Decimal, and Fraction
+description: Learn how to switch easily between percentages, decimals, and fractions
+sidebar:
+  order: 16
+---
+
+import Quiz from "../../../components/Quiz.astro";
+
+## What You'll Learn
+
+In this lesson you'll learn simple rules to convert percentages to decimals and fractions, and back again.
+
+## The Concept
+
+Conversions are straightforward:
+
+- Percent to decimal: Move decimal point 2 places left (divide by 100).
+  $45\% → 0.45$
+
+- Percent to fraction: Put number over 100, simplify.
+  $45\% → \frac{45}{100} = \frac{9}{20}$
+
+- Decimal to percent: Move decimal 2 places right (multiply by 100).
+  $0.75 → 75\%$
+
+- Fraction to percent: Divide numerator by denominator, then convert decimal to percent.
+  $\frac{3}{4} = 0.75 = 75\%$
+
+- Fraction to decimal: Divide numerator by denominator.
+
+## Worked Example
+
+Convert each:
+
+1. $20\% → $ decimal $0.20 → $ fraction $\frac{20}{100} = \frac{1}{5}$
+2. $0.625 → $ percent $62.5\% → $ fraction $\frac{625}{1000} = \frac{5}{8}$
+3. $\frac{2}{5} → $ decimal $0.4 → $ percent $40\%$
+
+## Real-World Application
+
+Conversions help compare offers: 1/4 off = 0.25 = 25% discount. Or tax: 8% = 0.08, so $0.08 \times 200$ dollars = 16 dollars tax. Or interest: 6.5% = 0.065. Knowing how to switch makes shopping, budgeting, and finance clearer.
+
+:::note[You've Got This]
+The big trick is moving the decimal two places for percent ↔ decimal. For fractions, just divide or simplify. Practice converting tips or discounts you see daily — it will stick fast.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="arithmetic-percentages-converting"
+  questions={[
+    {
+      id: "q1",
+      text: "Convert 65% to a decimal.",
+      options: ["0.65", "6.5", "0.065", "65.0"],
+      correctIndex: 0,
+      explanation: "Move decimal 2 places left: 65% = 0.65.",
+    },
+    {
+      id: "q2",
+      text: "What is 0.4 as a percent?",
+      options: ["40%", "4%", "400%", "0.4%"],
+      correctIndex: 0,
+      explanation: "Move decimal 2 places right: 0.4 → 40%.",
+    },
+    {
+      id: "q3",
+      text: "Convert 3/5 to a percent.",
+      options: ["60%", "35%", "50%", "30%"],
+      correctIndex: 0,
+      explanation: "3 ÷ 5 = 0.6 → 60%.",
+    },
+    {
+      id: "q4",
+      text: "Convert 25% to a simplified fraction.",
+      options: ["1/4", "25/100", "1/5", "2/5"],
+      correctIndex: 0,
+      explanation: "25/100 = 1/4 (simplified).",
+    },
+  ]}
+/>

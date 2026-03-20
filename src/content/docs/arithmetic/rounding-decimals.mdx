@@ -1,0 +1,82 @@
+---
+title: Rounding Decimals
+description: Learn how to round decimal numbers to the nearest whole, tenth, or hundredth
+sidebar:
+  order: 11
+---
+
+import Quiz from "../../../components/Quiz.astro";
+
+## What You'll Learn
+
+In this lesson you'll learn the rules for rounding decimals to different places and how to apply them for quick estimates.
+
+## The Concept
+
+**Rounding decimals** simplifies numbers while keeping them close to the original value. Look at the digit to the right of the place you're rounding to:
+
+- 5 or higher → round up
+- Less than 5 → round down (keep the digit the same)
+
+Examples:
+
+- Round $3.78$ to nearest tenth: Look at hundredths (8 ≥ 5) → $3.8$
+- Round $3.78$ to nearest whole: Look at tenths (7 ≥ 5) → $4$
+- Round $12.345$ to nearest hundredth: Look at thousandths (5 ≥ 5) → $12.35$
+
+Trailing zeros after rounding can be dropped ($12.350$ becomes $12.35$).
+
+## Worked Example
+
+Round $7.649$ to:
+
+1. Nearest tenth: Look at hundredths (4 < 5) → $7.6$
+2. Nearest hundredth: Look at thousandths (9 ≥ 5) → $7.65$
+3. Nearest whole: Look at tenths (6 ≥ 5) → $8$
+
+## Real-World Application
+
+Rounding decimals is used for estimates: gas at 3.789 per gallon rounded to 3.79; tip calculation (18.5% of a 42 dollar meal ≈ 8 dollars); or measurements (cut wood to 5.73 feet rounded to 5.7 feet). It helps make quick decisions without exact precision.
+
+:::note[You've Got This]
+Rounding is just deciding whether to keep or bump up based on the next digit — like approximating how much something costs. Practice on receipts or prices, and always ask "is it closer to this or that?" You'll get accurate estimates in no time.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="arithmetic-rounding-decimals"
+  questions={[
+    {
+      id: "q1",
+      text: "Round 4.673 to the nearest tenth.",
+      options: ["4.7", "4.6", "5.0", "4.67"],
+      correctIndex: 0,
+      explanation:
+        "Hundredths digit is 7 (≥ 5) → round tenths from 6 up to 7 → 4.7.",
+    },
+    {
+      id: "q2",
+      text: "Round 9.248 to the nearest hundredth.",
+      options: ["9.25", "9.24", "9.20", "9.30"],
+      correctIndex: 0,
+      explanation:
+        "Thousandths digit is 8 (≥ 5) → round hundredths from 4 up to 5 → 9.25.",
+    },
+    {
+      id: "q3",
+      text: "A bill is 67.89 dollars. Rounded to the nearest dollar, how much?",
+      options: ["68 dollars", "67 dollars", "70 dollars", "67.90 dollars"],
+      correctIndex: 0,
+      explanation: "Tenths digit is 8 (≥ 5) → round up to 68 dollars.",
+    },
+    {
+      id: "q4",
+      text: "Round 12.3456 to the nearest thousandth.",
+      options: ["12.346", "12.345", "12.350", "12.300"],
+      correctIndex: 0,
+      explanation:
+        "Ten-thousandths digit is 6 (≥ 5) → round thousandths from 5 up to 6 → 12.346.",
+    },
+  ]}
+/>

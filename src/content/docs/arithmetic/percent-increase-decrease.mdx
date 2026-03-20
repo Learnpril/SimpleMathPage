@@ -1,0 +1,93 @@
+---
+title: Percent Increase and Decrease
+description: Learn how to calculate percentage change up or down
+sidebar:
+  order: 18
+---
+
+import Quiz from "../../../components/Quiz.astro";
+
+## What You'll Learn
+
+In this lesson you'll learn how to find percent increase (growth) and percent decrease (reduction), including the formula and examples.
+
+## The Concept
+
+**Percent increase/decrease** measures change relative to the original amount.
+
+Formula:
+
+$$
+\text{Percent change} = \frac{\text{new} - \text{original}}{\text{original}} \times 100\%
+$$
+
+- Positive result = increase
+- Negative = decrease
+
+Shortcut for increase: Add the percent of original.
+Example: 20% increase on 50 = $50 + (0.20 \times 50) = 60$
+
+For decrease: Subtract the percent.
+30% decrease on 80 = $80 - (0.30 \times 80) = 56$
+
+## Worked Example
+
+A salary of 40,000 dollars increases by 8%.
+
+1. Increase amount: $0.08 \times 40{,}000 = 3{,}200$ dollars
+2. New salary: $40{,}000 + 3{,}200 = 43{,}200$ dollars
+3. Percent increase: $\frac{3{,}200}{40{,}000} \times 100\% = 8\%$
+
+Price of 120 dollars decreases by 25%.
+
+1. Decrease: $0.25 \times 120 = 30$ dollars
+2. New price: $120 - 30 = 90$ dollars
+
+## Real-World Application
+
+Percent increase/decrease appears in raises (5% salary bump), discounts (30% off sale), inflation (prices up 4%), or fuel efficiency changes. It helps understand how much things really change relative to the starting amount.
+
+:::note[You've Got This]
+Percent change is just "how much bigger/smaller compared to the original." Multiply the percent by the original, then add/subtract. Check by seeing if the change makes sense (a 50% increase doubles the number). Practice with sale prices or bills — it'll click fast.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="arithmetic-percent-increase-decrease"
+  questions={[
+    {
+      id: "q1",
+      text: "A 50-dollar item increases by 20%. New price?",
+      options: ["60 dollars", "70 dollars", "55 dollars", "40 dollars"],
+      correctIndex: 0,
+      explanation: "0.20 × 50 = 10, 50 + 10 = 60 dollars.",
+    },
+    {
+      id: "q2",
+      text: "A price drops from 80 dollars to 64 dollars. Percent decrease?",
+      options: ["20%", "25%", "16%", "30%"],
+      correctIndex: 0,
+      explanation: "(80 - 64)/80 = 16/80 = 0.20 = 20% decrease.",
+    },
+    {
+      id: "q3",
+      text: "Salary of 50,000 dollars increases by 6%. New salary?",
+      options: [
+        "53,000 dollars",
+        "52,000 dollars",
+        "56,000 dollars",
+        "50,600 dollars",
+      ],
+      correctIndex: 0,
+      explanation: "0.06 × 50,000 = 3,000; 50,000 + 3,000 = 53,000 dollars.",
+    },
+    {
+      id: "q4",
+      text: "A 200-dollar bill decreases by 15%. New amount?",
+      options: ["170 dollars", "185 dollars", "230 dollars", "160 dollars"],
+      correctIndex: 0,
+      explanation: "0.15 × 200 = 30; 200 - 30 = 170 dollars.",
+    },
+  ]}
+/>
