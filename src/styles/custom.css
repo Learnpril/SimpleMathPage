@@ -1,5 +1,5 @@
 /* ===========================
-   Math Made Clear — Custom Theme
+   Mom's Basement University — Custom Theme
    =========================== */
 
 /* ---------- Light mode (default) ---------- */
@@ -13,8 +13,8 @@
   --sl-color-accent: #0d6efd;
   --sl-color-accent-high: #0a58ca;
 
-  /* Typography */
-  --sl-font: "Inter", sans-serif;
+  /* Typography — serif for a math-book feel */
+  --sl-font: "Merriweather", "Georgia", "Times New Roman", serif;
 
   /* Quiz tokens */
   --quiz-correct: #198754;
@@ -34,9 +34,39 @@
   --quiz-special: #b197fc;
 }
 
+/* Site title — high contrast in both modes */
+[data-theme="light"] .site-title,
+:root:not([data-theme="dark"]) .site-title {
+  color: #1a1a1a;
+}
+[data-theme="dark"] .site-title {
+  color: #ffffff;
+}
+
+/* Sidebar active link — subtle highlight instead of solid accent block */
+[aria-current="page"] {
+  background-color: var(--sl-color-accent-low) !important;
+  color: #1a1a1a !important;
+}
+:root[data-theme="dark"] [aria-current="page"] {
+  color: #ffffff !important;
+}
+
 /* ===========================
    Quiz Component Styles
    =========================== */
+
+/* Large headings — scratchy handwritten feel */
+.sl-markdown-content h1,
+.sl-markdown-content h2,
+.sl-markdown-content h3 {
+  font-family: "Tagesschrift", cursive !important;
+}
+
+/* Site title — handwritten too */
+.site-title {
+  font-family: "Tagesschrift", cursive !important;
+}
 
 /* Fieldset — one per question */
 .quiz-question {
