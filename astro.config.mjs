@@ -25,28 +25,113 @@ export default defineConfig({
           label: "Pre-Algebra",
           autogenerate: { directory: "pre-algebra" },
         },
-        {
-          label: "Linear Algebra",
-          autogenerate: { directory: "linear-algebra" },
-        },
-        {
-          label: "Graphics Math",
-          autogenerate: { directory: "graphics-math" },
-        },
-        {
-          label: "AI Art Math",
-          autogenerate: { directory: "ai-art-math" },
-        },
-        {
-          label: "Esoteric Patterns",
-          autogenerate: { directory: "esoteric-patterns" },
-        },
+        // Uncomment these sections as you add content:
+        // {
+        //   label: "Linear Algebra",
+        //   autogenerate: { directory: "linear-algebra" },
+        // },
+        // {
+        //   label: "Graphics Math",
+        //   autogenerate: { directory: "graphics-math" },
+        // },
+        // {
+        //   label: "AI Art Math",
+        //   autogenerate: { directory: "ai-art-math" },
+        // },
+        // {
+        //   label: "Esoteric Patterns",
+        //   autogenerate: { directory: "esoteric-patterns" },
+        // },
       ],
       customCss: ["./src/styles/custom.css", "katex/dist/katex.min.css"],
       head: [
         {
           tag: "script",
           content: `if (!localStorage.getItem('starlight-theme')) { document.documentElement.dataset.theme = 'dark'; }`,
+        },
+        {
+          tag: "script",
+          content: `
+            document.addEventListener('DOMContentLoaded', function() {
+              if (window.innerWidth >= 800) return;
+              var sunSvg = '<svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm0-3a1 1 0 0 0 1-1V1a1 1 0 0 0-2 0v2a1 1 0 0 0 1 1zm0 18a1 1 0 0 0-1 1v2a1 1 0 0 0 2 0v-2a1 1 0 0 0-1-1zM5.64 7.05 4.22 5.64a1 1 0 0 1 1.42-1.42l1.41 1.42a1 1 0 1 1-1.41 1.41zm12.73 9.9a1 1 0 1 0-1.42 1.42l1.42 1.41a1 1 0 0 0 1.41-1.41l-1.41-1.42zM4 12a1 1 0 0 0-1-1H1a1 1 0 0 0 0 2h2a1 1 0 0 0 1-1zm18-1h-2a1 1 0 0 0 0 2h2a1 1 0 0 0 0-2zM5.64 16.95a1 1 0 1 0-1.41 1.42l1.41 1.41a1 1 0 0 0 1.42-1.41l-1.42-1.42zm12.73-9.9a1 1 0 1 0 1.41-1.41l-1.41-1.42a1 1 0 0 0-1.42 1.42l1.42 1.41z"/></svg>';
+              var moonSvg = '<svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M21.64 13a1 1 0 0 0-1.05-.14 8.05 8.05 0 0 1-3.37.73A8.15 8.15 0 0 1 9.08 5.49a8.59 8.59 0 0 1 .25-2 1 1 0 0 0-.37-1 1 1 0 0 0-1-.17 10 10 0 1 0 13.69 11.65 1 1 0 0 0 0-.96z"/></svg>';
+              var header = document.querySelector('header');
+              if (!header) return;
+
+              var group = document.createElement('div');
+              group.className = 'mobile-header-icons';
+
+              var search = header.querySelector('starlight-search');
+              if (search) group.appendChild(search);
+
+              var themeBtn = document.createElement('button');
+              themeBtn.className = 'mobile-header-icon';
+              themeBtn.setAttribute('aria-label', 'Toggle theme');
+              var isDark = document.documentElement.dataset.theme !== 'light';
+              themeBtn.innerHTML = isDark ? sunSvg : moonSvg;
+              themeBtn.addEventListener('click', function() {
+                var sel = document.querySelector('starlight-theme-select select');
+                if (sel) {
+                  var next = document.documentElement.dataset.theme === 'light' ? 'dark' : 'light';
+                  sel.value = next;
+                  sel.dispatchEvent(new Event('change'));
+                  themeBtn.innerHTML = next === 'dark' ? sunSvg : moonSvg;
+                }
+              });
+              group.appendChild(themeBtn);
+
+              header.appendChild(group);
+            });
+          `,
+        },
+        {
+          tag: "script",
+          content: `
+            document.addEventListener('DOMContentLoaded', function() {
+              if (window.innerWidth >= 800) return;
+              var path = window.location.pathname;
+              var isHome = (path === '/' || path === '/index.html');
+              var bar = document.createElement('div');
+              bar.className = 'mobile-nav-bar';
+              if (!isHome) {
+                var btn = document.createElement('a');
+                btn.href = '/';
+                btn.className = 'mobile-back-btn';
+                btn.innerHTML = '<svg viewBox="0 0 24 24"><path d="M19 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H19v-2z"/></svg>Back';
+                bar.appendChild(btn);
+              }
+              var menuBtn = document.createElement('button');
+              menuBtn.className = 'mobile-menu-btn';
+              menuBtn.setAttribute('aria-label', 'Menu');
+              menuBtn.innerHTML = '<svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg>';
+              menuBtn.addEventListener('click', function() {
+                var real = document.querySelector('starlight-menu-button button');
+                if (real) real.click();
+              });
+              bar.appendChild(menuBtn);
+              var main = document.querySelector('main') || document.querySelector('.main-pane');
+              var header = document.querySelector('header');
+              if (header && header.nextElementSibling) {
+                header.parentNode.insertBefore(bar, header.nextElementSibling);
+              } else if (main) {
+                main.parentNode.insertBefore(bar, main);
+              } else {
+                document.body.insertBefore(bar, document.body.firstChild);
+              }
+            });
+          `,
+        },
+        {
+          tag: "script",
+          content: `
+            document.addEventListener('DOMContentLoaded', function() {
+              var footer = document.createElement('div');
+              footer.className = 'scratch-paper-footer';
+              footer.innerHTML = '\\u270F\\uFE0F Grab some scratch paper and work the problems out by hand — it makes a huge difference.';
+              document.body.appendChild(footer);
+            });
+          `,
         },
         {
           tag: "link",
