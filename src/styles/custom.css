@@ -275,6 +275,33 @@ starlight-toc {
   .title-wrapper {
     overflow: visible !important;
   }
+
+  /* Reduce the big gap between header and content */
+  .main-frame {
+    padding-top: 0 !important;
+  }
+  .right-sidebar-container {
+    padding-top: 0 !important;
+    margin-top: 0 !important;
+  }
+  .main-pane {
+    padding-top: 0 !important;
+  }
+  .content-panel {
+    padding-top: 0.25rem !important;
+  }
+  .content-panel .sl-container {
+    padding-top: 0 !important;
+  }
+  main {
+    padding-top: 0 !important;
+  }
+  h1#_top,
+  .sl-markdown-content h1:first-of-type,
+  .content-panel h1:first-of-type {
+    margin-top: 0 !important;
+    padding-top: 0.25rem !important;
+  }
 }
 
 /* ---------- Mobile: hide "On this page" TOC, show back + menu bar ---------- */
