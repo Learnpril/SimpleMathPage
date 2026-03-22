@@ -25,22 +25,62 @@ export default defineConfig({
           label: "Pre-Algebra",
           autogenerate: { directory: "pre-algebra" },
         },
+        {
+          label: "Algebra Basics",
+          autogenerate: { directory: "algebra-basics" },
+        },
         // Uncomment these sections as you add content:
+        // {
+        //   label: "Geometry",
+        //   autogenerate: { directory: "geometry" },
+        // },
+        // {
+        //   label: "Algebra 2",
+        //   autogenerate: { directory: "algebra-2" },
+        // },
+        // {
+        //   label: "Pre-Calculus",
+        //   autogenerate: { directory: "pre-calculus" },
+        // },
+        // {
+        //   label: "Trigonometry",
+        //   autogenerate: { directory: "trigonometry" },
+        // },
+        // {
+        //   label: "Calculus 1",
+        //   autogenerate: { directory: "calculus-1" },
+        // },
+        // {
+        //   label: "Calculus 2",
+        //   autogenerate: { directory: "calculus-2" },
+        // },
+        // {
+        //   label: "Calculus 3",
+        //   autogenerate: { directory: "calculus-3" },
+        // },
         // {
         //   label: "Linear Algebra",
         //   autogenerate: { directory: "linear-algebra" },
         // },
         // {
-        //   label: "Graphics Math",
-        //   autogenerate: { directory: "graphics-math" },
+        //   label: "Discrete Mathematics",
+        //   autogenerate: { directory: "discrete-mathematics" },
         // },
         // {
-        //   label: "AI Art Math",
-        //   autogenerate: { directory: "ai-art-math" },
+        //   label: "Statistics",
+        //   autogenerate: { directory: "statistics" },
         // },
         // {
-        //   label: "Esoteric Patterns",
-        //   autogenerate: { directory: "esoteric-patterns" },
+        //   label: "Differential Equations",
+        //   autogenerate: { directory: "differential-equations" },
+        // },
+        // {
+        //   label: "Abstract Algebra",
+        //   autogenerate: { directory: "abstract-algebra" },
+        // },
+        // {
+        //   label: "Real Analysis",
+        //   autogenerate: { directory: "real-analysis" },
         // },
       ],
       customCss: ["./src/styles/custom.css", "katex/dist/katex.min.css"],
