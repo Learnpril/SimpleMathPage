@@ -1,0 +1,119 @@
+---
+title: Standard Form & Converting Between Forms
+description: Learn standard form (Ax + By = C) and how to convert between slope-intercept, point-slope, and standard forms
+sidebar:
+  order: 8
+---
+
+import CoordinateGraph from "../../../components/CoordinateGraph.astro";
+
+## What You'll Learn
+
+In this lesson you'll learn standard form of a linear equation, why it's useful, and how to convert between slope-intercept, point-slope, and standard forms.
+
+## The Concept
+
+**Standard form** is Ax + By = C, where A, B, and C are integers, A &ge; 0, and A and B are not both zero. It's useful for:
+
+- Systems of equations (easier to solve with elimination)
+- Finding intercepts quickly (x-intercept: C/A when y = 0; y-intercept: C/B when x = 0)
+- Keeping coefficients integer with no fractions
+
+Conversions:
+
+- Slope-intercept y = mx + b → standard: mx − y = −b (multiply by −1 if needed for A &gt; 0)
+- Point-slope y − y₁ = m(x − x₁) → distribute m, move terms to one side, clear fractions if needed
+- Standard → slope-intercept: solve for y (isolate y term)
+
+Example conversions:
+
+1. y = 3x − 5 → 3x − y = 5
+2. y − 4 = −2(x + 1) → y − 4 = −2x − 2 → y + 2x = 2 → 2x + y = 2
+3. 4x − 5y = 20 → −5y = −4x + 20 → y = (4/5)x − 4 (slope-intercept)
+
+Here's 3x + 2y = 12 in standard form — notice how the intercepts are easy to find:
+
+<CoordinateGraph
+  xMin={-1}
+  xMax={6}
+  yMin={-1}
+  yMax={8}
+  lines={[{ slope: -3 / 2, intercept: 6, label: "3x + 2y = 12" }]}
+  points={[
+    { x: 0, y: 6, label: "(0, 6)" },
+    { x: 4, y: 0, label: "(4, 0)" },
+  ]}
+  title="Standard form: x-int = C/A = 4, y-int = C/B = 6"
+/>
+
+## Worked Example
+
+Convert y = −(3/2)x + 6 to standard form.
+
+1. y + (3/2)x = 6
+2. Multiply by 2 to clear fraction: 2y + 3x = 12
+3. 3x + 2y = 12 (A = 3 &gt; 0)
+
+Another: Convert point-slope y − 7 = 4(x − 2) to standard.
+
+1. y − 7 = 4x − 8
+2. y = 4x − 1
+3. −4x + y = −1 → 4x − y = 1
+
+## Real-World Application
+
+Standard form is common in budgeting, business, or planning:
+
+- Budget constraint: 3x + 5y = 150 (3 dollars food + 5 dollars gas = 150 dollars total budget)
+- Two plans: 4x + 2y = 100 and 5x + 3y = 120 (solve system for break-even)
+- Linear programming (intro): constraints in standard form help find max/min
+
+Converting forms lets you pick the best view: slope-intercept for rate/start, standard for intercepts/systems.
+
+:::note[You've Got This]
+Standard form is just another way to write the same line — no fractions, integer coefficients. To convert, move terms around and clear denominators. Practice switching between forms with real constraints (budgets, plans) — you'll see which form makes the problem easiest.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="algebra-basics-standard-form-and-converting"
+  questions={[
+    {
+      id: "q1",
+      text: "Convert y = 5x − 8 to standard form.",
+      options: ["5x − y = 8", "−5x + y = −8", "5x + y = 8", "−5x − y = −8"],
+      correctIndex: 0,
+      explanation: "y − 5x = −8 → −5x + y = −8 → multiply by −1: 5x − y = 8.",
+    },
+    {
+      id: "q2",
+      text: "What is the standard form of y − 3 = 2(x + 4)?",
+      options: ["2x − y = −11", "2x + y = 11", "2x − y = 11", "−2x + y = −11"],
+      correctIndex: 0,
+      explanation:
+        "y − 3 = 2x + 8 → y − 2x = 11 → −2x + y = 11 → 2x − y = −11.",
+    },
+    {
+      id: "q3",
+      text: "Convert 3x + 4y = 12 to slope-intercept form.",
+      options: [
+        "y = −(3/4)x + 3",
+        "y = (3/4)x + 3",
+        "y = −3x + 12",
+        "y = 3x + 4",
+      ],
+      correctIndex: 0,
+      explanation: "4y = −3x + 12 → y = −(3/4)x + 3.",
+    },
+    {
+      id: "q4",
+      text: "A budget is 5x + 8y = 200 (5 dollars food + 8 dollars transport). What is the y-intercept?",
+      options: ["25", "40", "200", "0"],
+      correctIndex: 0,
+      explanation: "Set x = 0: 8y = 200 → y = 25 (max transport if no food).",
+    },
+  ]}
+/>

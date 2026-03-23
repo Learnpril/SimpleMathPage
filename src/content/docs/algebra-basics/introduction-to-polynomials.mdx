@@ -1,7 +1,115 @@
 ---
 title: Introduction to Polynomials
+description: Learn what polynomials are, how to classify them, and how to add and subtract them
 sidebar:
-  order: 13
+  order: 14
 ---
 
-Content coming soon.
+## What You'll Learn
+
+In this lesson you'll learn what polynomials are, the different types (monomial, binomial, trinomial), and how to add and subtract them.
+
+## The Concept
+
+A **polynomial** is an expression with variables, coefficients, and exponents (whole numbers only), combined with + or −.
+
+Examples:
+
+- 5x² + 3x − 7 (trinomial)
+- 4x³ (monomial)
+- 2x + 5 (binomial)
+- 9 (constant polynomial)
+
+**Terms**: Each part separated by + or − (5x², 3x, −7 are terms).
+
+**Degree**: Highest exponent (5x² + 3x − 7 has degree 2).
+
+**Leading coefficient**: Coefficient of highest-degree term (5 in 5x² + ...).
+
+**Adding/subtracting polynomials**: Combine like terms (same variable and exponent).
+
+Example: (3x² + 5x − 2) + (2x² − 4x + 7)
+
+= (3x² + 2x²) + (5x − 4x) + (−2 + 7) = 5x² + x + 5
+
+Subtract: (4x³ − 2x + 1) − (x³ + 3x² − 5)
+
+= 4x³ − 2x + 1 − x³ − 3x² + 5 = 3x³ − 3x² − 2x + 6
+
+Distribute the negative when subtracting: −(x³ + 3x² − 5) = −x³ − 3x² + 5
+
+## Worked Example
+
+Add: (6x² − 4x + 9) + (3x² + 5x − 2)
+
+1. Combine like terms: (6x² + 3x²) + (−4x + 5x) + (9 − 2)
+2. 9x² + x + 7
+
+Subtract: (5x³ + 2x² − 8) − (2x³ − 3x + 1)
+
+1. Distribute negative: 5x³ + 2x² − 8 − 2x³ + 3x − 1
+2. (5x³ − 2x³) + 2x² + 3x + (−8 − 1) = 3x³ + 2x² + 3x − 9
+
+## Real-World Application
+
+Polynomials model many real situations:
+
+- Area of a rectangle: length × width = (x + 5)(x + 3) = x² + 8x + 15 (area in square units)
+- Total cost: fixed cost + variable cost per item × number of items = 200 + 12x
+- Profit: revenue − cost = (15x) − (200 + 8x) = 7x − 200 (x = units sold)
+- Volume of a box: length × width × height = (x + 2)(x + 2)(x + 4) (expands to polynomial)
+
+Adding/subtracting polynomials combines like terms in budgeting, area, profit, or volume calculations.
+
+:::note[You've Got This]
+Polynomials are just expressions with multiple terms — add or subtract by grouping like terms. Think of them as categories (x² terms, x terms, constants). Practice with simple costs or areas — you'll simplify them quickly and see how they model real things.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="algebra-basics-introduction-to-polynomials"
+  questions={[
+    {
+      id: "q1",
+      text: "What type of polynomial is 5x² − 3x + 7?",
+      options: ["Trinomial", "Binomial", "Monomial", "Constant"],
+      correctIndex: 0,
+      explanation: "Three terms → trinomial.",
+    },
+    {
+      id: "q2",
+      text: "Add (4x² + 3x − 5) + (2x² − x + 8).",
+      options: [
+        "6x² + 2x + 3",
+        "6x² + 4x + 3",
+        "6x² + 2x + 13",
+        "6x² + 4x + 13",
+      ],
+      correctIndex: 0,
+      explanation: "4x² + 2x² = 6x², 3x − x = 2x, −5 + 8 = 3 → 6x² + 2x + 3.",
+    },
+    {
+      id: "q3",
+      text: "Subtract (7x³ − 2x + 4) − (3x³ + 5x − 1).",
+      options: [
+        "4x³ − 7x + 5",
+        "4x³ − 7x + 3",
+        "10x³ − 7x + 5",
+        "4x³ + 3x + 5",
+      ],
+      correctIndex: 0,
+      explanation:
+        "7x³ − 3x³ = 4x³, −2x − 5x = −7x, 4 − (−1) = 5 → 4x³ − 7x + 5.",
+    },
+    {
+      id: "q4",
+      text: "A rectangle has length x + 6 and width x + 2. Area expression?",
+      options: ["x² + 8x + 12", "x² + 6x + 2", "2x + 8", "x² + 2x + 6"],
+      correctIndex: 0,
+      explanation: "(x + 6)(x + 2) = x² + 2x + 6x + 12 = x² + 8x + 12.",
+    },
+  ]}
+/>

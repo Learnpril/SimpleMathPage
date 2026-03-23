@@ -1,0 +1,137 @@
+---
+title: Base 10 and Place Value (gentle intro)
+description: Understand how numbers are built using ones, tens, and hundreds
+sidebar:
+  order: -1
+---
+
+import Quiz from "../../../components/Quiz.astro";
+import NumberLine from "../../../components/NumberLine.astro";
+import TwoHands from "../../../components/TwoHands.astro";
+
+## What You'll Learn
+
+In this lesson you'll learn how our number system uses base 10 and what place value means for ones, tens, and hundreds.
+
+## The Concept
+
+**Base 10** means we group numbers by 10s — 10 ones make 1 ten, 10 tens make 1 hundred, and so on. Why 10? Most likely because we have 10 fingers:
+
+<TwoHands />
+
+Humans have counted on their fingers for thousands of years, so it's natural that our number system groups by 10s.
+
+But base 10 isn't the only option. A "base" is just how many digits a system uses before it rolls over to the next place:
+
+- **Base 2 (binary)** — uses only 0 and 1. This is how computers think, since electronic switches are either off (0) or on (1).
+- **Base 16 (hexadecimal)** — uses 0–9 plus A–F (16 symbols). Programmers use it as a shorthand for binary, and it shows up in color codes like #FF5733.
+- **Base 12 (duodecimal)** — we still see traces of it: 12 hours on a clock, 12 inches in a foot, 12 eggs in a dozen.
+- **Base 60 (sexagesimal)** — the ancient Babylonians used this, and it's why we have 60 seconds in a minute and 60 minutes in an hour.
+
+For everyday math, we use base 10 — and that's what the rest of this lesson focuses on.
+
+On a number line, you can see how each group of 10 is one jump forward:
+
+<NumberLine
+  min={0}
+  max={100}
+  step={10}
+  jumpFrom={0}
+  jumpTo={10}
+  jumpLabel="+10"
+  title="Grouping by 10s"
+/>
+
+**Place value** tells what each digit is worth based on its position:
+
+- Rightmost digit: ones place (×1)
+- Next left: tens place (×10)
+- Next left: hundreds place (×100)
+
+Example: 347
+
+- 7 is in the ones place → 7 × 1 = 7
+- 4 is in the tens place → 4 × 10 = 40
+- 3 is in the hundreds place → 3 × 100 = 300
+
+Total: 300 + 40 + 7 = 347
+
+Here's where 347 sits on a number line — right between 300 and 400:
+
+<NumberLine
+  min={300}
+  max={400}
+  step={10}
+  highlight={347}
+  highlightLabel="347"
+  title="347 on the number line"
+/>
+
+You can think of it as: hundreds | tens | ones
+3 | 4 | 7
+
+## Worked Example
+
+Break down 562:
+
+- 5 hundreds = 500
+- 6 tens = 60
+- 2 ones = 2
+  Total: 500 + 60 + 2 = 562
+
+Write 408 as hundreds, tens, ones:
+
+- 4 hundreds = 400
+- 0 tens = 0
+- 8 ones = 8
+  Total: 400 + 0 + 8 = 408
+
+## Real-World Application
+
+Place value helps read prices, addresses, phone numbers, or scores:
+
+- 125 dollars = 1 hundred + 2 tens + 5 ones
+- House number 247 = 2 hundreds + 4 tens + 7 ones
+- Score of 89 points = 8 tens + 9 ones
+
+Understanding places makes big numbers less scary — break them into groups of 10s and 100s.
+
+:::note[You've Got This]
+Place value is just grouping by 10s — like bundling 10 dollars into a 10-dollar bill. Write numbers in columns (hundreds | tens | ones) if it helps. Practice with prices, page numbers, or addresses — you'll see the pattern quickly.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="arithmetic-getting-started-base-ten-place-value"
+  questions={[
+    {
+      id: "q1",
+      text: "In 342, what does the 4 mean?",
+      options: ["4 ones", "4 tens", "4 hundreds", "40 ones"],
+      correctIndex: 1,
+      explanation: "4 is in the tens place → 4 × 10 = 40.",
+    },
+    {
+      id: "q2",
+      text: "What is 5 hundreds + 3 tens + 7 ones?",
+      options: ["537", "573", "357", "753"],
+      correctIndex: 0,
+      explanation: "500 + 30 + 7 = 537.",
+    },
+    {
+      id: "q3",
+      text: "In 209, what is the value of the 0?",
+      options: ["0 tens", "0 ones", "0 hundreds", "10"],
+      correctIndex: 0,
+      explanation: "0 is in the tens place → 0 × 10 = 0.",
+    },
+    {
+      id: "q4",
+      text: "A price is 1 hundred + 6 tens + 5 ones. What is the price?",
+      options: ["165 dollars", "156 dollars", "615 dollars", "105 dollars"],
+      correctIndex: 0,
+      explanation: "100 + 60 + 5 = 165 dollars.",
+    },
+  ]}
+/>

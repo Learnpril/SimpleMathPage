@@ -1,0 +1,224 @@
+---
+interface Jump {
+  from: number;
+  to: number;
+  label?: string;
+}
+
+interface Props {
+  min?: number;
+  max?: number;
+  step?: number;
+  highlight?: number;
+  highlightLabel?: string;
+  jumpFrom?: number;
+  jumpTo?: number;
+  jumpLabel?: string;
+  jumps?: Jump[];
+  width?: number;
+  height?: number;
+  title?: string;
+}
+
+const {
+  min = -5,
+  max = 10,
+  step = 1,
+  highlight,
+  highlightLabel,
+  jumpFrom,
+  jumpTo,
+  jumpLabel,
+  jumps: jumpsProp,
+  width = 600,
+  height = 100,
+  title,
+} = Astro.props;
+
+const padL = 30;
+const padR = 30;
+const lineY = 55;
+const trackW = width - padL - padR;
+
+function toX(n: number) {
+  return padL + ((n - min) / (max - min)) * trackW;
+}
+
+const ticks: number[] = [];
+for (let i = min; i <= max; i += step) ticks.push(i);
+
+// Build jumps array — support both single jump (legacy) and multi-jump props
+const allJumps: Jump[] = jumpsProp
+  ? jumpsProp
+  : (jumpFrom !== undefined && jumpTo !== undefined)
+    ? [{ from: jumpFrom, to: jumpTo, label: jumpLabel }]
+    : [];
+
+function jumpArc(j: Jump) {
+  const dir = j.to > j.from ? 1 : -1;
+  const midX = (toX(j.from) + toX(j.to)) / 2;
+  const rx = Math.abs(toX(j.to) - toX(j.from)) / 2;
+  const ry = Math.min(rx * 0.6, 30);
+  const sweep = dir > 0 ? 1 : 0;
+  const d = `M${toX(j.from)},${lineY - 10} A${rx},${ry} 0 0,${sweep} ${toX(j.to)},${lineY - 10}`;
+  return { dir, midX, rx, ry, d };
+}
+---
+
+<figure class="number-line" role="img" aria-label={title || "Number line"}>
+  {title && <figcaption class="nl-title">{title}</figcaption>}
+  <svg
+    viewBox={`0 0 ${width} ${height}`}
+    width={width}
+    height={height}
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <defs>
+      <marker id="nl-arrow-r" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+        <path class="nl-arrow" d="M0,1 L7,4 L0,7 Z" />
+      </marker>
+      <marker id="nl-arrow-l" markerWidth="8" markerHeight="8" refX="2" refY="4" orient="auto">
+        <path class="nl-arrow" d="M8,1 L1,4 L8,7 Z" />
+      </marker>
+      <marker id="nl-jump-arrow" markerWidth="7" markerHeight="7" refX="5" refY="3.5" orient="auto">
+        <path class="nl-jump-head" d="M0,0.5 L6,3.5 L0,6.5 Z" />
+      </marker>
+    </defs>
+
+    {/* Main line with arrows */}
+    <line
+      class="nl-axis"
+      x1={padL - 12}
+      y1={lineY}
+      x2={width - padR + 12}
+      y2={lineY}
+      stroke-width="2"
+      marker-start="url(#nl-arrow-l)"
+      marker-end="url(#nl-arrow-r)"
+    />
+
+    {/* Tick marks and labels */}
+    {ticks.map((n) => (
+      <g>
+        <line
+          class={n === 0 ? "nl-tick-zero" : "nl-tick"}
+          x1={toX(n)}
+          y1={lineY - 8}
+          x2={toX(n)}
+          y2={lineY + 8}
+          stroke-width={n === 0 ? 2.5 : 1.5}
+        />
+        <text
+          class={n === 0 ? "nl-label-zero" : "nl-label"}
+          x={toX(n)}
+          y={lineY + 24}
+          font-size="13"
+          font-family="'Libre Baskerville', Georgia, serif"
+          text-anchor="middle"
+          font-weight={n === 0 ? "bold" : "normal"}
+        >
+          {n}
+        </text>
+      </g>
+    ))}
+
+    {/* Highlight dot */}
+    {highlight !== undefined && (
+      <g>
+        <circle class="nl-dot" cx={toX(highlight)} cy={lineY} r="7" stroke-width="2" />
+        {highlightLabel && (
+          <text
+            class="nl-dot-label"
+            x={toX(highlight)}
+            y={lineY - 16}
+            font-size="12"
+            font-family="'Libre Baskerville', Georgia, serif"
+            text-anchor="middle"
+            font-weight="bold"
+          >
+            {highlightLabel}
+          </text>
+        )}
+      </g>
+    )}
+
+    {/* Jump arcs */}
+    {allJumps.map((j) => {
+      const arc = jumpArc(j);
+      return (
+        <g>
+          <path
+            class="nl-jump"
+            d={arc.d}
+            fill="none"
+            stroke-width="2"
+            stroke-dasharray="5,3"
+            marker-end="url(#nl-jump-arrow)"
+          />
+          {j.label && (
+            <text
+              class="nl-jump-label"
+              x={arc.midX}
+              y={lineY - arc.ry - 14}
+              font-size="12"
+              font-family="'Libre Baskerville', Georgia, serif"
+              text-anchor="middle"
+              font-weight="bold"
+            >
+              {j.label}
+            </text>
+          )}
+          <circle class="nl-jump-dot" cx={toX(j.from)} cy={lineY} r="5" stroke-width="1.5" />
+          <circle class="nl-jump-dot" cx={toX(j.to)} cy={lineY} r="5" stroke-width="1.5" />
+        </g>
+      );
+    })}
+  </svg>
+</figure>
+
+<style>
+  .number-line {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 1.5rem 0;
+  }
+  .nl-title {
+    font-size: 0.95rem;
+    color: var(--sl-color-gray-3);
+    margin-bottom: 0.5rem;
+    font-style: italic;
+  }
+  .number-line svg {
+    max-width: 100%;
+    height: auto;
+  }
+
+  /* ---- Dark mode (default) ---- */
+  .nl-axis { stroke: #888; }
+  .nl-arrow { fill: #888; }
+  .nl-tick { stroke: #888; }
+  .nl-tick-zero { stroke: #ddd; }
+  .nl-label { fill: #aaa; }
+  .nl-label-zero { fill: #fff; }
+  .nl-dot { fill: #f0c674; stroke: #fff; }
+  .nl-dot-label { fill: #f0c674; }
+  .nl-jump { stroke: #58a6ff; }
+  .nl-jump-head { fill: #58a6ff; }
+  .nl-jump-label { fill: #58a6ff; }
+  .nl-jump-dot { fill: #58a6ff; stroke: #fff; }
+
+  /* ---- Light mode ---- */
+  :global([data-theme="light"]) .nl-axis { stroke: #333; }
+  :global([data-theme="light"]) .nl-arrow { fill: #333; }
+  :global([data-theme="light"]) .nl-tick { stroke: #555; }
+  :global([data-theme="light"]) .nl-tick-zero { stroke: #111; }
+  :global([data-theme="light"]) .nl-label { fill: #333; }
+  :global([data-theme="light"]) .nl-label-zero { fill: #000; }
+  :global([data-theme="light"]) .nl-dot { fill: #0550ae; stroke: #fff; }
+  :global([data-theme="light"]) .nl-dot-label { fill: #0550ae; }
+  :global([data-theme="light"]) .nl-jump { stroke: #0969da; }
+  :global([data-theme="light"]) .nl-jump-head { fill: #0969da; }
+  :global([data-theme="light"]) .nl-jump-label { fill: #0969da; }
+  :global([data-theme="light"]) .nl-jump-dot { fill: #0969da; stroke: #fff; }
+</style>

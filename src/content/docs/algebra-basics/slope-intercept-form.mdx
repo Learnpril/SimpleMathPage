@@ -1,7 +1,121 @@
 ---
 title: Slope-Intercept Form (y = mx + b)
+description: Learn how to use, graph, and interpret equations in slope-intercept form
 sidebar:
   order: 6
 ---
 
-Content coming soon.
+import CoordinateGraph from "../../../components/CoordinateGraph.astro";
+
+## What You'll Learn
+
+In this lesson you'll learn what slope-intercept form is, how to graph lines from y = mx + b, and how to interpret slope and y-intercept in real-world situations.
+
+## The Concept
+
+**Slope-intercept form** is the equation y = mx + b, where:
+
+- m = slope (rate of change: how much y changes per unit of x)
+- b = y-intercept (the value of y when x = 0; where the line crosses the y-axis)
+
+This form makes graphing easy: start at y-intercept b, then use slope m to move up/down and right/left.
+
+Steps to graph y = mx + b:
+
+1. Plot the y-intercept point (0, b)
+2. From that point, use slope m = rise/run
+   - Positive m: up and right
+   - Negative m: down and right
+   - Fraction m = p/q: up p, right q (or down if negative)
+3. Plot a second point, then draw a straight line through both
+
+Example: y = 2x + 3
+
+- y-intercept b = 3 → point (0, 3)
+- Slope m = 2 = 2/1 → from (0, 3): up 2, right 1 → point (1, 5)
+- Draw line through (0, 3) and (1, 5)
+
+<CoordinateGraph
+  xMin={-2}
+  xMax={5}
+  yMin={-1}
+  yMax={9}
+  lines={[{ slope: 2, intercept: 3, label: "y = 2x + 3" }]}
+  points={[
+    { x: 0, y: 3, label: "(0, 3)" },
+    { x: 1, y: 5, label: "(1, 5)" },
+  ]}
+  title="y = 2x + 3 — start at b = 3, slope m = 2"
+/>
+
+## Worked Example
+
+Graph y = −3x + 6.
+
+1. y-intercept b = 6 → point (0, 6)
+2. Slope m = −3 = −3/1 → from (0, 6): down 3, right 1 → point (1, 3)
+3. Draw line through (0, 6) and (1, 3) (continues down-right)
+
+Another: y = (1/2)x − 4
+
+1. y-intercept b = −4 → point (0, −4)
+2. Slope m = 1/2 → from (0, −4): up 1, right 2 → point (2, −3)
+3. Draw line through (0, −4) and (2, −3)
+
+## Real-World Application
+
+Slope-intercept form models linear relationships:
+
+- Pay: y = 18x + 50 (18 dollars per hour + 50-dollar bonus; y = total pay, x = hours)
+- Cost: y = 3.50x + 20 (3.50 dollars per gallon gas + 20-dollar delivery fee)
+- Savings: y = 0.05x + 200 (5% interest per year + 200 dollars initial; y = amount, x = years)
+- Distance: y = 65x (65 mph driving; y = miles, x = hours)
+
+Slope = rate of change (pay rate, cost per unit, interest rate)
+
+y-intercept = starting amount (bonus, fee, initial deposit)
+
+This form helps predict totals, compare plans, or plan budgets.
+
+:::note[You've Got This]
+Slope-intercept form is the easiest way to see a line's story: b is the starting point, m is the speed/direction of change. Start at (0, b), follow the slope (rise/run), draw the line. Practice with real rates (pay, gas, savings) — you'll quickly understand what the equation is telling you.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="algebra-basics-slope-intercept-form"
+  questions={[
+    {
+      id: "q1",
+      text: "In y = 4x + 7, what is the y-intercept?",
+      options: ["7", "4", "0", "11"],
+      correctIndex: 0,
+      explanation: "y-intercept b = 7 (when x = 0, y = 7).",
+    },
+    {
+      id: "q2",
+      text: "What is the slope of y = −2x + 5?",
+      options: ["−2", "5", "2", "0"],
+      correctIndex: 0,
+      explanation: "Slope m = −2 (y decreases by 2 for each 1 unit right).",
+    },
+    {
+      id: "q3",
+      text: "A job pays 15 dollars per hour plus 30 dollars bonus. Which equation?",
+      options: ["y = 15x + 30", "y = 30x + 15", "y = 15x − 30", "y = 30 + 15"],
+      correctIndex: 0,
+      explanation:
+        "Slope 15 dollars per hour, y-intercept 30 dollars bonus → y = 15x + 30.",
+    },
+    {
+      id: "q4",
+      text: "For y = (1/2)x − 4, what is the slope?",
+      options: ["1/2", "−4", "1/2", "2"],
+      correctIndex: 0,
+      explanation: "Slope m = 1/2 (rise 1 for run 2).",
+    },
+  ]}
+/>

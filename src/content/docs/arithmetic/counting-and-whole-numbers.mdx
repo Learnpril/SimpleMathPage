@@ -1,0 +1,141 @@
+---
+title: Counting and Whole Numbers
+description: Learn to count forward and backward and work with whole numbers from 0 to 100
+sidebar:
+  order: -2
+---
+
+import Quiz from "../../../components/Quiz.astro";
+import NumberLine from "../../../components/NumberLine.astro";
+
+## What You'll Learn
+
+In this lesson you'll practice counting whole numbers forward and backward and get comfortable reading and writing numbers from 0 to 100.
+
+## The Concept
+
+**Whole numbers** are the counting numbers: 0, 1, 2, 3, 4... (no fractions or negatives here).
+
+**Counting forward** (adding 1 each time): 0 → 1 → 2 → 3 → ...
+**Counting backward** (subtracting 1 each time): 10 → 9 → 8 → 7 → ...
+
+Skip-counting (counting by 2s, 5s, 10s) helps see patterns:
+
+- By 2s: 0, 2, 4, 6, 8, 10...
+- By 5s: 0, 5, 10, 15, 20...
+- By 10s: 0, 10, 20, 30...
+
+Here's what skip-counting by 5s looks like on a number line — each jump moves 5 spaces forward:
+
+<NumberLine
+  min={0}
+  max={25}
+  step={5}
+  jumps={[
+    { from: 0, to: 5, label: "+5" },
+    { from: 5, to: 10, label: "+5" },
+    { from: 10, to: 15, label: "+5" },
+    { from: 15, to: 20, label: "+5" },
+    { from: 20, to: 25, label: "+5" },
+  ]}
+  title="Skip-counting by 5s"
+/>
+
+And skip-counting by 10s — bigger jumps, same idea:
+
+<NumberLine
+  min={0}
+  max={50}
+  step={5}
+  jumps={[
+    { from: 0, to: 10, label: "+10" },
+    { from: 10, to: 20, label: "+10" },
+    { from: 20, to: 30, label: "+10" },
+    { from: 30, to: 40, label: "+10" },
+    { from: 40, to: 50, label: "+10" },
+  ]}
+  title="Skip-counting by 10s"
+/>
+
+Reading numbers:
+
+- 23 = twenty-three
+- 45 = forty-five
+- 100 = one hundred
+
+Writing numbers: Say it, then write it — "sixty-seven" = 67.
+
+## Worked Example
+
+Count forward by 5s to 50: 0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50.
+
+Count backward from 30 by 3s: 30, 27, 24, 21, 18, 15, 12, 9, 6, 3, 0.
+
+On a number line, counting backward means jumping left — here's the first step from 30 back to 27:
+
+<NumberLine
+  min={0}
+  max={30}
+  step={3}
+  jumps={[
+    { from: 30, to: 27, label: "−3" },
+    { from: 27, to: 24, label: "−3" },
+    { from: 24, to: 21, label: "−3" },
+    { from: 21, to: 18, label: "−3" },
+  ]}
+  title="Counting backward by 3s"
+/>
+
+Read and write: "eighty-nine" = 89
+"forty-two" = 42
+
+## Real-World Application
+
+Counting is used constantly:
+
+- Pages in a book or report (page 1 to page 100)
+- Money: counting coins or bills (quarters = 25 cents each)
+- Time: counting hours worked or minutes left
+- Shopping: counting items in your cart or people in line
+
+Skip-counting helps with patterns: money by 5s (nickels), 10s (dimes), or 100s (dollars).
+
+:::note[You've Got This]
+Counting is the foundation of all math — and you're already good at it from daily life. Say the numbers out loud, use your fingers if it helps, and practice forward and backward. Start small (0 to 20), then build up. You're starting right where you need to.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="arithmetic-getting-started-counting-whole"
+  questions={[
+    {
+      id: "q1",
+      text: "What number comes after 19 when counting forward?",
+      options: ["20", "18", "21", "10"],
+      correctIndex: 0,
+      explanation: "After 19 comes 20.",
+    },
+    {
+      id: "q2",
+      text: "Count backward from 12 by 1s. What is the third number?",
+      options: ["9", "11", "10", "8"],
+      correctIndex: 0,
+      explanation: "12 → 11 → 10 → 9 (third is 9).",
+    },
+    {
+      id: "q3",
+      text: "How many pages if a book has 45 pages?",
+      options: ["45 pages", "50 pages", "40 pages", "46 pages"],
+      correctIndex: 0,
+      explanation: "The book has exactly 45 pages.",
+    },
+    {
+      id: "q4",
+      text: "Skip-count by 10s to 50. Which number is missing: 0, 10, 20, __, 40, 50?",
+      options: ["30", "25", "35", "15"],
+      correctIndex: 0,
+      explanation: "0, 10, 20, 30, 40, 50 — 30 is missing.",
+    },
+  ]}
+/>

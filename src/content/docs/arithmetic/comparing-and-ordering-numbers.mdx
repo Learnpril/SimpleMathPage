@@ -1,0 +1,109 @@
+---
+title: Comparing & Ordering Numbers
+description: Learn how to compare numbers using greater than, less than, and equal signs and put them in order
+sidebar:
+  order: 0
+---
+
+import Quiz from "../../../components/Quiz.astro";
+
+## What You'll Learn
+
+In this lesson you'll learn how to compare two or more numbers and put them in order from least to greatest or greatest to least.
+
+## The Concept
+
+**Comparing numbers** uses symbols:
+
+- &gt; means greater than (bigger)
+- &lt; means less than (smaller)
+- = means equal
+
+To compare: Line up digits by place value (right-align), compare from left to right.
+
+Example: 456 and 432
+
+- Hundreds: 4 = 4
+- Tens: 5 &gt; 3 → 456 &gt; 432
+
+If same up to a point: 567 and 569 → 567 &lt; 569 (7 &lt; 9)
+
+**Ordering**: List from smallest to largest (least to greatest) or largest to smallest.
+
+Example: Order 23, 18, 45, 9
+Least to greatest: 9, 18, 23, 45
+
+## Worked Example
+
+Compare 378 and 392.
+
+1. Hundreds: 3 = 3
+2. Tens: 7 &lt; 9 → 378 &lt; 392
+
+Order 512, 489, 500, 475:
+
+1. Hundreds: 4 (489, 475), 5 (512, 500)
+2. Among 5xx: 500 &lt; 512
+3. Among 4xx: 475 &lt; 489
+4. Least to greatest: 475, 489, 500, 512
+
+## Real-World Application
+
+Comparing and ordering numbers helps daily:
+
+- Prices: Which is cheaper — 12.99 dollars or 13.49 dollars? (12.99 &lt; 13.49)
+- Temperatures: Today 68°F, yesterday 72°F — yesterday was warmer (72 &gt; 68)
+- Scores: Your test 85, friend's 92 — friend scored higher (92 &gt; 85)
+- Addresses: House numbers in order on a street (124, 126, 128...)
+
+This skill helps you choose, compare, or organize things quickly.
+
+:::note[You've Got This]
+Comparing numbers is like lining up people by height — look at the biggest place first. If tied, look at the next place. Practice with prices, temperatures, or scores you see every day — you'll spot which is bigger or smaller instantly.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="arithmetic-getting-started-comparing-ordering"
+  questions={[
+    {
+      id: "q1",
+      text: "Which is larger: 345 or 354?",
+      options: ["354", "345", "they are equal", "cannot tell"],
+      correctIndex: 0,
+      explanation: "Hundreds same (3=3), tens 5 > 4 → 354 > 345.",
+    },
+    {
+      id: "q2",
+      text: "Which symbol goes in 67 __ 72?",
+      options: ["<", ">", "=", "≤"],
+      correctIndex: 0,
+      explanation: "67 < 72 (67 is smaller).",
+    },
+    {
+      id: "q3",
+      text: "Order from least to greatest: 19, 12, 25, 8.",
+      options: [
+        "8, 12, 19, 25",
+        "25, 19, 12, 8",
+        "12, 8, 19, 25",
+        "8, 19, 12, 25",
+      ],
+      correctIndex: 0,
+      explanation: "8 < 12 < 19 < 25.",
+    },
+    {
+      id: "q4",
+      text: "A temperature is 45°F today, 38°F yesterday. Which was warmer?",
+      options: [
+        "Today (45°F)",
+        "Yesterday (38°F)",
+        "they were equal",
+        "cannot tell",
+      ],
+      correctIndex: 0,
+      explanation: "45 > 38 — today is warmer.",
+    },
+  ]}
+/>

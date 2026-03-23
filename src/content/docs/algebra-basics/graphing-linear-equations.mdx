@@ -1,7 +1,142 @@
 ---
 title: Graphing Linear Equations
+description: Learn multiple methods to graph linear equations from any form
 sidebar:
-  order: 8
+  order: 9
 ---
 
-Content coming soon.
+import CoordinateGraph from "../../../components/CoordinateGraph.astro";
+
+## What You'll Learn
+
+In this lesson you'll learn three practical ways to graph linear equations: using a table of values, finding intercepts, and using slope-intercept form.
+
+## The Concept
+
+Graphing a linear equation means plotting all points that satisfy y = mx + b (or any form) to show the straight line.
+
+Three common methods:
+
+1. **Table of values** (most reliable for any form):
+   Pick several x-values, solve for y, plot the (x, y) points, connect with a straight line.
+
+2. **Intercepts method** (great for standard form Ax + By = C):
+   - x-intercept: set y = 0, solve for x
+   - y-intercept: set x = 0, solve for y
+
+   Plot (x-intercept, 0) and (0, y-intercept), draw line through them.
+
+3. **Slope-intercept method** (fastest if in y = mx + b):
+   Start at y-intercept (0, b), use slope m (rise/run) to find another point, draw line.
+
+All methods give the same line — choose based on the equation form.
+
+## Worked Example
+
+Graph 2x + 3y = 12 (standard form).
+
+**Intercepts method**:
+
+- x-intercept: 2x + 3(0) = 12 → 2x = 12 → x = 6 → point (6, 0)
+- y-intercept: 2(0) + 3y = 12 → 3y = 12 → y = 4 → point (0, 4)
+
+Plot (6, 0) and (0, 4), draw straight line.
+
+<CoordinateGraph
+  xMin={-1}
+  xMax={8}
+  yMin={-1}
+  yMax={6}
+  lines={[{ slope: -2 / 3, intercept: 4, label: "2x + 3y = 12" }]}
+  points={[
+    { x: 0, y: 4, label: "(0, 4)" },
+    { x: 6, y: 0, label: "(6, 0)" },
+  ]}
+  title="Intercepts method: x-int (6, 0) and y-int (0, 4)"
+/>
+
+**Table method** (verify): Pick x = 0, 3, 6:
+
+- x = 0: 2(0) + 3y = 12 → y = 4 → (0, 4)
+- x = 3: 2(3) + 3y = 12 → 6 + 3y = 12 → y = 2 → (3, 2)
+- x = 6: 2(6) + 3y = 12 → 12 + 3y = 12 → y = 0 → (6, 0)
+
+All three points fall on the same line — the table confirms the intercepts.
+
+**Slope-intercept method**: Convert first → 3y = −2x + 12 → y = (−2/3)x + 4
+
+- Start at (0, 4), slope = −2/3 → down 2, right 3 → (3, 2)
+- Draw line through (0, 4) and (3, 2)
+
+<CoordinateGraph
+  xMin={-1}
+  xMax={8}
+  yMin={-1}
+  yMax={6}
+  lines={[{ slope: -2 / 3, intercept: 4, label: "y = (−2/3)x + 4" }]}
+  points={[
+    { x: 0, y: 4, label: "(0, 4)" },
+    { x: 3, y: 2, label: "(3, 2)" },
+    { x: 6, y: 0, label: "(6, 0)" },
+  ]}
+  title="Slope-intercept method: start at b = 4, slope −2/3"
+/>
+
+## Real-World Application
+
+Graphing helps visualize relationships:
+
+- Budget: Graph your spending equation to see when you run out of money
+- Distance: Plot distance vs. time to compare speeds of two trips
+- Business: Graph revenue and cost lines to find the break-even point (where they cross)
+- Temperature: Plot temperature over time to see warming or cooling trends
+
+Being able to graph from any form means you can always visualize the relationship, no matter how the equation is given.
+
+:::note[You've Got This]
+Three methods, same line. Use intercepts for standard form (set x = 0, then y = 0), slope-intercept for y = mx + b (start at b, follow the slope), and a table when in doubt (pick easy x-values, solve for y). Pick whichever method matches the form you're given.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="algebra-basics-graphing-linear-equations"
+  questions={[
+    {
+      id: "q1",
+      text: "Find the x-intercept of 3x + 2y = 18.",
+      options: ["(6, 0)", "(0, 9)", "(9, 0)", "(0, 6)"],
+      correctIndex: 0,
+      explanation: "Set y = 0: 3x = 18 → x = 6 → (6, 0).",
+    },
+    {
+      id: "q2",
+      text: "Find the y-intercept of 3x + 2y = 18.",
+      options: ["(0, 9)", "(6, 0)", "(0, 6)", "(9, 0)"],
+      correctIndex: 0,
+      explanation: "Set x = 0: 2y = 18 → y = 9 → (0, 9).",
+    },
+    {
+      id: "q3",
+      text: "Which method is fastest for graphing y = −4x + 3?",
+      options: [
+        "Slope-intercept method",
+        "Intercepts method",
+        "Table of values",
+        "Guess and check",
+      ],
+      correctIndex: 0,
+      explanation:
+        "It's already in y = mx + b form — start at (0, 3), use slope −4.",
+    },
+    {
+      id: "q4",
+      text: "Using a table for y = 2x − 1, what is y when x = 3?",
+      options: ["5", "7", "1", "6"],
+      correctIndex: 0,
+      explanation: "y = 2(3) − 1 = 6 − 1 = 5.",
+    },
+  ]}
+/>

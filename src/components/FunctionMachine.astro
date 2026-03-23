@@ -1,0 +1,87 @@
+---
+interface Props {
+  input?: string;
+  rule?: string;
+  output?: string;
+  title?: string;
+}
+const {
+  input = "4",
+  rule = "2x + 3",
+  output = "11",
+  title = "Function machine",
+} = Astro.props;
+---
+
+<figure class="fn-machine" role="img" aria-label={title}>
+  {title && <figcaption class="fn-title">{title}</figcaption>}
+  <svg viewBox="0 0 420 130" width="420" height="130" xmlns="http://www.w3.org/2000/svg">
+
+    <defs>
+      <marker id="fn-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+        <path class="fn-arrow-head" d="M0,1 L7,4 L0,7 Z" />
+      </marker>
+    </defs>
+
+    {/* Input label */}
+    <text class="fn-input" x="30" y="70" text-anchor="middle" font-size="18">{input}</text>
+
+    {/* Arrow: input → machine */}
+    <line class="fn-pipe" x1="55" y1="65" x2="110" y2="65" marker-end="url(#fn-arrow)" />
+
+    {/* Machine box */}
+    <rect class="fn-box" x="115" y="30" width="170" height="70" rx="12" ry="12" />
+
+    {/* Rule text inside box */}
+    <text class="fn-rule" x="200" y="56" text-anchor="middle" font-size="14">f(x) =</text>
+    <text class="fn-rule" x="200" y="78" text-anchor="middle" font-size="18">{rule}</text>
+
+    {/* Arrow: machine → output */}
+    <line class="fn-pipe" x1="290" y1="65" x2="345" y2="65" marker-end="url(#fn-arrow)" />
+
+    {/* Output label */}
+    <text class="fn-output" x="380" y="70" text-anchor="middle" font-size="18">{output}</text>
+
+    {/* Small labels */}
+    <text class="fn-small" x="30" y="105" text-anchor="middle" font-size="11">input</text>
+    <text class="fn-small" x="380" y="105" text-anchor="middle" font-size="11">output</text>
+
+  </svg>
+</figure>
+
+<style>
+  .fn-machine {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 1.5rem 0;
+  }
+  .fn-title {
+    font-size: 0.95rem;
+    color: var(--sl-color-gray-3);
+    margin-bottom: 0.5rem;
+    font-style: italic;
+  }
+  .fn-machine svg {
+    max-width: 100%;
+    height: auto;
+  }
+
+  /* Dark mode (default) */
+  .fn-box { fill: none; stroke: #999; stroke-width: 2; }
+  .fn-pipe { stroke: #888; stroke-width: 2; }
+  .fn-arrow-head { fill: #888; }
+  .fn-input { fill: #58a6ff; font-family: 'Libre Baskerville', Georgia, serif; font-weight: bold; }
+  .fn-output { fill: #f0c674; font-family: 'Libre Baskerville', Georgia, serif; font-weight: bold; }
+  .fn-rule { fill: #ccc; font-family: 'Libre Baskerville', Georgia, serif; }
+  .fn-small { fill: #777; font-family: 'Libre Baskerville', Georgia, serif; }
+
+  /* Light mode */
+  :global([data-theme="light"]) .fn-box { stroke: #444; }
+  :global([data-theme="light"]) .fn-pipe { stroke: #555; }
+  :global([data-theme="light"]) .fn-arrow-head { fill: #555; }
+  :global([data-theme="light"]) .fn-input { fill: #0969da; }
+  :global([data-theme="light"]) .fn-output { fill: #b45309; }
+  :global([data-theme="light"]) .fn-rule { fill: #333; }
+  :global([data-theme="light"]) .fn-small { fill: #666; }
+</style>

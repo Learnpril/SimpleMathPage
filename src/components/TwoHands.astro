@@ -1,0 +1,107 @@
+---
+interface Props {
+  title?: string;
+}
+const { title = "Ten fingers — why we use base 10" } = Astro.props;
+
+/* Left hand path — thumb on right side, facing center.
+   The hand spans roughly x: 10–145, y: 28–185.
+   We'll mirror this for the right hand. */
+const handPath = [
+  /* pinky */
+  "M 10,140",
+  "L 10,100",
+  "Q 10,68  18,68",
+  "Q 26,68  26,100",
+  "L 26,108",
+  /* ring */
+  "L 26,80",
+  "Q 26,42  38,42",
+  "Q 50,42  50,80",
+  "L 50,100",
+  /* middle */
+  "L 50,70",
+  "Q 50,28  64,28",
+  "Q 78,28  78,70",
+  "L 78,100",
+  /* index */
+  "L 78,78",
+  "Q 78,40  92,40",
+  "Q 106,40 106,78",
+  "L 106,120",
+  /* thumb (smaller — shorter and tighter curve) */
+  "L 110,118",
+  "Q 116,104 126,98",
+  "Q 138,92  141,100",
+  "Q 144,108 134,118",
+  "L 118,138",
+  /* palm base */
+  "Q 120,180 65,185",
+  "Q 10,180  10,140",
+  "Z"
+].join(" ");
+
+/* The hand shape bounding box center-x for mirroring */
+const handW = 155;   /* approx width of hand path */
+const gap = 60;      /* space between the two hands */
+const svgW = handW * 2 + gap + 60;  /* total width with padding */
+const rightHandX = handW + gap + 30; /* translate-x for right hand group */
+---
+
+<figure class="two-hands" role="img" aria-label={title}>
+  {title && <figcaption class="hands-title">{title}</figcaption>}
+  <svg viewBox={`0 0 ${svgW} 230`} width={svgW} height="230" xmlns="http://www.w3.org/2000/svg">
+
+    {/* ===== LEFT HAND ===== */}
+    <g transform="translate(20, 20)">
+      <path class="hand-outline" d={handPath} />
+    </g>
+
+    {/* Left hand number labels: pinky=1, ring=2, middle=3, index=4, thumb=5 */}
+    <text class="hand-num" x="30"  y="48">1</text>
+    <text class="hand-num" x="54"  y="22">2</text>
+    <text class="hand-num" x="82"  y="12">3</text>
+    <text class="hand-num" x="112" y="22">4</text>
+    <text class="hand-num" x="152" y="72">5</text>
+
+    {/* ===== RIGHT HAND (mirrored left hand) ===== */}
+    <g transform={`translate(${rightHandX + handW}, 20) scale(-1, 1)`}>
+      <path class="hand-outline" d={handPath} />
+    </g>
+
+    {/* Right hand number labels: thumb=6, index=7, middle=8, ring=9, pinky=10 */}
+    <text class="hand-num" x={rightHandX + 22}  y="72">6</text>
+    <text class="hand-num" x={rightHandX + 63}  y="22">7</text>
+    <text class="hand-num" x={rightHandX + 91}  y="12">8</text>
+    <text class="hand-num" x={rightHandX + 117} y="22">9</text>
+    <text class="hand-num" x={rightHandX + 145} y="48">10</text>
+
+  </svg>
+</figure>
+
+<style>
+  .two-hands {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 1.5rem 0;
+  }
+  .hands-title {
+    font-size: 0.95rem;
+    color: var(--sl-color-gray-3);
+    margin-bottom: 0.5rem;
+    font-style: italic;
+  }
+  .two-hands svg {
+    max-width: 100%;
+    height: auto;
+  }
+
+  /* Dark mode (default) */
+  .hand-outline { fill: none; stroke: #999; stroke-width: 2.5; stroke-linejoin: round; }
+  .hand-num { fill: #58a6ff; font-family: 'Libre Baskerville', Georgia, serif; font-weight: bold; font-size: 16px; text-anchor: middle; }
+
+  /* Light mode */
+  :global([data-theme="light"]) .hand-outline { stroke: #444; }
+  :global([data-theme="light"]) .hand-num { fill: #0969da; }
+</style>

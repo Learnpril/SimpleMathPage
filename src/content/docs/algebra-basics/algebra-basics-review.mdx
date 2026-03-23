@@ -1,7 +1,171 @@
 ---
 title: Algebra Basics Review
+description: Review core concepts from multi-step equations through factoring with mixed practice problems
 sidebar:
-  order: 15
+  order: 16
 ---
 
-Content coming soon.
+## What You'll Learn
+
+In this review lesson you'll revisit the major ideas from Algebra Basics, practice mixed problems across topics, and apply them to real-life situations to solidify your skills before moving to the next section.
+
+## The Concept
+
+Algebra Basics builds on Pre-Algebra by focusing on linear relationships and early polynomials. Key skills include:
+
+- Solving multi-step equations and inequalities (including variables on both sides)
+- Rearranging literal equations and formulas
+- Understanding functions, slope, and linear forms (slope-intercept, point-slope, standard)
+- Graphing lines and solving systems (graphing, substitution, elimination)
+- Working with polynomials (adding, subtracting, basic factoring)
+
+Tips for mixed review:
+
+- Identify the main concept first (equation, system, factoring, etc.)
+- Show all steps — especially when solving systems or factoring
+- Check solutions by substituting back or estimating
+- Use real-world context to verify answers make sense
+
+## Worked Example
+
+**1. Solve the system:**
+
+$
+\begin{cases} 2x + 3y = 12 \\ x - y = 1 \end{cases}
+$
+
+Use substitution — solve the second equation for x:
+
+$x = y + 1$
+
+Substitute into the first equation:
+
+$
+\begin{aligned}
+2(y + 1) + 3y &= 12 \\[1em]
+2y + 2 + 3y &= 12 \\[1em]
+5y &= 10 \\[1em]
+y &= 2
+\end{aligned}
+$
+
+Back-substitute to find x:
+
+$x = 2 + 1 = 3$
+
+Solution: $(3, 2)$
+
+**2. Factor x² + 6x + 8**
+
+Find two numbers that multiply to 8 and add to 6: that's 4 and 2.
+
+$x^2 + 6x + 8 = (x + 4)(x + 2)$
+
+**Check** (FOIL): $(x + 4)(x + 2) = x^2 + 2x + 4x + 8 = x^2 + 6x + 8$ ✓
+
+**3. Solve 5x − 7 = 3(x + 2)**
+
+$
+\begin{aligned}
+5x - 7 &= 3x + 6 \\[1em]
+5x - 3x &= 6 + 7 \\[1em]
+2x &= 13 \\[1em]
+x &= \frac{13}{2} = 6.5
+\end{aligned}
+$
+
+**4. Evaluate f(x) = 2x² − 3x + 1 when x = −1**
+
+$
+\begin{aligned}
+f(-1) &= 2(-1)^2 - 3(-1) + 1 \\[1em]
+&= 2(1) + 3 + 1 \\[1em]
+&= 6
+\end{aligned}
+$
+
+## Real-World Application
+
+Algebra Basics skills solve practical problems:
+
+- **Budget comparison**: Two plans — Plan A: $45 + 0.12x$, Plan B: $60 + 0.08x$. When are they equal?
+
+  $
+  \begin{aligned}
+  45 + 0.12x &= 60 + 0.08x \\[1em]
+  0.04x &= 15 \\[1em]
+  x &= 375 \text{ units}
+  \end{aligned}
+  $
+
+- **Area modeling**: A room's area is $x^2 + 8x + 15$ square feet. Factor to find dimensions:
+
+  $x^2 + 8x + 15 = (x + 3)(x + 5)$
+
+  So the room is $(x + 3)$ by $(x + 5)$ feet.
+
+- **Work rates**: Job A pays 20 dollars/hour. Job B pays 15 dollars/hour plus a 100-dollar bonus. When does total pay match?
+
+  $
+  \begin{aligned}
+  20h &= 15h + 100 \\[1em]
+  5h &= 100 \\[1em]
+  h &= 20 \text{ hours}
+  \end{aligned}
+  $
+
+These tools help compare costs, model areas and profits, and plan work or budgets.
+
+:::note[You've Got This]
+You've covered a lot in Algebra Basics — from solving equations and systems to graphing lines and basic factoring. Review feels like a lot, but each skill connects to the next. Pick one problem type at a time, show your work, and check answers. You're now equipped to handle many real-life math situations — celebrate that progress.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="algebra-basics-review-mixed"
+  questions={[
+    {
+      id: "q1",
+      text: "Solve 4x + 5 = 2x + 17.",
+      options: ["x = 6", "x = 4", "x = 3", "x = 12"],
+      correctIndex: 0,
+      explanation:
+        "Subtract 2x: 2x + 5 = 17. Subtract 5: 2x = 12. Divide by 2: x = 6.",
+    },
+    {
+      id: "q2",
+      text: "Factor x² − 5x − 14.",
+      options: [
+        "(x − 7)(x + 2)",
+        "(x + 7)(x − 2)",
+        "(x − 14)(x + 1)",
+        "(x + 14)(x − 1)",
+      ],
+      correctIndex: 0,
+      explanation: "−7 and 2: (−7) × 2 = −14, −7 + 2 = −5 → (x − 7)(x + 2).",
+    },
+    {
+      id: "q3",
+      text: "A line has slope 3 and passes through (1, 4). Which point-slope equation?",
+      options: [
+        "y − 4 = 3(x − 1)",
+        "y − 1 = 3(x − 4)",
+        "y = 3x + 4",
+        "y − 4 = 3x − 1",
+      ],
+      correctIndex: 0,
+      explanation: "Point-slope form: y − y₁ = m(x − x₁) → y − 4 = 3(x − 1).",
+    },
+    {
+      id: "q4",
+      text: "Solve the system: y = x + 2 and 3x + y = 14.",
+      options: ["x = 3, y = 5", "x = 4, y = 6", "x = 2, y = 4", "x = 5, y = 7"],
+      correctIndex: 0,
+      explanation:
+        "Substitute y: 3x + (x + 2) = 14 → 4x + 2 = 14 → 4x = 12 → x = 3 → y = 5.",
+    },
+  ]}
+/>

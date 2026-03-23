@@ -1,7 +1,127 @@
 ---
-title: Linear Functions & Slope
+title: Linear Functions and Slope
+description: Learn what linear functions are and how to calculate and interpret slope
 sidebar:
   order: 5
 ---
 
-Content coming soon.
+import CoordinateGraph from "../../../components/CoordinateGraph.astro";
+
+## What You'll Learn
+
+In this lesson you'll learn what makes a function linear, how to find slope from two points or a graph, and what slope tells us about real-world rates of change.
+
+## The Concept
+
+A **linear function** is a function whose graph is a straight line. Its equation is usually written as y = mx + b, where:
+
+- m = **slope** (how steep the line is, rise over run)
+- b = **y-intercept** (where the line crosses the y-axis when x = 0)
+
+**Slope** (m) measures the rate of change: how much y changes for each unit change in x.
+
+Slope formula from two points (x₁, y₁) and (x₂, y₂):
+
+$$
+m = \frac{y_2 - y_1}{x_2 - x_1} = \frac{\text{rise}}{\text{run}}
+$$
+
+- Positive slope: line goes up left-to-right (increasing)
+- Negative slope: line goes down left-to-right (decreasing)
+- Zero slope: horizontal line (no change in y)
+- Undefined slope: vertical line (no change in x)
+
+Here's what a line with slope 2 looks like — it passes through (2, 5) and (6, 13), rising 8 units over a run of 4:
+
+<CoordinateGraph
+  xMin={-1}
+  xMax={8}
+  yMin={-1}
+  yMax={16}
+  lines={[{ slope: 2, intercept: 1, label: "m = 2" }]}
+  points={[
+    { x: 2, y: 5, label: "(2, 5)" },
+    { x: 6, y: 13, label: "(6, 13)" },
+  ]}
+  title="Slope = rise / run = 8 / 4 = 2"
+/>
+
+## Worked Example
+
+Find the slope between points (2, 5) and (6, 13).
+
+1. Rise = y₂ − y₁ = 13 − 5 = 8
+2. Run = x₂ − x₁ = 6 − 2 = 4
+3. m = 8 / 4 = 2
+
+Slope = 2 (for every 1 unit right, y increases by 2 units).
+
+Another: Points (4, 9) and (1, 15)
+
+1. Rise = 15 − 9 = 6
+2. Run = 1 − 4 = −3
+3. m = 6 / (−3) = −2
+
+Slope = −2 (decreasing: for every 1 unit right, y decreases by 2 units).
+
+## Real-World Application
+
+Slope represents rates in daily life:
+
+- Pay: 18 dollars per hour → slope = 18 (y = pay, x = hours)
+- Fuel efficiency: 28 miles per gallon → slope = 28 (y = miles, x = gallons)
+- Cost: 3.50 dollars per gallon → slope = 3.50 (y = cost, x = gallons)
+- Speed: 65 mph → slope = 65 (y = distance, x = time in hours)
+
+Positive slope = increasing (earning more, growing savings)
+
+Negative slope = decreasing (spending down balance, temperature dropping)
+
+Understanding slope helps predict trends, compare options, and plan.
+
+:::note[You've Got This]
+Slope is just "how much change for each step" — rise over run. Pick two points, subtract y's over subtract x's. Practice with real rates (pay, gas, speed) — you'll quickly see what slope tells you about the situation.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="algebra-basics-linear-functions-and-slope"
+  questions={[
+    {
+      id: "q1",
+      text: "What is the slope between points (3, 8) and (7, 20)?",
+      options: ["3", "4", "2", "12"],
+      correctIndex: 0,
+      explanation: "Rise = 20 − 8 = 12, Run = 7 − 3 = 4 → m = 12/4 = 3.",
+    },
+    {
+      id: "q2",
+      text: "A line has slope −5. What does that mean?",
+      options: [
+        "y decreases by 5 for every 1 unit right",
+        "y increases by 5 for every 1 unit right",
+        "y stays the same",
+        "x decreases by 5",
+      ],
+      correctIndex: 0,
+      explanation: "Negative slope means y decreases as x increases.",
+    },
+    {
+      id: "q3",
+      text: "You earn 22 dollars per hour. What is the slope of your pay function?",
+      options: ["22", "0", "−22", "1"],
+      correctIndex: 0,
+      explanation: "Pay = 22 × hours → slope = 22 dollars per hour.",
+    },
+    {
+      id: "q4",
+      text: "Points (1, 4) and (5, −8). What is the slope?",
+      options: ["−3", "−2", "3", "−12/4 = −3"],
+      correctIndex: 0,
+      explanation: "Rise = −8 − 4 = −12, Run = 5 − 1 = 4 → m = −12/4 = −3.",
+    },
+  ]}
+/>

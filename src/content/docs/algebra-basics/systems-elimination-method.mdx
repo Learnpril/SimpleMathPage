@@ -1,7 +1,157 @@
 ---
 title: "Systems of Equations: Elimination Method"
+description: Learn how to solve systems of linear equations using the elimination method by adding or subtracting equations
 sidebar:
-  order: 11
+  order: 12
 ---
 
-Content coming soon.
+import CoordinateGraph from "../../../components/CoordinateGraph.astro";
+
+## What You'll Learn
+
+In this lesson you'll learn the elimination method for solving systems of two linear equations, including how to make coefficients match and handle special cases.
+
+## The Concept
+
+The **elimination method** (also called addition method) solves a system by adding or subtracting the equations to eliminate one variable, leaving an equation with only one variable.
+
+Steps:
+
+1. Make the coefficients of one variable the same (or opposites) in both equations — multiply one or both equations by numbers if needed
+2. Add (if opposites) or subtract (if same) the equations to cancel that variable
+3. Solve the resulting one-variable equation
+4. Substitute the value back into either original equation to find the second variable
+5. Write the solution as (x, y) and check in both equations
+
+Example system:
+
+$
+\begin{cases} 3x + 2y = 11 \\ x - 2y = 1 \end{cases}
+$
+
+Add the equations (y terms cancel):
+
+4x = 12 → x = 3
+
+Substitute x = 3 into second: 3 − 2y = 1 → −2y = −2 → y = 1
+
+Solution: (3, 1)
+
+**Special cases**:
+
+- No solution: elimination gives contradiction (e.g., 0 = 5)
+- Infinite solutions: elimination gives identity (0 = 0)
+
+## Worked Example
+
+Solve:
+
+$
+\begin{cases} 4x + 3y = 25 \\ 2x - 3y = -1 \end{cases}
+$
+
+1. Add the equations (y terms cancel):
+
+   6x = 24 → x = 4
+
+2. Substitute x = 4 into first: 4(4) + 3y = 25 → 16 + 3y = 25 → 3y = 9 → y = 3
+
+Solution: (4, 3)
+
+<CoordinateGraph
+  xMin={-1}
+  xMax={8}
+  yMin={-2}
+  yMax={10}
+  lines={[
+    { slope: -4 / 3, intercept: 25 / 3, label: "4x + 3y = 25" },
+    { slope: 2 / 3, intercept: 1 / 3, label: "2x − 3y = −1" },
+  ]}
+  points={[{ x: 4, y: 3, label: "(4, 3)" }]}
+  title="Elimination confirms the intersection at (4, 3)"
+/>
+
+**Check**:
+
+- 4(4) + 3(3) = 16 + 9 = 25 ✓
+- 2(4) − 3(3) = 8 − 9 = −1 ✓
+
+Both true.
+
+Another (need to multiply):
+
+$
+\begin{cases} 5x + 2y = 18 \\ 3x + 4y = 26 \end{cases}
+$
+
+Multiply first by 2: 10x + 4y = 36
+
+Subtract second: 10x + 4y − (3x + 4y) = 36 − 26 → 7x = 10 → x = 10/7
+
+Substitute: 5(10/7) + 2y = 18 → 50/7 + 2y = 18 → 2y = 76/7 → y = 38/7
+
+Solution: (10/7, 38/7)
+
+## Real-World Application
+
+Elimination is efficient for systems with aligned coefficients:
+
+- Two investment plans: Plan A: 200 + 60m, Plan B: 300 + 40m (m = months). 200 + 60m = 300 + 40m → 20m = 100 → m = 5 months when equal
+- Two costs: Fixed 50 dollars + 8 dollars per item vs. 30 dollars + 12 dollars per item. 50 + 8i = 30 + 12i → 20 = 4i → i = 5 items when costs match
+- Mixture problems: 5 dollars per pound coffee + 9 dollars per pound to get 7 dollars per pound blend. Use elimination to find amounts.
+
+This method is fast for comparison, break-even, or blending calculations.
+
+:::note[You've Got This]
+Elimination is like "canceling out" one variable — make coefficients match, add/subtract, solve. If you need to multiply, pick numbers that make one variable disappear. Practice with real comparisons (plans, costs) — you'll find it's often quicker than graphing or substitution once you spot the best way.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="algebra-basics-systems-elimination-method"
+  questions={[
+    {
+      id: "q1",
+      text: "Solve using elimination: 2x + y = 10 and 3x − y = 5.",
+      options: ["x = 3, y = 4", "x = 5, y = 0", "x = 2, y = 6", "x = 4, y = 2"],
+      correctIndex: 0,
+      explanation:
+        "Add equations: 5x = 15 → x = 3. Substitute: 2(3) + y = 10 → y = 4.",
+    },
+    {
+      id: "q2",
+      text: "In 4x + 5y = 22 and 2x − 5y = 2, what happens when you add them?",
+      options: ["6x = 24", "2x = 20", "6x = 20", "4x = 24"],
+      correctIndex: 0,
+      explanation: "4x + 2x = 6x, 5y − 5y = 0, 22 + 2 = 24 → 6x = 24.",
+    },
+    {
+      id: "q3",
+      text: "Two plans: A: 60 + 8m, B: 90 + 5m. When equal?",
+      options: [
+        "m = 10 months",
+        "m = 6 months",
+        "m = 15 months",
+        "m = 30 months",
+      ],
+      correctIndex: 0,
+      explanation: "60 + 8m = 90 + 5m → 3m = 30 → m = 10.",
+    },
+    {
+      id: "q4",
+      text: "Solve 3x + 2y = 19 and 3x − 2y = 5 using elimination.",
+      options: [
+        "x = 4, y = 3.5",
+        "x = 8, y = −2.5",
+        "x = 3, y = 5",
+        "x = 6, y = 0.5",
+      ],
+      correctIndex: 0,
+      explanation:
+        "Add: 6x = 24 → x = 4. Substitute: 3(4) + 2y = 19 → 2y = 7 → y = 3.5.",
+    },
+  ]}
+/>

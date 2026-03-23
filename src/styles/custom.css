@@ -81,13 +81,9 @@ main h1:first-of-type {
   width: auto;
 }
 
-/* Tighten gap between logo and title text */
+/* Site title — tighten gap and match font */
 .site-title {
   gap: 0.25rem !important;
-}
-
-/* Site title */
-.site-title {
   font-family: "Libre Baskerville", Georgia, serif !important;
 }
 

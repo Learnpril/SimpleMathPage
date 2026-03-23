@@ -13,7 +13,6 @@
   },
   "dependencies": {
     "@astrojs/starlight": "0.37.7",
-    "@fontsource/tagesschrift": "^5.2.2",
     "astro": "^5.5.0",
     "rehype-katex": "^7.0.1",
     "remark-math": "^6.0.0",

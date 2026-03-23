@@ -1,7 +1,136 @@
 ---
-title: Point-Slope & Standard Form
+title: Point-Slope Form
+description: Learn how to write and use the point-slope form of a line equation
 sidebar:
   order: 7
 ---
 
-Content coming soon.
+import CoordinateGraph from "../../../components/CoordinateGraph.astro";
+
+## What You'll Learn
+
+In this lesson you'll learn the point-slope form of a linear equation, how to write it from a point and slope, and how to convert it to other forms.
+
+## The Concept
+
+**Point-slope form** is a way to write the equation of a line when you know one point on the line and the slope. The formula is:
+
+$
+y - y_1 = m(x - x_1)
+$
+
+Where:
+
+- m = slope
+- (x₁, y₁) = any point on the line
+
+This form is useful when you have a point and slope (common in word problems about rates or changes).
+
+To graph: start at the given point (x₁, y₁), use slope m to find another point, draw the line.
+
+To convert to slope-intercept (y = mx + b): distribute m, then add y₁ to both sides.
+
+Example: Point (3, 5), slope m = 2
+
+y − 5 = 2(x − 3)
+y − 5 = 2x − 6
+y = 2x − 1
+
+<CoordinateGraph
+  xMin={-1}
+  xMax={6}
+  yMin={-2}
+  yMax={10}
+  lines={[{ slope: 2, intercept: -1, label: "y = 2x − 1" }]}
+  points={[
+    { x: 3, y: 5, label: "(3, 5)" },
+    { x: 0, y: -1, label: "(0, −1)" },
+  ]}
+  title="Point-slope → slope-intercept: y = 2x − 1"
+/>
+
+## Worked Example
+
+Write the equation in point-slope form for a line with slope −3 passing through point (4, 1).
+
+1. Plug in m = −3, (x₁, y₁) = (4, 1):
+
+   y − 1 = −3(x − 4)
+
+2. Convert to slope-intercept (optional):
+
+   y − 1 = −3x + 12
+   y = −3x + 13
+
+Another: Slope 1/2, point (−2, 7)
+
+y − 7 = (1/2)(x − (−2))
+y − 7 = (1/2)(x + 2)
+
+## Real-World Application
+
+Point-slope form is great for situations where you know a starting point and a rate of change:
+
+- Savings: You start with 200 dollars and add 50 dollars per week. Slope = 50, point (0 weeks, 200 dollars) → y − 200 = 50(x − 0) → y = 50x + 200
+- Temperature drop: Starts at 72°F and drops 4°F per hour. Slope = −4, point (0 hours, 72) → y − 72 = −4(x − 0)
+- Cost increase: Item costs 25 dollars now and rises 2 dollars per year. Slope = 2, point (0 years, 25) → y − 25 = 2(x − 0)
+
+This form helps model growth, decay, or changes starting from a known value.
+
+:::note[You've Got This]
+Point-slope form is perfect when you know "where you start" (the point) and "how fast it's changing" (the slope). Plug them in, distribute if you need y = mx + b, and check by plugging in the original point. Practice with rates of change (pay raises, costs, temperature) — you'll find it useful for real predictions.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="algebra-basics-point-slope-form"
+  questions={[
+    {
+      id: "q1",
+      text: "What is the point-slope form for slope 3 and point (2, 5)?",
+      options: [
+        "y − 5 = 3(x − 2)",
+        "y = 3x + 5",
+        "y − 2 = 3(x − 5)",
+        "y − 5 = 3x − 2",
+      ],
+      correctIndex: 0,
+      explanation: "y − y₁ = m(x − x₁) → y − 5 = 3(x − 2).",
+    },
+    {
+      id: "q2",
+      text: "A line has slope −4 and passes through (1, 8). Which equation?",
+      options: [
+        "y − 8 = −4(x − 1)",
+        "y = −4x + 8",
+        "y − 1 = −4(x − 8)",
+        "y − 8 = −4x − 1",
+      ],
+      correctIndex: 0,
+      explanation: "y − 8 = −4(x − 1).",
+    },
+    {
+      id: "q3",
+      text: "You start with 100 dollars in savings and add 25 dollars per week. Which point-slope equation?",
+      options: [
+        "y − 100 = 25(x − 0)",
+        "y = 25x + 100",
+        "y − 0 = 25(x − 100)",
+        "y − 100 = 25x",
+      ],
+      correctIndex: 0,
+      explanation:
+        "Point (0 weeks, 100 dollars), slope 25 → y − 100 = 25(x − 0).",
+    },
+    {
+      id: "q4",
+      text: "Convert y − 3 = 2(x + 4) to slope-intercept form.",
+      options: ["y = 2x + 11", "y = 2x − 5", "y = 2x + 3", "y = 2x − 11"],
+      correctIndex: 0,
+      explanation: "y − 3 = 2x + 8 → y = 2x + 11.",
+    },
+  ]}
+/>

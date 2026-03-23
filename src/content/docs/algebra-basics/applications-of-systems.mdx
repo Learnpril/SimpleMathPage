@@ -1,7 +1,104 @@
 ---
 title: Applications of Systems (Word Problems)
+description: Learn how to translate real-world word problems into systems of linear equations and solve them
 sidebar:
-  order: 12
+  order: 13
 ---
 
-Content coming soon.
+## What You'll Learn
+
+In this lesson you'll learn how to set up and solve systems of linear equations from word problems, using any method (graphing, substitution, or elimination).
+
+## The Concept
+
+**Word problems** with systems involve two unknowns and two related conditions. Steps:
+
+1. Read carefully and identify the two unknowns (assign variables, e.g., let x = number of adults, y = number of children)
+2. Write two equations based on the relationships (usually one for totals/counts, one for values/rates)
+3. Solve the system using substitution, elimination, or graphing
+4. Interpret the solution in context
+5. Check: does the answer make sense (positive numbers, realistic amounts)?
+
+Common types:
+
+- Comparison/break-even (two plans, when equal)
+- Mixture (blending two items to get a target)
+- Number/age problems (adults + children = total, values = total)
+- Work/rate (two rates, combined work)
+
+## Worked Example
+
+A movie theater sells adult tickets for 12 dollars and child tickets for 8 dollars. One night, 220 tickets are sold for 2,360 dollars total. How many adult and child tickets were sold?
+
+1. Let a = adult tickets, c = child tickets
+2. Equation 1 (total tickets): a + c = 220
+3. Equation 2 (total revenue): 12a + 8c = 2360
+
+Solve using elimination: Multiply first by 8: 8a + 8c = 1760
+
+Subtract from second: (12a + 8c) − (8a + 8c) = 2360 − 1760 → 4a = 600 → a = 150
+
+Substitute: 150 + c = 220 → c = 70
+
+Solution: 150 adult tickets, 70 child tickets.
+
+**Check**: 150 + 70 = 220 tickets; 12(150) + 8(70) = 1800 + 560 = 2360 dollars ✓
+
+## Real-World Application
+
+Systems solve comparison and mixture problems:
+
+- Two jobs: Job A: 18 dollars/hour + 100-dollar bonus. Job B: 22 dollars/hour. When equal? 18h + 100 = 22h → 100 = 4h → h = 25 hours
+- Coffee blend: 5 dollars/pound + 9 dollars/pound to make 7 dollars/pound blend. Let x = pounds of 5-dollar coffee, y = pounds of 9-dollar coffee. x + y = total pounds, 5x + 9y = 7 × total → solve for ratio
+- Budget: Rent + food = 1200 dollars. Rent is twice food. r + f = 1200, r = 2f → 2f + f = 1200 → f = 400, r = 800
+
+These help compare options, find balance points, or mix solutions in budgeting, work, or purchases.
+
+:::note[You've Got This]
+Word problems are just stories with two unknowns and two facts. Pick clear variables, write two equations from the relationships, solve with your favorite method, and interpret the answer. Practice with real scenarios (tickets, jobs, budgets) — the setup gets easier every time.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="algebra-basics-applications-of-systems"
+  questions={[
+    {
+      id: "q1",
+      text: "A store sells pens for 2 dollars and notebooks for 5 dollars. You buy 8 items for 25 dollars. How many pens?",
+      options: ["5 pens", "3 pens", "6 pens", "4 pens"],
+      correctIndex: 0,
+      explanation:
+        "p + n = 8, 2p + 5n = 25. From first: p = 8 − n. Substitute: 2(8 − n) + 5n = 25 → 16 − 2n + 5n = 25 → 3n = 9 → n = 3 → p = 5.",
+    },
+    {
+      id: "q2",
+      text: "Job A pays 20 dollars/hour + 80-dollar bonus. Job B pays 24 dollars/hour. After how many hours is pay equal?",
+      options: ["20 hours", "10 hours", "40 hours", "5 hours"],
+      correctIndex: 0,
+      explanation: "20h + 80 = 24h → 80 = 4h → h = 20 hours.",
+    },
+    {
+      id: "q3",
+      text: "Two numbers add to 50 and differ by 14. What are they?",
+      options: ["32 and 18", "34 and 16", "30 and 20", "25 and 25"],
+      correctIndex: 0,
+      explanation: "x + y = 50, x − y = 14. Add: 2x = 64 → x = 32 → y = 18.",
+    },
+    {
+      id: "q4",
+      text: "A concert sells 300 tickets: floor 25 dollars, balcony 15 dollars, total 5,500 dollars. How many floor tickets?",
+      options: [
+        "100 floor tickets",
+        "200 floor tickets",
+        "150 floor tickets",
+        "250 floor tickets",
+      ],
+      correctIndex: 0,
+      explanation:
+        "f + b = 300, 25f + 15b = 5500. Multiply first by 15: 15f + 15b = 4500. Subtract: 10f = 1000 → f = 100.",
+    },
+  ]}
+/>

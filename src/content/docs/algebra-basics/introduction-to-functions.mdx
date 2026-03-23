@@ -1,7 +1,113 @@
 ---
 title: Introduction to Functions
+description: Learn what functions are, function notation, and how to evaluate them
 sidebar:
   order: 4
 ---
 
-Content coming soon.
+## What You'll Learn
+
+In this lesson you'll learn what a function is, how to use function notation like f(x), and how to evaluate functions by plugging in values for the input.
+
+## The Concept
+
+A **function** is a rule that takes an input (usually called x) and produces exactly one output.
+It's like a machine: put something in, get one thing out — no ambiguity.
+
+import FunctionMachine from "../../../components/FunctionMachine.astro";
+
+<FunctionMachine
+  input="4"
+  rule="2x + 3"
+  output="11"
+  title="f(x) = 2x + 3 — put in 4, get out 11"
+/>
+
+Examples of functions:
+
+- f(x) = 2x + 3 → double the input and add 3
+- g(x) = x² → square the input
+- h(x) = 50 + 15x → 50 dollars base plus 15 dollars per hour (x = hours)
+
+**Function notation** f(x) means "the output of function f when the input is x."
+
+To **evaluate** f(x): substitute the given value for x and compute.
+
+Example: f(x) = 2x + 3
+If x = 4 → f(4) = 2(4) + 3 = 8 + 3 = 11
+
+Functions can be written as equations (y = ...), tables, graphs, or words — all describe the same rule.
+
+## Worked Example
+
+Evaluate each:
+
+1. f(x) = 3x − 7 when x = 5
+
+   f(5) = 3(5) − 7 = 15 − 7 = 8
+
+2. g(x) = x² + 1 when x = −3
+
+   g(−3) = (−3)² + 1 = 9 + 1 = 10
+
+3. Cost function: c(h) = 25 + 12h (25 dollars base + 12 dollars per hour)
+
+   For h = 4 hours: c(4) = 25 + 12(4) = 25 + 48 = 73 dollars
+
+## Real-World Application
+
+Functions model relationships in daily life:
+
+- Pay: p(h) = 18h (18 dollars per hour × h hours worked)
+- Fuel cost: c(g) = 3.80g (3.80 dollars per gallon × g gallons)
+- Distance: d(t) = 55t (55 mph × t hours driving)
+- Tip calculator: t(b) = 0.15b (15% of bill b dollars)
+
+Functions help predict outcomes, compare options, and plan (e.g., "how much will I earn in 40 hours?").
+
+:::note[You've Got This]
+Functions are just rules that give one answer for each input — like a vending machine (put in money, get one snack). Start by substituting the number for x, follow the operations in order, and check your work. Practice with simple pay or cost formulas — you'll see how useful they are right away.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="algebra-basics-introduction-to-functions"
+  questions={[
+    {
+      id: "q1",
+      text: "For f(x) = 4x + 2, what is f(3)?",
+      options: ["14", "10", "12", "16"],
+      correctIndex: 0,
+      explanation: "4(3) + 2 = 12 + 2 = 14.",
+    },
+    {
+      id: "q2",
+      text: "If g(x) = x² - 5, what is g(4)?",
+      options: ["11", "21", "16 - 5 = 11", "16"],
+      correctIndex: 0,
+      explanation: "4² - 5 = 16 - 5 = 11.",
+    },
+    {
+      id: "q3",
+      text: "A job pays 20 dollars per hour. Write the function for pay p after h hours, then find p(5).",
+      options: [
+        "p(h) = 20h, p(5) = 100 dollars",
+        "p(h) = 20 + h, p(5) = 25 dollars",
+        "p(h) = 20h, p(5) = 80 dollars",
+        "p(h) = h + 20, p(5) = 25 dollars",
+      ],
+      correctIndex: 0,
+      explanation: "p(h) = 20h → p(5) = 20 × 5 = 100 dollars.",
+    },
+    {
+      id: "q4",
+      text: "For c(x) = 50 + 8x (50 dollars base + 8 dollars per item), what is c(4)?",
+      options: ["82 dollars", "58 dollars", "32 dollars", "50 dollars"],
+      correctIndex: 0,
+      explanation: "50 + 8(4) = 50 + 32 = 82 dollars.",
+    },
+  ]}
+/>

@@ -1,7 +1,140 @@
 ---
 title: "Systems of Equations: Graphing Method"
+description: Learn how to solve systems of linear equations by graphing both lines and finding the intersection point
 sidebar:
-  order: 9
+  order: 10
 ---
 
-Content coming soon.
+import CoordinateGraph from "../../../components/CoordinateGraph.astro";
+
+## What You'll Learn
+
+In this lesson you'll learn how to solve a system of two linear equations by graphing both lines on the same coordinate plane and identifying their intersection point as the solution.
+
+## The Concept
+
+The **graphing method** solves a system by plotting both equations as lines on the same graph. The solution is the point (x, y) where the lines intersect — it satisfies both equations at once.
+
+Steps:
+
+1. Graph the first equation (use slope-intercept, intercepts, or table method)
+2. Graph the second equation on the same axes
+3. Find the intersection point (read x and y coordinates)
+4. Write the solution as (x, y)
+5. Check by substituting into both original equations
+
+Types of solutions:
+
+- One intersection → one solution
+- Lines parallel (same slope, different y-intercept) → no solution
+- Lines coincide (same equation) → infinite solutions
+
+Graphing is visual and great for checking, but less precise for fractional answers.
+
+## Worked Example
+
+Solve the system by graphing:
+
+$
+\begin{cases} y = 2x - 3 \\ y = -x + 6 \end{cases}
+$
+
+1. First line: y = 2x − 3
+   y-intercept −3 at (0, −3), slope 2 → point (1, −1)
+
+2. Second line: y = −x + 6
+   y-intercept 6 at (0, 6), slope −1 → point (1, 5)
+
+3. Intersection: set 2x − 3 = −x + 6 → 3x = 9 → x = 3, y = 2(3) − 3 = 3
+
+Solution: (3, 3)
+
+<CoordinateGraph
+  xMin={-1}
+  xMax={8}
+  yMin={-4}
+  yMax={8}
+  lines={[
+    { slope: 2, intercept: -3, label: "y = 2x − 3" },
+    { slope: -1, intercept: 6, label: "y = −x + 6" },
+  ]}
+  points={[{ x: 3, y: 3, label: "(3, 3)" }]}
+  title="Intersection at (3, 3) — the solution to the system"
+/>
+
+**Check**:
+
+- First: 2(3) − 3 = 6 − 3 = 3 ✓
+- Second: −3 + 6 = 3 ✓
+
+Both true → solution (3, 3).
+
+## Real-World Application
+
+Graphing systems helps compare options visually:
+
+- Two phone plans: Plan A: y = 40 + 0.10x (per text), Plan B: y = 30 + 0.15x — graph both to find when costs are equal
+- Two savings accounts: A: y = 200 + 50m, B: y = 100 + 70m (m = months) — intersection finds when balances match
+- Supply and demand: price where quantity supplied = quantity demanded
+
+The graph shows trends (which plan is cheaper before/after intersection) and the exact meeting point.
+
+:::note[You've Got This]
+Graphing is the most visual way to see a system — where the lines meet is the answer. Use slope-intercept when possible (easy to plot), or intercepts/table. Estimate first, then find the exact point. Practice with real comparisons (plans, costs) — seeing the lines cross makes the math feel concrete and useful.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="algebra-basics-systems-graphing-method"
+  questions={[
+    {
+      id: "q1",
+      text: "When graphing a system, what does the intersection point represent?",
+      options: [
+        "The solution (x, y) that works for both equations",
+        "The slope of one line",
+        "The y-intercept of both",
+        "The distance between lines",
+      ],
+      correctIndex: 0,
+      explanation:
+        "The intersection is the point that satisfies both equations simultaneously.",
+    },
+    {
+      id: "q2",
+      text: "If two lines are parallel and distinct, how many solutions does the system have?",
+      options: [
+        "No solution",
+        "One solution",
+        "Infinite solutions",
+        "Two solutions",
+      ],
+      correctIndex: 0,
+      explanation: "Parallel lines never intersect → no common solution.",
+    },
+    {
+      id: "q3",
+      text: "A system has lines that coincide. How many solutions?",
+      options: [
+        "Infinite solutions",
+        "No solution",
+        "One solution",
+        "Two solutions",
+      ],
+      correctIndex: 0,
+      explanation:
+        "Same line → every point on the line satisfies both equations.",
+    },
+    {
+      id: "q4",
+      text: "You graph y = x + 1 and y = −x + 5. Where do they intersect?",
+      options: ["(2, 3)", "(3, 2)", "(1, 4)", "(0, 5)"],
+      correctIndex: 0,
+      explanation:
+        "Set equal: x + 1 = −x + 5 → 2x = 4 → x = 2, y = 2 + 1 = 3. Intersection at (2, 3).",
+    },
+  ]}
+/>
