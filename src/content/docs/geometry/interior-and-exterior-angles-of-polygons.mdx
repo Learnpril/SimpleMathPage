@@ -1,8 +1,108 @@
 ---
 title: Interior and Exterior Angles of Polygons
-description: Learn the formulas for interior and exterior angles of regular polygons
+description: Learn how to calculate the sum of interior angles and exterior angles of any polygon
 sidebar:
   order: 12
 ---
 
-Content coming soon.
+import PolygonAngles from "../../../components/PolygonAngles.astro";
+
+## What You'll Learn
+
+In this lesson you'll learn how to find the sum of interior angles and exterior angles for any polygon and how to use those formulas to solve for unknown angles.
+
+## The Concept
+
+A **polygon** is a closed shape with straight sides.
+
+**Interior Angles** (angles inside the polygon):
+
+The sum of the interior angles of any polygon with n sides is:
+
+$$
+(n - 2) \times 180°
+$$
+
+<PolygonAngles />
+
+- Triangle (n = 3): (3 − 2) × 180° = 180°
+- Quadrilateral (n = 4): (4 − 2) × 180° = 360°
+- Pentagon (n = 5): (5 − 2) × 180° = 540°
+- Hexagon (n = 6): (6 − 2) × 180° = 720°
+
+**Exterior Angles** (angles formed by one side and the extension of an adjacent side):
+
+The sum of the exterior angles of **any** polygon (one at each vertex) is always **360°**, no matter how many sides it has.
+
+Each exterior angle of a **regular** polygon (all sides and angles equal) is:
+
+$$
+\frac{360°}{n}
+$$
+
+## Worked Example
+
+1. What is the sum of the interior angles of a pentagon?
+
+   $(5 - 2) \times 180° = 3 \times 180° = 540°$
+
+2. A regular hexagon has 6 sides. What is the measure of each interior angle?
+
+   Sum = (6 − 2) × 180° = 720°. Each interior angle = 720° ÷ 6 = 120°.
+
+3. What is the measure of each exterior angle of a regular octagon (8 sides)?
+
+   $360° \div 8 = 45°$
+
+## Real-World Application
+
+These formulas are very useful in real life:
+
+- Architecture and construction: Calculating angles for roof designs, floor tiles, or polygonal rooms.
+- Landscaping and gardening: Planning flower beds or patios that are pentagons, hexagons, or octagons.
+- Manufacturing: Designing signs, tables, or decorative frames with multiple sides.
+- Navigation and maps: Understanding angles when working with polygonal boundaries or routes.
+
+For example, if you're building a hexagonal gazebo, knowing each interior angle is 120° helps you cut the wood accurately.
+
+:::note[You've Got This]
+For interior angles, remember the simple formula (n − 2) × 180°. For exterior angles, the total is always 360° — very handy for regular polygons. Practice with shapes you see around you (stop signs are octagons, some tables are hexagons). These formulas make working with polygons much easier.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="geometry-interior-and-exterior-angles-of-polygons"
+  questions={[
+    {
+      id: "q1",
+      text: "What is the sum of the interior angles of a quadrilateral?",
+      options: ["360°", "180°", "540°", "720°"],
+      correctIndex: 0,
+      explanation: "(4 − 2) × 180° = 360°.",
+    },
+    {
+      id: "q2",
+      text: "What is the sum of the interior angles of a hexagon?",
+      options: ["720°", "540°", "360°", "1080°"],
+      correctIndex: 0,
+      explanation: "(6 − 2) × 180° = 720°.",
+    },
+    {
+      id: "q3",
+      text: "The sum of the exterior angles of any polygon is always:",
+      options: ["360°", "180°", "n × 180°", "720°"],
+      correctIndex: 0,
+      explanation: "The exterior angles of any polygon add up to 360°.",
+    },
+    {
+      id: "q4",
+      text: "Each exterior angle of a regular pentagon measures:",
+      options: ["72°", "108°", "60°", "90°"],
+      correctIndex: 0,
+      explanation: "360° ÷ 5 = 72°.",
+    },
+  ]}
+/>

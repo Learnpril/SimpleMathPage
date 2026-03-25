@@ -1,8 +1,112 @@
 ---
 title: Parts of a Circle
-description: Learn about radius, diameter, circumference, and other parts of a circle
+description: Learn the basic parts of a circle including center, radius, diameter, chord, arc, and sector
 sidebar:
   order: 13
 ---
 
-Content coming soon.
+import CircleParts from "../../../components/CircleParts.astro";
+import RadiusDiameter from "../../../components/RadiusDiameter.astro";
+
+## What You'll Learn
+
+In this lesson you'll learn the names and definitions of the main parts of a circle and how they relate to one another.
+
+## The Concept
+
+A **circle** is a closed curve where every point on the curve is the same distance from a fixed point inside called the **center**.
+
+<CircleParts />
+
+Key parts:
+
+- **Center**: The fixed point in the middle of the circle (usually labeled O).
+- **Radius**: The distance from the center to any point on the circle. All radii in the same circle are equal.
+- **Diameter**: A straight line that passes through the center and connects two points on the circle. Diameter = 2 × radius.
+- **Chord**: Any straight line connecting two points on the circle (a diameter is a special chord that passes through the center).
+- **Arc**: A portion of the circle's circumference (the curved part between two points).
+- **Sector**: The region bounded by two radii and the arc between them (like a slice of pizza).
+- **Circumference**: The total distance around the circle.
+
+Important relationships:
+
+- Diameter = 2 × radius
+- Radius = diameter ÷ 2
+
+<RadiusDiameter />
+
+## Worked Example
+
+1. A circle has a radius of 7 cm. What is the diameter?
+
+   Diameter = 2 × 7 = 14 cm
+
+2. A circle has a diameter of 20 inches. What is the radius?
+
+   Radius = 20 ÷ 2 = 10 inches
+
+3. Name the longest chord in any circle.
+
+   The diameter (it passes through the center).
+
+## Real-World Application
+
+Circles and their parts appear everywhere:
+
+- Wheels, tires, and gears (radius and diameter determine size and fit).
+- Clocks and watches (the hands move along arcs).
+- Pizza or pies (each slice is a sector).
+- Round tables, plates, and manhole covers.
+- Navigation: Circles are used in maps for distance from a central point.
+- Construction: Arches, domes, and circular windows or pipes.
+
+Understanding these parts helps with measuring, designing, and working with anything round — from baking pans to car tires.
+
+:::note[You've Got This]
+A circle is very simple once you remember the center is the key point. Radius goes from center to edge, diameter goes straight across through the center (twice as long), and everything else builds from there. Look at round objects around you (plates, clocks, wheels) and identify the center, radius, and diameter — it makes the vocabulary stick quickly.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="geometry-parts-of-a-circle"
+  questions={[
+    {
+      id: "q1",
+      text: "What is the distance from the center of a circle to any point on the circle?",
+      options: ["Radius", "Diameter", "Chord", "Arc"],
+      correctIndex: 0,
+      explanation: "The radius is the distance from the center to the edge.",
+    },
+    {
+      id: "q2",
+      text: "How is the diameter related to the radius?",
+      options: [
+        "Diameter = 2 × radius",
+        "Diameter = radius ÷ 2",
+        "They are the same",
+        "Diameter is always shorter",
+      ],
+      correctIndex: 0,
+      explanation: "The diameter is twice the length of the radius.",
+    },
+    {
+      id: "q3",
+      text: "Which line segment is the longest chord in a circle?",
+      options: ["The diameter", "Any radius", "A short arc", "A sector"],
+      correctIndex: 0,
+      explanation:
+        "The diameter is the longest chord because it passes through the center.",
+    },
+    {
+      id: "q4",
+      text: "A slice of pizza is an example of a:",
+      options: ["Sector", "Chord", "Radius", "Arc only"],
+      correctIndex: 0,
+      explanation:
+        "A sector is the region bounded by two radii and the arc between them.",
+    },
+  ]}
+/>

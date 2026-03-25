@@ -1,8 +1,122 @@
 ---
 title: Graphing Geometric Figures
-description: Learn how to plot and analyze geometric shapes on the coordinate plane
+description: Learn how to graph points, lines, line segments, and basic shapes on the coordinate plane
 sidebar:
   order: 18
 ---
 
-Content coming soon.
+import CoordinateGraph from "../../../components/CoordinateGraph.astro";
+
+## What You'll Learn
+
+In this lesson you'll learn how to plot points and graph basic geometric figures (lines, line segments, rays, and simple polygons) on the coordinate plane.
+
+## The Concept
+
+The **coordinate plane** has an x-axis (horizontal) and y-axis (vertical) that cross at the origin (0, 0).
+
+To graph:
+
+- **Points**: Move right/left for x, then up/down for y. Example: Point (3, 2) → right 3, up 2.
+- **Lines**: Plot two points and connect them with a straight line (extend with arrows if it's an infinite line).
+- **Line segments**: Plot the two endpoints and connect them (no arrows).
+- **Rays**: Plot the endpoint and another point, then draw a line with one arrow.
+- **Polygons**: Plot all vertices in order and connect them.
+
+Use graph paper or the coordinate grid to keep things accurate. Label points clearly.
+
+## Worked Example
+
+**1. Plot points A(−2, 1), B(3, 1), and C(1, 4). Connect them to form △ABC.**
+
+<CoordinateGraph
+  points={[
+    { x: -2, y: 1, label: "A(−2,1)" },
+    { x: 3, y: 1, label: "B(3,1)" },
+    { x: 1, y: 4, label: "C(1,4)" },
+  ]}
+  segments={[
+    { x1: -2, y1: 1, x2: 3, y2: 1, color: "#61afef" },
+    { x1: 3, y1: 1, x2: 1, y2: 4, color: "#61afef" },
+    { x1: 1, y1: 4, x2: -2, y2: 1, color: "#61afef" },
+  ]}
+  xMin={-4}
+  xMax={5}
+  yMin={-1}
+  yMax={6}
+/>
+
+This creates a triangle on the coordinate plane. You can see the base along y = 1 and the apex at C(1, 4).
+
+**2. Graph the line segment from (0, 0) to (5, 3).**
+
+Plot both points and draw the segment between them — no arrows, since it has two definite endpoints.
+
+**3. Graph the line through points (−1, −2) and (2, 4).**
+
+Slope = (4 − (−2)) / (2 − (−1)) = 6/3 = 2. Plot the two points and draw the line with arrows on both ends to show it extends infinitely.
+
+## Real-World Application
+
+Graphing geometric figures helps with:
+
+- Blueprints and floor plans (plotting walls and rooms on a grid).
+- Landscaping (mapping out garden beds or fences).
+- Navigation and GPS (plotting routes as line segments).
+- Design work (creating logos, patterns, or simple diagrams).
+- Construction (laying out foundations or tile patterns on a grid).
+
+For example, an architect might plot the corners of a rectangular room at (0, 0), (12, 0), (12, 8), and (0, 8) to visualize the space.
+
+:::note[You've Got This]
+Graphing is just "right/left then up/down." Start with points, then connect them for lines and shapes. Practice plotting a few simple figures on paper or in a drawing app. The more you do it, the more natural it feels — and it's a skill that shows up in many real jobs and hobbies.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="geometry-graphing-geometric-figures"
+  questions={[
+    {
+      id: "q1",
+      text: "To plot point (4, −2), you move:",
+      options: [
+        "4 right and 2 down",
+        "4 left and 2 up",
+        "2 right and 4 down",
+        "4 right and 2 up",
+      ],
+      correctIndex: 0,
+      explanation: "Positive x = right, negative y = down.",
+    },
+    {
+      id: "q2",
+      text: "Which figure would you graph by plotting two points and drawing a line with arrows on both ends?",
+      options: ["Infinite line", "Line segment", "Ray", "Triangle"],
+      correctIndex: 0,
+      explanation: "An infinite line has arrows on both ends.",
+    },
+    {
+      id: "q3",
+      text: "Points (0,0), (5,0), and (0,3) form what shape when connected?",
+      options: ["Right triangle", "Square", "Line segment", "Parallelogram"],
+      correctIndex: 0,
+      explanation: "It forms a right triangle with the right angle at (0,0).",
+    },
+    {
+      id: "q4",
+      text: "A ray starts at (−1, 2) and goes through (3, 2). How would you graph it?",
+      options: [
+        "Plot (−1,2), draw line right with one arrow",
+        "Plot both points with arrows on both ends",
+        "Plot only one point",
+        "Draw a curved line",
+      ],
+      correctIndex: 0,
+      explanation:
+        "Start at the endpoint and draw with one arrow in the direction of the second point.",
+    },
+  ]}
+/>

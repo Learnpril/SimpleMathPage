@@ -1,0 +1,69 @@
+---
+// AreaFormulas.astro — 2×2 grid, bigger shapes, more spacing, larger formulas
+// Row 1: Rectangle (left x=125), Parallelogram (right x=375). Shapes y=55–145.
+// Row 2: Triangle (left x=125), Trapezoid (right x=375). Shapes y=250–340.
+// Titles at y=20 (row1) and y=215 (row2). Formulas at y=178 (row1) and y=375 (row2).
+---
+
+<div class="diagram-container" style="text-align:center; margin: 1.5rem 0;">
+  <svg viewBox="0 0 500 395" width="500" height="395" role="img" aria-label="Four shapes with area formulas: rectangle, parallelogram, triangle, trapezoid" style="max-width:100%; height:auto;">
+
+    <!-- ROW 1 -->
+
+    <!-- RECTANGLE (left, centered at x=125) -->
+    <text x="125" y="20" font-size="15" font-weight="bold" fill="var(--af-label, currentColor)" text-anchor="middle">Rectangle</text>
+    <rect x="45" y="48" width="160" height="90" fill="none" stroke="var(--af1, #61afef)" stroke-width="2" />
+    <text x="125" y="155" font-size="13" fill="var(--af-dim, #888)" text-anchor="middle">l</text>
+    <text x="28" y="98" font-size="13" fill="var(--af-dim, #888)" text-anchor="middle">w</text>
+    <text x="125" y="178" font-size="16" font-weight="bold" fill="var(--af-dim, #888)" text-anchor="middle">A = l × w</text>
+
+    <!-- PARALLELOGRAM (right, centered at x=375) -->
+    <text x="375" y="20" font-size="15" font-weight="bold" fill="var(--af-label, currentColor)" text-anchor="middle">Parallelogram</text>
+    <polygon points="325,48 480,48 460,138 305,138" fill="none" stroke="var(--af2, #98c379)" stroke-width="2" stroke-linejoin="round" />
+    <line x1="340" y1="48" x2="340" y2="138" stroke="var(--af-ht, #e5c07b)" stroke-width="1.5" stroke-dasharray="5,3" />
+    <text x="330" y="98" font-size="13" fill="var(--af-ht, #e5c07b)" text-anchor="end">h</text>
+    <text x="383" y="155" font-size="13" fill="var(--af-dim, #888)" text-anchor="middle">b</text>
+    <text x="375" y="178" font-size="16" font-weight="bold" fill="var(--af-dim, #888)" text-anchor="middle">A = b × h</text>
+
+    <!-- ROW 2 -->
+
+    <!-- TRIANGLE (left, centered at x=125) -->
+    <text x="125" y="215" font-size="15" font-weight="bold" fill="var(--af-label, currentColor)" text-anchor="middle">Triangle</text>
+    <polygon points="120,240 45,335 195,335" fill="none" stroke="var(--af3, #e06c75)" stroke-width="2" stroke-linejoin="round" />
+    <line x1="120" y1="240" x2="120" y2="335" stroke="var(--af-ht, #e5c07b)" stroke-width="1.5" stroke-dasharray="5,3" />
+    <text x="110" y="293" font-size="13" fill="var(--af-ht, #e5c07b)" text-anchor="end">h</text>
+    <text x="120" y="352" font-size="13" fill="var(--af-dim, #888)" text-anchor="middle">b</text>
+    <text x="125" y="378" font-size="16" font-weight="bold" fill="var(--af-dim, #888)" text-anchor="middle">A = ½ × b × h</text>
+
+    <!-- TRAPEZOID (right, centered at x=375) -->
+    <text x="375" y="215" font-size="15" font-weight="bold" fill="var(--af-label, currentColor)" text-anchor="middle">Trapezoid</text>
+    <polygon points="340,240 410,240 460,335 290,335" fill="none" stroke="var(--af4, #c678dd)" stroke-width="2" stroke-linejoin="round" />
+    <line x1="350" y1="240" x2="350" y2="335" stroke="var(--af-ht, #e5c07b)" stroke-width="1.5" stroke-dasharray="5,3" />
+    <text x="340" y="293" font-size="13" fill="var(--af-ht, #e5c07b)" text-anchor="end">h</text>
+    <text x="375" y="234" font-size="12" fill="var(--af-dim, #888)" text-anchor="middle">b₁</text>
+    <text x="375" y="352" font-size="12" fill="var(--af-dim, #888)" text-anchor="middle">b₂</text>
+    <text x="375" y="378" font-size="16" font-weight="bold" fill="var(--af-dim, #888)" text-anchor="middle">A = ½(b₁ + b₂) × h</text>
+
+  </svg>
+</div>
+
+<style>
+  :root {
+    --af1: #61afef;
+    --af2: #98c379;
+    --af3: #e06c75;
+    --af4: #c678dd;
+    --af-ht: #e5c07b;
+    --af-label: var(--sl-color-white, #e0e0e0);
+    --af-dim: #888;
+  }
+  :root[data-theme="light"] {
+    --af1: #2980b9;
+    --af2: #27ae60;
+    --af3: #c0392b;
+    --af4: #8e44ad;
+    --af-ht: #d4a017;
+    --af-label: #1a1a1a;
+    --af-dim: #666;
+  }
+</style>

@@ -1,8 +1,99 @@
 ---
 title: Perimeter and Area of Polygons
-description: Learn how to calculate the perimeter and area of common polygons
+description: Learn how to calculate the perimeter and area of common polygons including triangles, rectangles, parallelograms, and trapezoids
 sidebar:
   order: 11
 ---
 
-Content coming soon.
+import AreaFormulas from "../../../components/AreaFormulas.astro";
+import GardenDiagram from "../../../components/GardenDiagram.astro";
+
+## What You'll Learn
+
+In this lesson you'll learn how to calculate the perimeter and area of basic polygons and understand when to use each formula.
+
+## The Concept
+
+**Perimeter** is the total distance around the outside of a polygon. It is found by adding the lengths of all sides.
+
+**Area** is the amount of space inside the polygon. Different polygons have different area formulas.
+
+<AreaFormulas />
+
+Common formulas:
+
+- **Rectangle**: Perimeter = 2(length + width). Area = length × width.
+- **Parallelogram**: Perimeter = 2(base + side). Area = base × height (height is the perpendicular distance).
+- **Triangle**: Perimeter = side₁ + side₂ + side₃. Area = ½ × base × height.
+- **Trapezoid**: Perimeter = sum of all four sides. Area = ½ × (base₁ + base₂) × height.
+
+Always make sure the height is the perpendicular distance (not the slanted side).
+
+## Worked Example
+
+1. Rectangle with length 8 cm and width 5 cm:
+
+   Perimeter = 2(8 + 5) = 26 cm
+
+   Area = 8 × 5 = 40 cm²
+
+2. Triangle with base 10 cm and height 6 cm:
+
+   Area = ½ × 10 × 6 = 30 cm²
+
+3. Trapezoid with bases 7 cm and 13 cm, height 5 cm:
+
+   Area = ½ × (7 + 13) × 5 = ½ × 20 × 5 = 50 cm²
+
+## Real-World Application
+
+Perimeter and area are used constantly in everyday life:
+
+- Perimeter: Fencing a yard, framing a picture, measuring the border of a room for baseboard or crown molding.
+- Area: Buying paint or carpet (how much floor space), calculating lawn fertilizer, determining how much wallpaper or tile you need.
+
+For example: A rectangular garden is 12 feet by 8 feet. Perimeter tells you how much fencing you need: 2(12 + 8) = 40 feet. Area tells you how much soil or seed you need: 12 × 8 = 96 square feet.
+
+<GardenDiagram />
+
+:::note[You've Got This]
+Perimeter is just adding up all the sides. Area formulas are shortcuts — remember to use the perpendicular height for parallelograms and trapezoids. Practice with real objects around you (rooms, tables, gardens) — measuring and calculating perimeter and area becomes very useful and satisfying once you get the hang of it.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="geometry-perimeter-and-area-of-polygons"
+  questions={[
+    {
+      id: "q1",
+      text: "What is the perimeter of a rectangle with length 10 cm and width 6 cm?",
+      options: ["32 cm", "60 cm", "16 cm", "26 cm"],
+      correctIndex: 0,
+      explanation: "Perimeter = 2(length + width) = 2(10 + 6) = 32 cm.",
+    },
+    {
+      id: "q2",
+      text: "What is the area of a triangle with base 12 cm and height 8 cm?",
+      options: ["48 cm²", "96 cm²", "20 cm²", "80 cm²"],
+      correctIndex: 0,
+      explanation: "Area = ½ × base × height = ½ × 12 × 8 = 48 cm².",
+    },
+    {
+      id: "q3",
+      text: "A parallelogram has base 15 cm and height 7 cm. What is its area?",
+      options: ["105 cm²", "44 cm²", "210 cm²", "22 cm²"],
+      correctIndex: 0,
+      explanation: "Area = base × height = 15 × 7 = 105 cm².",
+    },
+    {
+      id: "q4",
+      text: "A trapezoid has bases of 8 cm and 14 cm with height 5 cm. What is its area?",
+      options: ["55 cm²", "110 cm²", "70 cm²", "44 cm²"],
+      correctIndex: 0,
+      explanation: "Area = ½ × (8 + 14) × 5 = ½ × 22 × 5 = 55 cm².",
+    },
+  ]}
+/>

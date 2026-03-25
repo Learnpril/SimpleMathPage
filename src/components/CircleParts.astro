@@ -1,0 +1,75 @@
+---
+// CircleParts.astro — Circle with labeled parts, bigger, labels not overlapping lines
+// Circle center at (210, 185), radius 120.
+---
+
+<div class="diagram-container" style="text-align:center; margin: 1.5rem 0;">
+  <svg viewBox="0 0 460 400" width="460" height="400" role="img" aria-label="Circle with labeled parts: center, radius, diameter, chord, arc, and sector" style="max-width:100%; height:auto;">
+
+    <!-- Sector fill (pizza slice) from 0° to 60° -->
+    <!-- Arc from (330,185) to (210+120*cos60, 185-120*sin60) = (270, 81.1) -->
+    <path d="M 210,185 L 330,185 A 120,120 0 0,0 270,81.1 Z" fill="var(--cp-sector, rgba(200,120,221,0.15))" stroke="none" />
+
+    <!-- Circle -->
+    <circle cx="210" cy="185" r="120" fill="none" stroke="var(--cp-circle, #61afef)" stroke-width="2" />
+
+    <!-- Center dot -->
+    <circle cx="210" cy="185" r="4.5" fill="var(--cp-center, #e5c07b)" />
+    <text x="195" y="180" font-size="15" font-weight="bold" fill="var(--cp-center, #e5c07b)" text-anchor="end">O</text>
+
+    <!-- Radius: center to right edge -->
+    <line x1="210" y1="185" x2="330" y2="185" stroke="var(--cp-radius, #98c379)" stroke-width="2.5" />
+    <text x="272" y="205" font-size="15" font-weight="bold" fill="var(--cp-radius, #98c379)" text-anchor="middle">radius</text>
+
+    <!-- Diameter: top to bottom through center (vertical) -->
+    <line x1="210" y1="65" x2="210" y2="305" stroke="var(--cp-diam, #e06c75)" stroke-width="2.5" stroke-dasharray="7,4" />
+    <text x="240" y="58" font-size="15" font-weight="bold" fill="var(--cp-diam, #e06c75)">diameter</text>
+
+    <!-- Chord: connects two points, not through center -->
+    <!-- From ~210° to ~330°: (210+120*cos210, 185-120*sin210) = (106.1, 245) to (313.9, 245) -->
+    <line x1="106.1" y1="245" x2="313.9" y2="245" stroke="var(--cp-chord, #56b6c2)" stroke-width="2.5" />
+    <!-- Label to the LEFT of the chord, clear of lines -->
+    <text x="88" y="240" font-size="15" font-weight="bold" fill="var(--cp-chord, #56b6c2)" text-anchor="end">chord</text>
+
+    <!-- Arc highlight: thick colored arc from ~300° to ~360° -->
+    <!-- 300°: (210+120*cos(-60), 185-120*sin(-60)) = (270, 288.9) -->
+    <!-- 360°: (330, 185) -->
+    <path d="M 270,288.9 A 120,120 0 0,1 330,185" fill="none" stroke="var(--cp-arc, #e5c07b)" stroke-width="5" />
+    <text x="345" y="250" font-size="15" font-weight="bold" fill="var(--cp-arc, #e5c07b)">arc</text>
+
+    <!-- Sector boundary (second radius of the slice) -->
+    <line x1="210" y1="185" x2="270" y2="81.1" stroke="var(--cp-sectorlbl, #c678dd)" stroke-width="1.5" stroke-dasharray="6,4" />
+    <!-- Label inside the sector region -->
+    <text x="272" y="148" font-size="15" font-weight="bold" fill="var(--cp-sectorlbl, #c678dd)" text-anchor="middle">sector</text>
+
+    <!-- Legend below -->
+    <text x="230" y="350" font-size="15" fill="var(--cp-sub, #888)" text-anchor="middle">Diameter = 2 × Radius</text>
+    <text x="230" y="372" font-size="15" fill="var(--cp-sub, #888)" text-anchor="middle">A chord through the center is the diameter</text>
+
+  </svg>
+</div>
+
+<style>
+  :root {
+    --cp-circle: #61afef;
+    --cp-center: #e5c07b;
+    --cp-radius: #98c379;
+    --cp-diam: #e06c75;
+    --cp-chord: #56b6c2;
+    --cp-arc: #e5c07b;
+    --cp-sector: rgba(200,120,221,0.15);
+    --cp-sectorlbl: #c678dd;
+    --cp-sub: #888;
+  }
+  :root[data-theme="light"] {
+    --cp-circle: #2980b9;
+    --cp-center: #d4a017;
+    --cp-radius: #27ae60;
+    --cp-diam: #c0392b;
+    --cp-chord: #16a085;
+    --cp-arc: #d4a017;
+    --cp-sector: rgba(142,68,173,0.1);
+    --cp-sectorlbl: #8e44ad;
+    --cp-sub: #666;
+  }
+</style>

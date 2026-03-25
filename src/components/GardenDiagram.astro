@@ -1,0 +1,44 @@
+---
+// GardenDiagram.astro — A 12ft × 8ft rectangular garden showing perimeter and area
+// Rectangle with green fill (garden), dimensions labeled outside, calculations below
+---
+
+<div class="diagram-container" style="text-align:center; margin: 1.5rem 0;">
+  <svg viewBox="0 0 360 210" width="360" height="210" role="img" aria-label="Rectangular garden 12 feet by 8 feet showing perimeter of 40 feet and area of 96 square feet" style="max-width:100%; height:auto;">
+
+    <!-- Garden title -->
+    <text x="180" y="18" font-size="14" font-weight="bold" fill="var(--gd-label, currentColor)" text-anchor="middle">Garden: 12 ft × 8 ft</text>
+
+    <!-- Garden rectangle with subtle green fill -->
+    <rect x="70" y="38" width="192" height="105" fill="var(--gd-fill, rgba(76,175,80,0.12))" stroke="var(--gd-border, #66bb6a)" stroke-width="2.5" rx="2" />
+
+    <!-- Dimension labels outside -->
+    <text x="166" y="160" font-size="14" font-weight="bold" fill="var(--gd-border, #66bb6a)" text-anchor="middle">12 ft</text>
+    <text x="48" y="95" font-size="14" font-weight="bold" fill="var(--gd-border, #66bb6a)" text-anchor="middle">8 ft</text>
+
+    <!-- Area label inside the rectangle -->
+    <text x="166" y="95" font-size="15" font-weight="bold" fill="var(--gd-area, #e5c07b)" text-anchor="middle">96 ft²</text>
+
+    <!-- Perimeter and area calculations below -->
+    <text x="180" y="185" font-size="13" fill="var(--gd-sub, #888)" text-anchor="middle">Perimeter = 2(12 + 8) = 40 ft</text>
+    <text x="180" y="203" font-size="13" fill="var(--gd-sub, #888)" text-anchor="middle">Area = 12 × 8 = 96 ft²</text>
+
+  </svg>
+</div>
+
+<style>
+  :root {
+    --gd-label: var(--sl-color-white, #e0e0e0);
+    --gd-fill: rgba(76,175,80,0.12);
+    --gd-border: #66bb6a;
+    --gd-area: #e5c07b;
+    --gd-sub: #888;
+  }
+  :root[data-theme="light"] {
+    --gd-label: #1a1a1a;
+    --gd-fill: rgba(76,175,80,0.1);
+    --gd-border: #388e3c;
+    --gd-area: #d4a017;
+    --gd-sub: #666;
+  }
+</style>

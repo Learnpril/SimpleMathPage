@@ -1,8 +1,219 @@
 ---
 title: Geometry Review
-description: Review core geometry concepts with mixed practice problems and real-world applications
+description: Review all major concepts from the Geometry section with mixed practice
 sidebar:
   order: 19
 ---
 
-Content coming soon.
+import PythagoreanDiagram from "../../../components/PythagoreanDiagram.astro";
+import CoordinateGraph from "../../../components/CoordinateGraph.astro";
+
+## What You'll Learn
+
+In this review lesson you'll revisit the key ideas from the entire Geometry section and practice mixed problems to prepare for the next topics.
+
+## The Concept
+
+Geometry builds from basic elements to shapes, measurements, and coordinate applications. Key topics include:
+
+- Points, lines, planes, segments, rays, and angles
+- Angle relationships (adjacent, vertical, complementary, supplementary, parallel lines and transversals)
+- Triangles (classification, Triangle Sum Theorem, Pythagorean Theorem)
+- Quadrilaterals and polygons (properties, interior/exterior angles)
+- Circles (parts, circumference, area, arcs, central angles)
+- Coordinate geometry (distance, midpoint, slope, graphing figures)
+
+Review tips:
+
+- Draw quick sketches whenever possible.
+- Use the Triangle Sum Theorem (180°) and polygon interior angle formula $(n - 2) \times 180°$.
+- Remember: slope = rise/run, distance uses the Pythagorean Theorem, midpoint averages coordinates.
+- Check units (linear vs. square) and whether answers make sense.
+
+## Worked Examples
+
+**1. Angles and Angle Relationships**
+
+Two lines intersect. One angle measures 72°. Find the vertical angle and the two adjacent angles.
+
+- Vertical angle = 72° (vertical angles are equal)
+- Adjacent angles = 180° − 72° = 108° each
+
+**2. Triangle Sum Theorem and Classification**
+
+In triangle ABC, angle A = 48° and angle B = 67°. Classify the triangle and find angle C.
+
+$\angle C = 180° - 48° - 67° = 65°$
+
+All angles are less than 90° → acute triangle.
+
+**3. Pythagorean Theorem**
+
+A right triangle has legs of 9 ft and 12 ft. Find the hypotenuse.
+
+$$
+9^2 + 12^2 = 81 + 144 = 225 \quad \rightarrow \quad c = \sqrt{225} = 15 \text{ ft}
+$$
+
+<PythagoreanDiagram />
+
+**4. Properties of Quadrilaterals**
+
+A quadrilateral has opposite sides parallel and equal, and all angles are 90°. Name it and list two key properties.
+
+- It is a rectangle (also a parallelogram).
+- Opposite sides equal, diagonals equal, four right angles.
+
+**5. Perimeter and Area**
+
+A rectangle is 14 m long and 8 m wide.
+
+Perimeter = 2(14 + 8) = 44 m. Area = 14 × 8 = 112 m².
+
+**6. Circles: Circumference and Area**
+
+A circle has diameter 20 cm (radius = 10 cm).
+
+$$
+\begin{aligned}
+C &= \pi \times 20 \approx 62.8 \text{ cm} \\[1em]
+A &= \pi \times 10^2 \approx 314 \text{ cm}^2
+\end{aligned}
+$$
+
+**7. Arcs and Central Angles**
+
+A central angle measures 75°.
+
+- Minor arc = 75° (equals the central angle)
+- Major arc = 360° − 75° = 285°
+
+**8. Distance and Midpoint**
+
+Find the distance and midpoint between A(−2, 1) and B(4, 5).
+
+<CoordinateGraph
+  points={[
+    { x: -2, y: 1, label: "A(−2,1)" },
+    { x: 4, y: 5, label: "B(4,5)" },
+    { x: 1, y: 3, label: "M(1,3)" },
+  ]}
+  segments={[{ x1: -2, y1: 1, x2: 4, y2: 5, color: "#e06c75" }]}
+  xMin={-4}
+  xMax={6}
+  yMin={-1}
+  yMax={7}
+/>
+
+$$
+d = \sqrt{(4-(-2))^2 + (5-1)^2} = \sqrt{36 + 16} = \sqrt{52} \approx 7.21
+$$
+
+$$
+M = \left(\frac{-2+4}{2},\; \frac{1+5}{2}\right) = (1,\; 3)
+$$
+
+**9. Slope**
+
+Find the slope of the line through (1, 3) and (5, 11).
+
+<CoordinateGraph
+  points={[
+    { x: 1, y: 3, label: "(1,3)" },
+    { x: 5, y: 11, label: "(5,11)" },
+  ]}
+  lines={[{ slope: 2, intercept: 1, color: "#98c379", label: "m = 2" }]}
+  xMin={-1}
+  xMax={7}
+  yMin={0}
+  yMax={13}
+/>
+
+$$
+m = \frac{11 - 3}{5 - 1} = \frac{8}{4} = 2
+$$
+
+Positive slope of 2 — the line rises 2 units for every 1 unit right.
+
+## Real-World Application
+
+Geometry skills help with everyday and career tasks:
+
+- Measuring rooms or gardens (area and perimeter).
+- Reading blueprints or maps (angles, slopes, distances).
+- Construction and DIY projects (Pythagorean Theorem for square corners, roof pitches).
+- Design and landscaping (circles, polygons, coordinate planning).
+- Navigation (distances, slopes, graphing routes).
+
+Example: Planning a rectangular patio 12 ft by 8 ft with a circular fountain of radius 3 ft. Perimeter of the patio tells you edging needed, area tells you paving material, and circle area tells you fountain size.
+
+:::note[You've Got This]
+You've covered a huge amount in Geometry — from basic points and angles all the way to circles and coordinate graphing. The best way to improve is to cover up the solutions and try each one yourself first. Draw pictures, label what you know, and solve step by step. These tools will serve you well in many real-life situations. Be proud of how far you've come.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="geometry-review"
+  questions={[
+    {
+      id: "q1",
+      text: "The sum of interior angles in any triangle is:",
+      options: ["180°", "360°", "90°", "270°"],
+      correctIndex: 0,
+      explanation:
+        "Triangle Sum Theorem: the interior angles always add to 180°.",
+    },
+    {
+      id: "q2",
+      text: "What is the slope between points (0,0) and (3,6)?",
+      options: ["2", "3", "6", "1/2"],
+      correctIndex: 0,
+      explanation: "(6-0)/(3-0) = 6/3 = 2.",
+    },
+    {
+      id: "q3",
+      text: "A circle has radius 6 cm. What is its area?",
+      options: ["36π cm²", "12π cm²", "72π cm²", "18π cm²"],
+      correctIndex: 0,
+      explanation: "Area = πr² = π × 36 = 36π cm².",
+    },
+    {
+      id: "q4",
+      text: "In a right triangle with legs 5 and 12, the hypotenuse is:",
+      options: ["13", "17", "10", "7"],
+      correctIndex: 0,
+      explanation: "5² + 12² = 25 + 144 = 169. √169 = 13.",
+    },
+    {
+      id: "q5",
+      text: "A circle has radius 8 cm. Its area is:",
+      options: ["64π cm²", "16π cm²", "128π cm²", "256π cm²"],
+      correctIndex: 0,
+      explanation: "Area = πr² = π × 64 = 64π cm².",
+    },
+    {
+      id: "q6",
+      text: "The slope between (0,0) and (3,9) is:",
+      options: ["3", "9", "1/3", "0"],
+      correctIndex: 0,
+      explanation: "(9-0)/(3-0) = 9/3 = 3.",
+    },
+    {
+      id: "q7",
+      text: "Sum of interior angles in a hexagon is:",
+      options: ["720°", "540°", "360°", "1080°"],
+      correctIndex: 0,
+      explanation: "(6-2) × 180° = 4 × 180° = 720°.",
+    },
+    {
+      id: "q8",
+      text: "Two angles are complementary. One is 38°. The other is:",
+      options: ["52°", "142°", "38°", "90°"],
+      correctIndex: 0,
+      explanation: "Complementary angles add to 90°: 90° - 38° = 52°.",
+    },
+  ]}
+/>

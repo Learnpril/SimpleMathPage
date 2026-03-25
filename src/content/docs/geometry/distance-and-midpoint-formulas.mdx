@@ -1,8 +1,126 @@
 ---
 title: Distance and Midpoint Formulas
-description: Learn how to find the distance between two points and the midpoint of a segment
+description: Learn how to use the distance formula and midpoint formula in the coordinate plane
 sidebar:
   order: 16
 ---
 
-Content coming soon.
+import CoordinateGraph from "../../../components/CoordinateGraph.astro";
+
+## What You'll Learn
+
+In this lesson you'll learn the distance formula and the midpoint formula and how to use them to solve problems on the coordinate plane.
+
+## The Concept
+
+When working with points on a coordinate plane, we often need to find:
+
+- The **distance** between two points
+- The **midpoint** (the point exactly halfway between them)
+
+**Distance Formula** (derived from the Pythagorean Theorem):
+
+$$
+d = \sqrt{(x_2 - x_1)^2 + (y_2 - y_1)^2}
+$$
+
+**Midpoint Formula**:
+
+$$
+M = \left( \frac{x_1 + x_2}{2}, \frac{y_1 + y_2}{2} \right)
+$$
+
+These formulas work for any two points (x₁, y₁) and (x₂, y₂).
+
+## Worked Example
+
+**1. Find the distance between points A(2, 3) and B(5, 7).**
+
+<CoordinateGraph
+  points={[
+    { x: 2, y: 3, label: "A(2,3)" },
+    { x: 5, y: 7, label: "B(5,7)" },
+  ]}
+  segments={[{ x1: 2, y1: 3, x2: 5, y2: 7, color: "#e06c75" }]}
+  xMin={0}
+  xMax={8}
+  yMin={0}
+  yMax={9}
+/>
+
+$$
+d = \sqrt{(5-2)^2 + (7-3)^2} = \sqrt{9 + 16} = \sqrt{25} = 5
+$$
+
+**2. Find the midpoint of points C(−4, 1) and D(6, 9).**
+
+$$
+M = \left( \frac{-4 + 6}{2}, \frac{1 + 9}{2} \right) = \left( \frac{2}{2}, \frac{10}{2} \right) = (1, 5)
+$$
+
+**3. Points E(0, 0) and F(8, 6). What is the distance?**
+
+$$
+d = \sqrt{(8-0)^2 + (6-0)^2} = \sqrt{64 + 36} = \sqrt{100} = 10
+$$
+
+## Real-World Application
+
+These formulas are very practical:
+
+- **Distance**: How far is it from your house to the store on a map? How long is a straight fence between two posts?
+- **Midpoint**: Where should you place a support beam in the middle of a bridge? Where is the center of a rectangular garden?
+
+Example: You and a friend live at coordinates (2, 3) and (8, 11) on a city grid. The midpoint tells you exactly where to meet:
+
+$$
+\left( \frac{2+8}{2}, \frac{3+11}{2} \right) = (5, 7)
+$$
+
+:::note[You've Got This]
+The distance formula is just the Pythagorean Theorem in disguise — it finds the straight-line distance. The midpoint formula averages the coordinates. Draw a quick sketch, plug in the numbers carefully, and always double-check your signs. These two tools will help you solve many real-world location and measurement problems.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="geometry-distance-and-midpoint-formulas"
+  questions={[
+    {
+      id: "q1",
+      text: "What is the distance between points (1, 2) and (4, 6)?",
+      options: ["5", "7", "√25", "√13"],
+      correctIndex: 0,
+      explanation: "√[(4−1)² + (6−2)²] = √[9 + 16] = √25 = 5.",
+    },
+    {
+      id: "q2",
+      text: "What is the midpoint of points (−3, 5) and (5, 9)?",
+      options: ["(1, 7)", "(4, 7)", "(1, 14)", "(2, 7)"],
+      correctIndex: 0,
+      explanation: "((−3+5)/2, (5+9)/2) = (1, 7).",
+    },
+    {
+      id: "q3",
+      text: "The distance formula comes from which theorem?",
+      options: [
+        "Pythagorean Theorem",
+        "Triangle Sum Theorem",
+        "Midpoint Theorem",
+        "Parallel Lines Theorem",
+      ],
+      correctIndex: 0,
+      explanation:
+        "The distance formula is derived from the Pythagorean Theorem.",
+    },
+    {
+      id: "q4",
+      text: "Points A(0,0) and B(0,10). What is the distance between them?",
+      options: ["10", "5", "0", "√100"],
+      correctIndex: 0,
+      explanation: "√[(0−0)² + (10−0)²] = √100 = 10.",
+    },
+  ]}
+/>

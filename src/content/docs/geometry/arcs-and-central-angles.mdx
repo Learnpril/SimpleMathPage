@@ -1,8 +1,95 @@
 ---
 title: Arcs and Central Angles
-description: Learn about arcs, central angles, and their relationships in circles
+description: Learn what arcs and central angles are and how to calculate their measures
 sidebar:
   order: 15
 ---
 
-Content coming soon.
+import ArcCentralAngle from "../../../components/ArcCentralAngle.astro";
+
+## What You'll Learn
+
+In this lesson you'll learn what arcs and central angles are, how they relate to each other, and how to find their measures in a circle.
+
+## The Concept
+
+A **central angle** is an angle whose vertex is at the center of the circle and whose sides pass through two points on the circle.
+
+An **arc** is the curved portion of the circle between those two points.
+
+Key relationships:
+
+- The measure of a **minor arc** (the shorter arc) is equal to the measure of its central angle.
+- The measure of a **major arc** (the longer arc) is 360° minus the measure of the minor arc.
+- The entire circle is 360°.
+
+<ArcCentralAngle />
+
+## Worked Example
+
+1. A central angle measures 90°. What is the measure of the minor arc?
+
+   90° (same as the central angle).
+
+2. A central angle is 120°. What is the measure of the major arc?
+
+   360° − 120° = 240°.
+
+3. The minor arc between points A and B measures 75°. What is the central angle?
+
+   75° (they are equal).
+
+## Real-World Application
+
+Arcs and central angles are used in many practical situations:
+
+- Cutting a pizza or cake into equal slices (each slice is defined by a central angle and its arc).
+- Designing circular gardens, fountains, or patios with specific curved sections.
+- Navigation: GPS and maps often describe turns as arcs with central angles.
+- Sports: The path of a thrown ball or the curve of a racetrack.
+- Architecture: Arched doorways, windows, or bridges use arc measurements.
+
+For example, if you want to divide a circular flower bed into 5 equal sections, each central angle would be 360° ÷ 5 = 72°, and each arc would also measure 72°.
+
+:::note[You've Got This]
+The measure of a minor arc is exactly the same as its central angle — that's the key shortcut. For major arcs, subtract from 360°. Look at round objects like clocks, pizzas, or wheels and imagine the central angles that create different arcs. It becomes very intuitive with a little practice.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="geometry-arcs-and-central-angles"
+  questions={[
+    {
+      id: "q1",
+      text: "A central angle measures 80°. What is the measure of the minor arc it creates?",
+      options: ["80°", "280°", "100°", "40°"],
+      correctIndex: 0,
+      explanation:
+        "The measure of a minor arc equals the measure of its central angle.",
+    },
+    {
+      id: "q2",
+      text: "If a minor arc measures 110°, what is the measure of its central angle?",
+      options: ["110°", "250°", "70°", "360°"],
+      correctIndex: 0,
+      explanation: "The central angle equals the measure of the minor arc.",
+    },
+    {
+      id: "q3",
+      text: "A central angle is 45°. What is the measure of the major arc?",
+      options: ["315°", "45°", "90°", "135°"],
+      correctIndex: 0,
+      explanation: "Major arc = 360° − 45° = 315°.",
+    },
+    {
+      id: "q4",
+      text: "The entire circle measures:",
+      options: ["360°", "180°", "90°", "270°"],
+      correctIndex: 0,
+      explanation: "A full circle is always 360°.",
+    },
+  ]}
+/>

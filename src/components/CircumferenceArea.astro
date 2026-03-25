@@ -1,0 +1,53 @@
+---
+// CircumferenceArea.astro — Two circles: left shows circumference (outline), right shows area (filled)
+// Both radius 70px. Left center (110,100), right center (350,100).
+---
+
+<div class="diagram-container" style="text-align:center; margin: 1.5rem 0;">
+  <svg viewBox="0 0 460 230" width="460" height="230" role="img" aria-label="Two circles showing circumference as the distance around and area as the space inside" style="max-width:100%; height:auto;">
+
+    <!-- LEFT: Circumference (thick outline, no fill) -->
+    <text x="110" y="18" font-size="14" font-weight="bold" fill="var(--ca-label, currentColor)" text-anchor="middle">Circumference</text>
+    <circle cx="110" cy="110" r="70" fill="none" stroke="var(--ca-circ, #61afef)" stroke-width="4" />
+    <!-- Radius line -->
+    <line x1="110" y1="110" x2="180" y2="110" stroke="var(--ca-radius, #98c379)" stroke-width="2" />
+    <circle cx="110" cy="110" r="3.5" fill="var(--ca-center, #e5c07b)" />
+    <text x="148" y="128" font-size="13" font-weight="bold" fill="var(--ca-radius, #98c379)" text-anchor="middle">r</text>
+    <!-- Formula -->
+    <text x="110" y="208" font-size="16" font-weight="bold" fill="var(--ca-sub, #888)" text-anchor="middle">C = 2πr</text>
+
+    <!-- RIGHT: Area (filled circle) -->
+    <text x="350" y="18" font-size="14" font-weight="bold" fill="var(--ca-label, currentColor)" text-anchor="middle">Area</text>
+    <circle cx="350" cy="110" r="70" fill="var(--ca-fill, rgba(97,175,239,0.15))" stroke="var(--ca-circ, #61afef)" stroke-width="2" />
+    <!-- Radius line -->
+    <line x1="350" y1="110" x2="420" y2="110" stroke="var(--ca-radius, #98c379)" stroke-width="2" />
+    <circle cx="350" cy="110" r="3.5" fill="var(--ca-center, #e5c07b)" />
+    <text x="388" y="128" font-size="13" font-weight="bold" fill="var(--ca-radius, #98c379)" text-anchor="middle">r</text>
+    <!-- Area label inside -->
+    <text x="340" y="105" font-size="15" font-weight="bold" fill="var(--ca-area, #e5c07b)" text-anchor="middle">πr²</text>
+    <!-- Formula -->
+    <text x="350" y="208" font-size="16" font-weight="bold" fill="var(--ca-sub, #888)" text-anchor="middle">A = πr²</text>
+
+  </svg>
+</div>
+
+<style>
+  :root {
+    --ca-circ: #61afef;
+    --ca-fill: rgba(97,175,239,0.15);
+    --ca-radius: #98c379;
+    --ca-center: #e5c07b;
+    --ca-area: #e5c07b;
+    --ca-label: var(--sl-color-white, #e0e0e0);
+    --ca-sub: #888;
+  }
+  :root[data-theme="light"] {
+    --ca-circ: #2980b9;
+    --ca-fill: rgba(41,128,185,0.1);
+    --ca-radius: #27ae60;
+    --ca-center: #d4a017;
+    --ca-area: #d4a017;
+    --ca-label: #1a1a1a;
+    --ca-sub: #666;
+  }
+</style>

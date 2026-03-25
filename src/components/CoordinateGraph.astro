@@ -12,9 +12,19 @@ interface Line {
   label?: string;
 }
 
+interface Segment {
+  x1: number;
+  y1: number;
+  x2: number;
+  y2: number;
+  color?: string;
+  dashed?: boolean;
+}
+
 interface Props {
   points?: Point[];
   lines?: Line[];
+  segments?: Segment[];
   xMin?: number;
   xMax?: number;
   yMin?: number;
@@ -27,6 +37,7 @@ interface Props {
 const {
   points = [],
   lines = [],
+  segments = [],
   xMin = -6,
   xMax = 6,
   yMin = -6,
@@ -132,6 +143,17 @@ const lineColorsLight = ["#0969da", "#cf222e", "#1a7f37", "#8250df"];
         </g>
       );
     })}
+
+    {/* Segments */}
+    {segments.map((seg) => (
+      <line
+        x1={toSvgX(seg.x1)} y1={toSvgY(seg.y1)}
+        x2={toSvgX(seg.x2)} y2={toSvgY(seg.y2)}
+        stroke={seg.color || "#61afef"}
+        stroke-width="2.5"
+        stroke-dasharray={seg.dashed ? "6,4" : "none"}
+      />
+    ))}
 
     {/* Points */}
     {points.map((p) => (

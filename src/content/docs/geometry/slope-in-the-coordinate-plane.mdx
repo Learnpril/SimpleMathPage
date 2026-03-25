@@ -1,8 +1,124 @@
 ---
 title: Slope in the Coordinate Plane
-description: Review slope concepts applied to geometric figures on the coordinate plane
+description: Learn what slope is, how to calculate it, and what different slopes mean
 sidebar:
   order: 17
 ---
 
-Content coming soon.
+import CoordinateGraph from "../../../components/CoordinateGraph.astro";
+
+## What You'll Learn
+
+In this lesson you'll learn what slope means, how to calculate it between two points, and how to interpret positive, negative, zero, and undefined slopes.
+
+## The Concept
+
+**Slope** (m) measures how steep a line is and whether it rises or falls.
+
+Formula for slope between two points (x₁, y₁) and (x₂, y₂):
+
+$$
+m = \frac{y_2 - y_1}{x_2 - x_1} = \frac{\text{rise}}{\text{run}}
+$$
+
+What different slopes mean:
+
+- **Positive slope** (&gt; 0): Line rises from left to right (uphill).
+- **Negative slope** (&lt; 0): Line falls from left to right (downhill).
+- **Zero slope** (m = 0): Horizontal line.
+- **Undefined slope**: Vertical line (division by zero).
+
+Slope is the same anywhere on a straight line.
+
+## Worked Example
+
+**1. Find the slope between points (2, 3) and (5, 9).**
+
+<CoordinateGraph
+  points={[
+    { x: 2, y: 3, label: "(2,3)" },
+    { x: 5, y: 9, label: "(5,9)" },
+  ]}
+  lines={[{ slope: 2, intercept: -1, color: "#98c379", label: "m = 2" }]}
+  xMin={0}
+  xMax={7}
+  yMin={0}
+  yMax={11}
+/>
+
+$$
+m = \frac{9 - 3}{5 - 2} = \frac{6}{3} = 2
+$$
+
+Positive slope of 2 (rises 2 units for every 1 unit right).
+
+**2. Find the slope between points (−1, 4) and (3, −2).**
+
+$$
+m = \frac{-2 - 4}{3 - (-1)} = \frac{-6}{4} = -1.5
+$$
+
+Negative slope (falls 1.5 units for every 1 unit right).
+
+**3. Points (0, 5) and (0, 8).**
+
+$$
+m = \frac{8 - 5}{0 - 0} = \frac{3}{0}
+$$
+
+Undefined slope — vertical line.
+
+## Real-World Application
+
+Slope helps describe real situations:
+
+- Road grade or hill steepness (a 10% grade means slope = 0.1).
+- Roof pitch in construction (rise over run).
+- Ramps for accessibility (maximum allowed slope).
+- Budget lines or cost graphs (slope = cost per unit).
+- Navigation: How steeply a trail climbs.
+
+Example: A road rises 300 feet over 1 mile (5,280 feet). Slope = 300/5,280 ≈ 0.057 (about a 5.7% grade).
+
+:::note[You've Got This]
+Slope is simply "rise over run" — how much it goes up or down compared to how far it goes right. Remember: positive = uphill, negative = downhill, zero = flat, undefined = straight up/down. Practice with two points you make up or see on a graph. It gets easy fast.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="geometry-slope-in-the-coordinate-plane"
+  questions={[
+    {
+      id: "q1",
+      text: "What is the slope between points (1, 2) and (4, 8)?",
+      options: ["2", "3", "6", "1"],
+      correctIndex: 0,
+      explanation: "(8−2)/(4−1) = 6/3 = 2.",
+    },
+    {
+      id: "q2",
+      text: "A line with negative slope does what from left to right?",
+      options: ["Falls", "Rises", "Stays horizontal", "Is vertical"],
+      correctIndex: 0,
+      explanation: "Negative slope means the line goes down as you move right.",
+    },
+    {
+      id: "q3",
+      text: "The slope of a horizontal line is:",
+      options: ["0", "Undefined", "1", "−1"],
+      correctIndex: 0,
+      explanation: "Horizontal lines have zero slope (no rise).",
+    },
+    {
+      id: "q4",
+      text: "Points (3, 5) and (3, 9) have what type of slope?",
+      options: ["Undefined", "Zero", "Positive", "Negative"],
+      correctIndex: 0,
+      explanation:
+        "Same x-coordinate means a vertical line, so the slope is undefined.",
+    },
+  ]}
+/>

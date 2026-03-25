@@ -1,0 +1,50 @@
+---
+// RadiusDiameter.astro — Two circles side by side showing radius vs diameter relationship
+// Left: circle with radius labeled (center to edge). Right: circle with diameter labeled (edge to edge through center).
+// Both circles radius 70px. Left center (110,100), right center (350,100).
+---
+
+<div class="diagram-container" style="text-align:center; margin: 1.5rem 0;">
+  <svg viewBox="0 0 460 230" width="460" height="230" role="img" aria-label="Two circles showing radius equals half the diameter and diameter equals twice the radius" style="max-width:100%; height:auto;">
+
+    <!-- LEFT: Radius -->
+    <circle cx="110" cy="100" r="70" fill="none" stroke="var(--rd-circle, #61afef)" stroke-width="2" />
+    <circle cx="110" cy="100" r="4" fill="var(--rd-center, #e5c07b)" />
+    <text x="100" y="96" font-size="13" font-weight="bold" fill="var(--rd-center, #e5c07b)" text-anchor="end">O</text>
+    <!-- Radius line: center to right edge -->
+    <line x1="110" y1="100" x2="180" y2="100" stroke="var(--rd-radius, #98c379)" stroke-width="2.5" />
+    <!-- Label below the line -->
+    <text x="145" y="120" font-size="14" font-weight="bold" fill="var(--rd-radius, #98c379)" text-anchor="middle">r</text>
+    <!-- Formula -->
+    <text x="110" y="200" font-size="16" font-weight="bold" fill="var(--rd-sub, #888)" text-anchor="middle">Radius = d ÷ 2</text>
+
+    <!-- RIGHT: Diameter -->
+    <circle cx="350" cy="100" r="70" fill="none" stroke="var(--rd-circle, #61afef)" stroke-width="2" />
+    <circle cx="350" cy="100" r="4" fill="var(--rd-center, #e5c07b)" />
+    <text x="340" y="96" font-size="13" font-weight="bold" fill="var(--rd-center, #e5c07b)" text-anchor="end">O</text>
+    <!-- Diameter line: left edge to right edge through center -->
+    <line x1="280" y1="100" x2="420" y2="100" stroke="var(--rd-diam, #e06c75)" stroke-width="2.5" />
+    <!-- Label below the line -->
+    <text x="350" y="120" font-size="14" font-weight="bold" fill="var(--rd-diam, #e06c75)" text-anchor="middle">d</text>
+    <!-- Formula -->
+    <text x="350" y="200" font-size="16" font-weight="bold" fill="var(--rd-sub, #888)" text-anchor="middle">Diameter = 2 × r</text>
+
+  </svg>
+</div>
+
+<style>
+  :root {
+    --rd-circle: #61afef;
+    --rd-center: #e5c07b;
+    --rd-radius: #98c379;
+    --rd-diam: #e06c75;
+    --rd-sub: #888;
+  }
+  :root[data-theme="light"] {
+    --rd-circle: #2980b9;
+    --rd-center: #d4a017;
+    --rd-radius: #27ae60;
+    --rd-diam: #c0392b;
+    --rd-sub: #666;
+  }
+</style>

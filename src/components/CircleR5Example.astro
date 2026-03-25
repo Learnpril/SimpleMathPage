@@ -1,0 +1,51 @@
+---
+// CircleR5Example.astro — Circle with r=5, no text cut off or overlapping lines
+---
+
+<div class="diagram-container" style="text-align:center; margin: 1.5rem 0;">
+  <svg viewBox="0 0 400 275" width="400" height="275" role="img" aria-label="Circle with radius 5 cm showing circumference of 10π and area of 25π" style="max-width:100%; height:auto;">
+
+    <!-- Circle with subtle fill for area -->
+    <circle cx="170" cy="120" r="80" fill="var(--cr5-fill, rgba(97,175,239,0.1))" stroke="var(--cr5-circ, #61afef)" stroke-width="3" />
+
+    <!-- Center dot -->
+    <circle cx="170" cy="120" r="4" fill="var(--cr5-center, #e5c07b)" />
+    <text x="155" y="116" font-size="14" font-weight="bold" fill="var(--cr5-center, #e5c07b)" text-anchor="end">O</text>
+
+    <!-- Radius line: center to right -->
+    <line x1="170" y1="120" x2="250" y2="120" stroke="var(--cr5-radius, #98c379)" stroke-width="2.5" />
+    <text x="212" y="142" font-size="15" font-weight="bold" fill="var(--cr5-radius, #98c379)" text-anchor="middle">r = 5 cm</text>
+
+    <!-- Area label inside circle -->
+    <text x="145" y="82" font-size="14" fill="var(--cr5-area, #c678dd)" text-anchor="middle">A = 25π</text>
+    <text x="145" y="98" font-size="12" fill="var(--cr5-sub, #888)" text-anchor="middle">≈ 78.5 cm²</text>
+
+    <!-- Circumference label outside circle, top-right -->
+    <text x="268" y="48" font-size="14" font-weight="bold" fill="var(--cr5-circ, #61afef)">C = 10π</text>
+    <text x="268" y="64" font-size="12" fill="var(--cr5-sub, #888)">≈ 31.4 cm</text>
+
+    <!-- Formulas below -->
+    <text x="200" y="235" font-size="14" fill="var(--cr5-sub, #888)" text-anchor="middle">C = 2π(5) = 10π ≈ 31.4 cm</text>
+    <text x="200" y="257" font-size="14" fill="var(--cr5-sub, #888)" text-anchor="middle">A = π(5²) = 25π ≈ 78.5 cm²</text>
+
+  </svg>
+</div>
+
+<style>
+  :root {
+    --cr5-circ: #61afef;
+    --cr5-fill: rgba(97,175,239,0.1);
+    --cr5-radius: #98c379;
+    --cr5-center: #e5c07b;
+    --cr5-area: #c678dd;
+    --cr5-sub: #888;
+  }
+  :root[data-theme="light"] {
+    --cr5-circ: #2980b9;
+    --cr5-fill: rgba(41,128,185,0.08);
+    --cr5-radius: #27ae60;
+    --cr5-center: #d4a017;
+    --cr5-area: #8e44ad;
+    --cr5-sub: #666;
+  }
+</style>

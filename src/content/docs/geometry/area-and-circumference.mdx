@@ -1,8 +1,116 @@
 ---
 title: Area and Circumference
-description: Learn how to calculate the area and circumference of circles
+description: Learn how to calculate the circumference and area of a circle
 sidebar:
   order: 14
 ---
 
-Content coming soon.
+import CircumferenceArea from "../../../components/CircumferenceArea.astro";
+import CircleR5Example from "../../../components/CircleR5Example.astro";
+
+## What You'll Learn
+
+In this lesson you'll learn the formulas for circumference and area of a circle and how to use them in real situations.
+
+## The Concept
+
+**Circumference** is the distance around the circle (the perimeter of the circle).
+
+$$
+C = 2\pi r \quad \text{or} \quad C = \pi d
+$$
+
+**Area** is the space inside the circle.
+
+$$
+A = \pi r^2
+$$
+
+Where:
+
+- $r$ = radius
+- $d$ = diameter
+- $\pi \approx 3.14$ (or leave it as $\pi$ for exact answers)
+
+<CircumferenceArea />
+
+Important notes:
+
+- Circumference uses the radius or diameter (linear measurement).
+- Area uses the radius squared (square units).
+
+## Worked Example
+
+**1. A circle has a radius of 5 cm.**
+
+<CircleR5Example />
+
+Circumference = $2\pi \times 5 = 10\pi$ cm ≈ 31.4 cm
+
+Area = $\pi \times 5^2 = 25\pi$ cm² ≈ 78.5 cm²
+
+**2. A circle has a diameter of 12 inches.**
+
+Radius = 6 inches
+
+Circumference = $\pi \times 12 = 12\pi$ inches ≈ 37.7 inches
+
+Area = $\pi \times 6^2 = 36\pi$ in² ≈ 113.1 in²
+
+**3. A circle has circumference 62.8 cm. What is the radius?**
+
+$C = 2\pi r$ → $62.8 = 2\pi r$ → $r = 62.8 \div (2\pi) \approx 10$ cm
+
+## Real-World Application
+
+Circumference and area are used all the time:
+
+- Buying fencing for a circular garden or yard (circumference).
+- Calculating how much paint or fertilizer you need for a circular area.
+- Determining the size of a round tablecloth or rug.
+- Engineering: Tire size, pipe capacity, or wheel rotations (distance = circumference × number of turns).
+- Cooking: How much dough you need for a round pizza or cake pan.
+
+Example: You want to put a fence around a circular pond with radius 8 feet. Circumference tells you how much fencing to buy: $2\pi \times 8 \approx 50.3$ feet.
+
+:::note[You've Got This]
+Remember: Circumference is around the circle (uses 2πr or πd), area is inside the circle (πr²). Use the radius for both when possible. Practice with real round objects — a plate, a wheel, or a pizza — and calculate their circumference and area. It makes the formulas feel useful and concrete.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="geometry-area-and-circumference"
+  questions={[
+    {
+      id: "q1",
+      text: "What is the formula for the circumference of a circle?",
+      options: ["C = 2πr or πd", "A = πr²", "C = 2πd", "C = πr"],
+      correctIndex: 0,
+      explanation: "Circumference = 2πr or πd.",
+    },
+    {
+      id: "q2",
+      text: "What is the formula for the area of a circle?",
+      options: ["A = πr²", "C = 2πr", "A = πd", "A = 2πd"],
+      correctIndex: 0,
+      explanation: "Area = πr².",
+    },
+    {
+      id: "q3",
+      text: "A circle has radius 7 cm. What is its area?",
+      options: ["49π cm²", "14π cm²", "21π cm²", "98π cm²"],
+      correctIndex: 0,
+      explanation: "Area = π × 7² = 49π cm².",
+    },
+    {
+      id: "q4",
+      text: "A circle has diameter 10 inches. What is its circumference?",
+      options: ["10π inches", "20π inches", "5π inches", "100π inches"],
+      correctIndex: 0,
+      explanation: "Circumference = π × diameter = 10π inches.",
+    },
+  ]}
+/>
