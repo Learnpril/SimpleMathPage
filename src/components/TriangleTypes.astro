@@ -1,0 +1,54 @@
+---
+// TriangleTypes.astro — Three triangles: equilateral, isosceles (tall/narrow), scalene
+// All base lines at y=145. Headers at y=20. Subtitle at y=163.
+---
+
+<div class="diagram-container" style="text-align:center; margin: 1.5rem 0;">
+  <svg viewBox="0 0 560 178" width="560" height="178" role="img" aria-label="Three triangle types: equilateral, isosceles, and scalene" style="max-width:100%; height:auto;">
+
+    <!-- EQUILATERAL (centered at x=93, wide and balanced) -->
+    <text x="93" y="20" font-size="13" font-weight="bold" fill="var(--label-color, currentColor)" text-anchor="middle">Equilateral</text>
+    <!-- Base 120px wide, height ~104 for equilateral proportions -->
+    <polygon points="93,41 33,145 153,145" fill="none" stroke="var(--tside-a, #61afef)" stroke-width="2" stroke-linejoin="round" />
+    <!-- Single tick marks on all 3 sides -->
+    <line x1="60" y1="90" x2="66" y2="96" stroke="var(--tside-a, #61afef)" stroke-width="1.5" />
+    <line x1="120" y1="96" x2="126" y2="90" stroke="var(--tside-a, #61afef)" stroke-width="1.5" />
+    <line x1="90" y1="145" x2="96" y2="145" stroke="var(--tside-a, #61afef)" stroke-width="1.5" />
+    <text x="93" y="163" font-size="11" fill="var(--sublabel-color, #888)" text-anchor="middle">All sides equal</text>
+
+    <!-- ISOSCELES (centered at x=280, tall and narrow — clearly different shape) -->
+    <text x="280" y="20" font-size="13" font-weight="bold" fill="var(--label-color, currentColor)" text-anchor="middle">Isosceles</text>
+    <!-- Narrow base (80px), tall apex — two long equal sides, short base -->
+    <polygon points="280,35 240,145 320,145" fill="none" stroke="var(--tside-b, #98c379)" stroke-width="2" stroke-linejoin="round" />
+    <!-- Double tick marks on the two equal (long) sides -->
+    <line x1="257" y1="87" x2="263" y2="93" stroke="var(--tside-b, #98c379)" stroke-width="1.5" />
+    <line x1="260" y1="85" x2="266" y2="91" stroke="var(--tside-b, #98c379)" stroke-width="1.5" />
+    <line x1="297" y1="93" x2="303" y2="87" stroke="var(--tside-b, #98c379)" stroke-width="1.5" />
+    <line x1="294" y1="91" x2="300" y2="85" stroke="var(--tside-b, #98c379)" stroke-width="1.5" />
+    <text x="280" y="163" font-size="11" fill="var(--sublabel-color, #888)" text-anchor="middle">Two sides equal</text>
+
+    <!-- SCALENE (centered at x=467, asymmetric) -->
+    <text x="467" y="20" font-size="13" font-weight="bold" fill="var(--label-color, currentColor)" text-anchor="middle">Scalene</text>
+    <!-- Lopsided: apex off-center, all sides different -->
+    <polygon points="440,41 400,145 530,145" fill="none" stroke="var(--tside-c, #e5c07b)" stroke-width="2" stroke-linejoin="round" />
+    <text x="467" y="163" font-size="11" fill="var(--sublabel-color, #888)" text-anchor="middle">No sides equal</text>
+
+  </svg>
+</div>
+
+<style>
+  :root {
+    --tside-a: #61afef;
+    --tside-b: #98c379;
+    --tside-c: #e5c07b;
+    --label-color: var(--sl-color-white, #e0e0e0);
+    --sublabel-color: #888;
+  }
+  :root[data-theme="light"] {
+    --tside-a: #2980b9;
+    --tside-b: #27ae60;
+    --tside-c: #d4a017;
+    --label-color: #1a1a1a;
+    --sublabel-color: #666;
+  }
+</style>

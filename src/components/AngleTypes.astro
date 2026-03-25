@@ -1,0 +1,72 @@
+---
+// AngleTypes.astro — Four angle types with precise arcs
+// Acute: vertex (40,110), rays horizontal-right and at 45° above. R=18.
+//   Arc start (horiz): (58,110). Arc end (45°): (40+18*cos45, 110-18*sin45) = (52.7, 97.3)
+// Right: vertex (190,110), rays horizontal-right and straight up. Square symbol.
+// Obtuse: vertex (340,110), rays horizontal-right and at 120° (60° above horizontal-left).
+//   Direction of upper ray from vertex: 120° from +x → cos120=-0.5, sin120=0.866
+//   Upper ray endpoint: (340+80*cos120, 110-80*sin120) = (300, 40.7) ≈ (300, 41)
+//   Arc R=18. Start (horiz): (358,110). End (120°): (340+18*cos120, 110-18*sin120) = (331, 94.4)
+// Straight: vertex (525,80), horizontal line both ways. Arc is semicircle above.
+---
+
+<div class="diagram-container" style="text-align:center; margin: 1.5rem 0;">
+  <svg viewBox="0 0 600 140" width="600" height="140" role="img" aria-label="Diagram showing four angle types: acute, right, obtuse, and straight" style="max-width:100%; height:auto;">
+
+    <!-- ACUTE 45° at vertex (40,110) -->
+    <text x="75" y="16" font-size="13" font-weight="bold" fill="var(--label-color, currentColor)" text-anchor="middle">Acute</text>
+    <text x="75" y="30" font-size="11" fill="var(--sublabel-color, #888)" text-anchor="middle">&lt; 90°</text>
+    <line x1="40" y1="110" x2="130" y2="110" stroke="var(--acute-color, #61afef)" stroke-width="2" />
+    <line x1="40" y1="110" x2="103.6" y2="46.4" stroke="var(--acute-color, #61afef)" stroke-width="2" />
+    <path d="M 58,110 A 18,18 0 0,0 52.7,97.3" fill="none" stroke="var(--acute-color, #61afef)" stroke-width="1.5" />
+    <text x="66" y="98" font-size="10" fill="var(--sublabel-color, #888)">45°</text>
+    <circle cx="40" cy="110" r="3" fill="var(--point-color, #e5c07b)" />
+
+    <!-- RIGHT 90° at vertex (190,110) -->
+    <text x="225" y="16" font-size="13" font-weight="bold" fill="var(--label-color, currentColor)" text-anchor="middle">Right</text>
+    <text x="225" y="30" font-size="11" fill="var(--sublabel-color, #888)" text-anchor="middle">= 90°</text>
+    <line x1="190" y1="110" x2="270" y2="110" stroke="var(--right-color, #98c379)" stroke-width="2" />
+    <line x1="190" y1="110" x2="190" y2="30" stroke="var(--right-color, #98c379)" stroke-width="2" />
+    <polyline points="206,110 206,94 190,94" fill="none" stroke="var(--right-color, #98c379)" stroke-width="1.5" />
+    <circle cx="190" cy="110" r="3" fill="var(--point-color, #e5c07b)" />
+
+    <!-- OBTUSE 120° at vertex (340,110) -->
+    <text x="375" y="16" font-size="13" font-weight="bold" fill="var(--label-color, currentColor)" text-anchor="middle">Obtuse</text>
+    <text x="375" y="30" font-size="11" fill="var(--sublabel-color, #888)" text-anchor="middle">90° – 180°</text>
+    <line x1="340" y1="110" x2="430" y2="110" stroke="var(--obtuse-color, #e5c07b)" stroke-width="2" />
+    <line x1="340" y1="110" x2="300" y2="41" stroke="var(--obtuse-color, #e5c07b)" stroke-width="2" />
+    <path d="M 358,110 A 18,18 0 0,0 331,94.4" fill="none" stroke="var(--obtuse-color, #e5c07b)" stroke-width="1.5" />
+    <text x="350" y="90" font-size="10" fill="var(--sublabel-color, #888)">120°</text>
+    <circle cx="340" cy="110" r="3" fill="var(--point-color, #e5c07b)" />
+
+    <!-- STRAIGHT 180° at vertex (525,80) -->
+    <text x="525" y="16" font-size="13" font-weight="bold" fill="var(--label-color, currentColor)" text-anchor="middle">Straight</text>
+    <text x="525" y="30" font-size="11" fill="var(--sublabel-color, #888)" text-anchor="middle">= 180°</text>
+    <line x1="470" y1="80" x2="580" y2="80" stroke="var(--straight-color, #e06c75)" stroke-width="2" />
+    <path d="M 543,80 A 18,18 0 0,0 507,80" fill="none" stroke="var(--straight-color, #e06c75)" stroke-width="1.5" />
+    <text x="525" y="72" font-size="10" fill="var(--sublabel-color, #888)" text-anchor="middle">180°</text>
+    <circle cx="525" cy="80" r="3" fill="var(--point-color, #e5c07b)" />
+
+  </svg>
+</div>
+
+<style>
+  :root {
+    --acute-color: #61afef;
+    --right-color: #98c379;
+    --obtuse-color: #e5c07b;
+    --straight-color: #e06c75;
+    --point-color: #e5c07b;
+    --label-color: var(--sl-color-white, #e0e0e0);
+    --sublabel-color: #888;
+  }
+  :root[data-theme="light"] {
+    --acute-color: #2980b9;
+    --right-color: #27ae60;
+    --obtuse-color: #d4a017;
+    --straight-color: #c0392b;
+    --point-color: #d4a017;
+    --label-color: #1a1a1a;
+    --sublabel-color: #666;
+  }
+</style>

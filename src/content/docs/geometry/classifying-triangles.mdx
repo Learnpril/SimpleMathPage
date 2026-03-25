@@ -1,0 +1,122 @@
+---
+title: Classifying Triangles
+description: Learn how to classify triangles by their sides and by their angles
+sidebar:
+  order: 7
+---
+
+import TriangleTypes from "../../../components/TriangleTypes.astro";
+import TriangleByAngles from "../../../components/TriangleByAngles.astro";
+
+## What You'll Learn
+
+In this lesson you'll learn how to classify triangles based on the lengths of their sides and the measures of their angles.
+
+## The Concept
+
+A **triangle** is a polygon with three sides, three vertices, and three angles. Triangles can be classified in two main ways:
+
+**By sides:**
+
+- **Equilateral triangle**: All three sides are equal (and all angles are 60°).
+- **Isosceles triangle**: At least two sides are equal (and the two base angles are equal).
+- **Scalene triangle**: All three sides have different lengths (and all angles are different).
+
+<TriangleTypes />
+
+**By angles:**
+
+- **Acute triangle**: All three angles are less than 90°.
+- **Right triangle**: One angle is exactly 90°.
+- **Obtuse triangle**: One angle is greater than 90° (but less than 180°).
+
+<TriangleByAngles />
+
+A triangle can belong to both categories at once (e.g., an isosceles right triangle).
+
+Key fact: The sum of the interior angles in any triangle is always **180°**.
+
+## Worked Example
+
+1. A triangle has sides of length 7 cm, 7 cm, and 10 cm.
+
+   It is isosceles (two sides equal).
+
+2. A triangle has angles measuring 50°, 60°, and 70°.
+
+   It is acute (all angles less than 90°).
+
+3. A triangle has sides 5 cm, 12 cm, and 13 cm, and one angle of 90°.
+
+   It is a right scalene triangle.
+
+4. A triangle has one angle of 120° and two sides of different lengths.
+
+   It is an obtuse scalene triangle.
+
+## Real-World Application
+
+Triangles are everywhere in daily life:
+
+- Roof trusses and bridges often use equilateral or isosceles triangles for strength.
+- A right triangle appears in ladders leaning against walls or in corner shelves.
+- Road signs (yield signs are equilateral triangles).
+- When measuring land or laying out a garden, you frequently work with triangles.
+- In construction and carpentry, understanding triangle types helps with stability and accurate cutting.
+
+Recognizing triangle types helps you understand stability, design, and measurement in the real world.
+
+:::note[You've Got This]
+Classifying triangles is straightforward once you remember the two main ways: by sides (equal or not) and by angles (acute, right, obtuse). Look around you — many objects (roofs, signs, shelves) form triangles. Practice naming them by both side and angle type. It becomes very natural with just a little practice.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="geometry-classifying-triangles"
+  questions={[
+    {
+      id: "q1",
+      text: "A triangle with all three sides equal is called:",
+      options: ["Equilateral", "Isosceles", "Scalene", "Right"],
+      correctIndex: 0,
+      explanation:
+        "Equilateral triangles have all sides equal (and all angles 60°).",
+    },
+    {
+      id: "q2",
+      text: "A triangle with one 90° angle is called:",
+      options: [
+        "Right triangle",
+        "Acute triangle",
+        "Obtuse triangle",
+        "Isosceles triangle",
+      ],
+      correctIndex: 0,
+      explanation: "A right triangle has exactly one right angle (90°).",
+    },
+    {
+      id: "q3",
+      text: "A triangle with sides 6 cm, 8 cm, and 10 cm and one 90° angle is:",
+      options: [
+        "Right scalene",
+        "Isosceles right",
+        "Equilateral",
+        "Obtuse scalene",
+      ],
+      correctIndex: 0,
+      explanation:
+        "It has a right angle and all sides of different lengths — right scalene.",
+    },
+    {
+      id: "q4",
+      text: "In any triangle, the sum of the interior angles is:",
+      options: ["180°", "360°", "90°", "270°"],
+      correctIndex: 0,
+      explanation:
+        "The sum of the interior angles in any triangle is always 180°.",
+    },
+  ]}
+/>

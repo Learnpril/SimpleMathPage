@@ -1,0 +1,100 @@
+---
+title: Line Segments and Rays
+description: Learn the differences between lines, line segments, and rays
+sidebar:
+  order: 2
+---
+
+import LineSegmentRay from "../../../components/LineSegmentRay.astro";
+
+## What You'll Learn
+
+In this lesson you'll learn the differences between lines, line segments, and rays, and how to name and use them.
+
+## The Concept
+
+- **Line**: Extends infinitely in both directions. Named with two points (line AB) or a single lowercase letter. Written as $\overleftrightarrow{AB}$.
+
+- **Line segment**: A finite portion of a line with two endpoints. Named with its two endpoints (segment AB). Written as $\overline{AB}$.
+
+- **Ray**: Starts at one endpoint and extends infinitely in one direction. Named with the endpoint first, then another point on the ray (ray AB). Written as $\overrightarrow{AB}$.
+
+<LineSegmentRay />
+
+Important notes:
+
+- A line segment has a definite length.
+- A ray has one endpoint and goes on forever in one direction.
+- Two rays with the same endpoint but going in opposite directions form a line.
+
+## Worked Example
+
+1. Name the figure with endpoints A and B that has a definite length.
+
+   Line segment AB, written $\overline{AB}$
+
+2. Name the figure that starts at point C and goes through point D forever.
+
+   Ray CD, written $\overrightarrow{CD}$
+
+3. How many endpoints does a line have?
+
+   Zero — it extends forever both ways.
+
+## Real-World Application
+
+- Line segment: The edge of a table, a piece of lumber you cut to length, the distance between two cities on a map.
+- Ray: A beam of light from a flashlight, a laser pointer, the path of a train track going off into the distance.
+- Line: The horizon, a straight road that seems to go on forever, the path of a laser in theory.
+
+These ideas help with construction, design, navigation, and understanding diagrams or blueprints.
+
+:::note[You've Got This]
+Lines go forever both ways, segments stop at two points, and rays start at one point and go forever one way. Think of a flashlight beam (ray), a cut piece of wood (segment), and an endless straight road (line). Practice naming things you see around you — it becomes natural quickly.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="geometry-line-segments-and-rays"
+  questions={[
+    {
+      id: "q1",
+      text: "Which figure has exactly two endpoints?",
+      options: ["Line segment", "Line", "Ray", "Plane"],
+      correctIndex: 0,
+      explanation: "A line segment has two definite endpoints.",
+    },
+    {
+      id: "q2",
+      text: "A figure starts at point A and goes through point B forever in one direction. What is it?",
+      options: ["Ray AB", "Line segment AB", "Line AB", "Plane AB"],
+      correctIndex: 0,
+      explanation:
+        "It starts at one endpoint and extends forever — that's a ray.",
+    },
+    {
+      id: "q3",
+      text: "How many endpoints does a line have?",
+      options: ["Zero", "One", "Two", "Infinite"],
+      correctIndex: 0,
+      explanation:
+        "A line extends infinitely in both directions and has no endpoints.",
+    },
+    {
+      id: "q4",
+      text: "Which notation represents a line segment between A and B?",
+      options: [
+        "AB with a bar on top",
+        "AB with arrows on both ends",
+        "AB with an arrow on one end",
+        "Just AB",
+      ],
+      correctIndex: 0,
+      explanation:
+        "A bar over AB represents a line segment. Arrows on both ends means a line, and an arrow on one end means a ray.",
+    },
+  ]}
+/>

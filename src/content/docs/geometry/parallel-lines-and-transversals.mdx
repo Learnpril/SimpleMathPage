@@ -1,0 +1,99 @@
+---
+title: Parallel Lines and Transversals
+description: Learn about parallel lines, transversals, and the special angle relationships they create
+sidebar:
+  order: 6
+---
+
+import ParallelTransversal from "../../../components/ParallelTransversal.astro";
+
+## What You'll Learn
+
+In this lesson you'll learn what parallel lines and transversals are, and how to identify and use the special angle relationships they form (corresponding, alternate interior, alternate exterior, and consecutive interior angles).
+
+## The Concept
+
+**Parallel lines** are two lines that never intersect and are always the same distance apart. Symbol: ∥ (e.g., line AB ∥ line CD).
+
+A **transversal** is a line that crosses two or more lines (usually parallel lines) at different points.
+
+When a transversal crosses parallel lines, it creates several pairs of special angles:
+
+- **Corresponding angles**: Angles in the same relative position (e.g., both above the lines on the same side of the transversal). They are equal.
+- **Alternate interior angles**: Angles inside the parallel lines but on opposite sides of the transversal. They are equal.
+- **Alternate exterior angles**: Angles outside the parallel lines but on opposite sides of the transversal. They are equal.
+- **Consecutive interior angles** (same-side interior): Angles inside the parallel lines on the same side of the transversal. They are supplementary (add to 180°).
+
+<ParallelTransversal />
+
+If the lines are **not** parallel, these relationships do not hold.
+
+## Worked Example
+
+Two parallel lines are cut by a transversal. One angle measures 65°.
+
+1. The corresponding angle also measures 65°.
+2. The alternate interior angle also measures 65°.
+3. The consecutive interior angle measures 180° − 65° = 115°.
+
+If you know one angle formed by a transversal and parallel lines, you can find all eight angles using these relationships.
+
+## Real-World Application
+
+Parallel lines and transversals appear in many practical situations:
+
+- Railroad tracks (parallel) crossed by a road (transversal).
+- Floor tiles or wall panels with straight grout lines.
+- Road intersections and highway design.
+- Architecture: window frames, door frames, and building supports often use parallel lines cut by transversals.
+- When hanging pictures or shelves, you use parallel lines and transversals to ensure everything is level and aligned.
+
+Understanding these angle relationships helps with construction, design, navigation, and ensuring things are straight and properly spaced.
+
+:::note[You've Got This]
+When a transversal crosses parallel lines, certain angles are equal and others add to 180°. Look for the "Z" shape for alternate interior angles and the "F" shape for corresponding angles. Practice spotting these patterns in real life (roads, tiles, window frames). It becomes very useful for solving geometry problems quickly.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="geometry-parallel-lines-and-transversals"
+  questions={[
+    {
+      id: "q1",
+      text: "What are lines that never intersect and stay the same distance apart called?",
+      options: [
+        "Parallel lines",
+        "Transversal lines",
+        "Intersecting lines",
+        "Perpendicular lines",
+      ],
+      correctIndex: 0,
+      explanation: "Parallel lines never intersect and remain equidistant.",
+    },
+    {
+      id: "q2",
+      text: "A line that crosses two or more lines at different points is called a:",
+      options: ["Transversal", "Parallel line", "Ray", "Segment"],
+      correctIndex: 0,
+      explanation: "A transversal intersects two or more lines.",
+    },
+    {
+      id: "q3",
+      text: "When a transversal crosses parallel lines, corresponding angles are:",
+      options: ["Equal", "Supplementary", "Complementary", "Adjacent"],
+      correctIndex: 0,
+      explanation:
+        "Corresponding angles are always equal when lines are parallel.",
+    },
+    {
+      id: "q4",
+      text: "Consecutive interior angles formed by a transversal and parallel lines are:",
+      options: ["Supplementary", "Equal", "Complementary", "Vertical"],
+      correctIndex: 0,
+      explanation: "Consecutive (same-side) interior angles add up to 180°.",
+    },
+  ]}
+/>

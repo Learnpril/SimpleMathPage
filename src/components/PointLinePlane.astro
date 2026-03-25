@@ -1,0 +1,52 @@
+---
+// PointLinePlane.astro — SVG diagram showing a point, a line through two points, and a plane
+---
+
+<div class="diagram-container" style="text-align:center; margin: 1.5rem 0;">
+  <svg viewBox="0 0 420 220" width="420" height="220" role="img" aria-label="Diagram showing a point, a line through two points, and a plane" style="max-width:100%; height:auto;">
+    <!-- Plane (parallelogram) -->
+    <polygon points="180,40 400,40 360,180 140,180" fill="var(--plane-fill, rgba(100,149,237,0.12))" stroke="var(--plane-stroke, cornflowerblue)" stroke-width="1.5" stroke-dasharray="6,3" />
+    <text x="370" y="58" font-size="13" fill="var(--label-color, currentColor)" font-style="italic">Plane P</text>
+
+    <!-- Line through A and B (extends beyond both points) -->
+    <line x1="160" y1="150" x2="380" y2="80" stroke="var(--line-color, #e06c75)" stroke-width="2" />
+    <!-- Arrowheads to show infinite extension -->
+    <polygon points="156,151.5 166,155 164,147" fill="var(--line-color, #e06c75)" />
+    <polygon points="384,78.5 374,75 376,83" fill="var(--line-color, #e06c75)" />
+
+    <!-- Point A on the line -->
+    <circle cx="220" cy="130" r="5" fill="var(--point-color, #e5c07b)" />
+    <text x="210" y="120" font-size="14" font-weight="bold" fill="var(--label-color, currentColor)">A</text>
+
+    <!-- Point B on the line -->
+    <circle cx="330" cy="93.5" r="5" fill="var(--point-color, #e5c07b)" />
+    <text x="335" y="88" font-size="14" font-weight="bold" fill="var(--label-color, currentColor)">B</text>
+
+    <!-- Standalone point C (not on the line) -->
+    <circle cx="60" cy="100" r="5" fill="var(--point-color, #e5c07b)" />
+    <text x="50" y="90" font-size="14" font-weight="bold" fill="var(--label-color, currentColor)">C</text>
+
+    <!-- Labels -->
+    <text x="15" y="140" font-size="12" fill="var(--sublabel-color, #888)">Point C</text>
+    <text x="245" y="170" font-size="12" fill="var(--sublabel-color, #888)">Line AB</text>
+  </svg>
+</div>
+
+<style>
+  :root {
+    --plane-fill: rgba(100,149,237,0.12);
+    --plane-stroke: cornflowerblue;
+    --line-color: #e06c75;
+    --point-color: #e5c07b;
+    --label-color: var(--sl-color-white, #e0e0e0);
+    --sublabel-color: #888;
+  }
+  :root[data-theme="light"] {
+    --plane-fill: rgba(70,130,220,0.1);
+    --plane-stroke: #4682dc;
+    --line-color: #c0392b;
+    --point-color: #d4a017;
+    --label-color: #1a1a1a;
+    --sublabel-color: #666;
+  }
+</style>

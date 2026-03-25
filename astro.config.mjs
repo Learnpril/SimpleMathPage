@@ -30,10 +30,10 @@ export default defineConfig({
           autogenerate: { directory: "algebra-basics" },
         },
         // Uncomment these sections as you add content:
-        // {
-        //   label: "Geometry",
-        //   autogenerate: { directory: "geometry" },
-        // },
+        {
+          label: "Geometry",
+          autogenerate: { directory: "geometry" },
+        },
         // {
         //   label: "Algebra 2",
         //   autogenerate: { directory: "algebra-2" },

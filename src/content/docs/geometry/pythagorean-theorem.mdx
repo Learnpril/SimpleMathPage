@@ -1,0 +1,118 @@
+---
+title: Pythagorean Theorem
+description: Learn the Pythagorean Theorem and how to use it to find missing sides in right triangles
+sidebar:
+  order: 9
+---
+
+import PythagoreanDiagram from "../../../components/PythagoreanDiagram.astro";
+
+## What You'll Learn
+
+In this lesson you'll learn the Pythagorean Theorem and how to use it to find the missing side of a right triangle when the other two sides are known.
+
+## The Concept
+
+The **Pythagorean Theorem** states that in any right triangle, the square of the length of the hypotenuse (the side opposite the right angle) is equal to the sum of the squares of the lengths of the other two sides (the legs).
+
+The formula is:
+
+$$
+a^2 + b^2 = c^2
+$$
+
+Where:
+
+- a and b are the lengths of the legs
+- c is the length of the hypotenuse (the longest side)
+
+<PythagoreanDiagram />
+
+This theorem only works for **right triangles** (triangles with one 90° angle).
+
+To solve:
+
+- If you know two sides, plug them in and solve for the third.
+- If solving for a leg: rearrange to $a^2 = c^2 - b^2$, then take the square root.
+
+## Worked Example
+
+1. A right triangle has legs of 6 cm and 8 cm. What is the hypotenuse?
+
+$$
+\begin{aligned}
+6^2 + 8^2 &= c^2 \\[1em]
+36 + 64 &= c^2 \\[1em]
+100 &= c^2 \\[1em]
+c &= 10 \text{ cm}
+\end{aligned}
+$$
+
+2. A right triangle has hypotenuse 13 cm and one leg 5 cm. What is the other leg?
+
+$$
+\begin{aligned}
+5^2 + b^2 &= 13^2 \\[1em]
+25 + b^2 &= 169 \\[1em]
+b^2 &= 144 \\[1em]
+b &= 12 \text{ cm}
+\end{aligned}
+$$
+
+## Real-World Application
+
+The Pythagorean Theorem is used in many practical situations:
+
+- Construction: Finding the diagonal of a rectangular room or the length of a roof rafter.
+- Navigation: Calculating straight-line distance between two points (e.g., how far is the shortcut across a field?).
+- Carpentry: Checking if a corner is square (if the diagonal satisfies a² + b² = c², it's a right angle).
+- Everyday measurements: A ladder leaning against a wall — how high up the wall does it reach if the base is 4 feet away and the ladder is 10 feet long? Answer: √(10² − 4²) = √84 ≈ 9.2 feet.
+
+This theorem is one of the most useful tools in geometry for solving real distance and construction problems.
+
+:::note[You've Got This]
+The Pythagorean Theorem is simple once you remember a² + b² = c², where c is always the longest side (hypotenuse). Draw a quick sketch, label the sides, and solve step by step. Practice with real objects around you (ladders, rooms, diagonal distances) — you'll see how often it comes up in daily life.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="geometry-pythagorean-theorem"
+  questions={[
+    {
+      id: "q1",
+      text: "In a right triangle, the legs are 5 and 12. What is the hypotenuse?",
+      options: ["13", "17", "10", "7"],
+      correctIndex: 0,
+      explanation: "5² + 12² = 25 + 144 = 169 → √169 = 13.",
+    },
+    {
+      id: "q2",
+      text: "A right triangle has hypotenuse 10 and one leg 6. What is the other leg?",
+      options: ["8", "4", "12", "√136"],
+      correctIndex: 0,
+      explanation: "6² + b² = 10² → 36 + b² = 100 → b² = 64 → b = 8.",
+    },
+    {
+      id: "q3",
+      text: "A ladder 13 feet long leans against a wall with its base 5 feet away. How high up the wall does it reach?",
+      options: ["12 feet", "8 feet", "9 feet", "10 feet"],
+      correctIndex: 0,
+      explanation: "5² + h² = 13² → 25 + h² = 169 → h² = 144 → h = 12 feet.",
+    },
+    {
+      id: "q4",
+      text: "Which statement is true about the Pythagorean Theorem?",
+      options: [
+        "It only works for right triangles",
+        "It works for all triangles",
+        "It only finds the hypotenuse",
+        "It only works with integers",
+      ],
+      correctIndex: 0,
+      explanation: "The Pythagorean Theorem applies only to right triangles.",
+    },
+  ]}
+/>

@@ -1,0 +1,105 @@
+---
+title: Adjacent and Vertical Angles
+description: Learn about adjacent and vertical angles and their properties
+sidebar:
+  order: 4
+---
+
+import VerticalAngles from "../../../components/VerticalAngles.astro";
+import VerticalAnglesWorked from "../../../components/VerticalAnglesWorked.astro";
+
+## What You'll Learn
+
+In this lesson you'll learn what adjacent and vertical angles are, their properties, and how to use them to find missing angle measures.
+
+## The Concept
+
+When two lines or rays intersect, they form several angles with special relationships.
+
+**Adjacent angles** share a common vertex and a common side, but have no common interior points. They are "next to" each other.
+
+**Vertical angles** are the angles opposite each other when two lines intersect. They are always congruent (equal in measure).
+
+<VerticalAngles />
+
+Important properties:
+
+- Adjacent angles that form a straight line are **supplementary** (add up to 180°).
+- Vertical angles are always equal.
+- If you know one angle, you can find its vertical angle easily.
+
+Example: Two lines intersect forming four angles. If one angle measures 65°, its vertical angle also measures 65°. The two adjacent angles each measure 180° − 65° = 115°.
+
+## Worked Example
+
+Two lines intersect. One angle measures 40°.
+
+<VerticalAnglesWorked />
+
+1. The vertical angle to it also measures 40°.
+2. The two adjacent angles each measure 180° − 40° = 140°.
+
+Another example: Adjacent angles on a straight line — one is 75°, what is the other?
+
+$180° - 75° = 105°$
+
+## Real-World Application
+
+Adjacent and vertical angles appear in many practical situations:
+
+- When two walls meet at a corner, the angles formed are adjacent.
+- In construction, when beams or pipes cross, vertical angles help ensure symmetry.
+- When reading a map or GPS, turn angles and intersecting roads create adjacent and vertical relationships.
+- In design and woodworking, understanding these angles helps with precise cuts and joints.
+
+Recognizing these relationships lets you calculate unknown angles without measuring everything directly.
+
+:::note[You've Got This]
+Vertical angles are always equal — that's one of the most useful shortcuts in geometry. Adjacent angles on a straight line add to 180°. Look for intersecting lines around you (door frames, window panes, roads) and practice spotting these pairs. It becomes very intuitive with a little practice.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="geometry-adjacent-and-vertical-angles"
+  questions={[
+    {
+      id: "q1",
+      text: "Angles that share a common vertex and a common side but have no common interior points are called:",
+      options: [
+        "Adjacent angles",
+        "Vertical angles",
+        "Supplementary angles",
+        "Complementary angles",
+      ],
+      correctIndex: 0,
+      explanation:
+        "Adjacent angles share a vertex and one side but do not overlap inside.",
+    },
+    {
+      id: "q2",
+      text: "Vertical angles are always:",
+      options: ["Equal", "Supplementary", "Complementary", "Adjacent"],
+      correctIndex: 0,
+      explanation:
+        "Vertical angles are opposite each other when two lines intersect and are always congruent (equal).",
+    },
+    {
+      id: "q3",
+      text: "If one angle formed by two intersecting lines measures 55°, what does its vertical angle measure?",
+      options: ["55°", "125°", "180°", "90°"],
+      correctIndex: 0,
+      explanation: "Vertical angles are always equal, so it also measures 55°.",
+    },
+    {
+      id: "q4",
+      text: "Two adjacent angles form a straight line. One measures 70°. What is the other?",
+      options: ["110°", "70°", "180°", "90°"],
+      correctIndex: 0,
+      explanation:
+        "Adjacent angles on a straight line are supplementary: 180° − 70° = 110°.",
+    },
+  ]}
+/>

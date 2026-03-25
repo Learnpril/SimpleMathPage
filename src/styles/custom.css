@@ -517,3 +517,12 @@ p:has(> .katex:only-child) {
     display: none !important;
   }
 }
+
+/* ---------- Diagram centering ---------- */
+.diagram-container {
+  display: flex;
+  justify-content: center;
+}
+.diagram-container svg {
+  display: block;
+}

@@ -1,0 +1,111 @@
+---
+title: Points, Lines, and Planes
+description: Learn the three fundamental building blocks of geometry
+sidebar:
+  order: 1
+---
+
+import PointLinePlane from "../../../components/PointLinePlane.astro";
+
+## What You'll Learn
+
+In this first Geometry lesson you'll learn the three basic building blocks of geometry — points, lines, and planes — and how they appear in everyday life.
+
+## The Concept
+
+Geometry studies shapes, sizes, positions, and properties of space. It begins with three simple, undefined terms:
+
+- **Point**: A single location in space. It has no size — just position. Represented by a dot and named with a capital letter (e.g., point A).
+
+- **Line**: A straight path that extends infinitely in both directions. It has no thickness and contains infinitely many points. Named with two points (line AB) or a single lowercase letter.
+
+- **Plane**: A flat, two-dimensional surface that extends infinitely. It has no thickness but contains infinitely many points and lines. Named with a capital letter (plane P) or three non-collinear points.
+
+<PointLinePlane />
+
+**Collinear** means points that all lie on the same straight line. **Non-collinear** means at least one point is off the line. This matters because if three points were all on the same line, you could tilt a plane around that line in infinite ways — so it wouldn't be unique.
+
+Key relationships:
+
+- Two points determine exactly one line.
+- Three non-collinear points determine exactly one plane.
+- Lines can lie in a plane or intersect it.
+
+## Worked Example
+
+1. How many lines pass through two distinct points?
+
+   Exactly one — points A and B determine line AB.
+
+2. How many planes are determined by three non-collinear points?
+
+   Exactly one — points A, B, C determine plane ABC.
+
+3. Can two different lines intersect at more than one point?
+
+   No. If they intersect at two points, they are actually the same line.
+
+## Real-World Application
+
+These basic elements are everywhere:
+
+- A point: the corner of a room, a GPS location, the tip of a pencil.
+- A line: the edge of a table, a straight road, a laser beam, the crease in folded paper.
+- A plane: the surface of a desk, a wall, the floor, the screen of your phone, or the flat surface of a calm lake.
+
+Understanding points, lines, and planes helps with construction, design, reading maps, architecture, and even simple tasks like hanging a picture straight.
+
+:::note[You've Got This]
+Points, lines, and planes are the simplest ideas in geometry — they're just names for things you already see every day. Don't worry about memorizing definitions perfectly. Look around your room right now and spot real examples. You're starting from the ground up, and that's exactly where you should be.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="geometry-points-lines-planes"
+  questions={[
+    {
+      id: "q1",
+      text: "How many lines can pass through two distinct points?",
+      options: ["One", "Two", "Infinite", "Zero"],
+      correctIndex: 0,
+      explanation:
+        "Exactly one unique line passes through any two distinct points.",
+    },
+    {
+      id: "q2",
+      text: "How many planes can three non-collinear points determine?",
+      options: ["One", "Two", "Three", "Infinite"],
+      correctIndex: 0,
+      explanation: "Three non-collinear points determine exactly one plane.",
+    },
+    {
+      id: "q3",
+      text: "Which of these is the best real-world example of a plane?",
+      options: [
+        "The surface of a table",
+        "The edge of a ruler",
+        "The tip of a pen",
+        "A single GPS point",
+      ],
+      correctIndex: 0,
+      explanation:
+        "A flat surface like a table or wall is a good example of a plane.",
+    },
+    {
+      id: "q4",
+      text: "If two lines intersect at two different points, what must be true?",
+      options: [
+        "They are the same line",
+        "They are parallel",
+        "They are perpendicular",
+        "They form a triangle",
+      ],
+      correctIndex: 0,
+      explanation:
+        "If two lines intersect at two points, they must actually be the same line.",
+    },
+  ]}
+/>

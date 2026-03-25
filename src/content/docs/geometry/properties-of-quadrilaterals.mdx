@@ -1,0 +1,104 @@
+---
+title: Properties of Quadrilaterals
+description: Learn the definitions and key properties of common quadrilaterals including parallelograms, rectangles, rhombuses, squares, and trapezoids
+sidebar:
+  order: 10
+---
+
+import QuadTypes from "../../../components/QuadTypes.astro";
+
+## What You'll Learn
+
+In this lesson you'll learn how to identify and distinguish between different types of quadrilaterals and understand their special properties.
+
+## The Concept
+
+A **quadrilateral** is any polygon with four sides and four vertices. The sum of its interior angles is always **360°**.
+
+<QuadTypes />
+
+Common types and their properties:
+
+- **Parallelogram**: Opposite sides are parallel and equal in length. Opposite angles are equal. Consecutive angles are supplementary.
+- **Rectangle**: A parallelogram with four right angles (90°). Opposite sides equal. Diagonals are equal.
+- **Rhombus**: A parallelogram with all four sides equal. Opposite angles equal. Diagonals bisect each other at right angles.
+- **Square**: A rectangle with all sides equal (or a rhombus with four right angles). All properties of both rectangle and rhombus.
+- **Trapezoid**: Exactly one pair of parallel sides (called the bases). The non-parallel sides are the legs.
+
+Key facts:
+
+- Every square is a rectangle, rhombus, and parallelogram.
+- Every rectangle and rhombus is a parallelogram.
+- The diagonals of a rectangle or square are equal.
+- The diagonals of a rhombus or square are perpendicular.
+
+## Worked Example
+
+1. A quadrilateral has opposite sides parallel and equal, and all angles are 90°. What is it?
+
+   Rectangle (and also a parallelogram).
+
+2. A quadrilateral has all sides equal and diagonals that intersect at 90°. What is it?
+
+   Rhombus (could be a square if angles are also 90°).
+
+3. In a parallelogram, one angle measures 70°. What do the other angles measure?
+
+   Opposite angle = 70°. Consecutive angles = 180° − 70° = 110° each.
+
+## Real-World Application
+
+Quadrilaterals appear constantly in daily life:
+
+- Rooms and floors are usually rectangles.
+- Picture frames, windows, and doors are rectangles or squares.
+- A diamond-shaped kite is often a rhombus.
+- Tables, books, phones, and screens are typically rectangles.
+- Trapezoids appear in bridge supports, roof shapes, and some furniture designs.
+
+Understanding their properties helps with construction, design, measuring space, and recognizing shapes in the world around you.
+
+:::note[You've Got This]
+Quadrilaterals are just four-sided shapes with different rules. Start by remembering that parallelograms have opposite sides parallel and equal. Rectangles add right angles, rhombuses add equal sides, and squares have both. Look around your room — most objects are rectangles or squares. Spotting these properties becomes easy with practice.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="geometry-properties-of-quadrilaterals"
+  questions={[
+    {
+      id: "q1",
+      text: "A quadrilateral with opposite sides parallel and equal is called a:",
+      options: ["Parallelogram", "Trapezoid", "Rhombus", "Square"],
+      correctIndex: 0,
+      explanation:
+        "A parallelogram has both pairs of opposite sides parallel and equal in length.",
+    },
+    {
+      id: "q2",
+      text: "Which quadrilateral has four right angles?",
+      options: ["Rectangle", "Rhombus", "Trapezoid", "Parallelogram"],
+      correctIndex: 0,
+      explanation: "A rectangle is a parallelogram with four 90° angles.",
+    },
+    {
+      id: "q3",
+      text: "A square is both a rectangle and a:",
+      options: ["Rhombus", "Trapezoid", "Parallelogram only", "Kite"],
+      correctIndex: 0,
+      explanation:
+        "A square has all sides equal (rhombus) and four right angles (rectangle).",
+    },
+    {
+      id: "q4",
+      text: "In a parallelogram, if one angle is 65°, what is the measure of the opposite angle?",
+      options: ["65°", "115°", "180°", "90°"],
+      correctIndex: 0,
+      explanation:
+        "Opposite angles in a parallelogram are equal, so it is also 65°.",
+    },
+  ]}
+/>

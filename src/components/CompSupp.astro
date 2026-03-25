@@ -1,0 +1,70 @@
+---
+// CompSupp.astro — Complementary (90°) and supplementary (180°) with precise arcs
+// LEFT: vertex (70,150). Horizontal right, vertical up, dashed at 30°.
+//   R=25. 30° arc: start (95,150), end (70+25*cos60, 150-25*sin60) = (82.5, 128.4)
+//   60° arc: start (82.5, 128.4), end (70, 125)
+//   Square: polyline at (70,150) going right 16 then up 16
+// RIGHT: vertex (390,150). Horizontal both ways, ray at 70° above right.
+//   Ray direction: cos70=0.342, sin70=0.940. Endpoint: (390+90*0.342, 150-90*0.940) = (421, 65)
+//   R=25. 70° arc: start (415,150), end (390+25*cos70, 150-25*sin70) = (398.5, 126.5)
+//   110° arc: start (398.5, 126.5), end (365, 150)
+---
+
+<div class="diagram-container" style="text-align:center; margin: 1.5rem 0;">
+  <svg viewBox="0 0 520 175" width="520" height="175" role="img" aria-label="Complementary angles adding to 90° and supplementary angles adding to 180°" style="max-width:100%; height:auto;">
+
+    <!-- COMPLEMENTARY (left) -->
+    <text x="130" y="18" font-size="13" font-weight="bold" fill="var(--cs-label, currentColor)" text-anchor="middle">Complementary = 90°</text>
+
+    <line x1="70" y1="150" x2="200" y2="150" stroke="var(--cs-line, #888)" stroke-width="2" />
+    <line x1="70" y1="150" x2="70" y2="40" stroke="var(--cs-line, #888)" stroke-width="2" />
+    <line x1="70" y1="150" x2="180" y2="87" stroke="var(--cs-line, #888)" stroke-width="1.5" stroke-dasharray="5,3" />
+
+    <!-- Square corner -->
+    <polyline points="86,150 86,134 70,134" fill="none" stroke="var(--cs-line, #888)" stroke-width="1.2" />
+
+    <!-- 30° arc: horizontal to dashed (30° above horizontal) -->
+    <path d="M 95,150 A 25,25 0 0,0 91.7,128.4" fill="none" stroke="var(--cs-a, #61afef)" stroke-width="2.5" />
+    <!-- 60° arc: dashed to vertical -->
+    <path d="M 91.7,128.4 A 25,25 0 0,0 70,125" fill="none" stroke="var(--cs-b, #e06c75)" stroke-width="2.5" />
+
+    <text x="104" y="140" font-size="13" font-weight="bold" fill="var(--cs-a, #61afef)">30°</text>
+    <text x="78" y="118" font-size="13" font-weight="bold" fill="var(--cs-b, #e06c75)">60°</text>
+
+    <circle cx="70" cy="150" r="3" fill="var(--cs-pt, #e5c07b)" />
+
+    <!-- SUPPLEMENTARY (right) -->
+    <text x="390" y="18" font-size="13" font-weight="bold" fill="var(--cs-label, currentColor)" text-anchor="middle">Supplementary = 180°</text>
+
+    <line x1="280" y1="150" x2="500" y2="150" stroke="var(--cs-line, #888)" stroke-width="2" />
+    <line x1="390" y1="150" x2="421" y2="65" stroke="var(--cs-line, #888)" stroke-width="2" />
+
+    <!-- 70° arc: horizontal-right to ray -->
+    <path d="M 415,150 A 25,25 0 0,0 398.5,126.5" fill="none" stroke="var(--cs-a, #61afef)" stroke-width="2.5" />
+    <!-- 110° arc: ray to horizontal-left -->
+    <path d="M 398.5,126.5 A 25,25 0 0,0 365,150" fill="none" stroke="var(--cs-b, #e06c75)" stroke-width="2.5" />
+
+    <text x="424" y="138" font-size="13" font-weight="bold" fill="var(--cs-a, #61afef)">70°</text>
+    <text x="345" y="130" font-size="13" font-weight="bold" fill="var(--cs-b, #e06c75)">110°</text>
+
+    <circle cx="390" cy="150" r="3" fill="var(--cs-pt, #e5c07b)" />
+
+  </svg>
+</div>
+
+<style>
+  :root {
+    --cs-line: #888;
+    --cs-pt: #e5c07b;
+    --cs-a: #61afef;
+    --cs-b: #e06c75;
+    --cs-label: var(--sl-color-white, #e0e0e0);
+  }
+  :root[data-theme="light"] {
+    --cs-line: #555;
+    --cs-pt: #d4a017;
+    --cs-a: #2980b9;
+    --cs-b: #c0392b;
+    --cs-label: #1a1a1a;
+  }
+</style>

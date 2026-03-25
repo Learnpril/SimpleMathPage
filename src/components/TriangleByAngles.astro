@@ -1,0 +1,74 @@
+---
+// TriangleByAngles.astro — Acute, Right, Obtuse triangles with precise geometry
+//
+// ACUTE: angles 70°, 60°, 50°. B at (33,145), C at (153,145). BC=120.
+//   AB = 120*sin(60°)/sin(50°) = 120*0.866/0.766 = 135.6
+//   A_x = 33 + 135.6*cos(70°) = 33 + 46.4 = 79.4
+//   A_y = 145 - 135.6*sin(70°) = 145 - 127.4 = 17.6
+//   A at (79, 18)
+//
+// RIGHT: 90° at D, 53.13° at F, 36.87° at E. D(240,145), E(240,42), F(340,145).
+//   DE=103 vertical, DF=100 horizontal. EF=sqrt(103²+100²)=143.5
+//   Angle at F = atan(103/100) = 45.84°... Let me use 90/50/40 instead.
+//   D(240,145), E(240,45), F(340,145). DE=100, DF=100.
+//   Angle at F = atan(100/100) = 45°. That gives 90/45/45.
+//   For 90/55/35: DE=100, DF = 100*tan(55°) = 142.8. F at (382.8, 145).
+//   Too wide. Use DE=80: DF = 80*tan(55°) = 114.3. F at (354.3, 145).
+//   Actually let me just do a clean 90/45/45 isosceles right triangle. Simple and clear.
+//   D(240,145), E(240,42), F(343,145). DE=103, DF=103. Angle F = 45°, E = 45°.
+//   Simpler: D(240,145), E(240,45), F(340,145). DE=DF=100. 90/45/45.
+//
+// OBTUSE: ~114° at apex. A(467,95), B(390,145), C(545,145).
+//   Already computed: apex angle ≈ 114°. Bottom angles: 
+//   At B: direction to A = (77,-50), to C = (155,0). Angle = atan(50/77) = 33°
+//   At C: direction to A = (-78,-50), to B = (-155,0). Angle = atan(50/78) = 33°
+//   Sum: 114 + 33 + 33 = 180 ✓
+---
+
+<div class="diagram-container" style="text-align:center; margin: 1.5rem 0;">
+  <svg viewBox="0 0 560 178" width="560" height="178" role="img" aria-label="Three triangle types by angle: acute, right, and obtuse" style="max-width:100%; height:auto;">
+
+    <!-- ACUTE: 70°/60°/50° — A(79,18), B(33,145), C(153,145) -->
+    <text x="93" y="14" font-size="13" font-weight="bold" fill="var(--label-color, currentColor)" text-anchor="middle">Acute</text>
+    <polygon points="79,18 33,145 153,145" fill="none" stroke="var(--tang-a, #e06c75)" stroke-width="2" stroke-linejoin="round" />
+    <text x="93" y="163" font-size="11" fill="var(--sublabel-color, #888)" text-anchor="middle">All angles &lt; 90°</text>
+
+    <!-- RIGHT: 90°/45°/45° — D(240,145), E(240,45), F(340,145) -->
+    <text x="280" y="14" font-size="13" font-weight="bold" fill="var(--label-color, currentColor)" text-anchor="middle">Right</text>
+    <polygon points="240,45 240,145 340,145" fill="none" stroke="var(--tang-b, #56b6c2)" stroke-width="2" stroke-linejoin="round" />
+    <!-- Right angle square at D(240,145) — snapped to corner -->
+    <polyline points="254,145 254,131 240,131" fill="none" stroke="var(--tang-b, #56b6c2)" stroke-width="1.3" />
+    <text x="280" y="163" font-size="11" fill="var(--sublabel-color, #888)" text-anchor="middle">One angle = 90°</text>
+
+    <!-- OBTUSE: ~114°/33°/33° — apex(467,95), B(390,145), C(545,145) -->
+    <text x="467" y="14" font-size="13" font-weight="bold" fill="var(--label-color, currentColor)" text-anchor="middle">Obtuse</text>
+    <polygon points="467,95 390,145 545,145" fill="none" stroke="var(--tang-c, #c678dd)" stroke-width="2" stroke-linejoin="round" />
+    <!-- Arc at obtuse apex (467,95). R=16.
+         Direction to B: (-77,50), angle = atan2(50,-77) = 147.0° (SVG)
+         Direction to C: (78,50), angle = atan2(50,78) = 32.7° (SVG)
+         Arc start (toward B): (467+16*cos147, 95+16*sin147) = (467-13.4, 95+8.7) = (453.6, 103.7)
+         Arc end (toward C): (467+16*cos32.7, 95+16*sin32.7) = (467+13.5, 95+8.6) = (480.5, 103.6)
+         large-arc-flag=1 since angle > 180°? No, the interior angle is 114° < 180°, so large-arc=0.
+         Sweep=0 (counterclockwise in SVG from B-side to C-side through interior) -->
+    <path d="M 453.6,103.7 A 16,16 0 0,0 480.5,103.6" fill="none" stroke="var(--tang-c, #c678dd)" stroke-width="1.3" />
+    <text x="467" y="163" font-size="11" fill="var(--sublabel-color, #888)" text-anchor="middle">One angle &gt; 90°</text>
+
+  </svg>
+</div>
+
+<style>
+  :root {
+    --tang-a: #e06c75;
+    --tang-b: #56b6c2;
+    --tang-c: #c678dd;
+    --label-color: var(--sl-color-white, #e0e0e0);
+    --sublabel-color: #888;
+  }
+  :root[data-theme="light"] {
+    --tang-a: #c0392b;
+    --tang-b: #16a085;
+    --tang-c: #8e44ad;
+    --label-color: #1a1a1a;
+    --sublabel-color: #666;
+  }
+</style>

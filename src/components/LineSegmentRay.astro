@@ -1,0 +1,56 @@
+---
+// LineSegmentRay.astro — SVG showing a line, line segment, and ray side by side
+---
+
+<div class="diagram-container" style="text-align:center; margin: 1.5rem 0;">
+  <svg viewBox="0 0 600 130" width="600" height="130" role="img" aria-label="Diagram comparing a line, line segment, and ray" style="max-width:100%; height:auto;">
+
+    <!-- LINE (centered at x=100) -->
+    <text x="100" y="20" font-size="13" font-weight="bold" fill="var(--label-color, currentColor)" text-anchor="middle">Line</text>
+    <polygon points="30,50 40,44 40,56" fill="var(--line-color, #e06c75)" />
+    <line x1="38" y1="50" x2="162" y2="50" stroke="var(--line-color, #e06c75)" stroke-width="2" />
+    <polygon points="170,50 160,44 160,56" fill="var(--line-color, #e06c75)" />
+    <text x="100" y="72" font-size="11" fill="var(--sublabel-color, #888)" text-anchor="middle">Extends forever both ways</text>
+    <text x="100" y="105" font-size="12" fill="var(--sublabel-color, #888)" text-anchor="middle">Symbol: ↔</text>
+
+    <!-- LINE SEGMENT (centered at x=300) -->
+    <text x="300" y="20" font-size="13" font-weight="bold" fill="var(--label-color, currentColor)" text-anchor="middle">Line Segment</text>
+    <circle cx="245" cy="50" r="5" fill="var(--point-color, #e5c07b)" />
+    <circle cx="355" cy="50" r="5" fill="var(--point-color, #e5c07b)" />
+    <line x1="245" y1="50" x2="355" y2="50" stroke="var(--segment-color, #61afef)" stroke-width="2" />
+    <text x="245" y="40" font-size="12" fill="var(--label-color, currentColor)" text-anchor="middle">A</text>
+    <text x="355" y="40" font-size="12" fill="var(--label-color, currentColor)" text-anchor="middle">B</text>
+    <text x="300" y="72" font-size="11" fill="var(--sublabel-color, #888)" text-anchor="middle">Two endpoints, finite length</text>
+    <text x="300" y="105" font-size="12" fill="var(--sublabel-color, #888)" text-anchor="middle">Symbol: —</text>
+
+    <!-- RAY (centered at x=500) -->
+    <text x="500" y="20" font-size="13" font-weight="bold" fill="var(--label-color, currentColor)" text-anchor="middle">Ray</text>
+    <circle cx="440" cy="50" r="5" fill="var(--point-color, #e5c07b)" />
+    <line x1="440" y1="50" x2="552" y2="50" stroke="var(--ray-color, #98c379)" stroke-width="2" />
+    <polygon points="560,50 550,44 550,56" fill="var(--ray-color, #98c379)" />
+    <text x="440" y="40" font-size="12" fill="var(--label-color, currentColor)" text-anchor="middle">C</text>
+    <text x="510" y="40" font-size="12" fill="var(--label-color, currentColor)" text-anchor="middle">D</text>
+    <text x="500" y="72" font-size="11" fill="var(--sublabel-color, #888)" text-anchor="middle">One endpoint, extends forever</text>
+    <text x="500" y="105" font-size="12" fill="var(--sublabel-color, #888)" text-anchor="middle">Symbol: →</text>
+
+  </svg>
+</div>
+
+<style>
+  :root {
+    --line-color: #e06c75;
+    --segment-color: #61afef;
+    --ray-color: #98c379;
+    --point-color: #e5c07b;
+    --label-color: var(--sl-color-white, #e0e0e0);
+    --sublabel-color: #888;
+  }
+  :root[data-theme="light"] {
+    --line-color: #c0392b;
+    --segment-color: #2980b9;
+    --ray-color: #27ae60;
+    --point-color: #d4a017;
+    --label-color: #1a1a1a;
+    --sublabel-color: #666;
+  }
+</style>

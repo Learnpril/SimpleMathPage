@@ -1,0 +1,113 @@
+---
+// TriangleSumDiagram.astro — Two triangles with precise arcs
+//
+// LEFT: B=65°, C=75°, A=40°. B at (70,180), C at (200,180), A at (153,18)
+// Arc radius R=20 for all arcs.
+//
+// At B (70,180): rays go to C (right, angle 0°) and to A (angle 65° above horizontal)
+//   Arc start (along BC): (70+20, 180) = (90, 180)
+//   Arc end (along BA): (70+20*cos65°, 180-20*sin65°) = (70+8.45, 180-18.13) = (78.5, 161.9)
+//   Sweep: 0 (counterclockwise from horizontal to upper-left)
+//
+// At C (200,180): rays go to B (left, angle 180°) and to A (angle 180°-75°=105° from right = going upper-left)
+//   Direction to A from C: angle = 180° - atan((180-18)/(200-153)) = 180° - atan(162/47) = 180° - 73.8° = 106.2°
+//   Arc start (along CB): (200-20, 180) = (180, 180)
+//   Arc end (along CA): (200+20*cos(106.2°), 180-20*sin(106.2°)) = (200-5.6, 180-19.2) = (194.4, 160.8)
+//   Sweep: 1 (clockwise from left to upper-left)
+//
+// At A (153,18): rays go to B and to C
+//   Direction to B: atan((180-18)/(153-70)) = atan(162/83) = 62.9° below horizontal-left = 180°+62.9° = 242.9°
+//   Direction to C: atan((180-18)/(200-153)) = atan(162/47) = 73.8° below horizontal-right = 360°-73.8° = 286.2° (or -73.8°)
+//   Wait, in SVG coords (y down): direction A→B = (70-153, 180-18) = (-83, 162), angle from +x = atan2(162,-83) = 117.1° (SVG)
+//   Direction A→C = (200-153, 180-18) = (47, 162), angle from +x = atan2(162,47) = 73.8° (SVG)
+//   Arc start (along AB): (153+20*cos(117.1°), 18+20*sin(117.1°)) = (153-9.1, 18+17.8) = (143.9, 35.8)
+//   Arc end (along AC): (153+20*cos(73.8°), 18+20*sin(73.8°)) = (153+5.6, 18+19.2) = (158.6, 37.2)
+//   Sweep: 0 (counterclockwise in SVG = from AB ray to AC ray going through interior)
+//
+// RIGHT: D=90°, E=50°, F=40°. D at (320,180), E at (320,80), F at (440,180)
+// Arc radius R=18
+//
+// At D (320,180): rays go up to E (angle 90° in SVG = straight up) and right to F (angle 0°)
+//   Arc start (along DF): (320+18, 180) = (338, 180)
+//   Arc end (along DE): (320, 180-18) = (320, 162)
+//   Right angle square: x=320, y=180-16=164, width=16, height=16 → bottom-left at (320,180), fits perfectly
+//
+// At E (320,80): rays go down to D (angle 270° SVG = straight down) and to F
+//   Direction E→F = (440-320, 180-80) = (120, 100), angle = atan2(100,120) = 39.8° (SVG)
+//   Arc start (along ED): (320, 80+18) = (320, 98)
+//   Arc end (along EF): (320+18*cos(39.8°), 80+18*sin(39.8°)) = (320+13.8, 80+11.5) = (333.8, 91.5)
+//   Sweep: 0
+//
+// At F (440,180): rays go left to D (angle 180°) and to E
+//   Direction F→E = (320-440, 80-180) = (-120, -100), angle = atan2(-100,-120) = 219.8° (SVG)
+//   Arc start (along FD): (440-18, 180) = (422, 180)
+//   Arc end (along FE): (440+18*cos(219.8°), 180+18*sin(219.8°)) = (440-13.8, 180-11.5) = (426.2, 168.5)
+//   Sweep: 1
+---
+
+<div class="diagram-container" style="text-align:center; margin: 1.5rem 0;">
+  <svg viewBox="0 0 520 230" width="520" height="230" role="img" aria-label="Two triangles each with angles summing to 180°" style="max-width:100%; height:auto;">
+
+    <!-- LEFT TRIANGLE: 65° / 75° / 40° -->
+    <polygon points="153,18 70,180 200,180" fill="none" stroke="var(--tsd-tri, #61afef)" stroke-width="2" stroke-linejoin="round" />
+
+    <!-- Arc at B (70,180) = 65° -->
+    <path d="M 90,180 A 20,20 0 0,0 78.5,161.9" fill="none" stroke="var(--tsd-arc, #e5c07b)" stroke-width="1.8" />
+    <!-- Arc at C (200,180) = 75° -->
+    <path d="M 180,180 A 20,20 0 0,1 194.4,160.8" fill="none" stroke="var(--tsd-arc, #e5c07b)" stroke-width="1.8" />
+    <!-- Arc at A (153,18) = 40° -->
+    <path d="M 143.9,35.8 A 20,20 0 0,0 158.6,37.2" fill="none" stroke="var(--tsd-arc, #e5c07b)" stroke-width="1.8" />
+
+    <!-- Labels outside -->
+    <text x="153" y="10" font-size="12" fill="var(--tsd-label, currentColor)" text-anchor="middle">A</text>
+    <text x="190" y="34" font-size="13" font-weight="bold" fill="var(--tsd-arc, #e5c07b)">40°</text>
+    <text x="56" y="192" font-size="12" fill="var(--tsd-label, currentColor)">B</text>
+    <text x="52" y="168" font-size="13" font-weight="bold" fill="var(--tsd-arc, #e5c07b)">65°</text>
+    <text x="206" y="192" font-size="12" fill="var(--tsd-label, currentColor)">C</text>
+    <text x="210" y="168" font-size="13" font-weight="bold" fill="var(--tsd-arc, #e5c07b)">75°</text>
+
+    <text x="135" y="218" font-size="11" fill="var(--tsd-sub, #888)" text-anchor="middle">65° + 75° + 40° = 180°</text>
+
+    <!-- RIGHT TRIANGLE: 90° / 50° / 40° -->
+    <polygon points="320,80 320,180 440,180" fill="none" stroke="var(--tsd-tri2, #98c379)" stroke-width="2" stroke-linejoin="round" />
+
+    <!-- Right angle square at D (320,180) — snapped to corner -->
+    <polyline points="336,180 336,164 320,164" fill="none" stroke="var(--tsd-arc2, #56b6c2)" stroke-width="1.5" />
+
+    <!-- Arc at E (320,80) = 50° -->
+    <path d="M 320,98 A 18,18 0 0,0 333.8,91.5" fill="none" stroke="var(--tsd-arc2, #56b6c2)" stroke-width="1.8" />
+
+    <!-- Arc at F (440,180) = 40° -->
+    <path d="M 422,180 A 18,18 0 0,1 426.2,168.5" fill="none" stroke="var(--tsd-arc2, #56b6c2)" stroke-width="1.8" />
+
+    <!-- Labels outside -->
+    <text x="308" y="76" font-size="12" fill="var(--tsd-label, currentColor)" text-anchor="end">E</text>
+    <text x="350" y="88" font-size="13" font-weight="bold" fill="var(--tsd-arc2, #56b6c2)">50°</text>
+    <text x="308" y="192" font-size="12" fill="var(--tsd-label, currentColor)" text-anchor="end">D</text>
+    <text x="342" y="172" font-size="13" font-weight="bold" fill="var(--tsd-arc2, #56b6c2)">90°</text>
+    <text x="448" y="192" font-size="12" fill="var(--tsd-label, currentColor)">F</text>
+    <text x="448" y="172" font-size="13" font-weight="bold" fill="var(--tsd-arc2, #56b6c2)">40°</text>
+
+    <text x="380" y="218" font-size="11" fill="var(--tsd-sub, #888)" text-anchor="middle">90° + 50° + 40° = 180°</text>
+
+  </svg>
+</div>
+
+<style>
+  :root {
+    --tsd-tri: #61afef;
+    --tsd-arc: #e5c07b;
+    --tsd-tri2: #98c379;
+    --tsd-arc2: #56b6c2;
+    --tsd-label: var(--sl-color-white, #e0e0e0);
+    --tsd-sub: #888;
+  }
+  :root[data-theme="light"] {
+    --tsd-tri: #2980b9;
+    --tsd-arc: #d4a017;
+    --tsd-tri2: #27ae60;
+    --tsd-arc2: #16a085;
+    --tsd-label: #1a1a1a;
+    --tsd-sub: #666;
+  }
+</style>

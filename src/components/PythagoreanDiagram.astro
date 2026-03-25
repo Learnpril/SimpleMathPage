@@ -1,0 +1,49 @@
+---
+// PythagoreanDiagram.astro — Right triangle with labeled sides a, b, c
+// 3-4-5 triple scaled: a=6 (vertical leg), b=8 (horizontal leg), c=10 (hypotenuse)
+// Angles: at right angle = 90°, at bottom-right = atan(6/8) = 36.87°, at top = 53.13°
+// Vertices: B(60,170) bottom-left (right angle), C(220,170) bottom-right, A(60,50) top
+// Pixel scale: b=160px horizontal, a=120px vertical, c=200px hypotenuse
+---
+
+<div class="diagram-container" style="text-align:center; margin: 1.5rem 0;">
+  <svg viewBox="0 0 300 220" width="300" height="220" role="img" aria-label="Right triangle with legs a=6, b=8 and hypotenuse c=10 illustrating the Pythagorean theorem" style="max-width:100%; height:auto;">
+
+    <!-- Triangle: B(60,170), A(60,50), C(220,170) -->
+    <polygon points="60,50 60,170 220,170" fill="none" stroke="var(--pyth-tri, #61afef)" stroke-width="2" stroke-linejoin="round" />
+
+    <!-- Right angle square at B(60,170) -->
+    <polyline points="76,170 76,154 60,154" fill="none" stroke="var(--pyth-arc, #e5c07b)" stroke-width="1.5" />
+
+    <!-- Side labels outside the triangle -->
+    <!-- a = vertical leg (left side) -->
+    <text x="30" y="115" font-size="14" font-weight="bold" fill="var(--pyth-a, #e06c75)" text-anchor="middle">a = 6</text>
+    <!-- b = horizontal leg (bottom) -->
+    <text x="140" y="190" font-size="14" font-weight="bold" fill="var(--pyth-b, #98c379)" text-anchor="middle">b = 8</text>
+    <!-- c = hypotenuse (diagonal) -->
+    <text x="160" y="100" font-size="14" font-weight="bold" fill="var(--pyth-c, #c678dd)">c = 10</text>
+
+    <!-- Formula -->
+    <text x="150" y="215" font-size="12" fill="var(--pyth-sub, #888)" text-anchor="middle">6² + 8² = 36 + 64 = 100 = 10²</text>
+
+  </svg>
+</div>
+
+<style>
+  :root {
+    --pyth-tri: #61afef;
+    --pyth-arc: #e5c07b;
+    --pyth-a: #e06c75;
+    --pyth-b: #98c379;
+    --pyth-c: #c678dd;
+    --pyth-sub: #888;
+  }
+  :root[data-theme="light"] {
+    --pyth-tri: #2980b9;
+    --pyth-arc: #d4a017;
+    --pyth-a: #c0392b;
+    --pyth-b: #27ae60;
+    --pyth-c: #8e44ad;
+    --pyth-sub: #666;
+  }
+</style>

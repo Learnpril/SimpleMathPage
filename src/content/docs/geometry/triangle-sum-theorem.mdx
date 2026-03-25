@@ -1,0 +1,98 @@
+---
+title: Triangle Sum Theorem
+description: Learn that the sum of the interior angles in any triangle is 180° and how to use it to find missing angles
+sidebar:
+  order: 8
+---
+
+import TriangleSumDiagram from "../../../components/TriangleSumDiagram.astro";
+
+## What You'll Learn
+
+In this lesson you'll learn the Triangle Sum Theorem and how to use it to find missing angle measures in triangles.
+
+## The Concept
+
+The **Triangle Sum Theorem** states that the sum of the measures of the interior angles in any triangle is always **180°**.
+
+This is true for all triangles — equilateral, isosceles, scalene, right, acute, or obtuse.
+
+If you know two angles in a triangle, you can find the third by subtracting their sum from 180°.
+
+<TriangleSumDiagram />
+
+You can also use this theorem to check if given angles can form a triangle (their sum must be exactly 180°).
+
+## Worked Example
+
+1. In a triangle, two angles measure 50° and 60°. What is the third angle?
+
+   $180° - 50° - 60° = 70°$
+
+2. In △DEF, ∠D = 90° and ∠E = 35°. What is ∠F?
+
+   $180° - 90° - 35° = 55°$
+
+3. Can angles of 70°, 80°, and 40° form a triangle?
+
+   70° + 80° + 40° = 190° — No, because the sum is greater than 180°.
+
+## Real-World Application
+
+The Triangle Sum Theorem is used in many practical situations:
+
+- Roof design: Roof trusses form triangles, and knowing the angles helps calculate slopes and cuts.
+- Construction: When building frames or shelves, you ensure angles add up correctly for stability.
+- Navigation and surveying: Triangulation uses the fact that angles in triangles sum to 180° to determine distances and positions.
+- Art and design: When drawing perspective or laying out patterns, understanding triangle angles helps maintain proportions.
+
+This theorem is one of the most frequently used tools in basic geometry.
+
+:::note[You've Got This]
+The Triangle Sum Theorem is simple but powerful: the three angles inside any triangle always add up to 180°. If you know two, subtract their sum from 180° to find the third. Practice with real triangles you see (roof lines, shelf brackets, road signs) — you'll quickly get comfortable using it.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="geometry-triangle-sum-theorem"
+  questions={[
+    {
+      id: "q1",
+      text: "What is the sum of the interior angles in any triangle?",
+      options: ["180°", "360°", "90°", "270°"],
+      correctIndex: 0,
+      explanation:
+        "The Triangle Sum Theorem states that the interior angles of any triangle add up to 180°.",
+    },
+    {
+      id: "q2",
+      text: "In a triangle, two angles measure 45° and 65°. What is the third angle?",
+      options: ["70°", "80°", "90°", "110°"],
+      correctIndex: 0,
+      explanation: "180° − 45° − 65° = 70°.",
+    },
+    {
+      id: "q3",
+      text: "Can angles of 50°, 60°, and 80° form a triangle?",
+      options: [
+        "No, they add to 190°",
+        "Yes",
+        "Only if it's right",
+        "Only if it's isosceles",
+      ],
+      correctIndex: 0,
+      explanation:
+        "50° + 60° + 80° = 190°, which is greater than 180°, so they cannot form a triangle.",
+    },
+    {
+      id: "q4",
+      text: "In a right triangle, one angle is 90° and another is 35°. What is the third angle?",
+      options: ["55°", "45°", "65°", "90°"],
+      correctIndex: 0,
+      explanation: "180° − 90° − 35° = 55°.",
+    },
+  ]}
+/>

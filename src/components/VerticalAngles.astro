@@ -1,0 +1,62 @@
+---
+// VerticalAngles.astro — Two intersecting lines with 65°/115° vertical angle pairs
+// Center (190,140). Line1: horizontal. Line2: 65° above horizontal.
+// Circle radius 30. Four arc segments form a complete circle.
+// 0° = right = (220,140)
+// 65° = upper-right = (203,113)
+// 180° = left = (160,140)
+// 245° = lower-left = (177,167)
+---
+
+<div class="diagram-container" style="text-align:center; margin: 1.5rem 0;">
+  <svg viewBox="0 0 380 320" width="380" height="320" role="img" aria-label="Two intersecting lines forming 65° and 115° vertical angle pairs" style="max-width:100%; height:auto;">
+
+    <!-- Line 1: horizontal -->
+    <line x1="30" y1="140" x2="350" y2="140" stroke="var(--line-color, #888)" stroke-width="2" />
+    <!-- Line 2: at 65° above horizontal through center -->
+    <line x1="112" y1="280" x2="268" y2="0" stroke="var(--line-color, #888)" stroke-width="2" />
+
+    <!-- Center point -->
+    <circle cx="190" cy="140" r="4" fill="var(--point-color, #e5c07b)" />
+
+    <!-- Four arcs forming a complete circle, each colored by angle -->
+    <!-- Arc 1: 0° to 65° = 65° ACUTE (blue) — top-right -->
+    <path d="M 220,140 A 30,30 0 0,0 203,113" fill="none" stroke="var(--angle-a-color, #61afef)" stroke-width="2.5" />
+    <!-- Arc 2: 65° to 180° = 115° OBTUSE (red) — top-left -->
+    <path d="M 203,113 A 30,30 0 0,0 160,140" fill="none" stroke="var(--angle-b-color, #e06c75)" stroke-width="2.5" />
+    <!-- Arc 3: 180° to 245° = 65° ACUTE (blue) — bottom-left -->
+    <path d="M 160,140 A 30,30 0 0,0 177,167" fill="none" stroke="var(--angle-a-color, #61afef)" stroke-width="2.5" />
+    <!-- Arc 4: 245° to 360° = 115° OBTUSE (red) — bottom-right -->
+    <path d="M 177,167 A 30,30 0 0,0 220,140" fill="none" stroke="var(--angle-b-color, #e06c75)" stroke-width="2.5" />
+
+    <!-- Labels pushed outward -->
+    <text x="248" y="108" font-size="16" font-weight="bold" fill="var(--angle-a-color, #61afef)">65°</text>
+    <text x="95" y="186" font-size="16" font-weight="bold" fill="var(--angle-a-color, #61afef)">65°</text>
+    <text x="88" y="100" font-size="16" font-weight="bold" fill="var(--angle-b-color, #e06c75)">115°</text>
+    <text x="248" y="186" font-size="16" font-weight="bold" fill="var(--angle-b-color, #e06c75)">115°</text>
+
+    <!-- Legend -->
+    <rect x="70" y="290" width="14" height="14" rx="2" fill="var(--angle-a-color, #61afef)" />
+    <text x="90" y="302" font-size="12" fill="var(--label-color, currentColor)">Vertical pair: 65°</text>
+    <rect x="220" y="290" width="14" height="14" rx="2" fill="var(--angle-b-color, #e06c75)" />
+    <text x="240" y="302" font-size="12" fill="var(--label-color, currentColor)">Vertical pair: 115°</text>
+
+  </svg>
+</div>
+
+<style>
+  :root {
+    --line-color: #888;
+    --point-color: #e5c07b;
+    --angle-a-color: #61afef;
+    --angle-b-color: #e06c75;
+    --label-color: var(--sl-color-white, #e0e0e0);
+  }
+  :root[data-theme="light"] {
+    --line-color: #555;
+    --point-color: #d4a017;
+    --angle-a-color: #2980b9;
+    --angle-b-color: #c0392b;
+    --label-color: #1a1a1a;
+  }
+</style>

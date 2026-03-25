@@ -1,0 +1,68 @@
+---
+// QuadTypes.astro — Five quadrilaterals with distinct shapes
+// Columns at x=56, 168, 280, 392, 504. Base at y=120. Labels y=16. Subtitles y=142.
+---
+
+<div class="diagram-container" style="text-align:center; margin: 1.5rem 0;">
+  <svg viewBox="0 0 560 155" width="560" height="155" role="img" aria-label="Five quadrilateral types: parallelogram, rectangle, rhombus, square, trapezoid" style="max-width:100%; height:auto;">
+
+    <!-- PARALLELOGRAM centered at x=56 -->
+    <text x="56" y="16" font-size="11" font-weight="bold" fill="var(--qlabel, currentColor)" text-anchor="middle">Parallelogram</text>
+    <polygon points="27,45 97,45 85,120 15,120" fill="none" stroke="var(--q1, #61afef)" stroke-width="2" stroke-linejoin="round" />
+    <text x="56" y="142" font-size="9" fill="var(--qsub, #888)" text-anchor="middle">Opposite sides ∥ and =</text>
+
+    <!-- RECTANGLE centered at x=168 — wider than tall to distinguish from square -->
+    <text x="168" y="16" font-size="11" font-weight="bold" fill="var(--qlabel, currentColor)" text-anchor="middle">Rectangle</text>
+    <rect x="122" y="60" width="92" height="60" fill="none" stroke="var(--q2, #98c379)" stroke-width="2" />
+    <polyline points="132,60 132,70 122,70" fill="none" stroke="var(--q2, #98c379)" stroke-width="1" />
+    <text x="168" y="142" font-size="9" fill="var(--qsub, #888)" text-anchor="middle">4 right angles</text>
+
+    <!-- RHOMBUS centered at x=280 -->
+    <text x="280" y="16" font-size="11" font-weight="bold" fill="var(--qlabel, currentColor)" text-anchor="middle">Rhombus</text>
+    <polygon points="280,35 320,82 280,130 240,82" fill="none" stroke="var(--q3, #e5c07b)" stroke-width="2" stroke-linejoin="round" />
+    <!-- Tick marks on all 4 sides -->
+    <line x1="298" y1="56" x2="302" y2="60" stroke="var(--q3, #e5c07b)" stroke-width="1.2" />
+    <line x1="302" y1="104" x2="298" y2="108" stroke="var(--q3, #e5c07b)" stroke-width="1.2" />
+    <line x1="258" y1="60" x2="262" y2="56" stroke="var(--q3, #e5c07b)" stroke-width="1.2" />
+    <line x1="262" y1="108" x2="258" y2="104" stroke="var(--q3, #e5c07b)" stroke-width="1.2" />
+    <text x="280" y="142" font-size="9" fill="var(--qsub, #888)" text-anchor="middle">4 equal sides</text>
+
+    <!-- SQUARE centered at x=392 -->
+    <text x="392" y="16" font-size="11" font-weight="bold" fill="var(--qlabel, currentColor)" text-anchor="middle">Square</text>
+    <rect x="355" y="45" width="75" height="75" fill="none" stroke="var(--q4, #e06c75)" stroke-width="2" />
+    <polyline points="365,45 365,55 355,55" fill="none" stroke="var(--q4, #e06c75)" stroke-width="1" />
+    <!-- Tick marks on all 4 sides -->
+    <line x1="390" y1="45" x2="394" y2="45" stroke="var(--q4, #e06c75)" stroke-width="1.2" />
+    <line x1="355" y1="80" x2="355" y2="84" stroke="var(--q4, #e06c75)" stroke-width="1.2" />
+    <line x1="430" y1="80" x2="430" y2="84" stroke="var(--q4, #e06c75)" stroke-width="1.2" />
+    <line x1="390" y1="120" x2="394" y2="120" stroke="var(--q4, #e06c75)" stroke-width="1.2" />
+    <text x="392" y="142" font-size="9" fill="var(--qsub, #888)" text-anchor="middle">4 right angles + 4 equal sides</text>
+
+    <!-- TRAPEZOID centered at x=504 -->
+    <text x="504" y="16" font-size="11" font-weight="bold" fill="var(--qlabel, currentColor)" text-anchor="middle">Trapezoid</text>
+    <polygon points="484,45 524,45 545,120 463,120" fill="none" stroke="var(--q5, #c678dd)" stroke-width="2" stroke-linejoin="round" />
+    <text x="504" y="142" font-size="9" fill="var(--qsub, #888)" text-anchor="middle">1 pair of ∥ sides</text>
+
+  </svg>
+</div>
+
+<style>
+  :root {
+    --q1: #61afef;
+    --q2: #98c379;
+    --q3: #e5c07b;
+    --q4: #e06c75;
+    --q5: #c678dd;
+    --qlabel: var(--sl-color-white, #e0e0e0);
+    --qsub: #888;
+  }
+  :root[data-theme="light"] {
+    --q1: #2980b9;
+    --q2: #27ae60;
+    --q3: #d4a017;
+    --q4: #c0392b;
+    --q5: #8e44ad;
+    --qlabel: #1a1a1a;
+    --qsub: #666;
+  }
+</style>

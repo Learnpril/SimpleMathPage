@@ -1,0 +1,99 @@
+---
+title: Complementary and Supplementary Angles
+description: Learn what complementary and supplementary angles are and how to use them to find missing angle measures
+sidebar:
+  order: 5
+---
+
+import CompSupp from "../../../components/CompSupp.astro";
+
+## What You'll Learn
+
+In this lesson you'll learn the definitions of complementary and supplementary angles and how to use them to solve for unknown angles.
+
+## The Concept
+
+Two angles can have special relationships based on their sum:
+
+- **Complementary angles**: Two angles whose measures add up to **90°**.
+  If ∠A + ∠B = 90°, then ∠A and ∠B are complementary.
+  Example: 30° and 60° are complementary.
+
+- **Supplementary angles**: Two angles whose measures add up to **180°**.
+  If ∠A + ∠B = 180°, then ∠A and ∠B are supplementary.
+  Example: 110° and 70° are supplementary (they form a straight line).
+
+<CompSupp />
+
+Important notes:
+
+- Complementary and supplementary angles do **not** need to be adjacent (next to each other), though they often are.
+- If they are adjacent and supplementary, they form a straight line.
+- If they are adjacent and complementary, they form a right angle.
+
+## Worked Example
+
+1. Two angles are complementary. One measures 35°. What is the other?
+
+   $90° - 35° = 55°$
+
+2. Two angles are supplementary. One measures 120°. What is the other?
+
+   $180° - 120° = 60°$
+
+3. ∠A and ∠B are adjacent and form a right angle. If ∠A = 28°, what is ∠B?
+
+   They are complementary → ∠B = 90° − 28° = 62°.
+
+## Real-World Application
+
+Complementary and supplementary angles appear in many practical situations:
+
+- Construction: Walls meeting at a corner usually form a 90° (right) angle — the two angles on either side are complementary if they make up that corner.
+- Design: When laying tiles or flooring, angles that add to 180° (supplementary) help create straight edges.
+- Navigation: Turning angles on a map or GPS often involve supplementary relationships (turning left then right to go straight).
+- Everyday objects: The angles formed by the back and seat of a chair, or the hands of a clock at certain times.
+
+Recognizing these relationships helps you calculate missing angles without measuring everything directly.
+
+:::note[You've Got This]
+Complementary angles add to 90° (think "right angle"), and supplementary angles add to 180° (think "straight line"). If you know one angle, subtract it from 90° or 180° to find the other. Look for these pairs in corners, doors, or straight paths around you — it makes the concepts much more real.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="geometry-complementary-and-supplementary-angles"
+  questions={[
+    {
+      id: "q1",
+      text: "Two angles are complementary. One measures 40°. What is the other?",
+      options: ["50°", "140°", "90°", "40°"],
+      correctIndex: 0,
+      explanation: "Complementary angles add to 90°: 90° − 40° = 50°.",
+    },
+    {
+      id: "q2",
+      text: "Two angles are supplementary. One measures 110°. What is the other?",
+      options: ["70°", "110°", "180°", "90°"],
+      correctIndex: 0,
+      explanation: "Supplementary angles add to 180°: 180° − 110° = 70°.",
+    },
+    {
+      id: "q3",
+      text: "If two adjacent angles form a straight line and one is 65°, what is the other?",
+      options: ["115°", "25°", "65°", "180°"],
+      correctIndex: 0,
+      explanation: "They are supplementary: 180° − 65° = 115°.",
+    },
+    {
+      id: "q4",
+      text: "Two angles add up to 90°. They are:",
+      options: ["Complementary", "Supplementary", "Vertical", "Straight"],
+      correctIndex: 0,
+      explanation: "Complementary angles add up to 90°.",
+    },
+  ]}
+/>
