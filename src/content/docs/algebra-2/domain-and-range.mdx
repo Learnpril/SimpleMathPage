@@ -18,13 +18,13 @@ import DomainRangeConcept from "../../../components/DomainRangeConcept.astro";
 
 <DomainRangeConcept />
 
-The diagram above shows how domain and range work. The green oval on the left holds the domain — the inputs we're allowed to feed into the function. Those values pass through the function rule (here, f(x) = x² + 1), and the purple oval on the right collects the range — the outputs that come out. For example, putting in −2 gives (−2)² + 1 = 5, putting in 0 gives 1, and putting in 3 gives 10.
+The diagram above shows how domain and range work. The green oval on the left holds the domain, the inputs we're allowed to feed into the function. Those values pass through the function rule (here, f(x) = x² + 1), and the purple oval on the right collects the range, the outputs that come out. For example, putting in −2 gives (−2)² + 1 = 5, putting in 0 gives 1, and putting in 3 gives 10.
 
-Notice that the domain usually covers a whole range of numbers, not just a few. In the diagram we only showed three sample inputs, but most functions accept infinitely many. For instance, f(x) = x² + 1 accepts every real number as input, so its domain is all real numbers. The range, however, is only y ≥ 1 — because squaring always gives zero or more, the smallest output is 0² + 1 = 1. Different inputs can also produce the same output: both −2 and 2 give 5. That's perfectly fine for a function — multiple inputs can share an output, as long as each input gives exactly one output.
+Notice that the domain usually covers a whole range of numbers, not just a few. In the diagram we only showed three sample inputs, but most functions accept infinitely many. For instance, f(x) = x² + 1 accepts every real number as input, so its domain is all real numbers. The range, however, is only y ≥ 1, because squaring always gives zero or more, the smallest output is 0² + 1 = 1. Different inputs can also produce the same output: both −2 and 2 give 5. That's perfectly fine for a function. Multiple inputs can share an output, as long as each input gives exactly one output.
 
 ## Number Sets and Notation
 
-When we say "all real numbers," we mean every number on the number line — positive, negative, zero, fractions, decimals, irrational numbers like √2 and π. The symbol for the set of all real numbers is ℝ.
+When we say "all real numbers," we mean every number on the number line: positive, negative, zero, fractions, decimals, irrational numbers like √2 and π. The symbol for the set of all real numbers is ℝ.
 
 Here are the number sets you'll see most often:
 
@@ -37,17 +37,17 @@ Here are the number sets you'll see most often:
 
 Most functions in Algebra 2 work with ℝ unless there's a specific restriction.
 
-These symbols come from more formal mathematics and you'll explore them in greater depth in Pre-Calculus and beyond. For now, the main one to know is ℝ — when a domain is "all real numbers," you may see it written as ℝ or (−∞, ∞).
+These symbols come from more formal mathematics and you'll explore them in greater depth in Pre-Calculus and beyond. For now, the main one to know is ℝ. When a domain is "all real numbers," you may see it written as ℝ or (−∞, ∞).
 
 ## Interval Notation
 
-Instead of writing "x ≥ 4" or "all real numbers except 3," mathematicians use **interval notation** — a compact way to describe a set of numbers on the number line.
+Instead of writing "x ≥ 4" or "all real numbers except 3," mathematicians use **interval notation**, a compact way to describe a set of numbers on the number line.
 
 The key symbols:
 
 - **[ ]** means the endpoint is **included** (solid dot on a number line).
 - **( )** means the endpoint is **excluded** (open dot on a number line).
-- **∞** and **−∞** always get parentheses — you can never actually reach infinity.
+- **∞** and **−∞** always get parentheses. You can never actually reach infinity.
 
 Common patterns:
 
@@ -60,7 +60,7 @@ Common patterns:
 | x is between −1 and 5 (exclusive) | −1 &lt; x &lt; 5 | (−1, 5)           |
 | All reals except 3                | x ≠ 3            | (−∞, 3) ∪ (3, ∞)  |
 
-The **∪** symbol means "union" — it joins two separate intervals together. You'll use it whenever the domain has a gap (like a value that causes division by zero).
+The **∪** symbol means "union." It joins two separate intervals together. You'll use it whenever the domain has a gap (like a value that causes division by zero).
 
 ## Set-Builder Notation
 
@@ -71,7 +71,7 @@ You may also see **set-builder notation**, which reads like a sentence:
 
 The vertical bar "|" is read as "such that." Some textbooks use a colon ":" instead.
 
-Both interval notation and set-builder notation say the same thing — interval notation is just more compact, and it's the one you'll use most in Algebra 2. Set-builder notation becomes more common in Pre-Calculus and college math, so it's good to recognize it now even if you won't use it every day yet.
+Both interval notation and set-builder notation say the same thing. Interval notation is just more compact, and it's the one you'll use most in Algebra 2. Set-builder notation becomes more common in Pre-Calculus and college math, so it's good to recognize it now even if you won't use it every day yet.
 
 For most functions we work with in Algebra 2:
 
@@ -114,7 +114,7 @@ import DomainRangeDiagram from "../../../components/DomainRangeDiagram.astro";
 
 <DomainRangeDiagram />
 
-Domain: all real numbers (no restrictions — you can square any number).
+Domain: all real numbers (no restrictions, you can square any number).
 
 Range: y ≥ 3 (the minimum value is 3, which occurs when x = 0).
 
@@ -130,7 +130,7 @@ Domain and range have practical meaning:
 Understanding domain helps you avoid impossible inputs, and range shows you what outputs are possible.
 
 :::note[You've Got This]
-Domain answers "What can I put in?" and range answers "What can come out?" Most restrictions come from division by zero or square roots of negatives. Start by looking for those problems first. Practice with a few functions each time you study — you'll quickly get comfortable identifying realistic inputs and outputs.
+Domain answers "What can I put in?" and range answers "What can come out?" Most restrictions come from division by zero or square roots of negatives. Start by looking for those problems first. Practice with a few functions each time you study and you'll quickly get comfortable identifying realistic inputs and outputs.
 :::
 
 ## Quiz
