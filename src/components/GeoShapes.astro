@@ -1,0 +1,62 @@
+---
+/**
+ * GeoShapes — visual showing the core geometric shapes:
+ * triangle, square, circle, pentagon, with labels.
+ */
+const w = 440;
+const h = 130;
+const shapes = [
+  { label: 'Triangle', color: '#58a6ff' },
+  { label: 'Rectangle', color: '#7ee787' },
+  { label: 'Circle', color: '#f0883e' },
+  { label: 'Pentagon', color: '#d2a8ff' },
+];
+const shapeW = 90;
+const gap = 15;
+const totalW = shapes.length * shapeW + (shapes.length - 1) * gap;
+const startX = (w - totalW) / 2;
+const cy = 55;
+---
+
+<figure class="gsh" role="img" aria-label="Core geometric shapes: triangle, rectangle, circle, pentagon">
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    {shapes.map((s, i) => {
+      const cx = startX + i * (shapeW + gap) + shapeW / 2;
+      const r = 30;
+      return (
+        <g>
+          {/* Triangle */}
+          {i === 0 && (
+            <polygon class="gsh-shape" points={`${cx},${cy - r} ${cx - r},${cy + r - 5} ${cx + r},${cy + r - 5}`} fill="none" stroke={s.color} stroke-width="2.5" />
+          )}
+          {/* Rectangle */}
+          {i === 1 && (
+            <rect class="gsh-shape" x={cx - r} y={cy - r + 8} width={r * 2} height={r * 1.5} rx="2" fill="none" stroke={s.color} stroke-width="2.5" />
+          )}
+          {/* Circle */}
+          {i === 2 && (
+            <circle class="gsh-shape" cx={cx} cy={cy + 2} r={r - 2} fill="none" stroke={s.color} stroke-width="2.5" />
+          )}
+          {/* Pentagon */}
+          {i === 3 && (() => {
+            const pts = [];
+            for (let a = 0; a < 5; a++) {
+              const angle = (a * 72 - 90) * Math.PI / 180;
+              pts.push(`${(cx + (r - 2) * Math.cos(angle)).toFixed(1)},${(cy + 2 + (r - 2) * Math.sin(angle)).toFixed(1)}`);
+            }
+            return <polygon class="gsh-shape" points={pts.join(' ')} fill="none" stroke={s.color} stroke-width="2.5" />;
+          })()}
+          <text class="gsh-lbl" x={cx} y={cy + r + 18} font-size="11" text-anchor="middle">{s.label}</text>
+        </g>
+      );
+    })}
+  </svg>
+</figure>
+
+<style>
+  .gsh { display: flex; flex-direction: column; align-items: center; margin: 1.5rem 0; }
+  .gsh svg { max-width: 100%; height: auto; }
+  .gsh-lbl { fill: #999; font-family: 'Libre Baskerville', Georgia, serif; }
+
+  :global([data-theme="light"]) .gsh-lbl { fill: #666; }
+</style>

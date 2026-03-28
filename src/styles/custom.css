@@ -490,9 +490,27 @@ p:has(> .katex:only-child) {
   border-color: #ffffff !important;
 }
 
-/* Hide Starlight prev/next pagination links */
-.pagination-links {
-  display: none !important;
+/* Starlight prev/next pagination links */
+
+/* Section badge above page title */
+.section-badge {
+  font-size: 0.8rem;
+  color: var(--sl-color-gray-3);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 0.25rem;
+  font-family: 'Libre Baskerville', Georgia, serif;
+}
+
+/* Section label in pagination links */
+.pagination-section {
+  display: block;
+  font-size: 0.7rem;
+  color: var(--sl-color-gray-3);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 0.1rem;
+  font-family: 'Libre Baskerville', Georgia, serif;
 }
 
 /* ---------- Sticky scratch paper reminder footer ---------- */

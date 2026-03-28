@@ -1,0 +1,56 @@
+---
+/**
+ * ArithFoundation — visual showing the four arithmetic operations
+ * as pillars supporting higher math, with a foundation metaphor.
+ */
+const w = 480;
+const h = 160;
+const pillars = [
+  { label: '+', name: 'Addition', color: '#58a6ff' },
+  { label: '−', name: 'Subtraction', color: '#7ee787' },
+  { label: '×', name: 'Multiplication', color: '#f0883e' },
+  { label: '÷', name: 'Division', color: '#d2a8ff' },
+];
+const pillarW = 80;
+const gap = 20;
+const totalPillarsW = pillars.length * pillarW + (pillars.length - 1) * gap;
+const startX = (w - totalPillarsW) / 2;
+const baseY = 120;
+const pillarH = 70;
+---
+
+<figure class="arith-found" role="img" aria-label="The four pillars of arithmetic: addition, subtraction, multiplication, division">
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    {/* Base platform */}
+    <rect class="af-base" x="20" y={baseY} width={w - 40} height="30" rx="6" />
+    <text class="af-base-text" x={w / 2} y={baseY + 20} font-size="13" text-anchor="middle" font-weight="bold">Arithmetic — The Foundation</text>
+
+    {/* Pillars */}
+    {pillars.map((p, i) => {
+      const x = startX + i * (pillarW + gap);
+      const topY = baseY - pillarH;
+      return (
+        <g>
+          <rect class="af-pillar" x={x} y={topY} width={pillarW} height={pillarH} rx="6" stroke={p.color} />
+          <text class="af-symbol" x={x + pillarW / 2} y={topY + 30} font-size="24" text-anchor="middle" fill={p.color} font-weight="bold">{p.label}</text>
+          <text class="af-name" x={x + pillarW / 2} y={topY + 52} font-size="10" text-anchor="middle">{p.name}</text>
+        </g>
+      );
+    })}
+  </svg>
+</figure>
+
+<style>
+  .arith-found { display: flex; flex-direction: column; align-items: center; margin: 1.5rem 0; }
+  .arith-found svg { max-width: 100%; height: auto; }
+  .af-base { fill: #2d333b; stroke: #444; stroke-width: 1; }
+  .af-base-text { fill: #ccc; font-family: 'Libre Baskerville', Georgia, serif; }
+  .af-pillar { fill: #1c2128; stroke-width: 2; }
+  .af-symbol { font-family: 'Libre Baskerville', Georgia, serif; }
+  .af-name { fill: #999; font-family: 'Libre Baskerville', Georgia, serif; }
+
+  :global([data-theme="light"]) .af-base { fill: #e8e8e8; stroke: #ccc; }
+  :global([data-theme="light"]) .af-base-text { fill: #333; }
+  :global([data-theme="light"]) .af-pillar { fill: #f5f5f5; }
+  :global([data-theme="light"]) .af-name { fill: #666; }
+</style>

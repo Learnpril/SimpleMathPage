@@ -166,6 +166,58 @@ export default defineConfig({
           tag: "script",
           content: `
             document.addEventListener('DOMContentLoaded', function() {
+              var path = window.location.pathname.replace(/^\\//, '').replace(/\\/$/, '');
+              var parts = path.split('/');
+              if (parts.length < 2) return;
+              var section = parts[0];
+              var map = {
+                'arithmetic': 'Arithmetic',
+                'pre-algebra': 'Pre-Algebra',
+                'algebra-basics': 'Algebra Basics',
+                'geometry': 'Geometry',
+                'algebra-2': 'Algebra 2',
+                'pre-calculus': 'Pre-Calculus',
+                'trigonometry': 'Trigonometry',
+                'calculus-1': 'Calculus 1',
+                'calculus-2': 'Calculus 2',
+                'calculus-3': 'Calculus 3',
+                'linear-algebra': 'Linear Algebra',
+                'discrete-mathematics': 'Discrete Mathematics',
+                'statistics': 'Statistics',
+                'differential-equations': 'Differential Equations'
+              };
+              var label = map[section];
+              if (!label) return;
+              var heading = document.querySelector('.sl-heading-wrapper h1, .content-panel h1, main h1');
+              if (!heading) return;
+              var badge = document.createElement('div');
+              badge.className = 'section-badge';
+              badge.textContent = label;
+              heading.parentNode.insertBefore(badge, heading);
+
+              // Also inject section labels into pagination links
+              var pagLinks = document.querySelectorAll('.pagination-links a');
+              pagLinks.forEach(function(link) {
+                var href = link.getAttribute('href') || '';
+                var hrefClean = href.replace(/^\\//, '').replace(/\\/$/, '');
+                var hrefParts = hrefClean.split('/');
+                if (hrefParts.length < 2) return;
+                var linkSection = map[hrefParts[0]];
+                if (!linkSection) return;
+                var linkTitle = link.querySelector('.link-title');
+                if (!linkTitle) return;
+                var secSpan = document.createElement('span');
+                secSpan.className = 'pagination-section';
+                secSpan.textContent = linkSection;
+                linkTitle.parentNode.insertBefore(secSpan, linkTitle);
+              });
+            });
+          `,
+        },
+        {
+          tag: "script",
+          content: `
+            document.addEventListener('DOMContentLoaded', function() {
               var footer = document.createElement('div');
               footer.className = 'scratch-paper-footer';
               footer.innerHTML = '\\u270F\\uFE0F Grab some scratch paper and work the problems out by hand — it makes a huge difference.';

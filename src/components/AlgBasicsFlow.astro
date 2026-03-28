@@ -1,0 +1,52 @@
+---
+/**
+ * AlgBasicsFlow — visual showing the progression of Algebra Basics topics:
+ * Equations → Functions → Graphing → Systems → Factoring
+ */
+const w = 520;
+const h = 100;
+const steps = [
+  { label: 'Equations', symbol: '2x = 10', color: '#58a6ff' },
+  { label: 'Functions', symbol: 'f(x)', color: '#7ee787' },
+  { label: 'Graphing', symbol: 'y = mx + b', color: '#f0883e' },
+  { label: 'Systems', symbol: '{ x, y }', color: '#d2a8ff' },
+  { label: 'Factoring', symbol: '(x+2)(x+3)', color: '#f778ba' },
+];
+const stepW = 85;
+const gap = 10;
+const totalW = steps.length * stepW + (steps.length - 1) * gap;
+const startX = (w - totalW) / 2;
+const cy = 45;
+---
+
+<figure class="abf" role="img" aria-label="Algebra Basics progression: Equations, Functions, Graphing, Systems, Factoring">
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    {steps.map((s, i) => {
+      const x = startX + i * (stepW + gap);
+      const cx = x + stepW / 2;
+      return (
+        <g>
+          <rect class="abf-box" x={x} y="10" width={stepW} height="70" rx="8" stroke={s.color} />
+          <text class="abf-sym" x={cx} y="40" font-size="12" text-anchor="middle" fill={s.color} font-weight="bold">{s.symbol}</text>
+          <text class="abf-lbl" x={cx} y="60" font-size="10" text-anchor="middle">{s.label}</text>
+          {i < steps.length - 1 && (
+            <text class="abf-arrow" x={x + stepW + gap / 2} y="50" font-size="16" text-anchor="middle" fill="#555">→</text>
+          )}
+        </g>
+      );
+    })}
+  </svg>
+</figure>
+
+<style>
+  .abf { display: flex; flex-direction: column; align-items: center; margin: 1.5rem 0; }
+  .abf svg { max-width: 100%; height: auto; }
+  .abf-box { fill: #1c2128; stroke-width: 1.5; }
+  .abf-sym { font-family: 'Libre Baskerville', Georgia, serif; }
+  .abf-lbl { fill: #999; font-family: 'Libre Baskerville', Georgia, serif; }
+  .abf-arrow { font-family: sans-serif; }
+
+  :global([data-theme="light"]) .abf-box { fill: #f5f5f5; }
+  :global([data-theme="light"]) .abf-lbl { fill: #666; }
+  :global([data-theme="light"]) .abf-arrow { fill: #aaa; }
+</style>

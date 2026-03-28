@@ -1,0 +1,41 @@
+---
+/**
+ * PreAlgBridge — visual showing pre-algebra as a bridge
+ * from arithmetic (numbers) to algebra (variables).
+ */
+const w = 440;
+const h = 130;
+---
+
+<figure class="pab" role="img" aria-label="Pre-Algebra bridges arithmetic and algebra">
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    {/* Left platform — Arithmetic */}
+    <rect class="pab-plat" x="10" y="70" width="110" height="40" rx="6" />
+    <text class="pab-plat-text" x="65" y="95" font-size="12" text-anchor="middle" font-weight="bold">Arithmetic</text>
+    <text class="pab-sub" x="65" y="60" font-size="18" text-anchor="middle" font-weight="bold" fill="#58a6ff">3 + 5</text>
+
+    {/* Right platform — Algebra */}
+    <rect class="pab-plat" x="320" y="70" width="110" height="40" rx="6" />
+    <text class="pab-plat-text" x="375" y="95" font-size="12" text-anchor="middle" font-weight="bold">Algebra</text>
+    <text class="pab-sub" x="375" y="60" font-size="18" text-anchor="middle" font-weight="bold" fill="#7ee787">x + 5</text>
+
+    {/* Bridge arc */}
+    <path class="pab-bridge" d="M120,75 Q220,15 320,75" fill="none" stroke-width="3" />
+    <text class="pab-bridge-text" x="220" y="35" font-size="13" text-anchor="middle" font-weight="bold">Pre-Algebra</text>
+  </svg>
+</figure>
+
+<style>
+  .pab { display: flex; flex-direction: column; align-items: center; margin: 1.5rem 0; }
+  .pab svg { max-width: 100%; height: auto; }
+  .pab-plat { fill: #1c2128; stroke: #444; stroke-width: 1; }
+  .pab-plat-text { fill: #ccc; font-family: 'Libre Baskerville', Georgia, serif; }
+  .pab-sub { font-family: 'Libre Baskerville', Georgia, serif; }
+  .pab-bridge { stroke: #d2a8ff; }
+  .pab-bridge-text { fill: #d2a8ff; font-family: 'Libre Baskerville', Georgia, serif; }
+
+  :global([data-theme="light"]) .pab-plat { fill: #f0f0f0; stroke: #ccc; }
+  :global([data-theme="light"]) .pab-plat-text { fill: #333; }
+  :global([data-theme="light"]) .pab-bridge { stroke: #8250df; }
+  :global([data-theme="light"]) .pab-bridge-text { fill: #8250df; }
+</style>
