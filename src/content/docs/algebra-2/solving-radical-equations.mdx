@@ -144,5 +144,13 @@ import Quiz from "../../../components/Quiz.astro";
       explanation:
         "Always check both solutions because extraneous roots are common.",
     },
+    {
+      id: "q5",
+      text: "Solve $\\sqrt{2x - 1} = x - 2$.",
+      options: ["$x = 5$", "$x = 1$", "$x = 1$ and $x = 5$", "No solution"],
+      correctIndex: 0,
+      explanation:
+        "Square both sides: $2x - 1 = x^2 - 4x + 4 \\rightarrow x^2 - 6x + 5 = 0 \\rightarrow (x-1)(x-5) = 0$. Check: $x = 1$ gives $\\sqrt{1} = -1$ (false). $x = 5$ gives $\\sqrt{9} = 3$ (true). Only $x = 5$.",
+    },
   ]}
 />

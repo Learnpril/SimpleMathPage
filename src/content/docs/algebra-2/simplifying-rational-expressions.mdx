@@ -123,5 +123,18 @@ import Quiz from "../../../components/Quiz.astro";
       correctIndex: 0,
       explanation: "Those values make the original expression undefined.",
     },
+    {
+      id: "q5",
+      text: "Simplify $\\frac{x^2 + 5x + 6}{x^2 + 2x}$.",
+      options: [
+        "$\\frac{x + 3}{x}$",
+        "$\\frac{x + 2}{x}$",
+        "$\\frac{x + 6}{2x}$",
+        "$\\frac{5x + 6}{2x}$",
+      ],
+      correctIndex: 0,
+      explanation:
+        "$\\frac{(x+2)(x+3)}{x(x+2)} = \\frac{x+3}{x}$ ($x \\neq 0$, $x \\neq -2$).",
+    },
   ]}
 />

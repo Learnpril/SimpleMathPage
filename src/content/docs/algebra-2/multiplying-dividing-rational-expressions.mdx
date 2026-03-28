@@ -148,5 +148,18 @@ import Quiz from "../../../components/Quiz.astro";
       correctIndex: 0,
       explanation: "Those values make the original expression undefined.",
     },
+    {
+      id: "q5",
+      text: "Simplify: $\\frac{x^2 - 9}{x + 1} \\div \\frac{x - 3}{x + 1}$",
+      options: [
+        "$x + 3$",
+        "$x - 3$",
+        "$\\frac{x + 3}{x - 3}$",
+        "$\\frac{(x-3)(x+1)}{x+3}$",
+      ],
+      correctIndex: 0,
+      explanation:
+        "Flip and multiply: $\\frac{(x-3)(x+3)}{x+1} \\cdot \\frac{x+1}{x-3} = x + 3$.",
+    },
   ]}
 />

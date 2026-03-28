@@ -149,5 +149,18 @@ import Quiz from "../../../components/Quiz.astro";
       correctIndex: 0,
       explanation: "Testing roots shows $x = 1, 2, 3$ are all roots.",
     },
+    {
+      id: "q5",
+      text: "Factor $x^3 + 2x^2 - 5x - 6$ given that $x = -1$ is a root.",
+      options: [
+        "$(x + 1)(x - 2)(x + 3)$",
+        "$(x - 1)(x + 2)(x + 3)$",
+        "$(x + 1)(x + 2)(x - 3)$",
+        "$(x + 1)(x - 2)(x - 3)$",
+      ],
+      correctIndex: 0,
+      explanation:
+        "Synthetic division by $(x + 1)$ gives $x^2 + x - 6 = (x - 2)(x + 3)$.",
+    },
   ]}
 />

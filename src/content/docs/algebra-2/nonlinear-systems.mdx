@@ -137,5 +137,18 @@ import Quiz from "../../../components/Quiz.astro";
       explanation:
         "Extraneous solutions can appear, especially after squaring or substitution.",
     },
+    {
+      id: "q5",
+      text: "Solve the system: $y = x^2$ and $y = x + 2$.",
+      options: [
+        "$(-1, 1)$ and $(2, 4)$",
+        "$(0, 0)$ and $(2, 4)$",
+        "$(1, 1)$ and $(-2, 4)$",
+        "No solution",
+      ],
+      correctIndex: 0,
+      explanation:
+        "$x^2 = x + 2 \\rightarrow x^2 - x - 2 = 0 \\rightarrow (x-2)(x+1) = 0$. So $x = 2, y = 4$ and $x = -1, y = 1$.",
+    },
   ]}
 />
