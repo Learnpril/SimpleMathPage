@@ -1,0 +1,178 @@
+---
+title: Domain and Range
+description: Learn how to determine the domain and range of functions and understand what they represent
+sidebar:
+  order: 3
+---
+
+## What You'll Learn
+
+In this lesson you'll learn what domain and range mean, how to find them from a function rule or graph, and why they matter in real situations.
+
+## The Concept
+
+- **Domain**: all possible input values (x-values) that a function can accept.
+- **Range**: all possible output values (y-values) that the function can produce.
+
+import DomainRangeConcept from "../../../components/DomainRangeConcept.astro";
+
+<DomainRangeConcept />
+
+The diagram above shows how domain and range work. The green oval on the left holds the domain — the inputs we're allowed to feed into the function. Those values pass through the function rule (here, f(x) = x² + 1), and the purple oval on the right collects the range — the outputs that come out. For example, putting in −2 gives (−2)² + 1 = 5, putting in 0 gives 1, and putting in 3 gives 10.
+
+Notice that the domain usually covers a whole range of numbers, not just a few. In the diagram we only showed three sample inputs, but most functions accept infinitely many. For instance, f(x) = x² + 1 accepts every real number as input, so its domain is all real numbers. The range, however, is only y ≥ 1 — because squaring always gives zero or more, the smallest output is 0² + 1 = 1. Different inputs can also produce the same output: both −2 and 2 give 5. That's perfectly fine for a function — multiple inputs can share an output, as long as each input gives exactly one output.
+
+## Number Sets and Notation
+
+When we say "all real numbers," we mean every number on the number line — positive, negative, zero, fractions, decimals, irrational numbers like √2 and π. The symbol for the set of all real numbers is ℝ.
+
+Here are the number sets you'll see most often:
+
+| Symbol | Name             | Examples                          |
+| ------ | ---------------- | --------------------------------- |
+| ℕ      | Natural numbers  | 1, 2, 3, 4, …                     |
+| ℤ      | Integers         | …, −2, −1, 0, 1, 2, …             |
+| ℚ      | Rational numbers | 1/2, −3, 0.75, 7                  |
+| ℝ      | Real numbers     | all of the above plus √2, π, etc. |
+
+Most functions in Algebra 2 work with ℝ unless there's a specific restriction.
+
+These symbols come from more formal mathematics and you'll explore them in greater depth in Pre-Calculus and beyond. For now, the main one to know is ℝ — when a domain is "all real numbers," you may see it written as ℝ or (−∞, ∞).
+
+## Interval Notation
+
+Instead of writing "x ≥ 4" or "all real numbers except 3," mathematicians use **interval notation** — a compact way to describe a set of numbers on the number line.
+
+The key symbols:
+
+- **[ ]** means the endpoint is **included** (solid dot on a number line).
+- **( )** means the endpoint is **excluded** (open dot on a number line).
+- **∞** and **−∞** always get parentheses — you can never actually reach infinity.
+
+Common patterns:
+
+| In words                          | Inequality       | Interval notation |
+| --------------------------------- | ---------------- | ----------------- |
+| All real numbers                  | −∞ &lt; x &lt; ∞ | (−∞, ∞)           |
+| x is at least 4                   | x ≥ 4            | [4, ∞)            |
+| x is greater than 4               | x &gt; 4         | (4, ∞)            |
+| x is between −1 and 5 (inclusive) | −1 ≤ x ≤ 5       | [−1, 5]           |
+| x is between −1 and 5 (exclusive) | −1 &lt; x &lt; 5 | (−1, 5)           |
+| All reals except 3                | x ≠ 3            | (−∞, 3) ∪ (3, ∞)  |
+
+The **∪** symbol means "union" — it joins two separate intervals together. You'll use it whenever the domain has a gap (like a value that causes division by zero).
+
+## Set-Builder Notation
+
+You may also see **set-builder notation**, which reads like a sentence:
+
+- \{x | x ≥ 4\} means "the set of all x such that x is greater than or equal to 4."
+- \{x | x ≠ 3\} means "the set of all x such that x is not equal to 3."
+
+The vertical bar "|" is read as "such that." Some textbooks use a colon ":" instead.
+
+Both interval notation and set-builder notation say the same thing — interval notation is just more compact, and it's the one you'll use most in Algebra 2. Set-builder notation becomes more common in Pre-Calculus and college math, so it's good to recognize it now even if you won't use it every day yet.
+
+For most functions we work with in Algebra 2:
+
+- **Domain restrictions** usually come from:
+  - Division by zero (denominators cannot be zero)
+  - Square roots or even roots of negative numbers (cannot take the square root of a negative in real numbers)
+- **Range** depends on the shape of the function (e.g., quadratics that open upward have a minimum value).
+
+Examples:
+
+- f(x) = 1 / (x − 3): domain is all real numbers except x = 3 (cannot divide by zero).
+- g(x) = √x: domain is x ≥ 0 (cannot take the square root of a negative). Range is y ≥ 0.
+
+When looking at a graph:
+
+- Domain = all x-values the graph covers (left to right).
+- Range = all y-values the graph covers (bottom to top).
+
+## Worked Example
+
+**1. Find the domain of f(x) = 5 / (x + 2)**
+
+The denominator cannot be zero: x + 2 ≠ 0, so x ≠ −2.
+
+Domain: all real numbers except −2.
+
+**2. Find the domain of g(x) = √(x − 4)**
+
+The expression inside the square root must be ≥ 0:
+
+$$
+x - 4 \ge 0 \quad\Rightarrow\quad x \ge 4
+$$
+
+Domain: x ≥ 4.
+
+**3. Find the domain and range of h(x) = x² + 3**
+
+import DomainRangeDiagram from "../../../components/DomainRangeDiagram.astro";
+
+<DomainRangeDiagram />
+
+Domain: all real numbers (no restrictions — you can square any number).
+
+Range: y ≥ 3 (the minimum value is 3, which occurs when x = 0).
+
+## Real-World Application
+
+Domain and range have practical meaning:
+
+- A phone plan charges 0.10 dollars per text: domain is number of texts ≥ 0 (you can't send a negative number of texts).
+- A rental car costs 45 dollars per day plus 0.25 dollars per mile: domain is miles ≥ 0.
+- Temperature in Fahrenheit to Celsius: domain is all real numbers, but range depends on realistic temperatures.
+- Profit function: range might start at a minimum loss and go up.
+
+Understanding domain helps you avoid impossible inputs, and range shows you what outputs are possible.
+
+:::note[You've Got This]
+Domain answers "What can I put in?" and range answers "What can come out?" Most restrictions come from division by zero or square roots of negatives. Start by looking for those problems first. Practice with a few functions each time you study — you'll quickly get comfortable identifying realistic inputs and outputs.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="algebra2-domain-and-range"
+  questions={[
+    {
+      id: "q1",
+      text: "What is the domain of f(x) = 10 / (x − 5)?",
+      options: [
+        "All real numbers except x = 5",
+        "All real numbers",
+        "x ≥ 5",
+        "x ≤ 5",
+      ],
+      correctIndex: 0,
+      explanation: "Denominator cannot be zero, so x ≠ 5.",
+    },
+    {
+      id: "q2",
+      text: "What is the domain of g(x) = √(x + 3)?",
+      options: ["x ≥ −3", "x > −3", "All real numbers", "x ≤ −3"],
+      correctIndex: 0,
+      explanation:
+        "The expression inside the square root must be ≥ 0: x + 3 ≥ 0 → x ≥ −3.",
+    },
+    {
+      id: "q3",
+      text: "For the function h(x) = x² − 4, the range is:",
+      options: ["y ≥ −4", "y ≤ −4", "All real numbers", "y ≥ 0"],
+      correctIndex: 0,
+      explanation: "The parabola opens upward with minimum value −4 at x = 0.",
+    },
+    {
+      id: "q4",
+      text: "A delivery service charges 8 dollars plus 2 dollars per mile. What is a reasonable domain for miles driven?",
+      options: ["miles ≥ 0", "All real numbers", "miles > 0", "miles ≤ 100"],
+      correctIndex: 0,
+      explanation: "You cannot drive a negative number of miles.",
+    },
+  ]}
+/>

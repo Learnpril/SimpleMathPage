@@ -1,0 +1,96 @@
+---
+/**
+ * RationalRootGraph — plots y = 2x³ − 5x² − 4x + 3
+ * Roots at x = −1, x = 1/2, x = 3. Labels clear of curve.
+ */
+const pad = 55;
+const w = 440;
+const h = 400;
+const plotW = 330;
+const plotH = 300;
+const xLo = -2.5; const xHi = 4.5;
+const yLo = -12; const yHi = 15;
+const xRange = xHi - xLo; const yRange = yHi - yLo;
+
+function toX(v: number) { return pad + ((v - xLo) / xRange) * plotW; }
+function toY(v: number) { return pad + ((yHi - v) / yRange) * plotH; }
+
+const xAxisY = toY(0);
+const yAxisX = toX(0);
+
+const curvePts: string[] = [];
+for (let x = -1.8; x <= 4; x += 0.04) {
+  const y = 2*x*x*x - 5*x*x - 4*x + 3;
+  if (y >= yLo - 2 && y <= yHi + 2) {
+    curvePts.push(`${curvePts.length === 0 ? 'M' : 'L'}${toX(x).toFixed(1)},${toY(y).toFixed(1)}`);
+  }
+}
+const curveD = curvePts.join(' ');
+
+const xTicks = [-2, -1, 1, 2, 3, 4];
+const yLabelTicks = [-10, -5, 5, 10];
+---
+
+<figure class="rrg-diagram" role="img" aria-label="Graph of 2x³ − 5x² − 4x + 3 with roots at x = −1, 1/2, and 3">
+  <figcaption class="rrg-title">y = 2x³ − 5x² − 4x + 3 — the roots match our Rational Root Theorem results</figcaption>
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    <rect class="rrg-bg" x="0" y="0" width={w} height={h} rx="8" />
+
+    {/* Grid */}
+    {xTicks.map(x => <line class="rrg-grid" x1={toX(x)} y1={pad} x2={toX(x)} y2={pad + plotH} />)}
+    {yLabelTicks.map(y => <line class="rrg-grid" x1={pad} y1={toY(y)} x2={pad + plotW} y2={toY(y)} />)}
+
+    {/* Axes */}
+    <line class="rrg-axis" x1={pad} y1={xAxisY} x2={pad + plotW + 5} y2={xAxisY} stroke-width="1.5" />
+    <line class="rrg-axis" x1={yAxisX} y1={pad + plotH} x2={yAxisX} y2={pad - 5} stroke-width="1.5" />
+    <text class="rrg-axlabel" x={pad + plotW + 10} y={xAxisY + 4} font-size="13">x</text>
+    <text class="rrg-axlabel" x={yAxisX + 6} y={pad - 10} font-size="13">y</text>
+
+    {/* Tick labels */}
+    {xTicks.filter(x => x !== 0).map(x => (
+      <text class="rrg-tick" x={toX(x)} y={xAxisY + 16} font-size="10" text-anchor="middle">{x}</text>
+    ))}
+    {yLabelTicks.map(y => (
+      <text class="rrg-tick" x={yAxisX - 8} y={toY(y) + 4} font-size="10" text-anchor="end">{y}</text>
+    ))}
+
+    {/* Curve */}
+    <path class="rrg-curve" d={curveD} fill="none" stroke-width="2.5" />
+
+    {/* Root at x = −1 — label below-left, clear of curve */}
+    <circle class="rrg-root" cx={toX(-1)} cy={xAxisY} r="6" />
+    <text class="rrg-root-label" x={toX(-1) - 16} y={xAxisY + 30} font-size="12" font-weight="bold" text-anchor="end">x = −1</text>
+
+    {/* Root at x = 1/2 — label below-right */}
+    <circle class="rrg-root" cx={toX(0.5)} cy={xAxisY} r="6" />
+    <text class="rrg-root-label" x={toX(0.5) + 10} y={xAxisY - 12} font-size="12" font-weight="bold">x = ½</text>
+
+    {/* Root at x = 3 — label below-right */}
+    <circle class="rrg-root" cx={toX(3)} cy={xAxisY} r="6" />
+    <text class="rrg-root-label" x={toX(3) + 10} y={xAxisY + 20} font-size="12" font-weight="bold">x = 3</text>
+
+  </svg>
+</figure>
+
+<style>
+  .rrg-diagram { display: flex; flex-direction: column; align-items: center; margin: 1.5rem 0; }
+  .rrg-title { font-size: 0.95rem; color: var(--sl-color-gray-3); margin-bottom: 0.5rem; font-style: italic; }
+  .rrg-diagram svg { max-width: 100%; height: auto; }
+  .rrg-bg { fill: var(--sl-color-bg, #121212); }
+  .rrg-grid { stroke: #333; stroke-width: 0.5; }
+  .rrg-axis { stroke: #888; }
+  .rrg-axlabel { fill: #aaa; font-family: sans-serif; }
+  .rrg-tick { fill: #aaa; font-family: sans-serif; }
+  .rrg-curve { stroke: #58a6ff; }
+  .rrg-root { fill: #f0c674; stroke: #fff; stroke-width: 2; }
+  .rrg-root-label { fill: #f0c674; font-family: 'Libre Baskerville', Georgia, serif; }
+
+  :global([data-theme="light"]) .rrg-bg { fill: #f8f9fa; }
+  :global([data-theme="light"]) .rrg-grid { stroke: #ccc; }
+  :global([data-theme="light"]) .rrg-axis { stroke: #222; }
+  :global([data-theme="light"]) .rrg-axlabel { fill: #222; }
+  :global([data-theme="light"]) .rrg-tick { fill: #333; }
+  :global([data-theme="light"]) .rrg-curve { stroke: #0969da; }
+  :global([data-theme="light"]) .rrg-root { fill: #b45309; stroke: #fff; }
+  :global([data-theme="light"]) .rrg-root-label { fill: #b45309; }
+</style>

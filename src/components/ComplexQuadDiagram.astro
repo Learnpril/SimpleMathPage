@@ -1,0 +1,124 @@
+---
+/**
+ * ComplexQuadDiagram — two panels side by side:
+ * Left: parabola y = x² + 4x + 13 floating above x-axis (no real roots).
+ * Right: mini complex plane showing solutions −2+3i and −2−3i as conjugate pair.
+ */
+
+// Left panel: parabola
+const lPad = 40;
+const lW = 200;
+const lH = 200;
+const lxLo = -6; const lxHi = 2;
+const lyLo = -2; const lyHi = 16;
+const lxR = lxHi - lxLo; const lyR = lyHi - lyLo;
+function lX(v: number) { return lPad + ((v - lxLo) / lxR) * (lW - 20); }
+function lY(v: number) { return 30 + ((lyHi - v) / lyR) * (lH - 20); }
+
+const lCurve: string[] = [];
+for (let x = -5.5; x <= 1.5; x += 0.08) {
+  const y = x * x + 4 * x + 13;
+  if (y <= lyHi + 1) {
+    lCurve.push(`${lCurve.length === 0 ? 'M' : 'L'}${lX(x).toFixed(1)},${lY(y).toFixed(1)}`);
+  }
+}
+const lCurveD = lCurve.join(' ');
+const lAxisY = lY(0);
+const lAxisX = lX(0);
+
+// Right panel: complex plane
+const rOff = 240; // x offset for right panel
+const rPad = 30;
+const rSize = 180;
+const rLo = -5; const rHi = 5;
+const rRange = rHi - rLo;
+function rX(v: number) { return rOff + rPad + ((v - rLo) / rRange) * (rSize - 20); }
+function rY(v: number) { return 30 + ((rHi - v) / rRange) * (rSize - 20); }
+
+const rRealY = rY(0);
+const rImagX = rX(0);
+---
+
+<figure class="cq-diagram" role="img" aria-label="Parabola with no real roots and its complex solutions on the complex plane">
+  <figcaption class="cq-title">x² + 4x + 13 = 0 has no real roots — the solutions live on the complex plane</figcaption>
+  <svg viewBox="0 0 440 220" width="440" height="220" xmlns="http://www.w3.org/2000/svg">
+
+    <rect class="cq-bg" x="0" y="0" width="440" height="220" rx="8" />
+
+    {/* === Left: Parabola === */}
+    <text class="cq-panel-title" x={lPad + (lW - 20) / 2} y={16} font-size="11" text-anchor="middle">Graph (no x-intercepts)</text>
+
+    {/* X-axis */}
+    <line class="cq-axis" x1={lPad} y1={lAxisY} x2={lPad + lW - 15} y2={lAxisY} stroke-width="1" />
+    <text class="cq-axlabel" x={lPad + lW - 10} y={lAxisY - 5} font-size="9">x</text>
+
+    {/* Curve */}
+    <path class="cq-curve" d={lCurveD} fill="none" stroke-width="2.5" />
+
+    {/* Vertex at (−2, 9) — label to the right, away from curve */}
+    <circle class="cq-vtx" cx={lX(-2)} cy={lY(9)} r="4" />
+    <text class="cq-vtx-label" x={lX(-2) + 10} y={lY(9) + 18} font-size="10">(−2, 9)</text>
+
+    {/* "No real roots" annotation */}
+    <text class="cq-no-roots" x={lX(-2)} y={lAxisY + 18} font-size="10" text-anchor="middle">no x-intercepts</text>
+
+    {/* === Right: Complex Plane === */}
+    <text class="cq-panel-title" x={rOff + rPad + (rSize - 20) / 2} y={16} font-size="11" text-anchor="middle">Complex plane (solutions)</text>
+
+    {/* Axes */}
+    <line class="cq-axis" x1={rOff + rPad} y1={rRealY} x2={rOff + rPad + rSize - 15} y2={rRealY} stroke-width="1" />
+    <line class="cq-axis" x1={rImagX} y1={30 + rSize - 20} x2={rImagX} y2={25} stroke-width="1" />
+    <text class="cq-axlabel" x={rOff + rPad + rSize - 8} y={rRealY - 5} font-size="9">Re</text>
+    <text class="cq-axlabel" x={rImagX + 6} y={22} font-size="9">Im</text>
+
+    {/* Tick marks */}
+    {[-4, -2, 2, 4].map(t => (
+      <text class="cq-tick" x={rX(t)} y={rRealY + 14} font-size="8" text-anchor="middle">{t}</text>
+    ))}
+    {[-4, -2, 2, 4].map(t => (
+      <text class="cq-tick" x={rImagX - 6} y={rY(t) + 3} font-size="8" text-anchor="end">{t}i</text>
+    ))}
+
+    {/* Solution points: −2+3i and −2−3i — labels to the left, clear of y-axis and dashed line */}
+    <circle class="cq-sol" cx={rX(-2)} cy={rY(3)} r="6" />
+    <text class="cq-sol-label" x={rX(-2) - 14} y={rY(3) + 5} font-size="11" font-weight="bold" text-anchor="end">−2 + 3i</text>
+
+    <circle class="cq-sol" cx={rX(-2)} cy={rY(-3)} r="6" />
+    <text class="cq-sol-label" x={rX(-2) - 14} y={rY(-3) + 5} font-size="11" font-weight="bold" text-anchor="end">−2 − 3i</text>
+
+    {/* Dashed line connecting conjugate pair */}
+    <line class="cq-conj-line" x1={rX(-2)} y1={rY(3)} x2={rX(-2)} y2={rY(-3)} stroke-width="1.5" stroke-dasharray="4,3" />
+
+  </svg>
+</figure>
+
+<style>
+  .cq-diagram { display: flex; flex-direction: column; align-items: center; margin: 1.5rem 0; }
+  .cq-title { font-size: 0.95rem; color: var(--sl-color-gray-3); margin-bottom: 0.5rem; font-style: italic; }
+  .cq-diagram svg { max-width: 100%; height: auto; }
+  .cq-bg { fill: var(--sl-color-bg, #121212); }
+  .cq-axis { stroke: #888; }
+  .cq-axlabel { fill: #aaa; font-family: sans-serif; }
+  .cq-tick { fill: #aaa; font-family: sans-serif; }
+  .cq-panel-title { fill: #bbb; font-family: 'Libre Baskerville', Georgia, serif; }
+  .cq-curve { stroke: #f78166; }
+  .cq-vtx { fill: #888; stroke: #aaa; stroke-width: 1.5; }
+  .cq-vtx-label { fill: #888; font-family: 'Libre Baskerville', Georgia, serif; }
+  .cq-no-roots { fill: #f78166; font-family: 'Libre Baskerville', Georgia, serif; font-style: italic; }
+  .cq-sol { fill: #f0c674; stroke: #fff; stroke-width: 2; }
+  .cq-sol-label { fill: #f0c674; font-family: 'Libre Baskerville', Georgia, serif; }
+  .cq-conj-line { stroke: #d2a8ff; }
+
+  :global([data-theme="light"]) .cq-bg { fill: #f8f9fa; }
+  :global([data-theme="light"]) .cq-axis { stroke: #222; }
+  :global([data-theme="light"]) .cq-axlabel { fill: #333; }
+  :global([data-theme="light"]) .cq-tick { fill: #333; }
+  :global([data-theme="light"]) .cq-panel-title { fill: #444; }
+  :global([data-theme="light"]) .cq-curve { stroke: #cf222e; }
+  :global([data-theme="light"]) .cq-vtx { fill: #666; stroke: #444; }
+  :global([data-theme="light"]) .cq-vtx-label { fill: #666; }
+  :global([data-theme="light"]) .cq-no-roots { fill: #cf222e; }
+  :global([data-theme="light"]) .cq-sol { fill: #b45309; stroke: #fff; }
+  :global([data-theme="light"]) .cq-sol-label { fill: #b45309; }
+  :global([data-theme="light"]) .cq-conj-line { stroke: #8250df; }
+</style>

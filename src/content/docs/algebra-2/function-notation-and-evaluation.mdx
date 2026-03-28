@@ -1,0 +1,129 @@
+---
+title: Function Notation and Evaluation
+description: Deepen your understanding of function notation and practice evaluating functions efficiently
+sidebar:
+  order: 2
+---
+
+## What You'll Learn
+
+In this lesson you'll strengthen your skills with function notation, evaluate functions with multiple steps, and work with functions that involve more than one operation.
+
+## The Concept
+
+**Function notation** like f(x) tells us to take the input x and apply the rule defined by the function.
+
+When evaluating:
+
+- Replace every x with the given value.
+- Follow the order of operations (PEMDAS/BODMAS).
+- Work carefully with negative numbers and exponents.
+
+You can also evaluate functions with expressions instead of single numbers. For example, if f(x) = 2x + 5, then f(a + 3) means replace every x with (a + 3):
+
+$$
+f(a + 3) = 2(a + 3) + 5 = 2a + 6 + 5 = 2a + 11
+$$
+
+Functions can represent real quantities like cost, profit, distance, or temperature.
+
+import FunctionMachine from "../../../components/FunctionMachine.astro";
+
+<FunctionMachine
+  input="2"
+  rule="3x² − 4x + 7"
+  output="11"
+  title="f(2) = 3(2)² − 4(2) + 7 = 11"
+/>
+
+## Worked Example
+
+**1. Evaluate a quadratic function**
+
+Given f(x) = 3x² − 4x + 7, find f(2).
+
+$$
+f(2) = 3(2)^2 - 4(2) + 7 = 3(4) - 8 + 7 = 12 - 8 + 7 = 11
+$$
+
+**2. Evaluate a rational function**
+
+Given g(x) = (2x + 6) / (x − 1), find g(5).
+
+$$
+g(5) = \frac{2(5) + 6}{5 - 1} = \frac{10 + 6}{4} = \frac{16}{4} = 4
+$$
+
+**3. Evaluate with a negative input**
+
+Given h(x) = x² + 3x − 10, find h(−4).
+
+$$
+h(-4) = (-4)^2 + 3(-4) - 10 = 16 - 12 - 10 = -6
+$$
+
+**4. Real-world evaluation**
+
+A phone plan costs 25 dollars base plus 0.15 dollars per text, so p(x) = 25 + 0.15x. Find the cost for 180 texts.
+
+$$
+p(180) = 25 + 0.15(180) = 25 + 27 = 52 \text{ dollars}
+$$
+
+## Real-World Application
+
+Function notation is used constantly in practical situations:
+
+- Calculating total cost: c(n) = 40 + 12n (n = number of items)
+- Distance traveled: d(t) = 65t (t = hours driven at 65 mph)
+- Monthly profit: p(x) = −2x² + 180x − 500 (x = units sold)
+- Temperature conversion: F(C) = (9/5)C + 32
+
+Being fluent with function notation makes it much easier to work with these real relationships as we move into more advanced topics like quadratics and exponentials.
+
+:::note[You've Got This]
+Function notation is just a clean way of saying "plug this value in." Take your time, replace x carefully, and follow order of operations. Practice evaluating a few functions every time you sit down — the more you do it, the faster and more confident you'll become. This skill will pay off throughout the rest of Algebra 2.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="algebra2-function-notation-and-evaluation"
+  questions={[
+    {
+      id: "q1",
+      text: "Given f(x) = 5x − 8, what is f(6)?",
+      options: ["22", "38", "14", "2"],
+      correctIndex: 0,
+      explanation: "5(6) − 8 = 30 − 8 = 22.",
+    },
+    {
+      id: "q2",
+      text: "Given g(x) = x² + 4x − 3, what is g(−2)?",
+      options: ["−7", "1", "−3", "5"],
+      correctIndex: 0,
+      explanation: "(−2)² + 4(−2) − 3 = 4 − 8 − 3 = −7.",
+    },
+    {
+      id: "q3",
+      text: "A taxi charges 3 dollars plus 2.50 dollars per mile. Which function represents total cost for m miles?",
+      options: [
+        "c(m) = 3 + 2.50m",
+        "c(m) = 2.50 + 3m",
+        "f(x) = 5.50m",
+        "g(m) = 2.50m − 3",
+      ],
+      correctIndex: 0,
+      explanation: "Fixed fee of 3 dollars plus 2.50 dollars per mile.",
+    },
+    {
+      id: "q4",
+      text: "If h(x) = 2x² − x + 5, what is h(3)?",
+      options: ["20", "14", "26", "11"],
+      correctIndex: 0,
+      explanation: "2(9) − 3 + 5 = 18 − 3 + 5 = 20.",
+    },
+  ]}
+/>

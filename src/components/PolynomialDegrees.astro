@@ -1,0 +1,95 @@
+---
+/**
+ * PolynomialDegrees — four mini panels showing degree 1 through 4.
+ * Linear, Quadratic, Cubic, Quartic side by side.
+ */
+
+const pw = 100; // panel width
+const ph = 100; // panel height
+const gap = 10;
+const totalW = pw * 4 + gap * 3 + 20;
+const totalH = ph + 55;
+const topY = 42;
+
+function panelX(i: number) { return 10 + i * (pw + gap); }
+
+function toX(panel: number, v: number, lo: number, hi: number) {
+  return panelX(panel) + ((v - lo) / (hi - lo)) * pw;
+}
+function toY(v: number, lo: number, hi: number) {
+  return topY + ((hi - v) / (hi - lo)) * ph;
+}
+
+// Degree 1: y = x
+const d1: string[] = [];
+for (let x = -3; x <= 3; x += 0.2) {
+  const y = x;
+  d1.push(`${d1.length === 0 ? 'M' : 'L'}${toX(0, x, -3, 3).toFixed(1)},${toY(y, -3, 3).toFixed(1)}`);
+}
+
+// Degree 2: y = x²/2 - 1
+const d2: string[] = [];
+for (let x = -2.5; x <= 2.5; x += 0.1) {
+  const y = x * x / 2 - 1;
+  if (y >= -2 && y <= 3) d2.push(`${d2.length === 0 ? 'M' : 'L'}${toX(1, x, -3, 3).toFixed(1)},${toY(y, -2, 3).toFixed(1)}`);
+}
+
+// Degree 3: y = x³/4
+const d3: string[] = [];
+for (let x = -2.2; x <= 2.2; x += 0.08) {
+  const y = x * x * x / 4;
+  if (y >= -3 && y <= 3) d3.push(`${d3.length === 0 ? 'M' : 'L'}${toX(2, x, -3, 3).toFixed(1)},${toY(y, -3, 3).toFixed(1)}`);
+}
+
+// Degree 4: y = x⁴/8 - x²/2
+const d4: string[] = [];
+for (let x = -2.2; x <= 2.2; x += 0.06) {
+  const y = Math.pow(x, 4) / 8 - x * x / 2;
+  if (y >= -1.5 && y <= 3) d4.push(`${d4.length === 0 ? 'M' : 'L'}${toX(3, x, -3, 3).toFixed(1)},${toY(y, -1.5, 3).toFixed(1)}`);
+}
+
+const curves = [d1, d2, d3, d4];
+const labels = ["Degree 1", "Degree 2", "Degree 3", "Degree 4"];
+const subs = ["Linear", "Quadratic", "Cubic", "Quartic"];
+const axYs = [toY(0, -3, 3), toY(0, -2, 3), toY(0, -3, 3), toY(0, -1.5, 3)];
+---
+
+<figure class="pd-diagram" role="img" aria-label="Four polynomial shapes: linear, quadratic, cubic, quartic">
+  <figcaption class="pd-title">Polynomial shapes by degree</figcaption>
+  <svg viewBox={`0 0 ${totalW} ${totalH}`} width={totalW} height={totalH} xmlns="http://www.w3.org/2000/svg">
+    <rect class="pd-bg" x="0" y="0" width={totalW} height={totalH} rx="8" />
+
+    {labels.map((label, i) => (
+      <g>
+        <text class="pd-label" x={panelX(i) + pw / 2} y={16} font-size="11" text-anchor="middle" font-weight="bold">{label}</text>
+        <text class="pd-sub" x={panelX(i) + pw / 2} y={30} font-size="9" text-anchor="middle">{subs[i]}</text>
+        <line class="pd-axis" x1={panelX(i)} y1={axYs[i]} x2={panelX(i) + pw} y2={axYs[i]} stroke-width="0.8" />
+        <path class={`pd-curve pd-curve-${i}`} d={curves[i].join(' ')} fill="none" stroke-width="2.5" />
+      </g>
+    ))}
+
+  </svg>
+</figure>
+
+<style>
+  .pd-diagram { display: flex; flex-direction: column; align-items: center; margin: 1.5rem 0; }
+  .pd-title { font-size: 0.95rem; color: var(--sl-color-gray-3); margin-bottom: 0.5rem; font-style: italic; }
+  .pd-diagram svg { max-width: 100%; height: auto; }
+  .pd-bg { fill: var(--sl-color-bg, #121212); }
+  .pd-axis { stroke: #555; }
+  .pd-label { fill: #ccc; font-family: 'Libre Baskerville', Georgia, serif; }
+  .pd-sub { fill: #888; font-family: 'Libre Baskerville', Georgia, serif; }
+  .pd-curve-0 { stroke: #58a6ff; }
+  .pd-curve-1 { stroke: #f78166; }
+  .pd-curve-2 { stroke: #7ee787; }
+  .pd-curve-3 { stroke: #d2a8ff; }
+
+  :global([data-theme="light"]) .pd-bg { fill: #f8f9fa; }
+  :global([data-theme="light"]) .pd-axis { stroke: #aaa; }
+  :global([data-theme="light"]) .pd-label { fill: #333; }
+  :global([data-theme="light"]) .pd-sub { fill: #666; }
+  :global([data-theme="light"]) .pd-curve-0 { stroke: #0969da; }
+  :global([data-theme="light"]) .pd-curve-1 { stroke: #cf222e; }
+  :global([data-theme="light"]) .pd-curve-2 { stroke: #1a7f37; }
+  :global([data-theme="light"]) .pd-curve-3 { stroke: #8250df; }
+</style>

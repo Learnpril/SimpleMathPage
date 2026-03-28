@@ -1,0 +1,170 @@
+---
+title: Solving Quadratic Equations
+description: Learn multiple methods for solving quadratic equations — factoring, square roots, completing the square, and the quadratic formula
+sidebar:
+  order: 8
+---
+
+## What You'll Learn
+
+In this lesson you'll learn four reliable methods for solving quadratic equations and when to choose each one.
+
+## The Concept
+
+A **quadratic equation** is any equation that can be written in the form ax² + bx + c = 0, where a ≠ 0.
+
+Four main solving methods:
+
+1. **Factoring** — fastest when the equation factors nicely into two binomials.
+2. **Square Root Method** — best when the equation is in the form x² = k or after completing the square.
+3. **Completing the Square** — works for any quadratic and connects nicely to vertex form.
+4. **Quadratic Formula** — works for every quadratic equation (most reliable method).
+
+The **Quadratic Formula** is:
+
+$$
+x = \frac{-b \pm \sqrt{b^2 - 4ac}}{2a}
+$$
+
+The expression b² − 4ac is called the **discriminant**:
+
+- Positive → two distinct real solutions
+- Zero → one real solution (repeated root)
+- Negative → two complex (imaginary) solutions
+
+## Worked Example
+
+Solve 2x² − 8x + 6 = 0 using different methods.
+
+import QuadraticSolveDiagram from "../../../components/QuadraticSolveDiagram.astro";
+
+<QuadraticSolveDiagram />
+
+The graph shows the simplified version x² − 4x + 3 (after dividing by 2). The gold dots where the curve crosses the x-axis are the solutions — x = 1 and x = 3. Solving a quadratic equation means finding these x-intercepts. Let's verify with all three algebraic methods.
+
+**Method 1: Factoring**
+
+Divide both sides by 2 first: x² − 4x + 3 = 0. Now find two numbers that multiply to 3 and add to −4. Those are −1 and −3:
+
+$$
+(x - 1)(x - 3) = 0
+$$
+
+Set each factor equal to zero: x = 1 or x = 3.
+
+**Method 2: Quadratic Formula**
+
+Using the original equation 2x² − 8x + 6 = 0, we have a = 2, b = −8, c = 6.
+
+First, find the discriminant:
+
+$$
+b^2 - 4ac = (-8)^2 - 4(2)(6) = 64 - 48 = 16
+$$
+
+Since the discriminant is positive (16), we know there are two distinct real solutions. Now plug into the formula:
+
+$$
+x = \frac{-(-8) \pm \sqrt{16}}{2(2)} = \frac{8 \pm 4}{4}
+$$
+
+$$
+x = \frac{8 + 4}{4} = 3 \qquad \text{or} \qquad x = \frac{8 - 4}{4} = 1
+$$
+
+**Method 3: Completing the Square**
+
+Start with x² − 4x + 3 = 0 (after dividing by 2). Move the constant to the right:
+
+$$
+x^2 - 4x = -3
+$$
+
+Take half of −4 (which is −2), square it (which is 4), and add to both sides:
+
+$$
+x^2 - 4x + 4 = -3 + 4
+$$
+
+$$
+(x - 2)^2 = 1
+$$
+
+Take the square root of both sides:
+
+$$
+x - 2 = \pm 1
+$$
+
+So x = 2 + 1 = 3 or x = 2 − 1 = 1.
+
+All three methods give the same solutions: x = 1 and x = 3.
+
+## Real-World Application
+
+Quadratic equations model many real situations:
+
+- **Projectile motion**: finding when a ball or rocket will hit the ground.
+- **Business**: maximizing profit or finding break-even points.
+- **Area optimization**: finding dimensions that maximize area with a fixed perimeter.
+- **Physics**: calculating time for an object to reach a certain height or speed.
+
+Example: a ball is thrown with height h(t) = −16t² + 32t + 48. Setting h(t) = 0 and solving tells you the times when the ball hits the ground.
+
+:::note[You've Got This]
+You now have four solid tools. Start with factoring when the numbers work nicely — it's the quickest. When factoring is difficult, the quadratic formula is your most reliable friend. The discriminant gives you an instant preview of what kind of answers you'll get. Practice choosing the right method for each problem — you'll get faster and more confident with experience.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="algebra2-solving-quadratic-equations"
+  questions={[
+    {
+      id: "q1",
+      text: "Solve by factoring: x² − 5x − 6 = 0",
+      options: [
+        "x = 6 or x = −1",
+        "x = 3 or x = 2",
+        "x = 6 or x = 1",
+        "x = −6 or x = 1",
+      ],
+      correctIndex: 0,
+      explanation: "(x − 6)(x + 1) = 0 → x = 6 or x = −1.",
+    },
+    {
+      id: "q2",
+      text: "What is the discriminant of 3x² − 7x + 2 = 0?",
+      options: ["25", "49", "1", "13"],
+      correctIndex: 0,
+      explanation: "b² − 4ac = (−7)² − 4(3)(2) = 49 − 24 = 25.",
+    },
+    {
+      id: "q3",
+      text: "Which method is usually fastest when the quadratic factors easily?",
+      options: [
+        "Factoring",
+        "Quadratic Formula",
+        "Completing the Square",
+        "Square Root Method",
+      ],
+      correctIndex: 0,
+      explanation: "Factoring is the quickest when it works nicely.",
+    },
+    {
+      id: "q4",
+      text: "If the discriminant is negative, the equation has:",
+      options: [
+        "Two complex (imaginary) solutions",
+        "Two real solutions",
+        "One repeated real solution",
+        "No solutions at all",
+      ],
+      correctIndex: 0,
+      explanation:
+        "A negative discriminant means the parabola doesn't cross the x-axis, so the solutions are complex numbers.",
+    },
+  ]}
+/>

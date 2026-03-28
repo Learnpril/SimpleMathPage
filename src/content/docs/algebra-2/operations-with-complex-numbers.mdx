@@ -1,0 +1,148 @@
+---
+title: Operations with Complex Numbers
+description: Learn how to add, subtract, multiply, and divide complex numbers
+sidebar:
+  order: 11
+---
+
+## What You'll Learn
+
+In this lesson you'll learn how to perform basic arithmetic operations (addition, subtraction, multiplication, and division) with complex numbers.
+
+## The Concept
+
+Complex numbers are added, subtracted, and multiplied similarly to binomials, with one important rule: i² = −1.
+
+**Addition and Subtraction** — combine like terms (real parts with real parts, imaginary parts with imaginary parts).
+
+import ComplexAddDiagram from "../../../components/ComplexAddDiagram.astro";
+
+<ComplexAddDiagram />
+
+The diagram shows complex addition as vectors on the complex plane. The blue arrow represents 3 + 4i and the orange arrow represents 5 − 2i. To add them, you combine the real parts (3 + 5 = 8) and the imaginary parts (4i − 2i = 2i). The green arrow is the result: 8 + 2i. The dashed lines form a parallelogram — just like adding vectors in physics.
+
+**Multiplication** — use FOIL (First, Outer, Inner, Last) and replace i² with −1.
+
+Example: (2 + 3i)(4 − i)
+
+$$
+\begin{aligned}
+&= 2(4) + 2(-i) + 3i(4) + 3i(-i) \\[1em]
+&= 8 - 2i + 12i - 3i^2 \\[1em]
+&= 8 + 10i - 3(-1) \\[1em]
+&= 8 + 10i + 3 = 11 + 10i
+\end{aligned}
+$$
+
+**Division** — multiply numerator and denominator by the **complex conjugate** of the denominator. This eliminates the imaginary part from the denominator.
+
+The **complex conjugate** of a + bi is a − bi — you just flip the sign of the imaginary part. For example:
+
+- The conjugate of 1 + 4i is 1 − 4i
+- The conjugate of 3 − 2i is 3 + 2i
+- The conjugate of 7i is −7i
+- The conjugate of 5 (a real number) is just 5
+
+Why does this work? When you multiply a complex number by its conjugate, the imaginary parts cancel out and you get a real number:
+
+$$
+(a + bi)(a - bi) = a^2 - (bi)^2 = a^2 - b^2 i^2 = a^2 + b^2
+$$
+
+That's always a real number (no i left). So multiplying top and bottom by the conjugate turns the denominator into a plain real number, which you can then divide normally.
+
+Example: (3 + 2i) / (1 + 4i)
+
+$$
+\frac{3 + 2i}{1 + 4i} \cdot \frac{1 - 4i}{1 - 4i} = \frac{(3 + 2i)(1 - 4i)}{(1)^2 + (4)^2} = \frac{3 - 12i + 2i - 8i^2}{1 + 16} = \frac{3 - 10i + 8}{17} = \frac{11 - 10i}{17}
+$$
+
+## Worked Example
+
+**1. Add: (7 − 3i) + (−2 + 5i)**
+
+$$
+(7 - 2) + (-3i + 5i) = 5 + 2i
+$$
+
+**2. Multiply: (3 + 2i)(5 − i)**
+
+$$
+\begin{aligned}
+&= 3(5) + 3(-i) + 2i(5) + 2i(-i) \\[1em]
+&= 15 - 3i + 10i - 2i^2 \\[1em]
+&= 15 + 7i - 2(-1) \\[1em]
+&= 15 + 7i + 2 = 17 + 7i
+\end{aligned}
+$$
+
+**3. Divide: (4 + 3i) / (2 − i)**
+
+Multiply by the conjugate (2 + i):
+
+$$
+\begin{aligned}
+\text{Numerator: } &(4 + 3i)(2 + i) = 8 + 4i + 6i + 3i^2 = 8 + 10i - 3 = 5 + 10i \\[1em]
+\text{Denominator: } &(2)^2 + (1)^2 = 4 + 1 = 5 \\[1em]
+\text{Result: } &\frac{5 + 10i}{5} = 1 + 2i
+\end{aligned}
+$$
+
+## Real-World Application
+
+Operations with complex numbers are used in:
+
+- Electrical engineering (AC circuit analysis)
+- Signal processing and audio engineering
+- Computer graphics and 3D modeling
+- Quantum physics and advanced engineering
+
+Even if you don't work in these fields, mastering these operations builds confidence with algebra and prepares you for more advanced math.
+
+:::note[You've Got This]
+Treat complex numbers like binomials, but remember to replace i² with −1 when it appears. For division, always multiply by the conjugate of the denominator. Practice a few operations each session — addition and multiplication get easy quickly, and division becomes manageable with the conjugate trick.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="algebra2-operations-with-complex-numbers"
+  questions={[
+    {
+      id: "q1",
+      text: "Add: (5 + 3i) + (2 − 7i)",
+      options: ["7 − 4i", "3 + 10i", "7 + 4i", "3 − 4i"],
+      correctIndex: 0,
+      explanation: "(5 + 2) + (3i − 7i) = 7 − 4i.",
+    },
+    {
+      id: "q2",
+      text: "Multiply: (3 + 2i)(4 − i)",
+      options: ["14 + 5i", "10 + 5i", "14 − 5i", "12 + 11i"],
+      correctIndex: 0,
+      explanation: "12 − 3i + 8i − 2i² = 12 + 5i + 2 = 14 + 5i.",
+    },
+    {
+      id: "q3",
+      text: "What is i²?",
+      options: ["−1", "1", "i", "−i"],
+      correctIndex: 0,
+      explanation: "By definition, i² = −1.",
+    },
+    {
+      id: "q4",
+      text: "To divide complex numbers, multiply numerator and denominator by:",
+      options: [
+        "The complex conjugate of the denominator",
+        "i",
+        "The real part only",
+        "The imaginary part only",
+      ],
+      correctIndex: 0,
+      explanation:
+        "The conjugate changes the sign of the imaginary part and makes the denominator a real number.",
+    },
+  ]}
+/>

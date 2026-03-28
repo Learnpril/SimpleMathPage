@@ -1,0 +1,130 @@
+---
+title: Complex Numbers in Quadratic Equations
+description: Learn how to solve quadratic equations that have complex solutions using the quadratic formula
+sidebar:
+  order: 12
+---
+
+## What You'll Learn
+
+In this lesson you'll learn how to solve quadratic equations that have a negative discriminant and express the solutions as complex numbers.
+
+## The Concept
+
+When the discriminant b² − 4ac is negative, a quadratic equation has no real solutions — but it does have **complex solutions**.
+
+The quadratic formula still works:
+
+$$
+x = \frac{-b \pm \sqrt{b^2 - 4ac}}{2a}
+$$
+
+When the discriminant is negative, we write the square root using the imaginary unit i:
+
+$$
+\sqrt{-k} = \sqrt{k} \cdot i
+$$
+
+The solutions will be in the form a + bi and a − bi — always a **conjugate pair** (same real part, opposite imaginary parts).
+
+## Worked Example
+
+Solve x² + 4x + 13 = 0.
+
+import ComplexQuadDiagram from "../../../components/ComplexQuadDiagram.astro";
+
+<ComplexQuadDiagram />
+
+The left panel shows the parabola y = x² + 4x + 13. It floats entirely above the x-axis — there are no x-intercepts, which means no real solutions. The right panel shows where the solutions actually live: on the complex plane, as the conjugate pair −2 + 3i and −2 − 3i. The dashed purple line connecting them shows they're mirror images across the real axis.
+
+**1. Find the discriminant**
+
+Here a = 1, b = 4, c = 13.
+
+$$
+D = 4^2 - 4(1)(13) = 16 - 52 = -36
+$$
+
+D = −36 &lt; 0, so the solutions are complex.
+
+**2. Apply the quadratic formula**
+
+$$
+x = \frac{-4 \pm \sqrt{-36}}{2(1)} = \frac{-4 \pm \sqrt{36} \cdot i}{2} = \frac{-4 \pm 6i}{2}
+$$
+
+**3. Simplify**
+
+$$
+x = \frac{-4}{2} \pm \frac{6i}{2} = -2 \pm 3i
+$$
+
+The solutions are −2 + 3i and −2 − 3i — a conjugate pair.
+
+Notice that both solutions have the same real part (−2) and opposite imaginary parts (+3i and −3i). This always happens when the quadratic has real coefficients and a negative discriminant.
+
+## Real-World Application
+
+Complex solutions appear in many technical fields even when the final answer is interpreted in real terms:
+
+- Electrical engineering: analyzing alternating current (AC) circuits where voltage and current are out of phase.
+- Mechanical vibrations and resonance (damped harmonic motion).
+- Control systems and stability analysis.
+- Signal processing and audio engineering.
+
+For example, when modeling the motion of a damped spring, complex numbers help describe how the system oscillates and loses energy over time.
+
+:::note[You've Got This]
+When you see a negative discriminant, don't stop — just replace √(−k) with √k · i. The quadratic formula works the same way. Practice writing the solutions neatly as a ± bi. This skill connects your algebra work to more advanced math and science topics.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="algebra2-complex-numbers-in-quadratic-equations"
+  questions={[
+    {
+      id: "q1",
+      text: "Solve x² + 6x + 13 = 0",
+      options: ["−3 ± 2i", "−3 ± 4i", "3 ± 2i", "−6 ± i"],
+      correctIndex: 0,
+      explanation:
+        "D = 36 − 52 = −16. x = [−6 ± √(−16)] / 2 = [−6 ± 4i] / 2 = −3 ± 2i.",
+    },
+    {
+      id: "q2",
+      text: "If the discriminant is negative, the solutions are:",
+      options: [
+        "Complex numbers",
+        "Only real numbers",
+        "Only positive real numbers",
+        "No solutions",
+      ],
+      correctIndex: 0,
+      explanation:
+        "Negative discriminant means two complex (non-real) solutions.",
+    },
+    {
+      id: "q3",
+      text: "What is √(−49) in terms of i?",
+      options: ["7i", "−7i", "49i", "7"],
+      correctIndex: 0,
+      explanation: "√(−49) = √(49 × −1) = 7i.",
+    },
+    {
+      id: "q4",
+      text: "The solutions to a quadratic with negative discriminant always come in:",
+      options: [
+        "Complex conjugate pairs",
+        "The same number twice",
+        "Only positive values",
+        "Only negative values",
+      ],
+      correctIndex: 0,
+      explanation:
+        "Complex solutions to quadratics with real coefficients come in conjugate pairs (a + bi and a − bi).",
+    },
+  ]}
+/>

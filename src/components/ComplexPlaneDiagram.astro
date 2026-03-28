@@ -1,0 +1,110 @@
+---
+/**
+ * ComplexPlaneDiagram — the complex plane (Argand diagram).
+ * Horizontal axis = Real, Vertical axis = Imaginary.
+ * Plots: 3+4i, −2+3i, 4−2i, −3−i, and 5i (pure imaginary).
+ */
+
+const pad = 55;
+const w = 420;
+const h = 420;
+const plotW = 310;
+const plotH = 310;
+const lo = -5;
+const hi = 6;
+const range = hi - lo;
+
+function toX(v: number) { return pad + ((v - lo) / range) * plotW; }
+function toY(v: number) { return pad + ((hi - v) / range) * plotH; }
+
+const realAxisY = toY(0);
+const imagAxisX = toX(0);
+
+const ticks = [-4, -3, -2, -1, 1, 2, 3, 4, 5];
+
+// Points to plot: [real, imag, label, labelDx, labelDy]
+const points = [
+  { r: 3, i: 4, label: "3 + 4i", dx: 10, dy: -10 },
+  { r: -2, i: 3, label: "−2 + 3i", dx: -14, dy: -12 },
+  { r: 4, i: -2, label: "4 − 2i", dx: 10, dy: 16 },
+  { r: -3, i: -1, label: "−3 − i", dx: -14, dy: 16 },
+  { r: 0, i: 5, label: "5i", dx: 12, dy: -6 },
+];
+---
+
+<figure class="cp-diagram" role="img" aria-label="The complex plane showing several complex numbers plotted as points">
+  <figcaption class="cp-title">The complex plane — every complex number a + bi is a point</figcaption>
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+
+    <rect class="cp-bg" x="0" y="0" width={w} height={h} rx="8" />
+
+    {/* Grid */}
+    {ticks.map(t => (
+      <line class="cp-grid" x1={toX(t)} y1={pad} x2={toX(t)} y2={pad + plotH} />
+    ))}
+    {ticks.map(t => (
+      <line class="cp-grid" x1={pad} y1={toY(t)} x2={pad + plotW} y2={toY(t)} />
+    ))}
+
+    {/* Axes */}
+    <line class="cp-axis" x1={pad} y1={realAxisY} x2={pad + plotW + 5} y2={realAxisY} stroke-width="1.5" />
+    <line class="cp-axis" x1={imagAxisX} y1={pad + plotH} x2={imagAxisX} y2={pad - 5} stroke-width="1.5" />
+
+    {/* Axis labels — outside the plot area */}
+    <text class="cp-axis-label" x={pad + plotW + 10} y={realAxisY - 8} font-size="14">Real</text>
+    <text class="cp-axis-label" x={imagAxisX + 10} y={pad - 10} font-size="14">Imaginary</text>
+
+    {/* Tick labels */}
+    {ticks.filter(t => t !== 0).map(t => (
+      <text class="cp-tick" x={toX(t)} y={realAxisY + 18} font-size="11" text-anchor="middle">{t}</text>
+    ))}
+    {ticks.filter(t => t !== 0).map(t => (
+      <text class="cp-tick" x={imagAxisX - 10} y={toY(t) + 4} font-size="11" text-anchor="end">{t}i</text>
+    ))}
+
+    {/* Dashed lines from points to axes (to show real and imaginary components) */}
+    {/* Only for the main example: 3 + 4i */}
+    <line class="cp-guide-real" x1={toX(3)} y1={realAxisY} x2={toX(3)} y2={toY(4)} stroke-width="1" stroke-dasharray="4,3" />
+    <line class="cp-guide-imag" x1={imagAxisX} y1={toY(4)} x2={toX(3)} y2={toY(4)} stroke-width="1" stroke-dasharray="4,3" />
+
+    {/* Points */}
+    {points.map(p => (
+      <g>
+        <circle class="cp-point" cx={toX(p.r)} cy={toY(p.i)} r="6" />
+        <text class="cp-point-label"
+          x={toX(p.r) + p.dx} y={toY(p.i) + p.dy}
+          font-size="13" font-weight="bold"
+          text-anchor={p.dx < 0 ? "end" : "start"}>{p.label}</text>
+      </g>
+    ))}
+
+  </svg>
+</figure>
+
+<style>
+  .cp-diagram { display: flex; flex-direction: column; align-items: center; margin: 1.5rem 0; }
+  .cp-title { font-size: 0.95rem; color: var(--sl-color-gray-3); margin-bottom: 0.5rem; font-style: italic; }
+  .cp-diagram svg { max-width: 100%; height: auto; }
+
+  .cp-bg { fill: var(--sl-color-bg, #121212); }
+  .cp-grid { stroke: #333; stroke-width: 0.5; }
+  .cp-axis { stroke: #888; }
+  .cp-axis-label { fill: #aaa; font-family: 'Libre Baskerville', Georgia, serif; font-weight: bold; }
+  .cp-tick { fill: #aaa; font-family: sans-serif; }
+
+  .cp-guide-real { stroke: #7ee787; }
+  .cp-guide-imag { stroke: #d2a8ff; }
+
+  .cp-point { fill: #f0c674; stroke: #fff; stroke-width: 2; }
+  .cp-point-label { fill: #f0c674; font-family: 'Libre Baskerville', Georgia, serif; }
+
+  :global([data-theme="light"]) .cp-bg { fill: #f8f9fa; }
+  :global([data-theme="light"]) .cp-grid { stroke: #ccc; }
+  :global([data-theme="light"]) .cp-axis { stroke: #222; }
+  :global([data-theme="light"]) .cp-axis-label { fill: #222; }
+  :global([data-theme="light"]) .cp-tick { fill: #333; }
+  :global([data-theme="light"]) .cp-guide-real { stroke: #1a7f37; }
+  :global([data-theme="light"]) .cp-guide-imag { stroke: #8250df; }
+  :global([data-theme="light"]) .cp-point { fill: #b45309; stroke: #fff; }
+  :global([data-theme="light"]) .cp-point-label { fill: #b45309; }
+</style>

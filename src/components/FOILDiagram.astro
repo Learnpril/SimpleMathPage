@@ -1,0 +1,85 @@
+---
+/**
+ * FOILDiagram — visual showing (x + 4)(2x − 3) with color-coded
+ * arrows for First, Outer, Inner, Last.
+ */
+---
+
+<figure class="foil-diagram" role="img" aria-label="FOIL method for multiplying (x + 4)(2x − 3)">
+  <figcaption class="foil-title">FOIL: (x + 4)(2x − 3)</figcaption>
+  <svg viewBox="0 0 400 200" width="400" height="200" xmlns="http://www.w3.org/2000/svg">
+
+    {/* Terms positioned with generous spacing */}
+    {/* First binomial: x  +  4 */}
+    <text class="foil-term" x="80" y="70" font-size="26" text-anchor="middle" font-weight="bold">x</text>
+    <text class="foil-op" x="120" y="70" font-size="22" text-anchor="middle">+</text>
+    <text class="foil-term" x="160" y="70" font-size="26" text-anchor="middle" font-weight="bold">4</text>
+
+    {/* Parentheses */}
+    <text class="foil-paren" x="50" y="72" font-size="30" text-anchor="middle">(</text>
+    <text class="foil-paren" x="190" y="72" font-size="30" text-anchor="middle">)</text>
+
+    {/* Second binomial: 2x  −  3 */}
+    <text class="foil-term" x="230" y="70" font-size="26" text-anchor="middle" font-weight="bold">2x</text>
+    <text class="foil-op" x="270" y="70" font-size="22" text-anchor="middle">−</text>
+    <text class="foil-term" x="300" y="70" font-size="26" text-anchor="middle" font-weight="bold">3</text>
+
+    <text class="foil-paren" x="205" y="72" font-size="30" text-anchor="middle">(</text>
+    <text class="foil-paren" x="325" y="72" font-size="30" text-anchor="middle">)</text>
+
+    {/* Arrows — curved arcs above and below, well clear of text */}
+    {/* First: x → 2x (blue, arc above) */}
+    <path class="foil-arc foil-first" d="M80,52 Q155,15 230,52" fill="none" stroke-width="2" />
+    <text class="foil-arc-label foil-first-label" x="155" y="12" font-size="11" text-anchor="middle">First: 2x²</text>
+
+    {/* Outer: x → −3 (green, wider arc above) */}
+    <path class="foil-arc foil-outer" d="M80,48 Q190,0 300,48" fill="none" stroke-width="2" />
+    <text class="foil-arc-label foil-outer-label" x="260" y="6" font-size="11" text-anchor="start">Outer: −3x</text>
+
+    {/* Inner: 4 → 2x (orange, arc below) */}
+    <path class="foil-arc foil-inner" d="M160,82 Q195,115 230,82" fill="none" stroke-width="2" />
+    <text class="foil-arc-label foil-inner-label" x="195" y="130" font-size="11" text-anchor="middle">Inner: 8x</text>
+
+    {/* Last: 4 → −3 (purple, wider arc below) */}
+    <path class="foil-arc foil-last" d="M160,86 Q230,140 300,86" fill="none" stroke-width="2" />
+    <text class="foil-arc-label foil-last-label" x="230" y="155" font-size="11" text-anchor="middle">Last: −12</text>
+
+    {/* Result */}
+    <text class="foil-result" x="200" y="190" font-size="16" text-anchor="middle" font-weight="bold">= 2x² + 5x − 12</text>
+
+  </svg>
+</figure>
+
+<style>
+  .foil-diagram { display: flex; flex-direction: column; align-items: center; margin: 1.5rem 0; }
+  .foil-title { font-size: 0.95rem; color: var(--sl-color-gray-3); margin-bottom: 0.5rem; font-style: italic; }
+  .foil-diagram svg { max-width: 100%; height: auto; }
+
+  .foil-term { fill: #ddd; font-family: 'Libre Baskerville', Georgia, serif; }
+  .foil-op { fill: #888; font-family: 'Libre Baskerville', Georgia, serif; }
+  .foil-paren { fill: #666; font-family: 'Libre Baskerville', Georgia, serif; }
+
+  .foil-first { stroke: #58a6ff; }
+  .foil-first-label { fill: #58a6ff; font-family: 'Libre Baskerville', Georgia, serif; font-weight: bold; }
+  .foil-outer { stroke: #7ee787; }
+  .foil-outer-label { fill: #7ee787; font-family: 'Libre Baskerville', Georgia, serif; font-weight: bold; }
+  .foil-inner { stroke: #f78166; }
+  .foil-inner-label { fill: #f78166; font-family: 'Libre Baskerville', Georgia, serif; font-weight: bold; }
+  .foil-last { stroke: #d2a8ff; }
+  .foil-last-label { fill: #d2a8ff; font-family: 'Libre Baskerville', Georgia, serif; font-weight: bold; }
+
+  .foil-result { fill: #f0c674; font-family: 'Libre Baskerville', Georgia, serif; }
+
+  :global([data-theme="light"]) .foil-term { fill: #222; }
+  :global([data-theme="light"]) .foil-op { fill: #555; }
+  :global([data-theme="light"]) .foil-paren { fill: #888; }
+  :global([data-theme="light"]) .foil-first { stroke: #0969da; }
+  :global([data-theme="light"]) .foil-first-label { fill: #0969da; }
+  :global([data-theme="light"]) .foil-outer { stroke: #1a7f37; }
+  :global([data-theme="light"]) .foil-outer-label { fill: #1a7f37; }
+  :global([data-theme="light"]) .foil-inner { stroke: #cf222e; }
+  :global([data-theme="light"]) .foil-inner-label { fill: #cf222e; }
+  :global([data-theme="light"]) .foil-last { stroke: #8250df; }
+  :global([data-theme="light"]) .foil-last-label { fill: #8250df; }
+  :global([data-theme="light"]) .foil-result { fill: #b45309; }
+</style>

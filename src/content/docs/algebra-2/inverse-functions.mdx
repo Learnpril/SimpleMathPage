@@ -1,0 +1,151 @@
+---
+title: Inverse Functions
+description: Learn what inverse functions are, how to find them, and how to verify they are inverses
+sidebar:
+  order: 4
+---
+
+## What You'll Learn
+
+In this lesson you'll learn what an inverse function is, how to find the inverse of a function, and how to check that two functions are inverses of each other.
+
+## The Concept
+
+An **inverse function** "undoes" what the original function does.
+If f(x) turns input x into output y, then the inverse f⁻¹(x) turns that output back into the original input.
+
+Key idea:
+
+$$
+f(f^{-1}(x)) = x \quad \text{and} \quad f^{-1}(f(x)) = x
+$$
+
+How to find the inverse:
+
+1. Replace f(x) with y
+2. Swap x and y
+3. Solve for y
+4. Replace y with f⁻¹(x)
+
+**Example:** find the inverse of f(x) = 2x + 3.
+
+$$
+\begin{aligned}
+y &= 2x + 3 \\[1em]
+x &= 2y + 3 \\[1em]
+x - 3 &= 2y \\[1em]
+y &= \frac{x - 3}{2}
+\end{aligned}
+$$
+
+So f⁻¹(x) = (x − 3) / 2.
+
+To verify: plug the inverse into the original and vice versa. Both should give x.
+
+## Worked Example
+
+**1. Find the inverse of f(x) = 3x − 6**
+
+$$
+\begin{aligned}
+y &= 3x - 6 \\[1em]
+x &= 3y - 6 \\[1em]
+x + 6 &= 3y \\[1em]
+y &= \frac{x + 6}{3}
+\end{aligned}
+$$
+
+So f⁻¹(x) = (x + 6) / 3.
+
+**2. Verify they are inverses**
+
+import InverseDiagram from "../../../components/InverseDiagram.astro";
+
+<InverseDiagram />
+
+$$
+f(f^{-1}(x)) = f\!\left(\frac{x + 6}{3}\right) = 3\!\left(\frac{x + 6}{3}\right) - 6 = x + 6 - 6 = x \;\checkmark
+$$
+
+**3. Find the inverse of g(x) = x² + 4 (domain restricted to x ≥ 0)**
+
+$$
+\begin{aligned}
+y &= x^2 + 4 \\[1em]
+x &= y^2 + 4 \\[1em]
+x - 4 &= y^2 \\[1em]
+y &= \sqrt{x - 4}
+\end{aligned}
+$$
+
+We take the positive root because the domain was restricted to x ≥ 0. So g⁻¹(x) = √(x − 4).
+
+## Real-World Application
+
+Inverse functions are very useful in real life:
+
+- Converting temperature: Fahrenheit to Celsius and back again are inverses.
+- Undoing a discount: if a store applies 20% off, the inverse tells you the original price.
+- Finding how long it takes to earn a certain amount: if earnings = rate × time, the inverse finds time given earnings.
+- In finance: finding the interest rate needed to reach a savings goal.
+
+Example: a phone plan costs c(t) = 25 + 0.12t dollars for t texts. The inverse would tell you how many texts you sent if you know the total bill.
+
+:::note[You've Got This]
+Finding an inverse is mostly algebra: swap x and y, then solve for y. The hardest part is remembering to restrict the domain when needed (like with squares). Practice a few simple linear functions first — they're the easiest. You're building a very useful skill for later topics like logarithms and trigonometry.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="algebra2-inverse-functions"
+  questions={[
+    {
+      id: "q1",
+      text: "If f(x) = 4x − 8, what is f⁻¹(x)?",
+      options: ["(x + 8)/4", "4x + 8", "(x − 8)/4", "x/4 + 2"],
+      correctIndex: 0,
+      explanation: "y = 4x − 8 → x = 4y − 8 → x + 8 = 4y → y = (x + 8)/4.",
+    },
+    {
+      id: "q2",
+      text: "Which statement is true about inverse functions?",
+      options: [
+        "f(f⁻¹(x)) = x",
+        "f(f⁻¹(x)) = f(x)",
+        "f⁻¹(x) = f(x)",
+        "They always have the same graph",
+      ],
+      correctIndex: 0,
+      explanation:
+        "Applying a function and its inverse returns the original input.",
+    },
+    {
+      id: "q3",
+      text: "A function doubles a number and adds 5. What does its inverse do?",
+      options: [
+        "Subtract 5 and divide by 2",
+        "Subtract 5 and multiply by 2",
+        "Add 5 and divide by 2",
+        "Double and subtract 5",
+      ],
+      correctIndex: 0,
+      explanation: "To undo 'double and add 5', subtract 5 then divide by 2.",
+    },
+    {
+      id: "q4",
+      text: "Why do we sometimes need to restrict the domain when finding an inverse?",
+      options: [
+        "To make the inverse also a function",
+        "To make it easier to calculate",
+        "To avoid negative numbers",
+        "To make the graph linear",
+      ],
+      correctIndex: 0,
+      explanation:
+        "Some functions (like quadratics) are not one-to-one unless we restrict the domain.",
+    },
+  ]}
+/>

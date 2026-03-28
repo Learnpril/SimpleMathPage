@@ -1,0 +1,165 @@
+---
+title: Rational Root Theorem
+description: Learn how to use the Rational Root Theorem to find possible rational roots of polynomials
+sidebar:
+  order: 16
+---
+
+## What You'll Learn
+
+In this lesson you'll learn the Rational Root Theorem and how to use it systematically to find possible rational roots of polynomial equations.
+
+## The Concept
+
+The **Rational Root Theorem** provides a list of all possible rational roots of a polynomial equation with integer coefficients.
+
+If a polynomial with integer coefficients has a rational root p/q (in lowest terms), then:
+
+- p is a factor of the constant term (the last number)
+- q is a factor of the leading coefficient (the first number)
+
+This theorem doesn't tell you which roots are actual solutions — it only gives you a finite list of candidates to test. You still need to plug them in or use synthetic division to check.
+
+import RationalRootDiagram from "../../../components/RationalRootDiagram.astro";
+
+Use the Rational Root Theorem on 2x³ − 5x² − 4x + 3 = 0:
+
+<RationalRootDiagram />
+
+The diagram shows the process visually for the polynomial 2x³ − 5x² − 4x + 3. The blue 2 (leading coefficient) gives the q factors: ±1, ±2. The green 3 (constant term) gives the p factors: ±1, ±3. Dividing every p by every q produces the gold list of candidates: ±1, ±3, ±1/2, ±3/2. These are the only rational numbers that could possibly be roots.
+
+**Steps to use it:**
+
+1. List all positive and negative factors of the constant term (these are the possible p values).
+2. List all positive and negative factors of the leading coefficient (these are the possible q values).
+3. Form all possible fractions p/q and reduce them.
+4. Test each candidate by plugging it into the polynomial (or using synthetic division). If the result is 0, it's a root.
+
+## Worked Example
+
+Use the Rational Root Theorem to factor 2x³ − 5x² − 4x + 3 = 0.
+
+**1. List the possible rational roots**
+
+Constant term = 3, so factors of 3 are: ±1, ±3.
+
+Leading coefficient = 2, so factors of 2 are: ±1, ±2.
+
+All possible rational roots (p/q): ±1, ±3, ±1/2, ±3/2.
+
+**2. Test candidates**
+
+Test x = 1:
+
+$$
+2(1)^3 - 5(1)^2 - 4(1) + 3 = 2 - 5 - 4 + 3 = -4 \neq 0
+$$
+
+Not a root. Try x = 3:
+
+$$
+2(3)^3 - 5(3)^2 - 4(3) + 3 = 54 - 45 - 12 + 3 = 0 \;\checkmark
+$$
+
+x = 3 is a root, so (x − 3) is a factor.
+
+**3. Use synthetic division to divide 2x³ − 5x² − 4x + 3 by (x − 3)**
+
+| 3   | 2   | −5  | −4  | 3   |
+| --- | --- | --- | --- | --- |
+|     |     | 6   | 3   | −3  |
+|     | 2   | 1   | −1  | 0   |
+
+The quotient is 2x² + x − 1.
+
+**4. Factor the remaining quadratic**
+
+$$
+2x^2 + x - 1 = (2x - 1)(x + 1)
+$$
+
+**Final factored form:**
+
+$$
+2x^3 - 5x^2 - 4x + 3 = (x - 3)(2x - 1)(x + 1)
+$$
+
+The roots are x = 3, x = 1/2, and x = −1.
+
+import RationalRootGraph from "../../../components/RationalRootGraph.astro";
+
+<RationalRootGraph />
+
+The graph confirms our algebra — the blue cubic crosses the x-axis at exactly the three roots we found: x = −1, x = 1/2, and x = 3.
+
+## Real-World Application
+
+The Rational Root Theorem is useful whenever you need to solve a polynomial equation and don't have a graph handy:
+
+- Finding break-even points in business profit models
+- Solving engineering equations for dimensions or forces
+- Analyzing motion equations in physics
+- Determining equilibrium points in economics
+
+Without this theorem, you'd have to guess randomly. The Rational Root Theorem narrows the search to a manageable list.
+
+:::note[You've Got This]
+The Rational Root Theorem is a systematic way to start — it gives you a checklist of candidates instead of random guessing. Not every candidate will work, but the list is always finite. Test them one at a time (start with the easy ones like ±1, ±2), and once you find one root, use synthetic division to reduce the degree. Then factor what's left.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="algebra2-rational-root-theorem"
+  questions={[
+    {
+      id: "q1",
+      text: "For 3x³ + 2x² − x − 6 = 0, which are possible rational roots?",
+      options: ["±1, ±2, ±3, ±6, ±1/3, ±2/3", "±1, ±2, ±3", "±1, ±6", "±3, ±6"],
+      correctIndex: 0,
+      explanation:
+        "Factors of 6 (constant) over factors of 3 (leading): ±1, ±2, ±3, ±6, ±1/3, ±2/3.",
+    },
+    {
+      id: "q2",
+      text: "In the Rational Root Theorem, p is a factor of the:",
+      options: [
+        "Constant term",
+        "Leading coefficient",
+        "Degree",
+        "Middle term",
+      ],
+      correctIndex: 0,
+      explanation:
+        "p divides the constant term, q divides the leading coefficient.",
+    },
+    {
+      id: "q3",
+      text: "If you test a candidate root and get 0, that means:",
+      options: [
+        "It is a root of the polynomial",
+        "It is not a root",
+        "The polynomial has no roots",
+        "You need to test more values",
+      ],
+      correctIndex: 0,
+      explanation:
+        "Getting 0 means the candidate satisfies the equation — it's a root.",
+    },
+    {
+      id: "q4",
+      text: "After finding one rational root, the best next step is:",
+      options: [
+        "Synthetic division to reduce the degree",
+        "Test all remaining candidates",
+        "Use the quadratic formula on the original",
+        "Graph the polynomial",
+      ],
+      correctIndex: 0,
+      explanation:
+        "Synthetic division factors out the root and gives you a lower-degree polynomial to work with.",
+    },
+  ]}
+/>

@@ -1,0 +1,153 @@
+---
+title: Factoring Higher-Degree Polynomials
+description: Learn strategies for factoring cubic and quartic polynomials, including grouping and the rational root theorem
+sidebar:
+  order: 15
+---
+
+## What You'll Learn
+
+In this lesson you'll learn how to factor polynomials of degree 3 and higher using grouping and the rational root theorem.
+
+## The Concept
+
+Factoring higher-degree polynomials builds on what you learned with quadratics. The goal is to write the polynomial as a product of lower-degree factors.
+
+Common strategies:
+
+1. **Greatest Common Factor (GCF)** — always check first.
+2. **Grouping** — useful for polynomials with 4 or more terms.
+3. **Rational Root Theorem** — helps identify possible rational roots to test.
+
+**Rational Root Theorem**: any possible rational root p/q has p as a factor of the constant term and q as a factor of the leading coefficient.
+
+Once you find a root, use synthetic division to factor it out and reduce the degree.
+
+## Worked Example
+
+Factor 2x³ − 3x² − 11x + 6.
+
+import CubicFactorGraph from "../../../components/CubicFactorGraph.astro";
+
+<CubicFactorGraph />
+
+The graph shows the cubic crossing the x-axis at three points — these are the roots we need to find. Each gold dot is a solution to 2x³ − 3x² − 11x + 6 = 0. The factored form (x − 3)(2x − 1)(x + 2) tells us exactly where those crossings happen.
+
+**1. List possible rational roots**
+
+The constant term is 6 and the leading coefficient is 2. By the Rational Root Theorem, possible rational roots are ±1, ±2, ±3, ±6, ±1/2, ±3/2.
+
+**2. Test x = 3**
+
+$$
+2(3)^3 - 3(3)^2 - 11(3) + 6 = 54 - 27 - 33 + 6 = 0 \;\checkmark
+$$
+
+So x = 3 is a root, which means (x − 3) is a factor.
+
+**3. Use synthetic division to divide by (x − 3)**
+
+Synthetic division is a shortcut for dividing a polynomial by a linear factor (x − r). Instead of doing long division, you only work with the coefficients. Here's how it works step by step for dividing 2x³ − 3x² − 11x + 6 by (x − 3):
+
+1. Write the root (3) on the left and the coefficients of the polynomial (2, −3, −11, 6) in a row.
+2. Bring down the first coefficient (2).
+3. Multiply the root by that number: 3 × 2 = 6. Write it under the next coefficient.
+4. Add down the column: −3 + 6 = 3.
+5. Repeat: 3 × 3 = 9, write under next coefficient, add: −11 + 9 = −2.
+6. Repeat once more: 3 × (−2) = −6, add: 6 + (−6) = 0. The zero confirms x = 3 is a root.
+
+| 3   | 2   | −3  | −11 | 6   |
+| --- | --- | --- | --- | --- |
+|     |     | 6   | 9   | −6  |
+|     | 2   | 3   | −2  | 0   |
+
+The bottom row (2, 3, −2) gives the coefficients of the quotient: 2x² + 3x − 2. The last number (0) is the remainder — zero means (x − 3) divides evenly.
+
+**4. Factor the remaining quadratic**
+
+$$
+2x^2 + 3x - 2 = (2x - 1)(x + 2)
+$$
+
+**Final factored form:**
+
+$$
+2x^3 - 3x^2 - 11x + 6 = (x - 3)(2x - 1)(x + 2)
+$$
+
+The roots are x = 3, x = 1/2, and x = −2 — matching the three gold dots on the graph.
+
+## Real-World Application
+
+Factoring higher-degree polynomials helps in:
+
+- Finding break-even points in business models
+- Solving volume or area optimization problems
+- Analyzing projectile or motion equations
+- Engineering design (beam stress, fluid flow)
+
+Example: a company's profit model is a cubic polynomial. Factoring it helps find the production levels where profit is zero (break-even points).
+
+:::note[You've Got This]
+Start with the Rational Root Theorem to test possible rational roots — it's a systematic way to begin. Once you find one root, use synthetic division to reduce the degree. Then factor what remains. It may take a few tests, but the process is reliable. Practice with a few cubics — you'll get faster at spotting patterns.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="algebra2-factoring-higher-degree-polynomials"
+  questions={[
+    {
+      id: "q1",
+      text: "According to the Rational Root Theorem, possible rational roots are factors of the constant term over factors of the:",
+      options: [
+        "Leading coefficient",
+        "Middle coefficient",
+        "Degree",
+        "Number of terms",
+      ],
+      correctIndex: 0,
+      explanation:
+        "p/q where p divides the constant term and q divides the leading coefficient.",
+    },
+    {
+      id: "q2",
+      text: "What is a good first step when factoring a cubic polynomial?",
+      options: [
+        "Test possible rational roots",
+        "Use the quadratic formula",
+        "Graph the function",
+        "Add all terms together",
+      ],
+      correctIndex: 0,
+      explanation:
+        "The Rational Root Theorem gives a list of possible rational roots to test.",
+    },
+    {
+      id: "q3",
+      text: "After finding one root of a cubic, the next step is usually:",
+      options: [
+        "Synthetic division",
+        "Completing the square",
+        "Quadratic formula",
+        "Graphing",
+      ],
+      correctIndex: 0,
+      explanation: "Synthetic division reduces the cubic to a quadratic.",
+    },
+    {
+      id: "q4",
+      text: "The polynomial x³ − 6x² + 11x − 6 factors as:",
+      options: [
+        "(x − 1)(x − 2)(x − 3)",
+        "(x + 1)(x + 2)(x + 3)",
+        "(x − 1)(x − 3)(x − 6)",
+        "(x − 6)(x − 1)(x + 1)",
+      ],
+      correctIndex: 0,
+      explanation: "Testing roots shows x = 1, 2, 3 are all roots.",
+    },
+  ]}
+/>

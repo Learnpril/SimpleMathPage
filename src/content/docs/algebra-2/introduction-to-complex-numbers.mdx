@@ -1,0 +1,141 @@
+---
+title: Introduction to Complex Numbers
+description: Learn what complex numbers are, the imaginary unit i, and how to write them in standard form
+sidebar:
+  order: 10
+---
+
+## What You'll Learn
+
+In this lesson you'll learn what complex numbers are, the imaginary unit i, and how to write and interpret complex numbers in standard form.
+
+## The Concept
+
+When solving quadratic equations, we sometimes get a negative number under the square root (negative discriminant). To handle these, we use **complex numbers**.
+
+The **imaginary unit** is defined as:
+
+$$
+i = \sqrt{-1}
+$$
+
+This means i² = −1. The powers of i follow a repeating cycle:
+
+import ComplexNumberDiagram from "../../../components/ComplexNumberDiagram.astro";
+
+<ComplexNumberDiagram />
+
+On the left, the diagram shows how the powers of i cycle every four steps: i¹ = i (blue), i² = −1 (orange), i³ = −i (purple), i⁴ = 1 (green), and then it repeats. So to find any power of i, just divide the exponent by 4 and look at the remainder.
+
+On the right, the diagram shows the anatomy of a complex number in standard form a + bi. The green underline marks the real part (3 in this case) and the purple underline marks the imaginary part (4). Every complex number has these two components.
+
+A **complex number** is any number written as a + bi, where a and b are real numbers:
+
+- a is the **real part**
+- b is the **imaginary part**
+
+Examples:
+
+- 3 + 4i (real part 3, imaginary part 4)
+- 7 − 2i (real part 7, imaginary part −2)
+- 5i (real part 0, imaginary part 5) — a pure imaginary number
+- 6 (real part 6, imaginary part 0) — actually just a real number
+
+Complex numbers extend the real number system so that every quadratic equation has solutions.
+
+## The Complex Plane
+
+Just like real numbers live on a number line, complex numbers live on a **complex plane**. It looks like a regular coordinate plane, but the horizontal axis represents the real part and the vertical axis represents the imaginary part. Each complex number a + bi becomes a point at (a, b).
+
+import ComplexPlaneDiagram from "../../../components/ComplexPlaneDiagram.astro";
+
+<ComplexPlaneDiagram />
+
+The diagram plots five complex numbers. For 3 + 4i, the green dashed line shows the real part (3 units right) and the purple dashed line shows the imaginary part (4 units up). Notice that 5i sits right on the imaginary axis (its real part is 0), and a purely real number like 6 would sit right on the real axis.
+
+The complex plane is a more advanced topic that you'll explore further in Pre-Calculus and beyond, but it's helpful to see now how complex numbers have a visual, geometric meaning — they're not just abstract symbols.
+
+## Worked Example
+
+**1. Write √(−16) using i**
+
+$$
+\sqrt{-16} = \sqrt{16 \times (-1)} = \sqrt{16} \times \sqrt{-1} = 4i
+$$
+
+**2. Simplify √(−9) + √(−25)**
+
+$$
+\sqrt{-9} + \sqrt{-25} = 3i + 5i = 8i
+$$
+
+**3. Solve x² + 4 = 0**
+
+$$
+x^2 = -4 \quad\Rightarrow\quad x = \pm\sqrt{-4} = \pm 2i
+$$
+
+The solutions are x = 2i and x = −2i — both complex numbers.
+
+**4. Identify the parts of 7 − 3i**
+
+Real part = 7, imaginary part = −3.
+
+## Real-World Application
+
+Complex numbers may seem abstract at first, but they have many real applications:
+
+- Electrical engineering (AC circuits use imaginary numbers for phase)
+- Signal processing and audio engineering
+- Quantum mechanics and physics
+- Computer graphics and 3D modeling (quaternions are based on complex numbers)
+- Control systems and stability analysis
+
+Even if you don't work in these fields, understanding complex numbers helps you complete the picture of quadratic equations — every quadratic now has solutions.
+
+:::note[You've Got This]
+Complex numbers are simply a way to handle square roots of negative numbers. Remember i = √(−1) and i² = −1. Start by practicing writing numbers like √(−9) = 3i. It feels strange at first, but it becomes natural quickly. This is an important stepping stone for later topics.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="algebra2-introduction-to-complex-numbers"
+  questions={[
+    {
+      id: "q1",
+      text: "What is the value of i²?",
+      options: ["−1", "1", "i", "−i"],
+      correctIndex: 0,
+      explanation: "By definition, i² = −1.",
+    },
+    {
+      id: "q2",
+      text: "Write √(−36) using i.",
+      options: ["6i", "−6i", "6", "36i"],
+      correctIndex: 0,
+      explanation: "√(−36) = √(36 × −1) = 6i.",
+    },
+    {
+      id: "q3",
+      text: "In the complex number 5 − 7i, what is the real part?",
+      options: ["5", "−7", "7", "0"],
+      correctIndex: 0,
+      explanation: "The real part is the number without i.",
+    },
+    {
+      id: "q4",
+      text: "A quadratic equation has a negative discriminant. Its solutions are:",
+      options: [
+        "Complex numbers",
+        "Only real numbers",
+        "Only positive numbers",
+        "No solutions at all",
+      ],
+      correctIndex: 0,
+      explanation: "Negative discriminant means two complex solutions.",
+    },
+  ]}
+/>

@@ -1,0 +1,137 @@
+---
+title: Discriminant and Number of Solutions
+description: Learn how to use the discriminant to predict the number and type of solutions to quadratic equations
+sidebar:
+  order: 9
+---
+
+## What You'll Learn
+
+In this lesson you'll learn what the discriminant is, how to calculate it, and how it tells you the number and type of solutions a quadratic equation has.
+
+## The Concept
+
+The **discriminant** is the expression under the square root in the quadratic formula:
+
+$$
+D = b^2 - 4ac
+$$
+
+It acts as a "preview" of the solutions before you even solve the equation.
+
+import DiscriminantDiagram from "../../../components/DiscriminantDiagram.astro";
+
+<DiscriminantDiagram />
+
+The diagram shows three parabolas — one for each case. The green parabola (D &gt; 0) crosses the x-axis twice, giving two real solutions. The gold parabola (D = 0) just touches the x-axis at one point, giving one repeated root. The orange parabola (D &lt; 0) never reaches the x-axis at all, meaning there are no real solutions (only complex/imaginary ones).
+
+What the discriminant tells us:
+
+- D &gt; 0 → two distinct real solutions (parabola crosses x-axis twice)
+- D = 0 → one real solution, a repeated root (parabola touches x-axis once)
+- D &lt; 0 → no real solutions, two complex/imaginary solutions (parabola doesn't reach x-axis)
+
+This is very useful because it helps you know what kind of answer to expect and whether you need complex numbers.
+
+## Worked Example
+
+For each equation, calculate the discriminant and state the number of real solutions.
+
+**1. Two real solutions: x² − 6x + 5 = 0**
+
+Here a = 1, b = −6, c = 5.
+
+$$
+D = (-6)^2 - 4(1)(5) = 36 - 20 = 16
+$$
+
+D = 16 &gt; 0, so there are two distinct real solutions.
+
+**2. One real solution: 2x² − 8x + 8 = 0**
+
+Here a = 2, b = −8, c = 8.
+
+$$
+D = (-8)^2 - 4(2)(8) = 64 - 64 = 0
+$$
+
+D = 0, so there is exactly one real solution (a repeated root).
+
+**3. No real solutions: x² + 4x + 7 = 0**
+
+Here a = 1, b = 4, c = 7.
+
+$$
+D = (4)^2 - 4(1)(7) = 16 - 28 = -12
+$$
+
+D = −12 &lt; 0, so there are no real solutions — only complex (imaginary) solutions.
+
+## Real-World Application
+
+The discriminant helps in practical decision-making:
+
+- **Business**: will this pricing model give two break-even points, one, or none?
+- **Physics**: will a projectile hit a target twice, once (tangent), or miss completely?
+- **Engineering**: does this quadratic model predict two realistic solutions or impossible ones?
+- **Finance**: analyzing when profit turns positive.
+
+Example: a company's profit model is p(x) = −2x² + 120x − 800. Calculating the discriminant tells them whether there are two break-even points or if the business model needs adjusting.
+
+:::note[You've Got This]
+The discriminant is one of the most useful shortcuts in Algebra 2. Just calculate b² − 4ac and look at the sign. Positive = two real answers, zero = one answer, negative = no real answers (you'll need complex numbers). Practice calculating it quickly — it saves a lot of time when solving quadratics.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="algebra2-discriminant-and-number-of-solutions"
+  questions={[
+    {
+      id: "q1",
+      text: "What is the discriminant of x² − 8x + 12 = 0?",
+      options: ["16", "4", "64", "32"],
+      correctIndex: 0,
+      explanation: "b² − 4ac = (−8)² − 4(1)(12) = 64 − 48 = 16.",
+    },
+    {
+      id: "q2",
+      text: "If the discriminant is positive, how many real solutions does the quadratic have?",
+      options: [
+        "Two distinct real solutions",
+        "One real solution",
+        "No real solutions",
+        "Infinitely many",
+      ],
+      correctIndex: 0,
+      explanation: "D > 0 means two different real solutions.",
+    },
+    {
+      id: "q3",
+      text: "A quadratic has discriminant = 0. How many real solutions?",
+      options: [
+        "One (repeated root)",
+        "Two distinct real",
+        "No real solutions",
+        "Complex solutions",
+      ],
+      correctIndex: 0,
+      explanation: "D = 0 means exactly one real solution (a repeated root).",
+    },
+    {
+      id: "q4",
+      text: "If D = −24, what kind of solutions does the equation have?",
+      options: [
+        "Complex (no real solutions)",
+        "Two real solutions",
+        "One real solution",
+        "Infinitely many",
+      ],
+      correctIndex: 0,
+      explanation:
+        "Negative discriminant means no real solutions — the solutions are complex numbers.",
+    },
+  ]}
+/>

@@ -1,0 +1,160 @@
+---
+title: Graphing Quadratic Functions
+description: Learn how to graph quadratic functions and understand their key features
+sidebar:
+  order: 6
+---
+
+## What You'll Learn
+
+In this lesson you'll learn how to graph quadratic functions in standard form and identify their important features: vertex, axis of symmetry, direction of opening, minimum and maximum values, and intercepts.
+
+## The Concept
+
+A **quadratic function** has the form:
+
+$$
+f(x) = ax^2 + bx + c
+$$
+
+where a ≠ 0.
+
+Key features:
+
+- The graph is a **parabola** (U-shaped curve).
+- If a &gt; 0, the parabola opens **upward** (minimum point).
+- If a &lt; 0, the parabola opens **downward** (maximum point).
+- **Vertex**: the turning point of the parabola (lowest or highest point).
+- **Axis of symmetry**: the vertical line through the vertex, given by x = −b / (2a).
+
+To graph:
+
+1. Find the vertex using x = −b / (2a), then plug it back to find y.
+2. Find the y-intercept (set x = 0).
+3. Find the x-intercepts (set f(x) = 0 and solve, if they exist).
+4. Plot a few more points and sketch the parabola.
+
+## Worked Example
+
+**Upward-opening parabola:** graph f(x) = x² − 4x − 5.
+
+import ParabolaGraph from "../../../components/ParabolaGraph.astro";
+
+<ParabolaGraph />
+
+The graph shows the parabola f(x) = x² − 4x − 5 with all its key features labeled. The gold dot marks the vertex at (2, −9) — the lowest point on the curve. Since a = 1 &gt; 0 the parabola opens upward, so the vertex is the **minimum** of the function. That means f(x) never goes below −9, making the range y ≥ −9. The dashed line at x = 2 is the axis of symmetry. The green dots mark the y-intercept at (0, −5) and the two x-intercepts at (−1, 0) and (5, 0).
+
+**1. Find the vertex**
+
+Here a = 1, b = −4, c = −5. The x-coordinate of the vertex is:
+
+$$
+x = -\frac{b}{2a} = -\frac{-4}{2(1)} = 2
+$$
+
+Plug x = 2 back in: f(2) = (2)² − 4(2) − 5 = 4 − 8 − 5 = −9. So the vertex is (2, −9).
+
+**2. Find the y-intercept**
+
+Set x = 0: f(0) = 0 − 0 − 5 = −5. The y-intercept is (0, −5).
+
+**3. Find the x-intercepts**
+
+Set f(x) = 0 and factor:
+
+$$
+x^2 - 4x - 5 = 0 \quad\Rightarrow\quad (x - 5)(x + 1) = 0
+$$
+
+So x = 5 or x = −1. The x-intercepts are (−1, 0) and (5, 0).
+
+The parabola opens upward (a &gt; 0) with vertex at (2, −9).
+
+---
+
+**Downward-opening parabola:** graph g(x) = −x² + 4x + 5.
+
+import ParabolaDownGraph from "../../../components/ParabolaDownGraph.astro";
+
+<ParabolaDownGraph />
+
+Because a = −1 &lt; 0, this parabola opens downward — it has a **maximum** point instead of a minimum. The vertex at (2, 9) is the highest the function ever reaches, so f(x) never goes above 9, making the range y ≤ 9. The orange curve shows the ∩ shape, with the gold vertex at the top. Compare this to the upward parabola above: the sign of "a" flips the entire shape.
+
+**4. Find the vertex**
+
+Here a = −1, b = 4, c = 5. The x-coordinate of the vertex is:
+
+$$
+x = -\frac{b}{2a} = -\frac{4}{2(-1)} = 2
+$$
+
+Plug x = 2 back in: g(2) = −(2)² + 4(2) + 5 = −4 + 8 + 5 = 9. So the vertex is (2, 9) — the highest point.
+
+**5. Find the y-intercept**
+
+Set x = 0: g(0) = 0 + 0 + 5 = 5. The y-intercept is (0, 5).
+
+**6. Find the x-intercepts**
+
+Set g(x) = 0: −x² + 4x + 5 = 0. Multiply both sides by −1 to get x² − 4x − 5 = 0, then factor:
+
+$$
+(x - 5)(x + 1) = 0
+$$
+
+So x = 5 or x = −1. The x-intercepts are (−1, 0) and (5, 0) — same as the upward parabola, but the shape is flipped.
+
+## Real-World Application
+
+Quadratic functions model many real situations:
+
+- Projectile motion (height of a thrown ball over time)
+- Profit = revenue − cost (often quadratic)
+- Area of a rectangular garden with fixed perimeter
+- Bridge arches and satellite dishes (parabolic shapes)
+- Stopping distance of a car as speed increases
+
+Example: a ball is thrown upward. Its height can be modeled by a quadratic function. The vertex represents the maximum height — a downward-opening parabola, just like the second example above.
+
+:::note[You've Got This]
+Quadratic graphs are always parabolas. Start by finding the vertex — it's the most important point. Then find the intercepts and plot a couple more points. The sign of "a" tells you whether it opens up or down. Sketching a few quadratics will make this feel much more natural.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="algebra2-graphing-quadratic-functions"
+  questions={[
+    {
+      id: "q1",
+      text: "For f(x) = 2x² − 8x + 3, does the parabola open upward or downward?",
+      options: ["Upward", "Downward", "Sideways", "It depends on x"],
+      correctIndex: 0,
+      explanation: "Since a = 2 > 0, the parabola opens upward.",
+    },
+    {
+      id: "q2",
+      text: "What is the x-coordinate of the vertex of f(x) = x² + 6x − 7?",
+      options: ["−3", "3", "6", "−6"],
+      correctIndex: 0,
+      explanation: "x = −b/(2a) = −6/(2·1) = −3.",
+    },
+    {
+      id: "q3",
+      text: "The y-intercept of f(x) = x² − 4x + 5 is:",
+      options: ["(0, 5)", "(5, 0)", "(−4, 5)", "(0, −4)"],
+      correctIndex: 0,
+      explanation: "f(0) = 5, so the y-intercept is (0, 5).",
+    },
+    {
+      id: "q4",
+      text: "A quadratic function has a minimum point. This means:",
+      options: ["a > 0", "a < 0", "a = 0", "b = 0"],
+      correctIndex: 0,
+      explanation:
+        "When a > 0, the parabola opens upward and has a minimum at the vertex.",
+    },
+  ]}
+/>

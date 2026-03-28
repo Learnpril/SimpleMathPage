@@ -34,10 +34,10 @@ export default defineConfig({
           label: "Geometry",
           autogenerate: { directory: "geometry" },
         },
-        // {
-        //   label: "Algebra 2",
-        //   autogenerate: { directory: "algebra-2" },
-        // },
+        {
+          label: "Algebra 2",
+          autogenerate: { directory: "algebra-2" },
+        },
         // {
         //   label: "Pre-Calculus",
         //   autogenerate: { directory: "pre-calculus" },

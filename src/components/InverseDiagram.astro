@@ -1,0 +1,130 @@
+---
+/**
+ * InverseDiagram — shows f(x) = 3x − 6 and f⁻¹(x) = (x+6)/3
+ * reflected over the line y = x.
+ */
+
+const pad = 50;
+const size = 420;
+const plotSize = 320;
+const lo = -8;
+const hi = 8;
+const range = hi - lo;
+
+function toX(v: number) { return pad + ((v - lo) / range) * plotSize; }
+function toY(v: number) { return pad + ((hi - v) / range) * plotSize; }
+
+const xAxisY = toY(0);
+const yAxisX = toX(0);
+
+// Grid
+const gridTicks = [-6, -4, -2, 2, 4, 6];
+
+// f(x) = 3x - 6
+const fPts: string[] = [];
+for (let x = -0.67; x <= 4.67; x += 0.05) {
+  const y = 3 * x - 6;
+  if (y >= lo && y <= hi) {
+    fPts.push(`${fPts.length === 0 ? 'M' : 'L'}${toX(x).toFixed(1)},${toY(y).toFixed(1)}`);
+  }
+}
+const fD = fPts.join(' ');
+
+// f⁻¹(x) = (x+6)/3
+const gPts: string[] = [];
+for (let x = -8; x <= 8; x += 0.05) {
+  const y = (x + 6) / 3;
+  if (y >= lo && y <= hi) {
+    gPts.push(`${gPts.length === 0 ? 'M' : 'L'}${toX(x).toFixed(1)},${toY(y).toFixed(1)}`);
+  }
+}
+const gD = gPts.join(' ');
+
+// y = x line
+const yxD = `M${toX(lo).toFixed(1)},${toY(lo).toFixed(1)} L${toX(hi).toFixed(1)},${toY(hi).toFixed(1)}`;
+
+// Intersection at (3, 3)
+const intX = toX(3);
+const intY = toY(3);
+---
+
+<figure class="inv-diagram" role="img" aria-label="f(x) = 3x − 6 and its inverse reflected over y = x">
+  <figcaption class="inv-title">f(x) and f⁻¹(x) reflected over y = x</figcaption>
+  <svg viewBox={`0 0 ${size} ${size}`} width={size} height={size} xmlns="http://www.w3.org/2000/svg">
+
+    <rect class="inv-bg" x="0" y="0" width={size} height={size} rx="8" />
+
+    {/* Grid */}
+    {gridTicks.map(t => (
+      <line class="inv-grid" x1={toX(t)} y1={pad} x2={toX(t)} y2={pad + plotSize} />
+    ))}
+    {gridTicks.map(t => (
+      <line class="inv-grid" x1={pad} y1={toY(t)} x2={pad + plotSize} y2={toY(t)} />
+    ))}
+
+    {/* Axes */}
+    <line class="inv-axis" x1={pad} y1={xAxisY} x2={pad + plotSize + 5} y2={xAxisY} stroke-width="1.5" />
+    <line class="inv-axis" x1={yAxisX} y1={pad + plotSize} x2={yAxisX} y2={pad - 5} stroke-width="1.5" />
+    <text class="inv-label" x={pad + plotSize + 10} y={xAxisY + 4} font-size="13">x</text>
+    <text class="inv-label" x={yAxisX + 6} y={pad - 10} font-size="13">y</text>
+
+    {/* Tick labels */}
+    {gridTicks.map(t => (
+      <text class="inv-tick" x={toX(t)} y={xAxisY + 16} font-size="10" text-anchor="middle">{t}</text>
+    ))}
+    {gridTicks.map(t => (
+      <text class="inv-tick" x={yAxisX - 8} y={toY(t) + 4} font-size="10" text-anchor="end">{t}</text>
+    ))}
+
+    {/* y = x dashed */}
+    <path class="inv-yx" d={yxD} stroke-width="1.5" stroke-dasharray="6,4" fill="none" />
+    <text class="inv-yx-label" x={toX(6.5)} y={toY(7.2)} font-size="11">y = x</text>
+
+    {/* f(x) = 3x - 6 */}
+    <path class="inv-f" d={fD} stroke-width="2.5" fill="none" />
+    <text class="inv-f-label" x={toX(4.2)} y={toY(7) - 4} font-size="12" font-weight="bold">f(x)</text>
+
+    {/* f⁻¹(x) = (x+6)/3 */}
+    <path class="inv-g" d={gD} stroke-width="2.5" fill="none" />
+    <text class="inv-g-label" x={toX(7)} y={toY(3.8)} font-size="12" font-weight="bold">f⁻¹(x)</text>
+
+    {/* Intersection at (3, 3) */}
+    <circle class="inv-pt" cx={intX} cy={intY} r="5" />
+    <text class="inv-pt-label" x={intX + 8} y={intY - 8} font-size="11">(3, 3)</text>
+
+  </svg>
+</figure>
+
+<style>
+  .inv-diagram { display: flex; flex-direction: column; align-items: center; margin: 1.5rem 0; }
+  .inv-title { font-size: 0.95rem; color: var(--sl-color-gray-3); margin-bottom: 0.5rem; font-style: italic; }
+  .inv-diagram svg { max-width: 100%; height: auto; }
+
+  .inv-bg { fill: var(--sl-color-bg, #121212); }
+  .inv-grid { stroke: #333; stroke-width: 0.5; }
+  .inv-axis { stroke: #888; }
+  .inv-label { fill: #aaa; font-family: sans-serif; }
+  .inv-tick { fill: #aaa; font-family: sans-serif; }
+  .inv-yx { stroke: #666; }
+  .inv-yx-label { fill: #666; font-family: 'Libre Baskerville', Georgia, serif; font-style: italic; }
+  .inv-f { stroke: #58a6ff; }
+  .inv-f-label { fill: #58a6ff; font-family: 'Libre Baskerville', Georgia, serif; }
+  .inv-g { stroke: #f78166; }
+  .inv-g-label { fill: #f78166; font-family: 'Libre Baskerville', Georgia, serif; }
+  .inv-pt { fill: #f0c674; stroke: #fff; stroke-width: 1.5; }
+  .inv-pt-label { fill: #f0c674; font-family: 'Libre Baskerville', Georgia, serif; font-weight: bold; }
+
+  :global([data-theme="light"]) .inv-bg { fill: #f8f9fa; }
+  :global([data-theme="light"]) .inv-grid { stroke: #ccc; }
+  :global([data-theme="light"]) .inv-axis { stroke: #222; }
+  :global([data-theme="light"]) .inv-label { fill: #222; }
+  :global([data-theme="light"]) .inv-tick { fill: #333; }
+  :global([data-theme="light"]) .inv-yx { stroke: #999; }
+  :global([data-theme="light"]) .inv-yx-label { fill: #666; }
+  :global([data-theme="light"]) .inv-f { stroke: #0969da; }
+  :global([data-theme="light"]) .inv-f-label { fill: #0969da; }
+  :global([data-theme="light"]) .inv-g { stroke: #cf222e; }
+  :global([data-theme="light"]) .inv-g-label { fill: #cf222e; }
+  :global([data-theme="light"]) .inv-pt { fill: #b45309; stroke: #fff; }
+  :global([data-theme="light"]) .inv-pt-label { fill: #b45309; }
+</style>

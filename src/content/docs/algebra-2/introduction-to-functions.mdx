@@ -1,0 +1,134 @@
+---
+title: Introduction to Functions
+description: Review and extend the concept of functions, function notation, and basic properties
+sidebar:
+  order: 1
+---
+
+## What You'll Learn
+
+In this first Algebra 2 lesson you'll review what a function is, practice function notation, and learn how to evaluate and interpret functions in real-world contexts.
+
+## The Concept
+
+A **function** is a rule that assigns exactly one output to each input.
+Think of it as a machine: you put in an input (x), and it gives you exactly one output (f(x)).
+
+import FunctionMachine from "../../../components/FunctionMachine.astro";
+
+<FunctionMachine
+  input="5"
+  rule="2x + 3"
+  output="13"
+  title="f(x) = 2x + 3 — put in 5, get out 13"
+/>
+
+**Function notation:** we write the function as $f(x)$ and read it as "f of x."
+
+Example:
+
+$$
+f(x) = 2x + 3
+$$
+
+This means: whatever number you put in for x, multiply it by 2 and then add 3.
+
+To **evaluate** a function, replace x with a number and simplify:
+
+$$
+f(5) = 2(5) + 3 = 10 + 3 = 13
+$$
+
+Functions can represent real relationships such as cost, distance, temperature, or profit.
+
+## Worked Example
+
+**1. Evaluate a linear function**
+
+Given $f(x) = 3x - 7$, find $f(4)$.
+
+$$
+f(4) = 3(4) - 7 = 12 - 7 = 5
+$$
+
+**2. Evaluate a quadratic function**
+
+Given $g(x) = x^2 + 4$, find $g(-3)$.
+
+$$
+g(-3) = (-3)^2 + 4 = 9 + 4 = 13
+$$
+
+**3. Real-world function**
+
+A phone plan costs 30 dollars plus 0.10 dollars per text. Write this as a function and find the cost for 250 texts.
+
+Let $c(t) = 30 + 0.10t$ where t is the number of texts.
+
+$$
+c(250) = 30 + 0.10(250) = 30 + 25 = 55 \text{ dollars}
+$$
+
+## Real-World Application
+
+Functions help model many everyday situations:
+
+- Monthly phone or streaming bill based on usage
+- Distance traveled = speed × time
+- Cost of renting a car = daily fee + miles driven
+- Profit = revenue − expenses
+
+Being comfortable with function notation makes it much easier to work with these real-life relationships in later topics like quadratics, exponentials, and logarithms.
+
+:::note[You've Got This]
+Functions are just rules that turn an input into exactly one output. The notation $f(x)$ might look fancy at first, but it's simply "plug this number in and calculate." Practice evaluating a few functions each day — you'll quickly feel comfortable with them again. This skill will be used throughout the rest of Algebra 2 and beyond.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="algebra2-introduction-to-functions"
+  questions={[
+    {
+      id: "q1",
+      text: "Given f(x) = 4x − 5, what is f(3)?",
+      options: ["7", "12", "17", "2"],
+      correctIndex: 0,
+      explanation: "4(3) − 5 = 12 − 5 = 7.",
+    },
+    {
+      id: "q2",
+      text: "What does g(6) mean for a function g?",
+      options: [
+        "Plug 6 into the function g and calculate the output",
+        "Multiply g by 6",
+        "The 6th term of the function",
+        "The slope of the function",
+      ],
+      correctIndex: 0,
+      explanation: "g(6) means evaluate the function g when x = 6.",
+    },
+    {
+      id: "q3",
+      text: "A gym charges 25 dollars per month plus 8 dollars per class. Which function represents the monthly cost for c classes?",
+      options: [
+        "c(c) = 25 + 8c",
+        "cost(c) = 25 + 8c",
+        "f(x) = 25c + 8",
+        "g(c) = 8c − 25",
+      ],
+      correctIndex: 1,
+      explanation:
+        "The fixed cost is 25 dollars and the variable cost is 8 dollars per class, so cost(c) = 25 + 8c.",
+    },
+    {
+      id: "q4",
+      text: "If h(x) = x² − 3, what is h(−2)?",
+      options: ["1", "7", "−1", "4"],
+      correctIndex: 0,
+      explanation: "(−2)² − 3 = 4 − 3 = 1.",
+    },
+  ]}
+/>

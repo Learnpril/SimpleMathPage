@@ -1,0 +1,113 @@
+---
+/**
+ * ComplexNumberDiagram — two visuals side by side:
+ * Left: the i-cycle (i¹=i, i²=−1, i³=−i, i⁴=1) in a circular layout.
+ * Right: anatomy of a+bi showing real and imaginary parts.
+ * Larger text, high contrast in both dark and light modes.
+ */
+---
+
+<figure class="cn-diagram" role="img" aria-label="Powers of i cycle and anatomy of a complex number a + bi">
+  <figcaption class="cn-title">The powers of i cycle every 4, and every complex number has a real part and an imaginary part</figcaption>
+  <svg viewBox="0 0 520 230" width="520" height="230" xmlns="http://www.w3.org/2000/svg">
+
+    {/* === Left: i-cycle === */}
+    <circle class="cn-ring" cx="110" cy="115" r="62" fill="none" stroke-width="1.5" />
+
+    {/* Top: i¹ = i */}
+    <circle class="cn-dot cn-dot-1" cx="110" cy="53" r="22" />
+    <text class="cn-val" x="110" y="60" font-size="20" text-anchor="middle" font-weight="bold">i</text>
+    <text class="cn-pow" x="110" y="18" font-size="16" text-anchor="middle">i¹</text>
+
+    {/* Right: i² = −1 */}
+    <circle class="cn-dot cn-dot-2" cx="172" cy="115" r="22" />
+    <text class="cn-val" x="172" y="122" font-size="18" text-anchor="middle" font-weight="bold">−1</text>
+    <text class="cn-pow" x="208" y="102" font-size="16" text-anchor="start">i²</text>
+
+    {/* Bottom: i³ = −i */}
+    <circle class="cn-dot cn-dot-3" cx="110" cy="177" r="22" />
+    <text class="cn-val" x="110" y="184" font-size="18" text-anchor="middle" font-weight="bold">−i</text>
+    <text class="cn-pow" x="110" y="216" font-size="16" text-anchor="middle">i³</text>
+
+    {/* Left: i⁴ = 1 */}
+    <circle class="cn-dot cn-dot-4" cx="48" cy="115" r="22" />
+    <text class="cn-val" x="48" y="122" font-size="20" text-anchor="middle" font-weight="bold">1</text>
+    <text class="cn-pow" x="12" y="102" font-size="16" text-anchor="end">i⁴</text>
+
+    {/* Curved arrows */}
+    <defs>
+      <marker id="cn-arr" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto">
+        <path class="cn-arrow-head" d="M0,0 L7,3.5 L0,7 Z" />
+      </marker>
+    </defs>
+    <path class="cn-arc" d="M130,58 Q165,65 165,93" fill="none" stroke-width="1.5" marker-end="url(#cn-arr)" />
+    <path class="cn-arc" d="M165,137 Q165,165 130,172" fill="none" stroke-width="1.5" marker-end="url(#cn-arr)" />
+    <path class="cn-arc" d="M90,172 Q55,165 55,137" fill="none" stroke-width="1.5" marker-end="url(#cn-arr)" />
+    <path class="cn-arc" d="M55,93 Q55,65 90,58" fill="none" stroke-width="1.5" marker-end="url(#cn-arr)" />
+
+    <text class="cn-cycle-label" x="110" y="118" font-size="11" text-anchor="middle">repeats</text>
+
+    {/* === Right: a + bi anatomy === */}
+    <text class="cn-anatomy-num" x="370" y="85" font-size="42" text-anchor="middle" font-weight="bold">3 + 4i</text>
+
+    {/* Real part bracket under "3" */}
+    <line class="cn-bracket-real" x1="330" y1="98" x2="355" y2="98" stroke-width="3" />
+    <text class="cn-bracket-real-label" x="342" y="118" font-size="14" text-anchor="middle">real part</text>
+
+    {/* Imaginary part bracket under "4i" */}
+    <line class="cn-bracket-imag" x1="378" y1="98" x2="412" y2="98" stroke-width="3" />
+    <text class="cn-bracket-imag-label" x="395" y="142" font-size="14" text-anchor="middle">imaginary part</text>
+
+    {/* General form label */}
+    <text class="cn-form" x="370" y="178" font-size="15" text-anchor="middle">Standard form: a + bi</text>
+    <text class="cn-form-sub" x="370" y="198" font-size="12" text-anchor="middle">a and b are real numbers</text>
+
+  </svg>
+</figure>
+
+<style>
+  .cn-diagram { display: flex; flex-direction: column; align-items: center; margin: 1.5rem 0; }
+  .cn-title { font-size: 0.95rem; color: var(--sl-color-gray-3); margin-bottom: 0.5rem; font-style: italic; }
+  .cn-diagram svg { max-width: 100%; height: auto; }
+
+  /* Dark mode */
+  .cn-ring { stroke: #555; }
+  .cn-dot { stroke: #222; stroke-width: 2; }
+  .cn-dot-1 { fill: #58a6ff; }
+  .cn-dot-2 { fill: #f78166; }
+  .cn-dot-3 { fill: #d2a8ff; }
+  .cn-dot-4 { fill: #7ee787; }
+  .cn-val { fill: #111; font-family: 'Libre Baskerville', Georgia, serif; }
+  .cn-pow { fill: #bbb; font-family: 'Libre Baskerville', Georgia, serif; }
+  .cn-arc { stroke: #777; }
+  .cn-arrow-head { fill: #777; }
+  .cn-cycle-label { fill: #777; font-family: 'Libre Baskerville', Georgia, serif; font-style: italic; }
+
+  .cn-anatomy-num { fill: #eee; font-family: 'Libre Baskerville', Georgia, serif; }
+  .cn-bracket-real { stroke: #7ee787; }
+  .cn-bracket-real-label { fill: #7ee787; font-family: 'Libre Baskerville', Georgia, serif; }
+  .cn-bracket-imag { stroke: #d2a8ff; }
+  .cn-bracket-imag-label { fill: #d2a8ff; font-family: 'Libre Baskerville', Georgia, serif; }
+  .cn-form { fill: #bbb; font-family: 'Libre Baskerville', Georgia, serif; }
+  .cn-form-sub { fill: #999; font-family: 'Libre Baskerville', Georgia, serif; }
+
+  /* Light mode */
+  :global([data-theme="light"]) .cn-ring { stroke: #ccc; }
+  :global([data-theme="light"]) .cn-dot { stroke: #fff; stroke-width: 2; }
+  :global([data-theme="light"]) .cn-dot-1 { fill: #a8d4ff; }
+  :global([data-theme="light"]) .cn-dot-2 { fill: #ffb4a1; }
+  :global([data-theme="light"]) .cn-dot-3 { fill: #dfc5ff; }
+  :global([data-theme="light"]) .cn-dot-4 { fill: #a8f0b0; }
+  :global([data-theme="light"]) .cn-val { fill: #111; }
+  :global([data-theme="light"]) .cn-pow { fill: #555; }
+  :global([data-theme="light"]) .cn-arc { stroke: #aaa; }
+  :global([data-theme="light"]) .cn-arrow-head { fill: #aaa; }
+  :global([data-theme="light"]) .cn-cycle-label { fill: #888; }
+  :global([data-theme="light"]) .cn-anatomy-num { fill: #222; }
+  :global([data-theme="light"]) .cn-bracket-real { stroke: #1a7f37; }
+  :global([data-theme="light"]) .cn-bracket-real-label { fill: #1a7f37; }
+  :global([data-theme="light"]) .cn-bracket-imag { stroke: #8250df; }
+  :global([data-theme="light"]) .cn-bracket-imag-label { fill: #8250df; }
+  :global([data-theme="light"]) .cn-form { fill: #444; }
+  :global([data-theme="light"]) .cn-form-sub { fill: #666; }
+</style>

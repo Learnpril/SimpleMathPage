@@ -1,0 +1,142 @@
+---
+title: Vertex Form and Transformations
+description: Learn how to write quadratic functions in vertex form and how transformations affect their graphs
+sidebar:
+  order: 7
+---
+
+## What You'll Learn
+
+In this lesson you'll learn vertex form of a quadratic function and how changes in the equation (a, h, k) affect the graph through translations, stretches, and reflections.
+
+## The Concept
+
+**Vertex form** of a quadratic function is:
+
+$$
+f(x) = a(x - h)^2 + k
+$$
+
+Where:
+
+- The **vertex** is at the point (h, k).
+- a tells the direction and width:
+  - a &gt; 0 opens upward
+  - a &lt; 0 opens downward
+  - |a| &gt; 1 makes the parabola narrower (steeper)
+  - |a| &lt; 1 makes the parabola wider (flatter)
+
+**Transformations** from the parent function y = x²:
+
+- **Horizontal shift**: (x − h) shifts the graph right by h units (left if h is negative)
+- **Vertical shift**: +k shifts the graph up by k units (down if k is negative)
+- **Vertical stretch/compression**: |a| affects how tall or wide the parabola is
+- **Reflection**: a negative a reflects the parabola over the x-axis
+
+## Worked Example
+
+**1. Convert standard form to vertex form**
+
+Write f(x) = x² − 6x + 5 in vertex form by **completing the square**.
+
+Completing the square is a technique for rewriting a quadratic expression so that the x terms form a perfect square trinomial. The idea is to take the coefficient of x, divide it by 2, square the result, and add/subtract that number to create a perfect square. Here's how it works step by step:
+
+Start with the expression x² − 6x + 5.
+
+Step 1: Focus on the x² − 6x part. Take the coefficient of x (which is −6), divide by 2 to get −3, then square it to get 9.
+
+Step 2: Add and subtract 9 inside the expression. Adding 9 creates the perfect square, and subtracting 9 keeps the value the same:
+
+$$
+x^2 - 6x + 5 = (x^2 - 6x + 9) - 9 + 5
+$$
+
+Step 3: The first group is now a perfect square trinomial — it factors as (x − 3)²:
+
+$$
+= (x - 3)^2 - 4
+$$
+
+Vertex form: f(x) = (x − 3)² − 4. The vertex is (3, −4).
+
+**2. Describe the transformations**
+
+Describe the transformations for g(x) = −2(x + 1)² + 5.
+
+import VertexFormDiagram from "../../../components/VertexFormDiagram.astro";
+
+<VertexFormDiagram />
+
+The dashed gray curve is the parent function y = x², with its vertex at the origin. The solid orange curve is g(x) = −2(x + 1)² + 5. The green arrow shows how the vertex moved from (0, 0) to (−1, 5). Here's what each part of the equation does:
+
+- **Reflected** over the x-axis (the negative sign flips the U upside down)
+- **Vertically stretched** by a factor of 2 (the parabola is narrower/steeper than y = x²)
+- **Shifted left 1 unit** (the (x + 1) means h = −1)
+- **Shifted up 5 units** (the +5 means k = 5)
+
+The vertex is (−1, 5), which is the **maximum** since the parabola opens downward.
+
+## Real-World Application
+
+Vertex form is very useful in real life:
+
+- **Projectile motion**: height of a ball or rocket — the vertex gives maximum height.
+- **Business**: profit function — vertex gives maximum profit and the number of units to produce.
+- **Architecture**: parabolic arches and bridges — vertex form helps calculate height and width.
+- **Physics**: path of a thrown object or satellite dish shape.
+
+Example: a ball is thrown with height h(t) = −16t² + 48t + 6. Converting to vertex form tells you the maximum height and when it occurs.
+
+:::note[You've Got This]
+Vertex form makes it easy to see the vertex (h, k) and how the graph is transformed. Practice converting standard form to vertex form by completing the square — it's a skill that gets much easier with repetition. Think of transformations as "moving" and "stretching" the basic U-shape. You'll use this a lot when working with quadratics.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="algebra2-vertex-form-and-transformations"
+  questions={[
+    {
+      id: "q1",
+      text: "What is the vertex of f(x) = (x − 4)² + 7?",
+      options: ["(4, 7)", "(−4, 7)", "(4, −7)", "(−4, −7)"],
+      correctIndex: 0,
+      explanation:
+        "In vertex form a(x − h)² + k, the vertex is (h, k) = (4, 7).",
+    },
+    {
+      id: "q2",
+      text: "The function g(x) = −3(x + 2)² − 1 is:",
+      options: [
+        "Reflected and shifted left 2, down 1",
+        "Shifted right 2 and up 1",
+        "Wider than y = x²",
+        "Narrower and opens upward",
+      ],
+      correctIndex: 0,
+      explanation:
+        "Negative a reflects over x-axis, (x + 2) shifts left 2, −1 shifts down 1.",
+    },
+    {
+      id: "q3",
+      text: "Which form makes it easiest to identify the vertex?",
+      options: [
+        "Vertex form a(x − h)² + k",
+        "Standard form ax² + bx + c",
+        "Factored form",
+        "Slope-intercept form",
+      ],
+      correctIndex: 0,
+      explanation: "Vertex form directly shows the vertex at (h, k).",
+    },
+    {
+      id: "q4",
+      text: "For f(x) = 2(x − 3)² + 5, does the parabola open upward or downward?",
+      options: ["Upward", "Downward", "It depends", "Sideways"],
+      correctIndex: 0,
+      explanation: "Since a = 2 > 0, the parabola opens upward.",
+    },
+  ]}
+/>

@@ -1,0 +1,119 @@
+---
+title: Introduction to Polynomial Functions
+description: Learn what polynomial functions are, how to classify them by degree, and their basic properties
+sidebar:
+  order: 13
+---
+
+## What You'll Learn
+
+In this lesson you'll learn what polynomial functions are, how to identify their degree and leading coefficient, and understand their basic behavior.
+
+## The Concept
+
+A **polynomial function** is a function that can be written as a sum of terms, each with a whole-number exponent:
+
+$$
+f(x) = a_n x^n + a_{n-1} x^{n-1} + \dots + a_1 x + a_0
+$$
+
+Key terms:
+
+- **Degree**: the highest power of x with a non-zero coefficient.
+- **Leading coefficient**: the coefficient of the highest-degree term.
+- **Constant term**: the term with no variable.
+
+import PolynomialDegrees from "../../../components/PolynomialDegrees.astro";
+
+<PolynomialDegrees />
+
+The diagram shows how the shape of a polynomial changes with its degree. A degree 1 polynomial (blue) is a straight line. A degree 2 polynomial (orange) is a parabola. A degree 3 polynomial (green) has an S-shaped curve. A degree 4 polynomial (purple) can have a W-shape with multiple turns. The degree tells you the maximum number of times the curve can cross the x-axis and how many "turns" it can have.
+
+Classification by degree:
+
+- Degree 0: constant function (e.g., f(x) = 7)
+- Degree 1: linear function (e.g., f(x) = 3x − 2)
+- Degree 2: quadratic function (e.g., f(x) = x² + 4x − 5)
+- Degree 3: cubic function
+- Degree 4: quartic function
+
+## Worked Example
+
+**1. Identify the degree and leading coefficient**
+
+For f(x) = 4x³ − 2x² + 7x − 9:
+
+- Degree = 3 (the highest power of x)
+- Leading coefficient = 4 (the coefficient of x³)
+
+**2. Classify a polynomial**
+
+For g(x) = 5x⁴ − 3x + 1:
+
+- Degree = 4, so this is a quartic function
+- Leading coefficient = 5
+
+**3. Write a polynomial from a description**
+
+Write a polynomial of degree 2 with leading coefficient 2 and constant term −8.
+
+One example: f(x) = 2x² + 5x − 8. The middle term can be anything — the degree and leading coefficient are what matter.
+
+## Real-World Application
+
+Polynomial functions model many real situations:
+
+- **Profit functions**: often quadratic or cubic based on production volume.
+- **Population growth** or spread of disease (sometimes modeled with higher-degree polynomials).
+- **Physics**: position, velocity, and acceleration relationships.
+- **Economics**: cost, revenue, and demand curves.
+- **Engineering**: beam deflection, fluid flow, and signal processing.
+
+For example, a company's monthly profit might be modeled as a cubic polynomial based on units produced, advertising spend, and fixed costs.
+
+:::note[You've Got This]
+Polynomial functions are simply sums of terms with whole-number exponents. The degree is the highest exponent, and the leading coefficient tells you how the graph behaves for large values of x. Start by identifying the degree and leading term — that's the most important information. You'll use this foundation heavily as we move into factoring and graphing higher-degree polynomials.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="algebra2-introduction-to-polynomial-functions"
+  questions={[
+    {
+      id: "q1",
+      text: "What is the degree of f(x) = 3x⁴ − 2x² + 7?",
+      options: ["4", "3", "2", "7"],
+      correctIndex: 0,
+      explanation: "The highest exponent is 4.",
+    },
+    {
+      id: "q2",
+      text: "The leading coefficient of g(x) = −5x³ + 2x² − 8 is:",
+      options: ["−5", "5", "2", "−8"],
+      correctIndex: 0,
+      explanation: "The coefficient of the highest-degree term (x³) is −5.",
+    },
+    {
+      id: "q3",
+      text: "A polynomial of degree 2 is called a:",
+      options: [
+        "Quadratic function",
+        "Cubic function",
+        "Linear function",
+        "Constant function",
+      ],
+      correctIndex: 0,
+      explanation: "Degree 2 polynomials are quadratic functions.",
+    },
+    {
+      id: "q4",
+      text: "The maximum number of real roots a degree 4 polynomial can have is:",
+      options: ["4", "3", "2", "5"],
+      correctIndex: 0,
+      explanation: "A degree n polynomial can have up to n real roots.",
+    },
+  ]}
+/>

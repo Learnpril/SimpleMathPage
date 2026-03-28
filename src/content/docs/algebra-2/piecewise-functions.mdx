@@ -1,0 +1,143 @@
+---
+title: Piecewise Functions
+description: Learn what piecewise functions are and how to evaluate and graph them
+sidebar:
+  order: 5
+---
+
+## What You'll Learn
+
+In this lesson you'll learn what piecewise functions are, how to read and evaluate them, and how to graph simple piecewise functions.
+
+## The Concept
+
+A **piecewise function** is a function defined by different rules for different parts of its domain.
+It is written with multiple pieces separated by "if" conditions.
+
+Example:
+
+$$
+f(x) =
+\begin{cases}
+2x + 1 & \text{if } x < 0 \\
+x^2 & \text{if } x \ge 0
+\end{cases}
+$$
+
+This means:
+
+- When x is less than 0, use the rule 2x + 1
+- When x is greater than or equal to 0, use the rule x²
+
+To **evaluate** a piecewise function:
+
+1. Look at the given x-value.
+2. Decide which piece (condition) it satisfies.
+3. Use that rule to calculate the output.
+
+## Worked Example
+
+Given:
+
+$$
+f(x) =
+\begin{cases}
+3x + 5 & \text{if } x < 2 \\
+-x + 8 & \text{if } x \ge 2
+\end{cases}
+$$
+
+import PiecewiseDiagram from "../../../components/PiecewiseDiagram.astro";
+
+<PiecewiseDiagram />
+
+The graph shows the two pieces of this function. The blue line is 3x + 5, which applies when x &lt; 2. The orange line is −x + 8, which applies when x ≥ 2. At x = 2, the blue piece has an open dot (not included) and the orange piece has a closed dot (included) — this tells you which rule to use at the boundary.
+
+The dashed vertical line at x = 2 marks where the function switches from one rule to the other.
+
+Notice the dots at x = 2. The **open circle** (hollow dot) on the blue line at (2, 11) means that point is not included — the first piece only applies when x is strictly less than 2. The **closed circle** (filled dot) on the orange line at (2, 6) means that point is included — the second piece handles x = 2.
+
+This connects directly to the interval notation we learned in the Domain and Range lesson. An open circle on a graph matches a parenthesis ( ) in interval notation — the endpoint is excluded. A closed circle matches a bracket [ ] — the endpoint is included. So the blue piece covers the interval (−∞, 2) and the orange piece covers [2, ∞).
+
+**1. Find f(1)**
+
+Since 1 &lt; 2, use the first piece: f(1) = 3(1) + 5 = 8.
+
+**2. Find f(4)**
+
+Since 4 ≥ 2, use the second piece: f(4) = −4 + 8 = 4.
+
+**3. Find f(2)**
+
+Since 2 ≥ 2, use the second piece: f(2) = −2 + 8 = 6.
+
+## Real-World Application
+
+Piecewise functions are very common in real life:
+
+- **Cell phone plans**: first 500 minutes are 0.10 dollars each, then 0.05 dollars each after that.
+- **Taxes**: different tax brackets apply to different income levels.
+- **Shipping costs**: 5 dollars for the first 5 pounds, then 1.50 dollars per additional pound.
+- **Utility bills**: base charge plus different rates depending on how much electricity or gas you use.
+- **Overtime pay**: regular rate up to 40 hours, then 1.5× rate after 40 hours.
+
+Example: a parking garage charges 8 dollars for the first hour and 3 dollars for each additional hour. This can be written as a piecewise function.
+
+:::note[You've Got This]
+Piecewise functions are simply "different rules for different situations." Always check which condition your input satisfies first. They may look complicated at first, but they actually make a lot of sense for real-life pricing and rules. Practice evaluating a few values from each piece — you'll get comfortable quickly.
+:::
+
+## Quiz
+
+Use this function for questions 1 and 2:
+
+$$
+f(x) =
+\begin{cases}
+2x - 1 & \text{if } x < 3 \\
+x + 4 & \text{if } x \ge 3
+\end{cases}
+$$
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="algebra2-piecewise-functions"
+  questions={[
+    {
+      id: "q1",
+      text: "Using the function above: f(x) = 2x − 1 when x < 3, and f(x) = x + 4 when x ≥ 3. What is f(3)?",
+      options: ["7", "5", "6", "3"],
+      correctIndex: 0,
+      explanation: "Since 3 ≥ 3, use the second piece: f(3) = 3 + 4 = 7.",
+    },
+    {
+      id: "q2",
+      text: "Same function: f(x) = 2x − 1 when x < 3, and f(x) = x + 4 when x ≥ 3. What is f(0)?",
+      options: ["−1", "4", "0", "1"],
+      correctIndex: 0,
+      explanation: "Since 0 < 3, use the first piece: f(0) = 2(0) − 1 = −1.",
+    },
+    {
+      id: "q3",
+      text: "On a piecewise graph, what does an open dot mean?",
+      options: [
+        "That point is NOT included in that piece",
+        "That point IS included in that piece",
+        "The function is undefined there",
+        "The function equals zero there",
+      ],
+      correctIndex: 0,
+      explanation:
+        "An open dot means the endpoint is not included — the other piece handles that x-value.",
+    },
+    {
+      id: "q4",
+      text: "A gym charges 30 dollars per month for up to 10 classes, then 5 dollars per extra class. What is the cost for 14 classes?",
+      options: ["50 dollars", "70 dollars", "45 dollars", "35 dollars"],
+      correctIndex: 0,
+      explanation:
+        "First 10 classes cost 30 dollars. 4 extra classes × 5 dollars = 20 dollars. Total = 30 + 20 = 50 dollars.",
+    },
+  ]}
+/>

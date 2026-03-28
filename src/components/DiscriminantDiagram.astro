@@ -1,0 +1,121 @@
+---
+/**
+ * DiscriminantDiagram — three mini parabolas showing D > 0, D = 0, D < 0.
+ * Left: two x-intercepts. Center: one x-intercept (tangent). Right: no x-intercepts.
+ */
+
+const pw = 130; // each panel width
+const ph = 130; // each panel height
+const gap = 15;
+const totalW = pw * 3 + gap * 2 + 20; // 20 for left margin
+const totalH = ph + 60; // room for titles above and labels below
+const topY = 40; // top of plot area
+
+function panelX(i: number) { return 10 + i * (pw + gap); }
+
+// Helper: map graph coords to SVG within a panel
+function toX(panel: number, v: number, xLo: number, xHi: number) {
+  return panelX(panel) + ((v - xLo) / (xHi - xLo)) * pw;
+}
+function toY(v: number, yLo: number, yHi: number) {
+  return topY + ((yHi - v) / (yHi - yLo)) * ph;
+}
+
+// Panel 1: y = x² − 4x + 3, D = 4 > 0, roots at 1 and 3
+const p1xLo = -0.5, p1xHi = 4.5, p1yLo = -2, p1yHi = 5;
+const p1Pts: string[] = [];
+for (let x = -0.3; x <= 4.3; x += 0.08) {
+  const y = x * x - 4 * x + 3;
+  if (y >= p1yLo - 0.5 && y <= p1yHi + 0.5) {
+    p1Pts.push(`${p1Pts.length === 0 ? 'M' : 'L'}${toX(0, x, p1xLo, p1xHi).toFixed(1)},${toY(y, p1yLo, p1yHi).toFixed(1)}`);
+  }
+}
+
+// Panel 2: y = x² − 4x + 4, D = 0, root at 2
+const p2xLo = -0.5, p2xHi = 4.5, p2yLo = -1, p2yHi = 5;
+const p2Pts: string[] = [];
+for (let x = -0.2; x <= 4.2; x += 0.08) {
+  const y = x * x - 4 * x + 4;
+  if (y >= p2yLo - 0.5 && y <= p2yHi + 0.5) {
+    p2Pts.push(`${p2Pts.length === 0 ? 'M' : 'L'}${toX(1, x, p2xLo, p2xHi).toFixed(1)},${toY(y, p2yLo, p2yHi).toFixed(1)}`);
+  }
+}
+
+// Panel 3: y = x² − 4x + 7, D = -12 < 0, no real roots
+const p3xLo = -0.5, p3xHi = 4.5, p3yLo = 1, p3yHi = 9;
+const p3Pts: string[] = [];
+for (let x = -0.2; x <= 4.2; x += 0.08) {
+  const y = x * x - 4 * x + 7;
+  if (y >= p3yLo - 0.5 && y <= p3yHi + 0.5) {
+    p3Pts.push(`${p3Pts.length === 0 ? 'M' : 'L'}${toX(2, x, p3xLo, p3xHi).toFixed(1)},${toY(y, p3yLo, p3yHi).toFixed(1)}`);
+  }
+}
+
+// X-axis Y positions for each panel
+const ax1Y = toY(0, p1yLo, p1yHi);
+const ax2Y = toY(0, p2yLo, p2yHi);
+const ax3Y = toY(0, p3yLo, p3yHi);
+---
+
+<figure class="disc-diagram" role="img" aria-label="Three parabolas showing discriminant cases: D positive, D zero, D negative">
+  <figcaption class="disc-title">The discriminant determines how many times the parabola crosses the x-axis</figcaption>
+  <svg viewBox={`0 0 ${totalW} ${totalH}`} width={totalW} height={totalH} xmlns="http://www.w3.org/2000/svg">
+
+    <rect class="disc-bg" x="0" y="0" width={totalW} height={totalH} rx="8" />
+
+    {/* Panel 1: D > 0 — two roots */}
+    <text class="disc-heading disc-pos" x={panelX(0) + pw / 2} y={18} font-size="11" text-anchor="middle" font-weight="bold">D &gt; 0</text>
+    <text class="disc-sub" x={panelX(0) + pw / 2} y={32} font-size="9" text-anchor="middle">Two real solutions</text>
+    <line class="disc-axis" x1={panelX(0)} y1={ax1Y} x2={panelX(0) + pw} y2={ax1Y} stroke-width="1" />
+    <path class="disc-curve disc-curve-pos" d={p1Pts.join(' ')} fill="none" stroke-width="2" />
+    <circle class="disc-dot-pos" cx={toX(0, 1, p1xLo, p1xHi)} cy={ax1Y} r="4" />
+    <circle class="disc-dot-pos" cx={toX(0, 3, p1xLo, p1xHi)} cy={ax1Y} r="4" />
+
+    {/* Panel 2: D = 0 — one root */}
+    <text class="disc-heading disc-zero" x={panelX(1) + pw / 2} y={18} font-size="11" text-anchor="middle" font-weight="bold">D = 0</text>
+    <text class="disc-sub" x={panelX(1) + pw / 2} y={32} font-size="9" text-anchor="middle">One real solution</text>
+    <line class="disc-axis" x1={panelX(1)} y1={ax2Y} x2={panelX(1) + pw} y2={ax2Y} stroke-width="1" />
+    <path class="disc-curve disc-curve-zero" d={p2Pts.join(' ')} fill="none" stroke-width="2" />
+    <circle class="disc-dot-zero" cx={toX(1, 2, p2xLo, p2xHi)} cy={ax2Y} r="4" />
+
+    {/* Panel 3: D < 0 — no real roots */}
+    <text class="disc-heading disc-neg" x={panelX(2) + pw / 2} y={18} font-size="11" text-anchor="middle" font-weight="bold">D &lt; 0</text>
+    <text class="disc-sub" x={panelX(2) + pw / 2} y={32} font-size="9" text-anchor="middle">No real solutions</text>
+    <line class="disc-axis" x1={panelX(2)} y1={ax3Y} x2={panelX(2) + pw} y2={ax3Y} stroke-width="1" />
+    <path class="disc-curve disc-curve-neg" d={p3Pts.join(' ')} fill="none" stroke-width="2" />
+
+  </svg>
+</figure>
+
+<style>
+  .disc-diagram { display: flex; flex-direction: column; align-items: center; margin: 1.5rem 0; }
+  .disc-title { font-size: 0.95rem; color: var(--sl-color-gray-3); margin-bottom: 0.5rem; font-style: italic; }
+  .disc-diagram svg { max-width: 100%; height: auto; }
+
+  .disc-bg { fill: var(--sl-color-bg, #121212); }
+  .disc-axis { stroke: #666; }
+  .disc-sub { fill: #999; font-family: 'Libre Baskerville', Georgia, serif; }
+
+  .disc-heading.disc-pos { fill: #7ee787; }
+  .disc-curve-pos { stroke: #7ee787; }
+  .disc-dot-pos { fill: #7ee787; stroke: #fff; stroke-width: 1.5; }
+
+  .disc-heading.disc-zero { fill: #f0c674; }
+  .disc-curve-zero { stroke: #f0c674; }
+  .disc-dot-zero { fill: #f0c674; stroke: #fff; stroke-width: 1.5; }
+
+  .disc-heading.disc-neg { fill: #f78166; }
+  .disc-curve-neg { stroke: #f78166; }
+
+  :global([data-theme="light"]) .disc-bg { fill: #f8f9fa; }
+  :global([data-theme="light"]) .disc-axis { stroke: #999; }
+  :global([data-theme="light"]) .disc-sub { fill: #666; }
+  :global([data-theme="light"]) .disc-heading.disc-pos { fill: #1a7f37; }
+  :global([data-theme="light"]) .disc-curve-pos { stroke: #1a7f37; }
+  :global([data-theme="light"]) .disc-dot-pos { fill: #1a7f37; stroke: #fff; }
+  :global([data-theme="light"]) .disc-heading.disc-zero { fill: #b45309; }
+  :global([data-theme="light"]) .disc-curve-zero { stroke: #b45309; }
+  :global([data-theme="light"]) .disc-dot-zero { fill: #b45309; stroke: #fff; }
+  :global([data-theme="light"]) .disc-heading.disc-neg { fill: #cf222e; }
+  :global([data-theme="light"]) .disc-curve-neg { stroke: #cf222e; }
+</style>

@@ -1,0 +1,128 @@
+---
+title: Polynomial Operations
+description: Learn how to add, subtract, and multiply polynomial functions
+sidebar:
+  order: 14
+---
+
+## What You'll Learn
+
+In this lesson you'll learn how to add, subtract, and multiply polynomials, including how to organize terms and simplify the results.
+
+## The Concept
+
+**Polynomial operations** follow the same rules as working with numbers, but you must combine **like terms** (terms with the same variable and same exponent).
+
+**Addition and Subtraction** — combine like terms. When subtracting, distribute the negative sign to every term in the second polynomial.
+
+**Multiplication** — use the distributive property. Multiply every term in the first polynomial by every term in the second. For two binomials, this is called FOIL (First, Outer, Inner, Last).
+
+import FOILDiagram from "../../../components/FOILDiagram.astro";
+
+<FOILDiagram />
+
+The diagram shows the FOIL method for multiplying two binomials. Each colored arc connects two terms being multiplied: blue for First (x · 2x = 2x²), green for Outer (x · −3 = −3x), orange for Inner (4 · 2x = 8x), and purple for Last (4 · −3 = −12). Combine the like terms (−3x + 8x = 5x) to get the final answer: 2x² + 5x − 12.
+
+Important reminders:
+
+- When subtracting, distribute the negative sign to every term in the second polynomial.
+- Write the final answer in **standard form** (descending powers of x).
+- The degree of the product equals the sum of the degrees of the factors.
+
+## Worked Example
+
+**1. Add two polynomials**
+
+(3x³ − 2x² + 5x − 1) + (x³ + 4x² − 7x + 8)
+
+$$
+= (3x^3 + x^3) + (-2x^2 + 4x^2) + (5x - 7x) + (-1 + 8) = 4x^3 + 2x^2 - 2x + 7
+$$
+
+**2. Subtract two polynomials**
+
+(5x² + 3x − 4) − (2x² − 6x + 9)
+
+Distribute the negative sign first:
+
+$$
+= 5x^2 + 3x - 4 - 2x^2 + 6x - 9 = 3x^2 + 9x - 13
+$$
+
+**3. Multiply a binomial by a trinomial**
+
+(x + 4)(2x² − 3x + 5)
+
+Distribute each term of the first polynomial across the second:
+
+$$
+\begin{aligned}
+&= x(2x^2 - 3x + 5) + 4(2x^2 - 3x + 5) \\[1em]
+&= 2x^3 - 3x^2 + 5x + 8x^2 - 12x + 20 \\[1em]
+&= 2x^3 + 5x^2 - 7x + 20
+\end{aligned}
+$$
+
+## Real-World Application
+
+Polynomial operations are used when combining real quantities:
+
+- **Total cost**: fixed costs + variable costs (often polynomials).
+- **Profit**: revenue polynomial minus cost polynomial.
+- **Area/volume**: multiplying length, width, and height expressions.
+- **Physics**: combining force, velocity, or acceleration models.
+- **Economics**: total revenue = price × quantity, where both may be polynomial expressions.
+
+Example: a company's revenue is r(x) = 50x − 2x² and cost is c(x) = 200 + 15x. Profit = r(x) − c(x) = 50x − 2x² − 200 − 15x = −2x² + 35x − 200.
+
+:::note[You've Got This]
+Adding and subtracting polynomials is mostly about carefully combining like terms. Multiplication is just repeated distribution. Always write your final answer with terms in descending order of exponents. Practice a few operations each time you study — the process becomes very mechanical and reliable with repetition.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="algebra2-polynomial-operations"
+  questions={[
+    {
+      id: "q1",
+      text: "Add: (4x² − 3x + 7) + (2x² + 5x − 1)",
+      options: ["6x² + 2x + 6", "6x² + 8x + 6", "2x² − 8x + 8", "6x² + 2x + 8"],
+      correctIndex: 0,
+      explanation: "4x² + 2x² = 6x², −3x + 5x = 2x, 7 − 1 = 6.",
+    },
+    {
+      id: "q2",
+      text: "Subtract: (5x³ + 2x − 8) − (3x³ − 4x + 1)",
+      options: ["2x³ + 6x − 9", "8x³ − 2x − 9", "2x³ − 2x − 9", "2x³ + 6x − 7"],
+      correctIndex: 0,
+      explanation: "5x³ − 3x³ = 2x³, 2x − (−4x) = 6x, −8 − 1 = −9.",
+    },
+    {
+      id: "q3",
+      text: "Multiply: (x + 3)(2x − 5)",
+      options: [
+        "2x² + x − 15",
+        "2x² + 11x − 15",
+        "2x² − x − 15",
+        "x² + x − 15",
+      ],
+      correctIndex: 0,
+      explanation: "F: 2x², O: −5x, I: 6x, L: −15 → 2x² + x − 15.",
+    },
+    {
+      id: "q4",
+      text: "After adding or subtracting polynomials, the final answer should be written in:",
+      options: [
+        "Descending powers of x",
+        "Ascending powers of x",
+        "Any order",
+        "Factored form",
+      ],
+      correctIndex: 0,
+      explanation: "Standard form uses descending powers of the variable.",
+    },
+  ]}
+/>

@@ -1,0 +1,147 @@
+---
+/**
+ * VertexFormDiagram — shows parent y = x² (dashed) and
+ * g(x) = −2(x+1)² + 5 (solid) to illustrate transformations.
+ * Parent vertex (0,0), transformed vertex (−1, 5).
+ */
+
+const pad = 55;
+const w = 440;
+const h = 420;
+const plotW = 330;
+const plotH = 320;
+const xLo = -5;
+const xHi = 5;
+const yLo = -6;
+const yHi = 8;
+const xRange = xHi - xLo;
+const yRange = yHi - yLo;
+
+function toX(v: number) { return pad + ((v - xLo) / xRange) * plotW; }
+function toY(v: number) { return pad + ((yHi - v) / yRange) * plotH; }
+
+const xAxisY = toY(0);
+const yAxisX = toX(0);
+
+// Parent: y = x²
+const parentPts: string[] = [];
+for (let x = -2.8; x <= 2.8; x += 0.05) {
+  const y = x * x;
+  if (y <= yHi + 0.5) {
+    parentPts.push(`${parentPts.length === 0 ? 'M' : 'L'}${toX(x).toFixed(1)},${toY(y).toFixed(1)}`);
+  }
+}
+const parentD = parentPts.join(' ');
+
+// Transformed: g(x) = −2(x+1)² + 5
+const transPts: string[] = [];
+for (let x = -3.6; x <= 1.6; x += 0.05) {
+  const y = -2 * (x + 1) * (x + 1) + 5;
+  if (y >= yLo - 0.5 && y <= yHi + 0.5) {
+    transPts.push(`${transPts.length === 0 ? 'M' : 'L'}${toX(x).toFixed(1)},${toY(y).toFixed(1)}`);
+  }
+}
+const transD = transPts.join(' ');
+
+const xTicks = [-4, -3, -2, -1, 1, 2, 3, 4];
+const yTicks = [-5, -4, -3, -2, -1, 1, 2, 3, 4, 5, 6, 7];
+const yLabelTicks = [-4, -2, 2, 4, 6];
+---
+
+<figure class="vf-diagram" role="img" aria-label="Parent y = x² and transformed g(x) = −2(x+1)² + 5">
+  <figcaption class="vf-title">y = x² (dashed) vs g(x) = −2(x + 1)² + 5 (solid)</figcaption>
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+
+    <rect class="vf-bg" x="0" y="0" width={w} height={h} rx="8" />
+
+    {/* Grid */}
+    {xTicks.map(x => (
+      <line class="vf-grid" x1={toX(x)} y1={pad} x2={toX(x)} y2={pad + plotH} />
+    ))}
+    {yTicks.map(y => (
+      <line class="vf-grid" x1={pad} y1={toY(y)} x2={pad + plotW} y2={toY(y)} />
+    ))}
+
+    {/* Axes */}
+    <line class="vf-axis" x1={pad} y1={xAxisY} x2={pad + plotW + 5} y2={xAxisY} stroke-width="1.5" />
+    <line class="vf-axis" x1={yAxisX} y1={pad + plotH} x2={yAxisX} y2={pad - 5} stroke-width="1.5" />
+    <text class="vf-axlabel" x={pad + plotW + 10} y={xAxisY + 4} font-size="13">x</text>
+    <text class="vf-axlabel" x={yAxisX + 6} y={pad - 10} font-size="13">y</text>
+
+    {/* Tick labels */}
+    {xTicks.filter(x => x !== 0).map(x => (
+      <text class="vf-tick" x={toX(x)} y={xAxisY + 16} font-size="10" text-anchor="middle">{x}</text>
+    ))}
+    {yLabelTicks.map(y => (
+      <text class="vf-tick" x={yAxisX - 8} y={toY(y) + 4} font-size="10" text-anchor="end">{y}</text>
+    ))}
+
+    {/* Parent curve: y = x² (dashed, gray) */}
+    <path class="vf-parent" d={parentD} fill="none" stroke-width="2" stroke-dasharray="6,4" />
+    {/* Parent vertex */}
+    <circle class="vf-parent-pt" cx={toX(0)} cy={toY(0)} r="4" />
+    {/* Parent label — far right, above the curve in open space */}
+    <text class="vf-parent-label" x={toX(3.5)} y={toY(7.2)} font-size="11">y = x²</text>
+
+    {/* Transformed curve: g(x) = −2(x+1)² + 5 (solid, orange) */}
+    <path class="vf-trans" d={transD} fill="none" stroke-width="2.5" />
+    {/* Transformed vertex at (−1, 5) */}
+    <circle class="vf-trans-pt" cx={toX(-1)} cy={toY(5)} r="5" />
+    <text class="vf-trans-pt-label" x={toX(-1) - 14} y={toY(5) - 12} font-size="11" text-anchor="end">(−1, 5)</text>
+    {/* Transformed label — bottom-left, moved up to be inside plot area */}
+    <text class="vf-trans-label" x={toX(-4.8)} y={toY(-2.5)} font-size="10" font-weight="bold">−2(x + 1)² + 5</text>
+
+    {/* Transformation arrows/annotations */}
+    {/* Arrow from parent vertex to transformed vertex */}
+    <defs>
+      <marker id="vf-arr" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto">
+        <path class="vf-arrow-head" d="M0,0 L7,3.5 L0,7 Z" />
+      </marker>
+    </defs>
+    <line class="vf-shift-arrow" x1={toX(0) - 3} y1={toY(0) - 3} x2={toX(-1) + 5} y2={toY(5) + 8}
+      stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#vf-arr)" />
+    <text class="vf-shift-text" x={toX(-3.5)} y={toY(3)} font-size="9" text-anchor="start">left 1, up 5</text>
+
+  </svg>
+</figure>
+
+<style>
+  .vf-diagram { display: flex; flex-direction: column; align-items: center; margin: 1.5rem 0; }
+  .vf-title { font-size: 0.95rem; color: var(--sl-color-gray-3); margin-bottom: 0.5rem; font-style: italic; }
+  .vf-diagram svg { max-width: 100%; height: auto; }
+
+  .vf-bg { fill: var(--sl-color-bg, #121212); }
+  .vf-grid { stroke: #333; stroke-width: 0.5; }
+  .vf-axis { stroke: #888; }
+  .vf-axlabel { fill: #aaa; font-family: sans-serif; }
+  .vf-tick { fill: #aaa; font-family: sans-serif; }
+
+  .vf-parent { stroke: #666; }
+  .vf-parent-pt { fill: #888; stroke: #aaa; stroke-width: 1.5; }
+  .vf-parent-label { fill: #888; font-family: 'Libre Baskerville', Georgia, serif; font-style: italic; }
+
+  .vf-trans { stroke: #f78166; }
+  .vf-trans-pt { fill: #f0c674; stroke: #fff; stroke-width: 1.5; }
+  .vf-trans-pt-label { fill: #f0c674; font-family: 'Libre Baskerville', Georgia, serif; font-weight: bold; }
+  .vf-trans-label { fill: #f78166; font-family: 'Libre Baskerville', Georgia, serif; }
+
+  .vf-shift-arrow { stroke: #7ee787; }
+  .vf-arrow-head { fill: #7ee787; }
+  .vf-shift-text { fill: #7ee787; font-family: 'Libre Baskerville', Georgia, serif; }
+
+  :global([data-theme="light"]) .vf-bg { fill: #f8f9fa; }
+  :global([data-theme="light"]) .vf-grid { stroke: #ccc; }
+  :global([data-theme="light"]) .vf-axis { stroke: #222; }
+  :global([data-theme="light"]) .vf-axlabel { fill: #222; }
+  :global([data-theme="light"]) .vf-tick { fill: #333; }
+  :global([data-theme="light"]) .vf-parent { stroke: #999; }
+  :global([data-theme="light"]) .vf-parent-pt { fill: #666; stroke: #444; }
+  :global([data-theme="light"]) .vf-parent-label { fill: #666; }
+  :global([data-theme="light"]) .vf-trans { stroke: #cf222e; }
+  :global([data-theme="light"]) .vf-trans-pt { fill: #b45309; stroke: #fff; }
+  :global([data-theme="light"]) .vf-trans-pt-label { fill: #b45309; }
+  :global([data-theme="light"]) .vf-trans-label { fill: #cf222e; }
+  :global([data-theme="light"]) .vf-shift-arrow { stroke: #1a7f37; }
+  :global([data-theme="light"]) .vf-arrow-head { fill: #1a7f37; }
+  :global([data-theme="light"]) .vf-shift-text { fill: #1a7f37; }
+</style>

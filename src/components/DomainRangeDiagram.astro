@@ -1,0 +1,153 @@
+---
+/**
+ * DomainRangeDiagram — shows h(x) = x² + 3 with domain/range annotations.
+ * Parabola opens upward, vertex at (0, 3). Domain: all reals, Range: y ≥ 3.
+ */
+
+// Plot config
+const pad = 50;
+const w = 420;
+const h = 380;
+const plotW = 340;
+const plotH = 290;
+const xLo = -4;
+const xHi = 4;
+const yLo = -1;
+const yHi = 10;
+const xRange = xHi - xLo;
+const yRange = yHi - yLo;
+
+function toX(v: number) { return pad + ((v - xLo) / xRange) * plotW; }
+function toY(v: number) { return 40 + ((yHi - v) / yRange) * plotH; }
+
+const xAxisY = toY(0);
+const yAxisX = toX(0);
+
+// Grid ticks
+const xGridTicks = [-3, -2, -1, 1, 2, 3];
+const yGridTicks = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+const yLabelTicks = [3, 5, 7, 9];
+
+// Parabola points: h(x) = x² + 3
+const parabolaPts: string[] = [];
+for (let x = -2.6; x <= 2.6; x += 0.05) {
+  const y = x * x + 3;
+  if (y <= 10.5) {
+    parabolaPts.push(`${parabolaPts.length === 0 ? 'M' : 'L'}${toX(x).toFixed(1)},${toY(y).toFixed(1)}`);
+  }
+}
+const parabolaD = parabolaPts.join(' ');
+
+// Vertex
+const vx = toX(0);
+const vy = toY(3);
+
+// Range annotation
+const rangeX = 30;
+const rangeY3 = toY(3);
+const rangeTop = 45;
+const rangeMid = (rangeY3 + rangeTop) / 2;
+---
+
+<figure class="dr-diagram" role="img" aria-label="Domain and range of h(x) = x² + 3">
+  <figcaption class="dr-title">h(x) = x² + 3 — domain and range</figcaption>
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+
+    <rect class="dr-bg" x="0" y="0" width={w} height={h} rx="8" />
+
+    {/* Grid lines */}
+    {xGridTicks.map(x => (
+      <line class="dr-grid" x1={toX(x)} y1={40} x2={toX(x)} y2={40 + plotH} />
+    ))}
+    {yGridTicks.map(y => (
+      <line class="dr-grid" x1={pad} y1={toY(y)} x2={pad + plotW} y2={toY(y)} />
+    ))}
+
+    {/* Axes */}
+    <line class="dr-axis" x1={pad} y1={xAxisY} x2={pad + plotW + 5} y2={xAxisY} stroke-width="1.5" />
+    <line class="dr-axis" x1={yAxisX} y1={40 + plotH} x2={yAxisX} y2={35} stroke-width="1.5" />
+    <text class="dr-label" x={pad + plotW + 10} y={xAxisY + 4} font-size="13">x</text>
+    <text class="dr-label" x={yAxisX + 6} y={32} font-size="13">y</text>
+
+    {/* X tick labels */}
+    {xGridTicks.map(x => (
+      <text class="dr-tick" x={toX(x)} y={xAxisY + 16} font-size="11" text-anchor="middle">{x}</text>
+    ))}
+    {/* Y tick labels */}
+    {yLabelTicks.map(y => (
+      <text class="dr-tick" x={yAxisX - 8} y={toY(y) + 4} font-size="11" text-anchor="end">{y}</text>
+    ))}
+
+    {/* Parabola */}
+    <path class="dr-curve" d={parabolaD} fill="none" stroke-width="2.5" />
+
+    {/* Vertex */}
+    <circle class="dr-vertex" cx={vx} cy={vy} r="5" />
+    <text class="dr-vertex-label" x={vx + 10} y={vy + 5} font-size="12">(0, 3)</text>
+
+    {/* Arrow markers */}
+    <defs>
+      <marker id="dr-arr-l" markerWidth="7" markerHeight="7" refX="1" refY="3.5" orient="auto">
+        <path class="dr-domain-arrow" d="M7,0 L0,3.5 L7,7 Z" />
+      </marker>
+      <marker id="dr-arr-r" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto">
+        <path class="dr-domain-arrow" d="M0,0 L7,3.5 L0,7 Z" />
+      </marker>
+      <marker id="dr-arr-u" markerWidth="7" markerHeight="7" refX="3.5" refY="1" orient="auto">
+        <path class="dr-range-arrow" d="M0,7 L3.5,0 L7,7 Z" />
+      </marker>
+    </defs>
+
+    {/* Domain annotation */}
+    <line class="dr-domain-line" x1={60} y1={355} x2={380} y2={355}
+      marker-start="url(#dr-arr-l)" marker-end="url(#dr-arr-r)" stroke-width="2" />
+    <text class="dr-domain-text" x={220} y={373} font-size="12" text-anchor="middle">Domain: all real numbers</text>
+
+    {/* Range annotation */}
+    <line class="dr-range-line" x1={rangeX} y1={rangeY3} x2={rangeX} y2={rangeTop}
+      marker-end="url(#dr-arr-u)" stroke-width="2" />
+    <circle class="dr-range-dot" cx={rangeX} cy={rangeY3} r="4" />
+    <text class="dr-range-text" x={rangeX + 2} y={rangeY3 + 18} font-size="11" text-anchor="middle">y = 3</text>
+    <text class="dr-range-text" x={rangeX - 14} y={rangeMid} font-size="12" text-anchor="middle"
+      transform={`rotate(-90, ${rangeX - 14}, ${rangeMid})`}>Range: y ≥ 3</text>
+
+  </svg>
+</figure>
+
+<style>
+  .dr-diagram { display: flex; flex-direction: column; align-items: center; margin: 1.5rem 0; }
+  .dr-title { font-size: 0.95rem; color: var(--sl-color-gray-3); margin-bottom: 0.5rem; font-style: italic; }
+  .dr-diagram svg { max-width: 100%; height: auto; }
+
+  .dr-bg { fill: var(--sl-color-bg, #121212); }
+  .dr-grid { stroke: #333; stroke-width: 0.5; }
+  .dr-axis { stroke: #888; }
+  .dr-label { fill: #aaa; font-family: sans-serif; }
+  .dr-tick { fill: #aaa; font-family: sans-serif; }
+  .dr-curve { stroke: #58a6ff; }
+  .dr-vertex { fill: #f0c674; stroke: #fff; stroke-width: 1.5; }
+  .dr-vertex-label { fill: #f0c674; font-family: 'Libre Baskerville', Georgia, serif; font-weight: bold; }
+  .dr-domain-line { stroke: #7ee787; }
+  .dr-domain-arrow { fill: #7ee787; }
+  .dr-domain-text { fill: #7ee787; font-family: 'Libre Baskerville', Georgia, serif; }
+  .dr-range-line { stroke: #d2a8ff; }
+  .dr-range-arrow { fill: #d2a8ff; }
+  .dr-range-dot { fill: #d2a8ff; stroke: #fff; stroke-width: 1.5; }
+  .dr-range-text { fill: #d2a8ff; font-family: 'Libre Baskerville', Georgia, serif; }
+
+  :global([data-theme="light"]) .dr-bg { fill: #f8f9fa; }
+  :global([data-theme="light"]) .dr-grid { stroke: #ccc; }
+  :global([data-theme="light"]) .dr-axis { stroke: #222; }
+  :global([data-theme="light"]) .dr-label { fill: #222; }
+  :global([data-theme="light"]) .dr-tick { fill: #333; }
+  :global([data-theme="light"]) .dr-curve { stroke: #0969da; }
+  :global([data-theme="light"]) .dr-vertex { fill: #b45309; stroke: #fff; }
+  :global([data-theme="light"]) .dr-vertex-label { fill: #b45309; }
+  :global([data-theme="light"]) .dr-domain-line { stroke: #1a7f37; }
+  :global([data-theme="light"]) .dr-domain-arrow { fill: #1a7f37; }
+  :global([data-theme="light"]) .dr-domain-text { fill: #1a7f37; }
+  :global([data-theme="light"]) .dr-range-line { stroke: #8250df; }
+  :global([data-theme="light"]) .dr-range-arrow { fill: #8250df; }
+  :global([data-theme="light"]) .dr-range-dot { fill: #8250df; stroke: #fff; }
+  :global([data-theme="light"]) .dr-range-text { fill: #8250df; }
+</style>
