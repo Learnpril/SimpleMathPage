@@ -1,8 +1,141 @@
 ---
 title: Introduction to Logarithms
-description: Learn what logarithms are and how they relate to exponents
+description: Learn what logarithms are, how they relate to exponentials, and how to convert between the two forms
 sidebar:
-  order: 27
+  order: 28
 ---
 
-Content coming soon.
+## What You'll Learn
+
+In this lesson you'll learn the definition of a logarithm, how logarithms are the inverse of exponentials, and how to convert between logarithmic and exponential forms.
+
+## The Concept
+
+A **logarithm** asks the question: "To what power must the base be raised to get this number?"
+
+The logarithmic form log_b(a) = c means:
+
+$$
+b^c = a
+$$
+
+import LogExpDiagram from "../../../components/LogExpDiagram.astro";
+
+<LogExpDiagram />
+
+The graph shows the relationship visually. The green curve is the exponential y = 2^x — it grows rapidly. The blue curve is its inverse, y = log₂(x) — it grows slowly. They are mirror images across the dashed y = x line. The gold dot at (1, 0) shows that log₂(1) = 0, because 2⁰ = 1.
+
+Key facts:
+
+- The base b must be positive and not equal to 1.
+- The argument a must be positive (you can't take the log of zero or a negative).
+- Logarithms and exponentials are inverses: log_b(b^x) = x and b^(log_b(x)) = x.
+
+Common bases:
+
+- **Base 10 (common logarithm)**: written as "log" without a subscript. This is the default on most calculators. It's used for anything involving powers of 10 — the Richter scale, decibels, pH, and scientific notation all use base 10. When you see "log(100)" with no base written, it means log₁₀(100) = 2.
+
+- **Base e ≈ 2.718 (natural logarithm)**: written as "ln". The number e is a special irrational constant that shows up naturally in continuous growth and decay — things like population growth, radioactive decay, compound interest compounded continuously, and calculus. When you see "ln(x)", it means log_e(x). You'll encounter e more in Pre-Calculus and Calculus, but it's good to know it exists now.
+
+- **Base 2 (binary logarithm)**: written as log₂. This is the one we graphed above. It's especially important in computer science, where everything is built on powers of 2 (bits, bytes, binary).
+
+Any positive number (except 1) can be a base, but these three come up the most. In Algebra 2, you'll mostly work with base 10 and general bases. The natural logarithm becomes central in Pre-Calculus and beyond.
+
+## Worked Example
+
+**1. Convert to exponential form: log₂(8) = 3**
+
+$$
+2^3 = 8
+$$
+
+**2. Convert to logarithmic form: 10⁴ = 10000**
+
+$$
+\log_{10}(10000) = 4
+$$
+
+**3. Evaluate log₅(125)**
+
+Ask: 5 to what power equals 125? Since 5³ = 125:
+
+$$
+\log_5(125) = 3
+$$
+
+**4. Solve for x: log₃(x) = 4**
+
+Convert to exponential form:
+
+$$
+3^4 = x \quad\Rightarrow\quad x = 81
+$$
+
+## Real-World Application
+
+Logarithms are used in many practical areas:
+
+- **Earthquakes**: the Richter scale is logarithmic (each whole number is 10 times stronger).
+- **Sound**: decibels measure sound intensity on a logarithmic scale.
+- **pH scale**: acidity is measured logarithmically.
+- **Finance**: compound interest problems often use logarithms to solve for time.
+- **Computer science**: logarithms measure algorithm efficiency (e.g., O(log n)).
+
+Example: if an investment grows exponentially, logarithms help you solve for how many years it takes to reach a target amount.
+
+:::note[You've Got This]
+A logarithm is simply asking "what exponent gives me this number?" Remember: log_b(a) = c means b^c = a. Practice converting back and forth between log and exponential form until it feels natural. This skill is the foundation for working with logarithmic functions and equations later.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="algebra2-introduction-to-logarithms"
+  questions={[
+    {
+      id: "q1",
+      text: "The equation $\\log_3(27) = 3$ means:",
+      options: [
+        "$3^3 = 27$",
+        "$27^3 = 3$",
+        "$3^{27} = 3$",
+        "$\\log_{27}(3) = 3$",
+      ],
+      correctIndex: 0,
+      explanation: "$\\log_b(a) = c$ means $b^c = a$.",
+    },
+    {
+      id: "q2",
+      text: "Convert $5^2 = 25$ to logarithmic form:",
+      options: [
+        "$\\log_5(25) = 2$",
+        "$\\log_{25}(5) = 2$",
+        "$5 = \\log(25)$",
+        "$\\log(5) = 25$",
+      ],
+      correctIndex: 0,
+      explanation: "The exponent becomes the value of the log.",
+    },
+    {
+      id: "q3",
+      text: "What is $\\log_{10}(1000)$?",
+      options: ["$3$", "$2$", "$4$", "$10$"],
+      correctIndex: 0,
+      explanation: "$10^3 = 1000$, so $\\log_{10}(1000) = 3$.",
+    },
+    {
+      id: "q4",
+      text: "Logarithms and exponentials are:",
+      options: [
+        "Inverses of each other",
+        "The same thing",
+        "Never used together",
+        "Only used in physics",
+      ],
+      correctIndex: 0,
+      explanation: "A logarithm undoes an exponential, and vice versa.",
+    },
+  ]}
+/>

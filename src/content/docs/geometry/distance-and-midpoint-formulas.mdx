@@ -90,17 +90,19 @@ import Quiz from "../../../components/Quiz.astro";
   questions={[
     {
       id: "q1",
-      text: "What is the distance between points (1, 2) and (4, 6)?",
-      options: ["5", "7", "√25", "√13"],
+      text: "What is the distance between points $(1, 2)$ and $(4, 6)$?",
+      options: ["$5$", "$7$", "$\\sqrt{25}$", "$\\sqrt{13}$"],
       correctIndex: 0,
-      explanation: "√[(4−1)² + (6−2)²] = √[9 + 16] = √25 = 5.",
+      explanation:
+        "$\\sqrt{(4-1)^2 + (6-2)^2} = \\sqrt{9 + 16} = \\sqrt{25} = 5$.",
     },
     {
       id: "q2",
-      text: "What is the midpoint of points (−3, 5) and (5, 9)?",
-      options: ["(1, 7)", "(4, 7)", "(1, 14)", "(2, 7)"],
+      text: "What is the midpoint of points $(-3, 5)$ and $(5, 9)$?",
+      options: ["$(1, 7)$", "$(4, 7)$", "$(1, 14)$", "$(2, 7)$"],
       correctIndex: 0,
-      explanation: "((−3+5)/2, (5+9)/2) = (1, 7).",
+      explanation:
+        "$\\left(\\frac{-3+5}{2},\\, \\frac{5+9}{2}\\right) = (1, 7)$.",
     },
     {
       id: "q3",
@@ -117,10 +119,10 @@ import Quiz from "../../../components/Quiz.astro";
     },
     {
       id: "q4",
-      text: "Points A(0,0) and B(0,10). What is the distance between them?",
-      options: ["10", "5", "0", "√100"],
+      text: "Points $A(0,0)$ and $B(0,10)$. What is the distance between them?",
+      options: ["$10$", "$5$", "$0$", "$\\sqrt{100}$"],
       correctIndex: 0,
-      explanation: "√[(0−0)² + (10−0)²] = √100 = 10.",
+      explanation: "$\\sqrt{(0-0)^2 + (10-0)^2} = \\sqrt{100} = 10$.",
     },
   ]}
 />

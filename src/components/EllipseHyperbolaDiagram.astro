@@ -1,0 +1,117 @@
+---
+/**
+ * EllipseHyperbolaDiagram — two panels:
+ * Left: ellipse (x-2)²/9 + (y+1)²/4 = 1, center (2,-1), a=3, b=2
+ * Right: hyperbola (x+3)²/16 - (y-5)²/9 = 1, center (-3,5), a=4, b=3
+ */
+const pw = 200; const ph = 200; const gap = 20;
+const totalW = pw * 2 + gap + 20;
+const totalH = ph + 30;
+
+// Left: ellipse, center (2,-1), a=3 horiz, b=2 vert
+const lx = 10; const ly = 10;
+const lxLo = -2; const lxHi = 6; const lyLo = -4; const lyHi = 2;
+function lX(v: number) { return lx + ((v - lxLo) / (lxHi - lxLo)) * pw; }
+function lY(v: number) { return ly + ((lyHi - v) / (lyHi - lyLo)) * ph; }
+
+const ellPts: string[] = [];
+for (let a = 0; a <= 360; a += 2) {
+  const x = 2 + 3 * Math.cos(a * Math.PI / 180);
+  const y = -1 + 2 * Math.sin(a * Math.PI / 180);
+  ellPts.push(`${a === 0 ? 'M' : 'L'}${lX(x).toFixed(1)},${lY(y).toFixed(1)}`);
+}
+
+// Right: hyperbola, center (-3,5), a=4 horiz, b=3 vert
+const rx = lx + pw + gap; const ry = 10;
+const rxLo = -10; const rxHi = 4; const ryLo = 0; const ryHi = 10;
+function rX(v: number) { return rx + ((v - rxLo) / (rxHi - rxLo)) * pw; }
+function rY(v: number) { return ry + ((ryHi - v) / (ryHi - ryLo)) * ph; }
+
+const hypR: string[] = []; const hypL: string[] = [];
+for (let t = -1.3; t <= 1.3; t += 0.05) {
+  const coshT = (Math.exp(t) + Math.exp(-t)) / 2;
+  const sinhT = (Math.exp(t) - Math.exp(-t)) / 2;
+  const xr = -3 + 4 * coshT; const yr = 5 + 3 * sinhT;
+  const xl = -3 - 4 * coshT;
+  if (xr <= rxHi && yr >= ryLo && yr <= ryHi) {
+    hypR.push(`${hypR.length === 0 ? 'M' : 'L'}${rX(xr).toFixed(1)},${rY(yr).toFixed(1)}`);
+  }
+  if (xl >= rxLo && yr >= ryLo && yr <= ryHi) {
+    hypL.push(`${hypL.length === 0 ? 'M' : 'L'}${rX(xl).toFixed(1)},${rY(yr).toFixed(1)}`);
+  }
+}
+
+// Asymptotes for hyperbola: y-5 = ±(3/4)(x+3)
+const asym1s = 5 + 0.75 * (rxLo + 3); const asym1e = 5 + 0.75 * (rxHi + 3);
+const asym2s = 5 - 0.75 * (rxLo + 3); const asym2e = 5 - 0.75 * (rxHi + 3);
+---
+
+<figure class="eh-diagram" role="img" aria-label="Ellipse and hyperbola from worked examples">
+  <figcaption class="eh-title">Ellipse and hyperbola from the worked examples</figcaption>
+  <svg viewBox={`0 0 ${totalW} ${totalH}`} width={totalW} height={totalH} xmlns="http://www.w3.org/2000/svg">
+    <rect class="eh-bg" x="0" y="0" width={totalW} height={totalH} rx="8" />
+
+    {/* Left: Ellipse */}
+    <line class="eh-axis" x1={lx} y1={lY(0)} x2={lx + pw} y2={lY(0)} stroke-width="0.8" />
+    <line class="eh-axis" x1={lX(0)} y1={ly} x2={lX(0)} y2={ly + ph} stroke-width="0.8" />
+    <path class="eh-ellipse" d={ellPts.join(' ') + ' Z'} fill="none" stroke-width="2.5" />
+    <circle class="eh-center" cx={lX(2)} cy={lY(-1)} r="4" />
+    <text class="eh-center-label" x={lX(2) + 8} y={lY(-1) + 16} font-size="10" font-weight="bold">(2, −1)</text>
+    {/* Vertices */}
+    <circle class="eh-vert" cx={lX(-1)} cy={lY(-1)} r="3" />
+    <circle class="eh-vert" cx={lX(5)} cy={lY(-1)} r="3" />
+    {/* Semi-axis labels — clear of curve */}
+    <text class="eh-a-label" x={lX(3.5)} y={lY(-1) - 10} font-size="9" text-anchor="middle">a = 3</text>
+    <text class="eh-b-label" x={lX(2) - 14} y={lY(0.2)} font-size="9" text-anchor="end">b = 2</text>
+    <text class="eh-eq" x={lx + pw / 2} y={ly + ph + 18} font-size="9" text-anchor="middle" font-weight="bold">(x−2)²/9 + (y+1)²/4 = 1</text>
+
+    {/* Right: Hyperbola */}
+    <line class="eh-axis" x1={rx} y1={rY(5)} x2={rx + pw} y2={rY(5)} stroke-width="0.8" />
+    <line class="eh-axis" x1={rX(-3)} y1={ry} x2={rX(-3)} y2={ry + ph} stroke-width="0.8" />
+    {/* Asymptotes */}
+    <line class="eh-asym" x1={rX(rxLo)} y1={rY(asym1s)} x2={rX(rxHi)} y2={rY(asym1e)} stroke-width="1" stroke-dasharray="4,3" />
+    <line class="eh-asym" x1={rX(rxLo)} y1={rY(asym2s)} x2={rX(rxHi)} y2={rY(asym2e)} stroke-width="1" stroke-dasharray="4,3" />
+    {/* Branches */}
+    <path class="eh-hyp" d={hypR.join(' ')} fill="none" stroke-width="2.5" />
+    <path class="eh-hyp" d={hypL.join(' ')} fill="none" stroke-width="2.5" />
+    {/* Center */}
+    <circle class="eh-center" cx={rX(-3)} cy={rY(5)} r="4" />
+    <text class="eh-center-label" x={rX(-3) - 10} y={rY(5) + 16} font-size="10" font-weight="bold" text-anchor="end">(−3, 5)</text>
+    {/* Vertices */}
+    <circle class="eh-vert" cx={rX(1)} cy={rY(5)} r="3" />
+    <circle class="eh-vert" cx={rX(-7)} cy={rY(5)} r="3" />
+    <text class="eh-eq eh-eq-hyp" x={rx + pw / 2} y={ry + ph + 18} font-size="9" text-anchor="middle" font-weight="bold">(x+3)²/16 − (y−5)²/9 = 1</text>
+
+  </svg>
+</figure>
+
+<style>
+  .eh-diagram { display: flex; flex-direction: column; align-items: center; margin: 1.5rem 0; }
+  .eh-title { font-size: 0.95rem; color: var(--sl-color-gray-3); margin-bottom: 0.5rem; font-style: italic; }
+  .eh-diagram svg { max-width: 100%; height: auto; }
+  .eh-bg { fill: var(--sl-color-bg, #121212); }
+  .eh-axis { stroke: #555; }
+  .eh-ellipse { stroke: #7ee787; }
+  .eh-hyp { stroke: #d2a8ff; }
+  .eh-asym { stroke: #666; }
+  .eh-center { fill: #f0c674; stroke: #fff; stroke-width: 1.5; }
+  .eh-center-label { fill: #f0c674; font-family: 'Libre Baskerville', Georgia, serif; }
+  .eh-vert { fill: #58a6ff; stroke: #fff; stroke-width: 1.5; }
+  .eh-a-label { fill: #7ee787; font-family: 'Libre Baskerville', Georgia, serif; }
+  .eh-b-label { fill: #7ee787; font-family: 'Libre Baskerville', Georgia, serif; }
+  .eh-eq { fill: #7ee787; font-family: 'Libre Baskerville', Georgia, serif; }
+  .eh-eq-hyp { fill: #d2a8ff; }
+
+  :global([data-theme="light"]) .eh-bg { fill: #f8f9fa; }
+  :global([data-theme="light"]) .eh-axis { stroke: #aaa; }
+  :global([data-theme="light"]) .eh-ellipse { stroke: #1a7f37; }
+  :global([data-theme="light"]) .eh-hyp { stroke: #8250df; }
+  :global([data-theme="light"]) .eh-asym { stroke: #999; }
+  :global([data-theme="light"]) .eh-center { fill: #b45309; stroke: #fff; }
+  :global([data-theme="light"]) .eh-center-label { fill: #b45309; }
+  :global([data-theme="light"]) .eh-vert { fill: #0969da; stroke: #fff; }
+  :global([data-theme="light"]) .eh-a-label { fill: #1a7f37; }
+  :global([data-theme="light"]) .eh-b-label { fill: #1a7f37; }
+  :global([data-theme="light"]) .eh-eq { fill: #1a7f37; }
+  :global([data-theme="light"]) .eh-eq-hyp { fill: #8250df; }
+</style>

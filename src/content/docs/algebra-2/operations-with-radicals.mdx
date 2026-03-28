@@ -1,8 +1,143 @@
 ---
 title: Operations with Radicals
-description: Learn to add, subtract, multiply, and divide radical expressions
+description: Learn how to add, subtract, multiply, and divide radical expressions
 sidebar:
-  order: 20
+  order: 21
 ---
 
-Content coming soon.
+## What You'll Learn
+
+In this lesson you'll learn how to perform addition, subtraction, multiplication, and division with radical expressions and when simplification is required.
+
+## The Concept
+
+**Adding and Subtracting Radicals** — you can only combine radicals that have the same index and same radicand (like terms). Simplify each radical first, then combine.
+
+**Multiplying Radicals** — for radicals with the same index, multiply the numbers inside:
+
+$$
+\sqrt{a} \cdot \sqrt{b} = \sqrt{a \cdot b}
+$$
+
+**Dividing Radicals** — combine under one radical, then simplify. Rationalize the denominator if needed:
+
+$$
+\frac{\sqrt{a}}{\sqrt{b}} = \sqrt{\frac{a}{b}}
+$$
+
+Key rule: always simplify radicals as much as possible before combining them.
+
+## Worked Example
+
+**1. Add: 5√12 + 3√3**
+
+Simplify √12 first:
+
+$$
+\sqrt{12} = \sqrt{4 \cdot 3} = 2\sqrt{3}
+$$
+
+Now combine:
+
+$$
+5(2\sqrt{3}) + 3\sqrt{3} = 10\sqrt{3} + 3\sqrt{3} = 13\sqrt{3}
+$$
+
+**2. Multiply: (3 + √5)(4 − √5)**
+
+Use FOIL:
+
+$$
+\begin{aligned}
+&= 3(4) + 3(-\sqrt{5}) + \sqrt{5}(4) + \sqrt{5}(-\sqrt{5}) \\[1em]
+&= 12 - 3\sqrt{5} + 4\sqrt{5} - 5 \\[1em]
+&= 7 + \sqrt{5}
+\end{aligned}
+$$
+
+Notice that √5 · √5 = 5 (the radical disappears when you multiply a radical by itself).
+
+**3. Divide and rationalize: 6 / √8**
+
+Simplify √8 first:
+
+$$
+\frac{6}{\sqrt{8}} = \frac{6}{2\sqrt{2}} = \frac{3}{\sqrt{2}}
+$$
+
+Rationalize by multiplying top and bottom by √2:
+
+$$
+\frac{3}{\sqrt{2}} \cdot \frac{\sqrt{2}}{\sqrt{2}} = \frac{3\sqrt{2}}{2}
+$$
+
+## Real-World Application
+
+Operations with radicals are used in:
+
+- Construction and carpentry (diagonal distances, roof pitches)
+- Physics (pendulum period, velocity formulas)
+- Engineering (stress calculations, electrical resistance)
+- Design (scaling shapes, calculating exact lengths)
+
+Example: finding the diagonal of a rectangular room with sides 12 ft and 16 ft uses √(12² + 16²) = √(144 + 256) = √400 = 20 ft.
+
+:::note[You've Got This]
+For addition and subtraction, make sure the radicals are identical after simplifying. For multiplication and division, use the product and quotient rules. Always simplify as much as possible and rationalize denominators when asked. Practice a few problems each time — these operations become much more comfortable with repetition.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="algebra2-operations-with-radicals"
+  questions={[
+    {
+      id: "q1",
+      text: "Simplify and add: $4\\sqrt{18} + 3\\sqrt{2}$",
+      options: [
+        "$15\\sqrt{2}$",
+        "$12\\sqrt{2}$",
+        "$9\\sqrt{2}$",
+        "$7\\sqrt{2}$",
+      ],
+      correctIndex: 0,
+      explanation:
+        "$4\\sqrt{9 \\cdot 2} = 4 \\cdot 3\\sqrt{2} = 12\\sqrt{2}$. Then $12\\sqrt{2} + 3\\sqrt{2} = 15\\sqrt{2}$.",
+    },
+    {
+      id: "q2",
+      text: "Multiply: $\\sqrt{6} \\cdot \\sqrt{24}$",
+      options: ["$12$", "$6\\sqrt{4}$", "$4\\sqrt{6}$", "$\\sqrt{30}$"],
+      correctIndex: 0,
+      explanation: "$\\sqrt{6 \\cdot 24} = \\sqrt{144} = 12$.",
+    },
+    {
+      id: "q3",
+      text: "Rationalize the denominator: $\\frac{5}{\\sqrt{3}}$",
+      options: [
+        "$\\frac{5\\sqrt{3}}{3}$",
+        "$5\\sqrt{3}$",
+        "$\\sqrt{3}$",
+        "$\\frac{15}{\\sqrt{3}}$",
+      ],
+      correctIndex: 0,
+      explanation:
+        "Multiply top and bottom by $\\sqrt{3}$: $\\frac{5\\sqrt{3}}{3}$.",
+    },
+    {
+      id: "q4",
+      text: "You can add or subtract radicals only when they have:",
+      options: [
+        "The same index and same radicand",
+        "Different indices",
+        "The same coefficient",
+        "No common factors",
+      ],
+      correctIndex: 0,
+      explanation:
+        "Like radicals must have identical index and radicand after simplification.",
+    },
+  ]}
+/>

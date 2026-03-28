@@ -1,0 +1,123 @@
+---
+/**
+ * IdentifyConicExamples — 2x2 grid of the four worked examples:
+ * 1. Circle (x-3)²+(y+4)²=16, center (3,-4), r=4
+ * 2. Parabola y=2(x-2)²-3, vertex (2,-3)
+ * 3. Hyperbola x²/25-y²/16=1, center origin
+ * 4. Ellipse (x-2)²/4+(y+3)²/9=1, center (2,-3)
+ */
+const pw = 160; const ph = 160; const gap = 14;
+const totalW = pw * 2 + gap + 20;
+const totalH = ph * 2 + gap + 55;
+
+function grid(col: number, row: number) {
+  return { x: 10 + col * (pw + gap), y: 10 + row * (ph + gap + 20) };
+}
+function toX(ox: number, v: number, lo: number, hi: number) { return ox + ((v - lo) / (hi - lo)) * pw; }
+function toY(oy: number, v: number, lo: number, hi: number) { return oy + ((hi - v) / (hi - lo)) * ph; }
+
+// 1. Circle center (3,-4) r=4
+const g1 = grid(0, 0);
+const c1: string[] = [];
+for (let a = 0; a <= 360; a += 2) {
+  const x = 3 + 4 * Math.cos(a * Math.PI / 180);
+  const y = -4 + 4 * Math.sin(a * Math.PI / 180);
+  c1.push(`${a === 0 ? 'M' : 'L'}${toX(g1.x, x, -2, 8).toFixed(1)},${toY(g1.y, y, -9, 1).toFixed(1)}`);
+}
+
+// 2. Parabola y=2(x-2)²-3
+const g2 = grid(1, 0);
+const c2: string[] = [];
+for (let x = -0.5; x <= 4.5; x += 0.06) {
+  const y = 2 * (x - 2) * (x - 2) - 3;
+  if (y >= -4 && y <= 10) c2.push(`${c2.length === 0 ? 'M' : 'L'}${toX(g2.x, x, -1, 5).toFixed(1)},${toY(g2.y, y, -4, 10).toFixed(1)}`);
+}
+
+// 3. Hyperbola x²/25-y²/16=1, a=5, b=4
+const g3 = grid(0, 1);
+const h3r: string[] = []; const h3l: string[] = [];
+for (let t = -1.2; t <= 1.2; t += 0.05) {
+  const coshT = (Math.exp(t) + Math.exp(-t)) / 2;
+  const sinhT = (Math.exp(t) - Math.exp(-t)) / 2;
+  const xr = 5 * coshT; const yr = 4 * sinhT;
+  if (xr <= 8) {
+    h3r.push(`${h3r.length === 0 ? 'M' : 'L'}${toX(g3.x, xr, -9, 9).toFixed(1)},${toY(g3.y, yr, -6, 6).toFixed(1)}`);
+    h3l.push(`${h3l.length === 0 ? 'M' : 'L'}${toX(g3.x, -xr, -9, 9).toFixed(1)},${toY(g3.y, yr, -6, 6).toFixed(1)}`);
+  }
+}
+
+// 4. Ellipse (x-2)²/4+(y+3)²/9=1, center (2,-3), a=2 horiz, b=3 vert
+const g4 = grid(1, 1);
+const c4: string[] = [];
+for (let a = 0; a <= 360; a += 2) {
+  const x = 2 + 2 * Math.cos(a * Math.PI / 180);
+  const y = -3 + 3 * Math.sin(a * Math.PI / 180);
+  c4.push(`${a === 0 ? 'M' : 'L'}${toX(g4.x, x, -1, 5).toFixed(1)},${toY(g4.y, y, -7, 1).toFixed(1)}`);
+}
+---
+
+<figure class="ice-diagram" role="img" aria-label="Four worked examples graphed: circle, parabola, hyperbola, ellipse">
+  <figcaption class="ice-title">The four worked examples graphed</figcaption>
+  <svg viewBox={`0 0 ${totalW} ${totalH}`} width={totalW} height={totalH} xmlns="http://www.w3.org/2000/svg">
+    <rect class="ice-bg" x="0" y="0" width={totalW} height={totalH} rx="8" />
+
+    {/* 1. Circle */}
+    <line class="ice-axis" x1={g1.x} y1={toY(g1.y, 0, -9, 1)} x2={g1.x + pw} y2={toY(g1.y, 0, -9, 1)} stroke-width="0.8" />
+    <line class="ice-axis" x1={toX(g1.x, 0, -2, 8)} y1={g1.y} x2={toX(g1.x, 0, -2, 8)} y2={g1.y + ph} stroke-width="0.8" />
+    <path class="ice-c0" d={c1.join(' ') + ' Z'} fill="none" stroke-width="2" />
+    <circle class="ice-dot" cx={toX(g1.x, 3, -2, 8)} cy={toY(g1.y, -4, -9, 1)} r="3" />
+    <text class="ice-l0" x={g1.x + pw / 2} y={g1.y + ph + 14} font-size="9" text-anchor="middle" font-weight="bold">1. Circle: (x−3)²+(y+4)²=16</text>
+
+    {/* 2. Parabola */}
+    <line class="ice-axis" x1={g2.x} y1={toY(g2.y, 0, -4, 10)} x2={g2.x + pw} y2={toY(g2.y, 0, -4, 10)} stroke-width="0.8" />
+    <line class="ice-axis" x1={toX(g2.x, 0, -1, 5)} y1={g2.y} x2={toX(g2.x, 0, -1, 5)} y2={g2.y + ph} stroke-width="0.8" />
+    <path class="ice-c1" d={c2.join(' ')} fill="none" stroke-width="2" />
+    <circle class="ice-dot" cx={toX(g2.x, 2, -1, 5)} cy={toY(g2.y, -3, -4, 10)} r="3" />
+    <text class="ice-l1" x={g2.x + pw / 2} y={g2.y + ph + 14} font-size="9" text-anchor="middle" font-weight="bold">2. Parabola: y=2(x−2)²−3</text>
+
+    {/* 3. Hyperbola */}
+    <line class="ice-axis" x1={g3.x} y1={toY(g3.y, 0, -6, 6)} x2={g3.x + pw} y2={toY(g3.y, 0, -6, 6)} stroke-width="0.8" />
+    <line class="ice-axis" x1={toX(g3.x, 0, -9, 9)} y1={g3.y} x2={toX(g3.x, 0, -9, 9)} y2={g3.y + ph} stroke-width="0.8" />
+    <path class="ice-c2" d={h3r.join(' ')} fill="none" stroke-width="2" />
+    <path class="ice-c2" d={h3l.join(' ')} fill="none" stroke-width="2" />
+    <circle class="ice-dot" cx={toX(g3.x, 0, -9, 9)} cy={toY(g3.y, 0, -6, 6)} r="3" />
+    <text class="ice-l2" x={g3.x + pw / 2} y={g3.y + ph + 14} font-size="9" text-anchor="middle" font-weight="bold">3. Hyperbola: x²/25−y²/16=1</text>
+
+    {/* 4. Ellipse */}
+    <line class="ice-axis" x1={g4.x} y1={toY(g4.y, 0, -7, 1)} x2={g4.x + pw} y2={toY(g4.y, 0, -7, 1)} stroke-width="0.8" />
+    <line class="ice-axis" x1={toX(g4.x, 0, -1, 5)} y1={g4.y} x2={toX(g4.x, 0, -1, 5)} y2={g4.y + ph} stroke-width="0.8" />
+    <path class="ice-c3" d={c4.join(' ') + ' Z'} fill="none" stroke-width="2" />
+    <circle class="ice-dot" cx={toX(g4.x, 2, -1, 5)} cy={toY(g4.y, -3, -7, 1)} r="3" />
+    <text class="ice-l3" x={g4.x + pw / 2} y={g4.y + ph + 14} font-size="9" text-anchor="middle" font-weight="bold">4. Ellipse: (x−2)²/4+(y+3)²/9=1</text>
+
+  </svg>
+</figure>
+
+<style>
+  .ice-diagram { display: flex; flex-direction: column; align-items: center; margin: 1.5rem 0; }
+  .ice-title { font-size: 0.95rem; color: var(--sl-color-gray-3); margin-bottom: 0.5rem; font-style: italic; }
+  .ice-diagram svg { max-width: 100%; height: auto; }
+  .ice-bg { fill: var(--sl-color-bg, #121212); }
+  .ice-axis { stroke: #555; }
+  .ice-dot { fill: #f0c674; stroke: #fff; stroke-width: 1.5; }
+  .ice-c0 { stroke: #58a6ff; }
+  .ice-c1 { stroke: #f78166; }
+  .ice-c2 { stroke: #d2a8ff; }
+  .ice-c3 { stroke: #7ee787; }
+  .ice-l0 { fill: #58a6ff; font-family: 'Libre Baskerville', Georgia, serif; }
+  .ice-l1 { fill: #f78166; font-family: 'Libre Baskerville', Georgia, serif; }
+  .ice-l2 { fill: #d2a8ff; font-family: 'Libre Baskerville', Georgia, serif; }
+  .ice-l3 { fill: #7ee787; font-family: 'Libre Baskerville', Georgia, serif; }
+
+  :global([data-theme="light"]) .ice-bg { fill: #f8f9fa; }
+  :global([data-theme="light"]) .ice-axis { stroke: #aaa; }
+  :global([data-theme="light"]) .ice-dot { fill: #b45309; stroke: #fff; }
+  :global([data-theme="light"]) .ice-c0 { stroke: #0969da; }
+  :global([data-theme="light"]) .ice-c1 { stroke: #cf222e; }
+  :global([data-theme="light"]) .ice-c2 { stroke: #8250df; }
+  :global([data-theme="light"]) .ice-c3 { stroke: #1a7f37; }
+  :global([data-theme="light"]) .ice-l0 { fill: #0969da; }
+  :global([data-theme="light"]) .ice-l1 { fill: #cf222e; }
+  :global([data-theme="light"]) .ice-l2 { fill: #8250df; }
+  :global([data-theme="light"]) .ice-l3 { fill: #1a7f37; }
+</style>

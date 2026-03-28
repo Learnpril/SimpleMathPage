@@ -1,0 +1,79 @@
+---
+/**
+ * ArithSeqDiagram — shows 7, 11, 15, 19, 23 with +4 arcs.
+ * Bigger circles, larger text, more spacing.
+ */
+const terms = [7, 11, 15, 19, 23];
+const n = terms.length;
+const w = 540; const h = 180;
+const dotY = 110;
+const startX = 50; const endX = 490;
+const gap = (endX - startX) / (n - 1);
+
+function dx(i: number) { return startX + i * gap; }
+
+const subs = ['a₁', 'a₂', 'a₃', 'a₄', 'a₅'];
+---
+
+<figure class="asq-diagram" role="img" aria-label="Arithmetic sequence 7, 11, 15, 19, 23 with common difference +4">
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+
+    {/* Horizontal line */}
+    <line class="asq-line" x1={startX - 25} y1={dotY} x2={endX + 25} y2={dotY} stroke-width="1.5" />
+
+    {/* Dots with values inside */}
+    {terms.map((t, i) => (
+      <g>
+        <circle class="asq-dot" cx={dx(i)} cy={dotY} r="18" />
+        <text class="asq-val" x={dx(i)} y={dotY + 6} font-size="18" text-anchor="middle" font-weight="bold">{t}</text>
+      </g>
+    ))}
+
+    {/* Subscript labels below */}
+    {subs.map((s, i) => (
+      <text class="asq-idx" x={dx(i)} y={dotY + 40} font-size="14" text-anchor="middle">{s}</text>
+    ))}
+
+    {/* +4 arcs between each pair */}
+    <defs>
+      <marker id="asq-arr" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto">
+        <path class="asq-arrow-head" d="M0,0 L7,3.5 L0,7 Z" />
+      </marker>
+    </defs>
+
+    {[0, 1, 2, 3].map(i => {
+      const x1 = dx(i) + 20;
+      const x2 = dx(i + 1) - 20;
+      const midX = (x1 + x2) / 2;
+      const arcY = dotY - 50;
+      return (
+        <g>
+          <path class="asq-arc" d={`M${x1},${dotY - 16} Q${midX},${arcY} ${x2},${dotY - 16}`} fill="none" stroke-width="2" marker-end="url(#asq-arr)" />
+          <text class="asq-diff" x={midX} y={arcY - 6} font-size="16" text-anchor="middle" font-weight="bold">+4</text>
+        </g>
+      );
+    })}
+
+  </svg>
+</figure>
+
+<style>
+  .asq-diagram { display: flex; flex-direction: column; align-items: center; margin: 1.5rem 0; }
+  .asq-title { font-size: 0.95rem; color: var(--sl-color-gray-3); margin-bottom: 0.5rem; font-style: italic; }
+  .asq-diagram svg { max-width: 100%; height: auto; }
+  .asq-line { stroke: #555; }
+  .asq-dot { fill: #58a6ff; stroke: #fff; stroke-width: 2.5; }
+  .asq-val { fill: #fff; font-family: 'Libre Baskerville', Georgia, serif; }
+  .asq-idx { fill: #999; font-family: 'Libre Baskerville', Georgia, serif; }
+  .asq-arc { stroke: #7ee787; }
+  .asq-arrow-head { fill: #7ee787; }
+  .asq-diff { fill: #7ee787; font-faia, serif; }
+
+  :global([data-theme="light"]) .asq-line { stroke: #aaa; }
+  :global([data-theme="light"]) .asq-dot { fill: #0969da; stroke: #fff; }
+  :global([data-theme="light"]) .asq-val { fill: #fff; }
+  :global([data-theme="light"]) .asq-idx { fill: #666; }
+  :global([data-theme="light"]) .asq-arc { stroke: #1a7f37; }
+  :global([data-theme="light"]) .asq-arrow-head { fill: #1a7f37; }
+  :global([data-theme="light"]) .asq-diff { fill: #1a7f37; }
+</style>

@@ -1,8 +1,122 @@
 ---
 title: Ellipses and Hyperbolas
-description: Learn the equations and properties of ellipses and hyperbolas
+description: Learn the standard equations and key features of ellipses and hyperbolas
 sidebar:
-  order: 24
+  order: 25
 ---
 
-Content coming soon.
+## What You'll Learn
+
+In this lesson you'll learn the standard equations for ellipses and hyperbolas and how to identify their key features.
+
+## The Concept
+
+### Ellipses
+
+An **ellipse** is an oval-shaped curve. The standard equation with center (h, k) is:
+
+Horizontal major axis (wider than tall, a &gt; b):
+
+$$
+\frac{(x - h)^2}{a^2} + \frac{(y - k)^2}{b^2} = 1
+$$
+
+Vertical major axis (taller than wide, a &gt; b):
+
+$$
+\frac{(x - h)^2}{b^2} + \frac{(y - k)^2}{a^2} = 1
+$$
+
+Key features: center (h, k), vertices along the major axis, co-vertices along the minor axis.
+
+### Hyperbolas
+
+A **hyperbola** has two separate branches. The standard equations are:
+
+Horizontal transverse axis (branches open left/right):
+
+$$
+\frac{(x - h)^2}{a^2} - \frac{(y - k)^2}{b^2} = 1
+$$
+
+Vertical transverse axis (branches open up/down):
+
+$$
+\frac{(y - k)^2}{a^2} - \frac{(x - h)^2}{b^2} = 1
+$$
+
+Key features: center (h, k), vertices along the transverse axis, asymptotes that the branches approach.
+
+## Worked Example
+
+import EllipseHyperbolaDiagram from "../../../components/EllipseHyperbolaDiagram.astro";
+
+<EllipseHyperbolaDiagram />
+
+The left graph shows the green ellipse centered at (2, −1) with a = 3 (horizontal) and b = 2 (vertical). The gold dot is the center, and the blue dots are the vertices at (−1, −1) and (5, −1). The right graph shows the purple hyperbola centered at (−3, 5) with two branches opening left and right. The dashed lines are the asymptotes that the branches approach but never touch.
+
+**1. Identify the conic and center**
+
+$$
+\frac{(x - 2)^2}{9} + \frac{(y + 1)^2}{4} = 1
+$$
+
+Both terms positive → **ellipse**. Center: (2, −1). Since 9 &gt; 4, the larger denominator is under x², so a = 3 (horizontal major axis) and b = 2.
+
+**2. Identify the conic**
+
+$$
+\frac{(x + 3)^2}{16} - \frac{(y - 5)^2}{9} = 1
+$$
+
+Opposite signs → **hyperbola**. The positive term is under x², so the transverse axis is horizontal. Center: (−3, 5). a = 4, b = 3.
+
+## Real-World Application
+
+- **Ellipses**: planetary orbits (Kepler's laws), whispering galleries, certain sports stadiums, and gears.
+- **Hyperbolas**: navigation systems (LORAN), cooling towers at power plants, some telescope designs, and hyperbolic mirrors.
+
+Example: the orbits of planets around the sun are ellipses, with the sun at one focus.
+
+:::note[You've Got This]
+For ellipses, both x² and y² terms are positive. For hyperbolas, they have opposite signs. The larger denominator tells you the direction of the major/transverse axis. Practice identifying the type and center from the equation — this skill will help you graph them more easily in the future.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="algebra2-ellipses-and-hyperbolas"
+  questions={[
+    {
+      id: "q1",
+      text: "The equation $\\frac{(x-1)^2}{4} + \\frac{(y+2)^2}{9} = 1$ is a:",
+      options: ["Ellipse", "Hyperbola", "Circle", "Parabola"],
+      correctIndex: 0,
+      explanation: "Both terms are positive → ellipse.",
+    },
+    {
+      id: "q2",
+      text: "The equation $\\frac{(x+3)^2}{25} - \\frac{(y-1)^2}{16} = 1$ is a:",
+      options: ["Hyperbola", "Ellipse", "Parabola", "Circle"],
+      correctIndex: 0,
+      explanation: "Opposite signs → hyperbola.",
+    },
+    {
+      id: "q3",
+      text: "In the ellipse $\\frac{(x-h)^2}{a^2} + \\frac{(y-k)^2}{b^2} = 1$, if $a > b$, the major axis is:",
+      options: ["Horizontal", "Vertical", "Diagonal", "It depends on $k$"],
+      correctIndex: 0,
+      explanation:
+        "The larger denominator ($a^2$) under $x^2$ means horizontal major axis.",
+    },
+    {
+      id: "q4",
+      text: "The center of $\\frac{(x+4)^2}{16} - \\frac{(y-3)^2}{9} = 1$ is:",
+      options: ["$(-4, 3)$", "$(4, -3)$", "$(-4, -3)$", "$(4, 3)$"],
+      correctIndex: 0,
+      explanation: "Center is $(h, k) = (-4, 3)$ from the signs.",
+    },
+  ]}
+/>

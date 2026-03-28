@@ -1,8 +1,122 @@
 ---
 title: Circles and Parabolas
-description: Learn the equations and properties of circles and parabolas
+description: Learn the standard equations and key features of circles and parabolas
 sidebar:
-  order: 23
+  order: 24
 ---
 
-Content coming soon.
+## What You'll Learn
+
+In this lesson you'll learn the standard equations for circles and parabolas and how to identify their key features from the equation.
+
+## The Concept
+
+### Circles
+
+The standard equation of a circle with center (h, k) and radius r is:
+
+$$
+(x - h)^2 + (y - k)^2 = r^2
+$$
+
+Key features: center at (h, k), radius r, diameter 2r.
+
+### Parabolas
+
+A parabola can open up/down or left/right.
+
+Vertical parabola (opens up or down):
+
+$$
+y = a(x - h)^2 + k
+$$
+
+Vertex at (h, k). Opens upward if a &gt; 0, downward if a &lt; 0.
+
+Horizontal parabola (opens left or right):
+
+$$
+x = a(y - k)^2 + h
+$$
+
+Vertex at (h, k). Opens right if a &gt; 0, left if a &lt; 0.
+
+## Worked Example
+
+import CircleParabolaDiagram from "../../../components/CircleParabolaDiagram.astro";
+
+<CircleParabolaDiagram />
+
+The left graph shows the blue circle with center (3, −2) and radius 5. The gold dot marks the center, and the green dashed line shows the radius extending to the right. The right graph shows the orange parabola with vertex at (4, 1), opening upward since a = 2 &gt; 0. The dashed line is the axis of symmetry at x = 4.
+
+**1. Write the equation of a circle with center (3, −2) and radius 5**
+
+$$
+(x - 3)^2 + (y + 2)^2 = 25
+$$
+
+**2. Identify the vertex and direction of y = 2(x − 4)² + 1**
+
+Vertex: (4, 1). Opens upward (a = 2 &gt; 0).
+
+**3. Find the center and radius of x² + y² − 6x + 8y − 11 = 0**
+
+Complete the square for both x and y:
+
+$$
+\begin{aligned}
+(x^2 - 6x + 9) + (y^2 + 8y + 16) &= 11 + 9 + 16 \\[1em]
+(x - 3)^2 + (y + 4)^2 &= 36
+\end{aligned}
+$$
+
+Center: (3, −4). Radius: √36 = 6.
+
+## Real-World Application
+
+- **Circles**: wheels, clocks, round tables, satellite orbits, manhole covers.
+- **Parabolas**: satellite dishes (focus incoming signals), headlights and flashlights (focus light beams), suspension bridges, projectile paths.
+
+Example: a satellite dish is parabolic because it reflects signals to a single focal point at the vertex.
+
+:::note[You've Got This]
+For circles, remember the center is (h, k) and the equation uses (x − h)² + (y − k)². For parabolas, the squared term tells you the direction it opens. Practice converting between general and standard form by completing the square — it's a very useful skill for all conic sections.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="algebra2-circles-and-parabolas"
+  questions={[
+    {
+      id: "q1",
+      text: "What is the center of the circle $(x - 5)^2 + (y + 2)^2 = 49$?",
+      options: ["$(5, -2)$", "$(-5, 2)$", "$(5, 2)$", "$(-5, -2)$"],
+      correctIndex: 0,
+      explanation: "The center is $(h, k) = (5, -2)$.",
+    },
+    {
+      id: "q2",
+      text: "The equation $y = -3(x + 1)^2 + 4$ opens:",
+      options: ["Downward", "Upward", "Left", "Right"],
+      correctIndex: 0,
+      explanation: "$a = -3 < 0$, so it opens downward.",
+    },
+    {
+      id: "q3",
+      text: "What is the radius of $x^2 + y^2 = 36$?",
+      options: ["$6$", "$36$", "$18$", "$\\sqrt{36}$"],
+      correctIndex: 0,
+      explanation: "$r^2 = 36 \\rightarrow r = 6$.",
+    },
+    {
+      id: "q4",
+      text: "The vertex of $x = 2(y - 3)^2 + 5$ is:",
+      options: ["$(5, 3)$", "$(3, 5)$", "$(-5, 3)$", "$(2, 3)$"],
+      correctIndex: 0,
+      explanation: "For $x = a(y - k)^2 + h$, vertex is $(h, k) = (5, 3)$.",
+    },
+  ]}
+/>

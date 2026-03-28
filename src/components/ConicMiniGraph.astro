@@ -1,0 +1,85 @@
+---
+/**
+ * ConicMiniGraph — single mini graph for one conic section.
+ * Props: type = "circle" | "parabola" | "hyperbola" | "ellipse"
+ */
+interface Props { type: "circle" | "parabola" | "hyperbola" | "ellipse"; }
+const { type } = Astro.props;
+
+const w = 280; const h = 280; const pad = 40;
+const pw = w - pad * 2; const ph = h - pad * 2;
+
+let xLo: number, xHi: number, yLo: number, yHi: number;
+let curvePaths: string[] = [];
+let centerX = 0; let centerY = 0;
+let label = ""; let color = "#58a6ff";
+
+function toX(v: number) { return pad + ((v - xLo) / (xHi - xLo)) * pw; }
+function toY(v: number) { return pad + ((yHi - v) / (yHi - yLo)) * ph; }
+
+if (type === "circle") {
+  xLo = -2; xHi = 8; yLo = -9; yHi = 1;
+  centerX = 3; centerY = -4; color = "#58a6ff";
+  label = "(x−3)² + (y+4)² = 16";
+  const pts: string[] = [];
+  for (let a = 0; a <= 360; a += 2) {
+    pts.push(`${a === 0 ? 'M' : 'L'}${toX(3 + 4 * Math.cos(a * Math.PI / 180)).toFixed(1)},${toY(-4 + 4 * Math.sin(a * Math.PI / 180)).toFixed(1)}`);
+  }
+  curvePaths = [pts.join(' ') + ' Z'];
+} else if (type === "parabola") {
+  xLo = -1; xHi = 5; yLo = -4; yHi = 10;
+  centerX = 2; centerY = -3; color = "#f78166";
+  label = "y = 2(x−2)² − 3";
+  const pts: string[] = [];
+  for (let x = -0.5; x <= 4.5; x += 0.06) {
+    const y = 2 * (x - 2) * (x - 2) - 3;
+    if (y >= yLo && y <= yHi) pts.push(`${pts.length === 0 ? 'M' : 'L'}${toX(x).toFixed(1)},${toY(y).toFixed(1)}`);
+  }
+  curvePaths = [pts.join(' ')];
+} else if (type === "hyperbola") {
+  xLo = -9; xHi = 9; yLo = -6; yHi = 6;
+  centerX = 0; centerY = 0; color = "#d2a8ff";
+  label = "x²/25 − y²/16 = 1";
+  const r: string[] = []; const l: string[] = [];
+  for (let t = -1.2; t <= 1.2; t += 0.05) {
+    const cT = (Math.exp(t) + Math.exp(-t)) / 2;
+    const sT = (Math.exp(t) - Math.exp(-t)) / 2;
+    if (5 * cT <= 8.5) {
+      r.push(`${r.length === 0 ? 'M' : 'L'}${toX(5 * cT).toFixed(1)},${toY(4 * sT).toFixed(1)}`);
+      l.push(`${l.length === 0 ? 'M' : 'L'}${toX(-5 * cT).toFixed(1)},${toY(4 * sT).toFixed(1)}`);
+    }
+  }
+  curvePaths = [r.join(' '), l.join(' ')];
+} else {
+  xLo = -1; xHi = 5; yLo = -7; yHi = 1;
+  centerX = 2; centerY = -3; color = "#7ee787";
+  label = "(x−2)²/4 + (y+3)²/9 = 1";
+  const pts: string[] = [];
+  for (let a = 0; a <= 360; a += 2) {
+    pts.push(`${a === 0 ? 'M' : 'L'}${toX(2 + 2 * Math.cos(a * Math.PI / 180)).toFixed(1)},${toY(-3 + 3 * Math.sin(a * Math.PI / 180)).toFixed(1)}`);
+  }
+  curvePaths = [pts.join(' ') + ' Z'];
+}
+
+const axY = toY(0); const axX = toX(0);
+---
+
+<figure class="cmg" role="img" aria-label={label}>
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    <rect class="cmg-bg" x="0" y="0" width={w} height={h} rx="8" />
+    <line class="cmg-axis" x1={pad} y1={axY} x2={w - pad} y2={axY} stroke-width="0.8" />
+    <line class="cmg-axis" x1={axX} y1={pad} x2={axX} y2={h - pad} stroke-width="0.8" />
+    {curvePaths.map(d => <path d={d} fill="none" stroke={color} stroke-width="2.5" />)}
+    <circle cx={toX(centerX)} cy={toY(centerY)} r="4" fill="#f0c674" stroke="#fff" stroke-width="1.5" />
+    <text x={w / 2} y={h - 6} font-size="11" text-anchor="middle" fill={color} font-weight="bold" font-family="'Libre Baskerville', Georgia, serif">{label}</text>
+  </svg>
+</figure>
+
+<style>
+  .cmg { display: flex; flex-direction: column; align-items: center; margin: 1rem 0; }
+  .cmg svg { max-width: 100%; height: auto; }
+  .cmg-bg { fill: var(--sl-color-bg, #121212); }
+  .cmg-axis { stroke: #555; }
+  :global([data-theme="light"]) .cmg-bg { fill: #f8f9fa; }
+  :global([data-theme="light"]) .cmg-axis { stroke: #aaa; }
+</style>

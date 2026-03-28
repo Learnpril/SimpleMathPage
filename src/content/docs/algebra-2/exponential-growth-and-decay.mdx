@@ -1,8 +1,157 @@
 ---
 title: Exponential Growth and Decay
-description: Learn about exponential functions and their real-world applications
+description: Learn how to model and solve problems involving exponential growth and decay
 sidebar:
-  order: 26
+  order: 27
 ---
 
-Content coming soon.
+## What You'll Learn
+
+In this lesson you'll learn how to recognize, write, and solve problems involving exponential growth and exponential decay.
+
+## The Concept
+
+Exponential functions have the form:
+
+$$
+y = a \cdot b^x
+$$
+
+Where a is the initial amount (when x = 0) and b is the growth or decay factor.
+
+- **Exponential growth**: b &gt; 1 (quantity increases over time)
+- **Exponential decay**: 0 &lt; b &lt; 1 (quantity decreases over time)
+
+import ExpGrowthDecayDiagram from "../../../components/ExpGrowthDecayDiagram.astro";
+
+<ExpGrowthDecayDiagram />
+
+The left graph shows exponential growth — the green curve starts at 500 and climbs faster and faster. The right graph shows exponential decay — the orange curve starts at 200 and drops quickly at first, then levels off toward zero. The gold dots mark the initial values.
+
+Common real-world forms:
+
+**Growth:**
+
+$$
+y = a(1 + r)^t
+$$
+
+where r is the growth rate per period and t is time.
+
+**Decay:**
+
+$$
+y = a(1 - r)^t
+$$
+
+or for half-life problems:
+
+$$
+y = a\left(\frac{1}{2}\right)^{t/h}
+$$
+
+where h is the half-life.
+
+## Worked Example
+
+**1. Bacteria growth**
+
+A population of 500 bacteria grows at 8% per hour. Write the model and find the population after 5 hours.
+
+$$
+P(t) = 500(1.08)^t
+$$
+
+$$
+P(5) = 500(1.08)^5 \approx 500 \times 1.4693 \approx 735 \text{ bacteria}
+$$
+
+**2. Radioactive decay (half-life)**
+
+A substance has a half-life of 10 years. Starting with 200 grams, how much remains after 30 years?
+
+$$
+y = 200\left(\frac{1}{2}\right)^{t/10}
+$$
+
+$$
+y = 200\left(\frac{1}{2}\right)^{30/10} = 200\left(\frac{1}{2}\right)^3 = 200 \times \frac{1}{8} = 25 \text{ grams}
+$$
+
+**3. Car depreciation**
+
+A car bought for 25,000 dollars depreciates at 12% per year. Value after 4 years:
+
+$$
+V(t) = 25000(0.88)^t
+$$
+
+$$
+V(4) = 25000(0.88)^4 \approx 25000 \times 0.5997 \approx 14{,}993 \text{ dollars}
+$$
+
+## Real-World Application
+
+Exponential growth and decay appear in many important areas:
+
+- Population growth and spread of diseases
+- Compound interest and investment growth
+- Radioactive decay and carbon dating
+- Depreciation of cars, equipment, and assets
+- Cooling/heating of objects (Newton's Law of Cooling)
+
+Example: understanding exponential decay helps scientists determine the age of ancient artifacts using carbon-14 dating.
+
+:::note[You've Got This]
+Remember: growth uses a base greater than 1, decay uses a base between 0 and 1. The exponent is almost always time. When you see "grows at r% per year" or "half-life," translate them into the proper base. Practice converting word problems into exponential equations — this skill is extremely useful in science, finance, and everyday decision-making.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="algebra2-exponential-growth-and-decay"
+  questions={[
+    {
+      id: "q1",
+      text: "$P(t) = 200(1.06)^t$ represents:",
+      options: [
+        "Exponential growth",
+        "Exponential decay",
+        "Linear growth",
+        "Quadratic growth",
+      ],
+      correctIndex: 0,
+      explanation: "Base $1.06 > 1$ indicates growth.",
+    },
+    {
+      id: "q2",
+      text: "A substance with half-life 8 years uses the model:",
+      options: [
+        "$y = a\\left(\\frac{1}{2}\\right)^{t/8}$",
+        "$y = a(1.5)^t$",
+        "$y = a(0.5)^t$",
+        "$y = a(2)^t$",
+      ],
+      correctIndex: 0,
+      explanation:
+        "Half-life means the amount is multiplied by $\\frac{1}{2}$ every 8 years.",
+    },
+    {
+      id: "q3",
+      text: "If a car depreciates at 15% per year, the decay factor is:",
+      options: ["$0.85$", "$1.15$", "$0.15$", "$1.85$"],
+      correctIndex: 0,
+      explanation: "Decay factor $= 1 - 0.15 = 0.85$.",
+    },
+    {
+      id: "q4",
+      text: "In $y = a \\cdot b^t$, exponential decay occurs when:",
+      options: ["$0 < b < 1$", "$b > 1$", "$b = 1$", "$b < 0$"],
+      correctIndex: 0,
+      explanation:
+        "A base between 0 and 1 makes the function decrease over time.",
+    },
+  ]}
+/>

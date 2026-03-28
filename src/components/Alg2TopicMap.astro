@@ -1,0 +1,70 @@
+---
+/**
+ * Alg2TopicMap — visual overview of all 10 Algebra 2 topic areas
+ * arranged in a grid with icons/symbols for each topic.
+ */
+const topics = [
+  { label: 'Functions', symbol: 'f(x)', color: '#58a6ff' },
+  { label: 'Quadratics', symbol: 'x²', color: '#7ee787' },
+  { label: 'Complex\nNumbers', symbol: 'a+bi', color: '#d2a8ff' },
+  { label: 'Polynomials', symbol: 'xⁿ', color: '#f0883e' },
+  { label: 'Rational\nExpressions', symbol: 'p/q', color: '#f778ba' },
+  { label: 'Radicals', symbol: '√x', color: '#ffa657' },
+  { label: 'Conics', symbol: '__conic__', color: '#79c0ff' },
+  { label: 'Exp & Log', symbol: 'eˣ', color: '#7ee787' },
+  { label: 'Systems', symbol: '{ }', color: '#d2a8ff' },
+  { label: 'Sequences', symbol: 'aₙ', color: '#58a6ff' },
+];
+
+const cols = 5;
+const cellW = 110;
+const cellH = 90;
+const padX = 15;
+const padY = 15;
+const w = cols * cellW + (cols + 1) * padX;
+const rows = Math.ceil(topics.length / cols);
+const h = rows * cellH + (rows + 1) * padY;
+---
+
+<figure class="a2tm" role="img" aria-label="Algebra 2 topic overview: Functions, Quadratics, Complex Numbers, Polynomials, Rational Expressions, Radicals, Conics, Exponentials and Logarithms, Systems, Sequences">
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    {topics.map((t, i) => {
+      const col = i % cols;
+      const row = Math.floor(i / cols);
+      const x = padX + col * (cellW + padX);
+      const y = padY + row * (cellH + padY);
+      const cx = x + cellW / 2;
+      const cy = y + cellH / 2;
+      const lines = t.label.split('\n');
+      return (
+        <g>
+          <rect class="a2tm-card" x={x} y={y} width={cellW} height={cellH} rx="10" ry="10" />
+          {t.symbol === '__conic__' ? (
+            <ellipse cx={cx} cy={cy - 14} rx="18" ry="12" fill="none" stroke={t.color} stroke-width="2" />
+          ) : (
+            <text class="a2tm-sym" x={cx} y={cy - 12} font-size="20" text-anchor="middle" font-weight="bold" fill={t.color}>{t.symbol}</text>
+          )}
+          {lines.length === 1 ? (
+            <text class="a2tm-lbl" x={cx} y={cy + 18} font-size="11" text-anchor="middle">{lines[0]}</text>
+          ) : (
+            <g>
+              <text class="a2tm-lbl" x={cx} y={cy + 14} font-size="11" text-anchor="middle">{lines[0]}</text>
+              <text class="a2tm-lbl" x={cx} y={cy + 27} font-size="11" text-anchor="middle">{lines[1]}</text>
+            </g>
+          )}
+        </g>
+      );
+    })}
+  </svg>
+</figure>
+
+<style>
+  .a2tm { display: flex; flex-direction: column; align-items: center; margin: 1.5rem 0; }
+  .a2tm svg { max-width: 100%; height: auto; }
+  .a2tm-card { fill: #1c2128; stroke: #444; stroke-width: 1; }
+  .a2tm-lbl { fill: #ccc; font-family: 'Libre Baskerville', Georgia, serif; }
+  .a2tm-sym { font-family: 'Libre Baskerville', Georgia, serif; }
+
+  :global([data-theme="light"]) .a2tm-card { fill: #f0f0f0; stroke: #ccc; }
+  :global([data-theme="light"]) .a2tm-lbl { fill: #333; }
+</style>

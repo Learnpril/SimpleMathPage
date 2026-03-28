@@ -1,8 +1,114 @@
 ---
 title: Introduction to Matrices
-description: Learn what matrices are and basic matrix operations
+description: Learn what matrices are, how to represent them, and basic matrix operations (addition and subtraction)
 sidebar:
-  order: 29
+  order: 30
 ---
 
-Content coming soon.
+## What You'll Learn
+
+In this lesson you'll learn what a matrix is, how to read and write matrices, and how to add and subtract matrices of the same size.
+
+## The Concept
+
+A **matrix** is a rectangular array of numbers arranged in rows and columns.
+
+Example of a 2×3 matrix (2 rows, 3 columns):
+
+$$
+\begin{bmatrix} 2 & 5 & -1 \\ 3 & 0 & 7 \end{bmatrix}
+$$
+
+- The size is written as rows × columns (e.g., 2×3).
+- Individual entries are called elements.
+
+**Matrix Addition and Subtraction** — you can add or subtract two matrices only if they have the same dimensions. Add or subtract corresponding elements.
+
+$$
+\begin{bmatrix} 3 & 1 \\ -2 & 4 \end{bmatrix} + \begin{bmatrix} 5 & -3 \\ 0 & 2 \end{bmatrix} = \begin{bmatrix} 8 & -2 \\ -2 & 6 \end{bmatrix}
+$$
+
+We will cover deeper matrix topics (determinants, inverses, matrix multiplication) in the future Linear Algebra section. In Algebra 2, we focus on basic operations and using small matrices to solve systems of equations.
+
+## Worked Example
+
+**1. Add two matrices**
+
+$$
+\begin{bmatrix} 4 & -1 & 6 \\ 2 & 3 & 0 \end{bmatrix} + \begin{bmatrix} 1 & 5 & -2 \\ -3 & 2 & 7 \end{bmatrix} = \begin{bmatrix} 5 & 4 & 4 \\ -1 & 5 & 7 \end{bmatrix}
+$$
+
+**2. Subtract two matrices**
+
+$$
+\begin{bmatrix} 7 & 2 \\ 5 & 9 \end{bmatrix} - \begin{bmatrix} 3 & 4 \\ 1 & 6 \end{bmatrix} = \begin{bmatrix} 4 & -2 \\ 4 & 3 \end{bmatrix}
+$$
+
+**3. Can you add a 2×3 matrix and a 3×2 matrix?**
+
+No — the dimensions are different (2×3 vs 3×2), so addition is not defined.
+
+## Real-World Application
+
+Matrices are used in many practical areas:
+
+- Organizing data (spreadsheets, sales tables, inventory)
+- Computer graphics and video games (transformation matrices)
+- Solving systems of equations more efficiently
+- Economics and business (input-output models)
+- Engineering (stress and strain calculations)
+
+Example: a store tracks sales of three products over two weeks in a matrix. Adding matrices lets them see total sales easily.
+
+:::note[You've Got This]
+Matrices are just organized tables of numbers. As long as two matrices have the same number of rows and columns, you can add or subtract them by working element by element. This is a very useful tool for handling large amounts of data and will become even more powerful when we learn matrix multiplication and solving systems with matrices.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="algebra2-introduction-to-matrices"
+  questions={[
+    {
+      id: "q1",
+      text: "A 3×2 matrix has:",
+      options: [
+        "3 rows and 2 columns",
+        "2 rows and 3 columns",
+        "6 rows",
+        "3 columns and 2 rows",
+      ],
+      correctIndex: 0,
+      explanation: "The first number is rows, the second is columns.",
+    },
+    {
+      id: "q2",
+      text: "You can add two matrices only if they have:",
+      options: [
+        "The same dimensions",
+        "The same number of rows only",
+        "Any dimensions",
+        "Square dimensions",
+      ],
+      correctIndex: 0,
+      explanation:
+        "Both matrices must have the same number of rows and columns.",
+    },
+    {
+      id: "q3",
+      text: "What is [2, 5] + [3, −1]?",
+      options: ["[5, 4]", "[6, 4]", "[5, 6]", "[−1, 6]"],
+      correctIndex: 0,
+      explanation: "2+3 = 5, 5+(−1) = 4.",
+    },
+    {
+      id: "q4",
+      text: "Individual numbers in a matrix are called:",
+      options: ["Elements", "Variables", "Coefficients", "Factors"],
+      correctIndex: 0,
+      explanation: "Each number in a matrix is called an element or entry.",
+    },
+  ]}
+/>

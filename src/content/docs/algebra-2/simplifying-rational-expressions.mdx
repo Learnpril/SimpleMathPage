@@ -1,8 +1,127 @@
 ---
 title: Simplifying Rational Expressions
-description: Learn how to simplify rational expressions
+description: Learn how to simplify rational expressions by factoring and canceling common factors
 sidebar:
-  order: 16
+  order: 17
 ---
 
-Content coming soon.
+## What You'll Learn
+
+In this lesson you'll learn what rational expressions are and how to simplify them by factoring the numerator and denominator completely.
+
+## The Concept
+
+A **rational expression** is a fraction where the numerator and/or denominator is a polynomial.
+
+To **simplify** a rational expression:
+
+1. Factor the numerator completely.
+2. Factor the denominator completely.
+3. Cancel any common factors (things that are multiplied in both).
+4. Write the simplified expression in lowest terms.
+
+import RationalCancelDiagram from "../../../components/RationalCancelDiagram.astro";
+
+<RationalCancelDiagram />
+
+Important rules:
+
+- You can only cancel **factors** (things multiplied), never terms that are added or subtracted.
+- Always note the values that make any denominator zero — these are excluded from the domain.
+
+## Worked Example
+
+**1. Simplify (x² − 9) / (x² − 6x + 9)**
+
+Factor both:
+
+$$
+\frac{x^2 - 9}{x^2 - 6x + 9} = \frac{(x - 3)(x + 3)}{(x - 3)(x - 3)}
+$$
+
+Cancel the common (x − 3):
+
+$$
+= \frac{x + 3}{x - 3} \qquad (x \neq 3)
+$$
+
+**2. Simplify (6x² − 12x) / (3x² − 6x)**
+
+Factor both by pulling out the GCF:
+
+$$
+\frac{6x(x - 2)}{3x(x - 2)} = \frac{6}{3} = 2 \qquad (x \neq 0,\; x \neq 2)
+$$
+
+**3. Simplify (x² + 5x + 6) / (x² − 4)**
+
+Factor both:
+
+$$
+\frac{(x + 2)(x + 3)}{(x - 2)(x + 2)} = \frac{x + 3}{x - 2} \qquad (x \neq -2,\; x \neq 2)
+$$
+
+## Real-World Application
+
+Simplifying rational expressions is useful when:
+
+- Finding average cost per unit (total cost / number of units)
+- Simplifying rates in work problems
+- Reducing formulas in physics or engineering
+- Working with concentrations in mixtures
+
+Example: if total cost is 2x² + 10x + 50 and you produce x items, average cost per item is (2x² + 10x + 50) / x. Simplifying helps analyze efficiency as production increases.
+
+:::note[You've Got This]
+Simplifying rational expressions is mostly about strong factoring skills. Factor everything completely first, then cancel matching factors top and bottom. Always write down the excluded values (where the denominator would be zero). With practice, this process becomes fast and reliable.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="algebra2-simplifying-rational-expressions"
+  questions={[
+    {
+      id: "q1",
+      text: "Simplify $\\frac{x^2 - 4}{x - 2}$",
+      options: ["$x + 2$", "$x - 2$", "$x + 4$", "$x^2 - 2$"],
+      correctIndex: 0,
+      explanation:
+        "$x^2 - 4 = (x - 2)(x + 2)$, cancel $(x - 2) \\rightarrow x + 2$ ($x \\neq 2$).",
+    },
+    {
+      id: "q2",
+      text: "When simplifying rational expressions, you can cancel:",
+      options: [
+        "Common factors",
+        "Common terms that are added",
+        "Only constants",
+        "Only the leading coefficients",
+      ],
+      correctIndex: 0,
+      explanation: "You can only cancel common factors that are multiplied.",
+    },
+    {
+      id: "q3",
+      text: "Simplify $\\frac{6x^2 - 12x}{3x^2 - 6x}$",
+      options: ["$2$", "$2x$", "$x - 2$", "$2(x - 2)$"],
+      correctIndex: 0,
+      explanation:
+        "$\\frac{6x(x - 2)}{3x(x - 2)} = \\frac{6}{3} = 2$ ($x \\neq 0$, $x \\neq 2$).",
+    },
+    {
+      id: "q4",
+      text: "Why do we note excluded values when simplifying?",
+      options: [
+        "They make the original denominator zero",
+        "To make the expression look nicer",
+        "Because they are always roots",
+        "To avoid fractions",
+      ],
+      correctIndex: 0,
+      explanation: "Those values make the original expression undefined.",
+    },
+  ]}
+/>

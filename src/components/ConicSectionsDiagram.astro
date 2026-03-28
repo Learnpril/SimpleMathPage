@@ -1,0 +1,110 @@
+---
+/**
+ * ConicSectionsDiagram — four mini panels showing circle, ellipse, parabola, hyperbola.
+ * Simple shape outlines with labels above, no text overlapping curves.
+ */
+const pw = 95;
+const ph = 90;
+const gap = 12;
+const totalW = pw * 4 + gap * 3 + 20;
+const totalH = ph + 50;
+const topY = 40;
+
+function panelX(i: number) { return 10 + i * (pw + gap); }
+const cx = (i: number) => panelX(i) + pw / 2;
+const cy = topY + ph / 2;
+
+// Circle points
+const circlePts: string[] = [];
+for (let a = 0; a <= 360; a += 5) {
+  const r = 35;
+  const x = cx(0) + r * Math.cos(a * Math.PI / 180);
+  const y = cy + r * Math.sin(a * Math.PI / 180);
+  circlePts.push(`${a === 0 ? 'M' : 'L'}${x.toFixed(1)},${y.toFixed(1)}`);
+}
+
+// Ellipse points
+const ellipsePts: string[] = [];
+for (let a = 0; a <= 360; a += 5) {
+  const rx = 40; const ry = 25;
+  const x = cx(1) + rx * Math.cos(a * Math.PI / 180);
+  const y = cy + ry * Math.sin(a * Math.PI / 180);
+  ellipsePts.push(`${a === 0 ? 'M' : 'L'}${x.toFixed(1)},${y.toFixed(1)}`);
+}
+
+// Parabola points (opening up)
+const parPts: string[] = [];
+for (let t = -1.8; t <= 1.8; t += 0.1) {
+  const x = cx(2) + t * 22;
+  const y = cy + 35 - t * t * 18;
+  parPts.push(`${parPts.length === 0 ? 'M' : 'L'}${x.toFixed(1)},${y.toFixed(1)}`);
+}
+
+// Hyperbola points (two branches)
+const hypLeft: string[] = [];
+const hypRight: string[] = [];
+for (let t = -1.6; t <= 1.6; t += 0.08) {
+  const coshT = (Math.exp(t) + Math.exp(-t)) / 2;
+  const sinhT = (Math.exp(t) - Math.exp(-t)) / 2;
+  const xr = cx(3) + coshT * 20;
+  const yr = cy + sinhT * 22;
+  hypRight.push(`${hypRight.length === 0 ? 'M' : 'L'}${xr.toFixed(1)},${yr.toFixed(1)}`);
+  const xl = cx(3) - coshT * 20;
+  hypLeft.push(`${hypLeft.length === 0 ? 'M' : 'L'}${xl.toFixed(1)},${yr.toFixed(1)}`);
+}
+
+const labels = ["Circle", "Ellipse", "Parabola", "Hyperbola"];
+---
+
+<figure class="cs-diagram" role="img" aria-label="Four conic sections: circle, ellipse, parabola, hyperbola">
+  <figcaption class="cs-title">The four conic sections</figcaption>
+  <svg viewBox={`0 0 ${totalW} ${totalH}`} width={totalW} height={totalH} xmlns="http://www.w3.org/2000/svg">
+    <rect class="cs-bg" x="0" y="0" width={totalW} height={totalH} rx="8" />
+
+    {/* Labels above each shape */}
+    {labels.map((label, i) => (
+      <text class={`cs-label cs-label-${i}`} x={cx(i)} y={20} font-size="12" text-anchor="middle" font-weight="bold">{label}</text>
+    ))}
+
+    {/* Circle */}
+    <path class="cs-curve cs-curve-0" d={circlePts.join(' ') + ' Z'} fill="none" stroke-width="2.5" />
+
+    {/* Ellipse */}
+    <path class="cs-curve cs-curve-1" d={ellipsePts.join(' ') + ' Z'} fill="none" stroke-width="2.5" />
+
+    {/* Parabola */}
+    <path class="cs-curve cs-curve-2" d={parPts.join(' ')} fill="none" stroke-width="2.5" />
+
+    {/* Hyperbola (two branches) */}
+    <path class="cs-curve cs-curve-3" d={hypRight.join(' ')} fill="none" stroke-width="2.5" />
+    <path class="cs-curve cs-curve-3" d={hypLeft.join(' ')} fill="none" stroke-width="2.5" />
+
+  </svg>
+</figure>
+
+<style>
+  .cs-diagram { display: flex; flex-direction: column; align-items: center; margin: 1.5rem 0; }
+  .cs-title { font-size: 0.95rem; color: var(--sl-color-gray-3); margin-bottom: 0.5rem; font-style: italic; }
+  .cs-diagram svg { max-width: 100%; height: auto; }
+  .cs-bg { fill: var(--sl-color-bg, #121212); }
+
+  .cs-label-0 { fill: #58a6ff; font-family: 'Libre Baskerville', Georgia, serif; }
+  .cs-label-1 { fill: #7ee787; font-family: 'Libre Baskerville', Georgia, serif; }
+  .cs-label-2 { fill: #f78166; font-family: 'Libre Baskerville', Georgia, serif; }
+  .cs-label-3 { fill: #d2a8ff; font-family: 'Libre Baskerville', Georgia, serif; }
+
+  .cs-curve-0 { stroke: #58a6ff; }
+  .cs-curve-1 { stroke: #7ee787; }
+  .cs-curve-2 { stroke: #f78166; }
+  .cs-curve-3 { stroke: #d2a8ff; }
+
+  :global([data-theme="light"]) .cs-bg { fill: #f8f9fa; }
+  :global([data-theme="light"]) .cs-label-0 { fill: #0969da; }
+  :global([data-theme="light"]) .cs-label-1 { fill: #1a7f37; }
+  :global([data-theme="light"]) .cs-label-2 { fill: #cf222e; }
+  :global([data-theme="light"]) .cs-label-3 { fill: #8250df; }
+  :global([data-theme="light"]) .cs-curve-0 { stroke: #0969da; }
+  :global([data-theme="light"]) .cs-curve-1 { stroke: #1a7f37; }
+  :global([data-theme="light"]) .cs-curve-2 { stroke: #cf222e; }
+  :global([data-theme="light"]) .cs-curve-3 { stroke: #8250df; }
+</style>

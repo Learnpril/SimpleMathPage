@@ -1,8 +1,166 @@
 ---
 title: Properties of Logarithms
-description: Learn the key properties and rules of logarithms
+description: Learn the key properties of logarithms and how to use them to expand and condense logarithmic expressions
 sidebar:
-  order: 28
+  order: 29
 ---
 
-Content coming soon.
+## What You'll Learn
+
+In this lesson you'll learn the three main properties of logarithms and how to use them to simplify, expand, and condense logarithmic expressions.
+
+## The Concept
+
+Logarithms have three fundamental properties that make them powerful tools for simplification:
+
+**1. Product Property** — the log of a product is the sum of the logs:
+
+$$
+\log_b(MN) = \log_b(M) + \log_b(N)
+$$
+
+**2. Quotient Property** — the log of a quotient is the difference of the logs:
+
+$$
+\log_b\!\left(\frac{M}{N}\right) = \log_b(M) - \log_b(N)
+$$
+
+**3. Power Property** — the log of a power brings the exponent out front:
+
+$$
+\log_b(M^k) = k \cdot \log_b(M)
+$$
+
+These properties work in both directions:
+
+- **Expanding**: break a single log into a sum or difference of simpler logs.
+- **Condensing**: combine a sum or difference of logs into a single log.
+
+All logs must have the same base for these properties to apply.
+
+## Worked Example
+
+**1. Expand: log₂(8x³)**
+
+Use the product property, then the power property:
+
+$$
+\log_2(8x^3) = \log_2(8) + \log_2(x^3) = 3 + 3\log_2(x)
+$$
+
+**2. Expand: log₅(25/y)**
+
+Use the quotient property:
+
+$$
+\log_5\!\left(\frac{25}{y}\right) = \log_5(25) - \log_5(y) = 2 - \log_5(y)
+$$
+
+**3. Condense: 2log₃(x) + log₃(5) − 3log₃(y)**
+
+Use the power property first, then product and quotient:
+
+$$
+\begin{aligned}
+&= \log_3(x^2) + \log_3(5) - \log_3(y^3) \\[1em]
+&= \log_3\!\left(\frac{5x^2}{y^3}\right)
+\end{aligned}
+$$
+
+**4. Simplify: log₁₀(1000) + log₁₀(0.1)**
+
+Use the product property to combine, then evaluate:
+
+$$
+\log_{10}(1000 \times 0.1) = \log_{10}(100) = 2
+$$
+
+## Real-World Application
+
+Properties of logarithms are used to:
+
+- Simplify complex formulas in science and engineering
+- Solve exponential equations (by taking logs of both sides)
+- Analyze sound intensity (decibels) and earthquake magnitude (Richter scale)
+- Work with large or small numbers in finance and data analysis
+
+Example: in acoustics, the decibel scale is logarithmic. Properties of logs help combine multiple sound sources.
+
+:::note[You've Got This]
+The three properties (product, quotient, power) are your main tools. Think of them as the "log rules" that let you break big logs apart or combine small ones. Practice expanding and condensing until it feels natural — this skill will be essential when you solve logarithmic and exponential equations later.
+:::
+
+## Quiz
+
+For reference, the three properties:
+
+$$
+\log_b(MN) = \log_b(M) + \log_b(N)
+$$
+
+$$
+\log_b\!\left(\frac{M}{N}\right) = \log_b(M) - \log_b(N)
+$$
+
+$$
+\log_b(M^k) = k \cdot \log_b(M)
+$$
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="algebra2-properties-of-logarithms"
+  questions={[
+    {
+      id: "q1",
+      text: "Using the product property: $\\log_b(MN) =$",
+      options: [
+        "$\\log_b(M) + \\log_b(N)$",
+        "$\\log_b(M) - \\log_b(N)$",
+        "$\\log_b(M) \\cdot \\log_b(N)$",
+        "$\\log_b(M/N)$",
+      ],
+      correctIndex: 0,
+      explanation:
+        "The product property says the log of a product is the sum of the logs.",
+    },
+    {
+      id: "q2",
+      text: "Condense: $3\\log_2(x) - \\log_2(5)$",
+      options: [
+        "$\\log_2(x^3/5)$",
+        "$\\log_2(3x/5)$",
+        "$\\log_2(x^3) - 5$",
+        "$\\log_2(3x - 5)$",
+      ],
+      correctIndex: 0,
+      explanation:
+        "$3\\log_2(x) = \\log_2(x^3)$, then $\\log_2(x^3) - \\log_2(5) = \\log_2(x^3/5)$.",
+    },
+    {
+      id: "q3",
+      text: "The power property says $\\log_b(M^k) =$",
+      options: [
+        "$k \\cdot \\log_b(M)$",
+        "$\\log_b(M) + k$",
+        "$\\log_b(M^k)$",
+        "$k / \\log_b(M)$",
+      ],
+      correctIndex: 0,
+      explanation: "The exponent can be brought in front as a multiplier.",
+    },
+    {
+      id: "q4",
+      text: "Which is equivalent to $\\log_3(27x)$?",
+      options: [
+        "$3 + \\log_3(x)$",
+        "$27 \\cdot \\log_3(x)$",
+        "$3 \\cdot \\log_3(x)$",
+        "$\\log_3(27) \\cdot \\log_3(x)$",
+      ],
+      correctIndex: 0,
+      explanation:
+        "Product property: $\\log_3(27) + \\log_3(x) = 3 + \\log_3(x)$.",
+    },
+  ]}
+/>

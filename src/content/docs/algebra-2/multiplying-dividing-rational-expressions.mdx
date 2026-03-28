@@ -1,8 +1,152 @@
 ---
 title: Multiplying and Dividing Rational Expressions
-description: Learn to multiply and divide rational expressions
+description: Learn how to multiply and divide rational expressions by factoring and simplifying
 sidebar:
-  order: 17
+  order: 18
 ---
 
-Content coming soon.
+## What You'll Learn
+
+In this lesson you'll learn how to multiply and divide rational expressions efficiently by factoring completely and canceling common factors.
+
+## The Concept
+
+**Multiplying rational expressions** — multiply the numerators together and the denominators together, then simplify by factoring and canceling common factors.
+
+**Dividing rational expressions** — flip the second fraction (take its reciprocal), then multiply.
+
+General steps for both:
+
+1. Factor all numerators and denominators completely.
+2. For division, flip the second fraction (multiply by its reciprocal).
+3. Cancel any common factors (a factor in any numerator with the same factor in any denominator).
+4. Multiply what's left.
+5. Note excluded values (where any original denominator is zero).
+
+Remember: only cancel **factors** (things multiplied), never terms that are added or subtracted.
+
+## Worked Example
+
+**1. Multiply (no cancellation needed)**
+
+$$
+\frac{x + 5}{x - 3} \cdot \frac{x - 2}{x + 4}
+$$
+
+Already fully factored, no common factors between any numerator and denominator.
+
+$$
+= \frac{(x + 5)(x - 2)}{(x - 3)(x + 4)} \qquad (x \neq 3,\; x \neq -4)
+$$
+
+**2. Multiply (with cancellation)**
+
+$$
+\frac{x^2 - 9}{x + 6} \cdot \frac{x + 6}{x - 3}
+$$
+
+Factor x² − 9 = (x − 3)(x + 3):
+
+$$
+= \frac{(x - 3)(x + 3)}{x + 6} \cdot \frac{x + 6}{x - 3}
+$$
+
+Cancel (x − 3) and (x + 6):
+
+$$
+= x + 3 \qquad (x \neq 3,\; x \neq -6)
+$$
+
+**3. Divide (flip and multiply)**
+
+$$
+\frac{2x^2 - 8x}{x^2 - 4} \div \frac{x - 4}{x + 2}
+$$
+
+Flip the second fraction and multiply:
+
+$$
+= \frac{2x^2 - 8x}{x^2 - 4} \cdot \frac{x + 2}{x - 4}
+$$
+
+Factor everything: numerator = 2x(x − 4), denominator = (x − 2)(x + 2):
+
+$$
+= \frac{2x(x - 4)}{(x - 2)(x + 2)} \cdot \frac{x + 2}{x - 4}
+$$
+
+Cancel (x − 4) and (x + 2):
+
+$$
+= \frac{2x}{x - 2} \qquad (x \neq \pm 2,\; x \neq 4)
+$$
+
+## Real-World Application
+
+Multiplying and dividing rational expressions is useful in:
+
+- Combined work-rate problems ("How long until two workers finish the job together?")
+- Average cost or rate calculations
+- Parallel circuits in electricity (total resistance)
+- Mixture concentration problems
+- Simplifying complex business or scientific formulas
+
+Example: if Machine A fills a tank in x hours and Machine B fills it in x + 3 hours, their combined rate involves multiplying and simplifying rational expressions.
+
+:::note[You've Got This]
+For multiplication, factor everything and cancel common factors. For division, remember to flip the second fraction first. The key skill is strong factoring. Always write down the excluded values at the end. With practice, these operations become much faster and more intuitive.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="algebra2-multiplying-dividing-rational-expressions"
+  questions={[
+    {
+      id: "q1",
+      text: "To divide two rational expressions, first:",
+      options: [
+        "Multiply by the reciprocal of the second fraction",
+        "Add the numerators",
+        "Cancel before multiplying",
+        "Factor only the denominator",
+      ],
+      correctIndex: 0,
+      explanation: "Division of fractions is multiplication by the reciprocal.",
+    },
+    {
+      id: "q2",
+      text: "Simplify: $\\frac{x^2 - 4}{x + 3} \\cdot \\frac{x + 3}{x - 2}$",
+      options: ["$x + 2$", "$x - 2$", "$x + 3$", "$x^2 - 4$"],
+      correctIndex: 0,
+      explanation:
+        "$x^2 - 4 = (x - 2)(x + 2)$, cancel $(x + 3)$ and $(x - 2) \\rightarrow x + 2$.",
+    },
+    {
+      id: "q3",
+      text: "When multiplying or dividing rational expressions, you can cancel:",
+      options: [
+        "Common factors only",
+        "Common terms that are added",
+        "Only constants",
+        "The entire numerator with the denominator",
+      ],
+      correctIndex: 0,
+      explanation: "You can only cancel matching factors, not added terms.",
+    },
+    {
+      id: "q4",
+      text: "After simplifying, you should always note:",
+      options: [
+        "Values that make any original denominator zero",
+        "Only positive values",
+        "The degree of the result",
+        "The leading coefficient",
+      ],
+      correctIndex: 0,
+      explanation: "Those values make the original expression undefined.",
+    },
+  ]}
+/>

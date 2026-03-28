@@ -1,8 +1,182 @@
 ---
 title: Identifying Conic Sections
-description: Learn how to identify conic sections from their equations
+description: Learn how to identify the type of conic section from its equation and convert to standard form
 sidebar:
-  order: 25
+  order: 26
 ---
 
-Content coming soon.
+## What You'll Learn
+
+In this lesson you'll learn how to identify whether an equation represents a circle, parabola, ellipse, or hyperbola, and how to rewrite general equations in standard form.
+
+## The Concept
+
+The general second-degree equation is:
+
+$$
+Ax^2 + Bxy + Cy^2 + Dx + Ey + F = 0
+$$
+
+For most Algebra 2 work, we focus on equations where B = 0 (no xy term). You can identify the conic by looking at the squared terms:
+
+| What you see                                    | Conic section |
+| ----------------------------------------------- | ------------- |
+| x² and y² with same coefficient                 | Circle        |
+| Only one variable squared                       | Parabola      |
+| x² and y² both positive, different coefficients | Ellipse       |
+| x² and y² with opposite signs                   | Hyperbola     |
+
+Standard form equations:
+
+**Circle:**
+
+$$
+(x - h)^2 + (y - k)^2 = r^2
+$$
+
+**Parabola:**
+
+$$
+y = a(x - h)^2 + k \quad\text{or}\quad x = a(y - k)^2 + h
+$$
+
+**Ellipse:**
+
+$$
+\frac{(x - h)^2}{a^2} + \frac{(y - k)^2}{b^2} = 1
+$$
+
+**Hyperbola:**
+
+$$
+\frac{(x - h)^2}{a^2} - \frac{(y - k)^2}{b^2} = 1
+$$
+
+To identify from a general equation:
+
+1. Move all terms to one side so the equation equals zero.
+2. Look at which variables are squared and their signs/coefficients.
+3. Complete the square if necessary to reach standard form.
+
+## Worked Example
+
+import ConicMiniGraph from "../../../components/ConicMiniGraph.astro";
+
+**1. Circle: x² + y² − 6x + 8y + 9 = 0**
+
+Both x² and y² with the same coefficient (1) → circle. Complete the square:
+
+$$
+\begin{aligned}
+(x^2 - 6x + 9) + (y^2 + 8y + 16) &= -9 + 9 + 16 \\[1em]
+(x - 3)^2 + (y + 4)^2 &= 16
+\end{aligned}
+$$
+
+Center (3, −4), radius 4.
+
+<ConicMiniGraph type="circle" />
+
+**2. Parabola: y = 2x² − 8x + 5**
+
+Only x is squared → parabola. Convert to vertex form:
+
+$$
+\begin{aligned}
+y &= 2(x^2 - 4x) + 5 \\[1em]
+&= 2(x^2 - 4x + 4 - 4) + 5 \\[1em]
+&= 2(x - 2)^2 - 3
+\end{aligned}
+$$
+
+Vertex (2, −3), opens upward.
+
+<ConicMiniGraph type="parabola" />
+
+**3. Hyperbola: x²/25 − y²/16 = 1**
+
+Opposite signs → hyperbola. Already in standard form. Center (0, 0), a = 5, b = 4, horizontal transverse axis.
+
+<ConicMiniGraph type="hyperbola" />
+
+**4. Ellipse: 9x² + 4y² − 36x + 24y + 36 = 0**
+
+Both x² and y² positive with different coefficients (9 and 4) → ellipse. Complete the square:
+
+$$
+\begin{aligned}
+9(x^2 - 4x) + 4(y^2 + 6y) &= -36 \\[1em]
+9(x^2 - 4x + 4) + 4(y^2 + 6y + 9) &= -36 + 36 + 36 \\[1em]
+9(x - 2)^2 + 4(y + 3)^2 &= 36 \\[1em]
+\frac{(x - 2)^2}{4} + \frac{(y + 3)^2}{9} &= 1
+\end{aligned}
+$$
+
+Center (2, −3), vertical major axis (a = 3 under y²), b = 2.
+
+<ConicMiniGraph type="ellipse" />
+
+## Real-World Application
+
+Being able to identify conic sections helps in:
+
+- Physics: understanding planetary orbits (ellipses) and projectile paths (parabolas)
+- Engineering: designing satellite dishes (parabolas), cooling towers (hyperbolas), and lenses
+- Architecture: creating elliptical domes or hyperbolic structures
+- Navigation: using hyperbolic navigation systems
+
+Example: astronomers identify elliptical orbits by recognizing the equation form from observational data.
+
+:::note[You've Got This]
+The quickest way to identify a conic is to look at the squared terms: same positive coefficients = circle, only one squared = parabola, both positive but different = ellipse, opposite signs = hyperbola. Practice completing the square when the equation is not in standard form. This skill ties together everything you've learned about quadratics.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="algebra2-identifying-conic-sections"
+  questions={[
+    {
+      id: "q1",
+      text: "The equation $x^2 + y^2 = 49$ represents a:",
+      options: ["Circle", "Ellipse", "Parabola", "Hyperbola"],
+      correctIndex: 0,
+      explanation: "Both $x^2$ and $y^2$ have the same positive coefficient.",
+    },
+    {
+      id: "q2",
+      text: "Which equation represents a parabola?",
+      options: [
+        "$y = 3x^2 - 6x + 1$",
+        "$x^2 + y^2 = 16$",
+        "$\\frac{x^2}{9} - \\frac{y^2}{4} = 1$",
+        "$\\frac{x^2}{4} + \\frac{y^2}{9} = 1$",
+      ],
+      correctIndex: 0,
+      explanation: "Only one variable is squared.",
+    },
+    {
+      id: "q3",
+      text: "The equation $\\frac{x^2}{16} - \\frac{y^2}{9} = 1$ is a:",
+      options: ["Hyperbola", "Ellipse", "Circle", "Parabola"],
+      correctIndex: 0,
+      explanation:
+        "Opposite signs between $x^2$ and $y^2$ terms indicate a hyperbola.",
+    },
+    {
+      id: "q4",
+      text: "To identify the type of conic, the most important step is to look at:",
+      options: [
+        "The signs and coefficients of the squared terms",
+        "Only the constant term",
+        "The linear terms only",
+        "The degree of the equation",
+      ],
+      correctIndex: 0,
+      explanation:
+        "The squared terms (and their signs) determine the type of conic.",
+    },
+  ]}
+/>

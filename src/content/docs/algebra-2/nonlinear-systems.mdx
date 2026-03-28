@@ -1,8 +1,141 @@
 ---
 title: Nonlinear Systems
-description: Learn to solve systems involving nonlinear equations
+description: Learn how to solve systems of equations where at least one equation is nonlinear
 sidebar:
-  order: 32
+  order: 33
 ---
 
-Content coming soon.
+## What You'll Learn
+
+In this lesson you'll learn how to solve systems that contain both linear and nonlinear equations, focusing on quadratic-linear systems.
+
+## The Concept
+
+A **nonlinear system** contains at least one equation that is not linear (usually quadratic, but can be radical, exponential, etc.).
+
+Common case in Algebra 2: one linear equation and one quadratic equation.
+
+Solution methods:
+
+1. **Substitution**: solve the linear equation for one variable and substitute into the quadratic.
+2. **Elimination** (sometimes possible after rearranging).
+3. **Graphing**: find intersection points visually (useful for checking).
+
+The number of solutions can be 0, 1, or 2 (for quadratic-linear systems). Always check solutions in both original equations.
+
+## Worked Example
+
+Solve the system:
+
+$$
+\begin{cases}
+y = x + 1 \\
+y = x^2 - 2x + 3
+\end{cases}
+$$
+
+import NonlinearSystemDiagram from "../../../components/NonlinearSystemDiagram.astro";
+
+<NonlinearSystemDiagram />
+
+The graph shows the green line y = x + 1 crossing the blue parabola y = x² − 2x + 3 at two points. The gold dots mark the solutions — the intersection points we need to find algebraically.
+
+**Substitution:** since both equations equal y, set them equal:
+
+$$
+x + 1 = x^2 - 2x + 3
+$$
+
+Bring all terms to one side:
+
+$$
+0 = x^2 - 3x + 2
+$$
+
+Factor:
+
+$$
+(x - 1)(x - 2) = 0 \quad\Rightarrow\quad x = 1 \;\text{ or }\; x = 2
+$$
+
+Find the corresponding y-values using y = x + 1:
+
+- x = 1: y = 1 + 1 = 2 → solution (1, 2)
+- x = 2: y = 2 + 1 = 3 → solution (2, 3)
+
+**Check both in the quadratic** y = x² − 2x + 3:
+
+- (1, 2): 1² − 2(1) + 3 = 1 − 2 + 3 = 2 ✓
+- (2, 3): 2² − 2(2) + 3 = 4 − 4 + 3 = 3 ✓
+
+Both solutions are valid.
+
+## Real-World Application
+
+Nonlinear systems model many real situations:
+
+- Finding intersection points between a straight road (linear) and a curved path (parabolic)
+- Break-even analysis when cost is linear and revenue is quadratic
+- Projectile motion intersecting with a straight line (e.g., hitting a target)
+- Mixing problems with nonlinear relationships
+
+Example: a company has linear cost and quadratic revenue. Solving the system tells them the exact production levels where they break even.
+
+:::note[You've Got This]
+For most Algebra 2 nonlinear systems, solve the linear equation for one variable and substitute into the nonlinear equation. This usually gives you a quadratic that you already know how to solve. Always check both solutions in the original equations. With practice, you'll handle these systems confidently.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="algebra2-nonlinear-systems"
+  questions={[
+    {
+      id: "q1",
+      text: "A system with one linear and one quadratic equation can have up to how many real solutions?",
+      options: ["2", "1", "3", "4"],
+      correctIndex: 0,
+      explanation: "A line and a parabola can intersect at most twice.",
+    },
+    {
+      id: "q2",
+      text: "The best first step when solving a linear-quadratic system is usually:",
+      options: [
+        "Solve the linear equation for one variable and substitute",
+        "Graph both equations",
+        "Add the equations",
+        "Multiply both equations",
+      ],
+      correctIndex: 0,
+      explanation: "Substitution is usually the most straightforward method.",
+    },
+    {
+      id: "q3",
+      text: "After substitution you usually end up with:",
+      options: [
+        "A quadratic equation",
+        "A linear equation",
+        "A system with four variables",
+        "An exponential equation",
+      ],
+      correctIndex: 0,
+      explanation:
+        "Substituting a linear expression into a quadratic gives a quadratic equation.",
+    },
+    {
+      id: "q4",
+      text: "Why is it important to check solutions in nonlinear systems?",
+      options: [
+        "Some solutions may not satisfy both original equations",
+        "To calculate the discriminant",
+        "To find the vertex",
+        "To determine the domain",
+      ],
+      correctIndex: 0,
+      explanation:
+        "Extraneous solutions can appear, especially after squaring or substitution.",
+    },
+  ]}
+/>

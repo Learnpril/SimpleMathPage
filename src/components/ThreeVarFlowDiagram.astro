@@ -1,0 +1,107 @@
+---
+/**
+ * ThreeVarFlowDiagram — shows the elimination process:
+ * 3 equations → eliminate one variable → 2 equations → solve → 1 equation
+ * → find first value → back-substitute → solution → check
+ * Wider layout with generous spacing between nodes.
+ */
+---
+
+<figure class="tvf-diagram" role="img" aria-label="Flowchart showing how to solve a 3-variable system by elimination">
+  <figcaption class="tvf-title">Solving a 3-variable system step by step</figcaption>
+  <svg viewBox="0 0 580 280" width="580" height="280" xmlns="http://www.w3.org/2000/svg">
+
+    <defs>
+      <marker id="tvf-arr" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+        <path class="tvf-arrow-head" d="M0,1 L7,4 L0,7 Z" />
+      </marker>
+    </defs>
+
+    {/* Row 1: three boxes across the top */}
+
+    {/* Step 1: Three equations */}
+    <rect class="tvf-box tvf-box-1" x="10" y="20" width="120" height="65" rx="8" />
+    <text class="tvf-box-text tvf-text-1" x="70" y="46" font-size="14" text-anchor="middle" font-weight="bold">3 equations</text>
+    <text class="tvf-box-text tvf-text-1" x="70" y="66" font-size="12" text-anchor="middle">3 variables</text>
+
+    {/* Arrow 1→2 with label above */}
+    <line class="tvf-arrow" x1="130" y1="52" x2="215" y2="52" stroke-width="2" marker-end="url(#tvf-arr)" />
+    <text class="tvf-step" x="172" y="38" font-size="11" text-anchor="middle">eliminate</text>
+    <text class="tvf-step" x="172" y="74" font-size="11" text-anchor="middle">one var</text>
+
+    {/* Step 2: Two equations */}
+    <rect class="tvf-box tvf-box-2" x="220" y="20" width="120" height="65" rx="8" />
+    <text class="tvf-box-text tvf-text-2" x="280" y="46" font-size="14" text-anchor="middle" font-weight="bold">2 equations</text>
+    <text class="tvf-box-text tvf-text-2" x="280" y="66" font-size="12" text-anchor="middle">2 variables</text>
+
+    {/* Arrow 2→3 */}
+    <line class="tvf-arrow" x1="340" y1="52" x2="415" y2="52" stroke-width="2" marker-end="url(#tvf-arr)" />
+    <text class="tvf-step" x="378" y="38" font-size="11" text-anchor="middle">solve</text>
+
+    {/* Step 3: One equation */}
+    <rect class="tvf-box tvf-box-3" x="420" y="20" width="120" height="65" rx="8" />
+    <text class="tvf-box-text tvf-text-3" x="480" y="46" font-size="14" text-anchor="middle" font-weight="bold">1 equation</text>
+    <text class="tvf-box-text tvf-text-3" x="480" y="66" font-size="12" text-anchor="middle">1 variable</text>
+
+    {/* Row 2: arrow down, then back-substitute and solution */}
+
+    {/* Arrow down from step 3 */}
+    <line class="tvf-arrow" x1="480" y1="85" x2="480" y2="135" stroke-width="2" marker-end="url(#tvf-arr)" />
+    <text class="tvf-step" x="508" y="115" font-size="11" text-anchor="start">find first</text>
+    <text class="tvf-step" x="508" y="130" font-size="11" text-anchor="start">value</text>
+
+    {/* Step 4: Back-substitute */}
+    <rect class="tvf-box tvf-box-4" x="350" y="140" width="170" height="55" rx="8" />
+    <text class="tvf-box-text tvf-text-4" x="435" y="163" font-size="14" text-anchor="middle" font-weight="bold">Back-substitute</text>
+    <text class="tvf-box-text tvf-text-4" x="435" y="182" font-size="11" text-anchor="middle">find remaining values</text>
+
+    {/* Arrow left from step 4 to solution */}
+    <line class="tvf-arrow" x1="350" y1="168" x2="240" y2="168" stroke-width="2" marker-end="url(#tvf-arr)" />
+
+    {/* Step 5: Solution */}
+    <rect class="tvf-box tvf-box-5" x="40" y="140" width="165" height="55" rx="8" />
+    <text class="tvf-box-text tvf-text-5" x="122" y="162" font-size="15" text-anchor="middle" font-weight="bold">Solution</text>
+    <text class="tvf-box-text tvf-text-5" x="122" y="182" font-size="13" text-anchor="middle">(x, y, z)</text>
+
+    {/* Check reminder */}
+    <text class="tvf-check" x="122" y="225" font-size="13" text-anchor="middle">Check in all 3 original equations</text>
+
+  </svg>
+</figure>
+
+<style>
+  .tvf-diagram { display: flex; flex-direction: column; align-items: center; margin: 1.5rem 0; }
+  .tvf-title { font-size: 0.95rem; color: var(--sl-color-gray-3); margin-bottom: 0.5rem; font-style: italic; }
+  .tvf-diagram svg { max-width: 100%; height: auto; }
+
+  .tvf-box { fill: none; stroke-width: 2; }
+  .tvf-box-1 { stroke: #58a6ff; }
+  .tvf-box-2 { stroke: #7ee787; }
+  .tvf-box-3 { stroke: #f78166; }
+  .tvf-box-4 { stroke: #d2a8ff; }
+  .tvf-box-5 { stroke: #f0c674; }
+  .tvf-text-1 { fill: #58a6ff; font-family: 'Libre Baskerville', Georgia, serif; }
+  .tvf-text-2 { fill: #7ee787; font-family: 'Libre Baskerville', Georgia, serif; }
+  .tvf-text-3 { fill: #f78166; font-family: 'Libre Baskerville', Georgia, serif; }
+  .tvf-text-4 { fill: #d2a8ff; font-family: 'Libre Baskerville', Georgia, serif; }
+  .tvf-text-5 { fill: #f0c674; font-family: 'Libre Baskerville', Georgia, serif; }
+  .tvf-arrow { stroke: #888; }
+  .tvf-arrow-head { fill: #888; }
+  .tvf-step { fill: #bbb; font-family: 'Libre Baskerville', Georgia, serif; }
+  .tvf-check { fill: #f0c674; font-family: 'Libre Baskerville', Georgia, serif; font-style: italic; }
+
+  :global([data-theme="light"]) .tvf-box-1 { stroke: #0969da; }
+  :global([data-theme="light"]) .tvf-box-2 { stroke: #1a7f37; }
+  :global([data-theme="light"]) .tvf-box-3 { stroke: #cf222e; }
+  :global([data-theme="light"]) .tvf-box-4 { stroke: #8250df; }
+  :global([data-theme="light"]) .tvf-box-5 { stroke: #b45309; }
+  :global([data-theme="light"]) .tvf-text-1 { fill: #0969da; }
+  :global([data-theme="light"]) .tvf-text-2 { fill: #1a7f37; }
+  :global([data-theme="light"]) .tvf-text-3 { fill: #cf222e; }
+  :global([data-theme="light"]) .tvf-text-4 { fill: #8250df; }
+  :global([data-theme="light"]) .tvf-text-5 { fill: #b45309; }
+  :global([data-theme="light"]) .tvf-arrow { stroke: #aaa; }
+  :global([data-theme="light"]) .tvf-arrow-head { fill: #aaa; }
+  :global([data-theme="light"]) .tvf-step { fill: #555; }
+  :global([data-theme="light"]) .tvf-check { fill: #b45309; }
+</style>

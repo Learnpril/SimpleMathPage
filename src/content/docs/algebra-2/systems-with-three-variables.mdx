@@ -1,8 +1,199 @@
 ---
 title: Systems with Three Variables
-description: Learn to solve systems of equations with three unknowns
+description: Learn how to solve systems of three linear equations in three variables
 sidebar:
-  order: 31
+  order: 32
 ---
 
-Content coming soon.
+## What You'll Learn
+
+In this lesson you'll learn how to solve systems of three linear equations with three variables using elimination and how to interpret the solutions.
+
+## The Concept
+
+A system of three linear equations in three variables looks like:
+
+$$
+\begin{cases}
+a_1 x + b_1 y + c_1 z = d_1 \\
+a_2 x + b_2 y + c_2 z = d_2 \\
+a_3 x + b_3 y + c_3 z = d_3
+\end{cases}
+$$
+
+Solutions can be:
+
+- One unique solution (x, y, z)
+- No solution (inconsistent system)
+- Infinitely many solutions (dependent system)
+
+**Method (Elimination):**
+
+1. Eliminate one variable from two pairs of equations to get two equations with two variables.
+2. Solve the resulting 2×2 system.
+3. Substitute back to find the third variable.
+4. Check the solution in all three original equations.
+
+import ThreeVarFlowDiagram from "../../../components/ThreeVarFlowDiagram.astro";
+
+<ThreeVarFlowDiagram />
+
+The flowchart shows the process visually. You start with 3 equations in 3 variables (blue), eliminate one variable to get 2 equations in 2 variables (green), solve down to 1 equation in 1 variable (orange), then back-substitute (purple) to find all three values and arrive at the solution (gold). Always check your answer in all three original equations at the end.
+
+## Worked Example
+
+**Example 1: No solution (inconsistent)**
+
+$$
+\begin{cases}
+x + 2y + z = 8 \\
+2x - y + 3z = 15 \\
+x - 3y + 2z = 1
+\end{cases}
+$$
+
+**Step 1:** Eliminate x from equations 1 and 2. Compute Eq2 − 2(Eq1):
+
+$$
+(2x - y + 3z) - 2(x + 2y + z) = 15 - 16 \quad\Rightarrow\quad -5y + z = -1
+$$
+
+Eliminate x from equations 1 and 3. Compute Eq3 − Eq1:
+
+$$
+(x - 3y + 2z) - (x + 2y + z) = 1 - 8 \quad\Rightarrow\quad -5y + z = -7
+$$
+
+**Step 2:** We now have −5y + z = −1 and −5y + z = −7. The left sides are identical but the right sides are different — this is a contradiction. The system has **no solution**.
+
+---
+
+**Example 2: Unique solution**
+
+$$
+\begin{cases}
+x + y + z = 6 \\
+2x - y + z = 3 \\
+x + 2y - z = 2
+\end{cases}
+$$
+
+**Step 1: Eliminate x** using Eq1 with the other two equations.
+
+Eq2 − 2(Eq1):
+
+$$
+(2x - y + z) - 2(x + y + z) = 3 - 12 \quad\Rightarrow\quad -3y - z = -9
+$$
+
+Eq3 − Eq1:
+
+$$
+(x + 2y - z) - (x + y + z) = 2 - 6 \quad\Rightarrow\quad y - 2z = -4
+$$
+
+**Step 2: Solve the 2×2 system.**
+
+From −3y − z = −9, solve for z:
+
+$$
+z = -3y + 9
+$$
+
+Substitute into y − 2z = −4:
+
+$$
+y - 2(-3y + 9) = -4 \quad\Rightarrow\quad y + 6y - 18 = -4 \quad\Rightarrow\quad 7y = 14 \quad\Rightarrow\quad y = 2
+$$
+
+**Step 3: Back-substitute.**
+
+$$
+z = -3(2) + 9 = 3
+$$
+
+From Eq1: x + 2 + 3 = 6, so x = 1.
+
+**Step 4: Check in all three original equations.**
+
+- Eq1: 1 + 2 + 3 = 6 ✓
+- Eq2: 2(1) − 2 + 3 = 3 ✓
+- Eq3: 1 + 2(2) − 3 = 2 ✓
+
+Solution: x = 1, y = 2, z = 3.
+
+## Real-World Application
+
+Systems with three variables model real situations such as:
+
+- Mixing three ingredients to achieve a target concentration or cost
+- Balancing a budget with three income/expense categories
+- Solving for currents in a three-loop electrical circuit
+- Finding production levels of three products to meet demand and profit goals
+
+Example: a company produces three products. The system can represent total materials used, labor hours, and revenue targets.
+
+:::note[You've Got This]
+Solving three-variable systems is an extension of two-variable systems. The key is to systematically eliminate one variable at a time until you have a solvable 2×2 system. Always check your final solution in all three original equations. If you get a contradiction (like 0 = 5), the system has no solution. With practice, you'll get comfortable with the process.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="algebra2-systems-with-three-variables"
+  questions={[
+    {
+      id: "q1",
+      text: "A system of three linear equations can have:",
+      options: [
+        "One solution, no solution, or infinitely many",
+        "Only one solution",
+        "Only two solutions",
+        "Only complex solutions",
+      ],
+      correctIndex: 0,
+      explanation:
+        "Three possibilities exist for linear systems in three variables.",
+    },
+    {
+      id: "q2",
+      text: "The first step when solving a 3×3 system is usually to:",
+      options: [
+        "Eliminate one variable using two pairs of equations",
+        "Graph all three equations",
+        "Use substitution on all variables",
+        "Find the determinant",
+      ],
+      correctIndex: 0,
+      explanation:
+        "Elimination reduces the system to two equations with two variables.",
+    },
+    {
+      id: "q3",
+      text: "If after elimination you get 0 = 5, the system has:",
+      options: [
+        "No solution",
+        "Infinitely many solutions",
+        "One solution",
+        "Two solutions",
+      ],
+      correctIndex: 0,
+      explanation: "A contradiction means the system is inconsistent.",
+    },
+    {
+      id: "q4",
+      text: "After finding values for x, y, and z, you should:",
+      options: [
+        "Check them in all three original equations",
+        "Only check in one equation",
+        "Graph the solution",
+        "Find the inverse",
+      ],
+      correctIndex: 0,
+      explanation:
+        "Verification in all original equations confirms the solution.",
+    },
+  ]}
+/>

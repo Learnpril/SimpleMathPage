@@ -1,8 +1,139 @@
 ---
 title: Introduction to Conic Sections
-description: Learn what conic sections are and where they come from
+description: Learn what conic sections are and how they are formed by slicing a cone
 sidebar:
-  order: 22
+  order: 23
 ---
 
-Content coming soon.
+## What You'll Learn
+
+In this lesson you'll learn what conic sections are, how they are formed, and get an overview of the four main types: circles, parabolas, ellipses, and hyperbolas.
+
+## The Concept
+
+**Conic sections** are curves formed by intersecting a plane with a double cone (two cones joined at their tips). The shape depends on the angle of the cut.
+
+import ConicSectionsDiagram from "../../../components/ConicSectionsDiagram.astro";
+import ConeSliceDiagram from "../../../components/ConeSliceDiagram.astro";
+
+<ConeSliceDiagram />
+
+Each double cone above is shown from the side. The colored line represents the cutting plane. A horizontal cut (blue) gives a circle. An angled cut (green) gives an ellipse. A cut parallel to the cone's side (orange) gives a parabola. A nearly vertical cut through both halves (purple) gives a hyperbola.
+
+<ConicSectionsDiagram />
+
+The diagram shows the four conic sections. A circle (blue) is perfectly round — equal width in all directions. An ellipse (green) is a stretched circle — wider in one direction. A parabola (orange) is an open U-shape that extends to infinity. A hyperbola (purple) has two separate branches that curve away from each other.
+
+How each is formed by slicing a cone:
+
+- **Circle**: plane cuts parallel to the base of the cone.
+- **Ellipse**: plane cuts at an angle, but doesn't go parallel to the side.
+- **Parabola**: plane cuts parallel to the side of the cone.
+- **Hyperbola**: plane cuts through both halves of the double cone.
+
+Each conic section can also be defined algebraically as a second-degree equation:
+
+$$
+Ax^2 + Bxy + Cy^2 + Dx + Ey + F = 0
+$$
+
+In Algebra 2, we usually study the non-rotated cases (where B = 0).
+
+## Worked Example
+
+Identify the conic section from its equation:
+
+**1. x² + y² = 25**
+
+Both x² and y² have the same positive coefficient (1) → **Circle** with radius 5.
+
+**2. y = x² − 4x + 3**
+
+Only one variable is squared (x²) → **Parabola**.
+
+**3. x²/9 + y²/4 = 1**
+
+Both x² and y² are positive but have different denominators → **Ellipse**.
+
+**4. x²/16 − y²/9 = 1**
+
+x² and y² have opposite signs (one positive, one negative) → **Hyperbola**.
+
+import ConicExamples from "../../../components/ConicExamples.astro";
+
+<ConicExamples />
+
+The four graphs above show the actual equations from the worked examples. The blue circle is perfectly round with radius 5. The orange parabola opens upward with vertex at (2, −1). The green ellipse is wider than it is tall (a = 3, b = 2). The purple hyperbola has two branches opening left and right.
+
+Quick identification guide:
+
+| What you see                     | Conic section |
+| -------------------------------- | ------------- |
+| x² + y² (same coefficient)       | Circle        |
+| Only x² or only y²               | Parabola      |
+| x² + y² (different coefficients) | Ellipse       |
+| x² − y² (opposite signs)         | Hyperbola     |
+
+## Real-World Application
+
+Conic sections appear in many real-world situations:
+
+- **Parabolas**: satellite dishes, headlights, suspension bridges, projectile paths.
+- **Ellipses**: planetary orbits, whispering galleries, certain stadium designs.
+- **Circles**: wheels, clocks, round tables, manhole covers.
+- **Hyperbolas**: navigation systems (LORAN), cooling towers, some telescope designs.
+
+Example: a satellite dish is shaped like a parabola because it reflects incoming signals to a single focal point.
+
+:::note[You've Got This]
+Conic sections are simply the different curves you get when you slice a cone at different angles. In Algebra 2, we focus on their equations and graphs. Start by looking at whether x², y², or both appear, and whether they have the same sign. This will help you quickly identify which type you're working with.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="algebra2-introduction-to-conic-sections"
+  questions={[
+    {
+      id: "q1",
+      text: "Which conic section is formed when a plane cuts parallel to the base of a cone?",
+      options: ["Circle", "Parabola", "Ellipse", "Hyperbola"],
+      correctIndex: 0,
+      explanation: "A horizontal cut parallel to the base produces a circle.",
+    },
+    {
+      id: "q2",
+      text: "The equation $y = x^2 - 6x + 5$ represents a:",
+      options: ["Parabola", "Circle", "Ellipse", "Hyperbola"],
+      correctIndex: 0,
+      explanation: "Only one variable is squared.",
+    },
+    {
+      id: "q3",
+      text: "Which equation represents a circle?",
+      options: [
+        "$x^2 + y^2 = 16$",
+        "$x^2 - y^2 = 9$",
+        "$y = x^2 + 4$",
+        "$\\frac{x^2}{4} + \\frac{y^2}{9} = 1$",
+      ],
+      correctIndex: 0,
+      explanation: "Both $x^2$ and $y^2$ have the same positive coefficient.",
+    },
+    {
+      id: "q4",
+      text: "A hyperbola is formed when the plane cuts:",
+      options: [
+        "Both halves of the double cone",
+        "Parallel to the base",
+        "Parallel to the side",
+        "At a shallow angle",
+      ],
+      correctIndex: 0,
+      explanation:
+        "A hyperbola is created when the cutting plane intersects both nappes.",
+    },
+  ]}
+/>

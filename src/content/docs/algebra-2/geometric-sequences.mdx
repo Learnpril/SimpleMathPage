@@ -1,8 +1,139 @@
 ---
 title: Geometric Sequences
-description: Learn about geometric sequences and how to find terms and sums
+description: Learn how to identify, write, and work with geometric sequences
 sidebar:
-  order: 34
+  order: 35
 ---
 
-Content coming soon.
+## What You'll Learn
+
+In this lesson you'll learn what a geometric sequence is, how to find the common ratio, and how to write both the explicit and recursive formulas.
+
+## The Concept
+
+A **geometric sequence** is a sequence in which each term after the first is found by multiplying the previous term by a constant called the **common ratio** (r).
+
+import GeoSeqDiagram from "../../../components/GeoSeqDiagram.astro";
+
+<GeoSeqDiagram />
+
+The diagram shows the sequence 3, 6, 12, 24, 48. Each arc shows the common ratio r = ×2 being multiplied to get the next term. Every geometric sequence works this way — you start with a first term and keep multiplying by the same number.
+
+Examples:
+
+- 3, 6, 12, 24, 48, … → common ratio r = 2
+- 80, 40, 20, 10, … → common ratio r = 1/2
+
+**Explicit formula** (gives the nth term directly):
+
+$$
+a_n = a_1 \cdot r^{n-1}
+$$
+
+**Recursive formula** (gives the next term from the previous one):
+
+A recursive formula defines each term using the term before it. Instead of jumping straight to any term like the explicit formula does, you build the sequence one step at a time — to find the 5th term you need the 4th, to find the 4th you need the 3rd, and so on. That's why a recursive formula always needs a starting value (a₁) to get going.
+
+$$
+a_n = a_{n-1} \cdot r \quad (n \ge 2)
+$$
+
+This says: "to get any term, take the previous term and multiply by r."
+
+**Growth vs. decay:**
+
+- If |r| &gt; 1, the terms grow larger (growth)
+- If 0 &lt; |r| &lt; 1, the terms get smaller (decay)
+
+## Worked Example
+
+**1. Find the common ratio and the 7th term of 5, 15, 45, 135, …**
+
+Common ratio: r = 15 ÷ 5 = 3.
+
+$$
+a_7 = 5 \cdot 3^{6} = 5 \cdot 729 = 3{,}645
+$$
+
+**2. Write the explicit formula for 64, 32, 16, 8, …**
+
+a₁ = 64, r = 1/2.
+
+$$
+a_n = 64 \cdot \left(\frac{1}{2}\right)^{n-1}
+$$
+
+**3. Given the recursive formula aₙ = aₙ₋₁ · (−2) with a₁ = 3, find a₄**
+
+$$
+\begin{aligned}
+a_2 &= 3 \times (-2) = -6 \\[0.5em]
+a_3 &= -6 \times (-2) = 12 \\[0.5em]
+a_4 &= 12 \times (-2) = -24
+\end{aligned}
+$$
+
+## Real-World Application
+
+Geometric sequences model many real-life situations:
+
+- Compound interest and investment growth
+- Population growth or decay (when the rate is a constant percentage)
+- Depreciation of assets by a fixed percentage each year
+- Half-life of radioactive substances
+- Successive percentage discounts or increases
+
+Example: an investment of 1000 dollars grows at 6% per year compounded annually. The value after n years follows a geometric sequence with r = 1.06.
+
+:::note[You've Got This]
+Geometric sequences multiply by the same number each time. The explicit formula aₙ = a₁ · r^(n − 1) is usually the most useful. Pay attention to whether the common ratio is greater than 1 (growth) or between 0 and 1 (decay). Practice writing both formulas — this skill connects nicely with exponential functions.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="algebra2-geometric-sequences"
+  questions={[
+    {
+      id: "q1",
+      text: "What is the common ratio in 4, 12, 36, 108, …?",
+      options: ["3", "4", "9", "12"],
+      correctIndex: 0,
+      explanation: "Each term is multiplied by 3.",
+    },
+    {
+      id: "q2",
+      text: "The explicit formula for a geometric sequence is:",
+      options: [
+        "$a_n = a_1 \\cdot r^{n-1}$",
+        "$a_n = a_1 + (n-1)r$",
+        "$a_n = a_1 \\cdot r^n$",
+        "$a_n = a_{n-1} + r$",
+      ],
+      correctIndex: 0,
+      explanation:
+        "The explicit formula multiplies the first term by the common ratio raised to $(n - 1)$.",
+    },
+    {
+      id: "q3",
+      text: "Find the 6th term: $a_1 = 5$, $r = 2$",
+      options: ["$160$", "$80$", "$320$", "$40$"],
+      correctIndex: 0,
+      explanation: "$a_6 = 5 \\cdot 2^5 = 5 \\cdot 32 = 160$.",
+    },
+    {
+      id: "q4",
+      text: "A geometric sequence has a constant:",
+      options: [
+        "Ratio between consecutive terms",
+        "Difference between consecutive terms",
+        "Sum of terms",
+        "Product of all terms",
+      ],
+      correctIndex: 0,
+      explanation: "The defining feature is the constant common ratio.",
+    },
+  ]}
+/>

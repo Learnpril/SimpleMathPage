@@ -1,0 +1,125 @@
+---
+/**
+ * ConicExamples — four mini graphs showing the worked example equations:
+ * 1. x²+y²=25 (circle r=5)
+ * 2. y=x²-4x+3 (parabola)
+ * 3. x²/9+y²/4=1 (ellipse)
+ * 4. x²/16-y²/9=1 (hyperbola)
+ */
+const pw = 160; const ph = 160; const gap = 14;
+const totalW = pw * 2 + gap + 20;
+const totalH = ph * 2 + gap + 50;
+const topY = 10;
+
+function grid(col: number, row: number) {
+  return { x: 10 + col * (pw + gap), y: topY + row * (ph + gap + 20) };
+}
+
+// Helpers per panel
+function toX(ox: number, v: number, lo: number, hi: number) { return ox + ((v - lo) / (hi - lo)) * pw; }
+function toY(oy: number, v: number, lo: number, hi: number) { return oy + ((hi - v) / (hi - lo)) * ph; }
+
+// Panel 1: circle x²+y²=25, range -6 to 6
+const g1 = grid(0, 0);
+const c1: string[] = [];
+for (let a = 0; a <= 360; a += 2) {
+  const x = 5 * Math.cos(a * Math.PI / 180);
+  const y = 5 * Math.sin(a * Math.PI / 180);
+  c1.push(`${a === 0 ? 'M' : 'L'}${toX(g1.x, x, -6, 6).toFixed(1)},${toY(g1.y, y, -6, 6).toFixed(1)}`);
+}
+
+// Panel 2: parabola y=x²-4x+3, x range -1 to 5, y range -2 to 8
+const g2 = grid(1, 0);
+const c2: string[] = [];
+for (let x = -0.5; x <= 4.5; x += 0.08) {
+  const y = x * x - 4 * x + 3;
+  if (y >= -2 && y <= 8) c2.push(`${c2.length === 0 ? 'M' : 'L'}${toX(g2.x, x, -1, 5).toFixed(1)},${toY(g2.y, y, -2, 8).toFixed(1)}`);
+}
+
+// Panel 3: ellipse x²/9+y²/4=1, range -4 to 4
+const g3 = grid(0, 1);
+const c3: string[] = [];
+for (let a = 0; a <= 360; a += 2) {
+  const x = 3 * Math.cos(a * Math.PI / 180);
+  const y = 2 * Math.sin(a * Math.PI / 180);
+  c3.push(`${a === 0 ? 'M' : 'L'}${toX(g3.x, x, -4, 4).toFixed(1)},${toY(g3.y, y, -3, 3).toFixed(1)}`);
+}
+
+// Panel 4: hyperbola x²/16-y²/9=1, two branches
+const g4 = grid(1, 1);
+const h4r: string[] = []; const h4l: string[] = [];
+for (let t = -1.5; t <= 1.5; t += 0.06) {
+  const coshT = (Math.exp(t) + Math.exp(-t)) / 2;
+  const sinhT = (Math.exp(t) - Math.exp(-t)) / 2;
+  const xr = 4 * coshT; const yr = 3 * sinhT;
+  if (xr <= 7) {
+    h4r.push(`${h4r.length === 0 ? 'M' : 'L'}${toX(g4.x, xr, -8, 8).toFixed(1)},${toY(g4.y, yr, -6, 6).toFixed(1)}`);
+    h4l.push(`${h4l.length === 0 ? 'M' : 'L'}${toX(g4.x, -xr, -8, 8).toFixed(1)},${toY(g4.y, yr, -6, 6).toFixed(1)}`);
+  }
+}
+
+const axY1 = toY(g1.y, 0, -6, 6); const axX1 = toX(g1.x, 0, -6, 6);
+const axY2 = toY(g2.y, 0, -2, 8); const axX2 = toX(g2.x, 0, -1, 5);
+const axY3 = toY(g3.y, 0, -3, 3); const axX3 = toX(g3.x, 0, -4, 4);
+const axY4 = toY(g4.y, 0, -6, 6); const axX4 = toX(g4.x, 0, -8, 8);
+---
+
+<figure class="ce-diagram" role="img" aria-label="Four conic section examples graphed">
+  <figcaption class="ce-title">The four worked examples graphed</figcaption>
+  <svg viewBox={`0 0 ${totalW} ${totalH}`} width={totalW} height={totalH} xmlns="http://www.w3.org/2000/svg">
+    <rect class="ce-bg" x="0" y="0" width={totalW} height={totalH} rx="8" />
+
+    {/* Panel 1: Circle */}
+    <line class="ce-axis" x1={g1.x} y1={axY1} x2={g1.x + pw} y2={axY1} stroke-width="0.8" />
+    <line class="ce-axis" x1={axX1} y1={g1.y} x2={axX1} y2={g1.y + ph} stroke-width="0.8" />
+    <path class="ce-curve ce-c0" d={c1.join(' ') + ' Z'} fill="none" stroke-width="2" />
+    <text class="ce-label ce-l0" x={g1.x + pw / 2} y={g1.y + ph + 14} font-size="10" text-anchor="middle" font-weight="bold">x² + y² = 25 (Circle)</text>
+
+    {/* Panel 2: Parabola */}
+    <line class="ce-axis" x1={g2.x} y1={axY2} x2={g2.x + pw} y2={axY2} stroke-width="0.8" />
+    <line class="ce-axis" x1={axX2} y1={g2.y} x2={axX2} y2={g2.y + ph} stroke-width="0.8" />
+    <path class="ce-curve ce-c1" d={c2.join(' ')} fill="none" stroke-width="2" />
+    <text class="ce-label ce-l1" x={g2.x + pw / 2} y={g2.y + ph + 14} font-size="10" text-anchor="middle" font-weight="bold">y = x² − 4x + 3 (Parabola)</text>
+
+    {/* Panel 3: Ellipse */}
+    <line class="ce-axis" x1={g3.x} y1={axY3} x2={g3.x + pw} y2={axY3} stroke-width="0.8" />
+    <line class="ce-axis" x1={axX3} y1={g3.y} x2={axX3} y2={g3.y + ph} stroke-width="0.8" />
+    <path class="ce-curve ce-c2" d={c3.join(' ') + ' Z'} fill="none" stroke-width="2" />
+    <text class="ce-label ce-l2" x={g3.x + pw / 2} y={g3.y + ph + 14} font-size="10" text-anchor="middle" font-weight="bold">x²/9 + y²/4 = 1 (Ellipse)</text>
+
+    {/* Panel 4: Hyperbola */}
+    <line class="ce-axis" x1={g4.x} y1={axY4} x2={g4.x + pw} y2={axY4} stroke-width="0.8" />
+    <line class="ce-axis" x1={axX4} y1={g4.y} x2={axX4} y2={g4.y + ph} stroke-width="0.8" />
+    <path class="ce-curve ce-c3" d={h4r.join(' ')} fill="none" stroke-width="2" />
+    <path class="ce-curve ce-c3" d={h4l.join(' ')} fill="none" stroke-width="2" />
+    <text class="ce-label ce-l3" x={g4.x + pw / 2} y={g4.y + ph + 14} font-size="10" text-anchor="middle" font-weight="bold">x²/16 − y²/9 = 1 (Hyperbola)</text>
+
+  </svg>
+</figure>
+
+<style>
+  .ce-diagram { display: flex; flex-direction: column; align-items: center; margin: 1.5rem 0; }
+  .ce-title { font-size: 0.95rem; color: var(--sl-color-gray-3); margin-bottom: 0.5rem; font-style: italic; }
+  .ce-diagram svg { max-width: 100%; height: auto; }
+  .ce-bg { fill: var(--sl-color-bg, #121212); }
+  .ce-axis { stroke: #555; }
+  .ce-c0 { stroke: #58a6ff; }
+  .ce-c1 { stroke: #f78166; }
+  .ce-c2 { stroke: #7ee787; }
+  .ce-c3 { stroke: #d2a8ff; }
+  .ce-l0 { fill: #58a6ff; font-family: 'Libre Baskerville', Georgia, serif; }
+  .ce-l1 { fill: #f78166; font-family: 'Libre Baskerville', Georgia, serif; }
+  .ce-l2 { fill: #7ee787; font-family: 'Libre Baskerville', Georgia, serif; }
+  .ce-l3 { fill: #d2a8ff; font-family: 'Libre Baskerville', Georgia, serif; }
+
+  :global([data-theme="light"]) .ce-bg { fill: #f8f9fa; }
+  :global([data-theme="light"]) .ce-axis { stroke: #aaa; }
+  :global([data-theme="light"]) .ce-c0 { stroke: #0969da; }
+  :global([data-theme="light"]) .ce-c1 { stroke: #cf222e; }
+  :global([data-theme="light"]) .ce-c2 { stroke: #1a7f37; }
+  :global([data-theme="light"]) .ce-c3 { stroke: #8250df; }
+  :global([data-theme="light"]) .ce-l0 { fill: #0969da; }
+  :global([data-theme="light"]) .ce-l1 { fill: #cf222e; }
+  :global([data-theme="light"]) .ce-l2 { fill: #1a7f37; }
+  :global([data-theme="light"]) .ce-l3 { fill: #8250df; }
+</style>

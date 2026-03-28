@@ -1,8 +1,148 @@
 ---
 title: Solving Rational Equations
-description: Learn how to solve equations involving rational expressions
+description: Learn how to solve equations that contain rational expressions
 sidebar:
-  order: 18
+  order: 19
 ---
 
-Content coming soon.
+## What You'll Learn
+
+In this lesson you'll learn how to solve rational equations by clearing denominators and checking for extraneous solutions.
+
+## The Concept
+
+A **rational equation** is an equation that contains one or more rational expressions (fractions with polynomials).
+
+To solve:
+
+1. Find the **least common denominator (LCD)** of all fractions.
+2. Multiply every term on both sides by the LCD to clear the denominators.
+3. Solve the resulting polynomial equation.
+4. **Check your solutions** in the original equation — some may be extraneous (they make a denominator zero).
+
+The checking step is critical. Multiplying by the LCD can introduce solutions that don't actually work in the original equation. If a solution makes any original denominator equal to zero, throw it out.
+
+## Worked Example
+
+Solve:
+
+$$
+\frac{2}{x - 3} + \frac{3}{x + 2} = 1
+$$
+
+**1. Find the LCD**
+
+The denominators are (x − 3) and (x + 2), so the LCD is (x − 3)(x + 2).
+
+**2. Multiply every term by the LCD**
+
+$$
+2(x + 2) + 3(x - 3) = 1 \cdot (x - 3)(x + 2)
+$$
+
+**3. Expand both sides**
+
+$$
+\begin{aligned}
+2x + 4 + 3x - 9 &= x^2 - x - 6 \\[1em]
+5x - 5 &= x^2 - x - 6
+\end{aligned}
+$$
+
+**4. Bring all terms to one side**
+
+$$
+0 = x^2 - x - 6 - 5x + 5 = x^2 - 6x - 1
+$$
+
+**5. Solve the quadratic using the quadratic formula**
+
+Here a = 1, b = −6, c = −1:
+
+$$
+x = \frac{6 \pm \sqrt{36 + 4}}{2} = \frac{6 \pm \sqrt{40}}{2} = \frac{6 \pm 2\sqrt{10}}{2} = 3 \pm \sqrt{10}
+$$
+
+**6. Check both solutions**
+
+x = 3 + √10 ≈ 6.16 — neither denominator is zero. Valid.
+
+x = 3 − √10 ≈ −0.16 — neither denominator is zero. Valid.
+
+Solutions: x = 3 + √10 and x = 3 − √10.
+
+## Real-World Application
+
+Rational equations appear in:
+
+- Combined work-rate problems ("How long until two people finish the job together?")
+- Distance-rate-time problems with different speeds
+- Mixture concentration problems
+- Electrical circuits (parallel resistance)
+- Average cost calculations
+
+Example: if Pipe A fills a tank in x hours and Pipe B fills it in x + 4 hours, their combined rate leads to a rational equation that must be solved.
+
+:::note[You've Got This]
+The main steps are: find the LCD, multiply through to clear denominators, solve the resulting equation, then check every solution in the original equation. The checking step is very important — some solutions may be invalid. Practice a few problems, and you'll get comfortable with the process quickly.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="algebra2-solving-rational-equations"
+  questions={[
+    {
+      id: "q1",
+      text: "When solving a rational equation, the most important final step is:",
+      options: [
+        "Check all solutions in the original equation",
+        "Only simplify the answer",
+        "Graph the function",
+        "Find the LCD again",
+      ],
+      correctIndex: 0,
+      explanation:
+        "You must check for extraneous solutions that make a denominator zero.",
+    },
+    {
+      id: "q2",
+      text: "To clear denominators in a rational equation, multiply both sides by:",
+      options: [
+        "The least common denominator (LCD)",
+        "The highest degree term",
+        "Only the first fraction",
+        "The constant term",
+      ],
+      correctIndex: 0,
+      explanation: "Multiplying by the LCD removes all fractions.",
+    },
+    {
+      id: "q3",
+      text: "Why do we check solutions after solving a rational equation?",
+      options: [
+        "Some may make a denominator zero (extraneous)",
+        "To make sure the answer is positive",
+        "To verify the degree",
+        "To find the range",
+      ],
+      correctIndex: 0,
+      explanation: "Solutions that make any denominator zero are invalid.",
+    },
+    {
+      id: "q4",
+      text: "A solution that makes a denominator zero is called:",
+      options: [
+        "An extraneous solution",
+        "A complex solution",
+        "A repeated root",
+        "An imaginary solution",
+      ],
+      correctIndex: 0,
+      explanation:
+        "Extraneous solutions are introduced by the solving process but don't satisfy the original equation.",
+    },
+  ]}
+/>

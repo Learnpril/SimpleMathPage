@@ -106,21 +106,23 @@ import Quiz from "../../../components/Quiz.astro";
   questions={[
     {
       id: "q1",
-      text: "Find the x-intercept of 3x + 2y = 18.",
-      options: ["(6, 0)", "(0, 9)", "(9, 0)", "(0, 6)"],
+      text: "Find the x-intercept of $3x + 2y = 18$.",
+      options: ["$(6, 0)$", "$(0, 9)$", "$(9, 0)$", "$(0, 6)$"],
       correctIndex: 0,
-      explanation: "Set y = 0: 3x = 18 → x = 6 → (6, 0).",
+      explanation:
+        "Set $y = 0$: $3x = 18 \\rightarrow x = 6 \\rightarrow (6, 0)$.",
     },
     {
       id: "q2",
-      text: "Find the y-intercept of 3x + 2y = 18.",
-      options: ["(0, 9)", "(6, 0)", "(0, 6)", "(9, 0)"],
+      text: "Find the y-intercept of $3x + 2y = 18$.",
+      options: ["$(0, 9)$", "$(6, 0)$", "$(0, 6)$", "$(9, 0)$"],
       correctIndex: 0,
-      explanation: "Set x = 0: 2y = 18 → y = 9 → (0, 9).",
+      explanation:
+        "Set $x = 0$: $2y = 18 \\rightarrow y = 9 \\rightarrow (0, 9)$.",
     },
     {
       id: "q3",
-      text: "Which method is fastest for graphing y = −4x + 3?",
+      text: "Which method is fastest for graphing $y = -4x + 3$?",
       options: [
         "Slope-intercept method",
         "Intercepts method",
@@ -129,14 +131,14 @@ import Quiz from "../../../components/Quiz.astro";
       ],
       correctIndex: 0,
       explanation:
-        "It's already in y = mx + b form — start at (0, 3), use slope −4.",
+        "It's already in $y = mx + b$ form — start at $(0, 3)$, use slope $-4$.",
     },
     {
       id: "q4",
-      text: "Using a table for y = 2x − 1, what is y when x = 3?",
-      options: ["5", "7", "1", "6"],
+      text: "Using a table for $y = 2x - 1$, what is $y$ when $x = 3$?",
+      options: ["$5$", "$7$", "$1$", "$6$"],
       correctIndex: 0,
-      explanation: "y = 2(3) − 1 = 6 − 1 = 5.",
+      explanation: "$y = 2(3) - 1 = 6 - 1 = 5$.",
     },
   ]}
 />

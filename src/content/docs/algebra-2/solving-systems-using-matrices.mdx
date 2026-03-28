@@ -1,8 +1,147 @@
 ---
 title: Solving Systems Using Matrices
-description: Learn to solve 2x2 systems using matrices
+description: Learn how to solve 2x2 systems of linear equations using matrix methods
 sidebar:
-  order: 30
+  order: 31
 ---
 
-Content coming soon.
+## What You'll Learn
+
+In this lesson you'll learn how to represent a system of linear equations as a matrix equation and solve it using the inverse of a 2×2 matrix.
+
+## The Concept
+
+A system of two linear equations can be written in matrix form as AX = B:
+
+$$
+\begin{bmatrix} a_1 & b_1 \\ a_2 & b_2 \end{bmatrix} \begin{bmatrix} x \\ y \end{bmatrix} = \begin{bmatrix} c_1 \\ c_2 \end{bmatrix}
+$$
+
+Where A is the coefficient matrix, X is the variable column, and B is the constant column.
+
+If A has an inverse, the solution is:
+
+$$
+X = A^{-1}B
+$$
+
+For a 2×2 matrix, the inverse exists when the determinant ad − bc ≠ 0:
+
+$$
+A^{-1} = \frac{1}{ad - bc} \begin{bmatrix} d & -b \\ -c & a \end{bmatrix}
+$$
+
+We will explore determinants and matrix inverses in more depth in the future Linear Algebra section. Here we focus on using them to solve small systems.
+
+## Worked Example
+
+Solve using matrices:
+
+$$
+\begin{cases}
+3x + 4y = 10 \\
+2x + 5y = 11
+\end{cases}
+$$
+
+**1. Write in matrix form**
+
+$$
+\begin{bmatrix} 3 & 4 \\ 2 & 5 \end{bmatrix} \begin{bmatrix} x \\ y \end{bmatrix} = \begin{bmatrix} 10 \\ 11 \end{bmatrix}
+$$
+
+**2. Find the determinant**
+
+$$
+\det(A) = (3)(5) - (4)(2) = 15 - 8 = 7 \neq 0
+$$
+
+The determinant is not zero, so the inverse exists.
+
+**3. Find the inverse of A**
+
+$$
+A^{-1} = \frac{1}{7} \begin{bmatrix} 5 & -4 \\ -2 & 3 \end{bmatrix}
+$$
+
+**4. Multiply A⁻¹ by B to find X**
+
+To multiply a 2×2 matrix by a 2×1 column, take each row of the matrix and compute the dot product with the column. The dot product means: multiply corresponding entries and add them up.
+
+Row 1 of A⁻¹ is [5, −4]. Dot product with [10, 11]: (5)(10) + (−4)(11) = 50 − 44 = 6.
+
+Row 2 of A⁻¹ is [−2, 3]. Dot product with [10, 11]: (−2)(10) + (3)(11) = −20 + 33 = 13.
+
+Then divide each result by 7 (the determinant):
+
+$$
+\begin{bmatrix} x \\ y \end{bmatrix} = \frac{1}{7} \begin{bmatrix} 5 & -4 \\ -2 & 3 \end{bmatrix} \begin{bmatrix} 10 \\ 11 \end{bmatrix} = \frac{1}{7} \begin{bmatrix} 6 \\ 13 \end{bmatrix} = \begin{bmatrix} 6/7 \\ 13/7 \end{bmatrix}
+$$
+
+Solution: x = 6/7, y = 13/7.
+
+Matrix multiplication, determinants, and inverses are topics we're just touching on here in Algebra 2 to give you a taste of how powerful matrices are. We'll revisit all of these concepts in much greater depth in the Linear Algebra section, where you'll work with larger matrices, learn more multiplication techniques, and see how matrices connect to transformations and higher-dimensional systems.
+
+## Real-World Application
+
+Using matrices to solve systems is efficient when dealing with:
+
+- Multiple budget categories and constraints
+- Mixing ingredients with several components
+- Balancing electrical circuits with multiple loops
+- Production planning with several products and resources
+
+Example: a nutritionist balancing nutrients across food types can set up the system as a matrix equation and solve it efficiently.
+
+:::note[You've Got This]
+Writing a system as AX = B and solving with the inverse is a powerful shortcut for 2×2 systems. The key steps are forming the matrices correctly and checking that the determinant is not zero. This method scales well and prepares you for more advanced work with matrices in Linear Algebra.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="algebra2-solving-systems-using-matrices"
+  questions={[
+    {
+      id: "q1",
+      text: "The matrix equation AX = B represents:",
+      options: [
+        "A system of linear equations",
+        "A single quadratic equation",
+        "A circle",
+        "An exponential function",
+      ],
+      correctIndex: 0,
+      explanation: "AX = B is the matrix form of a system of linear equations.",
+    },
+    {
+      id: "q2",
+      text: "To solve $AX = B$ for $X$ when $A$ is invertible, you compute:",
+      options: ["$X = A^{-1}B$", "$X = AB$", "$X = B - A$", "$X = A + B$"],
+      correctIndex: 0,
+      explanation: "Multiply both sides on the left by the inverse of $A$.",
+    },
+    {
+      id: "q3",
+      text: "A 2×2 matrix has an inverse only if its determinant is:",
+      options: ["Not zero", "Zero", "Positive", "Negative"],
+      correctIndex: 0,
+      explanation: "The determinant must be non-zero for the inverse to exist.",
+    },
+    {
+      id: "q4",
+      text: "The main advantage of using matrices to solve systems is:",
+      options: [
+        "It is systematic and scales to larger systems",
+        "It is always faster than substitution",
+        "It never requires checking answers",
+        "It only works for 2 variables",
+      ],
+      correctIndex: 0,
+      explanation:
+        "Matrix methods are organized and extend well to larger systems.",
+    },
+  ]}
+/>

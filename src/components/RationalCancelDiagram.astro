@@ -1,0 +1,87 @@
+---
+/**
+ * RationalCancelDiagram — shows the simplification of (x²−9)/(x²−6x+9)
+ * by factoring and canceling the common (x−3) factor.
+ */
+---
+
+<figure class="rc-diagram" role="img" aria-label="Simplifying a rational expression by factoring and canceling">
+  <figcaption class="rc-title">Factor, then cancel common factors</figcaption>
+  <svg viewBox="0 0 440 200" width="440" height="200" xmlns="http://www.w3.org/2000/svg">
+
+    {/* Step 1: Original fraction */}
+    <text class="rc-step" x="10" y="20" font-size="11">Original:</text>
+
+    {/* Numerator */}
+    <text class="rc-num" x="80" y="55" font-size="18" text-anchor="middle">x² − 9</text>
+    {/* Fraction line */}
+    <line class="rc-frac" x1="40" y1="65" x2="120" y2="65" stroke-width="2" />
+    {/* Denominator */}
+    <text class="rc-den" x="80" y="88" font-size="18" text-anchor="middle">x² − 6x + 9</text>
+
+    {/* Arrow */}
+    <text class="rc-arrow" x="145" y="70" font-size="20">→</text>
+
+    {/* Step 2: Factored */}
+    <text class="rc-step" x="170" y="20" font-size="11">Factor:</text>
+
+    {/* Numerator factored — common factor highlighted */}
+    <text class="rc-cancel" x="210" y="55" font-size="18" text-anchor="middle">(x − 3)</text>
+    <text class="rc-keep" x="280" y="55" font-size="18" text-anchor="start">(x + 3)</text>
+    {/* Strikethrough on canceled factor */}
+    <line class="rc-strike" x1="190" y1="52" x2="232" y2="52" stroke-width="2" />
+
+    {/* Fraction line */}
+    <line class="rc-frac" x1="180" y1="65" x2="330" y2="65" stroke-width="2" />
+
+    {/* Denominator factored */}
+    <text class="rc-cancel" x="210" y="88" font-size="18" text-anchor="middle">(x − 3)</text>
+    <text class="rc-keep" x="280" y="88" font-size="18" text-anchor="start">(x − 3)</text>
+    {/* Strikethrough on canceled factor */}
+    <line class="rc-strike" x1="190" y1="85" x2="232" y2="85" stroke-width="2" />
+
+    {/* Arrow */}
+    <text class="rc-arrow" x="345" y="70" font-size="20">=</text>
+
+    {/* Step 3: Result */}
+    <text class="rc-result-num" x="400" y="55" font-size="20" text-anchor="middle" font-weight="bold">x + 3</text>
+    <line class="rc-frac-result" x1="370" y1="65" x2="430" y2="65" stroke-width="2" />
+    <text class="rc-result-den" x="400" y="88" font-size="20" text-anchor="middle" font-weight="bold">x − 3</text>
+
+    {/* Domain note */}
+    <text class="rc-domain" x="220" y="130" font-size="12" text-anchor="middle">The red (x − 3) factors cancel because they appear in both numerator and denominator.</text>
+    <text class="rc-domain" x="220" y="150" font-size="12" text-anchor="middle">Excluded value: x ≠ 3 (would make the original denominator zero).</text>
+
+    {/* Warning */}
+    <text class="rc-warn" x="220" y="180" font-size="11" text-anchor="middle">Remember: you can only cancel factors (things multiplied), never terms (things added).</text>
+
+  </svg>
+</figure>
+
+<style>
+  .rc-diagram { display: flex; flex-direction: column; align-items: center; margin: 1.5rem 0; }
+  .rc-title { font-size: 0.95rem; color: var(--sl-color-gray-3); margin-bottom: 0.5rem; font-style: italic; }
+  .rc-diagram svg { max-width: 100%; height: auto; }
+
+  .rc-step { fill: #888; font-family: 'Libre Baskerville', Georgia, serif; }
+  .rc-num, .rc-den { fill: #ccc; font-family: 'Libre Baskerville', Georgia, serif; }
+  .rc-frac, .rc-frac-result { stroke: #888; }
+  .rc-arrow { fill: #888; font-family: 'Libre Baskerville', Georgia, serif; }
+  .rc-cancel { fill: #f78166; font-family: 'Libre Baskerville', Georgia, serif; }
+  .rc-strike { stroke: #f78166; }
+  .rc-keep { fill: #7ee787; font-family: 'Libre Baskerville', Georgia, serif; }
+  .rc-result-num, .rc-result-den { fill: #f0c674; font-family: 'Libre Baskerville', Georgia, serif; }
+  .rc-domain { fill: #999; font-family: 'Libre Baskerville', Georgia, serif; }
+  .rc-warn { fill: #f78166; font-family: 'Libre Baskerville', Georgia, serif; font-style: italic; }
+
+  :global([data-theme="light"]) .rc-step { fill: #666; }
+  :global([data-theme="light"]) .rc-num, :global([data-theme="light"]) .rc-den { fill: #333; }
+  :global([data-theme="light"]) .rc-frac, :global([data-theme="light"]) .rc-frac-result { stroke: #444; }
+  :global([data-theme="light"]) .rc-arrow { fill: #444; }
+  :global([data-theme="light"]) .rc-cancel { fill: #cf222e; }
+  :global([data-theme="light"]) .rc-strike { stroke: #cf222e; }
+  :global([data-theme="light"]) .rc-keep { fill: #1a7f37; }
+  :global([data-theme="light"]) .rc-result-num, :global([data-theme="light"]) .rc-result-den { fill: #b45309; }
+  :global([data-theme="light"]) .rc-domain { fill: #666; }
+  :global([data-theme="light"]) .rc-warn { fill: #cf222e; }
+</style>

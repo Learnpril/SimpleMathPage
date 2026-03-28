@@ -1,0 +1,62 @@
+---
+/**
+ * DiscriminantSummary — shows the three discriminant cases side by side
+ * with mini parabola sketches: 2 roots, 1 root, 0 real roots.
+ */
+const w = 480;
+const h = 130;
+const cases = [
+  { label: 'b² − 4ac > 0', desc: '2 real roots', color: '#7ee787' },
+  { label: 'b² − 4ac = 0', desc: '1 real root', color: '#ffa657' },
+  { label: 'b² − 4ac < 0', desc: '0 real roots', color: '#f778ba' },
+];
+const secW = w / 3;
+---
+
+<figure class="disc-sum" role="img" aria-label="Discriminant summary: positive gives 2 real roots, zero gives 1 real root, negative gives 0 real roots">
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    {cases.map((c, i) => {
+      const cx = secW * i + secW / 2;
+      const baseY = 85;
+      return (
+        <g>
+          {/* Mini parabola */}
+          {i === 0 && (
+            <g>
+              <path d={`M${cx - 35},${baseY} Q${cx},${baseY - 55} ${cx + 35},${baseY}`} fill="none" stroke={c.color} stroke-width="2" />
+              <line x1={cx - 30} y1={baseY - 5} x2={cx + 30} y2={baseY - 5} stroke="#666" stroke-width="1" stroke-dasharray="3,3" />
+              <circle cx={cx - 18} cy={baseY - 12} r="3" fill={c.color} />
+              <circle cx={cx + 18} cy={baseY - 12} r="3" fill={c.color} />
+            </g>
+          )}
+          {i === 1 && (
+            <g>
+              <path d={`M${cx - 35},${baseY} Q${cx},${baseY - 55} ${cx + 35},${baseY}`} fill="none" stroke={c.color} stroke-width="2" />
+              <line x1={cx - 30} y1={baseY} x2={cx + 30} y2={baseY} stroke="#666" stroke-width="1" stroke-dasharray="3,3" />
+              <circle cx={cx} cy={baseY} r="3" fill={c.color} />
+            </g>
+          )}
+          {i === 2 && (
+            <g>
+              <path d={`M${cx - 35},${baseY - 15} Q${cx},${baseY - 55} ${cx + 35},${baseY - 15}`} fill="none" stroke={c.color} stroke-width="2" />
+              <line x1={cx - 30} y1={baseY + 2} x2={cx + 30} y2={baseY + 2} stroke="#666" stroke-width="1" stroke-dasharray="3,3" />
+            </g>
+          )}
+          {/* Label */}
+          <text class="disc-formula" x={cx} y={18} font-size="13" text-anchor="middle" fill={c.color} font-weight="bold">{c.label}</text>
+          {/* Description */}
+          <text class="disc-desc" x={cx} y={baseY + 25} font-size="12" text-anchor="middle">{c.desc}</text>
+        </g>
+      );
+    })}
+  </svg>
+</figure>
+
+<style>
+  .disc-sum { display: flex; flex-direction: column; align-items: center; margin: 1.5rem 0; }
+  .disc-sum svg { max-width: 100%; height: auto; }
+  .disc-formula { font-family: 'Libre Baskerville', Georgia, serif; }
+  .disc-desc { fill: #999; font-family: 'Libre Baskerville', Georgia, serif; }
+
+  :global([data-theme="light"]) .disc-desc { fill: #555; }
+</style>

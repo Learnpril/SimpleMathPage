@@ -7,11 +7,11 @@ export function validateQuizData(data: QuizData): ValidationResult {
     !data.questions ||
     !Array.isArray(data.questions) ||
     data.questions.length < 3 ||
-    data.questions.length > 8
+    data.questions.length > 20
   ) {
     errors.push({
       field: "questions",
-      message: `Quiz must have 3–8 questions, got ${data.questions?.length ?? 0}`,
+      message: `Quiz must have 3–20 questions, got ${data.questions?.length ?? 0}`,
     });
   }
 

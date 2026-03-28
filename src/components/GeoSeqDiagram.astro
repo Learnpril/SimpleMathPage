@@ -1,0 +1,77 @@
+---
+/**
+ * GeoSeqDiagram — shows 3, 6, 12, 24, 48 with ×2 arcs.
+ */
+const terms = [3, 6, 12, 24, 48];
+const n = terms.length;
+const w = 540; const h = 180;
+const dotY = 110;
+const startX = 50; const endX = 490;
+const gap = (endX - startX) / (n - 1);
+
+function dx(i: number) { return startX + i * gap; }
+
+const subs = ['a₁', 'a₂', 'a₃', 'a₄', 'a₅'];
+---
+
+<figure class="gsq-diagram" role="img" aria-label="Geometric sequence 3, 6, 12, 24, 48 with common ratio ×2">
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+
+    {/* Horizontal line */}
+    <line class="gsq-line" x1={startX - 25} y1={dotY} x2={endX + 25} y2={dotY} stroke-width="1.5" />
+
+    {/* Dots with values inside */}
+    {terms.map((t, i) => (
+      <g>
+        <circle class="gsq-dot" cx={dx(i)} cy={dotY} r="18" />
+        <text class="gsq-val" x={dx(i)} y={dotY + 6} font-size="18" text-anchor="middle" font-weight="bold">{t}</text>
+      </g>
+    ))}
+
+    {/* Subscript labels below */}
+    {subs.map((s, i) => (
+      <text class="gsq-idx" x={dx(i)} y={dotY + 40} font-size="14" text-anchor="middle">{s}</text>
+    ))}
+
+    {/* ×2 arcs between each pair */}
+    <defs>
+      <marker id="gsq-arr" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto">
+        <path class="gsq-arrow-head" d="M0,0 L7,3.5 L0,7 Z" />
+      </marker>
+    </defs>
+
+    {[0, 1, 2, 3].map(i => {
+      const x1 = dx(i) + 20;
+      const x2 = dx(i + 1) - 20;
+      const midX = (x1 + x2) / 2;
+      const arcY = dotY - 50;
+      return (
+        <g>
+          <path class="gsq-arc" d={`M${x1},${dotY - 16} Q${midX},${arcY} ${x2},${dotY - 16}`} fill="none" stroke-width="2" marker-end="url(#gsq-arr)" />
+          <text class="gsq-diff" x={midX} y={arcY - 6} font-size="16" text-anchor="middle" font-weight="bold">×2</text>
+        </g>
+      );
+    })}
+
+  </svg>
+</figure>
+
+<style>
+  .gsq-diagram { display: flex; flex-direction: column; align-items: center; margin: 1.5rem 0; }
+  .gsq-diagram svg { max-width: 100%; height: auto; }
+  .gsq-line { stroke: #555; }
+  .gsq-dot { fill: #58a6ff; stroke: #fff; stroke-width: 2.5; }
+  .gsq-val { fill: #fff; font-family: 'Libre Baskerville', Georgia, serif; }
+  .gsq-idx { fill: #999; font-family: 'Libre Baskerville', Georgia, serif; }
+  .gsq-arc { stroke: #d2a8ff; }
+  .gsq-arrow-head { fill: #d2a8ff; }
+  .gsq-diff { fill: #d2a8ff; font-family: 'Libre Baskerville', Georgia, serif; }
+
+  :global([data-theme="light"]) .gsq-line { stroke: #aaa; }
+  :global([data-theme="light"]) .gsq-dot { fill: #0969da; stroke: #fff; }
+  :global([data-theme="light"]) .gsq-val { fill: #fff; }
+  :global([data-theme="light"]) .gsq-idx { fill: #666; }
+  :global([data-theme="light"]) .gsq-arc { stroke: #8250df; }
+  :global([data-theme="light"]) .gsq-arrow-head { fill: #8250df; }
+  :global([data-theme="light"]) .gsq-diff { fill: #8250df; }
+</style>

@@ -1,0 +1,82 @@
+---
+/**
+ * ExpGrowthDecayDiagram — two curves side by side:
+ * Left: exponential growth y = 500(1.08)^x
+ * Right: exponential decay y = 200(0.5)^(x/10)
+ * Both on the same SVG with separate panels.
+ */
+const pw = 190; const ph = 170; const gap = 20;
+const totalW = pw * 2 + gap + 20;
+const totalH = ph + 30;
+
+// Growth: y = 500(1.08)^t, t from 0 to 12
+const gx = 10; const gy = 10;
+const gxLo = 0; const gxHi = 12; const gyLo = 0; const gyHi = 1200;
+function gX(v: number) { return gx + ((v - gxLo) / (gxHi - gxLo)) * pw; }
+function gY(v: number) { return gy + ((gyHi - v) / (gyHi - gyLo)) * ph; }
+
+const growPts: string[] = [];
+for (let t = 0; t <= 12; t += 0.2) {
+  const y = 500 * Math.pow(1.08, t);
+  if (y <= gyHi) growPts.push(`${growPts.length === 0 ? 'M' : 'L'}${gX(t).toFixed(1)},${gY(y).toFixed(1)}`);
+}
+
+// Decay: y = 200(0.5)^(t/10), t from 0 to 40
+const dx = gx + pw + gap; const dy = 10;
+const dxLo = 0; const dxHi = 40; const dyLo = 0; const dyHi = 220;
+function dX(v: number) { return dx + ((v - dxLo) / (dxHi - dxLo)) * pw; }
+function dY(v: number) { return dy + ((dyHi - v) / (dyHi - dyLo)) * ph; }
+
+const decPts: string[] = [];
+for (let t = 0; t <= 40; t += 0.5) {
+  const y = 200 * Math.pow(0.5, t / 10);
+  decPts.push(`${decPts.length === 0 ? 'M' : 'L'}${dX(t).toFixed(1)},${dY(y).toFixed(1)}`);
+}
+---
+
+<figure class="egd-diagram" role="img" aria-label="Exponential growth and decay curves">
+  <figcaption class="egd-title">Exponential growth (left) vs exponential decay (right)</figcaption>
+  <svg viewBox={`0 0 ${totalW} ${totalH}`} width={totalW} height={totalH} xmlns="http://www.w3.org/2000/svg">
+    <rect class="egd-bg" x="0" y="0" width={totalW} height={totalH} rx="8" />
+
+    {/* Growth panel */}
+    <line class="egd-axis" x1={gx} y1={gY(0)} x2={gx + pw} y2={gY(0)} stroke-width="0.8" />
+    <line class="egd-axis" x1={gx} y1={gy} x2={gx} y2={gy + ph} stroke-width="0.8" />
+    <path class="egd-grow" d={growPts.join(' ')} fill="none" stroke-width="2.5" />
+    <circle class="egd-dot" cx={gX(0)} cy={gY(500)} r="4" />
+    <text class="egd-grow-label" x={gX(2)} y={gY(200)} font-size="13" font-weight="bold">P(t) = 500(1.08)ᵗ</text>
+    <text class="egd-sub" x={gx + pw / 2} y={gy + ph + 18} font-size="12" text-anchor="middle">Growth (b &gt; 1)</text>
+
+    {/* Decay panel */}
+    <line class="egd-axis" x1={dx} y1={dY(0)} x2={dx + pw} y2={dY(0)} stroke-width="0.8" />
+    <line class="egd-axis" x1={dx} y1={dy} x2={dx} y2={dy + ph} stroke-width="0.8" />
+    <path class="egd-decay" d={decPts.join(' ')} fill="none" stroke-width="2.5" />
+    <circle class="egd-dot" cx={dX(0)} cy={dY(200)} r="4" />
+    <text class="egd-decay-label" x={dX(18)} y={dY(160)} font-size="13" font-weight="bold">y = 200(½)^(t/10)</text>
+    <text class="egd-sub" x={dx + pw / 2} y={dy + ph + 18} font-size="12" text-anchor="middle">Decay (0 &lt; b &lt; 1)</text>
+
+  </svg>
+</figure>
+
+<style>
+  .egd-diagram { display: flex; flex-direction: column; align-items: center; margin: 1.5rem 0; }
+  .egd-title { font-size: 0.95rem; color: var(--sl-color-gray-3); margin-bottom: 0.5rem; font-style: italic; }
+  .egd-diagram svg { max-width: 100%; height: auto; }
+  .egd-bg { fill: var(--sl-color-bg, #121212); }
+  .egd-axis { stroke: #555; }
+  .egd-dot { fill: #f0c674; stroke: #fff; stroke-width: 1.5; }
+  .egd-grow { stroke: #7ee787; }
+  .egd-grow-label { fill: #7ee787; font-family: 'Libre Baskerville', Georgia, serif; }
+  .egd-decay { stroke: #f78166; }
+  .egd-decay-label { fill: #f78166; font-family: 'Libre Baskerville', Georgia, serif; }
+  .egd-sub { fill: #aaa; font-family: 'Libre Baskerville', Georgia, serif; }
+
+  :global([data-theme="light"]) .egd-bg { fill: #f8f9fa; }
+  :global([data-theme="light"]) .egd-axis { stroke: #aaa; }
+  :global([data-theme="light"]) .egd-dot { fill: #b45309; stroke: #fff; }
+  :global([data-theme="light"]) .egd-grow { stroke: #1a7f37; }
+  :global([data-theme="light"]) .egd-grow-label { fill: #1a7f37; }
+  :global([data-theme="light"]) .egd-decay { stroke: #cf222e; }
+  :global([data-theme="light"]) .egd-decay-label { fill: #cf222e; }
+  :global([data-theme="light"]) .egd-sub { fill: #666; }
+</style>

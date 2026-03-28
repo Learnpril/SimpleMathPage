@@ -1,8 +1,146 @@
 ---
 title: Simplifying Radicals and Rational Exponents
-description: Learn to simplify radicals and work with rational exponents
+description: Learn how to simplify radical expressions and convert between radical and rational exponent forms
 sidebar:
-  order: 19
+  order: 20
 ---
 
-Content coming soon.
+## What You'll Learn
+
+In this lesson you'll learn how to simplify radical expressions and how to work with rational exponents.
+
+## The Concept
+
+**Radical Expressions**
+
+A radical expression is in simplest form when:
+
+- No perfect square (or cube, etc.) factors remain under the radical.
+- No radicals are in the denominator (rationalize if needed).
+- The index is as small as possible.
+
+**Rational Exponents**
+
+A rational exponent connects exponents and radicals:
+
+$$
+x^{m/n} = \sqrt[n]{x^m} = \left(\sqrt[n]{x}\right)^m
+$$
+
+Key rules:
+
+- a^(1/n) = the nth root of a
+- a^(m/n) = take the nth root first, then raise to the m power (or vice versa)
+
+$$
+a^{1/n} = \sqrt[n]{a}
+$$
+
+$$
+a^{m/n} = \left(\sqrt[n]{a}\right)^m = \sqrt[n]{a^m}
+$$
+
+- Converting between radical and exponent form often makes simplification easier
+
+## Worked Example
+
+**1. Simplify √72**
+
+$$
+\sqrt{72} = \sqrt{36 \cdot 2} = \sqrt{36} \cdot \sqrt{2} = 6\sqrt{2}
+$$
+
+Find the largest perfect square factor (36), pull it out.
+
+**2. Simplify ∛(54x⁴)**
+
+$$
+\sqrt[3]{54x^4} = \sqrt[3]{27 \cdot 2 \cdot x^3 \cdot x} = \sqrt[3]{27} \cdot \sqrt[3]{x^3} \cdot \sqrt[3]{2x} = 3x\sqrt[3]{2x}
+$$
+
+Pull out the largest perfect cube: 27 from 54, and x³ from x⁴.
+
+**3. Evaluate 8^(2/3) using rational exponents**
+
+$$
+8^{2/3} = \left(\sqrt[3]{8}\right)^2 = 2^2 = 4
+$$
+
+Take the cube root first (8 → 2), then square it (2² = 4).
+
+**4. Simplify √18 / √2**
+
+$$
+\frac{\sqrt{18}}{\sqrt{2}} = \sqrt{\frac{18}{2}} = \sqrt{9} = 3
+$$
+
+When dividing radicals with the same index, combine them under one radical.
+
+## Real-World Application
+
+Simplifying radicals and rational exponents appears in:
+
+- Calculating exact lengths in construction and engineering
+- Simplifying formulas in physics (e.g., pendulum period, gravity)
+- Scaling recipes or mixture concentrations
+- Working with exponents in finance and growth models
+- Computer graphics and 3D modeling
+
+Example: the time for a pendulum to swing is proportional to √L, where L is the length. Simplifying radical expressions helps get exact answers instead of messy decimals.
+
+:::note[You've Got This]
+For radicals, factor out the largest perfect power. For rational exponents, remember a^(m/n) means take the nth root and raise to the m power (or vice versa). Practice converting back and forth between radical and exponent form — it makes many problems much easier. Take your time and check your work by squaring or cubing the result.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="algebra2-simplifying-radicals-and-rational-exponents"
+  questions={[
+    {
+      id: "q1",
+      text: "Simplify $\\sqrt{50}$",
+      options: [
+        "$5\\sqrt{2}$",
+        "$25\\sqrt{2}$",
+        "$\\sqrt{50}$",
+        "$10\\sqrt{5}$",
+      ],
+      correctIndex: 0,
+      explanation: "$\\sqrt{25 \\cdot 2} = 5\\sqrt{2}$.",
+    },
+    {
+      id: "q2",
+      text: "Evaluate $16^{3/4}$",
+      options: ["$8$", "$4$", "$2$", "$16$"],
+      correctIndex: 0,
+      explanation: "$16^{3/4} = (16^{1/4})^3 = 2^3 = 8$.",
+    },
+    {
+      id: "q3",
+      text: "Simplify $\\sqrt[3]{24x^6}$",
+      options: [
+        "$2x^2 \\sqrt[3]{3}$",
+        "$2x^2 \\sqrt{3}$",
+        "$x^2 \\sqrt[3]{24}$",
+        "$4x^2$",
+      ],
+      correctIndex: 0,
+      explanation: "$\\sqrt[3]{8 \\cdot 3 \\cdot x^6} = 2x^2 \\sqrt[3]{3}$.",
+    },
+    {
+      id: "q4",
+      text: "The expression $a^{m/n}$ means:",
+      options: [
+        "The $n$th root of $a$ raised to the $m$ power",
+        "$a$ multiplied by $m/n$",
+        "The $m$th root of $a$ raised to $n$",
+        "$a$ to the power of $m$ divided by $n$",
+      ],
+      correctIndex: 0,
+      explanation: "$a^{m/n} = (a^{1/n})^m$ or $(a^m)^{1/n}$.",
+    },
+  ]}
+/>

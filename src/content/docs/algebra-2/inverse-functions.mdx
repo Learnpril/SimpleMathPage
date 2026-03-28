@@ -104,18 +104,24 @@ import Quiz from "../../../components/Quiz.astro";
   questions={[
     {
       id: "q1",
-      text: "If f(x) = 4x − 8, what is f⁻¹(x)?",
-      options: ["(x + 8)/4", "4x + 8", "(x − 8)/4", "x/4 + 2"],
+      text: "If $f(x) = 4x - 8$, what is $f^{-1}(x)$?",
+      options: [
+        "$\\frac{x + 8}{4}$",
+        "$4x + 8$",
+        "$\\frac{x - 8}{4}$",
+        "$\\frac{x}{4} + 2$",
+      ],
       correctIndex: 0,
-      explanation: "y = 4x − 8 → x = 4y − 8 → x + 8 = 4y → y = (x + 8)/4.",
+      explanation:
+        "$y = 4x - 8 \\rightarrow x = 4y - 8 \\rightarrow x + 8 = 4y \\rightarrow y = \\frac{x + 8}{4}$.",
     },
     {
       id: "q2",
       text: "Which statement is true about inverse functions?",
       options: [
-        "f(f⁻¹(x)) = x",
-        "f(f⁻¹(x)) = f(x)",
-        "f⁻¹(x) = f(x)",
+        "$f(f^{-1}(x)) = x$",
+        "$f(f^{-1}(x)) = f(x)$",
+        "$f^{-1}(x) = f(x)$",
         "They always have the same graph",
       ],
       correctIndex: 0,

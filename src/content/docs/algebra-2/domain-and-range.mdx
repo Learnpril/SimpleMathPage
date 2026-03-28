@@ -142,30 +142,36 @@ import Quiz from "../../../components/Quiz.astro";
   questions={[
     {
       id: "q1",
-      text: "What is the domain of f(x) = 10 / (x − 5)?",
+      text: "What is the domain of $f(x) = \\frac{10}{x - 5}$?",
       options: [
-        "All real numbers except x = 5",
+        "All real numbers except $x = 5$",
         "All real numbers",
-        "x ≥ 5",
-        "x ≤ 5",
+        "$x \\geq 5$",
+        "$x \\leq 5$",
       ],
       correctIndex: 0,
-      explanation: "Denominator cannot be zero, so x ≠ 5.",
+      explanation: "Denominator cannot be zero, so $x \\neq 5$.",
     },
     {
       id: "q2",
-      text: "What is the domain of g(x) = √(x + 3)?",
-      options: ["x ≥ −3", "x > −3", "All real numbers", "x ≤ −3"],
+      text: "What is the domain of $g(x) = \\sqrt{x + 3}$?",
+      options: ["$x \\geq -3$", "$x > -3$", "All real numbers", "$x \\leq -3$"],
       correctIndex: 0,
       explanation:
-        "The expression inside the square root must be ≥ 0: x + 3 ≥ 0 → x ≥ −3.",
+        "The expression inside the square root must be $\\geq 0$: $x + 3 \\geq 0 \\rightarrow x \\geq -3$.",
     },
     {
       id: "q3",
-      text: "For the function h(x) = x² − 4, the range is:",
-      options: ["y ≥ −4", "y ≤ −4", "All real numbers", "y ≥ 0"],
+      text: "For the function $h(x) = x^2 - 4$, the range is:",
+      options: [
+        "$y \\geq -4$",
+        "$y \\leq -4$",
+        "All real numbers",
+        "$y \\geq 0$",
+      ],
       correctIndex: 0,
-      explanation: "The parabola opens upward with minimum value −4 at x = 0.",
+      explanation:
+        "The parabola opens upward with minimum value $-4$ at $x = 0$.",
     },
     {
       id: "q4",

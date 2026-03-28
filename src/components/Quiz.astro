@@ -49,6 +49,26 @@ const validation = validateQuizData({ quizId, questions });
   import { computeScore } from "../lib/quiz-scoring";
   import { getAnswerFeedback } from "../lib/quiz-feedback";
   import type { QuizQuestion, QuizState } from "../lib/quiz-types";
+  import katex from "katex";
+
+  /** Replace $...$ in a string with rendered KaTeX HTML */
+  function renderMathInString(text: string): string {
+    return text.replace(/\$([^$]+)\$/g, (_, expr) => {
+      try {
+        return katex.renderToString(expr, { throwOnError: false });
+      } catch {
+        return expr;
+      }
+    });
+  }
+
+  /** Process all text in an element, replacing $...$ with KaTeX */
+  function renderMathInElement(el: HTMLElement) {
+    const html = el.innerHTML;
+    if (html.includes("$")) {
+      el.innerHTML = renderMathInString(html);
+    }
+  }
 
   function initQuiz(container: HTMLElement) {
     const quizId = container.dataset.quizId!;
@@ -76,7 +96,7 @@ const validation = validateQuizData({ quizId, questions });
       const question = questions.find((q) => q.id === questionId)!;
       const fb = getAnswerFeedback(question, optionIndex);
       const el = container.querySelector(`[data-feedback-for="${questionId}"]`) as HTMLElement;
-      el.textContent = (fb.correct ? "✓ Correct. " : "✗ Incorrect. ") + fb.explanation;
+      el.innerHTML = (fb.correct ? "✓ Correct. " : "✗ Incorrect. ") + renderMathInString(fb.explanation);
       el.setAttribute("data-correct", String(fb.correct));
 
       // mark correct/incorrect on options
@@ -202,6 +222,9 @@ const validation = validateQuizData({ quizId, questions });
     container.querySelector("[data-quiz-retry]")!.addEventListener("click", retry);
 
     // --- restore saved state ---
+    // Render KaTeX in question text and options
+    container.querySelectorAll<HTMLElement>("legend, .quiz-option-text").forEach(renderMathInElement);
+
     const saved = loadQuizState(quizId);
     if (saved && saved.answers) {
       for (const [qId, optIdx] of Object.entries(saved.answers)) {

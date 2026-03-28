@@ -1,8 +1,129 @@
 ---
 title: Arithmetic Sequences
-description: Learn about arithmetic sequences and how to find terms and sums
+description: Learn how to identify, write, and work with arithmetic sequences
 sidebar:
-  order: 33
+  order: 34
 ---
 
-Content coming soon.
+## What You'll Learn
+
+In this lesson you'll learn what an arithmetic sequence is, how to find the common difference, and how to write both the explicit and recursive formulas.
+
+## The Concept
+
+An **arithmetic sequence** is a sequence of numbers where the difference between consecutive terms is always the same. This constant is called the **common difference** (d).
+
+import ArithSeqDiagram from "../../../components/ArithSeqDiagram.astro";
+
+<ArithSeqDiagram />
+
+The diagram shows the sequence 7, 11, 15, 19, 23. Each green arc shows the common difference d = +4 being added to get the next term. Every arithmetic sequence works this way — you start with a first term and keep adding the same number.
+
+**Explicit formula** (gives the nth term directly):
+
+$$
+a_n = a_1 + (n - 1)d
+$$
+
+**Recursive formula** (gives the next term from the previous one):
+
+A recursive formula defines each term using the term before it. Instead of jumping straight to any term like the explicit formula does, you build the sequence one step at a time — to find the 5th term you need the 4th, to find the 4th you need the 3rd, and so on. That's why a recursive formula always needs a starting value (a₁) to get going.
+
+$$
+a_n = a_{n-1} + d \quad (n \ge 2)
+$$
+
+This says: "to get any term, take the previous term and add d."
+
+## Worked Example
+
+**1. Find the 10th term of 7, 11, 15, 19, ...**
+
+Here a₁ = 7 and d = 4.
+
+$$
+a_{10} = 7 + (10 - 1)(4) = 7 + 36 = 43
+$$
+
+**2. Write the explicit formula for 3, 7, 11, 15, ...**
+
+a₁ = 3, d = 4.
+
+$$
+a_n = 3 + (n - 1)(4) = 3 + 4n - 4 = 4n - 1
+$$
+
+**3. Given the recursive formula a*n = a*(n−1) + 6 with a₁ = 2, find a₅**
+
+$$
+\begin{aligned}
+a_2 &= 2 + 6 = 8 \\[0.5em]
+a_3 &= 8 + 6 = 14 \\[0.5em]
+a_4 &= 14 + 6 = 20 \\[0.5em]
+a_5 &= 20 + 6 = 26
+\end{aligned}
+$$
+
+## Real-World Application
+
+Arithmetic sequences model many everyday situations:
+
+- Saving a fixed amount each week or month
+- Salary with fixed annual raises
+- Monthly rent or bill payments that increase by a fixed amount
+- Seating arrangements in rows with constant increase per row
+- Simple linear depreciation of an asset
+
+Example: you save 75 dollars every week. Your total savings after n weeks forms an arithmetic sequence with a₁ = 75 and d = 75.
+
+:::note[You've Got This]
+Arithmetic sequences are simply lists where you add (or subtract) the same number each time. The explicit formula a_n = a₁ + (n − 1)d is usually the most useful. Practice identifying the common difference and writing the formula — this skill will help you a lot with geometric sequences and series next.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="algebra2-arithmetic-sequences"
+  questions={[
+    {
+      id: "q1",
+      text: "What is the common difference in 4, 9, 14, 19, ...?",
+      options: ["5", "4", "9", "14"],
+      correctIndex: 0,
+      explanation: "Each term increases by 5.",
+    },
+    {
+      id: "q2",
+      text: "The explicit formula for an arithmetic sequence is:",
+      options: [
+        "$a_n = a_1 + (n-1)d$",
+        "$a_n = a_1 \\cdot r^{n-1}$",
+        "$a_n = a_{n-1} + d$",
+        "$a_n = a_1 + nd$",
+      ],
+      correctIndex: 0,
+      explanation: "The explicit formula gives the nth term directly.",
+    },
+    {
+      id: "q3",
+      text: "Find the 8th term: $a_1 = 10$, $d = -3$",
+      options: ["$-11$", "$4$", "$19$", "$7$"],
+      correctIndex: 0,
+      explanation: "$a_8 = 10 + (8-1)(-3) = 10 - 21 = -11$.",
+    },
+    {
+      id: "q4",
+      text: "An arithmetic sequence has a constant:",
+      options: [
+        "Difference between terms",
+        "Ratio between terms",
+        "Sum of terms",
+        "Product of terms",
+      ],
+      correctIndex: 0,
+      explanation: "The defining feature is the constant difference.",
+    },
+  ]}
+/>
