@@ -1,0 +1,162 @@
+---
+title: Solving Right Triangles
+description: Learn how to use trigonometric ratios to find missing sides and angles in right triangles
+sidebar:
+  order: 2
+---
+
+## What You'll Learn
+
+In this lesson you'll learn how to solve right triangles: finding missing sides and angles using sine, cosine, and tangent.
+
+## The Concept
+
+To **solve a right triangle** means to find all three sides and all three angles when some information is given.
+
+You will typically be given:
+
+- One acute angle and one side, or
+- Two sides (and the right angle is already known)
+
+Steps:
+
+1. Identify which sides and angles are known and which are missing.
+2. Choose the correct trigonometric ratio (SOH-CAH-TOA) based on what you know and what you need.
+3. Set up the equation and solve for the unknown.
+4. Use the fact that angles in a triangle add to 180° to find the third angle if needed.
+
+Common cases:
+
+- Given an angle and the opposite side → use sine (SOH)
+- Given an angle and the adjacent side → use cosine (CAH) or tangent (TOA)
+- Given an angle and the hypotenuse → use sine or cosine
+- Given two sides → use inverse trig functions (sin⁻¹, cos⁻¹, tan⁻¹) to find the angle
+
+## Worked Example
+
+**Example 1:** In a right triangle, angle θ = 35° and the adjacent side is 12 cm. Find the hypotenuse and the opposite side.
+
+import Trig35Triangle from "../../../components/Trig35Triangle.astro";
+
+<Trig35Triangle />
+
+**Finding the hypotenuse:**
+
+We know the adjacent side and need the hypotenuse. That's CAH: cos = adjacent / hypotenuse.
+
+$$
+\cos(35°) = \frac{12}{\text{hypotenuse}}
+$$
+
+$$
+\text{Hypotenuse} = \frac{12}{\cos(35°)} \approx \frac{12}{0.8192} \approx 14.65 \text{ cm}
+$$
+
+**Finding the opposite side:**
+
+We know the adjacent side and need the opposite. That's TOA: tan = opposite / adjacent.
+
+$$
+\tan(35°) = \frac{\text{opposite}}{12}
+$$
+
+$$
+\text{Opposite} \approx 12 \times \tan(35°) \approx 12 \times 0.7002 \approx 8.40 \text{ cm}
+$$
+
+**Example 2:** A ladder 15 feet long leans against a wall and makes a 62° angle with the ground. How high up the wall does it reach?
+
+The height is the opposite side and the ladder is the hypotenuse. That's SOH: sin = opposite / hypotenuse.
+
+$$
+\sin(62°) = \frac{\text{height}}{15}
+$$
+
+$$
+\text{Height} = 15 \times \sin(62°) \approx 15 \times 0.8829 \approx 13.24 \text{ feet}
+$$
+
+## Real-World Application
+
+Solving right triangles is used daily in:
+
+- Construction (roof pitches, ramp slopes, stair design)
+- Surveying and land measurement
+- Navigation (calculating heights or distances you can't measure directly)
+- Engineering (force components, structural supports)
+- Safety (ladder placement, wheelchair ramp angles)
+
+Example: when placing a ladder safely, you can use trigonometry to make sure the angle with the ground is appropriate (usually around 75°).
+
+:::note[You've Got This]
+Solving right triangles is mostly about choosing the right ratio (SOH-CAH-TOA) and setting up the equation correctly. Draw the triangle, label the known and unknown parts clearly, and pick the trig function that matches what you know versus what you need. The more you practice, the faster you'll see which ratio to use.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="trigonometry-solving-right-triangles"
+  questions={[
+    {
+      id: "q1",
+      text: "If you know an acute angle and the adjacent side, which ratio helps you find the hypotenuse?",
+      options: ["Cosine (CAH)", "Sine (SOH)", "Tangent (TOA)", "None of these"],
+      correctIndex: 0,
+      explanation:
+        "$\\cos(\\theta) = \\frac{\\text{adjacent}}{\\text{hypotenuse}}$, so hypotenuse $= \\frac{\\text{adjacent}}{\\cos(\\theta)}$.",
+    },
+    {
+      id: "q2",
+      text: "A ladder 20 feet long makes a 65° angle with the ground. How high up the wall does it reach?",
+      options: [
+        "$\\approx 18.1$ feet",
+        "$\\approx 8.5$ feet",
+        "$\\approx 22.4$ feet",
+        "$\\approx 15$ feet",
+      ],
+      correctIndex: 0,
+      explanation:
+        "Height $= 20 \\times \\sin(65°) \\approx 20 \\times 0.9063 \\approx 18.1$ feet.",
+    },
+    {
+      id: "q3",
+      text: "After finding two angles in a triangle, you find the third by:",
+      options: [
+        "Subtracting their sum from $180°$",
+        "Using the Pythagorean Theorem",
+        "Taking the inverse tangent",
+        "Using the quadratic formula",
+      ],
+      correctIndex: 0,
+      explanation: "The three angles in any triangle add up to $180°$.",
+    },
+    {
+      id: "q4",
+      text: "If you know the opposite and adjacent sides, which inverse function finds the angle?",
+      options: [
+        "$\\tan^{-1}$",
+        "$\\sin^{-1}$",
+        "$\\cos^{-1}$",
+        "None of these",
+      ],
+      correctIndex: 0,
+      explanation:
+        "$\\tan(\\theta) = \\frac{\\text{opposite}}{\\text{adjacent}}$, so $\\theta = \\tan^{-1}\\left(\\frac{\\text{opposite}}{\\text{adjacent}}\\right)$.",
+    },
+    {
+      id: "q5",
+      text: "In a right triangle with a 50° angle and hypotenuse of 20, the opposite side is:",
+      options: [
+        "$\\approx 15.3$",
+        "$\\approx 12.9$",
+        "$\\approx 18.8$",
+        "$\\approx 10.0$",
+      ],
+      correctIndex: 0,
+      explanation:
+        "Opposite $= 20 \\times \\sin(50°) \\approx 20 \\times 0.766 \\approx 15.3$.",
+    },
+  ]}
+/>

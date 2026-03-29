@@ -1,0 +1,47 @@
+---
+/**
+ * Trig30Triangle — worked example triangle with θ = 30°,
+ * opposite = 5, hypotenuse = 10, adjacent ≈ 8.66.
+ * Numbers labeled directly on the sides.
+ */
+const w = 360;
+const h = 200;
+// Triangle proportional to 30-60-90: base long, height short
+const ax = 40, ay = 170;    // bottom-left (30° angle)
+const bx = 290, by = 170;   // bottom-right (right angle)
+const cx = 290, cy = 50;    // top-right
+const r = 28;
+const angle = Math.atan2(cy - ay, cx - ax);
+const endArcX = ax + r * Math.cos(angle);
+const endArcY = ay + r * Math.sin(angle);
+---
+
+<figure class="t30" role="img" aria-label="Right triangle with 30 degree angle, opposite side 5, hypotenuse 10, adjacent 8.66">
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    <polygon points={`${ax},${ay} ${bx},${by} ${cx},${cy}`} fill="none" class="t30-tri" stroke-width="2.5" />
+    <polyline points={`${bx-13},${by} ${bx-13},${by-13} ${bx},${by-13}`} fill="none" class="t30-right" stroke-width="1.5" />
+    <path d={`M${ax+r},${ay} A${r},${r} 0 0,0 ${endArcX.toFixed(1)},${endArcY.toFixed(1)}`} fill="none" class="t30-arc" stroke-width="1.5" />
+    <text class="t30-angle" x={ax + 36} y={ay - 6} font-size="14" font-weight="bold">30°</text>
+    <text class="t30-hyp" x={(ax+cx)/2 - 20} y={(ay+cy)/2} font-size="14" text-anchor="middle" font-weight="bold"
+      transform={`rotate(-26, ${(ax+cx)/2 - 20}, ${(ay+cy)/2})`}>10</text>
+    <text class="t30-opp" x={bx + 14} y={(by+cy)/2 + 5} font-size="14" text-anchor="start" font-weight="bold">5</text>
+    <text class="t30-adj" x={(ax+bx)/2} y={ay + 20} font-size="14" text-anchor="middle" font-weight="bold">≈ 8.66</text>
+  </svg>
+</figure>
+
+<style>
+  .t30 { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .t30 svg { max-width:100%; height:auto; }
+  .t30-tri { stroke:#ccc; }
+  .t30-right { stroke:#666; }
+  .t30-arc { stroke:#d2a8ff; }
+  .t30-angle { fill:#d2a8ff; font-family:'Libre Baskerville',Georgia,serif; }
+  .t30-hyp { fill:#ccc; font-family:'Libre Baskerville',Georgia,serif; }
+  .t30-opp { fill:#58a6ff; font-family:'Libre Baskerville',Georgia,serif; }
+  .t30-adj { fill:#7ee787; font-family:'Libre Baskerville',Georgia,serif; }
+  :global([data-theme="light"]) .t30-tri { stroke:#333; }
+  :global([data-theme="light"]) .t30-right { stroke:#999; }
+  :global([data-theme="light"]) .t30-hyp { fill:#333; }
+  :global([data-theme="light"]) .t30-opp { fill:#0969da; }
+  :global([data-theme="light"]) .t30-adj { fill:#1a7f37; }
+</style>

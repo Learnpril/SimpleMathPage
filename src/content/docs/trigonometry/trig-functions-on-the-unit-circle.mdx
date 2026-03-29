@@ -1,0 +1,157 @@
+---
+title: Trigonometric Functions on the Unit Circle
+description: Learn how to find sine, cosine, and tangent values using the unit circle
+sidebar:
+  order: 6
+---
+
+## What You'll Learn
+
+In this lesson you'll use the unit circle to quickly find the exact values of sine, cosine, and tangent for the most important angles, without a calculator.
+
+## The Concept
+
+On the unit circle, any point has coordinates (cos θ, sin θ). This means you can read off exact trig values just by knowing where the angle lands on the circle.
+
+import UnitCircleDiagram from "../../../components/UnitCircleDiagram.astro";
+
+<UnitCircleDiagram />
+
+You only need to memorize the first quadrant values. The other three quadrants use the same numbers, just with different signs.
+
+**First Quadrant (0 to π/2):** all trig functions are positive
+
+- 0 → (1, 0)
+- π/6 (30°) → (√3/2, 1/2)
+- π/4 (45°) → (√2/2, √2/2)
+- π/3 (60°) → (1/2, √3/2)
+- π/2 (90°) → (0, 1)
+
+For the other quadrants, use the sign rules:
+
+- **Q I:** All positive
+- **Q II:** Sine positive, cosine and tangent negative
+- **Q III:** Tangent positive, sine and cosine negative
+- **Q IV:** Cosine positive, sine and tangent negative
+
+A common mnemonic for this is **ASTC** ("All Students Take Calculus"):
+**A**ll, **S**ine, **T**angent, **C**osine - telling you which function is positive in each quadrant.
+
+**Reference angles** are the key to using this. The reference angle is the acute angle between your terminal side and the x-axis. Find the reference angle, look up its first-quadrant values, then apply the correct sign for the quadrant you're in.
+
+**Tangent** is always sin θ / cos θ. If you know sin and cos, you know tan.
+
+## Worked Example
+
+**1. Find sin(2π/3) and cos(2π/3)**
+
+2π/3 = 120°, which is in Q II. The reference angle is π - 2π/3 = π/3.
+
+In Q II, sine is positive and cosine is negative:
+
+$$
+\sin\left(\frac{2\pi}{3}\right) = +\sin\left(\frac{\pi}{3}\right) = \frac{\sqrt{3}}{2}
+$$
+
+$$
+\cos\left(\frac{2\pi}{3}\right) = -\cos\left(\frac{\pi}{3}\right) = -\frac{1}{2}
+$$
+
+**2. Find tan(5π/4)**
+
+5π/4 = 225°, which is in Q III. The reference angle is 5π/4 - π = π/4.
+
+In Q III, tangent is positive:
+
+$$
+\tan\left(\frac{5\pi}{4}\right) = +\tan\left(\frac{\pi}{4}\right) = 1
+$$
+
+**3. Find sin(7π/6)**
+
+7π/6 = 210°, which is in Q III. The reference angle is 7π/6 - π = π/6.
+
+In Q III, sine is negative:
+
+$$
+\sin\left(\frac{7\pi}{6}\right) = -\sin\left(\frac{\pi}{6}\right) = -\frac{1}{2}
+$$
+
+## Real-World Application
+
+The unit circle is used in:
+
+- Computer graphics (rotating objects smoothly, calculating positions on circular paths)
+- Physics (circular motion, waves, pendulums)
+- Engineering (signal processing, AC circuits)
+- Music (sound wave analysis and synthesis)
+- Navigation and robotics (calculating headings and turns)
+
+Example: when animating a spinning wheel or calculating the position of a planet in its orbit, programmers and engineers constantly use unit circle values.
+
+:::note[You've Got This]
+The unit circle is your trigonometric reference table. Learn the first quadrant well (0, π/6, π/4, π/3, π/2), then use reference angles and the ASTC sign rules for the other quadrants. With a little practice, you'll recall these values quickly without a calculator.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="trigonometry-trig-functions-unit-circle"
+  questions={[
+    {
+      id: "q1",
+      text: "On the unit circle, the coordinates of any point are:",
+      options: [
+        "$(\\cos\\theta,\\, \\sin\\theta)$",
+        "$(\\sin\\theta,\\, \\cos\\theta)$",
+        "$(\\tan\\theta,\\, \\cot\\theta)$",
+        "$(r,\\, \\theta)$",
+      ],
+      correctIndex: 0,
+      explanation:
+        "The x-coordinate is $\\cos\\theta$ and the y-coordinate is $\\sin\\theta$.",
+    },
+    {
+      id: "q2",
+      text: "What is $\\cos\\left(\\frac{\\pi}{3}\\right)$?",
+      options: [
+        "$\\frac{1}{2}$",
+        "$\\frac{\\sqrt{3}}{2}$",
+        "$\\frac{\\sqrt{2}}{2}$",
+        "$0$",
+      ],
+      correctIndex: 0,
+      explanation:
+        "At $\\frac{\\pi}{3}$ (60°), the point is $\\left(\\frac{1}{2}, \\frac{\\sqrt{3}}{2}\\right)$.",
+    },
+    {
+      id: "q3",
+      text: "What is $\\sin\\left(\\frac{3\\pi}{2}\\right)$?",
+      options: ["$-1$", "$0$", "$1$", "$-\\frac{\\sqrt{2}}{2}$"],
+      correctIndex: 0,
+      explanation: "At $\\frac{3\\pi}{2}$ (270°), the point is $(0, -1)$.",
+    },
+    {
+      id: "q4",
+      text: "In the second quadrant, which trig function is positive?",
+      options: ["Sine", "Cosine", "Tangent", "None"],
+      correctIndex: 0,
+      explanation: "In Q II, sine is positive (the y-coordinate is positive).",
+    },
+    {
+      id: "q5",
+      text: "The reference angle for $\\frac{5\\pi}{6}$ is:",
+      options: [
+        "$\\frac{\\pi}{6}$",
+        "$\\frac{\\pi}{3}$",
+        "$\\frac{\\pi}{4}$",
+        "$\\frac{\\pi}{2}$",
+      ],
+      correctIndex: 0,
+      explanation:
+        "$\\frac{5\\pi}{6}$ is in Q II. Reference angle $= \\pi - \\frac{5\\pi}{6} = \\frac{\\pi}{6}$.",
+    },
+  ]}
+/>

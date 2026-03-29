@@ -1,0 +1,98 @@
+---
+/**
+ * SinCosGraph — plots y = sin(x) and y = cos(x) from 0 to 2π
+ * with labeled key points, axes, and π-based tick marks.
+ */
+const w = 520;
+const h = 260;
+const pad = 40;
+const gw = w - 2 * pad;
+const gh = h - 2 * pad;
+const cx = pad;
+const cy = pad + gh / 2; // y=0 line
+const scaleX = gw / (2 * Math.PI);
+const scaleY = gh / 2;
+
+function px(x: number) { return cx + x * scaleX; }
+function py(y: number) { return cy - y * scaleY; }
+
+// Generate smooth curve points
+const sinPts: string[] = [];
+const cosPts: string[] = [];
+for (let t = 0; t <= 2 * Math.PI; t += 0.05) {
+  sinPts.push(`${sinPts.length === 0 ? 'M' : 'L'}${px(t).toFixed(1)},${py(Math.sin(t)).toFixed(1)}`);
+  cosPts.push(`${cosPts.length === 0 ? 'M' : 'L'}${px(t).toFixed(1)},${py(Math.cos(t)).toFixed(1)}`);
+}
+
+const piTicks = [
+  { val: 0, label: '0' },
+  { val: Math.PI / 2, label: 'π/2' },
+  { val: Math.PI, label: 'π' },
+  { val: 3 * Math.PI / 2, label: '3π/2' },
+  { val: 2 * Math.PI, label: '2π' },
+];
+---
+
+<figure class="scg" role="img" aria-label="Graphs of y = sin(x) in blue and y = cos(x) in green from 0 to 2π">
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    {/* Grid lines */}
+    <line x1={cx} y1={py(1)} x2={px(2 * Math.PI)} y2={py(1)} class="scg-grid" stroke-width="0.5" />
+    <line x1={cx} y1={py(-1)} x2={px(2 * Math.PI)} y2={py(-1)} class="scg-grid" stroke-width="0.5" />
+    {piTicks.map(t => (
+      <line x1={px(t.val)} y1={py(1.1)} x2={px(t.val)} y2={py(-1.1)} class="scg-grid" stroke-width="0.5" />
+    ))}
+
+    {/* Axes */}
+    <line x1={cx - 5} y1={cy} x2={px(2 * Math.PI) + 10} y2={cy} class="scg-axis" stroke-width="1.5" />
+    <line x1={cx} y1={py(1.15)} x2={cx} y2={py(-1.15)} class="scg-axis" stroke-width="1.5" />
+
+    {/* Y-axis labels */}
+    <text class="scg-tick" x={cx - 8} y={py(1) + 4} font-size="12" text-anchor="end">1</text>
+    <text class="scg-tick" x={cx - 8} y={py(-1) + 4} font-size="12" text-anchor="end">-1</text>
+
+    {/* X-axis labels */}
+    {piTicks.map(t => (
+      <text class="scg-tick" x={px(t.val)} y={cy + 20} font-size="11" text-anchor="middle">{t.label}</text>
+    ))}
+
+    {/* Sine curve */}
+    <path d={sinPts.join(' ')} fill="none" class="scg-sin" stroke-width="2.5" />
+    {/* Cosine curve */}
+    <path d={cosPts.join(' ')} fill="none" class="scg-cos" stroke-width="2.5" />
+
+    {/* Key points for sine */}
+    <circle cx={px(0)} cy={py(0)} r="4" class="scg-sin-dot" />
+    <circle cx={px(Math.PI / 2)} cy={py(1)} r="4" class="scg-sin-dot" />
+    <circle cx={px(Math.PI)} cy={py(0)} r="4" class="scg-sin-dot" />
+    <circle cx={px(3 * Math.PI / 2)} cy={py(-1)} r="4" class="scg-sin-dot" />
+    <circle cx={px(2 * Math.PI)} cy={py(0)} r="4" class="scg-sin-dot" />
+
+    {/* Legend */}
+    <line x1={w - 130} y1="12" x2={w - 110} y2="12" class="scg-sin" stroke-width="2.5" />
+    <text class="scg-legend-sin" x={w - 105} y="16" font-size="12">y = sin(x)</text>
+    <line x1={w - 130} y1="28" x2={w - 110} y2="28" class="scg-cos" stroke-width="2.5" />
+    <text class="scg-legend-cos" x={w - 105} y="32" font-size="12">y = cos(x)</text>
+  </svg>
+</figure>
+
+<style>
+  .scg { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .scg svg { max-width:100%; height:auto; }
+  .scg-axis { stroke:#666; }
+  .scg-grid { stroke:#333; stroke-dasharray:3,3; }
+  .scg-tick { fill:#999; font-family:'Libre Baskerville',Georgia,serif; }
+  .scg-sin { stroke:#58a6ff; }
+  .scg-cos { stroke:#7ee787; }
+  .scg-sin-dot { fill:#58a6ff; }
+  .scg-legend-sin { fill:#58a6ff; font-family:'Libre Baskerville',Georgia,serif; }
+  .scg-legend-cos { fill:#7ee787; font-family:'Libre Baskerville',Georgia,serif; }
+
+  :global([data-theme="light"]) .scg-axis { stroke:#999; }
+  :global([data-theme="light"]) .scg-grid { stroke:#ddd; }
+  :global([data-theme="light"]) .scg-tick { fill:#555; }
+  :global([data-theme="light"]) .scg-sin { stroke:#0969da; }
+  :global([data-theme="light"]) .scg-cos { stroke:#1a7f37; }
+  :global([data-theme="light"]) .scg-sin-dot { fill:#0969da; }
+  :global([data-theme="light"]) .scg-legend-sin { fill:#0969da; }
+  :global([data-theme="light"]) .scg-legend-cos { fill:#1a7f37; }
+</style>

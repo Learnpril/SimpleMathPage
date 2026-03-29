@@ -1,0 +1,128 @@
+---
+/**
+ * UnitCircleDiagram — full unit circle with all 16 key angles,
+ * degrees, radians, (cos, sin) coordinates, and dotted radius lines.
+ * Larger viewBox with careful label placement to avoid overlap.
+ */
+const w = 720;
+const h = 720;
+const cx = 360, cy = 360;
+const r = 220;
+
+const angles = [
+  { deg: 0,   rad: '0',       cos: '1',      sin: '0',      lOff: [18, 4],   cOff: [18, 18] },
+  { deg: 30,  rad: 'π/6',     cos: '√3/2',   sin: '1/2',    lOff: [14, -4],  cOff: [50, 0] },
+  { deg: 45,  rad: 'π/4',     cos: '√2/2',   sin: '√2/2',   lOff: [10, -6],  cOff: [46, -2] },
+  { deg: 60,  rad: 'π/3',     cos: '1/2',    sin: '√3/2',   lOff: [8, -10],  cOff: [42, -6] },
+  { deg: 90,  rad: 'π/2',     cos: '0',      sin: '1',      lOff: [0, -18],  cOff: [0, -36] },
+  { deg: 120, rad: '2π/3',    cos: '-1/2',   sin: '√3/2',   lOff: [-8, -10], cOff: [-42, -6] },
+  { deg: 135, rad: '3π/4',    cos: '-√2/2',  sin: '√2/2',   lOff: [-10, -6], cOff: [-46, -2] },
+  { deg: 150, rad: '5π/6',    cos: '-√3/2',  sin: '1/2',    lOff: [-14, -4], cOff: [-50, 0] },
+  { deg: 180, rad: 'π',       cos: '-1',     sin: '0',      lOff: [-18, -16],cOff: [-18, -2] },
+  { deg: 210, rad: '7π/6',    cos: '-√3/2',  sin: '-1/2',   lOff: [-14, 6],  cOff: [-50, 14] },
+  { deg: 225, rad: '5π/4',    cos: '-√2/2',  sin: '-√2/2',  lOff: [-10, 8],  cOff: [-46, 16] },
+  { deg: 240, rad: '4π/3',    cos: '-1/2',   sin: '-√3/2',  lOff: [-8, 12],  cOff: [-42, 20] },
+  { deg: 270, rad: '3π/2',    cos: '0',      sin: '-1',     lOff: [0, 20],   cOff: [0, 38] },
+  { deg: 300, rad: '5π/3',    cos: '1/2',    sin: '-√3/2',  lOff: [8, 12],   cOff: [42, 20] },
+  { deg: 315, rad: '7π/4',    cos: '√2/2',   sin: '-√2/2',  lOff: [10, 8],   cOff: [46, 16] },
+  { deg: 330, rad: '11π/6',   cos: '√3/2',   sin: '-1/2',   lOff: [14, 6],   cOff: [50, 14] },
+];
+
+function toRad(d: number) { return d * Math.PI / 180; }
+---
+
+<figure class="uc" role="img" aria-label="Unit circle with degrees, radians, and coordinates at all 16 key angles">
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+
+    {/* Axes */}
+    <line x1="40" y1={cy} x2={w - 40} y2={cy} class="uc-axis" stroke-width="1" />
+    <line x1={cx} y1="40" x2={cx} y2={h - 40} class="uc-axis" stroke-width="1" />
+
+    {/* Axis labels */}
+    <text class="uc-axis-label" x={w - 50} y={cy - 22} font-size="15" text-anchor="end">cosine (x)</text>
+    <text class="uc-axis-label" x={cx + 22} y="48" font-size="15">sin (y)</text>
+
+    {/* Circle */}
+    <circle cx={cx} cy={cy} r={r} fill="none" class="uc-circle" stroke-width="2" />
+
+    {/* Tick marks - inside the circle, near the axis intersection points */}
+    <rect x={cx + r - 28} y={cy + 4} width="20" height="16" rx="3" class="uc-tick-bg" />
+    <text class="uc-tick" x={cx + r - 18} y={cy + 16} font-size="13" text-anchor="middle">1</text>
+    <rect x={cx - r + 6} y={cy + 4} width="24" height="16" rx="3" class="uc-tick-bg" />
+    <text class="uc-tick" x={cx - r + 18} y={cy + 16} font-size="13" text-anchor="middle">-1</text>
+    <rect x={cx + 6} y={cy - r + 6} width="14" height="16" rx="3" class="uc-tick-bg" />
+    <text class="uc-tick" x={cx + 12} y={cy - r + 18} font-size="13" text-anchor="start">1</text>
+    <rect x={cx + 6} y={cy + r - 20} width="20" height="16" rx="3" class="uc-tick-bg" />
+    <text class="uc-tick" x={cx + 12} y={cy + r - 8} font-size="13" text-anchor="start">-1</text>
+
+    {/* Dotted radius lines and points */}
+    {angles.map((a, i) => {
+      const rad = toRad(a.deg);
+      const px = cx + r * Math.cos(rad);
+      const py = cy - r * Math.sin(rad);
+      // Label positions pushed outward
+      const labelDist = r + 22;
+      const lx = cx + labelDist * Math.cos(rad) + a.lOff[0];
+      const ly = cy - labelDist * Math.sin(rad) + a.lOff[1];
+      const coordDist = r + 42;
+      const coordX = cx + coordDist * Math.cos(rad) + a.cOff[0];
+      const coordY = cy - coordDist * Math.sin(rad) + a.cOff[1];
+      const isRight = a.deg < 90 || a.deg > 270;
+      const isCenter = a.deg === 90 || a.deg === 270;
+      const anchor = isCenter ? 'middle' : (isRight ? 'start' : 'end');
+      return (
+        <g>
+          {/* Radius line - orange for quadrantal (0/90/180/270), blue/red alternating for others */}
+          <line x1={cx} y1={cy} x2={px.toFixed(1)} y2={py.toFixed(1)} stroke={a.deg % 90 === 0 ? '#e3922a' : (i % 2 === 0 ? '#58a6ff' : '#f47067')} stroke-width="2" stroke-opacity="0.5" stroke-dasharray="6,4" />
+          {/* Dot on circle */}
+          <circle cx={px.toFixed(1)} cy={py.toFixed(1)} r="4" class="uc-dot" />
+          {/* Degree + radian */}
+          <text class="uc-deg" x={lx.toFixed(1)} y={(ly - 5).toFixed(1)} font-size="14" text-anchor={anchor} font-weight="bold">{a.deg}°</text>
+          <text class="uc-rad" x={lx.toFixed(1)} y={(ly + 11).toFixed(1)} font-size="13" text-anchor={anchor}>{a.rad}</text>
+          {/* Coordinate */}
+          <text class="uc-coord" x={coordX.toFixed(1)} y={coordY.toFixed(1)} font-size="12" text-anchor={anchor}>({a.cos}, {a.sin})</text>
+        </g>
+      );
+    })}
+
+    {/* Center dot */}
+    <circle cx={cx} cy={cy} r="3" class="uc-center" />
+
+    {/* Quadrant labels at far corners of the SVG */}
+    <text class="uc-quadrant" x={w - 10} y="22" font-size="14" text-anchor="end">Q I</text>
+    <text class="uc-quadrant" x="10" y="22" font-size="14" text-anchor="start">Q II</text>
+    <text class="uc-quadrant" x="10" y={h - 10} font-size="14" text-anchor="start">Q III</text>
+    <text class="uc-quadrant" x={w - 10} y={h - 10} font-size="14" text-anchor="end">Q IV</text>
+
+  </svg>
+</figure>
+
+<style>
+  .uc { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .uc svg { max-width:100%; height:auto; }
+  .uc-axis { stroke:#444; stroke-dasharray:4,4; }
+  .uc-axis-label { fill:#777; font-family:'Libre Baskerville',Georgia,serif; }
+  .uc-circle { stroke:#fff; }
+  .uc-radius { stroke:#444; }
+  .uc-tick { fill:#fff; font-family:'Libre Baskerville',Georgia,serif; font-weight:bold; }
+  .uc-tick-bg { fill:none; }
+  .uc-dot { fill:#58a6ff; }
+  .uc-deg { fill:#d2a8ff; font-family:'Libre Baskerville',Georgia,serif; }
+  .uc-rad { fill:#7ee787; font-family:'Libre Baskerville',Georgia,serif; }
+  .uc-coord { fill:#999; font-family:'Libre Baskerville',Georgia,serif; }
+  .uc-center { fill:#ccc; }
+  .uc-quadrant { fill:#555; font-family:'Libre Baskerville',Georgia,serif; font-style:italic; }
+
+  :global([data-theme="light"]) .uc-axis { stroke:#ccc; }
+  :global([data-theme="light"]) .uc-radius { stroke:#ccc; }
+  :global([data-theme="light"]) .uc-circle { stroke:#000; }
+  :global([data-theme="light"]) .uc-dot { fill:#0969da; }
+  :global([data-theme="light"]) .uc-deg { fill:#8250df; }
+  :global([data-theme="light"]) .uc-rad { fill:#1a7f37; }
+  :global([data-theme="light"]) .uc-coord { fill:#666; }
+  :global([data-theme="light"]) .uc-center { fill:#333; }
+  :global([data-theme="light"]) .uc-quadrant { fill:#aaa; }
+  :global([data-theme="light"]) .uc-tick { fill:#000; }
+  :global([data-theme="light"]) .uc-tick-bg { fill:none; }
+  :global([data-theme="light"]) .uc-axis-label { fill:#555; }
+</style>

@@ -1,0 +1,169 @@
+---
+title: Basic Trigonometric Equations
+description: Learn how to solve simple trigonometric equations
+sidebar:
+  order: 13
+---
+
+## What You'll Learn
+
+In this lesson you'll learn how to solve basic trigonometric equations involving sine, cosine, and tangent, including finding multiple solutions within one period.
+
+## The Concept
+
+To solve a trigonometric equation:
+
+1. Isolate the trigonometric function (get sin θ, cos θ, or tan θ by itself)
+2. Use the unit circle or inverse functions to find the reference angle
+3. Find all solutions within one period (0 to 2π for sin/cos, 0 to π for tan)
+4. For general solutions, add the period multiplied by any integer k
+
+**General solution patterns:**
+
+- sin θ = k has solutions at θ = arcsin(k) and θ = π - arcsin(k), plus 2πn
+- cos θ = k has solutions at θ = ±arccos(k), plus 2πn
+- tan θ = k has solutions at θ = arctan(k), plus πn
+
+Always check solutions in the original equation, especially if you squared both sides or used identities that could introduce extraneous solutions.
+
+## Worked Example
+
+**1. Solve sin θ = 1/2 for θ in [0, 2π)**
+
+From the unit circle, sin θ = 1/2 at two angles in [0, 2π):
+
+$$
+\theta = \frac{\pi}{6} \quad \text{or} \quad \theta = \pi - \frac{\pi}{6} = \frac{5\pi}{6}
+$$
+
+The first is in Q1 (where sin is positive), the second is in Q2 (where sin is also positive).
+
+**2. Solve 2 cos θ - 1 = 0 for θ in [0, 2π)**
+
+First isolate cos θ:
+
+$$
+2\cos\theta = 1 \quad \Rightarrow \quad \cos\theta = \frac{1}{2}
+$$
+
+From the unit circle, cos θ = 1/2 at:
+
+$$
+\theta = \frac{\pi}{3} \quad \text{or} \quad \theta = 2\pi - \frac{\pi}{3} = \frac{5\pi}{3}
+$$
+
+Q1 and Q4, where cosine is positive.
+
+**3. Solve tan θ = 1 for θ in [0, 2π)**
+
+tan θ = 1 when sin θ and cos θ are equal. From the unit circle:
+
+$$
+\theta = \frac{\pi}{4} \quad \text{or} \quad \theta = \frac{\pi}{4} + \pi = \frac{5\pi}{4}
+$$
+
+Tangent repeats every π, so we get one solution in Q1 and one in Q3.
+
+**4. Solve sin(2θ) = √3/2 for θ in [0, 2π)**
+
+Let u = 2θ. Then sin(u) = √3/2, which gives:
+
+$$
+u = \frac{\pi}{3} \quad \text{or} \quad u = \frac{2\pi}{3}
+$$
+
+Since u = 2θ and we need θ in [0, 2π), u ranges from 0 to 4π. Adding 2π to each:
+
+$$
+u = \frac{\pi}{3},\; \frac{2\pi}{3},\; \frac{7\pi}{3},\; \frac{8\pi}{3}
+$$
+
+Divide by 2 to get θ:
+
+$$
+\theta = \frac{\pi}{6},\; \frac{\pi}{3},\; \frac{7\pi}{6},\; \frac{4\pi}{3}
+$$
+
+## Real-World Application
+
+Trigonometric equations are used to solve:
+
+- Finding angles in construction and engineering
+- Determining times of day for certain lighting or tidal conditions
+- Solving for angles in physics problems (projectile motion, waves)
+- Navigation and surveying problems
+
+Example: finding the angle a ladder should be placed against a wall for safety involves solving a trigonometric equation.
+
+:::note[You've Got This]
+Solving trig equations is mostly about isolating the trig function and then finding all angles that satisfy it within one period. Remember to add the appropriate period (2π for sin/cos, π for tan) to find all solutions. Always check your answers in the original equation.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="trigonometry-basic-trig-equations"
+  questions={[
+    {
+      id: "q1",
+      text: "Solve $\\sin\\theta = \\frac{1}{2}$ for $\\theta$ in $[0, 2\\pi)$:",
+      options: [
+        "$\\frac{\\pi}{6}$ and $\\frac{5\\pi}{6}$",
+        "$\\frac{\\pi}{3}$ and $\\frac{2\\pi}{3}$",
+        "$\\frac{\\pi}{4}$ and $\\frac{3\\pi}{4}$",
+        "$0$ and $\\pi$",
+      ],
+      correctIndex: 0,
+      explanation:
+        "$\\sin\\theta = \\frac{1}{2}$ at $\\frac{\\pi}{6}$ (Q1) and $\\frac{5\\pi}{6}$ (Q2).",
+    },
+    {
+      id: "q2",
+      text: "The general solution for $\\tan\\theta = k$ adds multiples of:",
+      options: ["$\\pi$", "$2\\pi$", "$\\frac{\\pi}{2}$", "$4\\pi$"],
+      correctIndex: 0,
+      explanation: "Tangent has a period of $\\pi$.",
+    },
+    {
+      id: "q3",
+      text: "Solve $\\cos\\theta = 0$ for $\\theta$ in $[0, 2\\pi)$:",
+      options: [
+        "$\\frac{\\pi}{2}$ and $\\frac{3\\pi}{2}$",
+        "$0$ and $\\pi$",
+        "$\\frac{\\pi}{4}$ and $\\frac{5\\pi}{4}$",
+        "$\\pi$ and $2\\pi$",
+      ],
+      correctIndex: 0,
+      explanation:
+        "$\\cos\\theta = 0$ at the top and bottom of the unit circle.",
+    },
+    {
+      id: "q4",
+      text: "Why is it important to check solutions in trig equations?",
+      options: [
+        "Some may be extraneous",
+        "To calculate the amplitude",
+        "To find the period",
+        "To determine the domain",
+      ],
+      correctIndex: 0,
+      explanation:
+        "Extraneous solutions can appear, especially when squaring both sides.",
+    },
+    {
+      id: "q5",
+      text: "Solve $2\\sin\\theta = \\sqrt{2}$ for $\\theta$ in $[0, 2\\pi)$:",
+      options: [
+        "$\\frac{\\pi}{4}$ and $\\frac{3\\pi}{4}$",
+        "$\\frac{\\pi}{6}$ and $\\frac{5\\pi}{6}$",
+        "$\\frac{\\pi}{3}$ and $\\frac{2\\pi}{3}$",
+        "$0$ and $\\pi$",
+      ],
+      correctIndex: 0,
+      explanation:
+        "$\\sin\\theta = \\frac{\\sqrt{2}}{2}$ at $\\frac{\\pi}{4}$ and $\\frac{3\\pi}{4}$.",
+    },
+  ]}
+/>

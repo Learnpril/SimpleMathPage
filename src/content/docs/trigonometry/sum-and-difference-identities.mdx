@@ -1,0 +1,176 @@
+---
+title: Sum and Difference Identities
+description: Learn the sum and difference formulas for sine, cosine, and tangent
+sidebar:
+  order: 12
+---
+
+## What You'll Learn
+
+In this lesson you'll learn the sum and difference identities for sine, cosine, and tangent and how to use them to find exact values and simplify expressions.
+
+## The Concept
+
+The **sum and difference identities** let you find the sine, cosine, or tangent of the sum or difference of two angles.
+
+### Sum Identities
+
+$$
+\sin(A + B) = \sin A \cos B + \cos A \sin B
+$$
+
+$$
+\cos(A + B) = \cos A \cos B - \sin A \sin B
+$$
+
+$$
+\tan(A + B) = \frac{\tan A + \tan B}{1 - \tan A \tan B}
+$$
+
+### Difference Identities
+
+$$
+\sin(A - B) = \sin A \cos B - \cos A \sin B
+$$
+
+$$
+\cos(A - B) = \cos A \cos B + \sin A \sin B
+$$
+
+$$
+\tan(A - B) = \frac{\tan A - \tan B}{1 + \tan A \tan B}
+$$
+
+Notice the pattern: for sine, the sign in the middle matches the sign in the argument. For cosine, the sign flips. This is worth remembering.
+
+These identities are useful for finding exact values of angles that are sums or differences of known angles (like 75° = 45° + 30°, or 15° = 45° - 30°), simplifying expressions, and solving equations.
+
+## Worked Example
+
+**1. Find the exact value of sin(75°)**
+
+75° = 45° + 30°, so use the sine sum identity:
+
+$$
+\sin(75°) = \sin(45° + 30°) = \sin 45° \cos 30° + \cos 45° \sin 30°
+$$
+
+Plug in the known values:
+
+$$
+= \frac{\sqrt{2}}{2} \cdot \frac{\sqrt{3}}{2} + \frac{\sqrt{2}}{2} \cdot \frac{1}{2} = \frac{\sqrt{6}}{4} + \frac{\sqrt{2}}{4} = \frac{\sqrt{6} + \sqrt{2}}{4}
+$$
+
+**2. Find tan(15°) using the difference identity**
+
+15° = 45° - 30°, so use the tangent difference identity:
+
+$$
+\tan(15°) = \frac{\tan 45° - \tan 30°}{1 + \tan 45° \cdot \tan 30°} = \frac{1 - \frac{1}{\sqrt{3}}}{1 + 1 \cdot \frac{1}{\sqrt{3}}}
+$$
+
+Multiply numerator and denominator by √3:
+
+$$
+= \frac{\sqrt{3} - 1}{\sqrt{3} + 1}
+$$
+
+Rationalize by multiplying by the conjugate:
+
+$$
+= \frac{(\sqrt{3} - 1)^2}{(\sqrt{3})^2 - 1^2} = \frac{3 - 2\sqrt{3} + 1}{2} = \frac{4 - 2\sqrt{3}}{2} = 2 - \sqrt{3}
+$$
+
+**3. Simplify cos(x + y) cos y + sin(x + y) sin y**
+
+This matches the form of the cosine difference identity cos(A - B) = cos A cos B + sin A sin B, where A = x + y and B = y:
+
+$$
+\cos((x + y) - y) = \cos(x)
+$$
+
+The whole expression simplifies to just cos(x).
+
+## Real-World Application
+
+Sum and difference identities are used in:
+
+- Physics (wave interference and superposition)
+- Engineering (signal processing and modulation)
+- Music (combining sound waves of different frequencies)
+- Navigation and astronomy (calculating angles between celestial bodies)
+
+Example: when two sound waves of slightly different frequencies interfere, the sum identity helps describe the resulting "beat" frequency pattern.
+
+:::note[You've Got This]
+The sum and difference identities are powerful tools that let you break down angles into sums or differences of easier angles. Memorize the sine and cosine versions first. The tangent version can be derived from them. Practice finding exact values of angles like 15°, 75°, and 105°.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="trigonometry-sum-difference-identities"
+  questions={[
+    {
+      id: "q1",
+      text: "The sum identity for sine is:",
+      options: [
+        "$\\sin(A+B) = \\sin A \\cos B + \\cos A \\sin B$",
+        "$\\sin(A+B) = \\sin A + \\sin B$",
+        "$\\sin(A+B) = \\cos(A-B)$",
+        "$\\sin(A+B) = \\tan A + \\tan B$",
+      ],
+      correctIndex: 0,
+      explanation: "$\\sin(A+B) = \\sin A \\cos B + \\cos A \\sin B$.",
+    },
+    {
+      id: "q2",
+      text: "The exact value of $\\cos(75°)$ is:",
+      options: [
+        "$\\frac{\\sqrt{6} - \\sqrt{2}}{4}$",
+        "$\\frac{\\sqrt{6} + \\sqrt{2}}{4}$",
+        "$\\frac{\\sqrt{2} - \\sqrt{6}}{4}$",
+        "$\\frac{\\sqrt{2}}{2}$",
+      ],
+      correctIndex: 0,
+      explanation:
+        "$75° = 45° + 30°$. $\\cos 45° \\cos 30° - \\sin 45° \\sin 30° = \\frac{\\sqrt{6} - \\sqrt{2}}{4}$.",
+    },
+    {
+      id: "q3",
+      text: "In the cosine sum identity, the sign between the two terms is:",
+      options: ["Minus", "Plus", "It depends on the angle", "There is no sign"],
+      correctIndex: 0,
+      explanation:
+        "$\\cos(A+B) = \\cos A \\cos B \\mathbf{-} \\sin A \\sin B$. The sign flips compared to the argument.",
+    },
+    {
+      id: "q4",
+      text: "Sum and difference identities are most useful for:",
+      options: [
+        "Finding exact values of angles like 15° and 75°",
+        "Graphing only",
+        "Solving linear equations",
+        "Finding domain and range",
+      ],
+      correctIndex: 0,
+      explanation:
+        "They let you calculate exact trig values for angles that are sums or differences of standard angles.",
+    },
+    {
+      id: "q5",
+      text: "$\\sin(A - B)$ equals:",
+      options: [
+        "$\\sin A \\cos B - \\cos A \\sin B$",
+        "$\\sin A \\cos B + \\cos A \\sin B$",
+        "$\\cos A \\cos B + \\sin A \\sin B$",
+        "$\\sin A - \\sin B$",
+      ],
+      correctIndex: 0,
+      explanation:
+        "The sine difference identity has a minus in the middle, matching the minus in the argument.",
+    },
+  ]}
+/>

@@ -38,13 +38,13 @@ export default defineConfig({
           label: "Algebra 2",
           autogenerate: { directory: "algebra-2" },
         },
+        {
+          label: "Trigonometry",
+          autogenerate: { directory: "trigonometry" },
+        },
         // {
         //   label: "Pre-Calculus",
         //   autogenerate: { directory: "pre-calculus" },
-        // },
-        // {
-        //   label: "Trigonometry",
-        //   autogenerate: { directory: "trigonometry" },
         // },
         // {
         //   label: "Calculus 1",

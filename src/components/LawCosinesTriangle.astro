@@ -1,0 +1,74 @@
+---
+/**
+ * LawCosinesTriangle — triangle PQR with p=7, q=10, R=55°
+ * showing the SAS case for Law of Cosines.
+ */
+const w = 400;
+const h = 230;
+// Triangle vertices
+const px = 50, py = 195;   // vertex P (bottom-left)
+const qx = 350, qy = 195;  // vertex Q (bottom-right)
+const rx = 160, ry = 45;   // vertex R (top)
+
+// Compute arc endpoints for the angle at R
+const rad = 30; // arc radius
+// Direction from R to P
+const dpx = px - rx, dpy = py - ry;
+const dPlen = Math.sqrt(dpx * dpx + dpy * dpy);
+// Direction from R to Q
+const dqx = qx - rx, dqy = qy - ry;
+const dQlen = Math.sqrt(dqx * dqx + dqy * dqy);
+// Arc start (along RP) and end (along RQ)
+const arcX1 = rx + (dpx / dPlen) * rad;
+const arcY1 = ry + (dpy / dPlen) * rad;
+const arcX2 = rx + (dqx / dQlen) * rad;
+const arcY2 = ry + (dqy / dQlen) * rad;
+// Midpoint of arc for label placement (bisector direction)
+const midDx = (dpx / dPlen + dqx / dQlen);
+const midDy = (dpy / dPlen + dqy / dQlen);
+const midLen = Math.sqrt(midDx * midDx + midDy * midDy);
+const labelR = 46;
+const labelX = rx + (midDx / midLen) * labelR;
+const labelY = ry + (midDy / midLen) * labelR;
+---
+
+<figure class="lct" role="img" aria-label="Triangle PQR with p=7, q=10, included angle R=55°">
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    {/* Triangle */}
+    <polygon points={`${px},${py} ${qx},${qy} ${rx},${ry}`} fill="none" class="lct-tri" stroke-width="2.5" />
+
+    {/* Angle arc at R */}
+    <path d={`M ${arcX1.toFixed(1)},${arcY1.toFixed(1)} A ${rad} ${rad} 0 0 0 ${arcX2.toFixed(1)},${arcY2.toFixed(1)}`} fill="none" class="lct-arc" stroke-width="1.5" />
+
+    {/* Angle label - centered along bisector */}
+    <text class="lct-angle" x={labelX.toFixed(1)} y={labelY.toFixed(1)} font-size="13" font-weight="bold" text-anchor="middle" dominant-baseline="middle">55°</text>
+
+    {/* Vertex labels - outside triangle */}
+    <text class="lct-vertex" x={px - 16} y={py + 16} font-size="14" font-weight="bold">P</text>
+    <text class="lct-vertex" x={qx + 8} y={qy + 16} font-size="14" font-weight="bold">Q</text>
+    <text class="lct-vertex" x={rx - 18} y={ry - 8} font-size="14" font-weight="bold">R</text>
+
+    {/* Side labels - outside the triangle */}
+    <text class="lct-side-a" x={(qx + rx) / 2 + 16} y={(qy + ry) / 2 - 6} font-size="13" font-weight="bold">p = 7</text>
+    <text class="lct-side-b" x={(px + rx) / 2 - 44} y={(py + ry) / 2 + 2} font-size="13" font-weight="bold">q = 10</text>
+    <text class="lct-side-c" x={(px + qx) / 2} y={py + 20} font-size="13" font-weight="bold" text-anchor="middle">r = ?</text>
+  </svg>
+</figure>
+
+<style>
+  .lct { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .lct svg { max-width:100%; height:auto; }
+  .lct-tri { stroke:#ccc; }
+  .lct-arc { stroke:#d2a8ff; }
+  .lct-angle { fill:#d2a8ff; font-family:'Libre Baskerville',Georgia,serif; }
+  .lct-vertex { fill:#58a6ff; font-family:'Libre Baskerville',Georgia,serif; }
+  .lct-side-a { fill:#7ee787; font-family:'Libre Baskerville',Georgia,serif; }
+  .lct-side-b { fill:#f0883e; font-family:'Libre Baskerville',Georgia,serif; }
+  .lct-side-c { fill:#999; font-family:'Libre Baskerville',Georgia,serif; }
+  :global([data-theme="light"]) .lct-tri { stroke:#333; }
+  :global([data-theme="light"]) .lct-arc { stroke:#8250df; }
+  :global([data-theme="light"]) .lct-angle { fill:#8250df; }
+  :global([data-theme="light"]) .lct-vertex { fill:#0969da; }
+  :global([data-theme="light"]) .lct-side-a { fill:#1a7f37; }
+  :global([data-theme="light"]) .lct-side-b { fill:#d4700a; }
+</style>

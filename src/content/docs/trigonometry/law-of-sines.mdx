@@ -1,0 +1,159 @@
+---
+title: Law of Sines
+description: Learn the Law of Sines and how to use it to solve oblique triangles
+sidebar:
+  order: 16
+---
+
+## What You'll Learn
+
+In this lesson you'll learn the Law of Sines and how to use it to find missing sides and angles in non-right triangles.
+
+## The Concept
+
+The **Law of Sines** states that in any triangle, the ratio of the length of a side to the sine of its opposite angle is constant:
+
+$$
+\frac{a}{\sin A} = \frac{b}{\sin B} = \frac{c}{\sin C}
+$$
+
+This works for any triangle, not just right triangles. You need at least one side and its opposite angle, plus one other piece of information.
+
+It's especially useful when you have:
+
+- Two angles and one side (AAS or ASA)
+- Two sides and a non-included angle (SSA, the "ambiguous case")
+
+The ambiguous case (SSA) is worth knowing about: depending on the given values, there might be zero, one, or two valid triangles. This happens because the sine function gives the same value for an angle and its supplement (sin θ = sin(180° - θ)).
+
+## Worked Example
+
+**Example 1 (AAS): Find side b**
+
+In triangle ABC, angle A = 40°, angle B = 65°, and side a = 12 cm.
+
+import LawSinesTriangle from "../../../components/LawSinesTriangle.astro";
+
+<LawSinesTriangle />
+
+First, find angle C:
+
+$$
+C = 180° - 40° - 65° = 75°
+$$
+
+Now use the Law of Sines to find b:
+
+$$
+\frac{12}{\sin 40°} = \frac{b}{\sin 65°}
+$$
+
+$$
+b = \frac{12 \times \sin 65°}{\sin 40°} \approx \frac{12 \times 0.9063}{0.6428} \approx 16.92 \text{ cm}
+$$
+
+**Example 2 (SSA - Ambiguous Case)**
+
+Given angle A = 30°, side a = 10, side b = 15. Find angle B.
+
+Using the Law of Sines:
+
+$$
+\frac{10}{\sin 30°} = \frac{15}{\sin B}
+$$
+
+$$
+\sin B = \frac{15 \times \sin 30°}{10} = \frac{15 \times 0.5}{10} = 0.75
+$$
+
+$$
+B = \sin^{-1}(0.75) \approx 48.6°
+$$
+
+But since sin(48.6°) = sin(131.4°), there's a second possible value: B = 131.4°.
+
+Check both: if B = 131.4°, then A + B = 30° + 131.4° = 161.4°, leaving C = 18.6°. That's valid (all angles positive and sum to 180°). So this SSA case produces two valid triangles.
+
+## Real-World Application
+
+The Law of Sines is used in:
+
+- Surveying and land measurement (finding distances across rivers or inaccessible areas)
+- Navigation and astronomy (calculating distances between celestial objects)
+- Engineering and construction (designing structures with non-right angles)
+- Forensics and accident reconstruction
+
+Example: a surveyor measures two angles and one side across a river and uses the Law of Sines to calculate the river's width without crossing it.
+
+:::note[You've Got This]
+The Law of Sines is a powerful tool for any triangle. Remember: side / sin(opposite angle) is constant. When given SSA, be careful about the ambiguous case. Draw the triangle and check whether one or two solutions exist. This is one of the most practical tools in trigonometry.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="trigonometry-law-of-sines"
+  questions={[
+    {
+      id: "q1",
+      text: "The Law of Sines states:",
+      options: [
+        "$\\frac{a}{\\sin A} = \\frac{b}{\\sin B} = \\frac{c}{\\sin C}$",
+        "$a^2 = b^2 + c^2 - 2bc\\cos A$",
+        "$\\sin A + \\sin B = \\sin C$",
+        "$a^2 + b^2 = c^2$",
+      ],
+      correctIndex: 0,
+      explanation:
+        "The ratio of each side to the sine of its opposite angle is constant.",
+    },
+    {
+      id: "q2",
+      text: "The Law of Sines is most useful when you know:",
+      options: [
+        "Two angles and one side, or two sides and a non-included angle",
+        "All three sides only",
+        "Only right triangles",
+        "Only the hypotenuse",
+      ],
+      correctIndex: 0,
+      explanation: "It works well for AAS/ASA and SSA cases.",
+    },
+    {
+      id: "q3",
+      text: "In the ambiguous case (SSA), how many possible triangles can exist?",
+      options: ["0, 1, or 2", "Always 1", "Always 2", "Only 3"],
+      correctIndex: 0,
+      explanation:
+        "Depending on the given sides and angle, there can be zero, one, or two triangles.",
+    },
+    {
+      id: "q4",
+      text: "Why does the ambiguous case occur with SSA?",
+      options: [
+        "Because $\\sin\\theta = \\sin(180° - \\theta)$",
+        "Because cosine is always positive",
+        "Because tangent has period $\\pi$",
+        "Because all triangles are right triangles",
+      ],
+      correctIndex: 0,
+      explanation:
+        "The sine function gives the same value for supplementary angles, creating two possible solutions.",
+    },
+    {
+      id: "q5",
+      text: "In triangle ABC with A = 50°, B = 70°, and a = 20, side b equals approximately:",
+      options: [
+        "$\\approx 24.5$",
+        "$\\approx 18.3$",
+        "$\\approx 30.1$",
+        "$\\approx 15.0$",
+      ],
+      correctIndex: 0,
+      explanation:
+        "$b = \\frac{20 \\times \\sin 70°}{\\sin 50°} \\approx \\frac{20 \\times 0.9397}{0.7660} \\approx 24.5$.",
+    },
+  ]}
+/>

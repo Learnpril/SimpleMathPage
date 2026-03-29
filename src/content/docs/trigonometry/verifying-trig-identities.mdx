@@ -1,0 +1,168 @@
+---
+title: Verifying Trigonometric Identities
+description: Learn strategies for proving that trigonometric equations are identities
+sidebar:
+  order: 11
+---
+
+## What You'll Learn
+
+In this lesson you'll learn strategies for verifying (proving) trigonometric identities by transforming one side of the equation into the other.
+
+## The Concept
+
+To **verify a trigonometric identity**, you must show that the equation is true for all values of the variable (where defined). You do this by simplifying one or both sides until they match.
+
+**Key strategies:**
+
+- Start with the more complicated side and try to transform it into the simpler side
+- Use fundamental identities (reciprocal, quotient, Pythagorean)
+- Factor, multiply by conjugates, or write everything in terms of sine and cosine when stuck
+- Work on only one side at a time. Never move terms from one side to the other
+- If needed, work on both sides separately until they meet in the middle
+
+**Common techniques:**
+
+- Replace tan with sin/cos, sec with 1/cos, etc.
+- Use Pythagorean identities to replace sin² or cos²
+- Multiply numerator and denominator by a conjugate to rationalize
+
+## Worked Example
+
+**Verify:** $\frac{\sin\theta}{1 - \cos\theta} = \frac{1 + \cos\theta}{\sin\theta}$
+
+Start with the left side. Multiply numerator and denominator by the conjugate (1 + cos θ):
+
+$$
+\frac{\sin\theta}{1 - \cos\theta} \cdot \frac{1 + \cos\theta}{1 + \cos\theta}
+$$
+
+The denominator becomes a difference of squares:
+
+$$
+= \frac{\sin\theta(1 + \cos\theta)}{1 - \cos^2\theta}
+$$
+
+By the Pythagorean identity, 1 - cos²θ = sin²θ
+
+$$
+= \frac{\sin\theta(1 + \cos\theta)}{\sin^2\theta}
+$$
+
+Cancel one sin θ from top and bottom:
+
+$$
+= \frac{1 + \cos\theta}{\sin\theta}
+$$
+
+This matches the right side. Identity verified.
+
+**Verify:** $\tan^2\theta + 1 = \sec^2\theta$
+
+Start with the left side. Replace tan with sin/cos:
+
+$$
+\tan^2\theta + 1 = \frac{\sin^2\theta}{\cos^2\theta} + 1
+$$
+
+Write 1 as cos²θ / cos²θ so we have a common denominator:
+
+$$
+= \frac{\sin^2\theta}{\cos^2\theta} + \frac{\cos^2\theta}{\cos^2\theta} = \frac{\sin^2\theta + \cos^2\theta}{\cos^2\theta}
+$$
+
+By the Pythagorean identity, the numerator equals 1:
+
+$$
+= \frac{1}{\cos^2\theta} = \sec^2\theta
+$$
+
+This matches the right side. Identity verified.
+
+## Real-World Application
+
+Verifying identities is essential in:
+
+- Simplifying complex waveforms in audio and signal processing
+- Solving trigonometric equations in physics and engineering
+- Proving relationships in electrical circuit analysis
+- Optimizing formulas in computer graphics and animation
+
+Example: engineers use identities to simplify expressions for alternating current and voltage phase relationships. A complicated expression can often be reduced to something much simpler using the right identity.
+
+:::note[You've Got This]
+Verifying identities is like algebraic puzzle-solving. Start with the more complicated side, apply fundamental identities step by step, and be patient. Don't move terms from one side to the other. Transform one side until it matches the other. With practice, you'll develop good intuition for which identities to use.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="trigonometry-verifying-trig-identities"
+  questions={[
+    {
+      id: "q1",
+      text: "When verifying an identity, you should:",
+      options: [
+        "Work on one side at a time",
+        "Move terms from one side to the other",
+        "Only use the quadratic formula",
+        "Graph both sides",
+      ],
+      correctIndex: 0,
+      explanation: "Transform one side until it equals the other side.",
+    },
+    {
+      id: "q2",
+      text: "A good strategy when stuck is to:",
+      options: [
+        "Express everything in terms of sine and cosine",
+        "Add the two sides together",
+        "Only use tangent",
+        "Ignore the denominator",
+      ],
+      correctIndex: 0,
+      explanation:
+        "Writing everything in sin and cos often reveals useful Pythagorean identities.",
+    },
+    {
+      id: "q3",
+      text: "To verify $\\tan\\theta = \\frac{\\sin\\theta}{\\cos\\theta}$, you would:",
+      options: [
+        "Use the quotient identity directly",
+        "Move terms across the equals sign",
+        "Square both sides",
+        "Use the quadratic formula",
+      ],
+      correctIndex: 0,
+      explanation: "The quotient identity directly proves this.",
+    },
+    {
+      id: "q4",
+      text: "Multiplying by a conjugate is useful when:",
+      options: [
+        "The denominator has a sum or difference with trig functions",
+        "The expression has no fractions",
+        "You want to add exponents",
+        "The identity involves only tangent",
+      ],
+      correctIndex: 0,
+      explanation:
+        "Conjugates create difference-of-squares patterns that simplify with Pythagorean identities.",
+    },
+    {
+      id: "q5",
+      text: "The final goal when verifying an identity is to show:",
+      options: [
+        "Both sides are identical",
+        "One side is larger",
+        "The equation has specific solutions",
+        "The graph matches at certain points",
+      ],
+      correctIndex: 0,
+      explanation:
+        "You must show the left side equals the right side for all valid values.",
+    },
+  ]}
+/>

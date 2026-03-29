@@ -1,0 +1,145 @@
+---
+title: The Unit Circle
+description: Learn the unit circle, its key angles in radians, and the sine and cosine values at those points
+sidebar:
+  order: 5
+---
+
+## What You'll Learn
+
+In this lesson you'll learn what the unit circle is, why it's important, and the sine and cosine values for the most common angles.
+
+## The Concept
+
+The **unit circle** is a circle with radius 1 centered at the origin (0, 0) on the coordinate plane.
+
+Any point on the unit circle can be written as (cos θ, sin θ), where θ is the angle measured counterclockwise from the positive x-axis. This gives us a powerful visual tool:
+
+- The **x-coordinate** of the point is **cos θ**
+- The **y-coordinate** of the point is **sin θ**
+
+import UnitCircleDiagram from "../../../components/UnitCircleDiagram.astro";
+
+<UnitCircleDiagram />
+
+The diagram above shows all 16 key angles with their degree and radian values, plus the (cos, sin) coordinates at each point. You don't need to memorize all of them right away. Start with the four quadrantal angles (0, π/2, π, 3π/2) and the first-quadrant values (π/6, π/4, π/3), then use symmetry to fill in the rest.
+
+A few patterns that help:
+
+- The values 0, 1/2, √2/2, √3/2, and 1 are the only ones that show up for sine and cosine on the unit circle. They just appear in different combinations and with different signs depending on the quadrant.
+- In Quadrant I, both sin and cos are positive.
+- In Quadrant II, sin is positive, cos is negative.
+- In Quadrant III, both are negative.
+- In Quadrant IV, cos is positive, sin is negative.
+
+The unit circle repeats every 2π radians (one full rotation).
+
+## Worked Example
+
+**1. Find sin(π/3) and cos(π/3)**
+
+At π/3 (60°), the point on the unit circle is (1/2, √3/2).
+
+$$
+\cos\left(\frac{\pi}{3}\right) = \frac{1}{2} \qquad \sin\left(\frac{\pi}{3}\right) = \frac{\sqrt{3}}{2}
+$$
+
+**2. Find sin(π) and cos(π)**
+
+At π (180°), the point is (-1, 0).
+
+$$
+\cos(\pi) = -1 \qquad \sin(\pi) = 0
+$$
+
+**3. Find sin(3π/2) and cos(3π/2)**
+
+At 3π/2 (270°), the point is (0, -1).
+
+$$
+\cos\left(\frac{3\pi}{2}\right) = 0 \qquad \sin\left(\frac{3\pi}{2}\right) = -1
+$$
+
+**4. Find sin(5π/4) and cos(5π/4)**
+
+5π/4 is in Quadrant III (225°). The reference angle is π/4 (45°), and in Q3 both sin and cos are negative.
+
+$$
+\cos\left(\frac{5\pi}{4}\right) = -\frac{\sqrt{2}}{2} \qquad \sin\left(\frac{5\pi}{4}\right) = -\frac{\sqrt{2}}{2}
+$$
+
+## Real-World Application
+
+The unit circle is fundamental in:
+
+- Computer graphics and game development (rotating objects, calculating positions)
+- Physics (circular motion, waves, oscillations)
+- Engineering (signal processing, AC circuits)
+- Music and audio (sound waves and frequencies)
+- Navigation and robotics (angles and heading)
+
+Example: when a game character rotates or a satellite dish points in a certain direction, the unit circle helps calculate the exact x and y components of that direction.
+
+:::note[You've Got This]
+The unit circle connects angles (in radians) with the actual values of sine and cosine. Focus on the first quadrant values first, then use the sign patterns for the other quadrants. With practice, you'll recall these values quickly. This is one of the most important visual tools in all of trigonometry.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="trigonometry-the-unit-circle"
+  questions={[
+    {
+      id: "q1",
+      text: "On the unit circle, the coordinates of a point at angle $\\theta$ are:",
+      options: [
+        "$(\\cos\\theta,\\, \\sin\\theta)$",
+        "$(\\sin\\theta,\\, \\cos\\theta)$",
+        "$(\\tan\\theta,\\, \\cot\\theta)$",
+        "$(r,\\, \\theta)$",
+      ],
+      correctIndex: 0,
+      explanation:
+        "Any point on the unit circle is $(\\cos\\theta, \\sin\\theta)$.",
+    },
+    {
+      id: "q2",
+      text: "What is $\\cos\\left(\\frac{\\pi}{2}\\right)$?",
+      options: ["$0$", "$1$", "$-1$", "$\\frac{\\sqrt{2}}{2}$"],
+      correctIndex: 0,
+      explanation:
+        "At $\\frac{\\pi}{2}$ (90°), the point is $(0, 1)$, so $\\cos\\left(\\frac{\\pi}{2}\\right) = 0$.",
+    },
+    {
+      id: "q3",
+      text: "What is $\\sin(\\pi)$?",
+      options: ["$0$", "$1$", "$-1$", "$\\frac{\\sqrt{3}}{2}$"],
+      correctIndex: 0,
+      explanation:
+        "At $\\pi$ (180°), the point is $(-1, 0)$, so $\\sin(\\pi) = 0$.",
+    },
+    {
+      id: "q4",
+      text: "In which quadrant are both sine and cosine negative?",
+      options: ["Quadrant III", "Quadrant I", "Quadrant II", "Quadrant IV"],
+      correctIndex: 0,
+      explanation:
+        "In Quadrant III (angles between $\\pi$ and $\\frac{3\\pi}{2}$), both x and y are negative.",
+    },
+    {
+      id: "q5",
+      text: "What is $\\cos\\left(\\frac{\\pi}{3}\\right)$?",
+      options: [
+        "$\\frac{1}{2}$",
+        "$\\frac{\\sqrt{3}}{2}$",
+        "$\\frac{\\sqrt{2}}{2}$",
+        "$0$",
+      ],
+      correctIndex: 0,
+      explanation:
+        "At $\\frac{\\pi}{3}$ (60°), the point is $\\left(\\frac{1}{2}, \\frac{\\sqrt{3}}{2}\\right)$, so $\\cos\\left(\\frac{\\pi}{3}\\right) = \\frac{1}{2}$.",
+    },
+  ]}
+/>

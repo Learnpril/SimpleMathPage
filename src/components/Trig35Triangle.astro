@@ -1,0 +1,45 @@
+---
+/**
+ * Trig35Triangle — worked example: θ = 35°, adjacent = 12,
+ * hypotenuse ≈ 14.65, opposite ≈ 8.40.
+ */
+const w = 380;
+const h = 200;
+const ax = 40, ay = 170;
+const bx = 280, by = 170;
+const cx = 280, cy = 48;
+const r = 26;
+const angle = Math.atan2(cy - ay, cx - ax);
+const endX = ax + r * Math.cos(angle);
+const endY = ay + r * Math.sin(angle);
+---
+
+<figure class="t35" role="img" aria-label="Right triangle: 35 degree angle, adjacent 12, hypotenuse 14.65, opposite 8.40">
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    <polygon points={`${ax},${ay} ${bx},${by} ${cx},${cy}`} fill="none" class="t35-tri" stroke-width="2.5" />
+    <polyline points={`${bx-13},${by} ${bx-13},${by-13} ${bx},${by-13}`} fill="none" class="t35-right" stroke-width="1.5" />
+    <path d={`M${ax+r},${ay} A${r},${r} 0 0,0 ${endX.toFixed(1)},${endY.toFixed(1)}`} fill="none" class="t35-arc" stroke-width="1.5" />
+    <text class="t35-angle" x={ax + 34} y={ay - 6} font-size="13" font-weight="bold">35°</text>
+    <text class="t35-hyp" x={(ax+cx)/2 - 18} y={(ay+cy)/2} font-size="13" text-anchor="middle" font-weight="bold"
+      transform={`rotate(-27, ${(ax+cx)/2 - 18}, ${(ay+cy)/2})`}>≈ 14.65</text>
+    <text class="t35-opp" x={bx + 12} y={(by+cy)/2 + 5} font-size="13" text-anchor="start" font-weight="bold">≈ 8.40</text>
+    <text class="t35-adj" x={(ax+bx)/2} y={ay + 20} font-size="13" text-anchor="middle" font-weight="bold">12</text>
+  </svg>
+</figure>
+
+<style>
+  .t35 { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .t35 svg { max-width:100%; height:auto; }
+  .t35-tri { stroke:#ccc; }
+  .t35-right { stroke:#666; }
+  .t35-arc { stroke:#d2a8ff; }
+  .t35-angle { fill:#d2a8ff; font-family:'Libre Baskerville',Georgia,serif; }
+  .t35-hyp { fill:#ccc; font-family:'Libre Baskerville',Georgia,serif; }
+  .t35-opp { fill:#58a6ff; font-family:'Libre Baskerville',Georgia,serif; }
+  .t35-adj { fill:#7ee787; font-family:'Libre Baskerville',Georgia,serif; }
+  :global([data-theme="light"]) .t35-tri { stroke:#333; }
+  :global([data-theme="light"]) .t35-right { stroke:#999; }
+  :global([data-theme="light"]) .t35-hyp { fill:#333; }
+  :global([data-theme="light"]) .t35-opp { fill:#0969da; }
+  :global([data-theme="light"]) .t35-adj { fill:#1a7f37; }
+</style>

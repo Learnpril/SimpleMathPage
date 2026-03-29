@@ -1,0 +1,187 @@
+---
+title: Applications of Trigonometric Equations
+description: Apply trigonometric equations to real-world periodic phenomena
+sidebar:
+  order: 15
+---
+
+## What You'll Learn
+
+In this lesson you'll learn how to set up and solve trigonometric equations in practical, real-world contexts.
+
+## The Concept
+
+Many real-world problems can be modeled using trigonometric equations. The process usually involves:
+
+1. Drawing a clear diagram and labeling known and unknown quantities
+2. Choosing the appropriate trigonometric ratio or identity
+3. Setting up the equation
+4. Solving for the unknown variable
+5. Interpreting the answer in context and checking if it makes sense
+
+Common applications include angles of elevation and depression, navigation, physics (waves and motion), and engineering problems.
+
+## Worked Example
+
+**Example 1: Building height**
+
+From a point 80 feet away from the base of a building, the angle of elevation to the top is 52°. How tall is the building?
+
+The height is opposite the 52° angle, and the 80 feet is adjacent. That's TOA: tan = opposite / adjacent.
+
+$$
+\tan(52°) = \frac{h}{80}
+$$
+
+$$
+h = 80 \times \tan(52°) \approx 80 \times 1.2799 \approx 102.4 \text{ feet}
+$$
+
+**Example 2: Ladder distance**
+
+A ladder 18 feet long leans against a wall, forming a 68° angle with the ground. How far is the base of the ladder from the wall?
+
+The distance from the wall is adjacent, and the ladder is the hypotenuse. That's CAH: cos = adjacent / hypotenuse.
+
+$$
+\cos(68°) = \frac{d}{18}
+$$
+
+$$
+d = 18 \times \cos(68°) \approx 18 \times 0.3746 \approx 6.74 \text{ feet}
+$$
+
+**Example 3: Finding an angle**
+
+A ramp must rise 4 feet over a horizontal distance of 48 feet. What angle does the ramp make with the ground?
+
+We know the opposite (4 ft) and adjacent (48 ft) and need the angle. That's TOA solved backwards with inverse tangent.
+
+$$
+\tan(\theta) = \frac{4}{48} \approx 0.0833
+$$
+
+$$
+\theta = \tan^{-1}(0.0833) \approx 4.76°
+$$
+
+This is within the ADA maximum ramp slope of about 4.76° (a 1:12 ratio), so the ramp meets code.
+
+**Example 4: Periodic model**
+
+The temperature in a city varies between 30°F in January and 90°F in July. Model the temperature as a function of the month and find when the temperature reaches 60°F.
+
+The average temperature is (30 + 90) / 2 = 60°F. The amplitude is (90 - 30) / 2 = 30°F. The period is 12 months. Using a cosine model (since January is the minimum):
+
+$$
+T(t) = -30\cos\left(\frac{2\pi}{12}t\right) + 60
+$$
+
+Set T(t) = 60 and solve:
+
+$$
+-30\cos\left(\frac{\pi}{6}t\right) + 60 = 60
+$$
+
+$$
+\cos\left(\frac{\pi}{6}t\right) = 0
+$$
+
+$$
+\frac{\pi}{6}t = \frac{\pi}{2} \quad \text{or} \quad \frac{\pi}{6}t = \frac{3\pi}{2}
+$$
+
+$$
+t = 3 \quad \text{or} \quad t = 9
+$$
+
+The temperature hits 60°F in month 3 (March) and month 9 (September). That makes sense.
+
+import TempModelGraph from "../../../components/TempModelGraph.astro";
+
+<TempModelGraph />
+
+## Real-World Application
+
+Trigonometric equations are used in:
+
+- Construction and architecture (roof slopes, ramp angles, structural supports)
+- Navigation and surveying (measuring inaccessible distances)
+- Physics (projectile motion, wave analysis)
+- Engineering (designing roads, bridges, and mechanical systems)
+- Climate science (modeling seasonal temperature patterns)
+- Safety (proper ladder placement, wheelchair ramp slopes)
+
+:::note[You've Got This]
+The key to solving application problems is drawing a good diagram and clearly identifying which sides are opposite, adjacent, or the hypotenuse. Choose the correct trig ratio, set up the equation, solve, and always ask: "Does this answer make sense in the real world?"
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="trigonometry-applications-trig-equations"
+  questions={[
+    {
+      id: "q1",
+      text: "From 100 feet away, the angle of elevation to the top of a tree is 48°. How tall is the tree?",
+      options: [
+        "$\\approx 111$ feet",
+        "$\\approx 74.5$ feet",
+        "$\\approx 140$ feet",
+        "$\\approx 50$ feet",
+      ],
+      correctIndex: 0,
+      explanation:
+        "Height $= 100 \\times \\tan(48°) \\approx 100 \\times 1.1106 \\approx 111$ feet (TOA).",
+    },
+    {
+      id: "q2",
+      text: "A 25-foot ladder makes a 70° angle with the ground. How far is the base from the wall?",
+      options: [
+        "$\\approx 8.55$ feet",
+        "$\\approx 23.5$ feet",
+        "$\\approx 18.1$ feet",
+        "$\\approx 15$ feet",
+      ],
+      correctIndex: 0,
+      explanation:
+        "Distance $= 25 \\times \\cos(70°) \\approx 25 \\times 0.342 \\approx 8.55$ feet (CAH).",
+    },
+    {
+      id: "q3",
+      text: "The most important first step in a trig application problem is:",
+      options: [
+        "Drawing a clear labeled diagram",
+        "Immediately plugging into a formula",
+        "Estimating the answer",
+        "Using the quadratic formula",
+      ],
+      correctIndex: 0,
+      explanation:
+        "A good diagram helps you correctly identify the sides and angles.",
+    },
+    {
+      id: "q4",
+      text: "A ramp rises 3 feet over 36 feet horizontally. The angle is approximately:",
+      options: [
+        "$\\approx 4.8°$",
+        "$\\approx 8.5°$",
+        "$\\approx 12°$",
+        "$\\approx 15°$",
+      ],
+      correctIndex: 0,
+      explanation:
+        "$\\tan(\\theta) = \\frac{3}{36} \\approx 0.0833$, so $\\theta \\approx 4.8°$.",
+    },
+    {
+      id: "q5",
+      text: "A temperature model $T(t) = 20\\cos\\left(\\frac{\\pi}{6}t\\right) + 70$ has an average temperature of:",
+      options: ["$70°$F", "$90°$F", "$50°$F", "$20°$F"],
+      correctIndex: 0,
+      explanation:
+        "The vertical shift $d = 70$ is the average (midline) temperature.",
+    },
+  ]}
+/>

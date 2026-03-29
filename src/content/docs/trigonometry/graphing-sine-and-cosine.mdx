@@ -1,0 +1,130 @@
+---
+title: Graphing Sine and Cosine Functions
+description: Learn to graph sine and cosine functions and identify their key features
+sidebar:
+  order: 7
+---
+
+## What You'll Learn
+
+In this lesson you'll learn how to graph the sine and cosine functions, identify their amplitude, period, and midline, and understand their basic shape.
+
+## The Concept
+
+The sine and cosine functions are **periodic**. They repeat the same pattern over and over, like a wave.
+
+import SinCosGraph from "../../../components/SinCosGraph.astro";
+
+<SinCosGraph />
+
+**Standard sine function** y = sin(x):
+
+- Amplitude = 1 (height from midline to peak)
+- Period = 2π (one full cycle)
+- Midline = y = 0
+- Starts at (0, 0), peaks at (π/2, 1), crosses zero at (π, 0), bottoms out at (3π/2, -1), returns to (2π, 0)
+
+**Standard cosine function** y = cos(x):
+
+- Amplitude = 1
+- Period = 2π
+- Midline = y = 0
+- Starts at (0, 1), crosses zero at (π/2, 0), bottoms out at (π, -1), crosses zero at (3π/2, 0), returns to (2π, 1)
+
+Both functions oscillate between -1 and 1. They're actually the same shape, just shifted: cos(x) = sin(x + π/2). Cosine is sine slid π/2 to the left.
+
+## Worked Example
+
+**1. Key points for y = sin(x) over one period (0 to 2π)**
+
+| x      | 0   | π/2 | π   | 3π/2 | 2π  |
+| ------ | --- | --- | --- | ---- | --- |
+| sin(x) | 0   | 1   | 0   | -1   | 0   |
+
+Plot these five points and connect them with a smooth curve. The shape is a wave that starts at zero, goes up, comes back, goes down, and returns.
+
+**2. Key points for y = cos(x) over one period**
+
+| x      | 0   | π/2 | π   | 3π/2 | 2π  |
+| ------ | --- | --- | --- | ---- | --- |
+| cos(x) | 1   | 0   | -1  | 0    | 1   |
+
+Same wave shape, but it starts at the top instead of the middle.
+
+**3. Comparing sin and cos at specific values**
+
+- At x = 0: sin(0) = 0, cos(0) = 1
+- At x = π/2: sin(π/2) = 1, cos(π/2) = 0
+- At x = π: sin(π) = 0, cos(π) = -1
+- At x = 3π/2: sin(3π/2) = -1, cos(3π/2) = 0
+
+They trade off. When one is at its peak, the other is at zero.
+
+## Real-World Application
+
+Sine and cosine graphs model many real phenomena:
+
+- Sound waves and music (frequency determines pitch, amplitude determines volume)
+- Alternating current (AC) electricity
+- Seasonal temperature changes over a year
+- Tides and ocean waves
+- Spring motion and vibrations
+- Daylight hours throughout the year
+
+Example: the height of a tide can be modeled with a sine or cosine function. The amplitude represents how high the tide rises, and the period represents the time between high tides (roughly 12.4 hours).
+
+:::note[You've Got This]
+Sine and cosine graphs are smooth, repeating waves. Sine starts at zero and goes up. Cosine starts at 1 and goes down. Focus on learning the five key points over one period (0 to 2π). Once you know these basic graphs well, transformations become much easier in the next lesson.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="trigonometry-graphing-sine-cosine"
+  questions={[
+    {
+      id: "q1",
+      text: "The amplitude of $y = \\sin(x)$ is:",
+      options: ["$1$", "$2\\pi$", "$0$", "$\\pi$"],
+      correctIndex: 0,
+      explanation:
+        "Amplitude is the distance from the midline to the peak, which is 1.",
+    },
+    {
+      id: "q2",
+      text: "The period of both $y = \\sin(x)$ and $y = \\cos(x)$ is:",
+      options: ["$2\\pi$", "$\\pi$", "$\\frac{\\pi}{2}$", "$4\\pi$"],
+      correctIndex: 0,
+      explanation:
+        "Both functions complete one full cycle every $2\\pi$ radians.",
+    },
+    {
+      id: "q3",
+      text: "At $x = \\frac{\\pi}{2}$, $\\sin(x)$ equals:",
+      options: ["$1$", "$0$", "$-1$", "$\\frac{\\sqrt{2}}{2}$"],
+      correctIndex: 0,
+      explanation: "$\\sin\\left(\\frac{\\pi}{2}\\right) = 1$.",
+    },
+    {
+      id: "q4",
+      text: "At $x = 0$, $\\cos(x)$ equals:",
+      options: ["$1$", "$0$", "$-1$", "$\\frac{\\sqrt{2}}{2}$"],
+      correctIndex: 0,
+      explanation: "$\\cos(0) = 1$.",
+    },
+    {
+      id: "q5",
+      text: "The relationship between sine and cosine is:",
+      options: [
+        "$\\cos(x) = \\sin\\left(x + \\frac{\\pi}{2}\\right)$",
+        "$\\sin(x) = \\cos(x + \\pi)$",
+        "They have different periods",
+        "They never intersect",
+      ],
+      correctIndex: 0,
+      explanation: "Cosine is sine shifted left by $\\frac{\\pi}{2}$.",
+    },
+  ]}
+/>

@@ -1,0 +1,50 @@
+---
+/**
+ * LawSinesTriangle — triangle ABC with A=40°, B=65°, C=75°,
+ * a=12, b≈16.92. Labels on sides and angles.
+ */
+const w = 400;
+const h = 220;
+// Triangle vertices
+const ax = 40, ay = 190;   // vertex A (bottom-left)
+const bx = 360, by = 190;  // vertex B (bottom-right)
+const cx = 200, cy = 40;   // vertex C (top)
+---
+
+<figure class="lst" role="img" aria-label="Triangle ABC with A=40°, B=65°, C=75°, a=12, b≈16.92">
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    {/* Triangle */}
+    <polygon points={`${ax},${ay} ${bx},${by} ${cx},${cy}`} fill="none" class="lst-tri" stroke-width="2.5" />
+
+    {/* Angle labels - inside triangle but away from edges */}
+    <text class="lst-angle" x={ax + 50} y={ay - 18} font-size="13" font-weight="bold">40°</text>
+    <text class="lst-angle" x={bx - 58} y={by - 18} font-size="13" font-weight="bold">65°</text>
+    <text class="lst-angle" x={cx - 2} y={cy + 30} font-size="13" font-weight="bold" text-anchor="middle">75°</text>
+
+    {/* Vertex labels - outside triangle */}
+    <text class="lst-vertex" x={ax - 14} y={ay + 16} font-size="14" font-weight="bold">A</text>
+    <text class="lst-vertex" x={bx + 8} y={by + 16} font-size="14" font-weight="bold">B</text>
+    <text class="lst-vertex" x={cx} y={cy - 10} font-size="14" font-weight="bold" text-anchor="middle">C</text>
+
+    {/* Side labels - outside the triangle edges */}
+    <text class="lst-side-a" x={(bx + cx) / 2 + 20} y={(by + cy) / 2 - 4} font-size="13" font-weight="bold">a = 12</text>
+    <text class="lst-side-b" x={(ax + cx) / 2 - 50} y={(ay + cy) / 2 - 4} font-size="13" font-weight="bold">b ≈ 16.9</text>
+    <text class="lst-side-c" x={(ax + bx) / 2} y={ay + 18} font-size="13" font-weight="bold" text-anchor="middle">c</text>
+  </svg>
+</figure>
+
+<style>
+  .lst { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .lst svg { max-width:100%; height:auto; }
+  .lst-tri { stroke:#ccc; }
+  .lst-angle { fill:#d2a8ff; font-family:'Libre Baskerville',Georgia,serif; }
+  .lst-vertex { fill:#58a6ff; font-family:'Libre Baskerville',Georgia,serif; }
+  .lst-side-a { fill:#7ee787; font-family:'Libre Baskerville',Georgia,serif; }
+  .lst-side-b { fill:#f0883e; font-family:'Libre Baskerville',Georgia,serif; }
+  .lst-side-c { fill:#999; font-family:'Libre Baskerville',Georgia,serif; }
+  :global([data-theme="light"]) .lst-tri { stroke:#333; }
+  :global([data-theme="light"]) .lst-angle { fill:#8250df; }
+  :global([data-theme="light"]) .lst-vertex { fill:#0969da; }
+  :global([data-theme="light"]) .lst-side-a { fill:#1a7f37; }
+  :global([data-theme="light"]) .lst-side-b { fill:#d4700a; }
+</style>

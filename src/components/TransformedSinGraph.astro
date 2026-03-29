@@ -1,0 +1,97 @@
+---
+/**
+ * TransformedSinGraph — shows y = sin(x) faintly and
+ * y = 3sin(2(x - π/4)) + 1 in bold, to illustrate transformations.
+ */
+const w = 520;
+const h = 300;
+const pad = 45;
+const gw = w - 2 * pad;
+const gh = h - 2 * pad;
+const cxO = pad;
+const cyO = pad + gh / 2;
+const xMin = -0.5;
+const xMax = 2 * Math.PI + 0.5;
+const yMin = -2.5;
+const yMax = 4.5;
+const scaleX = gw / (xMax - xMin);
+const scaleY = gh / (yMax - yMin);
+
+function px(x: number) { return cxO + (x - xMin) * scaleX; }
+function py(y: number) { return cyO - (y - (yMax + yMin) / 2) * scaleY; }
+
+// Standard sin(x)
+const sinPts: string[] = [];
+for (let t = xMin; t <= xMax; t += 0.04) {
+  sinPts.push(`${sinPts.length === 0 ? 'M' : 'L'}${px(t).toFixed(1)},${py(Math.sin(t)).toFixed(1)}`);
+}
+
+// Transformed: y = 3sin(2(x - π/4)) + 1
+const trPts: string[] = [];
+for (let t = xMin; t <= xMax; t += 0.04) {
+  const v = 3 * Math.sin(2 * (t - Math.PI / 4)) + 1;
+  trPts.push(`${trPts.length === 0 ? 'M' : 'L'}${px(t).toFixed(1)},${py(v).toFixed(1)}`);
+}
+
+const piTicks = [
+  { val: 0, label: '0' },
+  { val: Math.PI / 2, label: 'π/2' },
+  { val: Math.PI, label: 'π' },
+  { val: 3 * Math.PI / 2, label: '3π/2' },
+  { val: 2 * Math.PI, label: '2π' },
+];
+---
+
+<figure class="tsg" role="img" aria-label="Comparison of y = sin(x) and y = 3sin(2(x - π/4)) + 1">
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    {/* Axes */}
+    <line x1={cxO - 5} y1={py(0)} x2={w - pad + 10} y2={py(0)} class="tsg-axis" stroke-width="1.5" />
+    <line x1={px(0)} y1={pad - 5} x2={px(0)} y2={h - pad + 5} class="tsg-axis" stroke-width="1.5" />
+
+    {/* Midline for transformed function */}
+    <line x1={cxO} y1={py(1)} x2={w - pad} y2={py(1)} class="tsg-midline" stroke-width="1" stroke-dasharray="4,4" />
+    <text class="tsg-midline-label" x={w - pad + 4} y={py(1) + 4} font-size="10">midline y=1</text>
+
+    {/* Y ticks */}
+    {[-2, -1, 0, 1, 2, 3, 4].map(v => (
+      <text class="tsg-tick" x={px(0) - 8} y={py(v) + 4} font-size="10" text-anchor="end">{v}</text>
+    ))}
+
+    {/* X ticks */}
+    {piTicks.map(t => (
+      <text class="tsg-tick" x={px(t.val)} y={py(yMin) + 14} font-size="10" text-anchor="middle">{t.label}</text>
+    ))}
+
+    {/* Standard sin(x) - faint */}
+    <path d={sinPts.join(' ')} fill="none" class="tsg-sin" stroke-width="2" />
+
+    {/* Transformed function - bold */}
+    <path d={trPts.join(' ')} fill="none" class="tsg-transformed" stroke-width="2.5" />
+
+    {/* Legend */}
+    <line x1="60" y1="14" x2="80" y2="14" class="tsg-sin" stroke-width="2" />
+    <text class="tsg-legend-sin" x="85" y="18" font-size="11">y = sin(x)</text>
+    <line x1="60" y1="30" x2="80" y2="30" class="tsg-transformed" stroke-width="2.5" />
+    <text class="tsg-legend-tr" x="85" y="34" font-size="11">y = 3sin(2(x - π/4)) + 1</text>
+  </svg>
+</figure>
+
+<style>
+  .tsg { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .tsg svg { max-width:100%; height:auto; }
+  .tsg-axis { stroke:#666; }
+  .tsg-midline { stroke:#e3922a; opacity:0.5; }
+  .tsg-midline-label { fill:#e3922a; font-family:'Libre Baskerville',Georgia,serif; opacity:0.7; }
+  .tsg-tick { fill:#999; font-family:'Libre Baskerville',Georgia,serif; }
+  .tsg-sin { stroke:#58a6ff; opacity:0.35; }
+  .tsg-transformed { stroke:#f0883e; }
+  .tsg-legend-sin { fill:#58a6ff; opacity:0.5; font-family:'Libre Baskerville',Georgia,serif; }
+  .tsg-legend-tr { fill:#f0883e; font-family:'Libre Baskerville',Georgia,serif; }
+
+  :global([data-theme="light"]) .tsg-axis { stroke:#999; }
+  :global([data-theme="light"]) .tsg-tick { fill:#555; }
+  :global([data-theme="light"]) .tsg-sin { stroke:#0969da; opacity:0.3; }
+  :global([data-theme="light"]) .tsg-transformed { stroke:#d4700a; }
+  :global([data-theme="light"]) .tsg-legend-sin { fill:#0969da; opacity:0.4; }
+  :global([data-theme="light"]) .tsg-legend-tr { fill:#d4700a; }
+</style>

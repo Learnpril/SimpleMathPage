@@ -1,0 +1,140 @@
+---
+title: Radians and Degree-Radian Conversion
+description: Learn what radians are and how to convert between degrees and radians
+sidebar:
+  order: 4
+---
+
+## What You'll Learn
+
+In this lesson you'll learn what radians are, why they're used in trigonometry, and how to convert between degrees and radians.
+
+## The Concept
+
+You already know degrees. A full circle is 360°, a right angle is 90°, and so on. Degrees work fine for everyday use, but there's another way to measure angles that turns out to be much more natural for higher math.
+
+**Radians** measure angles based on the radius of a circle. One radian is the angle you get when the arc length equals the radius. Since the circumference of a circle is 2πr, a full circle contains exactly 2π radians.
+
+import RadianCircle from "../../../components/RadianCircle.astro";
+
+<RadianCircle />
+
+The key relationship is simple:
+
+$$
+180° = \pi \text{ radians}
+$$
+
+From that one fact, you can convert anything:
+
+- **Degrees to radians:** multiply by $\frac{\pi}{180}$
+- **Radians to degrees:** multiply by $\frac{180}{\pi}$
+
+Common values worth memorizing:
+
+- $30° = \frac{\pi}{6}$
+- $45° = \frac{\pi}{4}$
+- $60° = \frac{\pi}{3}$
+- $90° = \frac{\pi}{2}$
+- $180° = \pi$
+- $270° = \frac{3\pi}{2}$
+- $360° = 2\pi$
+
+Why bother with radians? Because they make many formulas cleaner. In calculus, the derivative of sin(x) is cos(x), but only if x is in radians. In degrees, you'd need an extra conversion factor everywhere. Radians also connect angle measure directly to arc length, which is useful in physics and engineering.
+
+## Worked Example
+
+**1. Convert 135° to radians**
+
+Multiply by $\frac{\pi}{180}$:
+
+$$
+135° \times \frac{\pi}{180} = \frac{135\pi}{180} = \frac{3\pi}{4} \text{ radians}
+$$
+
+**2. Convert $\frac{5\pi}{6}$ radians to degrees**
+
+Multiply by $\frac{180}{\pi}$:
+
+$$
+\frac{5\pi}{6} \times \frac{180}{\pi} = \frac{5 \times 180}{6} = 150°
+$$
+
+**3. Convert 240° to radians**
+
+$$
+240° \times \frac{\pi}{180} = \frac{240\pi}{180} = \frac{4\pi}{3} \text{ radians}
+$$
+
+## Real-World Application
+
+Radians are used in:
+
+- Physics and engineering (angular velocity, rotational motion)
+- Computer graphics and game development (rotations and animations)
+- Navigation and GPS systems
+- Calculus (derivatives and integrals of trig functions are much simpler in radians)
+- Astronomy and satellite communications
+
+Example: a wheel rotating at 3000 revolutions per minute is often described in radians per second for engineering calculations. One revolution = 2π radians, so 3000 RPM = 3000 × 2π / 60 ≈ 314.16 radians per second.
+
+:::note[You've Got This]
+Radians may feel strange at first because degrees are so familiar. But the conversion is straightforward: 180° = π radians. Practice converting a few common angles back and forth until it becomes second nature. This skill will make the rest of trigonometry much smoother.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="trigonometry-radians-degree-conversion"
+  questions={[
+    {
+      id: "q1",
+      text: "How many radians are in $180°$?",
+      options: ["$\\pi$", "$2\\pi$", "$\\frac{\\pi}{2}$", "$\\frac{3\\pi}{2}$"],
+      correctIndex: 0,
+      explanation: "$180°$ is exactly $\\pi$ radians.",
+    },
+    {
+      id: "q2",
+      text: "Convert $90°$ to radians.",
+      options: ["$\\frac{\\pi}{2}$", "$\\pi$", "$2\\pi$", "$\\frac{\\pi}{4}$"],
+      correctIndex: 0,
+      explanation: "$90° \\times \\frac{\\pi}{180} = \\frac{\\pi}{2}$.",
+    },
+    {
+      id: "q3",
+      text: "Convert $\\frac{3\\pi}{4}$ radians to degrees.",
+      options: ["$135°$", "$90°$", "$180°$", "$270°$"],
+      correctIndex: 0,
+      explanation: "$\\frac{3\\pi}{4} \\times \\frac{180}{\\pi} = 135°$.",
+    },
+    {
+      id: "q4",
+      text: "Why are radians preferred in higher mathematics?",
+      options: [
+        "They make calculus and trig identities cleaner",
+        "They are easier to measure with a protractor",
+        "They are always whole numbers",
+        "They are only used in geometry",
+      ],
+      correctIndex: 0,
+      explanation:
+        "Radians connect angle measure directly to arc length, simplifying many formulas.",
+    },
+    {
+      id: "q5",
+      text: "Convert $60°$ to radians.",
+      options: [
+        "$\\frac{\\pi}{3}$",
+        "$\\frac{\\pi}{6}$",
+        "$\\frac{2\\pi}{3}$",
+        "$\\frac{\\pi}{4}$",
+      ],
+      correctIndex: 0,
+      explanation:
+        "$60° \\times \\frac{\\pi}{180} = \\frac{60\\pi}{180} = \\frac{\\pi}{3}$.",
+    },
+  ]}
+/>

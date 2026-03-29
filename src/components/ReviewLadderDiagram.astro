@@ -1,0 +1,71 @@
+---
+/**
+ * ReviewLadderDiagram — right triangle showing a 25-ft ladder
+ * at 68° with the ground, solving for height h.
+ */
+const w = 280;
+const h = 240;
+const wallX = 60;
+const groundY = 210;
+const baseX = 220;
+const topY = 30;
+
+// Compute arc at base between ground (left) and ladder (up-left)
+const arcR = 28;
+// Direction from base along ground (leftward)
+const gLen = baseX - wallX;
+// Direction from base along ladder
+const lx = wallX - baseX, ly = topY - groundY;
+const lLen = Math.sqrt(lx * lx + ly * ly);
+// Arc start: along ground (leftward from base)
+const arc1x = baseX - arcR;
+const arc1y = groundY;
+// Arc end: along ladder direction
+const arc2x = baseX + (lx / lLen) * arcR;
+const arc2y = groundY + (ly / lLen) * arcR;
+// Label: along angle bisector
+const bisX = (-1 + lx / lLen);
+const bisY = (ly / lLen);
+const bisLen = Math.sqrt(bisX * bisX + bisY * bisY);
+const lblR = 44;
+const lblX = baseX + (bisX / bisLen) * lblR;
+const lblY = groundY + (bisY / bisLen) * lblR;
+---
+
+<figure class="rld" role="img" aria-label="Ladder leaning against wall: 25 ft at 68° angle, solving for height">
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    {/* Wall */}
+    <line x1={wallX} y1={topY - 10} x2={wallX} y2={groundY} class="rld-wall" stroke-width="3" />
+    {/* Ground */}
+    <line x1={wallX - 10} y1={groundY} x2={baseX + 20} y2={groundY} class="rld-ground" stroke-width="2" stroke-dasharray="6,4" />
+    {/* Ladder */}
+    <line x1={baseX} y1={groundY} x2={wallX} y2={topY} class="rld-ladder" stroke-width="2.5" />
+    {/* Right angle marker */}
+    <polyline points={`${wallX + 12},${groundY} ${wallX + 12},${groundY - 12} ${wallX},${groundY - 12}`} fill="none" class="rld-right" stroke-width="1.5" />
+    {/* Angle arc at base — computed to stay inside triangle */}
+    <path d={`M ${arc1x.toFixed(1)},${arc1y.toFixed(1)} A ${arcR} ${arcR} 0 0 1 ${arc2x.toFixed(1)},${arc2y.toFixed(1)}`} fill="none" class="rld-arc" stroke-width="1.5" />
+    {/* Labels */}
+    <text class="rld-angle" x={lblX.toFixed(1)} y={lblY.toFixed(1)} font-size="13" font-weight="bold" text-anchor="middle" dominant-baseline="middle">68°</text>
+    <text class="rld-hyp" x={(wallX + baseX) / 2 + 10} y={(topY + groundY) / 2 - 8} font-size="13" font-weight="bold" transform={`rotate(-56, ${(wallX + baseX) / 2 + 10}, ${(topY + groundY) / 2 - 8})`}>25 ft</text>
+    <text class="rld-height" x={wallX - 16} y={(topY + groundY) / 2 + 4} font-size="13" font-weight="bold" text-anchor="end">h = ?</text>
+  </svg>
+</figure>
+
+<style>
+  .rld { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .rld svg { max-width:100%; height:auto; }
+  .rld-wall { stroke:#888; }
+  .rld-ground { stroke:#555; }
+  .rld-ladder { stroke:#f0883e; }
+  .rld-right { stroke:#999; }
+  .rld-arc { stroke:#d2a8ff; }
+  .rld-angle { fill:#d2a8ff; font-family:'Libre Baskerville',Georgia,serif; }
+  .rld-hyp { fill:#f0883e; font-family:'Libre Baskerville',Georgia,serif; }
+  .rld-height { fill:#7ee787; font-family:'Libre Baskerville',Georgia,serif; }
+  :global([data-theme="light"]) .rld-wall { stroke:#333; }
+  :global([data-theme="light"]) .rld-ground { stroke:#aaa; }
+  :global([data-theme="light"]) .rld-arc { stroke:#8250df; }
+  :global([data-theme="light"]) .rld-angle { fill:#8250df; }
+  :global([data-theme="light"]) .rld-hyp { fill:#d4700a; }
+  :global([data-theme="light"]) .rld-height { fill:#1a7f37; }
+</style>

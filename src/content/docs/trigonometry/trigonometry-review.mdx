@@ -1,0 +1,375 @@
+---
+title: Trigonometry Review
+description: Comprehensive review of all major topics in Trigonometry
+sidebar:
+  order: 19
+---
+
+## What You'll Learn
+
+This is the capstone review for the Trigonometry section. It brings together all the major concepts you've learned, with mixed practice, key formulas, and real-world connections to help everything come together.
+
+import TrigTopicMap from "../../../components/TrigTopicMap.astro";
+
+<TrigTopicMap />
+
+## Major Topics Covered
+
+### 1. Right Triangle Trigonometry
+
+- SOH CAH TOA: the three fundamental ratios
+- sin θ = opposite / hypotenuse
+- cos θ = adjacent / hypotenuse
+- tan θ = opposite / adjacent
+- Solving right triangles for missing sides and angles
+- Applications: angles of elevation/depression, ladders, ramps
+
+### 2. Radians and the Unit Circle
+
+- Full circle = 360° = 2π radians
+- To convert: degrees × π/180, or radians × 180/π
+- Key angles: 30° = π/6, 45° = π/4, 60° = π/3, 90° = π/2
+- The unit circle: radius 1, any point is (cos θ, sin θ)
+- ASTC: All, Sine, Tangent, Cosine (signs by quadrant)
+
+### 3. Graphing Trig Functions
+
+- Sine and cosine: amplitude, period (2π), midline, phase shift
+- General form: y = a sin(b(x - c)) + d
+- Tangent: period π, vertical asymptotes where cos θ = 0
+- Reciprocal functions: csc, sec, cot
+- Transformations: amplitude = |a|, period = 2π/b, phase shift = c, vertical shift = d
+
+### 4. Trigonometric Identities
+
+- Pythagorean: sin²θ + cos²θ = 1
+- Reciprocal: csc θ = 1/sin θ, sec θ = 1/cos θ, cot θ = 1/tan θ
+- Quotient: tan θ = sin θ / cos θ
+- Sum and difference: sin(A ± B), cos(A ± B), tan(A ± B)
+- Verifying identities: work one side to match the other
+
+### 5. Solving Trig Equations
+
+- Isolate the trig function, then use inverse trig
+- Account for all solutions in [0, 2π)
+- For multiple angles: solve for the inner expression first, then divide
+
+### 6. Law of Sines and Law of Cosines
+
+- Law of Sines: a/sin A = b/sin B = c/sin C (use for AAS, ASA, SSA)
+- Law of Cosines: a² = b² + c² - 2bc cos A (use for SAS, SSS)
+- SSA can produce 0, 1, or 2 triangles (ambiguous case)
+- Area formula: Area = ½ ab sin C
+
+## Mixed Worked Examples
+
+**1. Right Triangle Application**
+
+A 25-foot ladder makes a 68° angle with the ground. How high up the wall does it reach?
+
+import ReviewLadderDiagram from "../../../components/ReviewLadderDiagram.astro";
+
+<ReviewLadderDiagram />
+
+The height is opposite the 68° angle, and the ladder is the hypotenuse. That's SOH: sin = opposite / hypotenuse.
+
+$$
+h = 25 \times \sin(68°) \approx 25 \times 0.9272 \approx 23.18 \text{ feet}
+$$
+
+**2. Unit Circle**
+
+Find sin(2π/3) and cos(2π/3).
+
+2π/3 = 120°, which is in Quadrant II. The reference angle is 60°. In Q2, sine is positive and cosine is negative:
+
+$$
+\sin\left(\frac{2\pi}{3}\right) = \frac{\sqrt{3}}{2}, \quad \cos\left(\frac{2\pi}{3}\right) = -\frac{1}{2}
+$$
+
+**3. Graph Transformation**
+
+For y = 3 sin(2(x - π/4)) + 1, identify the key features:
+
+$$
+\text{Amplitude} = 3, \quad \text{Period} = \frac{2\pi}{2} = \pi, \quad \text{Phase shift} = \frac{\pi}{4} \text{ right}, \quad \text{Vertical shift} = +1
+$$
+
+**4. Sum Identity**
+
+Find sin(75°) exactly.
+
+$$
+\sin(75°) = \sin(45° + 30°) = \sin 45° \cos 30° + \cos 45° \sin 30°
+$$
+
+$$
+= \frac{\sqrt{2}}{2} \cdot \frac{\sqrt{3}}{2} + \frac{\sqrt{2}}{2} \cdot \frac{1}{2} = \frac{\sqrt{6} + \sqrt{2}}{4}
+$$
+
+**5. Law of Sines**
+
+In triangle ABC, angle A = 40°, angle B = 65°, side a = 12. Find side b.
+
+First, angle C = 180° - 40° - 65° = 75°. Then:
+
+$$
+b = \frac{12 \times \sin 65°}{\sin 40°} \approx \frac{12 \times 0.9063}{0.6428} \approx 16.92 \text{ cm}
+$$
+
+## Real-World Connections
+
+Trigonometry helps you understand and model:
+
+- Waves (sound, light, ocean tides)
+- Rotational motion and circular paths
+- Navigation and surveying
+- Construction and engineering (ramps, roofs, bridges)
+- Physics (projectile motion, forces at angles)
+- Music and audio (sound waves are sine waves)
+- Computer graphics and game development (rotation, lighting, 3D rendering)
+- Medical imaging (CT scans use trigonometric reconstruction)
+
+## Final Tips for Success
+
+- Draw clear diagrams for triangle problems
+- Memorize the unit circle values for the major angles
+- Use SOH CAH TOA for right triangles and Law of Sines/Cosines for general triangles
+- Check solutions in the original equation (especially when squaring or using identities)
+- Practice converting between degrees and radians
+- Sketch graphs when solving or verifying
+
+:::note[You've Got This]
+You've completed a full Trigonometry course, from right triangles and the unit circle all the way through graphing, identities, equations, and triangle solving. This is a powerful toolkit that connects algebra, geometry, and the real world. Trigonometry is now another tool in your mathematical toolbox, ready for use in science, engineering, navigation, and many other areas. You've done excellent work.
+:::
+
+## Comprehensive Review Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="trigonometry-final-review"
+  questions={[
+    {
+      id: "q1",
+      text: "In a right triangle, $\\sin\\theta$ equals:",
+      options: [
+        "opposite / hypotenuse",
+        "adjacent / hypotenuse",
+        "opposite / adjacent",
+        "hypotenuse / opposite",
+      ],
+      correctIndex: 0,
+      explanation: "SOH: Sine = Opposite / Hypotenuse.",
+    },
+    {
+      id: "q2",
+      text: "Convert 135° to radians:",
+      options: [
+        "$\\frac{3\\pi}{4}$",
+        "$\\frac{\\pi}{2}$",
+        "$\\frac{2\\pi}{3}$",
+        "$\\frac{5\\pi}{6}$",
+      ],
+      correctIndex: 0,
+      explanation:
+        "$135 \\times \\frac{\\pi}{180} = \\frac{135\\pi}{180} = \\frac{3\\pi}{4}$.",
+    },
+    {
+      id: "q3",
+      text: "On the unit circle, $\\cos(\\pi/3)$ equals:",
+      options: [
+        "$\\frac{1}{2}$",
+        "$\\frac{\\sqrt{3}}{2}$",
+        "$\\frac{\\sqrt{2}}{2}$",
+        "$0$",
+      ],
+      correctIndex: 0,
+      explanation:
+        "At $\\pi/3$ (60°), the point is $(1/2,\\, \\sqrt{3}/2)$, so $\\cos = 1/2$.",
+    },
+    {
+      id: "q4",
+      text: "The period of $y = \\sin(x)$ is:",
+      options: ["$2\\pi$", "$\\pi$", "$\\frac{\\pi}{2}$", "$4\\pi$"],
+      correctIndex: 0,
+      explanation: "Sine completes one full cycle every $2\\pi$ radians.",
+    },
+    {
+      id: "q5",
+      text: "The amplitude of $y = 4\\sin(3x) - 2$ is:",
+      options: ["$4$", "$3$", "$2$", "$\\pi$"],
+      correctIndex: 0,
+      explanation:
+        "Amplitude is $|a| = |4| = 4$. The coefficient of $x$ affects period, not amplitude.",
+    },
+    {
+      id: "q6",
+      text: "The identity $\\sin^2\\theta + \\cos^2\\theta = 1$ is a:",
+      options: [
+        "Pythagorean identity",
+        "Quotient identity",
+        "Reciprocal identity",
+        "Sum identity",
+      ],
+      correctIndex: 0,
+      explanation: "This is the fundamental Pythagorean identity.",
+    },
+    {
+      id: "q7",
+      text: "Solve $\\sin(2\\theta) = \\frac{1}{2}$ for $\\theta$ in $[0, 2\\pi)$. The solutions are:",
+      options: [
+        "$\\frac{\\pi}{12},\\, \\frac{5\\pi}{12},\\, \\frac{13\\pi}{12},\\, \\frac{17\\pi}{12}$",
+        "$\\frac{\\pi}{6},\\, \\frac{5\\pi}{6}$",
+        "$\\frac{\\pi}{4},\\, \\frac{3\\pi}{4}$",
+        "$\\frac{\\pi}{3},\\, \\frac{2\\pi}{3}$",
+      ],
+      correctIndex: 0,
+      explanation:
+        "Solve $2\\theta = \\pi/6,\\, 5\\pi/6,\\, 13\\pi/6,\\, 17\\pi/6$, then divide each by 2.",
+    },
+    {
+      id: "q8",
+      text: "The Law of Sines is most useful when you know:",
+      options: [
+        "Two angles and one side",
+        "Two sides and the included angle",
+        "All three sides only",
+        "Only right triangles",
+      ],
+      correctIndex: 0,
+      explanation: "AAS or ASA cases are ideal for the Law of Sines.",
+    },
+    {
+      id: "q9",
+      text: "In $y = 2\\cos(4(x - \\pi/6)) + 1$, the phase shift is:",
+      options: [
+        "$\\frac{\\pi}{6}$ to the right",
+        "$\\frac{\\pi}{6}$ to the left",
+        "$4$ to the right",
+        "$2$ units up",
+      ],
+      correctIndex: 0,
+      explanation:
+        "The phase shift is $c$ in $(x - c)$. Here $c = \\pi/6$, so shift right by $\\pi/6$.",
+    },
+    {
+      id: "q10",
+      text: "The Law of Cosines is best used when you know:",
+      options: [
+        "Two sides and the included angle",
+        "Two angles and one side",
+        "Only the hypotenuse",
+        "Only right triangles",
+      ],
+      correctIndex: 0,
+      explanation: "SAS or SSS cases are ideal for the Law of Cosines.",
+    },
+    {
+      id: "q11",
+      text: "The period of $y = \\tan(x)$ is:",
+      options: ["$\\pi$", "$2\\pi$", "$\\frac{\\pi}{2}$", "$4\\pi$"],
+      correctIndex: 0,
+      explanation: "Tangent has a period of $\\pi$.",
+    },
+    {
+      id: "q12",
+      text: "What is $\\cos(5\\pi/6)$?",
+      options: [
+        "$-\\frac{\\sqrt{3}}{2}$",
+        "$\\frac{\\sqrt{3}}{2}$",
+        "$-\\frac{1}{2}$",
+        "$\\frac{1}{2}$",
+      ],
+      correctIndex: 0,
+      explanation:
+        "At $5\\pi/6$ (150°), the reference angle is 30°. In Q2, cosine is negative: $-\\sqrt{3}/2$.",
+    },
+    {
+      id: "q13",
+      text: "When solving trig equations, you should always:",
+      options: [
+        "Check solutions in the original equation",
+        "Only use the quadratic formula",
+        "Ignore the period",
+        "Only solve for $\\theta$ directly",
+      ],
+      correctIndex: 0,
+      explanation:
+        "Extraneous solutions are common, especially after squaring both sides.",
+    },
+    {
+      id: "q14",
+      text: "The reciprocal of sine is:",
+      options: ["Cosecant", "Secant", "Tangent", "Cotangent"],
+      correctIndex: 0,
+      explanation: "$\\csc\\theta = 1 / \\sin\\theta$.",
+    },
+    {
+      id: "q15",
+      text: "A ramp rises 5 feet over 60 feet horizontally. The angle is approximately:",
+      options: [
+        "$\\approx 4.76°$",
+        "$\\approx 8.5°$",
+        "$\\approx 12°$",
+        "$\\approx 15°$",
+      ],
+      correctIndex: 0,
+      explanation:
+        "$\\tan(\\theta) = 5/60 \\approx 0.0833$, so $\\theta \\approx \\tan^{-1}(0.0833) \\approx 4.76°$.",
+    },
+    {
+      id: "q16",
+      text: "The sum identity for cosine is:",
+      options: [
+        "$\\cos(A+B) = \\cos A\\cos B - \\sin A\\sin B$",
+        "$\\cos(A+B) = \\cos A + \\cos B$",
+        "$\\cos(A+B) = \\sin(A-B)$",
+        "$\\cos(A+B) = \\tan A + \\tan B$",
+      ],
+      correctIndex: 0,
+      explanation: "The cosine sum formula subtracts the sine product.",
+    },
+    {
+      id: "q17",
+      text: "In the ambiguous case (SSA), the number of possible triangles can be:",
+      options: ["0, 1, or 2", "Always 1", "Always 2", "Only 3"],
+      correctIndex: 0,
+      explanation:
+        "SSA can result in zero, one, or two triangles depending on the given values.",
+    },
+    {
+      id: "q18",
+      text: "The period of $y = \\cos(2x)$ is:",
+      options: ["$\\pi$", "$2\\pi$", "$\\frac{\\pi}{2}$", "$4\\pi$"],
+      correctIndex: 0,
+      explanation: "Period $= 2\\pi / b = 2\\pi / 2 = \\pi$.",
+    },
+    {
+      id: "q19",
+      text: "Trigonometry is most directly useful for solving problems involving:",
+      options: [
+        "Angles and sides of triangles",
+        "Only linear equations",
+        "Only polynomials",
+        "Only circles",
+      ],
+      correctIndex: 0,
+      explanation:
+        "Trigonometry fundamentally studies relationships between angles and sides.",
+    },
+    {
+      id: "q20",
+      text: "The most important final step when solving any trig equation is:",
+      options: [
+        "Checking solutions in the original equation",
+        "Only rounding the answer",
+        "Ignoring the period",
+        "Using the quadratic formula",
+      ],
+      correctIndex: 0,
+      explanation:
+        "Always verify that your solutions satisfy the original equation.",
+    },
+  ]}
+/>

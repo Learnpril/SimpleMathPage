@@ -1,0 +1,200 @@
+---
+title: Law of Cosines
+description: Learn the Law of Cosines and how to use it to solve oblique triangles
+sidebar:
+  order: 17
+---
+
+## What You'll Learn
+
+In this lesson you'll learn the Law of Cosines and how to use it to find missing sides and angles when the Law of Sines won't cut it.
+
+## The Concept
+
+The **Law of Cosines** is a generalization of the Pythagorean Theorem that works for any triangle:
+
+$$
+a^2 = b^2 + c^2 - 2bc\cos A
+$$
+
+You can write it for any side:
+
+$$
+b^2 = a^2 + c^2 - 2ac\cos B
+$$
+
+$$
+c^2 = a^2 + b^2 - 2ab\cos C
+$$
+
+Notice that if the angle is 90°, then cos 90° = 0 and the formula reduces to the Pythagorean Theorem. So this is really the same idea, just extended to handle any angle.
+
+Use the Law of Cosines when you have:
+
+- Two sides and the included angle (SAS) - find the third side
+- All three sides (SSS) - find any angle
+
+The Law of Sines handles AAS and ASA nicely, but for SAS and SSS, the Law of Cosines is the right tool.
+
+## Worked Example
+
+**Example 1 (SAS): Find the missing side**
+
+In triangle PQR, p = 7, q = 10, and angle R = 55°. Find side r.
+
+import LawCosinesTriangle from "../../../components/LawCosinesTriangle.astro";
+
+<LawCosinesTriangle />
+
+We know two sides and the included angle, so we plug straight into the formula:
+
+$$
+r^2 = p^2 + q^2 - 2pq\cos R
+$$
+
+$$
+r^2 = 49 + 100 - 2(7)(10)\cos(55°)
+$$
+
+$$
+r^2 = 149 - 140(0.5736) \approx 149 - 80.3 = 68.7
+$$
+
+$$
+r \approx \sqrt{68.7} \approx 8.29
+$$
+
+**Example 2 (SSS): Find an angle**
+
+A triangle has sides a = 5, b = 7, c = 9. Find angle A.
+
+Rearrange the Law of Cosines to solve for cos A:
+
+$$
+\cos A = \frac{b^2 + c^2 - a^2}{2bc}
+$$
+
+$$
+\cos A = \frac{49 + 81 - 25}{2(7)(9)} = \frac{105}{126} \approx 0.8333
+$$
+
+$$
+A = \cos^{-1}(0.8333) \approx 33.6°
+$$
+
+**Example 3 (SSS): Find all angles**
+
+A triangle has sides a = 8, b = 6, c = 10. Find all three angles.
+
+Start with the largest angle (opposite the longest side, c = 10):
+
+$$
+\cos C = \frac{a^2 + b^2 - c^2}{2ab} = \frac{64 + 36 - 100}{2(8)(6)} = \frac{0}{96} = 0
+$$
+
+$$
+C = \cos^{-1}(0) = 90°
+$$
+
+This is actually a right triangle (6-8-10 is a Pythagorean triple). Now find angle A:
+
+$$
+\cos A = \frac{b^2 + c^2 - a^2}{2bc} = \frac{36 + 100 - 64}{2(6)(10)} = \frac{72}{120} = 0.6
+$$
+
+$$
+A = \cos^{-1}(0.6) \approx 53.1°
+$$
+
+And angle B = 180° - 90° - 53.1° = 36.9°.
+
+## Real-World Application
+
+The Law of Cosines is used in:
+
+- GPS and navigation (calculating distances between three known points)
+- Surveying (when you can measure two sides and the angle between them)
+- Physics (finding the resultant of two forces at an angle)
+- Construction (calculating diagonal measurements for non-rectangular structures)
+- Aviation (determining flight paths and distances between waypoints)
+
+Example: two roads diverge from a town at a 65° angle. One road leads to a lake 12 miles away, the other to a mountain 8 miles away. The Law of Cosines tells you the straight-line distance between the lake and the mountain.
+
+:::note[You've Got This]
+The Law of Cosines is the Pythagorean Theorem's cooler older sibling. It handles any triangle, not just right ones. For SAS, plug in directly. For SSS, rearrange to find the angle. Between the Law of Sines and the Law of Cosines, you can solve any triangle.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="trigonometry-law-of-cosines"
+  questions={[
+    {
+      id: "q1",
+      text: "The Law of Cosines states:",
+      options: [
+        "$a^2 = b^2 + c^2 - 2bc\\cos A$",
+        "$\\frac{a}{\\sin A} = \\frac{b}{\\sin B}$",
+        "$a^2 + b^2 = c^2$ always",
+        "$a = b\\cos C + c\\cos B$",
+      ],
+      correctIndex: 0,
+      explanation:
+        "The Law of Cosines relates the three sides and one angle of any triangle.",
+    },
+    {
+      id: "q2",
+      text: "When angle A = 90°, the Law of Cosines reduces to:",
+      options: [
+        "The Pythagorean Theorem",
+        "The Law of Sines",
+        "The quadratic formula",
+        "Nothing useful",
+      ],
+      correctIndex: 0,
+      explanation:
+        "Since $\\cos 90° = 0$, the $-2bc\\cos A$ term disappears, leaving $a^2 = b^2 + c^2$.",
+    },
+    {
+      id: "q3",
+      text: "The Law of Cosines is the best choice when you know:",
+      options: [
+        "Two sides and the included angle (SAS)",
+        "Two angles and one side (AAS)",
+        "One side only",
+        "Two angles only",
+      ],
+      correctIndex: 0,
+      explanation:
+        "SAS and SSS are the cases where the Law of Cosines shines. AAS/ASA use the Law of Sines.",
+    },
+    {
+      id: "q4",
+      text: "In a triangle with sides 5, 7, and 9, $\\cos A$ equals:",
+      options: [
+        "$\\frac{105}{126} \\approx 0.833$",
+        "$\\frac{25}{63} \\approx 0.397$",
+        "$\\frac{55}{90} \\approx 0.611$",
+        "$\\frac{81}{70} \\approx 1.157$",
+      ],
+      correctIndex: 0,
+      explanation:
+        "$\\cos A = \\frac{b^2 + c^2 - a^2}{2bc} = \\frac{49 + 81 - 25}{126} = \\frac{105}{126}$.",
+    },
+    {
+      id: "q5",
+      text: "If $p = 6$, $q = 10$, and angle $R = 60°$, then $r$ is approximately:",
+      options: [
+        "$\\approx 8.72$",
+        "$\\approx 12.0$",
+        "$\\approx 6.5$",
+        "$\\approx 10.4$",
+      ],
+      correctIndex: 0,
+      explanation:
+        "$r^2 = 36 + 100 - 120\\cos(60°) = 136 - 60 = 76$, so $r \\approx 8.72$.",
+    },
+  ]}
+/>

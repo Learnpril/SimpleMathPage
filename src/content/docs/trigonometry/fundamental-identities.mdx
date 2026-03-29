@@ -1,0 +1,162 @@
+---
+title: Fundamental Identities
+description: Learn the core trigonometric identities including Pythagorean, reciprocal, and quotient identities
+sidebar:
+  order: 10
+---
+
+## What You'll Learn
+
+In this lesson you'll learn the fundamental trigonometric identities and how to use them to simplify expressions and solve problems.
+
+## The Concept
+
+**Trigonometric identities** are equations involving trig functions that are true for all values of the variable (where defined). They're not formulas you solve. They're relationships that are always true, and you use them to rewrite expressions in simpler or more useful forms.
+
+### Reciprocal Identities
+
+$$
+\sin\theta = \frac{1}{\csc\theta} \qquad \cos\theta = \frac{1}{\sec\theta} \qquad \tan\theta = \frac{1}{\cot\theta}
+$$
+
+### Quotient Identities
+
+$$
+\tan\theta = \frac{\sin\theta}{\cos\theta} \qquad \cot\theta = \frac{\cos\theta}{\sin\theta}
+$$
+
+### Pythagorean Identities
+
+These are the most important ones. They come directly from the Pythagorean theorem applied to the unit circle.
+
+$$
+\sin^2\theta + \cos^2\theta = 1
+$$
+
+$$
+1 + \tan^2\theta = \sec^2\theta
+$$
+
+$$
+1 + \cot^2\theta = \csc^2\theta
+$$
+
+The first one is the big one. The other two are derived from it by dividing through by cos²θ or sin²θ.
+
+You can also rearrange them:
+
+- $\sin^2\theta = 1 - \cos^2\theta$
+- $\cos^2\theta = 1 - \sin^2\theta$
+- $\tan^2\theta = \sec^2\theta - 1$
+
+## Worked Example
+
+**1. Simplify $\frac{\sin\theta}{\cos\theta} + \frac{\cos\theta}{\sin\theta}$**
+
+Recognize the quotient identities: this is $\tan\theta + \cot\theta$
+
+To combine into one fraction, find a common denominator:
+
+$$
+\frac{\sin^2\theta + \cos^2\theta}{\sin\theta\cos\theta} = \frac{1}{\sin\theta\cos\theta}
+$$
+
+By the Pythagorean identity, the numerator $\sin^2\theta + \cos^2\theta$ equals 1.
+
+**2. Verify $\sin^2\theta + \cos^2\theta = 1$ using θ = π/3**
+
+$$
+\sin\left(\frac{\pi}{3}\right) = \frac{\sqrt{3}}{2} \qquad \cos\left(\frac{\pi}{3}\right) = \frac{1}{2}
+$$
+
+$$
+\left(\frac{\sqrt{3}}{2}\right)^2 + \left(\frac{1}{2}\right)^2 = \frac{3}{4} + \frac{1}{4} = 1 \quad \checkmark
+$$
+
+**3. Simplify $\sec^2\theta - \tan^2\theta$**
+
+We know that 1 + tan²θ = sec²θ. Rearranging:
+
+$$
+\sec^2\theta - \tan^2\theta = 1
+$$
+
+That's it. It always equals 1, no matter what θ is.
+
+## Real-World Application
+
+Trigonometric identities are used in:
+
+- Simplifying complex waveforms in audio and signal processing
+- Solving equations in physics (wave motion, optics, electricity)
+- Engineering calculations (mechanical vibrations, structural analysis)
+- Computer graphics (efficient rotation and transformation calculations)
+
+Example: in electronics, identities help simplify expressions for alternating current and voltage relationships. Instead of working with a complicated expression, you can use an identity to reduce it to something much simpler.
+
+:::note[You've Got This]
+The Pythagorean identity sin²θ + cos²θ = 1 is your most powerful tool. Memorize the reciprocal and quotient identities, then practice using them to rewrite expressions. The goal is to become comfortable transforming trig expressions into simpler forms. This skill is essential for verifying identities and solving trig equations in the next lessons.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="trigonometry-fundamental-identities"
+  questions={[
+    {
+      id: "q1",
+      text: "Which identity is correct?",
+      options: [
+        "$\\sin^2\\theta + \\cos^2\\theta = 1$",
+        "$\\sin^2\\theta - \\cos^2\\theta = 1$",
+        "$\\tan^2\\theta + \\cot^2\\theta = 1$",
+        "$\\sec^2\\theta - \\csc^2\\theta = 1$",
+      ],
+      correctIndex: 0,
+      explanation:
+        "The fundamental Pythagorean identity is $\\sin^2\\theta + \\cos^2\\theta = 1$.",
+    },
+    {
+      id: "q2",
+      text: "$\\tan\\theta$ equals:",
+      options: [
+        "$\\frac{\\sin\\theta}{\\cos\\theta}$",
+        "$\\frac{\\cos\\theta}{\\sin\\theta}$",
+        "$\\frac{1}{\\sin\\theta}$",
+        "$\\frac{1}{\\cos\\theta}$",
+      ],
+      correctIndex: 0,
+      explanation: "Tangent is sine over cosine (quotient identity).",
+    },
+    {
+      id: "q3",
+      text: "The reciprocal of cosine is:",
+      options: ["Secant", "Cosecant", "Tangent", "Cotangent"],
+      correctIndex: 0,
+      explanation: "$\\sec\\theta = \\frac{1}{\\cos\\theta}$.",
+    },
+    {
+      id: "q4",
+      text: "$\\sec^2\\theta - \\tan^2\\theta$ equals:",
+      options: ["$1$", "$0$", "$-1$", "$\\sin^2\\theta$"],
+      correctIndex: 0,
+      explanation:
+        "From $1 + \\tan^2\\theta = \\sec^2\\theta$, rearranging gives $\\sec^2\\theta - \\tan^2\\theta = 1$.",
+    },
+    {
+      id: "q5",
+      text: "$\\sin^2\\theta$ can be rewritten as:",
+      options: [
+        "$1 - \\cos^2\\theta$",
+        "$1 + \\cos^2\\theta$",
+        "$\\cos^2\\theta - 1$",
+        "$\\tan^2\\theta$",
+      ],
+      correctIndex: 0,
+      explanation:
+        "From $\\sin^2\\theta + \\cos^2\\theta = 1$, subtract $\\cos^2\\theta$: $\\sin^2\\theta = 1 - \\cos^2\\theta$.",
+    },
+  ]}
+/>

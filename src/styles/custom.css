@@ -529,6 +529,16 @@ p:has(> .katex:only-child) {
   opacity: 0.85;
 }
 
+/* Buffer so fixed footer doesn't cover bottom content */
+body {
+  padding-bottom: 3rem;
+}
+
+/* Buffer so fixed footer doesn't cover bottom of sidebar */
+.sidebar-content, nav.sidebar, starlight-menu-button + nav, .sl-sidebar {
+  padding-bottom: 3rem !important;
+}
+
 /* Hide mobile nav bar on desktop */
 @media (min-width: 50rem) {
   .mobile-nav-bar {

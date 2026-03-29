@@ -1,0 +1,63 @@
+---
+/**
+ * TrigTopicMap — visual overview of all 6 Trigonometry topic areas
+ * arranged in a grid with symbols for each topic.
+ */
+const topics = [
+  { label: 'Right Triangle\nTrig', symbol: 'SOH CAH TOA', color: '#58a6ff', symSize: 12 },
+  { label: 'Radians &\nUnit Circle', symbol: '2π', color: '#7ee787', symSize: 20 },
+  { label: 'Graphing\nTrig Functions', symbol: '∿', color: '#d2a8ff', symSize: 24 },
+  { label: 'Identities', symbol: 'sin²+cos²=1', color: '#f0883e', symSize: 11 },
+  { label: 'Trig\nEquations', symbol: 'sin θ = ?', color: '#f778ba', symSize: 14 },
+  { label: 'Law of Sines\n& Cosines', symbol: 'a/sinA', color: '#79c0ff', symSize: 16 },
+];
+
+const cols = 3;
+const cellW = 130;
+const cellH = 90;
+const padX = 15;
+const padY = 15;
+const w = cols * cellW + (cols + 1) * padX;
+const rows = Math.ceil(topics.length / cols);
+const h = rows * cellH + (rows + 1) * padY;
+---
+
+<figure class="ttm" role="img" aria-label="Trigonometry topic overview: Right Triangle Trig, Radians and Unit Circle, Graphing, Identities, Equations, Laws of Sines and Cosines">
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    {topics.map((t, i) => {
+      const col = i % cols;
+      const row = Math.floor(i / cols);
+      const x = padX + col * (cellW + padX);
+      const y = padY + row * (cellH + padY);
+      const cx = x + cellW / 2;
+      const cy = y + cellH / 2;
+      const lines = t.label.split('\n');
+      const sz = t.symSize || 20;
+      return (
+        <g>
+          <rect class="ttm-card" x={x} y={y} width={cellW} height={cellH} rx="10" ry="10" />
+          <text class="ttm-sym" x={cx} y={cy - 12} font-size={sz} text-anchor="middle" font-weight="bold" fill={t.color}>{t.symbol}</text>
+          {lines.length === 1 ? (
+            <text class="ttm-lbl" x={cx} y={cy + 18} font-size="11" text-anchor="middle">{lines[0]}</text>
+          ) : (
+            <g>
+              <text class="ttm-lbl" x={cx} y={cy + 14} font-size="11" text-anchor="middle">{lines[0]}</text>
+              <text class="ttm-lbl" x={cx} y={cy + 27} font-size="11" text-anchor="middle">{lines[1]}</text>
+            </g>
+          )}
+        </g>
+      );
+    })}
+  </svg>
+</figure>
+
+<style>
+  .ttm { display: flex; flex-direction: column; align-items: center; margin: 1.5rem 0; }
+  .ttm svg { max-width: 100%; height: auto; }
+  .ttm-card { fill: #1c2128; stroke: #444; stroke-width: 1; }
+  .ttm-lbl { fill: #ccc; font-family: 'Libre Baskerville', Georgia, serif; }
+  .ttm-sym { font-family: 'Libre Baskerville', Georgia, serif; }
+
+  :global([data-theme="light"]) .ttm-card { fill: #f0f0f0; stroke: #ccc; }
+  :global([data-theme="light"]) .ttm-lbl { fill: #333; }
+</style>

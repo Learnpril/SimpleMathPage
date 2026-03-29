@@ -1,0 +1,157 @@
+---
+title: Equations with Multiple Angles
+description: Learn how to solve trigonometric equations involving multiple angles
+sidebar:
+  order: 14
+---
+
+## What You'll Learn
+
+In this lesson you'll learn how to solve trigonometric equations that contain multiple angles, such as sin(2θ) or cos(3θ).
+
+## The Concept
+
+When an equation contains a multiple angle (like 2θ, 3θ, or θ/2), the strategy is:
+
+1. Let u = the multiple angle (for example, u = 2θ)
+2. Solve the equation for u first
+3. Find all solutions for u in the extended interval (if θ is in [0, 2π) and u = 2θ, then u is in [0, 4π))
+4. Divide by the multiplier to get θ
+
+The key insight: if the multiplier is n, you need to search for solutions in an interval n times as wide, because dividing by n will shrink them back into [0, 2π).
+
+## Worked Example
+
+**1. Solve sin(2θ) = 1/2 for θ in [0, 2π)**
+
+Let u = 2θ. Since θ is in [0, 2π), u is in [0, 4π).
+
+Solve sin(u) = 1/2. The base solutions in [0, 2π) are:
+
+$$
+u = \frac{\pi}{6} \quad \text{and} \quad u = \frac{5\pi}{6}
+$$
+
+Since u goes up to 4π, add 2π to each:
+
+$$
+u = \frac{\pi}{6},\; \frac{5\pi}{6},\; \frac{13\pi}{6},\; \frac{17\pi}{6}
+$$
+
+Now divide each by 2 to get θ:
+
+$$
+\theta = \frac{\pi}{12},\; \frac{5\pi}{12},\; \frac{13\pi}{12},\; \frac{17\pi}{12}
+$$
+
+Four solutions total.
+
+**2. Solve cos(3θ) = 0 for θ in [0, 2π)**
+
+Let u = 3θ. Since θ is in [0, 2π), u is in [0, 6π).
+
+cos(u) = 0 at u = π/2 + kπ. List all values in [0, 6π):
+
+$$
+u = \frac{\pi}{2},\; \frac{3\pi}{2},\; \frac{5\pi}{2},\; \frac{7\pi}{2},\; \frac{9\pi}{2},\; \frac{11\pi}{2}
+$$
+
+Divide each by 3:
+
+$$
+\theta = \frac{\pi}{6},\; \frac{\pi}{2},\; \frac{5\pi}{6},\; \frac{7\pi}{6},\; \frac{3\pi}{2},\; \frac{11\pi}{6}
+$$
+
+Six solutions total. The multiplier of 3 tripled the number of solutions compared to a basic cos θ = 0 equation.
+
+**3. Solve tan(2θ) = √3 for θ in [0, 2π)**
+
+Let u = 2θ. Since θ is in [0, 2π), u is in [0, 4π).
+
+tan(u) = √3 at u = π/3 + kπ. List all values in [0, 4π):
+
+$$
+u = \frac{\pi}{3},\; \frac{4\pi}{3},\; \frac{7\pi}{3},\; \frac{10\pi}{3}
+$$
+
+Divide each by 2:
+
+$$
+\theta = \frac{\pi}{6},\; \frac{2\pi}{3},\; \frac{7\pi}{6},\; \frac{5\pi}{3}
+$$
+
+Four solutions. Notice that tangent's period is π (not 2π), so we add π each time for u, which becomes π/2 spacing for θ after dividing by 2.
+
+## Real-World Application
+
+Equations with multiple angles appear in:
+
+- Physics (wave interference, standing waves, harmonics)
+- Engineering (rotational motion, harmonic analysis)
+- Music (sound wave harmonics and overtones)
+- Navigation and astronomy (calculating repeated angular positions)
+
+Example: when analyzing the motion of a double pendulum or certain vibrating systems, equations with multiple angles frequently arise. The harmonics of a vibrating string are described by sin(nθ) where n is the harmonic number.
+
+:::note[You've Got This]
+The key is to substitute for the multiple angle first, solve for that angle over the appropriate extended range, then divide back to find θ. The multiplier tells you how many times wider your search interval needs to be. A 2θ equation searches [0, 4π), a 3θ equation searches [0, 6π), and so on.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="trigonometry-equations-multiple-angles"
+  questions={[
+    {
+      id: "q1",
+      text: "To solve $\\sin(2\\theta) = \\frac{1}{2}$, the first step is:",
+      options: [
+        "Let $u = 2\\theta$ and solve $\\sin u = \\frac{1}{2}$",
+        "Divide both sides by 2",
+        "Take arcsin of both sides directly",
+        "Square both sides",
+      ],
+      correctIndex: 0,
+      explanation: "Substitute $u = 2\\theta$ first, then solve for $u$.",
+    },
+    {
+      id: "q2",
+      text: "If solving $\\cos(3\\theta) = 0$ for $\\theta$ in $[0, 2\\pi)$, how many solutions are there?",
+      options: ["$6$", "$3$", "$4$", "$2$"],
+      correctIndex: 0,
+      explanation:
+        "$3\\theta$ covers $[0, 6\\pi)$, which contains 6 solutions for $\\cos = 0$.",
+    },
+    {
+      id: "q3",
+      text: "When solving $\\sin(2\\theta) = k$ for $\\theta$ in $[0, 2\\pi)$, the substitution $u = 2\\theta$ ranges over:",
+      options: ["$[0, 4\\pi)$", "$[0, 2\\pi)$", "$[0, \\pi)$", "$[0, 6\\pi)$"],
+      correctIndex: 0,
+      explanation:
+        "If $\\theta$ is in $[0, 2\\pi)$, then $2\\theta$ is in $[0, 4\\pi)$.",
+    },
+    {
+      id: "q4",
+      text: "Solve $\\tan(2\\theta) = 1$ for $\\theta$ in $[0, \\pi)$:",
+      options: [
+        "$\\frac{\\pi}{8}$ and $\\frac{5\\pi}{8}$",
+        "$\\frac{\\pi}{4}$ and $\\frac{3\\pi}{4}$",
+        "$\\frac{\\pi}{2}$",
+        "$0$",
+      ],
+      correctIndex: 0,
+      explanation:
+        "$2\\theta = \\frac{\\pi}{4} + k\\pi$, so $\\theta = \\frac{\\pi}{8} + \\frac{k\\pi}{2}$. In $[0, \\pi)$: $\\frac{\\pi}{8}$ and $\\frac{5\\pi}{8}$.",
+    },
+    {
+      id: "q5",
+      text: "A multiplier of $n$ in $\\sin(n\\theta)$ generally produces how many times more solutions than $\\sin(\\theta)$?",
+      options: ["$n$ times", "$2n$ times", "$n + 1$ times", "The same number"],
+      correctIndex: 0,
+      explanation:
+        "The multiplier $n$ extends the search interval by a factor of $n$, producing $n$ times as many solutions.",
+    },
+  ]}
+/>

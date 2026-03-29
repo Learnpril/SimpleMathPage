@@ -1,0 +1,120 @@
+---
+/**
+ * SecGraph — plots y = sec(x) = 1/cos(x) from -0.3 to 2π+0.3
+ * with a faint y = cos(x) reference curve.
+ * Asymptotes at x = π/2, 3π/2 (where cos = 0).
+ */
+const w = 520;
+const h = 280;
+const pad = 40;
+const gw = w - 2 * pad;
+const gh = h - 2 * pad;
+const cxO = pad;
+const cyO = pad + gh / 2;
+const xMin = -0.3;
+const xMax = 2 * Math.PI + 0.3;
+const scaleX = gw / (xMax - xMin);
+const scaleY = gh / 6;
+
+function px(x: number) { return cxO + (x - xMin) * scaleX; }
+function py(y: number) { return cyO - y * scaleY; }
+
+// Generate sec curve segments (skip near asymptotes)
+const secSegments: string[][] = [];
+let seg: string[] = [];
+for (let t = -0.3; t <= 2 * Math.PI + 0.3; t += 0.02) {
+  const c = Math.cos(t);
+  if (Math.abs(c) < 0.01) {
+    if (seg.length > 1) secSegments.push(seg);
+    seg = [];
+    continue;
+  }
+  const v = 1 / c;
+  if (Math.abs(v) > 3.2) {
+    if (seg.length > 1) secSegments.push(seg);
+    seg = [];
+    continue;
+  }
+  seg.push(`${seg.length === 0 ? 'M' : 'L'}${px(t).toFixed(1)},${py(v).toFixed(1)}`);
+}
+if (seg.length > 1) secSegments.push(seg);
+
+// Generate cos reference curve
+const cosPts: string[] = [];
+for (let t = -0.3; t <= 2 * Math.PI + 0.3; t += 0.02) {
+  const v = Math.cos(t);
+  cosPts.push(`${cosPts.length === 0 ? 'M' : 'L'}${px(t).toFixed(1)},${py(v).toFixed(1)}`);
+}
+
+const asymptotes = [Math.PI / 2, 3 * Math.PI / 2];
+const xTicks = [
+  { val: 0, label: '0' },
+  { val: Math.PI / 2, label: 'π/2' },
+  { val: Math.PI, label: 'π' },
+  { val: 3 * Math.PI / 2, label: '3π/2' },
+  { val: 2 * Math.PI, label: '2π' },
+];
+---
+
+<figure class="secg" role="img" aria-label="Graph of y = sec(x) with cos(x) reference curve and asymptotes">
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    {/* Axes */}
+    <line x1={cxO - 5} y1={cyO} x2={w - pad + 10} y2={cyO} class="secg-axis" stroke-width="1.5" />
+    <line x1={px(0)} y1={pad - 5} x2={px(0)} y2={h - pad + 5} class="secg-axis" stroke-width="1.5" />
+
+    {/* Asymptotes */}
+    {asymptotes.map(a => (
+      <line x1={px(a)} y1={pad - 5} x2={px(a)} y2={h - pad + 5} class="secg-asymptote" stroke-width="1.5" stroke-dasharray="6,4" />
+    ))}
+
+    {/* Y ticks */}
+    <text class="secg-tick" x={px(0) - 8} y={py(1) + 4} font-size="11" text-anchor="end">1</text>
+    <text class="secg-tick" x={px(0) - 8} y={py(-1) + 4} font-size="11" text-anchor="end">-1</text>
+
+    {/* X ticks */}
+    {xTicks.map(t => (
+      <text class="secg-tick" x={px(t.val)} y={cyO + 18} font-size="11" text-anchor="middle">{t.label}</text>
+    ))}
+
+    {/* Cos reference curve (faint) */}
+    <path d={cosPts.join(' ')} fill="none" class="secg-ref" stroke-width="2" />
+
+    {/* Sec curve segments */}
+    {secSegments.map(s => (
+      <path d={s.join(' ')} fill="none" class="secg-curve" stroke-width="2.5" />
+    ))}
+
+    {/* Key points where sec = 1 or -1 */}
+    <circle cx={px(0)} cy={py(1)} r="4" class="secg-dot" />
+    <circle cx={px(Math.PI)} cy={py(-1)} r="4" class="secg-dot" />
+    <circle cx={px(2 * Math.PI)} cy={py(1)} r="4" class="secg-dot" />
+
+    {/* Legend */}
+    <line x1={w - 140} y1="14" x2={w - 120} y2="14" class="secg-curve" stroke-width="2.5" />
+    <text class="secg-legend" x={w - 115} y="18" font-size="12">y = sec(x)</text>
+    <line x1={w - 140} y1="30" x2={w - 120} y2="30" class="secg-ref" stroke-width="2" />
+    <text class="secg-legend-ref" x={w - 115} y="34" font-size="12">y = cos(x)</text>
+  </svg>
+</figure>
+
+<style>
+  .secg { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .secg svg { max-width:100%; height:auto; }
+  .secg-axis { stroke:#666; }
+  .secg-asymptote { stroke:#f47067; opacity:0.6; }
+  .secg-tick { fill:#999; font-family:'Libre Baskerville',Georgia,serif; }
+  .secg-curve { stroke:#7ee787; }
+  .secg-ref { stroke:#7ee787; opacity:0.3; }
+  .secg-dot { fill:#7ee787; }
+  .secg-legend { fill:#7ee787; font-family:'Libre Baskerville',Georgia,serif; }
+  .secg-legend-ref { fill:#7ee787; opacity:0.3; font-family:'Libre Baskerville',Georgia,serif; }
+
+  :global([data-theme="light"]) .secg-axis { stroke:#999; }
+  :global([data-theme="light"]) .secg-asymptote { stroke:#cf222e; }
+  :global([data-theme="light"]) .secg-tick { fill:#555; }
+  :global([data-theme="light"]) .secg-curve { stroke:#1a7f37; }
+  :global([data-theme="light"]) .secg-ref { stroke:#1a7f37; opacity:0.3; }
+  :global([data-theme="light"]) .secg-dot { fill:#1a7f37; }
+  :global([data-theme="light"]) .secg-legend { fill:#1a7f37; }
+  :global([data-theme="light"]) .secg-legend-ref { fill:#1a7f37; opacity:0.3; }
+</style>

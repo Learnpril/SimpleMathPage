@@ -1,0 +1,160 @@
+---
+title: Graphing Tangent and Reciprocal Functions
+description: Learn to graph tangent, cotangent, secant, and cosecant functions
+sidebar:
+  order: 8
+---
+
+## What You'll Learn
+
+In this lesson you'll learn how to graph the tangent function and the reciprocal trig functions (cotangent, secant, cosecant), including their asymptotes, periods, and behavior.
+
+## The Concept
+
+### Tangent: y = tan(x)
+
+Tangent is sin(x) / cos(x). Wherever cosine is zero, tangent is undefined, which creates vertical asymptotes.
+
+import TanGraph from "../../../components/TanGraph.astro";
+
+<TanGraph />
+
+Key features:
+
+- Period = π (shorter than sine and cosine)
+- Vertical asymptotes at x = π/2 + kπ (where cos = 0)
+- Passes through the origin (0, 0) and through (π, 0)
+- Range: all real numbers (it goes to +∞ and -∞)
+- The graph has a distinctive "S" shape between each pair of asymptotes
+
+The red dashed lines in the graph are the asymptotes. The curve approaches them but never touches them.
+
+### Reciprocal Functions
+
+These are defined as the reciprocals of the three main trig functions:
+
+- **Cotangent**: cot(x) = cos(x) / sin(x) = 1 / tan(x)
+  - Period = π
+  - Asymptotes at x = kπ (where sin = 0)
+
+import CotGraph from "../../../components/CotGraph.astro";
+
+<CotGraph />
+
+- **Secant**: sec(x) = 1 / cos(x)
+  - Period = 2π
+  - Asymptotes where cos = 0 (same places as tangent)
+
+import SecGraph from "../../../components/SecGraph.astro";
+
+<SecGraph />
+
+- **Cosecant**: csc(x) = 1 / sin(x)
+  - Period = 2π
+  - Asymptotes where sin = 0
+
+import CscGraph from "../../../components/CscGraph.astro";
+
+<CscGraph />
+
+The key idea: wherever the original function (sin or cos) equals zero, the reciprocal function has a vertical asymptote. Wherever the original function equals 1 or -1, the reciprocal function also equals 1 or -1.
+
+## Worked Example
+
+**1. Graph y = tan(x) over one period (-π/2 to π/2)**
+
+Key points: passes through (-π/4, -1), (0, 0), (π/4, 1). Approaches +∞ as x approaches π/2 from the left, and -∞ as x approaches -π/2 from the right.
+
+**2. Identify asymptotes for y = sec(x)**
+
+sec(x) = 1/cos(x), so asymptotes occur where cos(x) = 0:
+
+$$
+x = \frac{\pi}{2} + k\pi \quad \text{(where k is any integer)}
+$$
+
+That's x = ±π/2, ±3π/2, ±5π/2, and so on.
+
+**3. Compare periods**
+
+| Function | Period |
+| -------- | ------ |
+| tan(x)   | π      |
+| cot(x)   | π      |
+| sec(x)   | 2π     |
+| csc(x)   | 2π     |
+
+Tangent and cotangent repeat twice as fast as secant and cosecant.
+
+## Real-World Application
+
+These functions appear in:
+
+- Physics (modeling wave interference and resonance)
+- Engineering (signal processing and electrical circuits)
+- Optics (light wave behavior near boundaries)
+- Architecture (structural vibration analysis)
+- Navigation (calculating bearings and slopes)
+
+Example: the tangent function models the steepness of a curve at any point. In calculus, the derivative of many functions involves tangent. In engineering, tangent describes the relationship between voltage and current phase in AC circuits.
+
+:::note[You've Got This]
+Tangent has a shorter period (π) and vertical asymptotes where cosine is zero. The reciprocal functions (sec, csc, cot) are defined by flipping sin, cos, or tan. Focus on learning where the asymptotes are, because they define the shape of the graph. Sketch these a few times and the patterns become clear.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="trigonometry-graphing-tan-reciprocal"
+  questions={[
+    {
+      id: "q1",
+      text: "The period of $y = \\tan(x)$ is:",
+      options: ["$\\pi$", "$2\\pi$", "$\\frac{\\pi}{2}$", "$4\\pi$"],
+      correctIndex: 0,
+      explanation: "Tangent repeats every $\\pi$ radians.",
+    },
+    {
+      id: "q2",
+      text: "The asymptotes of $y = \\tan(x)$ occur where:",
+      options: [
+        "$\\cos(x) = 0$",
+        "$\\sin(x) = 0$",
+        "$\\tan(x) = 0$",
+        "$x = k\\pi$",
+      ],
+      correctIndex: 0,
+      explanation:
+        "Since $\\tan(x) = \\frac{\\sin(x)}{\\cos(x)}$, it's undefined where $\\cos(x) = 0$.",
+    },
+    {
+      id: "q3",
+      text: "$\\sec(x)$ is defined as:",
+      options: [
+        "$\\frac{1}{\\cos(x)}$",
+        "$\\frac{1}{\\sin(x)}$",
+        "$\\frac{1}{\\tan(x)}$",
+        "$\\frac{\\sin(x)}{\\cos(x)}$",
+      ],
+      correctIndex: 0,
+      explanation: "Secant is the reciprocal of cosine.",
+    },
+    {
+      id: "q4",
+      text: "The period of $y = \\csc(x)$ is:",
+      options: ["$2\\pi$", "$\\pi$", "$\\frac{\\pi}{2}$", "$4\\pi$"],
+      correctIndex: 0,
+      explanation: "Cosecant has the same period as sine: $2\\pi$.",
+    },
+    {
+      id: "q5",
+      text: "At $x = 0$, $\\tan(x)$ equals:",
+      options: ["$0$", "$1$", "Undefined", "$-1$"],
+      correctIndex: 0,
+      explanation:
+        "$\\tan(0) = \\frac{\\sin(0)}{\\cos(0)} = \\frac{0}{1} = 0$.",
+    },
+  ]}
+/>

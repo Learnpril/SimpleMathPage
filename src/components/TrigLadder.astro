@@ -1,0 +1,54 @@
+---
+/**
+ * TrigLadder — ladder leaning against a wall.
+ * 68° angle with ground, ladder = 25 ft, height ≈ 23.18 ft.
+ */
+const w = 320;
+const h = 240;
+// Wall is vertical on the right, ground is horizontal at bottom
+const gx = 40, gy = 210;   // ground-left (person standing)
+const wx = 240, wy = 210;  // wall-base (right angle)
+const tx = 240, ty = 30;   // top of wall (where ladder meets)
+const r = 28;
+const angle = Math.atan2(ty - gy, tx - gx);
+const endX = gx + r * Math.cos(angle);
+const endY = gy + r * Math.sin(angle);
+---
+
+<figure class="tlad" role="img" aria-label="Ladder leaning against wall: 68 degree angle, ladder 25 ft, height 23.18 ft">
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    {/* Ground line */}
+    <line x1="20" y1={gy} x2={wx + 30} y2={gy} class="tlad-ground" stroke-width="2" />
+    {/* Wall line */}
+    <line x1={wx} y1={wy} x2={tx} y2={ty - 10} class="tlad-wall" stroke-width="2" />
+    {/* Ladder */}
+    <line x1={gx} y1={gy} x2={tx} y2={ty} class="tlad-ladder" stroke-width="2.5" />
+    {/* Right angle at wall base */}
+    <polyline points={`${wx-12},${wy} ${wx-12},${wy-12} ${wx},${wy-12}`} fill="none" class="tlad-right" stroke-width="1.5" />
+    {/* Angle arc */}
+    <path d={`M${gx+r},${gy} A${r},${r} 0 0,0 ${endX.toFixed(1)},${endY.toFixed(1)}`} fill="none" class="tlad-arc" stroke-width="1.5" />
+    <text class="tlad-angle" x={gx + 36} y={gy - 10} font-size="13" font-weight="bold">68°</text>
+    {/* Labels */}
+    <text class="tlad-hyp-label" x={(gx+tx)/2 - 16} y={(gy+ty)/2 - 2} font-size="13" text-anchor="middle" font-weight="bold"
+      transform={`rotate(-42, ${(gx+tx)/2 - 16}, ${(gy+ty)/2 - 2})`}>25 ft</text>
+    <text class="tlad-opp-label" x={wx + 16} y={(wy+ty)/2 + 5} font-size="13" font-weight="bold">≈ 23.18 ft</text>
+  </svg>
+</figure>
+
+<style>
+  .tlad { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .tlad svg { max-width:100%; height:auto; }
+  .tlad-ground { stroke:#555; }
+  .tlad-wall { stroke:#555; }
+  .tlad-ladder { stroke:#ccc; }
+  .tlad-right { stroke:#666; }
+  .tlad-arc { stroke:#d2a8ff; }
+  .tlad-angle { fill:#d2a8ff; font-family:'Libre Baskerville',Georgia,serif; }
+  .tlad-hyp-label { fill:#ccc; font-family:'Libre Baskerville',Georgia,serif; }
+  .tlad-opp-label { fill:#58a6ff; font-family:'Libre Baskerville',Georgia,serif; }
+  :global([data-theme="light"]) .tlad-ground { stroke:#aaa; }
+  :global([data-theme="light"]) .tlad-wall { stroke:#aaa; }
+  :global([data-theme="light"]) .tlad-ladder { stroke:#333; }
+  :global([data-theme="light"]) .tlad-hyp-label { fill:#333; }
+  :global([data-theme="light"]) .tlad-opp-label { fill:#0969da; }
+</style>

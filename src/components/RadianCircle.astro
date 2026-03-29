@@ -1,0 +1,78 @@
+---
+/**
+ * RadianCircle — shows a circle with radius r, an arc of length r,
+ * and the angle of 1 radian marked. Also shows key degree/radian pairs.
+ */
+const w = 420;
+const h = 220;
+const cx = 140, cy = 110;
+const r = 80;
+// 1 radian ≈ 57.3°
+const radAngle = 1; // 1 radian
+const endX = cx + r * Math.cos(-radAngle);
+const endY = cy - r * Math.sin(radAngle);
+// Arc for 1 radian
+const arcPts: string[] = [];
+for (let a = 0; a <= radAngle; a += 0.05) {
+  const px = cx + r * Math.cos(-a);
+  const py = cy - r * Math.sin(a);
+  arcPts.push(`${arcPts.length === 0 ? 'M' : 'L'}${px.toFixed(1)},${py.toFixed(1)}`);
+}
+---
+
+<figure class="radc" role="img" aria-label="Circle showing 1 radian: arc length equals radius">
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    {/* Circle */}
+    <circle cx={cx} cy={cy} r={r} fill="none" class="radc-circle" stroke-width="1.5" />
+    {/* Radius lines */}
+    <line x1={cx} y1={cy} x2={cx + r} y2={cy} class="radc-radius" stroke-width="2" />
+    <line x1={cx} y1={cy} x2={endX.toFixed(1)} y2={endY.toFixed(1)} class="radc-radius" stroke-width="2" />
+    {/* Arc highlight */}
+    <path d={arcPts.join(' ')} fill="none" class="radc-arc" stroke-width="3.5" />
+    {/* Angle arc */}
+    <path d={`M${cx + 25},${cy} A25,25 0 0,0 ${(cx + 25 * Math.cos(-radAngle)).toFixed(1)},${(cy - 25 * Math.sin(radAngle)).toFixed(1)}`} fill="none" class="radc-angle" stroke-width="1.5" />
+    {/* Labels */}
+    <text class="radc-r-label" x={cx + r / 2} y={cy + 16} font-size="13" text-anchor="middle" font-weight="bold">r</text>
+    <text class="radc-arc-label" x={cx + r + 8} y={cy - r / 2 + 10} font-size="13" font-weight="bold">arc = r</text>
+    <text class="radc-angle-label" x={cx + 34} y={cy - 10} font-size="12" font-weight="bold">1 rad</text>
+    {/* Center dot */}
+    <circle cx={cx} cy={cy} r="3" class="radc-dot" />
+    {/* Key conversions on the right */}
+    <text class="radc-conv" x="280" y="40" font-size="13">
+      <tspan font-weight="bold" fill="#58a6ff">90°</tspan>
+      <tspan fill="#999"> = π/2</tspan>
+    </text>
+    <text class="radc-conv" x="280" y="70" font-size="13">
+      <tspan font-weight="bold" fill="#7ee787">180°</tspan>
+      <tspan fill="#999"> = π</tspan>
+    </text>
+    <text class="radc-conv" x="280" y="100" font-size="13">
+      <tspan font-weight="bold" fill="#f0883e">270°</tspan>
+      <tspan fill="#999"> = 3π/2</tspan>
+    </text>
+    <text class="radc-conv" x="280" y="130" font-size="13">
+      <tspan font-weight="bold" fill="#d2a8ff">360°</tspan>
+      <tspan fill="#999"> = 2π</tspan>
+    </text>
+  </svg>
+</figure>
+
+<style>
+  .radc { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .radc svg { max-width:100%; height:auto; }
+  .radc-circle { stroke:#555; }
+  .radc-radius { stroke:#ccc; }
+  .radc-arc { stroke:#58a6ff; }
+  .radc-angle { stroke:#d2a8ff; }
+  .radc-r-label { fill:#ccc; font-family:'Libre Baskerville',Georgia,serif; }
+  .radc-arc-label { fill:#58a6ff; font-family:'Libre Baskerville',Georgia,serif; }
+  .radc-angle-label { fill:#d2a8ff; font-family:'Libre Baskerville',Georgia,serif; }
+  .radc-dot { fill:#ccc; }
+  .radc-conv { font-family:'Libre Baskerville',Georgia,serif; }
+  :global([data-theme="light"]) .radc-circle { stroke:#aaa; }
+  :global([data-theme="light"]) .radc-radius { stroke:#333; }
+  :global([data-theme="light"]) .radc-r-label { fill:#333; }
+  :global([data-theme="light"]) .radc-dot { fill:#333; }
+  :global([data-theme="light"]) .radc-arc { stroke:#0969da; }
+  :global([data-theme="light"]) .radc-arc-label { fill:#0969da; }
+</style>

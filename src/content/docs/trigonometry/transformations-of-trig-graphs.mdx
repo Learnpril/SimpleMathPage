@@ -1,0 +1,122 @@
+---
+title: Transformations of Trigonometric Graphs
+description: Learn how amplitude, period, phase shift, and vertical shift transform trig graphs
+sidebar:
+  order: 9
+---
+
+## What You'll Learn
+
+In this lesson you'll learn how to transform the graphs of sine and cosine functions by changing amplitude, period, phase shift, and vertical shift.
+
+## The Concept
+
+The general form for transformed sine and cosine functions is:
+
+$$
+y = a \sin(b(x - c)) + d \quad \text{or} \quad y = a \cos(b(x - c)) + d
+$$
+
+Each letter controls a different transformation:
+
+- **a** = amplitude (vertical stretch or compression). The wave reaches |a| above and below the midline.
+- **b** = affects the period. Period = $\frac{2\pi}{b}$. Larger b means the wave repeats faster.
+- **c** = phase shift (horizontal shift). Positive c shifts right, negative shifts left.
+- **d** = vertical shift. Moves the entire wave up or down. The midline becomes y = d.
+
+Quick reference:
+
+| Parameter | What it does        | Formula           |
+| --------- | ------------------- | ----------------- |
+| a         | Height of the wave  | Amplitude = \|a\| |
+| b         | Speed of repetition | Period = 2π / b   |
+| c         | Horizontal slide    | Shift right by c  |
+| d         | Vertical slide      | Midline at y = d  |
+
+## Worked Example
+
+**Graph y = 3 sin(2(x - π/4)) + 1**
+
+Let's identify each parameter:
+
+- a = 3, so amplitude = 3
+- b = 2, so period = 2π / 2 = π
+- c = π/4, so phase shift = π/4 to the right
+- d = 1, so midline at y = 1
+
+import TransformedSinGraph from "../../../components/TransformedSinGraph.astro";
+
+<TransformedSinGraph />
+
+The faint blue curve is the standard y = sin(x) for comparison. The orange curve is the transformed version. Notice how it's taller (amplitude 3 vs 1), repeats faster (period π vs 2π), shifted right by π/4, and centered on y = 1 instead of y = 0.
+
+The wave oscillates between y = 1 - 3 = -2 and y = 1 + 3 = 4.
+
+## Real-World Application
+
+Transformed trig graphs model many real situations:
+
+- Sound waves with different volumes (amplitude) and pitches (period)
+- Seasonal temperature variations (vertical shift for average temp, amplitude for range)
+- Tide heights throughout the day (period and phase shift)
+- Alternating current in electricity (amplitude and frequency)
+- Daylight hours throughout the year
+
+Example: the number of daylight hours in a year can be modeled as a transformed sine function. In a northern city, it might look something like y = 6 sin(2π/365 (x - 80)) + 12, where the amplitude is about 6 hours, the period is 365 days, the phase shift accounts for the spring equinox, and the vertical shift of 12 represents the average.
+
+:::note[You've Got This]
+Transformations follow the same rules as other functions: a affects height, b affects how fast it repeats, c shifts horizontally, and d shifts vertically. Start by identifying each parameter, then sketch the basic wave and apply the changes one at a time.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="trigonometry-transformations-trig-graphs"
+  questions={[
+    {
+      id: "q1",
+      text: "In $y = 4\\sin(2x) + 1$, the amplitude is:",
+      options: ["$4$", "$2$", "$1$", "$\\pi$"],
+      correctIndex: 0,
+      explanation: "Amplitude is $|a| = |4| = 4$.",
+    },
+    {
+      id: "q2",
+      text: "In $y = \\sin\\left(3\\left(x - \\frac{\\pi}{6}\\right)\\right) - 2$, the phase shift is:",
+      options: [
+        "$\\frac{\\pi}{6}$ to the right",
+        "$\\frac{\\pi}{6}$ to the left",
+        "$3$ to the right",
+        "$2$ units down",
+      ],
+      correctIndex: 0,
+      explanation:
+        "The phase shift is $c$ in $(x - c)$. Here $c = \\frac{\\pi}{6}$, so shift right.",
+    },
+    {
+      id: "q3",
+      text: "The period of $y = \\cos(4x)$ is:",
+      options: ["$\\frac{\\pi}{2}$", "$2\\pi$", "$4\\pi$", "$\\pi$"],
+      correctIndex: 0,
+      explanation:
+        "Period $= \\frac{2\\pi}{b} = \\frac{2\\pi}{4} = \\frac{\\pi}{2}$.",
+    },
+    {
+      id: "q4",
+      text: "A vertical shift of $+3$ means the midline is at:",
+      options: ["$y = 3$", "$y = -3$", "$y = 0$", "$y = 6$"],
+      correctIndex: 0,
+      explanation: "The vertical shift $d$ moves the midline to $y = d$.",
+    },
+    {
+      id: "q5",
+      text: "In $y = 2\\sin(x) + 5$, the wave oscillates between:",
+      options: ["$3$ and $7$", "$-2$ and $2$", "$5$ and $7$", "$3$ and $5$"],
+      correctIndex: 0,
+      explanation:
+        "Midline is $5$, amplitude is $2$. So it goes from $5 - 2 = 3$ to $5 + 2 = 7$.",
+    },
+  ]}
+/>

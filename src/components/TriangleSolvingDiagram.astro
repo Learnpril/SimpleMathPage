@@ -1,0 +1,94 @@
+---
+/**
+ * TriangleSolvingDiagram — shows a surveying scenario:
+ * two observation points A and B with known distance,
+ * measuring angles to a distant point C.
+ */
+const w = 420;
+const h = 260;
+const ax = 60, ay = 220;
+const bx = 340, by = 220;
+const cx = 250, cy = 40;
+
+// Arc at A: from AB direction to AC direction
+const arcR = 30;
+// A -> B direction
+const abx = bx - ax, aby = by - ay;
+const abLen = Math.sqrt(abx * abx + aby * aby);
+// A -> C direction
+const acx = cx - ax, acy = cy - ay;
+const acLen = Math.sqrt(acx * acx + acy * acy);
+// Arc endpoints at A
+const aArc1x = ax + (abx / abLen) * arcR;
+const aArc1y = ay + (aby / abLen) * arcR;
+const aArc2x = ax + (acx / acLen) * arcR;
+const aArc2y = ay + (acy / acLen) * arcR;
+
+// Arc at B: from BA direction to BC direction
+// B -> A direction
+const bax = ax - bx, bay = ay - by;
+const baLen = Math.sqrt(bax * bax + bay * bay);
+// B -> C direction
+const bcx = cx - bx, bcy = cy - by;
+const bcLen = Math.sqrt(bcx * bcx + bcy * bcy);
+// Arc endpoints at B
+const bArc1x = bx + (bcx / bcLen) * arcR;
+const bArc1y = by + (bcy / bcLen) * arcR;
+const bArc2x = bx + (bax / baLen) * arcR;
+const bArc2y = by + (bay / baLen) * arcR;
+---
+
+<figure class="tsd" role="img" aria-label="Surveying triangle: two observers A and B measure angles to point C">
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    {/* Ground line */}
+    <line x1="20" y1={ay} x2="400" y2={ay} class="tsd-ground" stroke-width="1" stroke-dasharray="6,4" />
+
+    {/* Triangle */}
+    <polygon points={`${ax},${ay} ${bx},${by} ${cx},${cy}`} fill="none" class="tsd-tri" stroke-width="2.5" />
+
+    {/* Angle arcs - computed to stay inside triangle */}
+    <path d={`M ${aArc1x.toFixed(1)},${aArc1y.toFixed(1)} A ${arcR} ${arcR} 0 0 0 ${aArc2x.toFixed(1)},${aArc2y.toFixed(1)}`} fill="none" class="tsd-arc" stroke-width="1.5" />
+    <path d={`M ${bArc1x.toFixed(1)},${bArc1y.toFixed(1)} A ${arcR} ${arcR} 0 0 0 ${bArc2x.toFixed(1)},${bArc2y.toFixed(1)}`} fill="none" class="tsd-arc" stroke-width="1.5" />
+
+    {/* Angle labels */}
+    <text class="tsd-angle" x={ax + 48} y={ay - 14} font-size="12" font-weight="bold">42°</text>
+    <text class="tsd-angle" x={bx - 56} y={by - 14} font-size="12" font-weight="bold">73°</text>
+
+    {/* Vertex labels */}
+    <text class="tsd-vertex" x={ax - 6} y={ay + 18} font-size="14" font-weight="bold" text-anchor="middle">A</text>
+    <text class="tsd-vertex" x={bx + 6} y={by + 18} font-size="14" font-weight="bold" text-anchor="middle">B</text>
+    <text class="tsd-vertex" x={cx - 20} y={cy - 10} font-size="14" font-weight="bold" text-anchor="middle">C</text>
+
+    {/* Side labels */}
+    <text class="tsd-side-known" x={(ax + bx) / 2} y={ay + 18} font-size="12" font-weight="bold" text-anchor="middle">500 m</text>
+    <text class="tsd-side-unknown" x={(bx + cx) / 2 + 18} y={(by + cy) / 2 - 4} font-size="12" font-weight="bold">a = ?</text>
+    <text class="tsd-side-unknown2" x={(ax + cx) / 2 - 40} y={(ay + cy) / 2 + 2} font-size="12" font-weight="bold">b = ?</text>
+
+    {/* Small flag/marker at C */}
+    <line x1={cx} y1={cy} x2={cx} y2={cy - 16} class="tsd-flag" stroke-width="2" />
+    <polygon points={`${cx},${cy - 16} ${cx + 10},${cy - 12} ${cx},${cy - 8}`} class="tsd-flag-fill" />
+  </svg>
+</figure>
+
+<style>
+  .tsd { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .tsd svg { max-width:100%; height:auto; }
+  .tsd-ground { stroke:#555; }
+  .tsd-tri { stroke:#ccc; }
+  .tsd-arc { stroke:#d2a8ff; }
+  .tsd-angle { fill:#d2a8ff; font-family:'Libre Baskerville',Georgia,serif; }
+  .tsd-vertex { fill:#58a6ff; font-family:'Libre Baskerville',Georgia,serif; }
+  .tsd-side-known { fill:#7ee787; font-family:'Libre Baskerville',Georgia,serif; }
+  .tsd-side-unknown { fill:#f0883e; font-family:'Libre Baskerville',Georgia,serif; }
+  .tsd-side-unknown2 { fill:#f0883e; font-family:'Libre Baskerville',Georgia,serif; }
+  .tsd-flag { stroke:#f47067; }
+  .tsd-flag-fill { fill:#f47067; }
+  :global([data-theme="light"]) .tsd-ground { stroke:#aaa; }
+  :global([data-theme="light"]) .tsd-tri { stroke:#333; }
+  :global([data-theme="light"]) .tsd-arc { stroke:#8250df; }
+  :global([data-theme="light"]) .tsd-angle { fill:#8250df; }
+  :global([data-theme="light"]) .tsd-vertex { fill:#0969da; }
+  :global([data-theme="light"]) .tsd-side-known { fill:#1a7f37; }
+  :global([data-theme="light"]) .tsd-side-unknown { fill:#d4700a; }
+  :global([data-theme="light"]) .tsd-side-unknown2 { fill:#d4700a; }
+</style>

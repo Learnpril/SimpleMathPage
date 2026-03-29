@@ -1,0 +1,119 @@
+---
+/**
+ * CscGraph — plots y = csc(x) = 1/sin(x) from 0 to 2π
+ * with a faint y = sin(x) reference curve.
+ * Asymptotes at x = 0, π, 2π (where sin = 0).
+ */
+const w = 520;
+const h = 280;
+const pad = 40;
+const gw = w - 2 * pad;
+const gh = h - 2 * pad;
+const cxO = pad;
+const cyO = pad + gh / 2;
+const xMin = -0.3;
+const xMax = 2 * Math.PI + 0.3;
+const scaleX = gw / (xMax - xMin);
+const scaleY = gh / 6;
+
+function px(x: number) { return cxO + (x - xMin) * scaleX; }
+function py(y: number) { return cyO - y * scaleY; }
+
+// Generate csc curve segments (skip near asymptotes)
+const cscSegments: string[][] = [];
+let seg: string[] = [];
+for (let t = 0.08; t <= 2 * Math.PI - 0.08; t += 0.02) {
+  const s = Math.sin(t);
+  if (Math.abs(s) < 0.01) {
+    if (seg.length > 1) cscSegments.push(seg);
+    seg = [];
+    continue;
+  }
+  const v = 1 / s;
+  if (Math.abs(v) > 3.2) {
+    if (seg.length > 1) cscSegments.push(seg);
+    seg = [];
+    continue;
+  }
+  seg.push(`${seg.length === 0 ? 'M' : 'L'}${px(t).toFixed(1)},${py(v).toFixed(1)}`);
+}
+if (seg.length > 1) cscSegments.push(seg);
+
+// Generate sin reference curve
+const sinPts: string[] = [];
+for (let t = 0.08; t <= 2 * Math.PI - 0.08; t += 0.02) {
+  const v = Math.sin(t);
+  sinPts.push(`${sinPts.length === 0 ? 'M' : 'L'}${px(t).toFixed(1)},${py(v).toFixed(1)}`);
+}
+
+const asymptotes = [0, Math.PI, 2 * Math.PI];
+const xTicks = [
+  { val: 0, label: '0' },
+  { val: Math.PI / 2, label: 'π/2' },
+  { val: Math.PI, label: 'π' },
+  { val: 3 * Math.PI / 2, label: '3π/2' },
+  { val: 2 * Math.PI, label: '2π' },
+];
+---
+
+<figure class="cscg" role="img" aria-label="Graph of y = csc(x) with sin(x) reference curve and asymptotes">
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    {/* Axes */}
+    <line x1={cxO - 5} y1={cyO} x2={w - pad + 10} y2={cyO} class="cscg-axis" stroke-width="1.5" />
+    <line x1={px(0)} y1={pad - 5} x2={px(0)} y2={h - pad + 5} class="cscg-axis" stroke-width="1.5" />
+
+    {/* Asymptotes */}
+    {asymptotes.map(a => (
+      <line x1={px(a)} y1={pad - 5} x2={px(a)} y2={h - pad + 5} class="cscg-asymptote" stroke-width="1.5" stroke-dasharray="6,4" />
+    ))}
+
+    {/* Y ticks */}
+    <text class="cscg-tick" x={px(0) - 8} y={py(1) + 4} font-size="11" text-anchor="end">1</text>
+    <text class="cscg-tick" x={px(0) - 8} y={py(-1) + 4} font-size="11" text-anchor="end">-1</text>
+
+    {/* X ticks */}
+    {xTicks.map(t => (
+      <text class="cscg-tick" x={px(t.val)} y={cyO + 18} font-size="11" text-anchor="middle">{t.label}</text>
+    ))}
+
+    {/* Sin reference curve (faint) */}
+    <path d={sinPts.join(' ')} fill="none" class="cscg-ref" stroke-width="2" />
+
+    {/* Csc curve segments */}
+    {cscSegments.map(s => (
+      <path d={s.join(' ')} fill="none" class="cscg-curve" stroke-width="2.5" />
+    ))}
+
+    {/* Key points where csc = 1 or -1 */}
+    <circle cx={px(Math.PI / 2)} cy={py(1)} r="4" class="cscg-dot" />
+    <circle cx={px(3 * Math.PI / 2)} cy={py(-1)} r="4" class="cscg-dot" />
+
+    {/* Legend */}
+    <line x1={w - 140} y1="14" x2={w - 120} y2="14" class="cscg-curve" stroke-width="2.5" />
+    <text class="cscg-legend" x={w - 115} y="18" font-size="12">y = csc(x)</text>
+    <line x1={w - 140} y1="30" x2={w - 120} y2="30" class="cscg-ref" stroke-width="2" />
+    <text class="cscg-legend-ref" x={w - 115} y="34" font-size="12">y = sin(x)</text>
+  </svg>
+</figure>
+
+<style>
+  .cscg { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .cscg svg { max-width:100%; height:auto; }
+  .cscg-axis { stroke:#666; }
+  .cscg-asymptote { stroke:#f47067; opacity:0.6; }
+  .cscg-tick { fill:#999; font-family:'Libre Baskerville',Georgia,serif; }
+  .cscg-curve { stroke:#f778ba; }
+  .cscg-ref { stroke:#f778ba; opacity:0.3; }
+  .cscg-dot { fill:#f778ba; }
+  .cscg-legend { fill:#f778ba; font-family:'Libre Baskerville',Georgia,serif; }
+  .cscg-legend-ref { fill:#f778ba; opacity:0.3; font-family:'Libre Baskerville',Georgia,serif; }
+
+  :global([data-theme="light"]) .cscg-axis { stroke:#999; }
+  :global([data-theme="light"]) .cscg-asymptote { stroke:#cf222e; }
+  :global([data-theme="light"]) .cscg-tick { fill:#555; }
+  :global([data-theme="light"]) .cscg-curve { stroke:#bf3989; }
+  :global([data-theme="light"]) .cscg-ref { stroke:#bf3989; opacity:0.3; }
+  :global([data-theme="light"]) .cscg-dot { fill:#bf3989; }
+  :global([data-theme="light"]) .cscg-legend { fill:#bf3989; }
+  :global([data-theme="light"]) .cscg-legend-ref { fill:#bf3989; opacity:0.3; }
+</style>

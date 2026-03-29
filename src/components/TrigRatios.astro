@@ -1,0 +1,80 @@
+---
+/**
+ * TrigRatios — visual showing a right triangle with labeled sides
+ * and the three primary trig ratios: sin, cos, tan.
+ * Wider layout to prevent text overlap.
+ */
+const w = 540;
+const h = 210;
+// Triangle vertices — smaller triangle, shifted left
+const ax = 40, ay = 180;    // bottom-left (angle θ)
+const bx = 240, by = 180;   // bottom-right (right angle)
+const cx = 240, cy = 50;    // top-right
+---
+
+<figure class="trig-ratios" role="img" aria-label="Right triangle showing sine, cosine, and tangent ratios">
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    {/* Triangle */}
+    <polygon points={`${ax},${ay} ${bx},${by} ${cx},${cy}`} fill="none" class="tr-triangle" stroke-width="2.5" />
+
+    {/* Right angle square */}
+    <polyline points={`${bx - 14},${by} ${bx - 14},${by - 14} ${bx},${by - 14}`} fill="none" class="tr-right" stroke-width="1.5" />
+
+    {/* Angle arc at A - sweeps from base toward hypotenuse */}
+    {(() => {
+      const r = 30;
+      // Arc starts on the base (horizontal right from A)
+      const startArcX = ax + r;
+      const startArcY = ay;
+      // Arc ends along the hypotenuse direction
+      // Hypotenuse angle: atan2(cy - ay, cx - ax) = atan2(50-180, 240-40) = atan2(-130, 200)
+      const angle = Math.atan2(cy - ay, cx - ax); // negative angle (going up-right)
+      const endArcX = ax + r * Math.cos(angle);
+      const endArcY = ay + r * Math.sin(angle);
+      return (
+        <g>
+          <path d={`M${startArcX},${startArcY} A${r},${r} 0 0,0 ${endArcX.toFixed(1)},${endArcY.toFixed(1)}`} fill="none" class="tr-arc" stroke-width="1.5" />
+          <text class="tr-angle-label" x={ax + 38} y={ay - 6} font-size="15" font-weight="bold">θ</text>
+        </g>
+      );
+    })()}
+
+    {/* Side labels */}
+    <text class="tr-hyp" x={(ax + cx) / 2 - 28} y={(ay + cy) / 2 + 5} font-size="13" text-anchor="middle" font-weight="bold" transform={`rotate(-33, ${(ax + cx) / 2 - 28}, ${(ay + cy) / 2 + 5})`}>Hypotenuse</text>
+    <text class="tr-opp" x={bx + 12} y={(by + cy) / 2 + 5} font-size="13" text-anchor="start" font-weight="bold">Opposite</text>
+    <text class="tr-adj" x={(ax + bx) / 2} y={ay + 20} font-size="13" text-anchor="middle" font-weight="bold">Adjacent</text>
+
+    {/* Ratio formulas — pushed far right */}
+    <text class="tr-formula" x={w - 20} y="60" font-size="14" text-anchor="end">
+      <tspan fill="#58a6ff" font-weight="bold">sin θ</tspan>
+      <tspan fill="#999"> = Opp / Hyp</tspan>
+    </text>
+    <text class="tr-formula" x={w - 20} y="95" font-size="14" text-anchor="end">
+      <tspan fill="#7ee787" font-weight="bold">cos θ</tspan>
+      <tspan fill="#999"> = Adj / Hyp</tspan>
+    </text>
+    <text class="tr-formula" x={w - 20} y="130" font-size="14" text-anchor="end">
+      <tspan fill="#f0883e" font-weight="bold">tan θ</tspan>
+      <tspan fill="#999"> = Opp / Adj</tspan>
+    </text>
+  </svg>
+</figure>
+
+<style>
+  .trig-ratios { display: flex; flex-direction: column; align-items: center; margin: 1.5rem 0; }
+  .trig-ratios svg { max-width: 100%; height: auto; }
+  .tr-triangle { stroke: #ccc; }
+  .tr-right { stroke: #666; }
+  .tr-arc { stroke: #d2a8ff; }
+  .tr-angle-label { fill: #d2a8ff; font-family: 'Libre Baskerville', Georgia, serif; }
+  .tr-hyp { fill: #ccc; font-family: 'Libre Baskerville', Georgia, serif; }
+  .tr-opp { fill: #58a6ff; font-family: 'Libre Baskerville', Georgia, serif; }
+  .tr-adj { fill: #7ee787; font-family: 'Libre Baskerville', Georgia, serif; }
+  .tr-formula { font-family: 'Libre Baskerville', Georgia, serif; }
+
+  :global([data-theme="light"]) .tr-triangle { stroke: #333; }
+  :global([data-theme="light"]) .tr-right { stroke: #999; }
+  :global([data-theme="light"]) .tr-hyp { fill: #333; }
+  :global([data-theme="light"]) .tr-opp { fill: #0969da; }
+  :global([data-theme="light"]) .tr-adj { fill: #1a7f37; }
+</style>
