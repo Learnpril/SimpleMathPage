@@ -1,0 +1,182 @@
+---
+title: Advanced Trigonometric Equations
+description: Solve complex trigonometric equations using advanced techniques
+sidebar:
+  order: 11
+---
+
+## What You'll Learn
+
+In this lesson you'll learn advanced techniques for solving trigonometric equations that involve multiple angles, identities, and factoring. You solved basic trig equations in Trigonometry. Here we tackle equations that require substitution, double-angle identities, and quadratic factoring.
+
+## The Concept
+
+Advanced trig equations often require a combination of strategies:
+
+1. Use identities to rewrite the equation in terms of a single trig function
+2. Factor when possible (look for quadratic patterns)
+3. Substitute if helpful (let u = sin x, then solve the quadratic in u)
+4. Find all solutions in the given interval, remembering the period
+5. Always check solutions in the original equation
+
+import UnitCircleDiagram from "../../../components/UnitCircleDiagram.astro";
+
+<UnitCircleDiagram />
+
+The unit circle is your reference for finding all solutions. When you get sin x = -1/2, for example, you look for the two angles on the circle where the y-coordinate is -1/2.
+
+## Worked Example
+
+**Example 1: Quadratic in sin θ**
+
+Solve for θ in [0, 2π):
+
+$$
+2\sin^2\theta - \sin\theta - 1 = 0
+$$
+
+Let u = sin θ. This becomes a quadratic:
+
+$$
+2u^2 - u - 1 = 0 \quad \Rightarrow \quad (2u + 1)(u - 1) = 0
+$$
+
+So u = -1/2 or u = 1, meaning sin θ = -1/2 or sin θ = 1.
+
+From sin θ = 1: θ = π/2.
+From sin θ = -1/2 (Q3 and Q4): θ = 7π/6 and 11π/6.
+
+Three solutions: θ = π/2, 7π/6, 11π/6.
+
+**Example 2: Double-angle equation**
+
+Solve for x in [0, 2π):
+
+$$
+\sin 2x = \cos x
+$$
+
+Replace sin 2x with the double-angle formula:
+
+$$
+2\sin x \cos x = \cos x
+$$
+
+$$
+2\sin x \cos x - \cos x = 0 \quad \Rightarrow \quad \cos x(2\sin x - 1) = 0
+$$
+
+From cos x = 0: x = π/2 and 3π/2.
+From sin x = 1/2: x = π/6 and 5π/6.
+
+Four solutions: x = π/6, π/2, 5π/6, 3π/2.
+
+**Example 3: Identity substitution**
+
+Solve for θ in [0, 2π):
+
+$$
+\cos 2\theta + \cos\theta = 0
+$$
+
+Replace cos 2θ with 2cos²θ - 1:
+
+$$
+2\cos^2\theta - 1 + \cos\theta = 0 \quad \Rightarrow \quad 2\cos^2\theta + \cos\theta - 1 = 0
+$$
+
+Let u = cos θ:
+
+$$
+(2u - 1)(u + 1) = 0
+$$
+
+So cos θ = 1/2 or cos θ = -1.
+
+From cos θ = 1/2: θ = π/3 and 5π/3.
+From cos θ = -1: θ = π.
+
+Three solutions: θ = π/3, π, 5π/3.
+
+## Real-World Application
+
+Advanced trig equations appear in:
+
+- Wave analysis (finding when two waves cancel or reinforce)
+- AC circuit analysis (determining when voltage reaches specific values)
+- Harmonic motion (finding when an oscillating object passes through a position)
+- Signal processing (identifying frequency components)
+- Astronomy (calculating when celestial objects reach specific positions)
+
+Example: engineers solve trig equations to determine when two sound waves will constructively or destructively interfere, which is essential for noise cancellation technology.
+
+:::note[You've Got This]
+Advanced trig equations often look intimidating, but break them down: simplify with identities, substitute to get a quadratic, factor, and solve. Remember to find all solutions in the interval. Check every solution, as extraneous roots can appear when squaring or using identities.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="precalculus-adv-trig-equations"
+  questions={[
+    {
+      id: "q1",
+      text: "To solve $2\\sin^2\\theta - 3\\sin\\theta + 1 = 0$, the best first step is:",
+      options: [
+        "Let $u = \\sin\\theta$ and solve the quadratic",
+        "Take the square root of both sides",
+        "Use the double-angle formula",
+        "Graph the function",
+      ],
+      correctIndex: 0,
+      explanation:
+        "Substitution turns it into a standard quadratic equation in $u$.",
+    },
+    {
+      id: "q2",
+      text: "To solve $\\sin 2x = \\cos x$, replace $\\sin 2x$ with:",
+      options: [
+        "$2\\sin x\\cos x$",
+        "$\\cos^2 x - \\sin^2 x$",
+        "$1 - 2\\sin^2 x$",
+        "$\\sin x + \\cos x$",
+      ],
+      correctIndex: 0,
+      explanation: "The double-angle formula lets you factor out $\\cos x$.",
+    },
+    {
+      id: "q3",
+      text: "After solving a trig equation, you should always:",
+      options: [
+        "Check solutions in the original equation",
+        "Only round the answers",
+        "Ignore extraneous solutions",
+        "Add $2\\pi$ to every solution",
+      ],
+      correctIndex: 0,
+      explanation:
+        "Extraneous solutions can appear, especially after squaring or substituting.",
+    },
+    {
+      id: "q4",
+      text: "$\\cos x(2\\sin x - 1) = 0$ gives solutions when:",
+      options: [
+        "$\\cos x = 0$ or $\\sin x = 1/2$",
+        "Only $\\cos x = 0$",
+        "Only $\\sin x = 1/2$",
+        "$\\cos x = 1$ and $\\sin x = 0$",
+      ],
+      correctIndex: 0,
+      explanation: "Zero product property: either factor can be zero.",
+    },
+    {
+      id: "q5",
+      text: "How many solutions does $\\sin\\theta = -1/2$ have in $[0, 2\\pi)$?",
+      options: ["$2$", "$1$", "$3$", "$4$"],
+      correctIndex: 0,
+      explanation: "Sine equals $-1/2$ in Q3 ($7\\pi/6$) and Q4 ($11\\pi/6$).",
+    },
+  ]}
+/>

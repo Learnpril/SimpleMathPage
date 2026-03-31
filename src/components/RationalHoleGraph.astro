@@ -1,0 +1,73 @@
+---
+/**
+ * RationalHoleGraph — plots g(x) = (x+3)/(x+2) with a hole at x=3
+ * (simplified from (x²-9)/(x²-x-6))
+ * VA at x=-2, HA at y=1, hole at (3, 1.2)
+ */
+const w = 300;
+const h = 260;
+const pad = 35;
+const gw = w - 2 * pad;
+const gh = h - 2 * pad;
+const xMin = -6, xMax = 7, yMin = -4, yMax = 6;
+const sx = (x: number) => pad + ((x - xMin) / (xMax - xMin)) * gw;
+const sy = (y: number) => pad + ((yMax - y) / (yMax - yMin)) * gh;
+
+const f = (x: number) => (x + 3) / (x + 2);
+
+const seg1: string[] = [];
+for (let x = xMin; x <= -2.15; x += 0.06) {
+  const y = f(x);
+  if (y > yMin && y < yMax) seg1.push(`${sx(x).toFixed(1)},${sy(y).toFixed(1)}`);
+}
+const seg2: string[] = [];
+for (let x = -1.85; x <= xMax; x += 0.06) {
+  const y = f(x);
+  if (y > yMin && y < yMax) seg2.push(`${sx(x).toFixed(1)},${sy(y).toFixed(1)}`);
+}
+---
+
+<figure class="rhg" role="img" aria-label="Graph of g(x)=(x+3)/(x+2) with hole at (3, 1.2), VA at x=-2, HA at y=1">
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    {[-4,-2,0,2,4,6].map(v => (
+      <g>
+        {v >= xMin && v <= xMax && <line x1={sx(v)} y1={sy(yMin)} x2={sx(v)} y2={sy(yMax)} class="rhg-grid" stroke-width="0.5" />}
+        {v >= yMin && v <= yMax && <line x1={sx(xMin)} y1={sy(v)} x2={sx(xMax)} y2={sy(v)} class="rhg-grid" stroke-width="0.5" />}
+      </g>
+    ))}
+    <line x1={sx(xMin)} y1={sy(0)} x2={sx(xMax)} y2={sy(0)} class="rhg-axis" stroke-width="1.5" />
+    <line x1={sx(0)} y1={sy(yMin)} x2={sx(0)} y2={sy(yMax)} class="rhg-axis" stroke-width="1.5" />
+    <line x1={sx(-2)} y1={sy(yMin)} x2={sx(-2)} y2={sy(yMax)} class="rhg-va" stroke-width="1.5" stroke-dasharray="6,4" />
+    <line x1={sx(xMin)} y1={sy(1)} x2={sx(xMax)} y2={sy(1)} class="rhg-ha" stroke-width="1.5" stroke-dasharray="6,4" />
+    {seg1.length > 1 && <polyline points={seg1.join(' ')} fill="none" class="rhg-curve" stroke-width="2.5" />}
+    {seg2.length > 1 && <polyline points={seg2.join(' ')} fill="none" class="rhg-curve" stroke-width="2.5" />}
+    {/* Hole at (3, 6/5 = 1.2) */}
+    <circle cx={sx(3)} cy={sy(1.2)} r="5" fill="none" class="rhg-hole" stroke-width="2" />
+    <text class="rhg-va-lbl" x={sx(-2) + 10} y={sy(yMax) + 12} font-size="10">x = -2</text>
+    <text class="rhg-ha-lbl" x={sx(xMax) - 30} y={sy(1) - 10} font-size="10">y = 1</text>
+    <text class="rhg-hole-lbl" x={sx(3)} y={sy(1.2) - 12} font-size="10" text-anchor="middle">hole</text>
+  </svg>
+</figure>
+
+<style>
+  .rhg { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .rhg svg { max-width:100%; height:auto; }
+  .rhg-grid { stroke:#333; }
+  .rhg-axis { stroke:#666; }
+  .rhg-va { stroke:#f47067; }
+  .rhg-ha { stroke:#7ee787; }
+  .rhg-curve { stroke:#d2a8ff; }
+  .rhg-hole { stroke:#f0883e; }
+  .rhg-va-lbl { fill:#f47067; font-family:'Libre Baskerville',Georgia,serif; }
+  .rhg-ha-lbl { fill:#7ee787; font-family:'Libre Baskerville',Georgia,serif; }
+  .rhg-hole-lbl { fill:#f0883e; font-family:'Libre Baskerville',Georgia,serif; }
+  :global([data-theme="light"]) .rhg-grid { stroke:#ddd; }
+  :global([data-theme="light"]) .rhg-axis { stroke:#999; }
+  :global([data-theme="light"]) .rhg-va { stroke:#cf222e; }
+  :global([data-theme="light"]) .rhg-ha { stroke:#1a7f37; }
+  :global([data-theme="light"]) .rhg-curve { stroke:#8250df; }
+  :global([data-theme="light"]) .rhg-hole { stroke:#d4700a; }
+  :global([data-theme="light"]) .rhg-va-lbl { fill:#cf222e; }
+  :global([data-theme="light"]) .rhg-ha-lbl { fill:#1a7f37; }
+  :global([data-theme="light"]) .rhg-hole-lbl { fill:#d4700a; }
+</style>

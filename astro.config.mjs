@@ -42,10 +42,10 @@ export default defineConfig({
           label: "Trigonometry",
           autogenerate: { directory: "trigonometry" },
         },
-        // {
-        //   label: "Pre-Calculus",
-        //   autogenerate: { directory: "pre-calculus" },
-        // },
+        {
+          label: "Pre-Calculus",
+          autogenerate: { directory: "pre-calculus" },
+        },
         // {
         //   label: "Calculus 1",
         //   autogenerate: { directory: "calculus-1" },

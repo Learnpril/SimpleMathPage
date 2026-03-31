@@ -42,8 +42,8 @@ const lblY = groundY + (bisY / bisLen) * lblR;
     <line x1={baseX} y1={groundY} x2={wallX} y2={topY} class="rld-ladder" stroke-width="2.5" />
     {/* Right angle marker */}
     <polyline points={`${wallX + 12},${groundY} ${wallX + 12},${groundY - 12} ${wallX},${groundY - 12}`} fill="none" class="rld-right" stroke-width="1.5" />
-    {/* Angle arc at base — computed to stay inside triangle */}
-    <path d={`M ${arc1x.toFixed(1)},${arc1y.toFixed(1)} A ${arcR} ${arcR} 0 0 1 ${arc2x.toFixed(1)},${arc2y.toFixed(1)}`} fill="none" class="rld-arc" stroke-width="1.5" />
+    {/* Angle arc at base — from ladder endpoint to ground endpoint, sweep curves inside */}
+    <path d={`M ${arc2x.toFixed(1)},${arc2y.toFixed(1)} A ${arcR} ${arcR} 0 0 1 ${arc1x.toFixed(1)},${arc1y.toFixed(1)}`} fill="none" class="rld-arc" stroke-width="1.5" />
     {/* Labels */}
     <text class="rld-angle" x={lblX.toFixed(1)} y={lblY.toFixed(1)} font-size="13" font-weight="bold" text-anchor="middle" dominant-baseline="middle">68°</text>
     <text class="rld-hyp" x={(wallX + baseX) / 2 + 10} y={(topY + groundY) / 2 - 8} font-size="13" font-weight="bold" transform={`rotate(-56, ${(wallX + baseX) / 2 + 10}, ${(topY + groundY) / 2 - 8})`}>25 ft</text>

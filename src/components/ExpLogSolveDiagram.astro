@@ -1,0 +1,70 @@
+---
+/**
+ * ExpLogSolveDiagram — shows y = 2^x and y = log₂(x) as inverse curves
+ * with the y=x reflection line, illustrating the relationship.
+ */
+const w = 300;
+const h = 280;
+const pad = 35;
+const gw = w - 2 * pad;
+const gh = h - 2 * pad;
+const xMin = -3, xMax = 6, yMin = -3, yMax = 6;
+const sx = (x: number) => pad + ((x - xMin) / (xMax - xMin)) * gw;
+const sy = (y: number) => pad + ((yMax - y) / (yMax - yMin)) * gh;
+
+// y = 2^x
+const expPts: string[] = [];
+for (let x = -2.5; x <= 2.8; x += 0.08) {
+  const y = Math.pow(2, x);
+  if (y >= yMin && y <= yMax) expPts.push(`${sx(x).toFixed(1)},${sy(y).toFixed(1)}`);
+}
+
+// y = log₂(x) = ln(x)/ln(2)
+const logPts: string[] = [];
+for (let x = 0.15; x <= 6; x += 0.08) {
+  const y = Math.log(x) / Math.log(2);
+  if (y >= yMin && y <= yMax) logPts.push(`${sx(x).toFixed(1)},${sy(y).toFixed(1)}`);
+}
+---
+
+<figure class="elsd" role="img" aria-label="Graphs of y=2^x and y=log₂(x) as inverse functions reflected over y=x">
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    {[-2,0,2,4].map(v => (
+      <g>
+        {v >= xMin && v <= xMax && <line x1={sx(v)} y1={sy(yMin)} x2={sx(v)} y2={sy(yMax)} class="elsd-grid" stroke-width="0.5" />}
+        {v >= yMin && v <= yMax && <line x1={sx(xMin)} y1={sy(v)} x2={sx(xMax)} y2={sy(v)} class="elsd-grid" stroke-width="0.5" />}
+      </g>
+    ))}
+    <line x1={sx(xMin)} y1={sy(0)} x2={sx(xMax)} y2={sy(0)} class="elsd-axis" stroke-width="1.5" />
+    <line x1={sx(0)} y1={sy(yMin)} x2={sx(0)} y2={sy(yMax)} class="elsd-axis" stroke-width="1.5" />
+    {/* y = x reflection line */}
+    <line x1={sx(yMin)} y1={sy(yMin)} x2={sx(yMax)} y2={sy(yMax)} class="elsd-ref" stroke-width="1" stroke-dasharray="5,4" />
+    {/* Curves */}
+    <polyline points={expPts.join(' ')} fill="none" class="elsd-exp" stroke-width="2.5" />
+    <polyline points={logPts.join(' ')} fill="none" class="elsd-log" stroke-width="2.5" />
+    {/* Labels */}
+    <text class="elsd-exp-lbl" x={sx(1.5)} y={sy(5.2)} font-size="12" font-weight="bold">y = 2ˣ</text>
+    <text class="elsd-log-lbl" x={sx(4)} y={sy(1.2)} font-size="12" font-weight="bold">y = log₂(x)</text>
+    <text class="elsd-ref-lbl" x={sx(4.5)} y={sy(5.5)} font-size="10" font-style="italic">y = x</text>
+  </svg>
+</figure>
+
+<style>
+  .elsd { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .elsd svg { max-width:100%; height:auto; }
+  .elsd-grid { stroke:#333; }
+  .elsd-axis { stroke:#666; }
+  .elsd-ref { stroke:#888; }
+  .elsd-exp { stroke:#58a6ff; }
+  .elsd-log { stroke:#f0883e; }
+  .elsd-exp-lbl { fill:#58a6ff; font-family:'Libre Baskerville',Georgia,serif; }
+  .elsd-log-lbl { fill:#f0883e; font-family:'Libre Baskerville',Georgia,serif; }
+  .elsd-ref-lbl { fill:#888; font-family:'Libre Baskerville',Georgia,serif; }
+  :global([data-theme="light"]) .elsd-grid { stroke:#ddd; }
+  :global([data-theme="light"]) .elsd-axis { stroke:#999; }
+  :global([data-theme="light"]) .elsd-ref { stroke:#aaa; }
+  :global([data-theme="light"]) .elsd-exp { stroke:#0969da; }
+  :global([data-theme="light"]) .elsd-log { stroke:#d4700a; }
+  :global([data-theme="light"]) .elsd-exp-lbl { fill:#0969da; }
+  :global([data-theme="light"]) .elsd-log-lbl { fill:#d4700a; }
+</style>

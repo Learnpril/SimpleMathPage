@@ -1,0 +1,64 @@
+---
+/**
+ * PreCalcTopicMap — visual overview of Pre-Calculus topic areas
+ * showing the bridge from Algebra 2/Trig to Calculus.
+ */
+const topics = [
+  { label: 'Advanced\nFunctions', symbol: 'f(g(x))', color: '#58a6ff', symSize: 14 },
+  { label: 'Polynomials\n& Rationals', symbol: 'p(x)/q(x)', color: '#7ee787', symSize: 13 },
+  { label: 'Exp & Log\n(Advanced)', symbol: 'ln x', color: '#d2a8ff', symSize: 18 },
+  { label: 'Advanced\nTrig', symbol: 'r = f(θ)', color: '#f0883e', symSize: 14 },
+  { label: 'Vectors', symbol: '→v', color: '#f778ba', symSize: 22 },
+  { label: 'Matrices', symbol: '[A]⁻¹', color: '#79c0ff', symSize: 16 },
+  { label: 'Sequences\n& Series', symbol: 'Σ aₙ', color: '#ffa657', symSize: 16 },
+  { label: 'Limits &\nContinuity', symbol: 'lim', color: '#7ee787', symSize: 18 },
+];
+
+const cols = 4;
+const cellW = 115;
+const cellH = 90;
+const padX = 12;
+const padY = 12;
+const w = cols * cellW + (cols + 1) * padX;
+const rows = Math.ceil(topics.length / cols);
+const h = rows * cellH + (rows + 1) * padY;
+---
+
+<figure class="pctm" role="img" aria-label="Pre-Calculus topic overview: Advanced Functions, Polynomials, Exponentials, Trig, Vectors, Matrices, Series, Limits">
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    {topics.map((t, i) => {
+      const col = i % cols;
+      const row = Math.floor(i / cols);
+      const x = padX + col * (cellW + padX);
+      const y = padY + row * (cellH + padY);
+      const cx = x + cellW / 2;
+      const cy = y + cellH / 2;
+      const lines = t.label.split('\n');
+      const sz = t.symSize || 16;
+      return (
+        <g>
+          <rect class="pctm-card" x={x} y={y} width={cellW} height={cellH} rx="10" ry="10" />
+          <text class="pctm-sym" x={cx} y={cy - 12} font-size={sz} text-anchor="middle" font-weight="bold" fill={t.color}>{t.symbol}</text>
+          {lines.length === 1 ? (
+            <text class="pctm-lbl" x={cx} y={cy + 18} font-size="11" text-anchor="middle">{lines[0]}</text>
+          ) : (
+            <g>
+              <text class="pctm-lbl" x={cx} y={cy + 14} font-size="11" text-anchor="middle">{lines[0]}</text>
+              <text class="pctm-lbl" x={cx} y={cy + 27} font-size="11" text-anchor="middle">{lines[1]}</text>
+            </g>
+          )}
+        </g>
+      );
+    })}
+  </svg>
+</figure>
+
+<style>
+  .pctm { display: flex; flex-direction: column; align-items: center; margin: 1.5rem 0; }
+  .pctm svg { max-width: 100%; height: auto; }
+  .pctm-card { fill: #1c2128; stroke: #444; stroke-width: 1; }
+  .pctm-lbl { fill: #ccc; font-family: 'Libre Baskerville', Georgia, serif; }
+  .pctm-sym { font-family: 'Libre Baskerville', Georgia, serif; }
+  :global([data-theme="light"]) .pctm-card { fill: #f0f0f0; stroke: #ccc; }
+  :global([data-theme="light"]) .pctm-lbl { fill: #333; }
+</style>

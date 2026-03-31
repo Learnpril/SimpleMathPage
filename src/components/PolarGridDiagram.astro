@@ -1,0 +1,83 @@
+---
+/**
+ * PolarGridDiagram — shows a polar coordinate grid with
+ * concentric circles and angle lines, plus a sample point (3, 4) → (5, 53°).
+ */
+const w = 300;
+const h = 300;
+const cx = 150, cy = 150;
+const maxR = 120;
+const rings = [1, 2, 3, 4, 5];
+const scale = maxR / 5;
+// Sample point: rectangular (3,4) → polar (5, ~53.13°)
+const ptR = 5;
+const ptAngle = Math.atan2(4, 3);
+const ptX = cx + 3 * scale;
+const ptY = cy - 4 * scale;
+---
+
+<figure class="pgd" role="img" aria-label="Polar coordinate grid showing point (5, 53°) corresponding to rectangular (3, 4)">
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    {/* Concentric circles */}
+    {rings.map(r => (
+      <circle cx={cx} cy={cy} r={r * scale} fill="none" class="pgd-ring" stroke-width="0.5" />
+    ))}
+
+    {/* Angle lines every 30° */}
+    {[0, 30, 60, 90, 120, 150].map(deg => {
+      const rad = deg * Math.PI / 180;
+      return (
+        <g>
+          <line x1={cx - maxR * Math.cos(rad)} y1={cy + maxR * Math.sin(rad)} x2={cx + maxR * Math.cos(rad)} y2={cy - maxR * Math.sin(rad)} class="pgd-spoke" stroke-width="0.5" />
+        </g>
+      );
+    })}
+
+    {/* Axes (thicker) */}
+    <line x1={cx - maxR - 5} y1={cy} x2={cx + maxR + 5} y2={cy} class="pgd-axis" stroke-width="1.5" />
+    <line x1={cx} y1={cy + maxR + 5} x2={cx} y2={cy - maxR - 5} class="pgd-axis" stroke-width="1.5" />
+
+    {/* Radius line to point */}
+    <line x1={cx} y1={cy} x2={ptX} y2={ptY} class="pgd-radius" stroke-width="2" />
+
+    {/* Angle arc */}
+    <path d={`M ${cx + 25},${cy} A 25 25 0 0 0 ${cx + 25 * Math.cos(ptAngle)},${cy - 25 * Math.sin(ptAngle)}`} fill="none" class="pgd-arc" stroke-width="1.5" />
+
+    {/* Point dot */}
+    <circle cx={ptX} cy={ptY} r="5" class="pgd-dot" />
+
+    {/* Labels */}
+    <text class="pgd-pt-lbl" x={ptX + 8} y={ptY - 8} font-size="11" font-weight="bold">(5, 53°)</text>
+    <text class="pgd-angle-lbl" x={cx + 34} y={cy - 8} font-size="10">53°</text>
+    <text class="pgd-r-lbl" x={cx + 54} y={cy - 52} font-size="10" font-weight="bold">r = 5</text>
+
+    {/* Ring labels */}
+    {[2, 4].map(r => (
+      <text class="pgd-ring-lbl" x={cx + r * scale + 3} y={cy - 3} font-size="8">{r}</text>
+    ))}
+  </svg>
+</figure>
+
+<style>
+  .pgd { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .pgd svg { max-width:100%; height:auto; }
+  .pgd-ring { stroke:#444; }
+  .pgd-spoke { stroke:#333; }
+  .pgd-axis { stroke:#666; }
+  .pgd-radius { stroke:#58a6ff; }
+  .pgd-arc { stroke:#d2a8ff; }
+  .pgd-dot { fill:#f0883e; }
+  .pgd-pt-lbl { fill:#f0883e; font-family:'Libre Baskerville',Georgia,serif; }
+  .pgd-angle-lbl { fill:#d2a8ff; font-family:'Libre Baskerville',Georgia,serif; }
+  .pgd-r-lbl { fill:#58a6ff; font-family:'Libre Baskerville',Georgia,serif; }
+  .pgd-ring-lbl { fill:#888; font-family:'Libre Baskerville',Georgia,serif; }
+  :global([data-theme="light"]) .pgd-ring { stroke:#ddd; }
+  :global([data-theme="light"]) .pgd-spoke { stroke:#eee; }
+  :global([data-theme="light"]) .pgd-axis { stroke:#999; }
+  :global([data-theme="light"]) .pgd-radius { stroke:#0969da; }
+  :global([data-theme="light"]) .pgd-arc { stroke:#8250df; }
+  :global([data-theme="light"]) .pgd-dot { fill:#d4700a; }
+  :global([data-theme="light"]) .pgd-pt-lbl { fill:#d4700a; }
+  :global([data-theme="light"]) .pgd-angle-lbl { fill:#8250df; }
+  :global([data-theme="light"]) .pgd-r-lbl { fill:#0969da; }
+</style>

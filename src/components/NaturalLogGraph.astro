@@ -1,0 +1,84 @@
+---
+/**
+ * NaturalLogGraph — shows y = eˣ and y = ln(x) as inverse curves
+ * with the y = x reflection line.
+ */
+const w = 300;
+const h = 280;
+const pad = 35;
+const gw = w - 2 * pad;
+const gh = h - 2 * pad;
+const xMin = -3, xMax = 5, yMin = -3, yMax = 5;
+const sx = (x: number) => pad + ((x - xMin) / (xMax - xMin)) * gw;
+const sy = (y: number) => pad + ((yMax - y) / (yMax - yMin)) * gh;
+
+// y = e^x
+const expPts: string[] = [];
+for (let x = -2.5; x <= 1.8; x += 0.06) {
+  const y = Math.exp(x);
+  if (y <= yMax) expPts.push(`${sx(x).toFixed(1)},${sy(y).toFixed(1)}`);
+}
+
+// y = ln(x)
+const lnPts: string[] = [];
+for (let x = 0.08; x <= 5; x += 0.06) {
+  const y = Math.log(x);
+  if (y >= yMin) lnPts.push(`${sx(x).toFixed(1)},${sy(y).toFixed(1)}`);
+}
+---
+
+<figure class="nlg" role="img" aria-label="Graphs of y = eˣ and y = ln(x) as inverse functions reflected over y = x">
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    {[-2,0,2,4].map(v => (
+      <g>
+        {v >= xMin && v <= xMax && <line x1={sx(v)} y1={sy(yMin)} x2={sx(v)} y2={sy(yMax)} class="nlg-grid" stroke-width="0.5" />}
+        {v >= yMin && v <= yMax && <line x1={sx(xMin)} y1={sy(v)} x2={sx(xMax)} y2={sy(v)} class="nlg-grid" stroke-width="0.5" />}
+      </g>
+    ))}
+    <line x1={sx(xMin)} y1={sy(0)} x2={sx(xMax)} y2={sy(0)} class="nlg-axis" stroke-width="1.5" />
+    <line x1={sx(0)} y1={sy(yMin)} x2={sx(0)} y2={sy(yMax)} class="nlg-axis" stroke-width="1.5" />
+    {/* y = x */}
+    <line x1={sx(yMin)} y1={sy(yMin)} x2={sx(yMax)} y2={sy(yMax)} class="nlg-ref" stroke-width="1" stroke-dasharray="5,4" />
+    {/* Key point (1, e) on exp and (e, 1) on ln */}
+    <circle cx={sx(0)} cy={sy(1)} r="3" class="nlg-dot" />
+    <circle cx={sx(1)} cy={sy(0)} r="3" class="nlg-dot2" />
+    {/* Curves */}
+    <polyline points={expPts.join(' ')} fill="none" class="nlg-exp" stroke-width="2.5" />
+    <polyline points={lnPts.join(' ')} fill="none" class="nlg-ln" stroke-width="2.5" />
+    {/* Labels */}
+    <text class="nlg-exp-lbl" x={sx(-1.5)} y={sy(4.2)} font-size="12" font-weight="bold">y = eˣ</text>
+    <text class="nlg-ln-lbl" x={sx(3.2)} y={sy(1.8)} font-size="12" font-weight="bold">y = ln(x)</text>
+    <text class="nlg-ref-lbl" x={sx(3.2)} y={sy(3.8)} font-size="10" font-style="italic">y = x</text>
+    {/* Point labels */}
+    <text class="nlg-dot-lbl" x={sx(0) - 40} y={sy(1) + 4} font-size="9">(0, 1)</text>
+    <text class="nlg-dot-lbl2" x={sx(1.5)} y={sy(-0.5)} font-size="9">(1, 0)</text>
+  </svg>
+</figure>
+
+<style>
+  .nlg { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .nlg svg { max-width:100%; height:auto; }
+  .nlg-grid { stroke:#333; }
+  .nlg-axis { stroke:#666; }
+  .nlg-ref { stroke:#888; }
+  .nlg-exp { stroke:#7ee787; }
+  .nlg-ln { stroke:#d2a8ff; }
+  .nlg-dot { fill:#7ee787; }
+  .nlg-dot2 { fill:#d2a8ff; }
+  .nlg-exp-lbl { fill:#7ee787; font-family:'Libre Baskerville',Georgia,serif; }
+  .nlg-ln-lbl { fill:#d2a8ff; font-family:'Libre Baskerville',Georgia,serif; }
+  .nlg-ref-lbl { fill:#888; font-family:'Libre Baskerville',Georgia,serif; }
+  .nlg-dot-lbl { fill:#7ee787; font-family:'Libre Baskerville',Georgia,serif; }
+  .nlg-dot-lbl2 { fill:#d2a8ff; font-family:'Libre Baskerville',Georgia,serif; }
+  :global([data-theme="light"]) .nlg-grid { stroke:#ddd; }
+  :global([data-theme="light"]) .nlg-axis { stroke:#999; }
+  :global([data-theme="light"]) .nlg-ref { stroke:#aaa; }
+  :global([data-theme="light"]) .nlg-exp { stroke:#1a7f37; }
+  :global([data-theme="light"]) .nlg-ln { stroke:#8250df; }
+  :global([data-theme="light"]) .nlg-dot { fill:#1a7f37; }
+  :global([data-theme="light"]) .nlg-dot2 { fill:#8250df; }
+  :global([data-theme="light"]) .nlg-exp-lbl { fill:#1a7f37; }
+  :global([data-theme="light"]) .nlg-ln-lbl { fill:#8250df; }
+  :global([data-theme="light"]) .nlg-dot-lbl { fill:#1a7f37; }
+  :global([data-theme="light"]) .nlg-dot-lbl2 { fill:#8250df; }
+</style>

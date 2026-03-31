@@ -1,0 +1,195 @@
+---
+title: Advanced Exponential and Logarithmic Equations
+description: Solve more complex exponential and logarithmic equations
+sidebar:
+  order: 7
+---
+
+## What You'll Learn
+
+In this lesson you'll learn strategies for solving exponential and logarithmic equations that require multiple steps. You covered the basics of exponentials and logs in Algebra 2. Here we tackle harder equations that need property manipulation, substitution, and careful solution checking.
+
+## The Concept
+
+Exponential and logarithmic functions are inverses of each other. That inverse relationship is the key to solving equations involving either one.
+
+import ExpLogSolveDiagram from "../../../components/ExpLogSolveDiagram.astro";
+
+<ExpLogSolveDiagram />
+
+For exponential equations (variable in the exponent):
+
+- If you can get the same base on both sides, set the exponents equal
+- If you can't match bases, take the logarithm of both sides
+- For equations like $a \cdot b^{cx} = d$, isolate the exponential first, then take logs
+
+For logarithmic equations (variable inside a log):
+
+- Use log properties to condense multiple logs into one
+- Convert to exponential form to solve
+- Always check solutions: log arguments must be positive
+
+## Worked Example
+
+**Example 1: Same-base exponential**
+
+Solve:
+
+$$
+4^{x+1} = 8^{2x-3}
+$$
+
+Rewrite both sides as powers of 2:
+
+$$
+(2^2)^{x+1} = (2^3)^{2x-3}
+$$
+
+$$
+2^{2x+2} = 2^{6x-9}
+$$
+
+Set exponents equal:
+
+$$
+2x + 2 = 6x - 9 \quad \Rightarrow \quad 11 = 4x \quad \Rightarrow \quad x = \frac{11}{4}
+$$
+
+**Example 2: Logarithmic equation**
+
+Solve:
+
+$$
+\log_2(x + 3) + \log_2(x - 2) = 3
+$$
+
+Use the product rule to combine:
+
+$$
+\log_2[(x + 3)(x - 2)] = 3
+$$
+
+Convert to exponential form:
+
+$$
+(x + 3)(x - 2) = 2^3 = 8
+$$
+
+$$
+x^2 + x - 6 = 8 \quad \Rightarrow \quad x^2 + x - 14 = 0
+$$
+
+Quadratic formula:
+
+$$
+x = \frac{-1 \pm \sqrt{1 + 56}}{2} = \frac{-1 \pm \sqrt{57}}{2}
+$$
+
+$$
+x \approx 3.27 \quad \text{or} \quad x \approx -4.27
+$$
+
+Check: x = -4.27 makes (x - 2) negative, so log₂(-6.27) is undefined. That's extraneous. Only x ≈ 3.27 is valid.
+
+**Example 3: Exponential requiring logs**
+
+Solve:
+
+$$
+5 \cdot 3^{2x} = 200
+$$
+
+Isolate the exponential:
+
+$$
+3^{2x} = 40
+$$
+
+Take the natural log of both sides:
+
+$$
+2x \ln 3 = \ln 40
+$$
+
+$$
+x = \frac{\ln 40}{2 \ln 3} = \frac{3.689}{2(1.099)} \approx 1.679
+$$
+
+## Real-World Application
+
+Advanced exponential and logarithmic equations are used in:
+
+- Finance: solving for time to double an investment ($A = Pe^{rt}$, solve for t)
+- Carbon dating: finding the age of a sample from remaining radioactive material
+- Epidemiology: modeling when a disease reaches a certain number of cases
+- Chemistry: pH calculations and reaction rates
+- Acoustics: decibel levels and sound intensity
+
+Example: if you invest \$1000 at 5% compounded continuously, how long until it doubles? Solve $2000 = 1000e^{0.05t}$, which gives $t = \ln 2 / 0.05 \approx 13.86$ years.
+
+:::note[You've Got This]
+For exponential equations, try matching bases first. If that doesn't work, take logs. For logarithmic equations, condense first, then convert to exponential form. Always check your answers, especially with logs, because the arguments must be positive. These techniques become second nature with practice.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="precalculus-adv-exp-log"
+  questions={[
+    {
+      id: "q1",
+      text: "To solve $5^{2x} = 25$, the best first step is:",
+      options: [
+        "Rewrite 25 as $5^2$ and set exponents equal",
+        "Take $\\log_{10}$ of both sides",
+        "Square both sides",
+        "Divide both sides by 5",
+      ],
+      correctIndex: 0,
+      explanation: "$25 = 5^2$, so $2x = 2$ and $x = 1$.",
+    },
+    {
+      id: "q2",
+      text: "Solve $\\log_3(x) = 4$:",
+      options: ["$x = 81$", "$x = 12$", "$x = 27$", "$x = 64$"],
+      correctIndex: 0,
+      explanation: "Convert to exponential form: $3^4 = 81$.",
+    },
+    {
+      id: "q3",
+      text: "When solving logarithmic equations, you must always:",
+      options: [
+        "Check that all log arguments are positive",
+        "Use the quadratic formula",
+        "Ignore the domain",
+        "Square both sides first",
+      ],
+      correctIndex: 0,
+      explanation:
+        "Logarithms are only defined for positive arguments. Extraneous solutions are common.",
+    },
+    {
+      id: "q4",
+      text: "To solve $3 \\cdot 2^x = 48$, the first step is:",
+      options: [
+        "Divide both sides by 3 to get $2^x = 16$",
+        "Take $\\ln$ of both sides immediately",
+        "Square both sides",
+        "Subtract 3 from both sides",
+      ],
+      correctIndex: 0,
+      explanation:
+        "Isolate the exponential first: $2^x = 16 = 2^4$, so $x = 4$.",
+    },
+    {
+      id: "q5",
+      text: "If $\\ln(x) + \\ln(x - 4) = \\ln(12)$, then $x$ equals:",
+      options: ["$6$", "$-2$", "$12$", "$8$"],
+      correctIndex: 0,
+      explanation:
+        "Combine: $\\ln[x(x-4)] = \\ln 12$, so $x^2 - 4x = 12$, giving $x = 6$ or $x = -2$. Only $x = 6$ is valid.",
+    },
+  ]}
+/>

@@ -1,0 +1,70 @@
+---
+/**
+ * ComplexZerosDiagram — shows zeros on the complex plane
+ * for a degree 4 polynomial with real zeros at x=3 and
+ * complex conjugate pair -1+4i, -1-4i, plus one unknown.
+ */
+const w = 300;
+const h = 300;
+const pad = 35;
+const gw = w - 2 * pad;
+const gh = h - 2 * pad;
+const reMin = -4, reMax = 5, imMin = -5.5, imMax = 5.5;
+const sx = (r: number) => pad + ((r - reMin) / (reMax - reMin)) * gw;
+const sy = (i: number) => pad + ((imMax - i) / (imMax - imMin)) * gh;
+
+const zeros = [
+  { re: 3, im: 0, label: '3', color: '#7ee787' },
+  { re: -1, im: 4, label: '-1 + 4i', color: '#58a6ff' },
+  { re: -1, im: -4, label: '-1 - 4i', color: '#58a6ff' },
+];
+---
+
+<figure class="czd" role="img" aria-label="Complex plane showing zeros: 3 on real axis, conjugate pair -1+4i and -1-4i">
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    {/* Grid lines */}
+    {[-4,-3,-2,-1,0,1,2,3,4,5].map(v => (
+      <g>
+        {v >= reMin && v <= reMax && <line x1={sx(v)} y1={sy(imMin)} x2={sx(v)} y2={sy(imMax)} class="czd-grid" stroke-width="0.5" />}
+        {v >= imMin && v <= imMax && <line x1={sx(reMin)} y1={sy(v)} x2={sx(reMax)} y2={sy(v)} class="czd-grid" stroke-width="0.5" />}
+      </g>
+    ))}
+
+    {/* Axes */}
+    <line x1={sx(reMin)} y1={sy(0)} x2={sx(reMax)} y2={sy(0)} class="czd-axis" stroke-width="1.5" />
+    <line x1={sx(0)} y1={sy(imMin)} x2={sx(0)} y2={sy(imMax)} class="czd-axis" stroke-width="1.5" />
+
+    {/* Conjugate pair dashed line */}
+    <line x1={sx(-1)} y1={sy(4)} x2={sx(-1)} y2={sy(-4)} class="czd-conj" stroke-width="1" stroke-dasharray="5,4" />
+
+    {/* Zero dots and labels */}
+    {zeros.map(z => (
+      <g>
+        <circle cx={sx(z.re)} cy={sy(z.im)} r="5" fill={z.color} />
+        <text x={sx(z.re) + 8} y={sy(z.im) + (z.im >= 0 ? -8 : 14)} font-size="11" font-weight="bold" fill={z.color} class="czd-lbl">{z.label}</text>
+      </g>
+    ))}
+
+    {/* Conjugate pair label */}
+    <text class="czd-conj-lbl" x={sx(-1) - 36} y={sy(0) - 14} font-size="9" text-anchor="middle">conjugate pair</text>
+
+    {/* Axis labels */}
+    <text class="czd-ax" x={sx(reMax) - 4} y={sy(0) - 8} font-size="10">Re</text>
+    <text class="czd-ax" x={sx(0) + 8} y={sy(imMax) + 4} font-size="10">Im</text>
+  </svg>
+</figure>
+
+<style>
+  .czd { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .czd svg { max-width:100%; height:auto; }
+  .czd-grid { stroke:#333; }
+  .czd-axis { stroke:#666; }
+  .czd-conj { stroke:#d2a8ff; }
+  .czd-lbl { font-family:'Libre Baskerville',Georgia,serif; }
+  .czd-conj-lbl { fill:#d2a8ff; font-family:'Libre Baskerville',Georgia,serif; }
+  .czd-ax { fill:#888; font-family:'Libre Baskerville',Georgia,serif; }
+  :global([data-theme="light"]) .czd-grid { stroke:#ddd; }
+  :global([data-theme="light"]) .czd-axis { stroke:#999; }
+  :global([data-theme="light"]) .czd-conj { stroke:#8250df; }
+  :global([data-theme="light"]) .czd-conj-lbl { fill:#8250df; }
+</style>

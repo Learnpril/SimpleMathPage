@@ -1,0 +1,92 @@
+---
+/**
+ * PiecewiseAbsGraph — shows y = |x - 2| + 1
+ * V-shape with vertex at (2, 1), plus the dashed y = x line for reference.
+ */
+const w = 300;
+const h = 260;
+const pad = 35;
+const gw = w - 2 * pad;
+const gh = h - 2 * pad;
+const xMin = -2, xMax = 7, yMin = -1, yMax = 7;
+const sx = (x: number) => pad + ((x - xMin) / (xMax - xMin)) * gw;
+const sy = (y: number) => pad + ((yMax - y) / (yMax - yMin)) * gh;
+
+// y = |x - 2| + 1: left arm from x=-1 to x=2, right arm from x=2 to x=6
+const leftPts: string[] = [];
+for (let x = -1; x <= 2; x += 0.25) {
+  const y = Math.abs(x - 2) + 1;
+  leftPts.push(`${sx(x).toFixed(1)},${sy(y).toFixed(1)}`);
+}
+const rightPts: string[] = [];
+for (let x = 2; x <= 6.5; x += 0.25) {
+  const y = Math.abs(x - 2) + 1;
+  rightPts.push(`${sx(x).toFixed(1)},${sy(y).toFixed(1)}`);
+}
+
+// Also show the basic |x| in gray for comparison
+const basePts: string[] = [];
+for (let x = -1.5; x <= 6; x += 0.25) {
+  const y = Math.abs(x);
+  if (y <= yMax) basePts.push(`${sx(x).toFixed(1)},${sy(y).toFixed(1)}`);
+}
+---
+
+<figure class="pag" role="img" aria-label="Graph of y = |x - 2| + 1 showing V-shape with vertex at (2,1)">
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    {/* Grid */}
+    {[0, 1, 2, 3, 4, 5, 6].map(v => (
+      <g>
+        {v >= xMin && v <= xMax && <line x1={sx(v)} y1={sy(yMin)} x2={sx(v)} y2={sy(yMax)} class="pag-grid" stroke-width="0.5" />}
+        {v >= yMin && v <= yMax && <line x1={sx(xMin)} y1={sy(v)} x2={sx(xMax)} y2={sy(v)} class="pag-grid" stroke-width="0.5" />}
+      </g>
+    ))}
+
+    {/* Axes */}
+    <line x1={sx(xMin)} y1={sy(0)} x2={sx(xMax)} y2={sy(0)} class="pag-axis" stroke-width="1.5" />
+    <line x1={sx(0)} y1={sy(yMin)} x2={sx(0)} y2={sy(yMax)} class="pag-axis" stroke-width="1.5" />
+
+    {/* y = |x| base (dashed gray) */}
+    <polyline points={basePts.join(' ')} fill="none" class="pag-base" stroke-width="1.5" stroke-dasharray="5,4" />
+
+    {/* y = |x - 2| + 1 (solid colored) */}
+    <polyline points={leftPts.join(' ')} fill="none" class="pag-left" stroke-width="2.5" />
+    <polyline points={rightPts.join(' ')} fill="none" class="pag-right" stroke-width="2.5" />
+
+    {/* Vertex dot */}
+    <circle cx={sx(2)} cy={sy(1)} r="4" class="pag-vertex" />
+
+    {/* Labels */}
+    <text class="pag-lbl" x={sx(4.5)} y={sy(4)} font-size="12" font-weight="bold">y = |x - 2| + 1</text>
+    <text class="pag-base-lbl" x={sx(4.8)} y={sy(5.5)} font-size="11" font-style="italic">y = |x|</text>
+    <text class="pag-vtx-lbl" x={sx(2) + 8} y={sy(1) + 16} font-size="11" font-weight="bold">(2, 1)</text>
+
+    {/* Axis labels */}
+    <text class="pag-ax-lbl" x={sx(xMax) - 4} y={sy(0) - 6} font-size="10">x</text>
+    <text class="pag-ax-lbl" x={sx(0) + 6} y={sy(yMax) + 4} font-size="10">y</text>
+  </svg>
+</figure>
+
+<style>
+  .pag { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .pag svg { max-width:100%; height:auto; }
+  .pag-grid { stroke:#333; }
+  .pag-axis { stroke:#666; }
+  .pag-base { stroke:#555; }
+  .pag-left { stroke:#58a6ff; }
+  .pag-right { stroke:#58a6ff; }
+  .pag-vertex { fill:#f0883e; }
+  .pag-lbl { fill:#58a6ff; font-family:'Libre Baskerville',Georgia,serif; }
+  .pag-base-lbl { fill:#777; font-family:'Libre Baskerville',Georgia,serif; }
+  .pag-vtx-lbl { fill:#f0883e; font-family:'Libre Baskerville',Georgia,serif; }
+  .pag-ax-lbl { fill:#888; font-family:'Libre Baskerville',Georgia,serif; }
+  :global([data-theme="light"]) .pag-grid { stroke:#ddd; }
+  :global([data-theme="light"]) .pag-axis { stroke:#999; }
+  :global([data-theme="light"]) .pag-base { stroke:#bbb; }
+  :global([data-theme="light"]) .pag-left { stroke:#0969da; }
+  :global([data-theme="light"]) .pag-right { stroke:#0969da; }
+  :global([data-theme="light"]) .pag-vertex { fill:#d4700a; }
+  :global([data-theme="light"]) .pag-lbl { fill:#0969da; }
+  :global([data-theme="light"]) .pag-base-lbl { fill:#999; }
+  :global([data-theme="light"]) .pag-vtx-lbl { fill:#d4700a; }
+</style>

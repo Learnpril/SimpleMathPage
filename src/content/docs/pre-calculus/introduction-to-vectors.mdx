@@ -1,0 +1,157 @@
+---
+title: Introduction to Vectors
+description: Learn what vectors are and how to represent them
+sidebar:
+  order: 13
+---
+
+## What You'll Learn
+
+In this lesson you'll learn what vectors are, how to represent them in component form, calculate their magnitude and direction, and perform basic operations like addition, subtraction, and scalar multiplication.
+
+## The Concept
+
+A vector is a quantity that has both magnitude (how much) and direction (which way). This is different from a scalar, which has only magnitude. Temperature is a scalar (just a number). Velocity is a vector (speed plus direction).
+
+In component form, a vector v is written as an ordered pair of numbers in angle brackets: v = ⟨a, b⟩. The first component is the horizontal part, the second is the vertical part. You can also write it as v = ai + bj, where i and j are the unit vectors along the x and y axes.
+
+The magnitude (length) of a vector is found using the Pythagorean theorem:
+
+$$
+|\mathbf{v}| = \sqrt{a^2 + b^2}
+$$
+
+The direction angle is the angle the vector makes with the positive x-axis:
+
+$$
+\theta = \tan^{-1}\left(\frac{b}{a}\right)
+$$
+
+(Adjust for the correct quadrant, just like with polar coordinates.)
+
+Basic operations work component by component:
+
+- Scalar multiplication: k⟨a, b⟩ = ⟨ka, kb⟩ (stretches or shrinks the vector)
+- Addition: ⟨a, b⟩ + ⟨c, d⟩ = ⟨a + c, b + d⟩
+- Subtraction: ⟨a, b⟩ - ⟨c, d⟩ = ⟨a - c, b - d⟩
+
+Graphically, you add vectors using the tip-to-tail method: place the tail of the second vector at the tip of the first, then draw the resultant from the origin to the new tip.
+
+## Worked Example
+
+Let u = ⟨2, 5⟩ and v = ⟨-3, 4⟩.
+
+import VectorAddDiagram from "../../../components/VectorAddDiagram.astro";
+
+<VectorAddDiagram />
+
+**Magnitude of u:**
+
+$$
+|\mathbf{u}| = \sqrt{2^2 + 5^2} = \sqrt{4 + 25} = \sqrt{29} \approx 5.39
+$$
+
+**Vector addition (tip-to-tail):**
+
+$$
+\mathbf{u} + \mathbf{v} = \langle 2 + (-3),\; 5 + 4 \rangle = \langle -1,\; 9 \rangle
+$$
+
+The diagram shows u (blue) from the origin to (2, 5), then v (orange) from the tip of u to (-1, 9). The dashed green arrow is the resultant u + v from the origin directly to (-1, 9).
+
+**Scalar multiplication:**
+
+$$
+3\mathbf{u} = \langle 3 \times 2,\; 3 \times 5 \rangle = \langle 6,\; 15 \rangle
+$$
+
+This triples the length of u while keeping the same direction.
+
+**Direction of u:**
+
+$$
+\theta = \tan^{-1}\left(\frac{5}{2}\right) \approx 68.2°
+$$
+
+Since both components are positive, u points into the first quadrant.
+
+## Real-World Application
+
+Vectors are essential in:
+
+- Physics (forces, velocity, acceleration, momentum)
+- Navigation (airplane heading combined with wind gives ground velocity)
+- Engineering (structural forces, fluid flow analysis)
+- Computer graphics (character movement, camera angles, lighting)
+- GPS and mapping (displacement between waypoints)
+
+Example: an airplane flies at 400 mph due east (airspeed vector), but there's a 50 mph wind blowing from the south (wind vector pointing north). The actual ground velocity is the vector sum of these two, giving a slightly faster speed at a slight northward angle.
+
+:::note[You've Got This]
+Vectors are simply "magnitude plus direction." Master component form and the three basic operations: add, subtract, and scalar multiply. Draw quick sketches using tip-to-tail when it helps you visualize. This foundation will make vector applications and matrix work much easier later.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="precalculus-intro-vectors"
+  questions={[
+    {
+      id: "q1",
+      text: "A vector differs from a scalar because it has:",
+      options: [
+        "Both magnitude and direction",
+        "Only magnitude",
+        "Only direction",
+        "Neither",
+      ],
+      correctIndex: 0,
+      explanation: "Vectors require both size and direction.",
+    },
+    {
+      id: "q2",
+      text: "The magnitude of $\\langle 6, 8 \\rangle$ is:",
+      options: ["$10$", "$14$", "$48$", "$2$"],
+      correctIndex: 0,
+      explanation: "$\\sqrt{36 + 64} = \\sqrt{100} = 10$.",
+    },
+    {
+      id: "q3",
+      text: "Vector addition is done by:",
+      options: [
+        "Adding corresponding components",
+        "Multiplying magnitudes",
+        "Subtracting angles",
+        "Taking the dot product",
+      ],
+      correctIndex: 0,
+      explanation: "Add the x-components and y-components separately.",
+    },
+    {
+      id: "q4",
+      text: "Scalar multiplication of a vector means:",
+      options: [
+        "Multiplying each component by a constant",
+        "Adding two vectors",
+        "Finding the length",
+        "Changing only the direction",
+      ],
+      correctIndex: 0,
+      explanation: "k times a vector multiplies both components by k.",
+    },
+    {
+      id: "q5",
+      text: "Vectors are commonly used to represent:",
+      options: [
+        "Velocity, force, and displacement",
+        "Only temperatures",
+        "Only distances without direction",
+        "Only time",
+      ],
+      correctIndex: 0,
+      explanation: "Any quantity with both size and direction is a vector.",
+    },
+  ]}
+/>

@@ -1,0 +1,199 @@
+---
+title: Advanced Trigonometric Identities
+description: Double-angle, half-angle, and product-to-sum identities
+sidebar:
+  order: 10
+---
+
+## What You'll Learn
+
+In this lesson you'll learn the double-angle, power-reducing, and half-angle identities, and how to use them to simplify expressions and solve equations. You covered sum and difference identities in Trigonometry. Here we build on those to derive more powerful tools.
+
+## The Concept
+
+All of these identities come from the sum formulas you already know. The double-angle formulas are just the sum formulas with A = B.
+
+Sum and difference identities (review):
+
+$$
+\sin(A \pm B) = \sin A \cos B \pm \cos A \sin B
+$$
+
+$$
+\cos(A \pm B) = \cos A \cos B \mp \sin A \sin B
+$$
+
+Double-angle identities (set B = A in the sum formulas):
+
+$$
+\sin 2\theta = 2\sin\theta\cos\theta
+$$
+
+$$
+\cos 2\theta = \cos^2\theta - \sin^2\theta = 2\cos^2\theta - 1 = 1 - 2\sin^2\theta
+$$
+
+import DoubleAngleGraph from "../../../components/DoubleAngleGraph.astro";
+
+<DoubleAngleGraph />
+
+The graph shows how sin(2x) (orange) completes two full cycles in the same interval where sin(x) (blue) completes one. That's the double-angle in action.
+
+Power-reducing identities (solve the cos 2θ formulas for sin²θ and cos²θ):
+
+$$
+\sin^2\theta = \frac{1 - \cos 2\theta}{2}, \quad \cos^2\theta = \frac{1 + \cos 2\theta}{2}
+$$
+
+Half-angle identities (replace θ with θ/2 in the power-reducing formulas):
+
+$$
+\sin\frac{\theta}{2} = \pm\sqrt{\frac{1 - \cos\theta}{2}}, \quad \cos\frac{\theta}{2} = \pm\sqrt{\frac{1 + \cos\theta}{2}}
+$$
+
+The ± depends on which quadrant θ/2 is in.
+
+## Worked Example
+
+**Example 1: Use double-angle to simplify**
+
+Simplify $\cos^2\theta - \sin^2\theta$:
+
+$$
+\cos^2\theta - \sin^2\theta = \cos 2\theta
+$$
+
+That's it. Recognizing the pattern is the whole skill.
+
+**Example 2: Power-reducing**
+
+Express $\sin^2 3\theta$ without powers:
+
+$$
+\sin^2 3\theta = \frac{1 - \cos 6\theta}{2}
+$$
+
+This is useful in calculus when integrating $\sin^2(3\theta)$.
+
+**Example 3: Solve using double-angle**
+
+Solve $\sin 2x = \cos x$ for x in $[0, 2\pi)$:
+
+Replace sin 2x with the double-angle formula:
+
+$$
+2\sin x \cos x = \cos x
+$$
+
+$$
+2\sin x \cos x - \cos x = 0
+$$
+
+$$
+\cos x(2\sin x - 1) = 0
+$$
+
+So $\cos x = 0$ or $\sin x = 1/2$.
+
+From $\cos x = 0$: $x = \pi/2$ or $x = 3\pi/2$.
+
+From $\sin x = 1/2$: $x = \pi/6$ or $x = 5\pi/6$.
+
+Four solutions: $x = \pi/6, \; \pi/2, \; 5\pi/6, \; 3\pi/2$.
+
+**Example 4: Half-angle**
+
+Find the exact value of $\cos 15°$ using the half-angle formula:
+
+$$
+\cos 15° = \cos\frac{30°}{2} = \sqrt{\frac{1 + \cos 30°}{2}} = \sqrt{\frac{1 + \frac{\sqrt{3}}{2}}{2}} = \sqrt{\frac{2 + \sqrt{3}}{4}} = \frac{\sqrt{2 + \sqrt{3}}}{2}
+$$
+
+## Real-World Application
+
+Advanced trig identities are used in:
+
+- Electrical engineering (simplifying AC circuit analysis, power calculations)
+- Physics (wave interference, standing waves, harmonic motion)
+- Signal processing (Fourier analysis breaks signals into sine/cosine components)
+- Computer graphics (rotation matrices, animation curves)
+- Calculus (integration of trig functions requires power-reducing identities)
+
+Example: when two sound waves interfere, the resulting amplitude involves product-to-sum identities. Engineers use these to analyze beats and resonance.
+
+:::note[You've Got This]
+Advanced trig identities are tools for simplifying complicated expressions. Start by memorizing the double-angle formulas, as they appear most often. When verifying identities, work on the more complicated side first. With practice, these become powerful shortcuts in both trigonometry and calculus.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="precalculus-adv-trig-identities"
+  questions={[
+    {
+      id: "q1",
+      text: "The double-angle formula for sine is:",
+      options: [
+        "$\\sin 2\\theta = 2\\sin\\theta\\cos\\theta$",
+        "$\\sin 2\\theta = \\sin^2\\theta - \\cos^2\\theta$",
+        "$\\sin 2\\theta = \\cos\\theta - \\sin\\theta$",
+        "$\\sin 2\\theta = 1 - 2\\cos^2\\theta$",
+      ],
+      correctIndex: 0,
+      explanation: "This is the standard double-angle identity for sine.",
+    },
+    {
+      id: "q2",
+      text: "$\\cos 2\\theta$ can be written as:",
+      options: [
+        "$\\cos^2\\theta - \\sin^2\\theta$",
+        "$2\\sin\\theta\\cos\\theta$",
+        "$\\sin\\theta + \\cos\\theta$",
+        "$1 + \\sin^2\\theta$",
+      ],
+      correctIndex: 0,
+      explanation:
+        "One of the three equivalent forms of the double-angle formula for cosine.",
+    },
+    {
+      id: "q3",
+      text: "The power-reducing formula for $\\sin^2\\theta$ is:",
+      options: [
+        "$\\frac{1 - \\cos 2\\theta}{2}$",
+        "$\\frac{1 + \\cos 2\\theta}{2}$",
+        "$2\\sin\\theta\\cos\\theta$",
+        "$\\cos 2\\theta$",
+      ],
+      correctIndex: 0,
+      explanation:
+        "This identity converts $\\sin^2\\theta$ into a first-power expression.",
+    },
+    {
+      id: "q4",
+      text: "When verifying trig identities, it's usually best to:",
+      options: [
+        "Work on the more complicated side first",
+        "Work on the simpler side first",
+        "Add both sides together",
+        "Multiply both sides by the same term",
+      ],
+      correctIndex: 0,
+      explanation: "Transform the more complex side to match the simpler one.",
+    },
+    {
+      id: "q5",
+      text: "Solving $\\sin 2x = \\cos x$ starts by replacing $\\sin 2x$ with:",
+      options: [
+        "$2\\sin x\\cos x$",
+        "$\\cos^2 x - \\sin^2 x$",
+        "$1 - 2\\sin^2 x$",
+        "$\\sin x + \\cos x$",
+      ],
+      correctIndex: 0,
+      explanation:
+        "Use the double-angle formula $\\sin 2x = 2\\sin x\\cos x$, then factor.",
+    },
+  ]}
+/>

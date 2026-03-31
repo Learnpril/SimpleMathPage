@@ -1,0 +1,87 @@
+---
+/**
+ * InverseFuncGraph — shows f(x) = 3x - 6 and its inverse f⁻¹(x) = (x+6)/3
+ * reflected over the line y = x.
+ */
+const w = 300;
+const h = 300;
+const pad = 30;
+const gw = w - 2 * pad;
+const gh = h - 2 * pad;
+// Map math coords to SVG: x in [-4, 10], y in [-4, 10]
+const xMin = -4, xMax = 10, yMin = -4, yMax = 10;
+const sx = (x: number) => pad + ((x - xMin) / (xMax - xMin)) * gw;
+const sy = (y: number) => pad + ((yMax - y) / (yMax - yMin)) * gh;
+
+// f(x) = 3x - 6: passes through (0,-6), (2,0), (4,6)
+// f⁻¹(x) = (x+6)/3: passes through (-6,0), (0,2), (6,4)
+// y = x line
+
+// Generate points for f(x) = 3x - 6
+const fPts: string[] = [];
+for (let x = -1; x <= 5.5; x += 0.5) {
+  const y = 3 * x - 6;
+  if (y >= yMin && y <= yMax) fPts.push(`${sx(x).toFixed(1)},${sy(y).toFixed(1)}`);
+}
+
+// Generate points for f⁻¹(x) = (x+6)/3
+const iPts: string[] = [];
+for (let x = -4; x <= 10; x += 0.5) {
+  const y = (x + 6) / 3;
+  if (y >= yMin && y <= yMax) iPts.push(`${sx(x).toFixed(1)},${sy(y).toFixed(1)}`);
+}
+
+// y = x line
+const eqPts = `${sx(yMin).toFixed(1)},${sy(yMin).toFixed(1)} ${sx(yMax).toFixed(1)},${sy(yMax).toFixed(1)}`;
+---
+
+<figure class="ifg" role="img" aria-label="Graph of f(x)=3x-6 and its inverse reflected over y=x">
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    {/* Grid lines */}
+    {[0, 2, 4, 6, 8].map(v => (
+      <g>
+        <line x1={sx(v)} y1={sy(yMin)} x2={sx(v)} y2={sy(yMax)} class="ifg-grid" stroke-width="0.5" />
+        <line x1={sx(xMin)} y1={sy(v)} x2={sx(xMax)} y2={sy(v)} class="ifg-grid" stroke-width="0.5" />
+      </g>
+    ))}
+
+    {/* Axes */}
+    <line x1={sx(xMin)} y1={sy(0)} x2={sx(xMax)} y2={sy(0)} class="ifg-axis" stroke-width="1.5" />
+    <line x1={sx(0)} y1={sy(yMin)} x2={sx(0)} y2={sy(yMax)} class="ifg-axis" stroke-width="1.5" />
+
+    {/* y = x line (dashed) */}
+    <polyline points={eqPts} fill="none" class="ifg-eq" stroke-width="1" stroke-dasharray="5,4" />
+
+    {/* f(x) = 3x - 6 */}
+    <polyline points={fPts.join(' ')} fill="none" class="ifg-f" stroke-width="2.5" />
+
+    {/* f⁻¹(x) = (x+6)/3 */}
+    <polyline points={iPts.join(' ')} fill="none" class="ifg-inv" stroke-width="2.5" />
+
+    {/* Labels */}
+    <text class="ifg-f-lbl" x={sx(5)} y={sy(8.5)} font-size="12" font-weight="bold">f(x) = 3x - 6</text>
+    <text class="ifg-inv-lbl" x={sx(5.5)} y={sy(4.2)} font-size="12" font-weight="bold">f⁻¹(x) = (x+6)/3</text>
+    <text class="ifg-eq-lbl" x={sx(7.5)} y={sy(8)} font-size="11" font-style="italic">y = x</text>
+  </svg>
+</figure>
+
+<style>
+  .ifg { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .ifg svg { max-width:100%; height:auto; }
+  .ifg-grid { stroke:#333; }
+  .ifg-axis { stroke:#666; }
+  .ifg-eq { stroke:#888; }
+  .ifg-f { stroke:#58a6ff; }
+  .ifg-inv { stroke:#f0883e; }
+  .ifg-f-lbl { fill:#58a6ff; font-family:'Libre Baskerville',Georgia,serif; }
+  .ifg-inv-lbl { fill:#f0883e; font-family:'Libre Baskerville',Georgia,serif; }
+  .ifg-eq-lbl { fill:#888; font-family:'Libre Baskerville',Georgia,serif; }
+  :global([data-theme="light"]) .ifg-grid { stroke:#ddd; }
+  :global([data-theme="light"]) .ifg-axis { stroke:#999; }
+  :global([data-theme="light"]) .ifg-eq { stroke:#aaa; }
+  :global([data-theme="light"]) .ifg-f { stroke:#0969da; }
+  :global([data-theme="light"]) .ifg-inv { stroke:#d4700a; }
+  :global([data-theme="light"]) .ifg-f-lbl { fill:#0969da; }
+  :global([data-theme="light"]) .ifg-inv-lbl { fill:#d4700a; }
+  :global([data-theme="light"]) .ifg-eq-lbl { fill:#999; }
+</style>

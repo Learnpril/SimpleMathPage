@@ -1,0 +1,225 @@
+---
+title: Inverse Functions
+description: Review inverse functions and explore their properties in more depth
+sidebar:
+  order: 2
+---
+
+## What You'll Learn
+
+In this lesson you'll review inverse functions and extend your understanding to more complex cases, including how to find inverses algebraically and graphically, and when they exist.
+
+## The Concept
+
+If you went through the Algebra 2 section, you've already seen inverse functions. This lesson is a recap of the basics plus some new territory. In Algebra 2 we focused on finding inverses of linear functions and understanding the concept. Here we'll go further: inverses of rational functions, domain restrictions on non-one-to-one functions, and formal verification using composition.
+
+Two functions f and g are inverses if applying one after the other returns the original input:
+
+$$
+f(g(x)) = x \quad \text{and} \quad g(f(x)) = x
+$$
+
+The inverse of f is written f⁻¹ (read "f inverse"). It undoes whatever f does. If f takes 3 to 7, then f⁻¹ takes 7 back to 3.
+
+Graphically, the inverse is the reflection of the original function over the line y = x. Every point (a, b) on f becomes (b, a) on f⁻¹.
+
+import InverseFuncGraph from "../../../components/InverseFuncGraph.astro";
+
+<InverseFuncGraph />
+
+To find the inverse algebraically:
+
+1. Replace f(x) with y
+2. Swap x and y
+3. Solve for y
+4. Replace y with f⁻¹(x)
+
+Not every function has an inverse. A function must be one-to-one (pass the horizontal line test) to have an inverse. If it's not one-to-one, you can restrict the domain to make it work.
+
+## Worked Example
+
+**Example 1: Linear function**
+
+Find the inverse of f(x) = 3x - 6.
+
+$$
+y = 3x - 6
+$$
+
+Swap x and y:
+
+$$
+x = 3y - 6
+$$
+
+Solve for y:
+
+$$
+x + 6 = 3y \quad \Rightarrow \quad y = \frac{x + 6}{3}
+$$
+
+$$
+f^{-1}(x) = \frac{x + 6}{3}
+$$
+
+**Verify they are inverses:**
+
+$$
+f(f^{-1}(x)) = 3\left(\frac{x + 6}{3}\right) - 6 = (x + 6) - 6 = x \quad \checkmark
+$$
+
+$$
+f^{-1}(f(x)) = \frac{(3x - 6) + 6}{3} = \frac{3x}{3} = x \quad \checkmark
+$$
+
+Both compositions return x, so they're confirmed inverses.
+
+**Example 2: Quadratic with restricted domain**
+
+Find the inverse of f(x) = x² + 4, with domain restricted to x ≥ 0.
+
+$$
+y = x^2 + 4
+$$
+
+Swap x and y:
+
+$$
+x = y^2 + 4
+$$
+
+Solve for y:
+
+$$
+y^2 = x - 4 \quad \Rightarrow \quad y = \sqrt{x - 4}
+$$
+
+We take the positive root because the original domain was x ≥ 0.
+
+$$
+f^{-1}(x) = \sqrt{x - 4}, \quad x \geq 4
+$$
+
+**Example 3: Rational function**
+
+Find the inverse of f(x) = (2x + 1) / (x - 3).
+
+$$
+y = \frac{2x + 1}{x - 3}
+$$
+
+Swap and solve:
+
+$$
+x = \frac{2y + 1}{y - 3}
+$$
+
+$$
+x(y - 3) = 2y + 1
+$$
+
+$$
+xy - 3x = 2y + 1
+$$
+
+$$
+xy - 2y = 3x + 1
+$$
+
+$$
+y(x - 2) = 3x + 1
+$$
+
+$$
+f^{-1}(x) = \frac{3x + 1}{x - 2}
+$$
+
+## Real-World Application
+
+Inverse functions are used in:
+
+- Unit conversion (Fahrenheit to Celsius and back: C = (5/9)(F - 32) and F = (9/5)C + 32)
+- Cryptography (encoding and decoding messages)
+- Finance (finding the interest rate given a final amount, or the original price before tax)
+- Physics (converting between position, velocity, and time)
+- Computer science (compression and decompression algorithms)
+
+Example: if a store charges f(x) = 1.08x (price with 8% tax), the inverse f⁻¹(x) = x / 1.08 tells you the pre-tax price from the total.
+
+:::note[You've Got This]
+Finding an inverse is mostly algebra: swap x and y, then solve for y. The trickiest part is remembering to restrict the domain when the function isn't one-to-one (like with squares). Practice with linear functions first, then try rational and quadratic ones. This skill is essential for exponential and logarithmic functions coming up next.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="precalculus-inverse-functions"
+  questions={[
+    {
+      id: "q1",
+      text: "Two functions $f$ and $g$ are inverses if:",
+      options: [
+        "$f(g(x)) = x$ and $g(f(x)) = x$",
+        "$f(x) + g(x) = x$",
+        "$f(x) \\cdot g(x) = x$",
+        "$f(x) = g(x)$",
+      ],
+      correctIndex: 0,
+      explanation:
+        "Inverses undo each other: both compositions must return $x$.",
+    },
+    {
+      id: "q2",
+      text: "The graph of $f^{-1}$ is the reflection of $f$ over:",
+      options: [
+        "The line $y = x$",
+        "The $x$-axis",
+        "The $y$-axis",
+        "The origin",
+      ],
+      correctIndex: 0,
+      explanation:
+        "Every point $(a, b)$ on $f$ becomes $(b, a)$ on $f^{-1}$, which is a reflection over $y = x$.",
+    },
+    {
+      id: "q3",
+      text: "A function has an inverse only if it is:",
+      options: [
+        "One-to-one",
+        "Quadratic",
+        "Always increasing",
+        "Defined for all real numbers",
+      ],
+      correctIndex: 0,
+      explanation:
+        "Only one-to-one functions (passing the horizontal line test) have inverses.",
+    },
+    {
+      id: "q4",
+      text: "If $f(x) = 4x - 12$, then $f^{-1}(x)$ is:",
+      options: [
+        "$\\frac{x + 12}{4}$",
+        "$4x + 12$",
+        "$\\frac{x - 12}{4}$",
+        "$\\frac{x}{4} - 3$",
+      ],
+      correctIndex: 0,
+      explanation: "Swap: $x = 4y - 12$, solve: $y = (x + 12)/4$.",
+    },
+    {
+      id: "q5",
+      text: "The inverse of $f(x) = x^2 + 1$ (with $x \\geq 0$) is:",
+      options: [
+        "$\\sqrt{x - 1}$",
+        "$x^2 - 1$",
+        "$(x - 1)^2$",
+        "$\\frac{1}{x^2 + 1}$",
+      ],
+      correctIndex: 0,
+      explanation:
+        "Swap and solve: $x = y^2 + 1 \\Rightarrow y = \\sqrt{x - 1}$ (positive root since $x \\geq 0$).",
+    },
+  ]}
+/>

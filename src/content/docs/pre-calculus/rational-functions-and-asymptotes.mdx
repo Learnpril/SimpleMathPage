@@ -1,0 +1,177 @@
+---
+title: Rational Functions and Asymptotes
+description: Analyze rational functions, identify vertical and horizontal asymptotes, and sketch their graphs
+sidebar:
+  order: 6
+---
+
+## What You'll Learn
+
+In this lesson you'll learn how to identify vertical and horizontal asymptotes of rational functions and use them to sketch accurate graphs. You saw rational expressions in Algebra 2. Here we focus on graphing and behavior analysis.
+
+## The Concept
+
+A rational function is a ratio of two polynomials:
+
+$$
+f(x) = \frac{P(x)}{Q(x)}
+$$
+
+where P(x) and Q(x) are polynomials and Q(x) cannot equal zero.
+
+The interesting behavior happens near the zeros of the denominator and as x gets very large. That's where asymptotes come in.
+
+Vertical asymptotes occur where the denominator is zero (and the numerator isn't zero at that same point). The graph shoots toward infinity or negative infinity near these values.
+
+Horizontal asymptotes describe the long-run behavior as x heads toward infinity. The rule depends on comparing the degrees of the numerator and denominator:
+
+- Numerator degree less than denominator degree: horizontal asymptote at y = 0
+- Degrees equal: horizontal asymptote at y = (leading coefficient of numerator) / (leading coefficient of denominator)
+- Numerator degree greater: no horizontal asymptote (possibly a slant asymptote)
+
+Holes (removable discontinuities) occur when a factor cancels from both numerator and denominator. The graph has a gap at that point but no asymptote.
+
+## Worked Example
+
+**Example 1: Full analysis**
+
+Analyze and sketch f(x) = (x² - 4) / (x² - 3x - 4).
+
+Factor completely:
+
+$$
+f(x) = \frac{(x - 2)(x + 2)}{(x - 4)(x + 1)}
+$$
+
+No common factors, so no holes.
+
+Vertical asymptotes: x = 4 and x = -1 (denominator zeros).
+
+Horizontal asymptote: both numerator and denominator are degree 2, so y = 1/1 = 1.
+
+x-intercepts: x = 2 and x = -2 (numerator zeros).
+
+y-intercept: f(0) = (0 - 4) / (0 - 0 - 4) = -4 / -4 = 1.
+
+import RationalFuncGraph from "../../../components/RationalFuncGraph.astro";
+
+<RationalFuncGraph />
+
+The graph has three separate pieces (split by the two vertical asymptotes), approaches y = 1 on both ends, and crosses the x-axis at x = -2 and x = 2.
+
+**Example 2: Function with a hole**
+
+Analyze g(x) = (x² - 9) / (x² - x - 6).
+
+Factor:
+
+$$
+g(x) = \frac{(x - 3)(x + 3)}{(x - 3)(x + 2)}
+$$
+
+The factor (x - 3) cancels, creating a hole at x = 3. After canceling:
+
+$$
+g(x) = \frac{x + 3}{x + 2}, \quad x \neq 3
+$$
+
+Vertical asymptote: x = -2. Horizontal asymptote: y = 1 (degrees equal, leading coefficients both 1). Hole at x = 3, where g(3) = 6/5 = 1.2.
+
+import RationalHoleGraph from "../../../components/RationalHoleGraph.astro";
+
+<RationalHoleGraph />
+
+**Example 3: Numerator degree less than denominator**
+
+$$
+h(x) = \frac{5}{x^2 + 1}
+$$
+
+No vertical asymptotes (x² + 1 is never zero). Horizontal asymptote: y = 0 (numerator degree 0 is less than denominator degree 2). The graph is a bell-shaped curve centered at x = 0 with maximum value h(0) = 5, approaching 0 as x gets large.
+
+import RationalBellGraph from "../../../components/RationalBellGraph.astro";
+
+<RationalBellGraph />
+
+## Real-World Application
+
+Rational functions model many real situations:
+
+- Average cost per unit: C(x) = (fixed costs + variable costs) / x approaches the variable cost per unit as x grows
+- Drug concentration: the amount of drug in the bloodstream over time often follows a rational model
+- Electrical resistance: parallel resistors combine as 1/R = 1/R₁ + 1/R₂
+- Population models with carrying capacity (logistic-like behavior)
+- Dilution problems: mixing solutions changes concentration as a rational function of volume added
+
+:::note[You've Got This]
+For rational functions, always factor first. Vertical asymptotes come from denominator zeros that don't cancel. Horizontal asymptotes come from comparing degrees. Sketch the asymptotes as dashed lines, plot the intercepts, then connect the dots. This systematic approach makes even complicated rational functions manageable.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="precalculus-rational-functions"
+  questions={[
+    {
+      id: "q1",
+      text: "Vertical asymptotes occur where:",
+      options: [
+        "The denominator is zero and the numerator is not",
+        "The numerator is zero",
+        "The degrees are equal",
+        "The function equals zero",
+      ],
+      correctIndex: 0,
+      explanation:
+        "Vertical asymptotes are at denominator zeros that don't cancel with the numerator.",
+    },
+    {
+      id: "q2",
+      text: "For $f(x) = \\frac{2x^2 + 3}{x^2 - 5x + 6}$, the horizontal asymptote is:",
+      options: ["$y = 2$", "$y = 0$", "$y = 1$", "$y = 3$"],
+      correctIndex: 0,
+      explanation:
+        "Degrees are equal, so $y = 2/1 = 2$ (ratio of leading coefficients).",
+    },
+    {
+      id: "q3",
+      text: "If a factor cancels from both numerator and denominator, it creates:",
+      options: [
+        "A hole (removable discontinuity)",
+        "A vertical asymptote",
+        "A horizontal asymptote",
+        "No change to the graph",
+      ],
+      correctIndex: 0,
+      explanation: "Cancellation creates a hole, not an asymptote.",
+    },
+    {
+      id: "q4",
+      text: "If the numerator degree is less than the denominator degree, the horizontal asymptote is:",
+      options: [
+        "$y = 0$",
+        "$y = 1$",
+        "There is no horizontal asymptote",
+        "$y = $ leading coefficient ratio",
+      ],
+      correctIndex: 0,
+      explanation:
+        "When the denominator grows faster, the function approaches zero.",
+    },
+    {
+      id: "q5",
+      text: "The first step when analyzing a rational function is:",
+      options: [
+        "Factor numerator and denominator completely",
+        "Graph it immediately",
+        "Find the domain only",
+        "Calculate the $y$-intercept",
+      ],
+      correctIndex: 0,
+      explanation:
+        "Factoring reveals asymptotes, holes, and intercepts all at once.",
+    },
+  ]}
+/>

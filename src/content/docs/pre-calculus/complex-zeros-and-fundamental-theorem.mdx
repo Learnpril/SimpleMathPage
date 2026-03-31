@@ -1,0 +1,160 @@
+---
+title: Complex Zeros and the Fundamental Theorem of Algebra
+description: Every polynomial has a complete set of zeros
+sidebar:
+  order: 5
+---
+
+## What You'll Learn
+
+In this lesson you'll learn the Fundamental Theorem of Algebra and how it guarantees that every polynomial can be completely factored. You worked with complex numbers in Algebra 2. Here we connect them to polynomial roots in a deeper way.
+
+## The Concept
+
+The Fundamental Theorem of Algebra states that every non-constant polynomial of degree n has exactly n zeros (roots) in the complex numbers, counting multiplicities.
+
+That's a big deal. It means:
+
+- A degree 1 polynomial has exactly 1 zero
+- A degree 2 polynomial has exactly 2 zeros
+- A degree 3 polynomial has exactly 3 zeros
+- A degree n polynomial has exactly n zeros
+
+Some of those zeros might be real numbers, and some might be complex (involving i). But the total count is always equal to the degree.
+
+For polynomials with real coefficients, there's an important rule: complex zeros always come in conjugate pairs. If a + bi is a zero, then a - bi is also a zero. This means complex zeros "use up" two of your n zeros at a time.
+
+A consequence: odd-degree polynomials with real coefficients always have at least one real zero (because you can't pair up an odd number of zeros into conjugate pairs without at least one being real).
+
+## Worked Example
+
+**Example 1: Identify all zeros**
+
+Find all zeros of f(x) = x³ - 3x² + 4x - 12.
+
+Try x = 3: f(3) = 27 - 27 + 12 - 12 = 0. So x = 3 is a zero.
+
+Divide out (x - 3):
+
+$$
+x^3 - 3x^2 + 4x - 12 = (x - 3)(x^2 + 4)
+$$
+
+Now solve x² + 4 = 0:
+
+$$
+x^2 = -4 \quad \Rightarrow \quad x = \pm 2i
+$$
+
+All three zeros: x = 3, x = 2i, x = -2i. One real, one conjugate pair. Degree 3, three zeros. ✓
+
+**Example 2: Build a polynomial from its zeros**
+
+Find a polynomial with real coefficients that has zeros at x = 1 and x = 3 - i.
+
+Since the coefficients are real, the conjugate 3 + i must also be a zero. So the polynomial has factors:
+
+$$
+(x - 1)(x - (3 - i))(x - (3 + i))
+$$
+
+Multiply the conjugate pair first:
+
+$$
+(x - 3 + i)(x - 3 - i) = (x - 3)^2 - i^2 = (x - 3)^2 + 1 = x^2 - 6x + 10
+$$
+
+Then multiply by (x - 1):
+
+$$
+(x - 1)(x^2 - 6x + 10) = x^3 - 7x^2 + 16x - 10
+$$
+
+**Example 3: Determine zeros from partial information**
+
+A degree 4 polynomial with real coefficients has zeros at x = 3 and x = -1 + 4i.
+
+import ComplexZerosDiagram from "../../../components/ComplexZerosDiagram.astro";
+
+<ComplexZerosDiagram />
+
+Since -1 + 4i is a zero, its conjugate -1 - 4i must also be a zero. That accounts for 3 of the 4 zeros. The fourth zero must be real (since we need exactly 4 total, and the remaining one can't form a conjugate pair by itself).
+
+## Real-World Application
+
+Complex zeros are important in:
+
+- Electrical engineering (analyzing AC circuits, where impedance involves complex numbers)
+- Signal processing (filter design uses polynomial roots in the complex plane)
+- Control systems (stability analysis depends on whether roots are in the left or right half-plane)
+- Vibration analysis (resonant frequencies correspond to polynomial roots)
+- Quantum mechanics (wave functions involve complex-valued solutions)
+
+Example: when an engineer designs a low-pass filter, the transfer function is a ratio of polynomials. The locations of the zeros and poles (roots of numerator and denominator) in the complex plane determine exactly which frequencies pass through and which get blocked.
+
+:::note[You've Got This]
+The Fundamental Theorem of Algebra is powerful because it guarantees every polynomial can be fully factored. When you see a polynomial with real coefficients and find one complex zero, its conjugate is automatically a zero too. That helps you factor completely and understand the full behavior of the polynomial. The complex plane diagram makes it visual: real zeros sit on the horizontal axis, and conjugate pairs are symmetric above and below it.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="precalculus-complex-zeros"
+  questions={[
+    {
+      id: "q1",
+      text: "A degree $n$ polynomial has exactly:",
+      options: [
+        "$n$ complex zeros (counting multiplicities)",
+        "$n$ real zeros",
+        "At most $n$ zeros",
+        "Only positive zeros",
+      ],
+      correctIndex: 0,
+      explanation:
+        "The Fundamental Theorem guarantees exactly $n$ zeros in the complex numbers.",
+    },
+    {
+      id: "q2",
+      text: "If a polynomial with real coefficients has a zero at $2 + 3i$, it must also have:",
+      options: ["$2 - 3i$", "$-2 + 3i$", "$-2 - 3i$", "$3 + 2i$"],
+      correctIndex: 0,
+      explanation:
+        "Complex zeros of real-coefficient polynomials come in conjugate pairs.",
+    },
+    {
+      id: "q3",
+      text: "A degree 5 polynomial with real coefficients must have:",
+      options: [
+        "At least one real zero",
+        "All complex zeros",
+        "Exactly 5 real zeros",
+        "No real zeros",
+      ],
+      correctIndex: 0,
+      explanation:
+        "Odd degree + real coefficients means at least one real zero (complex zeros pair up, leaving one unpaired).",
+    },
+    {
+      id: "q4",
+      text: "The zeros of $x^2 + 9$ are:",
+      options: [
+        "$3i$ and $-3i$",
+        "$3$ and $-3$",
+        "$9$ and $-9$",
+        "No zeros exist",
+      ],
+      correctIndex: 0,
+      explanation: "$x^2 = -9 \\Rightarrow x = \\pm 3i$. A conjugate pair.",
+    },
+    {
+      id: "q5",
+      text: "A degree 4 polynomial with real coefficients has zeros $1$, $-2$, and $3 + i$. The fourth zero is:",
+      options: ["$3 - i$", "$-3 + i$", "$-1$", "$i$"],
+      correctIndex: 0,
+      explanation: "The conjugate of $3 + i$ must also be a zero: $3 - i$.",
+    },
+  ]}
+/>

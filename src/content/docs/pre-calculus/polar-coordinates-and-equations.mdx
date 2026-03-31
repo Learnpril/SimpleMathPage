@@ -1,0 +1,181 @@
+---
+title: Polar Coordinates and Equations
+description: Explore the polar coordinate system and graph polar equations
+sidebar:
+  order: 12
+---
+
+## What You'll Learn
+
+In this lesson you'll learn the polar coordinate system, how to convert between polar and rectangular coordinates, and how to work with basic polar equations.
+
+## The Concept
+
+Up until now, every point you've plotted has used rectangular (Cartesian) coordinates: go x units left or right, then y units up or down. That system works great for lines, parabolas, and most algebra. But some shapes, especially circles, spirals, and anything involving rotation, are awkward to describe with x and y.
+
+Polar coordinates offer a different approach. Instead of "how far left/right and how far up/down," you describe a point by:
+
+- r: how far from the origin (the distance)
+- θ (theta): what angle from the positive x-axis (the direction)
+
+Think of it like giving directions with a compass. Instead of saying "go 3 blocks east and 4 blocks north," you'd say "go 5 blocks at a bearing of 53 degrees." Same destination, different description.
+
+import PolarGridDiagram from "../../../components/PolarGridDiagram.astro";
+
+<PolarGridDiagram />
+
+The diagram above shows the point (3, 4) in rectangular coordinates. In polar, that same point is (5, 53°): it's 5 units from the origin at an angle of about 53° from the positive x-axis. The concentric circles show distances (r = 1, 2, 3, 4, 5) and the spoke lines show angles.
+
+The connection between the two systems comes from right triangle trigonometry. If you draw a right triangle from the origin to the point, the horizontal leg is x, the vertical leg is y, and the hypotenuse is r. That gives us the conversion formulas.
+
+Rectangular to polar:
+
+$$
+r = \sqrt{x^2 + y^2}, \quad \theta = \tan^{-1}\left(\frac{y}{x}\right)
+$$
+
+(Always check the quadrant when finding θ. The arctangent function only gives values in Q1 and Q4, so you may need to add π for points in Q2 or Q3.)
+
+Polar to rectangular:
+
+$$
+x = r\cos\theta, \quad y = r\sin\theta
+$$
+
+These are just SOH CAH TOA applied to the triangle: cos θ = x/r and sin θ = y/r, rearranged.
+
+Once you're comfortable with the coordinate system, you can write equations in polar form. Some curves that are complicated in rectangular form become beautifully simple in polar:
+
+- r = a is a circle centered at the origin with radius a
+- r = a cos θ is a circle with diameter a along the x-axis
+- r = a sin θ is a circle with diameter a along the y-axis
+
+import PolarEquationExamples from "../../../components/PolarEquationExamples.astro";
+
+<PolarEquationExamples />
+
+## Worked Example
+
+**Example 1: Rectangular to polar**
+
+Convert the point (3, 4) to polar coordinates:
+
+$$
+r = \sqrt{3^2 + 4^2} = \sqrt{25} = 5
+$$
+
+$$
+\theta = \tan^{-1}\left(\frac{4}{3}\right) \approx 53.13°
+$$
+
+Polar form: (5, 53.13°) or approximately (5, 0.927 radians).
+
+**Example 2: Polar to rectangular**
+
+Convert (r, θ) = (4, π/3) to rectangular:
+
+$$
+x = 4\cos\left(\frac{\pi}{3}\right) = 4 \times \frac{1}{2} = 2
+$$
+
+$$
+y = 4\sin\left(\frac{\pi}{3}\right) = 4 \times \frac{\sqrt{3}}{2} \approx 3.464
+$$
+
+Rectangular form: approximately (2, 3.464).
+
+**Example 3: Convert an equation**
+
+Convert the rectangular equation x² + y² = 16 to polar form.
+
+We know that x² + y² = r² in polar coordinates, so we can substitute directly:
+
+$$
+r^2 = 16 \quad \Rightarrow \quad r = 4
+$$
+
+That's a circle of radius 4 centered at the origin. Much simpler in polar form.
+
+## Real-World Application
+
+Polar coordinates are used in:
+
+- Radar and sonar systems (distance and bearing angle are naturally polar)
+- Astronomy (planetary orbits are described in polar coordinates)
+- Navigation (GPS bearings, compass headings)
+- Electrical engineering (phasor diagrams for AC circuits)
+- Computer graphics (rotations, spiral patterns)
+- Physics (central force problems, orbital mechanics)
+
+Example: radar systems naturally use polar coordinates. The screen shows distance from the center (r) and direction (θ), which is exactly a polar grid.
+
+:::note[You've Got This]
+Polar coordinates are just another way to locate points: distance and angle instead of left/right and up/down. The conversion formulas are the key tools. Start with simple conversions, then try graphing basic polar equations like r = a cos θ. This system becomes very useful when dealing with circles, spirals, and rotational symmetry.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="precalculus-polar-coords"
+  questions={[
+    {
+      id: "q1",
+      text: "In polar coordinates, $r$ represents:",
+      options: [
+        "The distance from the origin",
+        "The angle from the x-axis",
+        "The x-coordinate",
+        "The y-coordinate",
+      ],
+      correctIndex: 0,
+      explanation: "$r$ is the radial distance from the origin.",
+    },
+    {
+      id: "q2",
+      text: "Convert (3, 4) to polar. The value of $r$ is:",
+      options: ["$5$", "$7$", "$12$", "$1$"],
+      correctIndex: 0,
+      explanation: "$r = \\sqrt{9 + 16} = \\sqrt{25} = 5$.",
+    },
+    {
+      id: "q3",
+      text: "The polar equation $r = 6$ represents:",
+      options: [
+        "A circle centered at the origin with radius 6",
+        "A straight line",
+        "A spiral",
+        "A cardioid",
+      ],
+      correctIndex: 0,
+      explanation: "Constant $r$ gives a circle centered at the origin.",
+    },
+    {
+      id: "q4",
+      text: "To convert from polar to rectangular, use:",
+      options: [
+        "$x = r\\cos\\theta$, $y = r\\sin\\theta$",
+        "$x = r\\sin\\theta$, $y = r\\cos\\theta$",
+        "$r = \\sqrt{x^2 + y^2}$",
+        "$\\theta = \\tan^{-1}(y/x)$",
+      ],
+      correctIndex: 0,
+      explanation:
+        "These are the standard polar-to-rectangular conversion formulas.",
+    },
+    {
+      id: "q5",
+      text: "Polar coordinates are particularly useful for describing:",
+      options: [
+        "Circles, spirals, and rotational symmetry",
+        "Only straight lines",
+        "Only parabolas",
+        "Only linear functions",
+      ],
+      correctIndex: 0,
+      explanation:
+        "Polar form excels at curves with rotational or radial symmetry.",
+    },
+  ]}
+/>

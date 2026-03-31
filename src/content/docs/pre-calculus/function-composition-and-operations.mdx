@@ -1,0 +1,153 @@
+---
+title: Function Composition and Operations
+description: Learn how to combine functions through addition, subtraction, multiplication, division, and composition
+sidebar:
+  order: 1
+---
+
+## What You'll Learn
+
+In this lesson you'll learn how to perform arithmetic operations on functions and how to compose functions, feeding the output of one function into another.
+
+## The Concept
+
+You already know how to add, subtract, multiply, and divide numbers. You can do the same things with functions.
+
+Given two functions f(x) and g(x), you can create new functions:
+
+- Sum: (f + g)(x) = f(x) + g(x)
+- Difference: (f - g)(x) = f(x) - g(x)
+- Product: (f · g)(x) = f(x) · g(x)
+- Quotient: (f / g)(x) = f(x) / g(x), provided g(x) ≠ 0
+
+These work exactly the way you'd expect. Evaluate each function separately, then combine the results.
+
+The more interesting operation is composition. Composition means plugging one function into another:
+
+$$
+(f \circ g)(x) = f(g(x))
+$$
+
+import FuncComposeDiagram from "../../../components/FuncComposeDiagram.astro";
+
+<FuncComposeDiagram />
+
+Think of it as a pipeline: x goes into g, and whatever comes out goes straight into f. The notation reads right to left: in (f ∘ g), you do g first, then f.
+
+One important thing: composition is not commutative. In general, f(g(x)) ≠ g(f(x)). The order matters.
+
+## Worked Example
+
+Let f(x) = 2x + 3 and g(x) = x² - 1.
+
+**Function operations:**
+
+$$
+(f + g)(x) = (2x + 3) + (x^2 - 1) = x^2 + 2x + 2
+$$
+
+$$
+(f \cdot g)(x) = (2x + 3)(x^2 - 1) = 2x^3 + 3x^2 - 2x - 3
+$$
+
+**Composition (f ∘ g):**
+
+Apply g first, then f:
+
+$$
+(f \circ g)(x) = f(g(x)) = f(x^2 - 1) = 2(x^2 - 1) + 3 = 2x^2 + 1
+$$
+
+**Composition (g ∘ f):**
+
+Now the other way around. Apply f first, then g:
+
+$$
+(g \circ f)(x) = g(f(x)) = g(2x + 3) = (2x + 3)^2 - 1 = 4x^2 + 12x + 8
+$$
+
+Notice that (f ∘ g)(x) = 2x² + 1 and (g ∘ f)(x) = 4x² + 12x + 8. Completely different results. Order matters.
+
+**Evaluating at a specific value:**
+
+Find (f ∘ g)(2):
+
+$$
+g(2) = 2^2 - 1 = 3, \quad \text{then} \quad f(3) = 2(3) + 3 = 9
+$$
+
+So (f ∘ g)(2) = 9. You can verify: 2(2²) + 1 = 2(4) + 1 = 9. ✓
+
+## Real-World Application
+
+Function composition and operations show up constantly:
+
+- Economics: if C(x) is cost and R(x) is revenue, then P(x) = R(x) - C(x) is profit
+- Physics: position, velocity, and acceleration are related through composition with derivatives
+- Computer science: chaining functions is the foundation of functional programming
+- Finance: compound interest is built by composing a growth function with itself repeatedly
+- Data pipelines: cleaning data, then transforming it, then analyzing it is function composition
+
+Example: a store offers a 20% discount, then charges 8% tax. If D(x) = 0.80x (discount) and T(x) = 1.08x (tax), the final price is T(D(x)) = 1.08(0.80x) = 0.864x. That's composition in action.
+
+:::note[You've Got This]
+Function operations are straightforward. Just apply the same rules you use with numbers. Composition is simply "function inside a function." The key is remembering the order: (f ∘ g) means do g first, then f. Practice writing a few compositions and this skill becomes very natural. It's used heavily in Calculus.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="precalculus-function-composition"
+  questions={[
+    {
+      id: "q1",
+      text: "$(f + g)(x)$ means:",
+      options: [
+        "$f(x) + g(x)$",
+        "$f(g(x))$",
+        "$f(x) \\cdot g(x)$",
+        "$f(x) / g(x)$",
+      ],
+      correctIndex: 0,
+      explanation:
+        "The sum of two functions is their individual outputs added together.",
+    },
+    {
+      id: "q2",
+      text: "If $f(x) = 2x$ and $g(x) = x + 3$, what is $(f \\circ g)(x)$?",
+      options: ["$2(x + 3) = 2x + 6$", "$2x + 3$", "$2x(x + 3)$", "$x + 5$"],
+      correctIndex: 0,
+      explanation: "$(f \\circ g)(x) = f(g(x)) = 2(x + 3) = 2x + 6$.",
+    },
+    {
+      id: "q3",
+      text: "In $(f \\circ g)(x)$, which function is applied first?",
+      options: ["$g$", "$f$", "Both at the same time", "It doesn't matter"],
+      correctIndex: 0,
+      explanation:
+        "Composition reads right to left: apply $g$ first, then $f$.",
+    },
+    {
+      id: "q4",
+      text: "When computing $(f / g)(x)$, you must ensure:",
+      options: [
+        "$g(x) \\neq 0$",
+        "$f(x) \\neq 0$",
+        "Both functions are quadratic",
+        "$x$ is positive",
+      ],
+      correctIndex: 0,
+      explanation:
+        "Division by zero is undefined, so $g(x)$ cannot equal zero.",
+    },
+    {
+      id: "q5",
+      text: "If $f(x) = x^2$ and $g(x) = 3x - 1$, then $(f \\circ g)(2)$ equals:",
+      options: ["$25$", "$11$", "$8$", "$17$"],
+      correctIndex: 0,
+      explanation: "$g(2) = 3(2) - 1 = 5$, then $f(5) = 5^2 = 25$.",
+    },
+  ]}
+/>

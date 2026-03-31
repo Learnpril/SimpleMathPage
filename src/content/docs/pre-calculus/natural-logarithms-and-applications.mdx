@@ -1,0 +1,157 @@
+---
+title: Natural Logarithms and Applications
+description: Explore the natural logarithm and its real-world uses
+sidebar:
+  order: 9
+---
+
+## What You'll Learn
+
+In this lesson you'll learn what the natural logarithm is, how it relates to the number e, and how to use it to solve real-world problems involving continuous growth and decay.
+
+## The Concept
+
+The natural logarithm, written as ln(x), is the logarithm with base e (approximately 2.71828):
+
+$$
+\ln x = \log_e x
+$$
+
+import NaturalLogGraph from "../../../components/NaturalLogGraph.astro";
+
+<NaturalLogGraph />
+
+The functions $e^x$ and $\ln(x)$ are inverses. The graph of $\ln(x)$ is the reflection of $e^x$ over the line y = x. Key points: $e^x$ passes through (0, 1), and $\ln(x)$ passes through (1, 0).
+
+Key properties (same rules as other logs, just with base e):
+
+- $\ln(e^x) = x$ and $e^{\ln x} = x$ (inverse relationship)
+- Product rule: $\ln(ab) = \ln a + \ln b$
+- Quotient rule: $\ln(a/b) = \ln a - \ln b$
+- Power rule: $\ln(a^k) = k \ln a$
+
+The number e shows up naturally in processes involving continuous change. Whenever something grows or decays at a rate proportional to its current size, e is the natural base.
+
+## Worked Example
+
+**Example 1: Solve an exponential equation with e**
+
+Solve:
+
+$$
+e^{2x} = 7
+$$
+
+Take the natural log of both sides:
+
+$$
+2x = \ln 7 \quad \Rightarrow \quad x = \frac{\ln 7}{2} \approx 0.973
+$$
+
+**Example 2: Solve a decay equation**
+
+Solve:
+
+$$
+5e^{-0.2t} = 2
+$$
+
+Isolate the exponential:
+
+$$
+e^{-0.2t} = 0.4
+$$
+
+Take ln of both sides:
+
+$$
+-0.2t = \ln(0.4) \approx -0.916 \quad \Rightarrow \quad t \approx 4.58
+$$
+
+**Example 3: Continuous compound interest**
+
+5,000 dollars invested at 6% compounded continuously for 10 years:
+
+$$
+A = Pe^{rt} = 5000 \cdot e^{0.06 \times 10} = 5000 \cdot e^{0.6} \approx 9{,}110.59
+$$
+
+Compare to annual compounding, which gives about 8,954. Continuous compounding earns roughly 156 dollars more over 10 years.
+
+## Real-World Application
+
+Natural logarithms are used in:
+
+- Finance (continuous compound interest, present value calculations)
+- Radioactive decay and carbon dating (half-life calculations use ln 2)
+- Population biology (logistic growth models)
+- Physics (Newton's law of cooling, capacitor discharge)
+- Chemistry (pH scale, reaction kinetics)
+- Information theory (entropy is measured in "nats" using ln)
+
+Example: the half-life formula can be derived from continuous decay. If a substance decays as $N(t) = N_0 e^{-kt}$, the half-life is $t_{1/2} = \ln 2 / k$.
+
+:::note[You've Got This]
+The natural logarithm is just log base e. The key identities are $\ln(e^x) = x$ and $e^{\ln x} = x$. When you see an equation with e, take ln of both sides. When you see ln, exponentiate with e. These tools are incredibly useful for modeling continuous change in science, finance, and nature.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="precalculus-natural-log"
+  questions={[
+    {
+      id: "q1",
+      text: "The natural logarithm is log base:",
+      options: ["$e$", "$10$", "$2$", "$\\pi$"],
+      correctIndex: 0,
+      explanation: "$\\ln x$ means $\\log_e x$.",
+    },
+    {
+      id: "q2",
+      text: "Solve $e^{3x} = 8$:",
+      options: [
+        "$x = \\frac{\\ln 8}{3}$",
+        "$x = \\frac{8}{3}$",
+        "$x = \\ln\\left(\\frac{8}{3}\\right)$",
+        "$x = 3\\ln 8$",
+      ],
+      correctIndex: 0,
+      explanation: "Take ln: $3x = \\ln 8$, so $x = (\\ln 8)/3$.",
+    },
+    {
+      id: "q3",
+      text: "The formula for continuous compound interest is:",
+      options: [
+        "$A = Pe^{rt}$",
+        "$A = P(1 + r)^t$",
+        "$A = P + rt$",
+        "$A = P(1 - r)^t$",
+      ],
+      correctIndex: 0,
+      explanation: "Continuous compounding uses base $e$.",
+    },
+    {
+      id: "q4",
+      text: "Natural logarithms are particularly useful for modeling:",
+      options: [
+        "Continuous growth and decay",
+        "Linear relationships only",
+        "Quadratic relationships",
+        "Periodic motion only",
+      ],
+      correctIndex: 0,
+      explanation:
+        "Processes involving continuous percentage change are naturally modeled with base $e$.",
+    },
+    {
+      id: "q5",
+      text: "The inverse of $e^x$ is:",
+      options: ["$\\ln x$", "$\\log_{10} x$", "$x^e$", "$10^x$"],
+      correctIndex: 0,
+      explanation: "The natural log undoes the exponential function $e^x$.",
+    },
+  ]}
+/>

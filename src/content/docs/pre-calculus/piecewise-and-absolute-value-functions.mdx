@@ -1,0 +1,201 @@
+---
+title: Piecewise and Absolute Value Functions
+description: Learn how to work with piecewise-defined functions and absolute value functions
+sidebar:
+  order: 3
+---
+
+## What You'll Learn
+
+In this lesson you'll learn how to define, evaluate, graph, and analyze piecewise functions and absolute value functions. If you covered piecewise functions in Algebra 2, this is a recap with some new depth, including writing absolute value expressions as piecewise functions and analyzing continuity at the boundary points.
+
+## The Concept
+
+### Piecewise Functions
+
+A piecewise function uses different rules for different parts of its domain. It's written using cases:
+
+$$
+f(x) =
+\begin{cases}
+\text{rule 1} & \text{if condition 1} \\
+\text{rule 2} & \text{if condition 2}
+\end{cases}
+$$
+
+To evaluate: check which condition the input satisfies, then use that rule. The key is paying attention to the boundary points and whether they use < or ≤.
+
+### Absolute Value Functions
+
+The absolute value function is the most common piecewise function:
+
+$$
+f(x) = |x| =
+\begin{cases}
+x & \text{if } x \geq 0 \\
+-x & \text{if } x < 0
+\end{cases}
+$$
+
+Its graph is a V-shape with vertex at the origin. Transformations work the same as with other functions: y = a|x - h| + k has vertex at (h, k), opens up if a > 0 and down if a < 0, and is stretched or compressed by |a|.
+
+import PiecewiseAbsGraph from "../../../components/PiecewiseAbsGraph.astro";
+
+<PiecewiseAbsGraph />
+
+## Worked Example
+
+**Example 1: Evaluate a piecewise function**
+
+$$
+f(x) =
+\begin{cases}
+2x + 5 & \text{if } x < 0 \\
+x^2 - 3 & \text{if } x \geq 0
+\end{cases}
+$$
+
+Find f(-2) and f(3):
+
+For f(-2): since -2 < 0, use the first rule:
+
+$$
+f(-2) = 2(-2) + 5 = -4 + 5 = 1
+$$
+
+For f(3): since 3 ≥ 0, use the second rule:
+
+$$
+f(3) = 3^2 - 3 = 9 - 3 = 6
+$$
+
+**Example 2: Graph y = |x - 2| + 1**
+
+This is the basic V-shape shifted right 2 and up 1. The vertex is at (2, 1). The left arm has slope -1 and the right arm has slope +1.
+
+**Example 3: Write |2x - 6| as a piecewise function**
+
+First find the critical point where the expression inside equals zero: 2x - 6 = 0, so x = 3.
+
+$$
+|2x - 6| =
+\begin{cases}
+2x - 6 & \text{if } x \geq 3 \\
+-(2x - 6) & \text{if } x < 3
+\end{cases}
+=
+\begin{cases}
+2x - 6 & \text{if } x \geq 3 \\
+-2x + 6 & \text{if } x < 3
+\end{cases}
+$$
+
+**Example 4: Check continuity at a boundary**
+
+$$
+g(x) =
+\begin{cases}
+x + 4 & \text{if } x < 2 \\
+3x & \text{if } x \geq 2
+\end{cases}
+$$
+
+At x = 2, check both sides:
+
+- From the left: x + 4 = 2 + 4 = 6
+- From the right: 3x = 3(2) = 6
+
+Both sides give 6, so g is continuous at x = 2. If they didn't match, there would be a jump discontinuity.
+
+## Real-World Application
+
+Piecewise and absolute value functions model many real situations:
+
+- Tax brackets: different rates apply to different income ranges
+- Shipping costs: base fee plus per-pound charge, with different rates above certain weights
+- Utility pricing: one rate for the first 500 kWh, a higher rate after that
+- Distance and displacement: absolute value gives total distance regardless of direction
+- Temperature control: heating kicks in below a setpoint, cooling above it
+
+Example: a phone plan charges $30/month for the first 5 GB, then $10 per additional GB. That's a piecewise function:
+
+$$
+\text{Cost}(x) =
+\begin{cases}
+30 & \text{if } x \leq 5 \\
+30 + 10(x - 5) & \text{if } x > 5
+\end{cases}
+$$
+
+:::note[You've Got This]
+Piecewise functions are simply "different rules for different situations." Always check which condition your input satisfies first. Absolute value functions create V-shapes and are useful for anything involving distance or magnitude. When in doubt, draw the graph or make a table of values. It helps a lot.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="precalculus-piecewise-abs-value"
+  questions={[
+    {
+      id: "q1",
+      text: "A piecewise function is defined by:",
+      options: [
+        "Different rules for different parts of the domain",
+        "Only one rule for all $x$",
+        "Only linear terms",
+        "Only quadratic terms",
+      ],
+      correctIndex: 0,
+      explanation:
+        "It uses different expressions depending on which condition the input satisfies.",
+    },
+    {
+      id: "q2",
+      text: "The graph of $y = |x - 3| + 2$ has its vertex at:",
+      options: ["$(3, 2)$", "$(2, 3)$", "$(-3, 2)$", "$(3, -2)$"],
+      correctIndex: 0,
+      explanation:
+        "The form $y = |x - h| + k$ has vertex at $(h, k)$. Here $h = 3$, $k = 2$.",
+    },
+    {
+      id: "q3",
+      text: "When evaluating a piecewise function, the first step is to:",
+      options: [
+        "Check which condition the input satisfies",
+        "Add all pieces together",
+        "Graph the function",
+        "Find the inverse",
+      ],
+      correctIndex: 0,
+      explanation: "Determine which rule applies to your specific input value.",
+    },
+    {
+      id: "q4",
+      text: "$|x|$ written as a piecewise function is:",
+      options: [
+        "$x$ if $x \\geq 0$, $\\,-x$ if $x \\lt 0$",
+        "$x$ for all $x$",
+        "$-x$ for all $x$",
+        "$x^2$ for all $x$",
+      ],
+      correctIndex: 0,
+      explanation:
+        "Absolute value returns the input unchanged if positive, and negates it if negative.",
+    },
+    {
+      id: "q5",
+      text: "A piecewise function has a jump discontinuity at $x = a$ when:",
+      options: [
+        "The left and right limits at $x = a$ are different",
+        "The function is undefined at $x = a$",
+        "The function equals zero at $x = a$",
+        "The slope changes at $x = a$",
+      ],
+      correctIndex: 0,
+      explanation:
+        "If the two pieces don't meet at the same value, there's a jump.",
+    },
+  ]}
+/>

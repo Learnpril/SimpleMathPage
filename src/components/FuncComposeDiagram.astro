@@ -1,0 +1,70 @@
+---
+/**
+ * FuncComposeDiagram — shows function composition as a pipeline:
+ * x → g(x) → f(g(x))
+ */
+const w = 420;
+const h = 100;
+const boxW = 80;
+const boxH = 44;
+const y = (h - boxH) / 2;
+const gap = 50;
+// Positions
+const x1 = 20;                    // input x
+const x2 = x1 + 50;              // g box
+const x3 = x2 + boxW + gap;      // f box
+const x4 = x3 + boxW + 30;       // output
+---
+
+<figure class="fcd" role="img" aria-label="Function composition pipeline: x goes into g, then the result goes into f">
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    {/* Input label */}
+    <text class="fcd-io" x={x1} y={h / 2 + 5} font-size="16" font-weight="bold">x</text>
+
+    {/* Arrow x → g */}
+    <line x1={x1 + 14} y1={h / 2} x2={x2 - 2} y2={h / 2} class="fcd-arrow" stroke-width="2" marker-end="url(#fcd-head)" />
+
+    {/* g box */}
+    <rect x={x2} y={y} width={boxW} height={boxH} rx="8" class="fcd-box-g" />
+    <text class="fcd-label-g" x={x2 + boxW / 2} y={h / 2 + 6} font-size="16" font-weight="bold" text-anchor="middle">g(x)</text>
+
+    {/* Arrow g → f */}
+    <line x1={x2 + boxW + 2} y1={h / 2} x2={x3 - 2} y2={h / 2} class="fcd-arrow" stroke-width="2" marker-end="url(#fcd-head)" />
+
+    {/* f box */}
+    <rect x={x3} y={y} width={boxW} height={boxH} rx="8" class="fcd-box-f" />
+    <text class="fcd-label-f" x={x3 + boxW / 2} y={h / 2 + 6} font-size="16" font-weight="bold" text-anchor="middle">f</text>
+
+    {/* Arrow f → output */}
+    <line x1={x3 + boxW + 2} y1={h / 2} x2={x4 - 2} y2={h / 2} class="fcd-arrow" stroke-width="2" marker-end="url(#fcd-head)" />
+
+    {/* Output label */}
+    <text class="fcd-io" x={x4} y={h / 2 + 5} font-size="14" font-weight="bold">f(g(x))</text>
+
+    {/* Arrowhead marker */}
+    <defs>
+      <marker id="fcd-head" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+        <polygon points="0 0, 8 3, 0 6" class="fcd-head-fill" />
+      </marker>
+    </defs>
+  </svg>
+</figure>
+
+<style>
+  .fcd { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .fcd svg { max-width:100%; height:auto; }
+  .fcd-box-g { fill:none; stroke:#7ee787; stroke-width:2; }
+  .fcd-box-f { fill:none; stroke:#58a6ff; stroke-width:2; }
+  .fcd-label-g { fill:#7ee787; font-family:'Libre Baskerville',Georgia,serif; }
+  .fcd-label-f { fill:#58a6ff; font-family:'Libre Baskerville',Georgia,serif; }
+  .fcd-io { fill:#d2a8ff; font-family:'Libre Baskerville',Georgia,serif; }
+  .fcd-arrow { stroke:#888; }
+  .fcd-head-fill { fill:#888; }
+  :global([data-theme="light"]) .fcd-box-g { stroke:#1a7f37; }
+  :global([data-theme="light"]) .fcd-box-f { stroke:#0969da; }
+  :global([data-theme="light"]) .fcd-label-g { fill:#1a7f37; }
+  :global([data-theme="light"]) .fcd-label-f { fill:#0969da; }
+  :global([data-theme="light"]) .fcd-io { fill:#8250df; }
+  :global([data-theme="light"]) .fcd-arrow { stroke:#555; }
+  :global([data-theme="light"]) .fcd-head-fill { fill:#555; }
+</style>

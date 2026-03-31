@@ -1,0 +1,73 @@
+---
+/**
+ * QuarticExampleGraph — plots f(x) = x⁴ - 4x²
+ * Shows roots at x = -2, 0 (bounce), 2 and both ends up.
+ */
+const w = 320;
+const h = 260;
+const pad = 35;
+const gw = w - 2 * pad;
+const gh = h - 2 * pad;
+const xMin = -3, xMax = 3, yMin = -5, yMax = 6;
+const sx = (x: number) => pad + ((x - xMin) / (xMax - xMin)) * gw;
+const sy = (y: number) => pad + ((yMax - y) / (yMax - yMin)) * gh;
+
+const f = (x: number) => x * x * x * x - 4 * x * x;
+const pts: string[] = [];
+for (let x = -2.4; x <= 2.4; x += 0.04) {
+  const y = f(x);
+  if (y >= yMin - 1 && y <= yMax + 1) pts.push(`${sx(x).toFixed(1)},${sy(y).toFixed(1)}`);
+}
+---
+
+<figure class="qeg" role="img" aria-label="Graph of f(x) = x⁴ - 4x² showing roots and end behavior">
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    {/* Grid */}
+    {[-4, -3, -2, -1, 0, 1, 2, 3, 4, 5].map(v => (
+      <g>
+        {v >= xMin && v <= xMax && <line x1={sx(v)} y1={sy(yMin)} x2={sx(v)} y2={sy(yMax)} class="qeg-grid" stroke-width="0.5" />}
+        {v >= yMin && v <= yMax && <line x1={sx(xMin)} y1={sy(v)} x2={sx(xMax)} y2={sy(v)} class="qeg-grid" stroke-width="0.5" />}
+      </g>
+    ))}
+    {/* Axes */}
+    <line x1={sx(xMin)} y1={sy(0)} x2={sx(xMax)} y2={sy(0)} class="qeg-axis" stroke-width="1.5" />
+    <line x1={sx(0)} y1={sy(yMin)} x2={sx(0)} y2={sy(yMax)} class="qeg-axis" stroke-width="1.5" />
+    {/* Curve */}
+    <polyline points={pts.join(' ')} fill="none" class="qeg-curve" stroke-width="2.5" />
+    {/* Root dots */}
+    <circle cx={sx(-2)} cy={sy(0)} r="4" class="qeg-cross" />
+    <circle cx={sx(0)} cy={sy(0)} r="4" class="qeg-bounce" />
+    <circle cx={sx(2)} cy={sy(0)} r="4" class="qeg-cross" />
+    {/* Labels */}
+    <text class="qeg-lbl" x={sx(0.3)} y={sy(5.2)} font-size="11" font-weight="bold">f(x) = x⁴ - 4x²</text>
+    <text class="qeg-cross-lbl" x={sx(-2) - 4} y={sy(0) - 10} font-size="9" text-anchor="middle">crosses</text>
+    <text class="qeg-bounce-lbl" x={sx(0)} y={sy(0) - 10} font-size="9" text-anchor="middle">bounces</text>
+    <text class="qeg-cross-lbl" x={sx(2) + 4} y={sy(0) - 10} font-size="9" text-anchor="middle">crosses</text>
+    {/* End behavior arrows */}
+    <text class="qeg-arrow" x={sx(-2.3)} y={sy(4)} font-size="14">↗</text>
+    <text class="qeg-arrow" x={sx(2.1)} y={sy(4)} font-size="14">↗</text>
+  </svg>
+</figure>
+
+<style>
+  .qeg { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .qeg svg { max-width:100%; height:auto; }
+  .qeg-grid { stroke:#333; }
+  .qeg-axis { stroke:#666; }
+  .qeg-curve { stroke:#d2a8ff; }
+  .qeg-cross { fill:#7ee787; }
+  .qeg-bounce { fill:#f0883e; }
+  .qeg-lbl { fill:#d2a8ff; font-family:'Libre Baskerville',Georgia,serif; }
+  .qeg-cross-lbl { fill:#7ee787; font-family:'Libre Baskerville',Georgia,serif; }
+  .qeg-bounce-lbl { fill:#f0883e; font-family:'Libre Baskerville',Georgia,serif; }
+  .qeg-arrow { fill:#7ee787; font-family:sans-serif; }
+  :global([data-theme="light"]) .qeg-grid { stroke:#ddd; }
+  :global([data-theme="light"]) .qeg-axis { stroke:#999; }
+  :global([data-theme="light"]) .qeg-curve { stroke:#8250df; }
+  :global([data-theme="light"]) .qeg-cross { fill:#1a7f37; }
+  :global([data-theme="light"]) .qeg-bounce { fill:#d4700a; }
+  :global([data-theme="light"]) .qeg-lbl { fill:#8250df; }
+  :global([data-theme="light"]) .qeg-cross-lbl { fill:#1a7f37; }
+  :global([data-theme="light"]) .qeg-bounce-lbl { fill:#d4700a; }
+  :global([data-theme="light"]) .qeg-arrow { fill:#1a7f37; }
+</style>
