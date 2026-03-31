@@ -1,0 +1,104 @@
+---
+/**
+ * RowReductionSteps — shows the 3-step row reduction process
+ * for the system x + 2y = 5, 3x + 4y = 11 as a clear
+ * step-by-step flow with arrows between matrices.
+ */
+const w = 340;
+const h = 340;
+---
+
+<figure class="rrs" role="img" aria-label="Row reduction: three steps from augmented matrix to solution">
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    {/* Column headers */}
+    <text class="rrs-col-hdr" x="30" y="14" font-size="10">x</text>
+    <text class="rrs-col-hdr" x="58" y="14" font-size="10">y</text>
+    <text class="rrs-col-hdr" x="104" y="14" font-size="10">=</text>
+
+    {/* Step 1: Original matrix */}
+    <text class="rrs-step" x="10" y="30" font-size="10" font-weight="bold">Start</text>
+    <rect x="10" y="36" width="130" height="48" rx="6" class="rrs-box" fill-opacity="0.08" />
+    <text class="rrs-r1" x="24" y="56" font-size="14" font-family="'Courier New',monospace">1   2  |  5</text>
+    <text class="rrs-r2" x="24" y="76" font-size="14" font-family="'Courier New',monospace">3   4  | 11</text>
+    <line x1="95" y1="38" x2="95" y2="82" class="rrs-div" stroke-width="1" stroke-dasharray="3,2" />
+    {/* Equation translations */}
+    <text class="rrs-eq" x="150" y="56" font-size="9">→ 1x + 2y = 5</text>
+    <text class="rrs-eq" x="150" y="76" font-size="9">→ 3x + 4y = 11</text>
+
+    {/* Arrow 1 */}
+    <line x1="75" y1="88" x2="75" y2="118" class="rrs-arrow" stroke-width="1.5" />
+    <polygon points="70,114 75,124 80,114" class="rrs-arrow-head" />
+    <text class="rrs-op" x="88" y="109" font-size="9">R2 - 3·R1</text>
+
+    {/* Step 2: After elimination */}
+    <text class="rrs-step" x="10" y="138" font-size="10" font-weight="bold">After elimination</text>
+    <rect x="10" y="144" width="130" height="48" rx="6" class="rrs-box" fill-opacity="0.08" />
+    <text class="rrs-r1" x="24" y="164" font-size="14" font-family="'Courier New',monospace">1   2  |  5</text>
+    <text class="rrs-r2-new" x="24" y="184" font-size="14" font-family="'Courier New',monospace">0  -2  | -4</text>
+    <line x1="95" y1="146" x2="95" y2="190" class="rrs-div" stroke-width="1" stroke-dasharray="3,2" />
+    {/* Highlight the zero */}
+    <rect x="20" y="171" width="16" height="16" rx="3" class="rrs-zero-hl" fill-opacity="0.2" />
+    {/* Equation translation */}
+    <text class="rrs-eq" x="150" y="184" font-size="9">→ 0x - 2y = -4</text>
+    <text class="rrs-eq-note" x="150" y="196" font-size="8">(x is gone from Row 2)</text>
+
+    {/* Arrow 2 */}
+    <line x1="75" y1="196" x2="75" y2="226" class="rrs-arrow" stroke-width="1.5" />
+    <polygon points="70,222 75,232 80,222" class="rrs-arrow-head" />
+    <text class="rrs-op" x="88" y="217" font-size="9">R2 ÷ (-2)</text>
+
+    {/* Step 3: Clean form */}
+    <text class="rrs-step" x="10" y="246" font-size="10" font-weight="bold">Clean form</text>
+    <rect x="10" y="252" width="130" height="48" rx="6" class="rrs-box" fill-opacity="0.08" />
+    <text class="rrs-r1" x="24" y="272" font-size="14" font-family="'Courier New',monospace">1   2  |  5</text>
+    <text class="rrs-r2-done" x="24" y="292" font-size="14" font-family="'Courier New',monospace">0   1  |  2</text>
+    <line x1="95" y1="254" x2="95" y2="298" class="rrs-div" stroke-width="1" stroke-dasharray="3,2" />
+
+    {/* Solution readout */}
+    <text class="rrs-read" x="160" y="272" font-size="11">Row 2: y = 2</text>
+    <text class="rrs-read" x="160" y="292" font-size="11">Row 1: x + 2(2) = 5</text>
+    <text class="rrs-sol" x="160" y="316" font-size="12" font-weight="bold">x = 1, y = 2</text>
+
+    {/* Connecting line from matrix to readout */}
+    <line x1="144" y1="276" x2="156" y2="272" class="rrs-conn" stroke-width="1" stroke-dasharray="2,2" />
+  </svg>
+</figure>
+
+<style>
+  .rrs { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .rrs svg { max-width:100%; height:auto; }
+  .rrs-col-hdr { fill:#58a6ff; font-family:'Libre Baskerville',Georgia,serif; font-weight:bold; }
+  .rrs-box { stroke:#555; fill:#58a6ff; }
+  .rrs-step { fill:#aaa; font-family:'Libre Baskerville',Georgia,serif; }
+  .rrs-r1 { fill:#ccc; }
+  .rrs-r2 { fill:#f0883e; }
+  .rrs-r2-new { fill:#7ee787; }
+  .rrs-r2-done { fill:#7ee787; }
+  .rrs-div { stroke:#666; }
+  .rrs-op { fill:#d2a8ff; font-family:'Libre Baskerville',Georgia,serif; }
+  .rrs-arrow { stroke:#d2a8ff; }
+  .rrs-arrow-head { fill:#d2a8ff; }
+  .rrs-zero-hl { fill:#7ee787; }
+  .rrs-eq { fill:#888; font-family:'Libre Baskerville',Georgia,serif; }
+  .rrs-eq-note { fill:#666; font-family:'Libre Baskerville',Georgia,serif; font-style:italic; }
+  .rrs-read { fill:#aaa; font-family:'Libre Baskerville',Georgia,serif; }
+  .rrs-sol { fill:#58a6ff; font-family:'Libre Baskerville',Georgia,serif; }
+  .rrs-conn { stroke:#666; }
+  :global([data-theme="light"]) .rrs-col-hdr { fill:#0550ae; }
+  :global([data-theme="light"]) .rrs-box { stroke:#ccc; fill:#0550ae; }
+  :global([data-theme="light"]) .rrs-step { fill:#666; }
+  :global([data-theme="light"]) .rrs-r1 { fill:#444; }
+  :global([data-theme="light"]) .rrs-r2 { fill:#b35900; }
+  :global([data-theme="light"]) .rrs-r2-new { fill:#116329; }
+  :global([data-theme="light"]) .rrs-r2-done { fill:#116329; }
+  :global([data-theme="light"]) .rrs-div { stroke:#999; }
+  :global([data-theme="light"]) .rrs-op { fill:#6639ba; }
+  :global([data-theme="light"]) .rrs-arrow { stroke:#6639ba; }
+  :global([data-theme="light"]) .rrs-arrow-head { fill:#6639ba; }
+  :global([data-theme="light"]) .rrs-zero-hl { fill:#116329; }
+  :global([data-theme="light"]) .rrs-eq { fill:#666; }
+  :global([data-theme="light"]) .rrs-eq-note { fill:#888; }
+  :global([data-theme="light"]) .rrs-read { fill:#666; }
+  :global([data-theme="light"]) .rrs-sol { fill:#0550ae; }
+  :global([data-theme="light"]) .rrs-conn { stroke:#999; }
+</style>

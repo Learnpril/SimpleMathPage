@@ -1,0 +1,70 @@
+---
+/**
+ * CramersVisual — shows two lines intersecting at the solution
+ * point found by Cramer's Rule: 2x + 3y = 8 and x - 4y = -5.
+ * Solution: x = 17/11 ≈ 1.545, y = 18/11 ≈ 1.636
+ */
+const w = 260;
+const h = 240;
+const pad = 35;
+const gw = w - 2 * pad;
+const gh = h - 2 * pad;
+const xMin = -2, xMax = 6, yMin = -2, yMax = 4;
+const sx = (x: number) => pad + ((x - xMin) / (xMax - xMin)) * gw;
+const sy = (y: number) => pad + ((yMax - y) / (yMax - yMin)) * gh;
+// Line 1: 2x + 3y = 8 → y = (8 - 2x)/3
+// Line 2: x - 4y = -5 → y = (x + 5)/4
+const l1 = (x: number) => (8 - 2 * x) / 3;
+const l2 = (x: number) => (x + 5) / 4;
+// Solution point
+const solX = 17 / 11;
+const solY = 18 / 11;
+---
+
+<figure class="crv" role="img" aria-label="Two lines intersecting at the Cramer's Rule solution point">
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    {/* Grid */}
+    {[-1,0,1,2,3,4,5].map(v => (
+      <g>
+        {v >= xMin && v <= xMax && <line x1={sx(v)} y1={sy(yMin)} x2={sx(v)} y2={sy(yMax)} class="crv-grid" stroke-width="0.5" />}
+        {v >= yMin && v <= yMax && <line x1={sx(xMin)} y1={sy(v)} x2={sx(xMax)} y2={sy(v)} class="crv-grid" stroke-width="0.5" />}
+      </g>
+    ))}
+    <line x1={sx(xMin)} y1={sy(0)} x2={sx(xMax)} y2={sy(0)} class="crv-axis" stroke-width="1.5" />
+    <line x1={sx(0)} y1={sy(yMin)} x2={sx(0)} y2={sy(yMax)} class="crv-axis" stroke-width="1" />
+
+    {/* Line 1: 2x + 3y = 8 (blue) */}
+    <line x1={sx(-2)} y1={sy(l1(-2))} x2={sx(6)} y2={sy(l1(6))} class="crv-line1" stroke-width="2" />
+    {/* Line 2: x - 4y = -5 (orange) */}
+    <line x1={sx(-2)} y1={sy(l2(-2))} x2={sx(6)} y2={sy(l2(6))} class="crv-line2" stroke-width="2" />
+
+    {/* Solution point */}
+    <circle cx={sx(solX)} cy={sy(solY)} r="5" class="crv-dot" />
+
+    {/* Labels — positioned to avoid lines and axes */}
+    <text class="crv-lbl1" x={sx(3.8)} y={sy(0.4)} font-size="10">2x + 3y = 8</text>
+    <text class="crv-lbl2" x={sx(3.5)} y={sy(3.2)} font-size="10">x - 4y = -5</text>
+    <text class="crv-sol" x={sx(2.6)} y={sy(1.2)} font-size="9">(17/11, 18/11)</text>
+  </svg>
+</figure>
+
+<style>
+  .crv { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .crv svg { max-width:100%; height:auto; }
+  .crv-grid { stroke:#333; }
+  .crv-axis { stroke:#666; }
+  .crv-line1 { stroke:#58a6ff; }
+  .crv-line2 { stroke:#f0883e; }
+  .crv-dot { fill:#7ee787; }
+  .crv-lbl1 { fill:#58a6ff; font-family:'Libre Baskerville',Georgia,serif; }
+  .crv-lbl2 { fill:#f0883e; font-family:'Libre Baskerville',Georgia,serif; }
+  .crv-sol { fill:#7ee787; font-family:'Libre Baskerville',Georgia,serif; font-weight:bold; }
+  :global([data-theme="light"]) .crv-grid { stroke:#ddd; }
+  :global([data-theme="light"]) .crv-axis { stroke:#999; }
+  :global([data-theme="light"]) .crv-line1 { stroke:#0550ae; }
+  :global([data-theme="light"]) .crv-line2 { stroke:#b35900; }
+  :global([data-theme="light"]) .crv-dot { fill:#116329; }
+  :global([data-theme="light"]) .crv-lbl1 { fill:#0550ae; }
+  :global([data-theme="light"]) .crv-lbl2 { fill:#b35900; }
+  :global([data-theme="light"]) .crv-sol { fill:#116329; }
+</style>

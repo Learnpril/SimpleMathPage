@@ -1,0 +1,83 @@
+---
+/**
+ * PolarCurveSingle — renders a single polar curve in a card.
+ * Props: label, color, type, lightColor (optional darker color for light mode)
+ */
+interface Props {
+  label: string;
+  color: string;
+  lightColor?: string;
+  type: 'cardioid' | 'limacon' | 'rose3' | 'rose4' | 'lemniscate' | 'archSpiral' | 'logSpiral';
+}
+const { label, color, lightColor, type } = Astro.props;
+const lc = lightColor || color;
+
+const sz = 220;
+const cx = sz / 2;
+const cy = sz / 2;
+
+const fns: Record<string, { fn: (t: number) => number; scale: number; tMax?: number; tMin?: number }> = {
+  cardioid:   { fn: (t) => 1 + Math.cos(t), scale: 45 },
+  limacon:    { fn: (t) => 1 + 2 * Math.cos(t), scale: 28 },
+  rose3:      { fn: (t) => Math.cos(3 * t), scale: 75 },
+  rose4:      { fn: (t) => Math.cos(2 * t), scale: 75 },
+  lemniscate: { fn: (t) => Math.sqrt(Math.max(0, 4 * Math.cos(2 * t))), scale: 38 },
+  archSpiral: { fn: (t) => 0.4 * t, scale: 10, tMax: 6 * Math.PI },
+  logSpiral:  { fn: (t) => 0.5 * Math.exp(0.15 * t), scale: 22, tMax: 4 * Math.PI, tMin: -8 * Math.PI },
+};
+
+const { fn, scale, tMax, tMin } = fns[type];
+const maxT = tMax || 2 * Math.PI;
+const minT = tMin || 0;
+const pts: string[] = [];
+const steps = 1080;
+for (let i = 0; i <= steps; i++) {
+  const t = minT + (i / steps) * (maxT - minT);
+  const r = fn(t);
+  if (isNaN(r)) continue;
+  const px = cx + r * Math.cos(t) * scale;
+  const py = cy - r * Math.sin(t) * scale;
+  if (px >= -10 && px <= sz + 10 && py >= -10 && py <= sz + 10) {
+    pts.push(`${px.toFixed(1)},${py.toFixed(1)}`);
+  }
+}
+// For lemniscate, draw the negative branch as a second polyline
+const pts2: string[] = [];
+if (type === 'lemniscate') {
+  for (let i = 0; i <= steps; i++) {
+    const t = (i / steps) * maxT;
+    const val = 4 * Math.cos(2 * t);
+    if (val <= 0) continue;
+    const r = -Math.sqrt(val);
+    const px = cx + r * Math.cos(t) * scale;
+    const py = cy - r * Math.sin(t) * scale;
+    if (px >= -10 && px <= sz + 10 && py >= -10 && py <= sz + 10) {
+      pts2.push(`${px.toFixed(1)},${py.toFixed(1)}`);
+    }
+  }
+}
+---
+
+<figure class="pcs" role="img" aria-label={label} style={`--curve-dark:${color}; --curve-light:${lc};`}>
+  <svg viewBox={`0 0 ${sz} ${sz}`} width={sz} height={sz} xmlns="http://www.w3.org/2000/svg">
+    <rect x="0" y="0" width={sz} height={sz} rx="10" class="pcs-bg" />
+    <line x1="10" y1={cy} x2={sz - 10} y2={cy} class="pcs-axis" stroke-width="0.5" />
+    <line x1={cx} y1="10" x2={cx} y2={sz - 10} class="pcs-axis" stroke-width="0.5" />
+    <polyline points={pts.join(' ')} fill="none" class="pcs-curve" stroke-width="2.5" />
+    {pts2.length > 0 && <polyline points={pts2.join(' ')} fill="none" class="pcs-curve" stroke-width="2.5" />}
+  </svg>
+  <figcaption class="pcs-cap">{label}</figcaption>
+</figure>
+
+<style>
+  .pcs { display:flex; flex-direction:column; align-items:center; margin:1rem 0; }
+  .pcs svg { max-width:100%; height:auto; }
+  .pcs-bg { fill:#1c2128; stroke:#444; stroke-width:1; }
+  .pcs-axis { stroke:#555; }
+  .pcs-curve { stroke: var(--curve-dark); }
+  .pcs-cap { font-family:'Libre Baskerville',Georgia,serif; font-size:0.9rem; font-weight:bold; margin-top:0.4rem; color: var(--curve-dark); }
+  :global([data-theme="light"]) .pcs-bg { fill:#f0f0f0; stroke:#ccc; }
+  :global([data-theme="light"]) .pcs-axis { stroke:#bbb; }
+  :global([data-theme="light"]) .pcs-curve { stroke: var(--curve-light); }
+  :global([data-theme="light"]) .pcs-cap { color: var(--curve-light); }
+</style>

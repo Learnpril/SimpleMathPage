@@ -1,0 +1,73 @@
+---
+/**
+ * VectorAnatomyDiagram — shows a single vector v = <3, 4> with
+ * its components, magnitude, and direction angle labeled.
+ */
+const w = 260;
+const h = 240;
+const pad = 35;
+const gw = w - 2 * pad;
+const gh = h - 2 * pad;
+const xMin = -1, xMax = 5, yMin = -1, yMax = 6;
+const sx = (x: number) => pad + ((x - xMin) / (xMax - xMin)) * gw;
+const sy = (y: number) => pad + ((yMax - y) / (yMax - yMin)) * gh;
+---
+
+<figure class="vanat" role="img" aria-label="Anatomy of a vector: components, magnitude, and direction angle">
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    {/* Grid */}
+    {[0,1,2,3,4,5].map(v => (
+      <g>
+        {v >= xMin && v <= xMax && <line x1={sx(v)} y1={sy(yMin)} x2={sx(v)} y2={sy(yMax)} class="vanat-grid" stroke-width="0.5" />}
+        {v >= yMin && v <= yMax && <line x1={sx(xMin)} y1={sy(v)} x2={sx(xMax)} y2={sy(v)} class="vanat-grid" stroke-width="0.5" />}
+      </g>
+    ))}
+    <line x1={sx(xMin)} y1={sy(0)} x2={sx(xMax)} y2={sy(0)} class="vanat-axis" stroke-width="1.5" />
+    <line x1={sx(0)} y1={sy(yMin)} x2={sx(0)} y2={sy(yMax)} class="vanat-axis" stroke-width="1" />
+
+    {/* Dashed component lines */}
+    <line x1={sx(0)} y1={sy(0)} x2={sx(3)} y2={sy(0)} class="vanat-comp" stroke-width="1.5" stroke-dasharray="5,3" />
+    <line x1={sx(3)} y1={sy(0)} x2={sx(3)} y2={sy(4)} class="vanat-comp" stroke-width="1.5" stroke-dasharray="5,3" />
+
+    {/* Vector arrow */}
+    <defs>
+      <marker id="vanat-ah" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+        <polygon points="0 0, 8 3, 0 6" fill="#58a6ff" />
+      </marker>
+    </defs>
+    <line x1={sx(0)} y1={sy(0)} x2={sx(3)} y2={sy(4)} class="vanat-vec" stroke-width="2.5" marker-end="url(#vanat-ah)" />
+
+    {/* Angle arc */}
+    <path d={`M ${sx(0.8)},${sy(0)} A 20 20 0 0 0 ${sx(0.48)},${sy(0.64)}`} fill="none" class="vanat-arc" stroke-width="1.5" />
+
+    {/* Labels */}
+    <text class="vanat-vec-lbl" x={sx(0.2)} y={sy(3.2)} font-size="12" font-weight="bold">v = ⟨3, 4⟩</text>
+    <text class="vanat-comp-lbl" x={sx(1)} y={sy(-0.6)} font-size="10">3 (horizontal)</text>
+    <text class="vanat-comp-lbl" x={sx(3.5)} y={sy(2)} font-size="10">4 (vertical)</text>
+    <text class="vanat-mag-lbl" x={sx(2.2)} y={sy(4.6)} font-size="9">|v| = 5</text>
+    <text class="vanat-angle-lbl" x={sx(1.4)} y={sy(0.4)} font-size="9">53°</text>
+  </svg>
+</figure>
+
+<style>
+  .vanat { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .vanat svg { max-width:100%; height:auto; }
+  .vanat-grid { stroke:#333; }
+  .vanat-axis { stroke:#666; }
+  .vanat-vec { stroke:#58a6ff; }
+  .vanat-comp { stroke:#f0883e; }
+  .vanat-arc { stroke:#d2a8ff; }
+  .vanat-vec-lbl { fill:#58a6ff; font-family:'Libre Baskerville',Georgia,serif; }
+  .vanat-comp-lbl { fill:#f0883e; font-family:'Libre Baskerville',Georgia,serif; }
+  .vanat-mag-lbl { fill:#7ee787; font-family:'Libre Baskerville',Georgia,serif; }
+  .vanat-angle-lbl { fill:#d2a8ff; font-family:'Libre Baskerville',Georgia,serif; }
+  :global([data-theme="light"]) .vanat-grid { stroke:#ddd; }
+  :global([data-theme="light"]) .vanat-axis { stroke:#999; }
+  :global([data-theme="light"]) .vanat-vec { stroke:#0550ae; }
+  :global([data-theme="light"]) .vanat-comp { stroke:#b35900; }
+  :global([data-theme="light"]) .vanat-arc { stroke:#6639ba; }
+  :global([data-theme="light"]) .vanat-vec-lbl { fill:#0550ae; }
+  :global([data-theme="light"]) .vanat-comp-lbl { fill:#b35900; }
+  :global([data-theme="light"]) .vanat-mag-lbl { fill:#116329; }
+  :global([data-theme="light"]) .vanat-angle-lbl { fill:#6639ba; }
+</style>

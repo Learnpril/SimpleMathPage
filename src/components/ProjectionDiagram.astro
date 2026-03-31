@@ -1,0 +1,81 @@
+---
+/**
+ * ProjectionDiagram — shows the projection of vector u onto vector v,
+ * with the projection component and perpendicular component labeled.
+ */
+const w = 300;
+const h = 200;
+const pad = 35;
+const gw = w - 2 * pad;
+const gh = h - 2 * pad;
+const xMin = -1, xMax = 7, yMin = -1, yMax = 4;
+const sx = (x: number) => pad + ((x - xMin) / (xMax - xMin)) * gw;
+const sy = (y: number) => pad + ((yMax - y) / (yMax - yMin)) * gh;
+// u = <3, 3>, v = <6, 2>
+// proj_v(u) = (u·v / v·v) * v = (18+6)/(36+4) * <6,2> = 24/40 * <6,2> = <3.6, 1.2>
+---
+
+<figure class="prjd" role="img" aria-label="Projection of vector u onto vector v">
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    {[0,2,4,6].map(v => (
+      <line x1={sx(v)} y1={sy(yMin)} x2={sx(v)} y2={sy(yMax)} class="prjd-grid" stroke-width="0.5" />
+    ))}
+    {[0,1,2,3].map(v => (
+      <line x1={sx(xMin)} y1={sy(v)} x2={sx(xMax)} y2={sy(v)} class="prjd-grid" stroke-width="0.5" />
+    ))}
+    <line x1={sx(xMin)} y1={sy(0)} x2={sx(xMax)} y2={sy(0)} class="prjd-axis" stroke-width="1.5" />
+    <line x1={sx(0)} y1={sy(yMin)} x2={sx(0)} y2={sy(yMax)} class="prjd-axis" stroke-width="1" />
+
+    <defs>
+      <marker id="prjd-ah-b" markerWidth="7" markerHeight="5" refX="7" refY="2.5" orient="auto">
+        <polygon points="0 0, 7 2.5, 0 5" fill="#58a6ff" />
+      </marker>
+      <marker id="prjd-ah-o" markerWidth="7" markerHeight="5" refX="7" refY="2.5" orient="auto">
+        <polygon points="0 0, 7 2.5, 0 5" fill="#f0883e" />
+      </marker>
+      <marker id="prjd-ah-g" markerWidth="7" markerHeight="5" refX="7" refY="2.5" orient="auto">
+        <polygon points="0 0, 7 2.5, 0 5" fill="#7ee787" />
+      </marker>
+    </defs>
+
+    {/* v = <6, 2> */}
+    <line x1={sx(0)} y1={sy(0)} x2={sx(6)} y2={sy(2)} class="prjd-v" stroke-width="2" marker-end="url(#prjd-ah-o)" />
+    {/* u = <3, 3> */}
+    <line x1={sx(0)} y1={sy(0)} x2={sx(3)} y2={sy(3)} class="prjd-u" stroke-width="2.5" marker-end="url(#prjd-ah-b)" />
+    {/* proj_v(u) = <3.6, 1.2> */}
+    <line x1={sx(0)} y1={sy(0)} x2={sx(3.6)} y2={sy(1.2)} class="prjd-proj" stroke-width="2.5" marker-end="url(#prjd-ah-g)" />
+    {/* Dashed perpendicular from u tip to proj tip */}
+    <line x1={sx(3)} y1={sy(3)} x2={sx(3.6)} y2={sy(1.2)} class="prjd-perp" stroke-width="1.5" stroke-dasharray="5,3" />
+
+    {/* Right angle marker at projection tip */}
+    <polyline points={`${sx(3.3)},${sy(1.5)} ${sx(3.6)},${sy(1.5)} ${sx(3.6)},${sy(1.2)}`} fill="none" class="prjd-perp" stroke-width="1" />
+
+    {/* Labels */}
+    <text class="prjd-u-lbl" x={sx(0.8)} y={sy(3.4)} font-size="11" font-weight="bold">u</text>
+    <text class="prjd-v-lbl" x={sx(5.5)} y={sy(2.6)} font-size="11" font-weight="bold">v</text>
+    <text class="prjd-proj-lbl" x={sx(1.2)} y={sy(0.2)} font-size="10" font-weight="bold">proj_v u</text>
+  </svg>
+</figure>
+
+<style>
+  .prjd { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .prjd svg { max-width:100%; height:auto; }
+  .prjd-grid { stroke:#333; }
+  .prjd-axis { stroke:#666; }
+  .prjd-u { stroke:#58a6ff; }
+  .prjd-v { stroke:#f0883e; }
+  .prjd-proj { stroke:#7ee787; }
+  .prjd-perp { stroke:#d2a8ff; }
+  .prjd-u-lbl { fill:#58a6ff; font-family:'Libre Baskerville',Georgia,serif; }
+  .prjd-v-lbl { fill:#f0883e; font-family:'Libre Baskerville',Georgia,serif; }
+  .prjd-proj-lbl { fill:#7ee787; font-family:'Libre Baskerville',Georgia,serif; }
+  :global([data-theme="light"]) .prjd-grid { stroke:#ddd; }
+  :global([data-theme="light"]) .prjd-axis { stroke:#999; }
+  :global([data-theme="light"]) .prjd-u { stroke:#0550ae; }
+  :global([data-theme="light"]) .prjd-v { stroke:#b35900; }
+  :global([data-theme="light"]) .prjd-proj { stroke:#116329; }
+  :global([data-theme="light"]) .prjd-perp { stroke:#6639ba; }
+  :global([data-theme="light"]) .prjd-u-lbl { fill:#0550ae; }
+  :global([data-theme="light"]) .prjd-v-lbl { fill:#b35900; }
+  :global([data-theme="light"]) .prjd-proj-lbl { fill:#116329; }
+</style>

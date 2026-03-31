@@ -5,4 +5,252 @@ sidebar:
   order: 16
 ---
 
-Content coming soon.
+## What You'll Learn
+
+If determinants and Cramer's Rule seem abstract, that's normal. This is just an overview, and you'll see all of this again in Linear Algebra where it really clicks. For now, focus on the mechanics.
+
+In this lesson you'll learn how to compute determinants of 2x2 and 3x3 matrices, understand what the determinant tells you geometrically, and use Cramer's Rule to solve systems of linear equations.
+
+## The Concept
+
+The determinant of a 2x2 matrix is a single number computed from its entries:
+
+$$
+\det\begin{bmatrix} a & b \\ c & d \end{bmatrix} = ad - bc
+$$
+
+Multiply the main diagonal, subtract the product of the other diagonal. If the determinant is zero, the matrix is singular (no inverse, and the system it represents either has no solution or infinitely many).
+
+For a 3x3 matrix, expand along the first row:
+
+$$
+\det\begin{bmatrix} a & b & c \\ d & e & f \\ g & h & i \end{bmatrix} = a(ei - fh) - b(di - fg) + c(dh - eg)
+$$
+
+Each term uses a 2x2 determinant (called a minor) with the row and column of that entry removed. The signs alternate in a checkerboard pattern:
+
+<div class="math-dark">
+$$
+\begin{bmatrix} \color{#7ee787}{+} & \color{#f47067}{-} & \color{#7ee787}{+} \\ \color{#f47067}{-} & \color{#7ee787}{+} & \color{#f47067}{-} \\ \color{#7ee787}{+} & \color{#f47067}{-} & \color{#7ee787}{+} \end{bmatrix}
+$$
+</div>
+<div class="math-light">
+$$
+\begin{bmatrix} \color{#116329}{+} & \color{#cf222e}{-} & \color{#116329}{+} \\ \color{#cf222e}{-} & \color{#116329}{+} & \color{#cf222e}{-} \\ \color{#116329}{+} & \color{#cf222e}{-} & \color{#116329}{+} \end{bmatrix}
+$$
+</div>
+
+So when expanding along the first row, the first entry gets a +, the second gets a -, and the third gets a +. Here's what that looks like with actual entries:
+
+<div class="math-dark">
+$$
+\color{#7ee787}{+a} \cdot \det\begin{bmatrix} e & f \\ h & i \end{bmatrix} \;\; \color{#f47067}{-b} \cdot \det\begin{bmatrix} d & f \\ g & i \end{bmatrix} \;\; \color{#7ee787}{+c} \cdot \det\begin{bmatrix} d & e \\ g & h \end{bmatrix}
+$$
+</div>
+<div class="math-light">
+$$
+\color{#116329}{+a} \cdot \det\begin{bmatrix} e & f \\ h & i \end{bmatrix} \;\; \color{#cf222e}{-b} \cdot \det\begin{bmatrix} d & f \\ g & i \end{bmatrix} \;\; \color{#116329}{+c} \cdot \det\begin{bmatrix} d & e \\ g & h \end{bmatrix}
+$$
+</div>
+
+For each term, you cross out the row and column of that entry and take the determinant of the 2x2 that's left.
+
+Cramer's Rule uses determinants to solve a system of equations. For a 2x2 system:
+
+$$
+ax + by = e
+$$
+
+$$
+cx + dy = f
+$$
+
+Think of it this way: you have two equations and two unknowns. Each equation is a line, and the solution is where the lines cross. Cramer's Rule gives you a formula to find that crossing point using determinants instead of substitution or elimination.
+
+Here's the recipe. Start with the coefficient matrix, which holds just the numbers in front of x and y:
+
+$$
+D = \det\begin{bmatrix} a & b \\ c & d \end{bmatrix}
+$$
+
+If D is not zero, the system has exactly one solution. To find x, take the coefficient matrix and swap out the x-column (the first column) with the constants from the right side of the equations:
+
+<div class="math-dark">
+$$
+D_x = \det\begin{bmatrix} \color{#58a6ff}{e} & b \\ \color{#58a6ff}{f} & d \end{bmatrix}
+$$
+</div>
+<div class="math-light">
+$$
+D_x = \det\begin{bmatrix} \color{#0550ae}{e} & b \\ \color{#0550ae}{f} & d \end{bmatrix}
+$$
+</div>
+
+To find y, swap out the y-column (the second column) instead:
+
+<div class="math-dark">
+$$
+D_y = \det\begin{bmatrix} a & \color{#7ee787}{e} \\ c & \color{#7ee787}{f} \end{bmatrix}
+$$
+</div>
+<div class="math-light">
+$$
+D_y = \det\begin{bmatrix} a & \color{#116329}{e} \\ c & \color{#116329}{f} \end{bmatrix}
+$$
+</div>
+
+Then divide each by the original determinant:
+
+$$
+x = \frac{D_x}{D}, \quad y = \frac{D_y}{D}
+$$
+
+That's the whole trick: swap the column, take the determinant, divide. The pattern extends to 3x3 systems too, you just swap one column at a time.
+
+Cramer's Rule works for any size system, but it's most practical for 2x2 and 3x3. For larger systems, row reduction is more efficient.
+
+## Worked Example
+
+**Example 1: 2x2 determinant**
+
+$$
+\det\begin{bmatrix} 3 & 5 \\ 2 & 7 \end{bmatrix} = (3)(7) - (5)(2) = 21 - 10 = 11
+$$
+
+**Example 2: Cramer's Rule (2x2)**
+
+Solve the system:
+
+$$
+2x + 3y = 8
+$$
+
+$$
+x - 4y = -5
+$$
+
+Each equation is a line. Cramer's Rule finds the intersection point.
+
+import CramersVisual from "../../../components/CramersVisual.astro";
+
+<CramersVisual />
+
+Coefficient determinant:
+
+$$
+D = \det\begin{bmatrix} 2 & 3 \\ 1 & -4 \end{bmatrix} = (2)(-4) - (3)(1) = -8 - 3 = -11
+$$
+
+Replace x-column with constants:
+
+$$
+D_x = \det\begin{bmatrix} 8 & 3 \\ -5 & -4 \end{bmatrix} = (8)(-4) - (3)(-5) = -32 + 15 = -17
+$$
+
+Replace y-column with constants:
+
+$$
+D_y = \det\begin{bmatrix} 2 & 8 \\ 1 & -5 \end{bmatrix} = (2)(-5) - (8)(1) = -10 - 8 = -18
+$$
+
+$$
+x = \frac{-17}{-11} = \frac{17}{11}, \quad y = \frac{-18}{-11} = \frac{18}{11}
+$$
+
+**Example 3: 3x3 determinant**
+
+$$
+\det\begin{bmatrix} 1 & 2 & 3 \\ 4 & 5 & 6 \\ 7 & 8 & 0 \end{bmatrix}
+$$
+
+Expand along row 1:
+
+$$
+= 1(5 \cdot 0 - 6 \cdot 8) - 2(4 \cdot 0 - 6 \cdot 7) + 3(4 \cdot 8 - 5 \cdot 7)
+$$
+
+$$
+= 1(0 - 48) - 2(0 - 42) + 3(32 - 35)
+$$
+
+$$
+= -48 + 84 - 9 = 27
+$$
+
+## Real-World Application
+
+Determinants and Cramer's Rule are used in:
+
+- Engineering (solving circuit equations, structural analysis)
+- Economics (equilibrium models with multiple markets)
+- Computer graphics (checking if transformations preserve orientation)
+- Physics (cross products use determinant notation)
+- Cryptography (matrix-based encryption requires invertible matrices)
+
+Example: in computer graphics, the determinant of a transformation matrix tells you whether the transformation preserves orientation (positive determinant) or flips it (negative determinant). A zero determinant means the transformation collapses the shape to a lower dimension.
+
+:::note[You've Got This]
+For 2x2 determinants, it's just "main diagonal minus other diagonal." For 3x3, expand along the first row using the alternating sign pattern. Cramer's Rule is a clean formula-based approach to solving systems, especially useful when you only need one variable from the system.
+:::
+
+## Quiz
+
+Use this matrix for Question 1:
+
+$$
+\begin{bmatrix} 3 & 1 \\ 4 & 2 \end{bmatrix}
+$$
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="precalculus-determinants-cramers"
+  questions={[
+    {
+      id: "q1",
+      text: "Find the determinant of the matrix shown above:",
+      options: ["$2$", "$5$", "$10$", "$-2$"],
+      correctIndex: 0,
+      explanation: "$(3)(2) - (1)(4) = 6 - 4 = 2$.",
+    },
+    {
+      id: "q2",
+      text: "If the determinant of the coefficient matrix is zero, the system:",
+      options: [
+        "Has no unique solution",
+        "Always has exactly one solution",
+        "Has exactly two solutions",
+        "Must be a 3x3 system",
+      ],
+      correctIndex: 0,
+      explanation:
+        "Zero determinant means the system is either inconsistent or dependent.",
+    },
+    {
+      id: "q3",
+      text: "In Cramer's Rule, to find x you replace:",
+      options: [
+        "The x-column with the constants column",
+        "The y-column with the constants column",
+        "The entire matrix with constants",
+        "The constants with zeros",
+      ],
+      correctIndex: 0,
+      explanation: "Replace the column of the variable you're solving for.",
+    },
+    {
+      id: "q4",
+      text: "When expanding a 3x3 determinant along the first row, the signs are:",
+      options: ["$+, -, +$", "$+, +, +$", "$-, +, -$", "$-, -, +$"],
+      correctIndex: 0,
+      explanation: "The cofactor signs alternate starting with positive.",
+    },
+    {
+      id: "q5",
+      text: "A matrix with a zero determinant is called:",
+      options: ["Singular", "Identity", "Diagonal", "Symmetric"],
+      correctIndex: 0,
+      explanation: "Singular matrices have no inverse and determinant zero.",
+    },
+  ]}
+/>

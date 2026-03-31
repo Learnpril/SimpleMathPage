@@ -1,0 +1,75 @@
+---
+/**
+ * RowReductionDiagram — shows the steps of row reduction
+ * from augmented matrix to row echelon form.
+ */
+const w = 320;
+const h = 150;
+---
+
+<figure class="rrd" role="img" aria-label="Row reduction: augmented matrix to row echelon form">
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    {/* Original augmented matrix */}
+    <text class="rrd-step" x="5" y="14" font-size="9">Start:</text>
+    <path d="M 10,22 L 5,22 L 5,72 L 10,72" fill="none" class="rrd-bracket" stroke-width="1.5" />
+    <path d="M 110,22 L 115,22 L 115,72 L 110,72" fill="none" class="rrd-bracket" stroke-width="1.5" />
+    <text class="rrd-coeff" x="15" y="40" font-size="12">2   1  |  5</text>
+    <text class="rrd-coeff" x="15" y="62" font-size="12">4   3  | 13</text>
+    <line x1="80" y1="24" x2="80" y2="70" class="rrd-divider" stroke-width="1" stroke-dasharray="3,2" />
+
+    {/* Arrow */}
+    <text class="rrd-op" x="125" y="50" font-size="9">R2 - 2R1</text>
+    <line x1="125" y1="55" x2="165" y2="55" class="rrd-arrow" stroke-width="1" marker-end="url(#rrd-ah)" />
+    <defs>
+      <marker id="rrd-ah" markerWidth="6" markerHeight="4" refX="6" refY="2" orient="auto">
+        <polygon points="0 0, 6 2, 0 4" class="rrd-arrow-head" />
+      </marker>
+    </defs>
+
+    {/* Reduced matrix */}
+    <text class="rrd-step" x="175" y="14" font-size="9">Result:</text>
+    <path d="M 175,22 L 170,22 L 170,72 L 175,72" fill="none" class="rrd-bracket" stroke-width="1.5" />
+    <path d="M 280,22 L 285,22 L 285,72 L 280,72" fill="none" class="rrd-bracket" stroke-width="1.5" />
+    <text class="rrd-coeff" x="180" y="40" font-size="12">2   1  |  5</text>
+    <text class="rrd-result" x="180" y="62" font-size="12">0   1  |  3</text>
+    <line x1="245" y1="24" x2="245" y2="70" class="rrd-divider" stroke-width="1" stroke-dasharray="3,2" />
+
+    {/* Highlight the pivot */}
+    <rect x="178" y="48" width="14" height="18" rx="2" class="rrd-pivot-hl" fill-opacity="0.2" />
+    <rect x="210" y="48" width="14" height="18" rx="2" class="rrd-pivot-hl2" fill-opacity="0.2" />
+
+    {/* Back-substitution note */}
+    <text class="rrd-note" x="160" y="100" font-size="9" text-anchor="middle">Row 2 gives y = 3, then back-substitute into Row 1:</text>
+    <text class="rrd-note" x="160" y="116" font-size="9" text-anchor="middle">2x + 3 = 5, so x = 1</text>
+    <text class="rrd-solution" x="160" y="138" font-size="11" text-anchor="middle">Solution: (1, 3)</text>
+  </svg>
+</figure>
+
+<style>
+  .rrd { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .rrd svg { max-width:100%; height:auto; }
+  .rrd-bracket { stroke:#888; }
+  .rrd-coeff { fill:#888; font-family:'Courier New',monospace; }
+  .rrd-result { fill:#7ee787; font-family:'Courier New',monospace; font-weight:bold; }
+  .rrd-divider { stroke:#666; }
+  .rrd-step { fill:#aaa; font-family:'Libre Baskerville',Georgia,serif; }
+  .rrd-op { fill:#d2a8ff; font-family:'Libre Baskerville',Georgia,serif; }
+  .rrd-arrow { stroke:#d2a8ff; }
+  .rrd-arrow-head { fill:#d2a8ff; }
+  .rrd-note { fill:#aaa; font-family:'Libre Baskerville',Georgia,serif; }
+  .rrd-solution { fill:#58a6ff; font-family:'Libre Baskerville',Georgia,serif; font-weight:bold; }
+  .rrd-pivot-hl { fill:#f0883e; }
+  .rrd-pivot-hl2 { fill:#7ee787; }
+  :global([data-theme="light"]) .rrd-bracket { stroke:#666; }
+  :global([data-theme="light"]) .rrd-coeff { fill:#666; }
+  :global([data-theme="light"]) .rrd-result { fill:#116329; }
+  :global([data-theme="light"]) .rrd-divider { stroke:#999; }
+  :global([data-theme="light"]) .rrd-step { fill:#666; }
+  :global([data-theme="light"]) .rrd-op { fill:#6639ba; }
+  :global([data-theme="light"]) .rrd-arrow { stroke:#6639ba; }
+  :global([data-theme="light"]) .rrd-arrow-head { fill:#6639ba; }
+  :global([data-theme="light"]) .rrd-note { fill:#666; }
+  :global([data-theme="light"]) .rrd-solution { fill:#0550ae; }
+  :global([data-theme="light"]) .rrd-pivot-hl { fill:#b35900; }
+  :global([data-theme="light"]) .rrd-pivot-hl2 { fill:#116329; }
+</style>

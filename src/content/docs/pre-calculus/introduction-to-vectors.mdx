@@ -7,6 +7,8 @@ sidebar:
 
 ## What You'll Learn
 
+If vectors feel like a big jump, don't fret. This is just an overview. You'll see vectors again in Calculus and they get a thorough deep dive in Linear Algebra, so think of this as a first look rather than the final word.
+
 In this lesson you'll learn what vectors are, how to represent them in component form, calculate their magnitude and direction, and perform basic operations like addition, subtraction, and scalar multiplication.
 
 ## The Concept
@@ -14,6 +16,18 @@ In this lesson you'll learn what vectors are, how to represent them in component
 A vector is a quantity that has both magnitude (how much) and direction (which way). This is different from a scalar, which has only magnitude. Temperature is a scalar (just a number). Velocity is a vector (speed plus direction).
 
 In component form, a vector v is written as an ordered pair of numbers in angle brackets: v = ⟨a, b⟩. The first component is the horizontal part, the second is the vertical part. You can also write it as v = ai + bj, where i and j are the unit vectors along the x and y axes.
+
+A few symbols to know going forward:
+
+- ⟨a, b⟩ are angle brackets, used specifically for vectors (not the same as parentheses or less-than/greater-than signs)
+- $|\mathbf{v}|$ means the magnitude (length) of vector v, similar to how absolute value gives the "size" of a number
+- Boldface letters like $\mathbf{v}$ or $\mathbf{u}$ indicate vectors, while regular letters like k or c are scalars (plain numbers)
+
+import VectorAnatomyDiagram from "../../../components/VectorAnatomyDiagram.astro";
+
+<VectorAnatomyDiagram />
+
+The diagram shows a vector v = ⟨3, 4⟩. The orange dashed lines are the horizontal and vertical components (3 right, 4 up). The blue arrow is the vector itself. The magnitude (length) is found using the Pythagorean theorem, and the direction angle is measured from the positive x-axis.
 
 The magnitude (length) of a vector is found using the Pythagorean theorem:
 
@@ -34,6 +48,12 @@ Basic operations work component by component:
 - Scalar multiplication: k⟨a, b⟩ = ⟨ka, kb⟩ (stretches or shrinks the vector)
 - Addition: ⟨a, b⟩ + ⟨c, d⟩ = ⟨a + c, b + d⟩
 - Subtraction: ⟨a, b⟩ - ⟨c, d⟩ = ⟨a - c, b - d⟩
+
+import VectorScalarDiagram from "../../../components/VectorScalarDiagram.astro";
+
+<VectorScalarDiagram />
+
+Scalar multiplication changes the length of a vector. Multiplying by 2 doubles the length (green). Multiplying by -1 reverses the direction (red). The direction stays the same for positive scalars and flips for negative ones.
 
 Graphically, you add vectors using the tip-to-tail method: place the tail of the second vector at the tip of the first, then draw the resultant from the origin to the new tip.
 

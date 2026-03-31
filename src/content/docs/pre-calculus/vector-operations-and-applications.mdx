@@ -1,8 +1,203 @@
 ---
 title: Vector Operations and Applications
-description: Add, subtract, and apply vectors to real-world problems
+description: Dot products, projections, and real-world vector applications
 sidebar:
   order: 14
 ---
 
-Content coming soon.
+## What You'll Learn
+
+If this feels like a lot, relax. Vectors and the dot product come back in Calculus and get a full deep dive in Linear Algebra. This is just a preview to get you comfortable with the basics before you see them again later.
+
+In this lesson you'll learn the dot product, how to find the angle between two vectors, vector projections, and how to apply vectors to real-world problems like navigation and force decomposition. You covered basic vector operations (add, subtract, scalar multiply) in the previous lesson. Here we go deeper.
+
+## The Concept
+
+The dot product (also called the scalar product) takes two vectors and returns a single number. For u = ⟨a, b⟩ and v = ⟨c, d⟩:
+
+$$
+\mathbf{u} \cdot \mathbf{v} = ac + bd
+$$
+
+Multiply corresponding components and add. That's it. The result is a scalar, not a vector.
+
+The geometric interpretation is where it gets interesting. The dot product also equals:
+
+$$
+\mathbf{u} \cdot \mathbf{v} = |\mathbf{u}||\mathbf{v}|\cos\theta
+$$
+
+where θ is the angle between the two vectors. This means you can find the angle between any two vectors:
+
+$$
+\theta = \cos^{-1}\left(\frac{\mathbf{u} \cdot \mathbf{v}}{|\mathbf{u}||\mathbf{v}|}\right)
+$$
+
+import DotProductDiagram from "../../../components/DotProductDiagram.astro";
+
+<DotProductDiagram />
+
+The diagram shows u = ⟨4, 3⟩ and v = ⟨5, 1⟩ with the angle between them. The dot product tells you how much the two vectors "agree" in direction. If the dot product is positive, the angle is acute. If it's zero, the vectors are perpendicular. If it's negative, the angle is obtuse.
+
+Before we go further, let's break down some notation you might not have seen before:
+
+- $\mathbf{u} \cdot \mathbf{v}$ is the dot product (the centered dot between two vectors means "dot product," not regular multiplication)
+- $|\mathbf{u}|$ is the magnitude (length) of vector u, same idea as absolute value but for vectors
+- $\perp$ means "is perpendicular to" (forms a 90-degree angle)
+- $\iff$ means "if and only if," a two-way logical statement: the left side is true exactly when the right side is true
+- $\text{proj}_{\mathbf{v}}\,\mathbf{u}$ is the projection of u onto v (the subscript tells you which vector you're projecting onto)
+
+Two vectors are perpendicular (orthogonal) when their dot product is zero:
+
+$$
+\mathbf{u} \perp \mathbf{v} \iff \mathbf{u} \cdot \mathbf{v} = 0
+$$
+
+In plain English: u is perpendicular to v if and only if their dot product equals zero.
+
+The projection of u onto v gives the component of u that points in the direction of v:
+
+$$
+\text{proj}_{\mathbf{v}}\,\mathbf{u} = \frac{\mathbf{u} \cdot \mathbf{v}}{|\mathbf{v}|^2}\,\mathbf{v}
+$$
+
+import ProjectionDiagram from "../../../components/ProjectionDiagram.astro";
+
+<ProjectionDiagram />
+
+The green arrow is the projection of u onto v. The dashed purple line is the perpendicular component. Together they decompose u into a part along v and a part perpendicular to v.
+
+## Worked Example
+
+**Example 1: Dot product and angle**
+
+Let u = ⟨4, 3⟩ and v = ⟨5, 1⟩.
+
+Dot product:
+
+$$
+\mathbf{u} \cdot \mathbf{v} = (4)(5) + (3)(1) = 20 + 3 = 23
+$$
+
+Magnitudes:
+
+$$
+|\mathbf{u}| = \sqrt{16 + 9} = 5, \quad |\mathbf{v}| = \sqrt{25 + 1} = \sqrt{26}
+$$
+
+Angle between them:
+
+$$
+\theta = \cos^{-1}\left(\frac{23}{5\sqrt{26}}\right) = \cos^{-1}(0.9025) \approx 25.3°
+$$
+
+**Example 2: Checking perpendicularity**
+
+Are u = ⟨3, -2⟩ and v = ⟨4, 6⟩ perpendicular?
+
+import PerpVectorsDiagram from "../../../components/PerpVectorsDiagram.astro";
+
+<PerpVectorsDiagram />
+
+$$
+\mathbf{u} \cdot \mathbf{v} = (3)(4) + (-2)(6) = 12 - 12 = 0
+$$
+
+Yes. Dot product is zero, so they're perpendicular. You can see the right angle in the diagram, and the small green square confirms it.
+
+**Example 3: Projection**
+
+Project u = ⟨3, 3⟩ onto v = ⟨6, 2⟩.
+
+$$
+\mathbf{u} \cdot \mathbf{v} = 18 + 6 = 24, \quad |\mathbf{v}|^2 = 36 + 4 = 40
+$$
+
+$$
+\text{proj}_{\mathbf{v}}\,\mathbf{u} = \frac{24}{40}\langle 6, 2 \rangle = \langle 3.6,\; 1.2 \rangle
+$$
+
+## Real-World Application
+
+A boat needs to cross a river. The boat's motor pushes it at 8 m/s due east: b = ⟨8, 0⟩. The river current flows at 3 m/s due south: c = ⟨0, -3⟩.
+
+The actual velocity is the vector sum:
+
+$$
+\mathbf{b} + \mathbf{c} = \langle 8, -3 \rangle
+$$
+
+Actual speed:
+
+$$
+|\mathbf{b} + \mathbf{c}| = \sqrt{64 + 9} = \sqrt{73} \approx 8.54 \text{ m/s}
+$$
+
+Direction angle below east:
+
+$$
+\theta = \tan^{-1}\left(\frac{3}{8}\right) \approx 20.6° \text{ south of east}
+$$
+
+The boat drifts downstream. To compensate, the pilot would need to aim slightly upstream.
+
+:::note[You've Got This]
+The dot product is the key new tool here. It gives you angles between vectors and lets you decompose vectors into components along any direction. If the dot product is zero, the vectors are perpendicular. Projection is just the dot product formula applied to find "how much of u goes in the direction of v."
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="precalculus-vector-ops"
+  questions={[
+    {
+      id: "q1",
+      text: "The dot product of $\\langle 3, 4 \\rangle$ and $\\langle 2, -1 \\rangle$ is:",
+      options: ["$2$", "$10$", "$-1$", "$6$"],
+      correctIndex: 0,
+      explanation: "$(3)(2) + (4)(-1) = 6 - 4 = 2$.",
+    },
+    {
+      id: "q2",
+      text: "Two vectors are perpendicular when their dot product is:",
+      options: ["$0$", "$1$", "$-1$", "Undefined"],
+      correctIndex: 0,
+      explanation:
+        "Zero dot product means the angle between them is 90 degrees.",
+    },
+    {
+      id: "q3",
+      text: "The angle between vectors can be found using:",
+      options: [
+        "$\\cos^{-1}\\left(\\frac{\\mathbf{u} \\cdot \\mathbf{v}}{|\\mathbf{u}||\\mathbf{v}|}\\right)$",
+        "$\\sin^{-1}(\\mathbf{u} \\cdot \\mathbf{v})$",
+        "$\\tan^{-1}(\\mathbf{u} + \\mathbf{v})$",
+        "$|\\mathbf{u}| + |\\mathbf{v}|$",
+      ],
+      correctIndex: 0,
+      explanation:
+        "This comes from the geometric definition of the dot product.",
+    },
+    {
+      id: "q4",
+      text: "The projection of u onto v gives:",
+      options: [
+        "The component of u in the direction of v",
+        "The magnitude of u",
+        "The angle between u and v",
+        "A vector perpendicular to v",
+      ],
+      correctIndex: 0,
+      explanation: "Projection decomposes u into a part along v.",
+    },
+    {
+      id: "q5",
+      text: "If a boat motor pushes east at 6 m/s and current flows south at 8 m/s, the actual speed is:",
+      options: ["$10$ m/s", "$14$ m/s", "$2$ m/s", "$48$ m/s"],
+      correctIndex: 0,
+      explanation: "$\\sqrt{36 + 64} = \\sqrt{100} = 10$ m/s.",
+    },
+  ]}
+/>

@@ -1,0 +1,132 @@
+---
+/**
+ * PolarCurveGallery — shows 4 famous polar curves in a 2x2 grid:
+ * Cardioid, Limacon, Rose (3 petals), Rose (4 petals)
+ */
+const cellW = 160;
+const cellH = 160;
+const gap = 12;
+const pad = 8;
+const w = 2 * cellW + gap + 2 * pad;
+const h = 2 * cellH + gap + 2 * pad + 40; // extra for labels
+
+const curves = [
+  {
+    label: 'Cardioid: r = 1 + cos θ',
+    color: '#58a6ff',
+    fn: (t: number) => 1 + Math.cos(t),
+    scale: 35,
+  },
+  {
+    label: 'Limaçon: r = 1 + 2cos θ',
+    color: '#7ee787',
+    fn: (t: number) => 1 + 2 * Math.cos(t),
+    scale: 22,
+  },
+  {
+    label: 'Rose: r = cos(3θ)',
+    color: '#d2a8ff',
+    fn: (t: number) => Math.cos(3 * t),
+    scale: 55,
+  },
+  {
+    label: 'Rose: r = cos(2θ)',
+    color: '#f0883e',
+    fn: (t: number) => Math.cos(2 * t),
+    scale: 55,
+  },
+];
+
+// Generate points for each curve
+const allPts = curves.map(c => {
+  const pts: string[] = [];
+  const steps = 360;
+  for (let i = 0; i <= steps; i++) {
+    const t = (i / steps) * 2 * Math.PI;
+    const r = c.fn(t);
+    if (r < 0) continue; // skip negative r for simplicity in roses
+    const x = r * Math.cos(t) * c.scale;
+    const y = -r * Math.sin(t) * c.scale; // SVG y is inverted
+    pts.push(`${x.toFixed(1)},${y.toFixed(1)}`);
+  }
+  return pts;
+});
+
+// For limacon and cardioid, include negative r (inner loop)
+const limaconPts: string[] = [];
+for (let i = 0; i <= 720; i++) {
+  const t = (i / 720) * 2 * Math.PI;
+  const r = 1 + 2 * Math.cos(t);
+  const x = r * Math.cos(t) * 22;
+  const y = -r * Math.sin(t) * 22;
+  limaconPts.push(`${x.toFixed(1)},${y.toFixed(1)}`);
+}
+
+// For roses, include negative r to get all petals
+const rose3Pts: string[] = [];
+for (let i = 0; i <= 720; i++) {
+  const t = (i / 720) * 2 * Math.PI;
+  const r = Math.cos(3 * t);
+  const x = r * Math.cos(t) * 55;
+  const y = -r * Math.sin(t) * 55;
+  rose3Pts.push(`${x.toFixed(1)},${y.toFixed(1)}`);
+}
+
+const rose4Pts: string[] = [];
+for (let i = 0; i <= 720; i++) {
+  const t = (i / 720) * 2 * Math.PI;
+  const r = Math.cos(2 * t);
+  const x = r * Math.cos(t) * 55;
+  const y = -r * Math.sin(t) * 55;
+  rose4Pts.push(`${x.toFixed(1)},${y.toFixed(1)}`);
+}
+---
+
+<figure class="pcg" role="img" aria-label="Four polar curves: cardioid, limacon with inner loop, 3-petal rose, 4-petal rose">
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    {curves.map((c, i) => {
+      const col = i % 2;
+      const row = Math.floor(i / 2);
+      const x0 = pad + col * (cellW + gap);
+      const y0 = pad + row * (cellH + gap);
+      const cx = x0 + cellW / 2;
+      const cy = y0 + cellH / 2;
+
+      // Choose the full-loop points for limacon and roses
+      let pts: string[];
+      if (i === 1) pts = limaconPts;
+      else if (i === 2) pts = rose3Pts;
+      else if (i === 3) pts = rose4Pts;
+      else pts = allPts[i];
+
+      // Translate points to cell center
+      const translated = pts.map(p => {
+        const [px, py] = p.split(',').map(Number);
+        return `${(cx + px).toFixed(1)},${(cy + py).toFixed(1)}`;
+      });
+
+      return (
+        <g>
+          <rect x={x0} y={y0} width={cellW} height={cellH} rx="8" class="pcg-card" />
+          {/* Light axes */}
+          <line x1={x0 + 8} y1={cy} x2={x0 + cellW - 8} y2={cy} class="pcg-axis" stroke-width="0.5" />
+          <line x1={cx} y1={y0 + 8} x2={cx} y2={y0 + cellH - 8} class="pcg-axis" stroke-width="0.5" />
+          {/* Curve */}
+          <polyline points={translated.join(' ')} fill="none" stroke={c.color} stroke-width="2" />
+          {/* Label */}
+          <text x={cx} y={y0 + cellH + 14} font-size="10" font-weight="bold" text-anchor="middle" fill={c.color} class="pcg-lbl">{c.label}</text>
+        </g>
+      );
+    })}
+  </svg>
+</figure>
+
+<style>
+  .pcg { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .pcg svg { max-width:100%; height:auto; }
+  .pcg-card { fill:#1c2128; stroke:#444; stroke-width:1; }
+  .pcg-axis { stroke:#555; }
+  .pcg-lbl { font-family:'Libre Baskerville',Georgia,serif; }
+  :global([data-theme="light"]) .pcg-card { fill:#f0f0f0; stroke:#ccc; }
+  :global([data-theme="light"]) .pcg-axis { stroke:#bbb; }
+</style>

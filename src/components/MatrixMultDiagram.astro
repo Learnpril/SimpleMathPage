@@ -1,0 +1,90 @@
+---
+/**
+ * MatrixMultDiagram — shows how matrix multiplication works:
+ * row × column = entry, with color-coded highlighting.
+ */
+const w = 320;
+const h = 160;
+---
+
+<figure class="mmd" role="img" aria-label="Matrix multiplication: row times column gives one entry">
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    {/* Matrix A (2x2) */}
+    <text class="mmd-lbl" x="10" y="30" font-size="11">A</text>
+    {/* Left bracket */}
+    <path d="M 28,15 L 22,15 L 22,75 L 28,75" fill="none" class="mmd-bracket" stroke-width="1.5" />
+    {/* Right bracket */}
+    <path d="M 92,15 L 98,15 L 98,75 L 92,75" fill="none" class="mmd-bracket" stroke-width="1.5" />
+    {/* Row 1 highlighted */}
+    <rect x="26" y="18" width="68" height="24" rx="3" class="mmd-row-hl" fill-opacity="0.2" />
+    <text class="mmd-row" x="40" y="36" font-size="13">1  3</text>
+    <text class="mmd-dim" x="40" y="66" font-size="13">2  4</text>
+
+    {/* Multiplication sign */}
+    <text class="mmd-op" x="108" y="50" font-size="16">×</text>
+
+    {/* Matrix B (2x2) */}
+    <text class="mmd-lbl" x="125" y="30" font-size="11">B</text>
+    <path d="M 143,15 L 137,15 L 137,75 L 143,75" fill="none" class="mmd-bracket" stroke-width="1.5" />
+    <path d="M 207,15 L 213,15 L 213,75 L 207,75" fill="none" class="mmd-bracket" stroke-width="1.5" />
+    {/* Col 1 highlighted */}
+    <rect x="140" y="18" width="34" height="54" rx="3" class="mmd-col-hl" fill-opacity="0.2" />
+    <text class="mmd-col" x="150" y="36" font-size="13">5</text>
+    <text class="mmd-col" x="150" y="66" font-size="13">7</text>
+    <text class="mmd-dim" x="190" y="36" font-size="13">6</text>
+    <text class="mmd-dim" x="190" y="66" font-size="13">8</text>
+
+    {/* Equals */}
+    <text class="mmd-op" x="223" y="50" font-size="16">=</text>
+
+    {/* Result matrix */}
+    <path d="M 243,15 L 237,15 L 237,75 L 243,75" fill="none" class="mmd-bracket" stroke-width="1.5" />
+    <path d="M 307,15 L 313,15 L 313,75 L 307,75" fill="none" class="mmd-bracket" stroke-width="1.5" />
+    {/* Entry (1,1) highlighted */}
+    <rect x="240" y="18" width="34" height="24" rx="3" class="mmd-res-hl" fill-opacity="0.25" />
+    <text class="mmd-res" x="248" y="36" font-size="13">26</text>
+    <text class="mmd-dim" x="286" y="36" font-size="13">30</text>
+    <text class="mmd-dim" x="248" y="66" font-size="13">38</text>
+    <text class="mmd-dim" x="286" y="66" font-size="13">44</text>
+
+    {/* Explanation below */}
+    <text class="mmd-explain" x="30" y="105" font-size="10">Row 1 of A  ×  Col 1 of B  =  entry (1,1)</text>
+    <text class="mmd-explain" x="30" y="122" font-size="10">(1)(5) + (3)(7) = 5 + 21 = 26</text>
+
+    {/* Dotted line connecting 1 → 5 (blue pair) */}
+    <path d="M 44,40 Q 70,88 152,32" fill="none" class="mmd-pair1" stroke-width="1.5" stroke-dasharray="4,3" />
+    {/* Dotted line connecting 3 → 7 (orange pair) */}
+    <path d="M 68,40 Q 95,95 152,62" fill="none" class="mmd-pair2" stroke-width="1.5" stroke-dasharray="4,3" />
+  </svg>
+</figure>
+
+<style>
+  .mmd { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .mmd svg { max-width:100%; height:auto; }
+  .mmd-bracket { stroke:#888; }
+  .mmd-lbl { fill:#888; font-family:'Libre Baskerville',Georgia,serif; }
+  .mmd-row { fill:#58a6ff; font-family:'Courier New',monospace; font-weight:bold; }
+  .mmd-col { fill:#f0883e; font-family:'Courier New',monospace; font-weight:bold; }
+  .mmd-dim { fill:#888; font-family:'Courier New',monospace; }
+  .mmd-res { fill:#7ee787; font-family:'Courier New',monospace; font-weight:bold; }
+  .mmd-op { fill:#888; font-family:'Libre Baskerville',Georgia,serif; }
+  .mmd-explain { fill:#aaa; font-family:'Libre Baskerville',Georgia,serif; }
+  .mmd-row-hl { fill:#58a6ff; }
+  .mmd-col-hl { fill:#f0883e; }
+  .mmd-res-hl { fill:#7ee787; }
+  .mmd-pair1 { stroke:#58a6ff; }
+  .mmd-pair2 { stroke:#f0883e; }
+  :global([data-theme="light"]) .mmd-bracket { stroke:#666; }
+  :global([data-theme="light"]) .mmd-lbl { fill:#666; }
+  :global([data-theme="light"]) .mmd-row { fill:#0550ae; }
+  :global([data-theme="light"]) .mmd-col { fill:#b35900; }
+  :global([data-theme="light"]) .mmd-dim { fill:#666; }
+  :global([data-theme="light"]) .mmd-res { fill:#116329; }
+  :global([data-theme="light"]) .mmd-op { fill:#666; }
+  :global([data-theme="light"]) .mmd-explain { fill:#666; }
+  :global([data-theme="light"]) .mmd-row-hl { fill:#0550ae; }
+  :global([data-theme="light"]) .mmd-col-hl { fill:#b35900; }
+  :global([data-theme="light"]) .mmd-res-hl { fill:#116329; }
+  :global([data-theme="light"]) .mmd-pair1 { stroke:#0550ae; }
+  :global([data-theme="light"]) .mmd-pair2 { stroke:#b35900; }
+</style>

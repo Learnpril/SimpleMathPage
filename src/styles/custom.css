@@ -560,3 +560,10 @@ body {
 p:has(> strong:first-child:last-child) {
   margin-top: 4rem;
 }
+
+/* ---------- Themed KaTeX math blocks ---------- */
+/* Show dark-mode math by default (dark theme), hide light-mode math */
+.math-dark { display: block; }
+.math-light { display: none; }
+[data-theme="light"] .math-dark { display: none; }
+[data-theme="light"] .math-light { display: block; }

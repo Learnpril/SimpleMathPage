@@ -1,0 +1,66 @@
+---
+/**
+ * CramersRuleDiagram — shows how Cramer's Rule replaces columns
+ * of the coefficient matrix with the constants column.
+ */
+const w = 320;
+const h = 140;
+---
+
+<figure class="crd" role="img" aria-label="Cramer's Rule: replacing columns to solve for x and y">
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    {/* D: original matrix */}
+    <text class="crd-lbl" x="8" y="18" font-size="10">D =</text>
+    <path d="M 35,8 L 29,8 L 29,55 L 35,55" fill="none" class="crd-bracket" stroke-width="1.5" />
+    <path d="M 85,8 L 91,8 L 91,55 L 85,55" fill="none" class="crd-bracket" stroke-width="1.5" />
+    <text class="crd-a" x="42" y="28" font-size="13">a  b</text>
+    <text class="crd-a" x="42" y="50" font-size="13">c  d</text>
+
+    {/* Dx: replace col 1 with constants */}
+    <text class="crd-lbl" x="105" y="18" font-size="10">D_x =</text>
+    <path d="M 140,8 L 134,8 L 134,55 L 140,55" fill="none" class="crd-bracket" stroke-width="1.5" />
+    <path d="M 195,8 L 201,8 L 201,55 L 195,55" fill="none" class="crd-bracket" stroke-width="1.5" />
+    <rect x="137" y="10" width="28" height="43" rx="3" class="crd-hl-x" fill-opacity="0.2" />
+    <text class="crd-const" x="145" y="28" font-size="13">e</text>
+    <text class="crd-a" x="175" y="28" font-size="13">b</text>
+    <text class="crd-const" x="146" y="50" font-size="13">f</text>
+    <text class="crd-a" x="175" y="50" font-size="13">d</text>
+
+    {/* Dy: replace col 2 with constants */}
+    <text class="crd-lbl" x="215" y="18" font-size="10">D_y =</text>
+    <path d="M 250,8 L 244,8 L 244,55 L 250,55" fill="none" class="crd-bracket" stroke-width="1.5" />
+    <path d="M 305,8 L 311,8 L 311,55 L 305,55" fill="none" class="crd-bracket" stroke-width="1.5" />
+    <rect x="280" y="10" width="28" height="43" rx="3" class="crd-hl-y" fill-opacity="0.2" />
+    <text class="crd-a" x="257" y="28" font-size="13">a</text>
+    <text class="crd-const" x="290" y="28" font-size="13">e</text>
+    <text class="crd-a" x="257" y="50" font-size="13">c</text>
+    <text class="crd-const" x="290" y="50" font-size="13">f</text>
+
+    {/* Formulas below */}
+    <text class="crd-formula" x="60" y="90" font-size="11" text-anchor="middle">x = D_x / D</text>
+    <text class="crd-formula" x="170" y="90" font-size="11" text-anchor="middle">y = D_y / D</text>
+
+    <text class="crd-note" x="160" y="120" font-size="9" text-anchor="middle">Replace the column of the variable you're solving for with the constants column</text>
+  </svg>
+</figure>
+
+<style>
+  .crd { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .crd svg { max-width:100%; height:auto; }
+  .crd-bracket { stroke:#888; }
+  .crd-lbl { fill:#888; font-family:'Libre Baskerville',Georgia,serif; }
+  .crd-a { fill:#888; font-family:'Courier New',monospace; }
+  .crd-const { fill:#f0883e; font-family:'Courier New',monospace; font-weight:bold; }
+  .crd-hl-x { fill:#58a6ff; }
+  .crd-hl-y { fill:#7ee787; }
+  .crd-formula { fill:#d2a8ff; font-family:'Libre Baskerville',Georgia,serif; font-weight:bold; }
+  .crd-note { fill:#aaa; font-family:'Libre Baskerville',Georgia,serif; }
+  :global([data-theme="light"]) .crd-bracket { stroke:#666; }
+  :global([data-theme="light"]) .crd-lbl { fill:#666; }
+  :global([data-theme="light"]) .crd-a { fill:#666; }
+  :global([data-theme="light"]) .crd-const { fill:#b35900; }
+  :global([data-theme="light"]) .crd-hl-x { fill:#0550ae; }
+  :global([data-theme="light"]) .crd-hl-y { fill:#116329; }
+  :global([data-theme="light"]) .crd-formula { fill:#6639ba; }
+  :global([data-theme="light"]) .crd-note { fill:#666; }
+</style>

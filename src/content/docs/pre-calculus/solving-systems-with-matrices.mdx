@@ -5,4 +5,255 @@ sidebar:
   order: 17
 ---
 
-Content coming soon.
+## What You'll Learn
+
+In this lesson you'll learn how to represent a system of linear equations as an augmented matrix and solve it using row reduction (Gaussian elimination). You'll also learn how to interpret the three possible outcomes of a system.
+
+## The Concept
+
+You already know how to solve systems by substitution or elimination. Row reduction is the same idea, just organized into a matrix so you can work with the numbers without rewriting x, y, z every time.
+
+Start with a system of equations:
+
+$$
+x + 2y = 5
+$$
+
+$$
+3x + 4y = 11
+$$
+
+Write the coefficients and constants into an augmented matrix. The vertical line separates the left side from the right side of the equals sign:
+
+$$
+\left[\begin{array}{cc|c} 1 & 2 & 5 \\ 3 & 4 & 11 \end{array}\right]
+$$
+
+The first column is the x-coefficients, the second is y, and the right side is the constants. Now the goal is to use row operations to turn this into a form where you can read off the answer.
+
+You're allowed three moves:
+
+1. Swap two rows
+2. Multiply an entire row by a nonzero number
+3. Add a multiple of one row to another row
+
+These moves never change the solution. They're the matrix version of the algebra moves you already know.
+
+Let's walk through it step by step.
+
+**Step 1: Eliminate x from Row 2**
+
+We want a zero in the bottom-left corner. Row 1 has a 1 in the x-column, and Row 2 has a 3. So we do R2 - 3(R1):
+
+<div class="math-dark">
+
+$$
+R2 - 3 \cdot R1: \quad [\color{#f0883e}{3} - 3(\color{#58a6ff}{1}), \quad \color{#f0883e}{4} - 3(\color{#58a6ff}{2}), \quad \color{#f0883e}{11} - 3(\color{#58a6ff}{5})] = [0, \; -2, \; -4]
+$$
+
+</div>
+<div class="math-light">
+
+$$
+R2 - 3 \cdot R1: \quad [\color{#b35900}{3} - 3(\color{#0550ae}{1}), \quad \color{#b35900}{4} - 3(\color{#0550ae}{2}), \quad \color{#b35900}{11} - 3(\color{#0550ae}{5})] = [0, \; -2, \; -4]
+$$
+
+</div>
+
+The matrix is now:
+
+$$
+\left[\begin{array}{cc|c} 1 & 2 & 5 \\ 0 & -2 & -4 \end{array}\right]
+$$
+
+That zero in the bottom-left is the whole point. We've eliminated x from the second equation.
+
+**Step 2: Solve for y from Row 2**
+
+Row 2 now says -2y = -4, so y = 2.
+
+You can also clean it up by dividing Row 2 by -2:
+
+$$
+\left[\begin{array}{cc|c} 1 & 2 & 5 \\ 0 & 1 & 2 \end{array}\right]
+$$
+
+**Step 3: Back-substitute into Row 1**
+
+Row 1 says x + 2y = 5. We know y = 2, so x + 4 = 5, which gives x = 1.
+
+Solution: x = 1, y = 2.
+
+Here's the whole process as a visual:
+
+import RowReductionSteps from "../../../components/RowReductionSteps.astro";
+
+<RowReductionSteps />
+
+The key insight: each row operation is just algebra you already know (multiply both sides, subtract equations), but organized so you only track the numbers.
+
+**What can go wrong (or go right)?**
+
+There are three possible outcomes:
+
+- One unique solution: every variable ends up with its own pivot row, and you can solve for each one. Geometrically, the equations describe lines (in 2D) or planes (in 3D) that all meet at exactly one point. That point is your answer. The example above is this case: the two lines cross at (1, 2) and nowhere else.
+- No solution: you end up with a row like [0 0 | 5], which says 0 = 5. Think about what that row means if you translate it back to an equation: 0x + 0y = 5. No matter what x and y are, the left side is always zero, so it can never equal 5. That's a contradiction. Geometrically, the original equations describe parallel lines (in 2D) or parallel planes (in 3D) that never intersect. The system was asking "where do these lines meet?" and the answer is "they don't."
+- Infinitely many solutions: you get a row of all zeros like [0 0 | 0], which translates back to 0x + 0y = 0. That's true for every x and y, so it gives you no new information. It means one of the original equations was redundant (just a multiple or combination of the others). Geometrically, the lines or planes overlap along an entire line or surface, not just at a single point. You end up with a "free variable" that can be anything, and the other variables depend on it. Instead of one answer, you get a whole family of answers.
+
+## Worked Example
+
+**Example 1: A 3x3 system**
+
+Solve:
+
+$$
+x + y + z = 6
+$$
+
+$$
+2x + 3y + z = 14
+$$
+
+$$
+x + 2y + 3z = 14
+$$
+
+Augmented matrix:
+
+$$
+\left[\begin{array}{ccc|c} 1 & 1 & 1 & 6 \\ 2 & 3 & 1 & 14 \\ 1 & 2 & 3 & 14 \end{array}\right]
+$$
+
+Step 1: Eliminate x from R2 and R3.
+
+R2 - 2(R1) and R3 - R1:
+
+$$
+\left[\begin{array}{ccc|c} 1 & 1 & 1 & 6 \\ 0 & 1 & -1 & 2 \\ 0 & 1 & 2 & 8 \end{array}\right]
+$$
+
+Step 2: Eliminate y from R3.
+
+R3 - R2:
+
+$$
+\left[\begin{array}{ccc|c} 1 & 1 & 1 & 6 \\ 0 & 1 & -1 & 2 \\ 0 & 0 & 3 & 6 \end{array}\right]
+$$
+
+Step 3: Back-substitute.
+
+Row 3: 3z = 6, so z = 2.
+
+Row 2: y - z = 2, so y - 2 = 2, y = 4.
+
+Row 1: x + y + z = 6, so x + 4 + 2 = 6, x = 0.
+
+Solution: (0, 4, 2).
+
+**Example 2: No solution**
+
+If during row reduction you get:
+
+$$
+\left[\begin{array}{ccc|c} 1 & 2 & -1 & 3 \\ 0 & 1 & 1 & 2 \\ 0 & 0 & 0 & 5 \end{array}\right]
+$$
+
+The last row says 0x + 0y + 0z = 5, which means 0 = 5. Impossible. No solution.
+
+**Example 3: Infinitely many solutions**
+
+If you get:
+
+$$
+\left[\begin{array}{ccc|c} 1 & 0 & 2 & 3 \\ 0 & 1 & -1 & 4 \\ 0 & 0 & 0 & 0 \end{array}\right]
+$$
+
+The last row is 0 = 0, which is always true but tells you nothing. z is a free variable. Let z = t, then x = 3 - 2t and y = 4 + t. Every value of t gives a different solution.
+
+## Real-World Application
+
+Solving systems with matrices is used in:
+
+- Business (resource allocation, production planning)
+- Engineering (balancing forces, circuit analysis)
+- Computer science (graphics transformations, machine learning)
+- Chemistry (balancing chemical equations with multiple variables)
+- Logistics (optimizing transportation routes)
+
+Example: a company making three products with limited raw materials can set up a system of equations and row-reduce to find the optimal production quantities.
+
+:::note[You've Got This]
+Row reduction is a mechanical process. It may feel tedious at first, but it becomes fast with practice. Focus on getting zeros below each pivot, then back-substitute. Recognizing the three outcomes (unique solution, no solution, infinitely many) is just as important as crunching the numbers.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="precalculus-solving-systems-matrices"
+  questions={[
+    {
+      id: "q1",
+      text: "An augmented matrix combines:",
+      options: [
+        "Coefficients and constants of the system",
+        "Only the coefficients",
+        "Only the constants",
+        "The inverses of the matrices",
+      ],
+      correctIndex: 0,
+      explanation:
+        "It includes both the coefficient matrix and the constant column.",
+    },
+    {
+      id: "q2",
+      text: "If row reduction produces a row [0 0 0 | 7], the system has:",
+      options: [
+        "No solution",
+        "Infinitely many solutions",
+        "A unique solution",
+        "Exactly two solutions",
+      ],
+      correctIndex: 0,
+      explanation: "0 = 7 is a contradiction, so no solution exists.",
+    },
+    {
+      id: "q3",
+      text: "The three elementary row operations are:",
+      options: [
+        "Swap rows, scale a row, add a multiple of one row to another",
+        "Multiply two matrices together",
+        "Find determinants of each row",
+        "Calculate inverses only",
+      ],
+      correctIndex: 0,
+      explanation:
+        "These operations simplify the matrix without changing the solution set.",
+    },
+    {
+      id: "q4",
+      text: "When a system has infinitely many solutions, you will see:",
+      options: [
+        "A row of all zeros with at least one free variable",
+        "A row [0 0 0 | nonzero]",
+        "Only leading 1s with no free variables",
+        "A singular matrix with no solutions",
+      ],
+      correctIndex: 0,
+      explanation: "Free variables allow parameterization of the solution.",
+    },
+    {
+      id: "q5",
+      text: "Augmented matrices are particularly useful for:",
+      options: [
+        "Larger systems and real-world modeling",
+        "Only 2x2 systems",
+        "Only quadratic equations",
+        "Only trigonometric equations",
+      ],
+      correctIndex: 0,
+      explanation: "The method scales well to systems of any size.",
+    },
+  ]}
+/>

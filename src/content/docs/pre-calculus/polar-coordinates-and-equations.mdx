@@ -96,6 +96,91 @@ $$
 
 That's a circle of radius 4 centered at the origin. Much simpler in polar form.
 
+## Famous Polar Curves
+
+Beyond circles, polar coordinates can describe some beautiful and useful curves. Here are four of the most common.
+
+import PolarCurveSingle from "../../../components/PolarCurveSingle.astro";
+
+### Cardioid
+
+<PolarCurveSingle
+  label="r = 1 + cos θ"
+  color="#58a6ff"
+  lightColor="#0550ae"
+  type="cardioid"
+/>
+
+A cardioid is a heart-shaped curve. The equation r = a(1 + cos θ) produces this shape. The name comes from the Greek word for "heart." You can think of it as what happens when you trace a point on the edge of a circle rolling around another circle of the same size. Cardioids show up in microphone pickup patterns (cardioid microphones reject sound from behind) and antenna design.
+
+### Limacon (with inner loop)
+
+<PolarCurveSingle
+  label="r = 1 + 2cos θ"
+  color="#7ee787"
+  lightColor="#116329"
+  type="limacon"
+/>
+
+A limacon looks like a cardioid's more dramatic cousin. The equation r = a + b cos θ produces different shapes depending on the ratio of a to b. When b is greater than a (as in r = 1 + 2cos θ), the curve has an inner loop that passes back through the origin. When a equals b, you get a cardioid. When a is greater than b, you get a dimpled or convex limacon. The word comes from the French for "snail."
+
+### Rose Curve (3 petals)
+
+<PolarCurveSingle
+  label="r = cos(3θ)"
+  color="#d2a8ff"
+  lightColor="#6639ba"
+  type="rose3"
+/>
+
+Rose curves produce petal-shaped patterns. The equation r = cos(nθ) creates petals whose count depends on n. When n is odd, you get exactly n petals. So r = cos(3θ) produces 3 petals. These curves are purely a product of the polar coordinate system and have no simple rectangular equivalent. They appear in signal analysis and mathematical art.
+
+### Rose Curve (4 petals)
+
+<PolarCurveSingle
+  label="r = cos(2θ)"
+  color="#f0883e"
+  lightColor="#b35900"
+  type="rose4"
+/>
+
+When n is even, you get 2n petals. So r = cos(2θ) produces 4 petals, not 2. This is one of those results that surprises people at first but makes sense once you trace through the values of θ. The negative values of r (when cos(2θ) is negative) create the extra petals on the opposite side.
+
+These curves are not just mathematical curiosities. Cardioid patterns are used in directional microphones. Rose curves appear in signal analysis. And limacon shapes show up in cam design for mechanical engineering.
+
+### Lemniscate (Infinity Symbol)
+
+<PolarCurveSingle
+  label="r² = 4 cos(2θ)"
+  color="#f47067"
+  lightColor="#cf222e"
+  type="lemniscate"
+/>
+
+A lemniscate is a figure-eight or infinity symbol shape. The equation r² = a² cos(2θ) produces this curve. The name comes from the Latin "lemniscatus" meaning "decorated with ribbons." It was studied by Jacob Bernoulli in 1694. The lemniscate is the set of all points where the product of the distances to two fixed points (foci) is constant. It shows up in physics (magnetic field lines), optics, and is the basis for the infinity symbol (∞) used in mathematics.
+
+### Archimedean Spiral
+
+<PolarCurveSingle
+  label="r = 0.4θ"
+  color="#79c0ff"
+  lightColor="#0550ae"
+  type="archSpiral"
+/>
+
+An Archimedean spiral has the simple equation r = aθ, where the distance from the origin increases at a constant rate as the angle increases. Named after Archimedes who studied it around 225 BCE, this spiral has evenly spaced turns. You see it everywhere in nature and engineering: the grooves on a vinyl record, the coils of a spring, the way a garden hose coils, and the arms of some galaxies. It's also the shape traced by a point moving outward at constant speed while rotating at constant speed.
+
+### Logarithmic Spiral
+
+<PolarCurveSingle
+  label="r = 0.3e^(0.12θ)"
+  color="#ffa657"
+  lightColor="#b35900"
+  type="logSpiral"
+/>
+
+A logarithmic spiral has the equation r = ae^(bθ), where the distance from the origin grows exponentially with the angle. Unlike the Archimedean spiral, the turns get wider and wider as you go outward. This spiral has a remarkable property: it looks the same at every scale (self-similar), and it crosses every radius line at the same angle. It appears throughout nature: nautilus shells, hurricane cloud bands, spiral galaxies, the flight path of a hawk approaching prey, and the arrangement of seeds in a sunflower. Jacob Bernoulli was so fascinated by it that he asked for one to be engraved on his tombstone with the words "Eadem mutata resurgo" ("Although changed, I arise the same").
+
 ## Real-World Application
 
 Polar coordinates are used in:

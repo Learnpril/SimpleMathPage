@@ -5,4 +5,185 @@ sidebar:
   order: 15
 ---
 
-Content coming soon.
+## What You'll Learn
+
+Matrices can look intimidating at first, but don't sweat it. This is an introduction, and you'll revisit all of this in Linear Algebra with way more depth. For now, just get comfortable with the mechanics.
+
+In this lesson you'll learn how to add, subtract, and multiply matrices, find the inverse of a 2x2 matrix, and understand when an inverse exists. You worked with matrices briefly in Algebra 2 for solving systems. Here we go deeper into the operations themselves.
+
+## The Concept
+
+A matrix is a rectangular array of numbers arranged in rows and columns. A 2x3 matrix has 2 rows and 3 columns. We name entries by their position: the entry in row i, column j is written as a_ij.
+
+Matrix addition and subtraction work entry by entry (the matrices must be the same size):
+
+$$
+\begin{bmatrix} a & b \\ c & d \end{bmatrix} + \begin{bmatrix} e & f \\ g & h \end{bmatrix} = \begin{bmatrix} a+e & b+f \\ c+g & d+h \end{bmatrix}
+$$
+
+Scalar multiplication multiplies every entry by the scalar:
+
+$$
+k\begin{bmatrix} a & b \\ c & d \end{bmatrix} = \begin{bmatrix} ka & kb \\ kc & kd \end{bmatrix}
+$$
+
+Matrix multiplication is the interesting one. To multiply A times B, you take each row of A and "dot" it with each column of B. The number of columns in A must equal the number of rows in B.
+
+Here's how it works. To find entry (1,1) of the result, take Row 1 of A and Column 1 of B, multiply the matching pairs, and add:
+
+<div class="math-dark">
+$$
+\begin{bmatrix} \color{#58a6ff}{1} & \color{#f0883e}{3} \\ 2 & 4 \end{bmatrix} \begin{bmatrix} \color{#58a6ff}{5} & 6 \\ \color{#f0883e}{7} & 8 \end{bmatrix} = \begin{bmatrix} \color{#7ee787}{26} & \cdots \\ \cdots & \cdots \end{bmatrix}
+$$
+</div>
+<div class="math-light">
+$$
+\begin{bmatrix} \color{#0550ae}{1} & \color{#b35900}{3} \\ 2 & 4 \end{bmatrix} \begin{bmatrix} \color{#0550ae}{5} & 6 \\ \color{#b35900}{7} & 8 \end{bmatrix} = \begin{bmatrix} \color{#116329}{26} & \cdots \\ \cdots & \cdots \end{bmatrix}
+$$
+</div>
+
+The blue 1 multiplies the blue 5, and the gold 3 multiplies the gold 7:
+
+<div class="math-dark">
+$$
+(\color{#58a6ff}{1})(\color{#58a6ff}{5}) + (\color{#f0883e}{3})(\color{#f0883e}{7}) = 5 + 21 = \color{#7ee787}{26}
+$$
+</div>
+<div class="math-light">
+$$
+(\color{#0550ae}{1})(\color{#0550ae}{5}) + (\color{#b35900}{3})(\color{#b35900}{7}) = 5 + 21 = \color{#116329}{26}
+$$
+</div>
+
+You repeat this for every row-column pair to fill in the whole result matrix.
+
+Matrix multiplication is not commutative. In general, AB does not equal BA. Order matters.
+
+The identity matrix I acts like the number 1: AI = IA = A.
+
+$$
+I = \begin{bmatrix} 1 & 0 \\ 0 & 1 \end{bmatrix}
+$$
+
+The inverse of a 2x2 matrix (when it exists) is:
+
+$$
+A^{-1} = \frac{1}{ad - bc}\begin{bmatrix} d & -b \\ -c & a \end{bmatrix}
+$$
+
+where ad - bc is the determinant. If the determinant is zero, the matrix has no inverse (it's singular).
+
+## Worked Example
+
+**Example 1: Matrix multiplication**
+
+$$
+\begin{bmatrix} 1 & 3 \\ 2 & 4 \end{bmatrix} \begin{bmatrix} 5 & 6 \\ 7 & 8 \end{bmatrix}
+$$
+
+Row 1 dot Col 1: (1)(5) + (3)(7) = 26
+
+Row 1 dot Col 2: (1)(6) + (3)(8) = 30
+
+Row 2 dot Col 1: (2)(5) + (4)(7) = 38
+
+Row 2 dot Col 2: (2)(6) + (4)(8) = 44
+
+$$
+= \begin{bmatrix} 26 & 30 \\ 38 & 44 \end{bmatrix}
+$$
+
+**Example 2: Finding an inverse**
+
+Find the inverse of A:
+
+$$
+A = \begin{bmatrix} 4 & 7 \\ 2 & 6 \end{bmatrix}
+$$
+
+Determinant: (4)(6) - (7)(2) = 24 - 14 = 10
+
+$$
+A^{-1} = \frac{1}{10}\begin{bmatrix} 6 & -7 \\ -2 & 4 \end{bmatrix} = \begin{bmatrix} 0.6 & -0.7 \\ -0.2 & 0.4 \end{bmatrix}
+$$
+
+Verify: multiply A by its inverse and you should get the identity matrix.
+
+## Real-World Application
+
+Matrices are used in:
+
+- Computer graphics (transformations: rotation, scaling, translation)
+- Data science (datasets are stored as matrices)
+- Economics (input-output models, Leontief models)
+- Engineering (circuit analysis, structural mechanics)
+- Machine learning (neural networks are layers of matrix multiplications)
+
+Example: every time you rotate an image on your phone, the device multiplies each pixel's coordinates by a rotation matrix. A 90-degree counterclockwise rotation uses the matrix [[0, -1], [1, 0]].
+
+:::note[You've Got This]
+Matrix multiplication is the big new skill here. Remember: row times column, and the inner dimensions must match. For 2x2 inverses, the formula is straightforward once you have the determinant. If the determinant is zero, there's no inverse.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="precalculus-matrix-ops"
+  questions={[
+    {
+      id: "q1",
+      text: "To add two matrices, they must:",
+      options: [
+        "Have the same dimensions",
+        "Be square",
+        "Have the same determinant",
+        "Be invertible",
+      ],
+      correctIndex: 0,
+      explanation: "Addition is entry-by-entry, so dimensions must match.",
+    },
+    {
+      id: "q2",
+      text: "In matrix multiplication AB, the number of columns in A must equal:",
+      options: [
+        "The number of rows in B",
+        "The number of columns in B",
+        "The determinant of B",
+        "The number of rows in A",
+      ],
+      correctIndex: 0,
+      explanation:
+        "The inner dimensions must match for multiplication to be defined.",
+    },
+    {
+      id: "q3",
+      text: "Matrix multiplication is:",
+      options: [
+        "Not commutative (AB ≠ BA in general)",
+        "Always commutative",
+        "Only defined for square matrices",
+        "The same as entry-by-entry multiplication",
+      ],
+      correctIndex: 0,
+      explanation: "Order matters in matrix multiplication.",
+    },
+    {
+      id: "q4",
+      text: "A 2x2 matrix has no inverse when its determinant is:",
+      options: ["$0$", "$1$", "$-1$", "Positive"],
+      correctIndex: 0,
+      explanation:
+        "Zero determinant means the matrix is singular (no inverse).",
+    },
+    {
+      id: "q5",
+      text: "The identity matrix multiplied by any matrix A gives:",
+      options: ["$A$", "The zero matrix", "The inverse of $A$", "$A^2$"],
+      correctIndex: 0,
+      explanation:
+        "The identity matrix is the multiplicative identity: IA = AI = A.",
+    },
+  ]}
+/>

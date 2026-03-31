@@ -1,0 +1,71 @@
+---
+/**
+ * DotProductDiagram — shows two vectors u and v with the angle
+ * between them labeled, illustrating the geometric interpretation
+ * of the dot product: u · v = |u||v|cos θ.
+ */
+const w = 280;
+const h = 220;
+const pad = 35;
+const gw = w - 2 * pad;
+const gh = h - 2 * pad;
+const xMin = -1, xMax = 6, yMin = -1, yMax = 5;
+const sx = (x: number) => pad + ((x - xMin) / (xMax - xMin)) * gw;
+const sy = (y: number) => pad + ((yMax - y) / (yMax - yMin)) * gh;
+---
+
+<figure class="dpd" role="img" aria-label="Dot product: angle between two vectors u and v">
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    {[0,1,2,3,4,5].map(v => (
+      <g>
+        <line x1={sx(v)} y1={sy(yMin)} x2={sx(v)} y2={sy(yMax)} class="dpd-grid" stroke-width="0.5" />
+        {v <= 4 && <line x1={sx(xMin)} y1={sy(v)} x2={sx(xMax)} y2={sy(v)} class="dpd-grid" stroke-width="0.5" />}
+      </g>
+    ))}
+    <line x1={sx(xMin)} y1={sy(0)} x2={sx(xMax)} y2={sy(0)} class="dpd-axis" stroke-width="1.5" />
+    <line x1={sx(0)} y1={sy(yMin)} x2={sx(0)} y2={sy(yMax)} class="dpd-axis" stroke-width="1" />
+
+    <defs>
+      <marker id="dpd-ah-b" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+        <polygon points="0 0, 8 3, 0 6" fill="#58a6ff" />
+      </marker>
+      <marker id="dpd-ah-o" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+        <polygon points="0 0, 8 3, 0 6" fill="#f0883e" />
+      </marker>
+    </defs>
+
+    {/* u = <4, 3> */}
+    <line x1={sx(0)} y1={sy(0)} x2={sx(4)} y2={sy(3)} class="dpd-u" stroke-width="2.5" marker-end="url(#dpd-ah-b)" />
+    {/* v = <5, 1> */}
+    <line x1={sx(0)} y1={sy(0)} x2={sx(5)} y2={sy(1)} class="dpd-v" stroke-width="2.5" marker-end="url(#dpd-ah-o)" />
+
+    {/* Angle arc between vectors */}
+    <path d={`M ${sx(1.6)},${sy(0.32)} A 28 28 0 0 1 ${sx(1.2)},${sy(0.9)}`} fill="none" class="dpd-arc" stroke-width="1.5" />
+
+    {/* Labels — positioned to avoid overlapping vectors and axes */}
+    <text class="dpd-u-lbl" x={sx(1.5)} y={sy(2.8)} font-size="12" font-weight="bold">u = ⟨4, 3⟩</text>
+    <text class="dpd-v-lbl" x={sx(3.8)} y={sy(-0.5)} font-size="12" font-weight="bold">v = ⟨5, 1⟩</text>
+    <text class="dpd-angle-lbl" x={sx(2.2)} y={sy(0.9)} font-size="10">θ ≈ 25.3°</text>
+  </svg>
+</figure>
+
+<style>
+  .dpd { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .dpd svg { max-width:100%; height:auto; }
+  .dpd-grid { stroke:#333; }
+  .dpd-axis { stroke:#666; }
+  .dpd-u { stroke:#58a6ff; }
+  .dpd-v { stroke:#f0883e; }
+  .dpd-arc { stroke:#d2a8ff; }
+  .dpd-u-lbl { fill:#58a6ff; font-family:'Libre Baskerville',Georgia,serif; }
+  .dpd-v-lbl { fill:#f0883e; font-family:'Libre Baskerville',Georgia,serif; }
+  .dpd-angle-lbl { fill:#d2a8ff; font-family:'Libre Baskerville',Georgia,serif; }
+  :global([data-theme="light"]) .dpd-grid { stroke:#ddd; }
+  :global([data-theme="light"]) .dpd-axis { stroke:#999; }
+  :global([data-theme="light"]) .dpd-u { stroke:#0550ae; }
+  :global([data-theme="light"]) .dpd-v { stroke:#b35900; }
+  :global([data-theme="light"]) .dpd-arc { stroke:#6639ba; }
+  :global([data-theme="light"]) .dpd-u-lbl { fill:#0550ae; }
+  :global([data-theme="light"]) .dpd-v-lbl { fill:#b35900; }
+  :global([data-theme="light"]) .dpd-angle-lbl { fill:#6639ba; }
+</style>
