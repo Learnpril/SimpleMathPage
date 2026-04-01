@@ -5,4 +5,204 @@ sidebar:
   order: 20
 ---
 
-Content coming soon.
+## What You'll Learn
+
+In this lesson you'll learn what a limit is, how to find limits from graphs and by simplifying expressions, and why limits are the gateway to calculus. This is the concept that makes calculus possible.
+
+## The Concept
+
+A limit describes what value a function approaches as the input gets closer and closer to a specific number. The function doesn't have to actually equal that value at the point. It just has to be heading toward it.
+
+We write it like this:
+
+$$
+\lim_{x \to a} f(x) = L
+$$
+
+In plain English: "As x gets very close to a (from both sides), f(x) gets very close to L."
+
+The key insight is that limits care about behavior near a point, not the actual value at the point. A function can have a hole at x = 3 but still have a limit there, because the limit only asks "what is the function approaching?" not "what does it equal?"
+
+import LimitDiagram from "../../../components/LimitDiagram.astro";
+
+<LimitDiagram />
+
+The diagram shows a function with a hole at x = 3 (the open circle). The function isn't defined there, but as x approaches 3 from both sides, the y-values approach 6. So the limit is 6, even though f(3) doesn't exist.
+
+For a two-sided limit to exist, the function must approach the same value from both the left and the right. If it approaches different values from each side, the limit does not exist.
+
+**How to find limits:**
+
+1. Direct substitution: just plug in the number. If you get a real answer, that's the limit.
+2. Factoring and canceling: if you get 0/0, simplify the expression first, then substitute.
+3. Rationalizing: for expressions with square roots, multiply by the conjugate.
+4. Graphs and tables: look at what the y-values approach as x gets close to the target.
+
+## Worked Example
+
+import LimitEx1 from "../../../components/LimitEx1.astro";
+import LimitEx2 from "../../../components/LimitEx2.astro";
+import LimitEx3 from "../../../components/LimitEx3.astro";
+
+**Example 1: Direct substitution**
+
+<LimitEx1 />
+
+Find the limit:
+
+$$
+\lim_{x \to 2} (3x^2 - 5x + 1)
+$$
+
+Just plug in x = 2:
+
+$$
+3(2)^2 - 5(2) + 1 = 3(4) - 10 + 1 = 12 - 10 + 1 = 3
+$$
+
+The limit is 3. This means as x approaches 2, the function approaches 3. When direct substitution gives you a normal number, you're done.
+
+**Example 2: Removable discontinuity (the 0/0 case)**
+
+<LimitEx2 />
+
+Find the limit:
+
+$$
+\lim_{x \to 3} \frac{x^2 - 9}{x - 3}
+$$
+
+Try plugging in x = 3: you get (9 - 9)/(3 - 3) = 0/0. That's not an answer. It's a signal that the expression can be simplified.
+
+Factor the numerator. The difference of squares rule gives us:
+
+$$
+x^2 - 9 = (x - 3)(x + 3)
+$$
+
+So the fraction becomes:
+
+$$
+\frac{(x - 3)(x + 3)}{x - 3}
+$$
+
+Cancel the (x - 3) terms (valid for all x except 3):
+
+$$
+= x + 3
+$$
+
+Now substitute x = 3:
+
+$$
+\lim_{x \to 3} (x + 3) = 6
+$$
+
+The limit is 6. The function has a hole at x = 3 (it's undefined there), but the limit still exists because the function approaches 6 from both sides. This is the situation shown in the diagram above.
+
+**Example 3: One-sided limits that disagree**
+
+<LimitEx3 />
+
+Consider the function:
+
+$$
+f(x) = \frac{\lvert x - 2 \rvert}{x - 2}
+$$
+
+This function equals 1 when x is greater than 2 (because the absolute value doesn't change anything), and -1 when x is less than 2 (because the absolute value flips the sign).
+
+From the right (x approaching 2 from above): f(x) = 1.
+
+From the left (x approaching 2 from below): f(x) = -1.
+
+Since the left-hand limit (-1) and right-hand limit (1) are different, the two-sided limit does not exist.
+
+## Real-World Application
+
+Limits are the foundation for:
+
+- Derivatives in Calculus (instantaneous rates of change)
+- Understanding continuity (is the function "smooth" or does it have breaks?)
+- Modeling real phenomena like population growth approaching a carrying capacity
+- Engineering (stress analysis as loads approach breaking points)
+- Economics (marginal cost as production approaches certain levels)
+
+Example: when you calculate the speed of a car at exactly 3:00 PM, you're really taking the limit of average speed over smaller and smaller time intervals. You can't measure speed at a single instant directly, but you can measure it over 1 second, then 0.1 seconds, then 0.01 seconds, and see what it approaches. That's a limit.
+
+:::note[You've Got This]
+Limits can feel strange at first because they ask "what is the function approaching?" rather than "what does it equal?" Start by trying direct substitution. When you get 0/0, that's a signal to simplify (usually by factoring). Practice reading graphs to build intuition. Limits are the bridge from algebra to calculus, and once you're comfortable with them, everything in Calculus starts to click.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="precalculus-intro-limits"
+  questions={[
+    {
+      id: "q1",
+      text: "A limit describes:",
+      options: [
+        "The exact value of the function at a point",
+        "The slope of the function",
+        "The area under the curve",
+        "What a function approaches as x gets close to a value",
+      ],
+      correctIndex: 3,
+      explanation:
+        "Limits focus on behavior near a point, not necessarily at the point.",
+    },
+    {
+      id: "q2",
+      text: "If direct substitution gives 0/0, you should usually:",
+      options: [
+        "Say the limit does not exist",
+        "Factor and simplify",
+        "Use the quadratic formula",
+        "Graph it immediately",
+      ],
+      correctIndex: 1,
+      explanation:
+        "0/0 is indeterminate and often means you can cancel common factors.",
+    },
+    {
+      id: "q3",
+      text: "For the two-sided limit to exist, the left and right limits must:",
+      options: [
+        "Be equal",
+        "Both be zero",
+        "Be different",
+        "Add up to the function value",
+      ],
+      correctIndex: 0,
+      explanation:
+        "Left and right limits must agree for the two-sided limit to exist.",
+    },
+    {
+      id: "q4",
+      text: "Limits are the foundation for understanding:",
+      options: [
+        "Only basic algebra",
+        "Only geometry",
+        "Derivatives and continuity in calculus",
+        "Only statistics",
+      ],
+      correctIndex: 2,
+      explanation: "They are the starting point of calculus.",
+    },
+    {
+      id: "q5",
+      text: "A removable discontinuity is:",
+      options: [
+        "A vertical asymptote",
+        "A jump in the graph",
+        "The function being undefined everywhere",
+        "A hole in the graph that can be filled by simplifying",
+      ],
+      correctIndex: 3,
+      explanation: "Factoring often removes the discontinuity for the limit.",
+    },
+  ]}
+/>

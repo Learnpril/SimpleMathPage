@@ -161,12 +161,12 @@ import Quiz from "../../../components/Quiz.astro";
       id: "q1",
       text: "Two functions $f$ and $g$ are inverses if:",
       options: [
-        "$f(g(x)) = x$ and $g(f(x)) = x$",
         "$f(x) + g(x) = x$",
         "$f(x) \\cdot g(x) = x$",
+        "$f(g(x)) = x$ and $g(f(x)) = x$",
         "$f(x) = g(x)$",
       ],
-      correctIndex: 0,
+      correctIndex: 2,
       explanation:
         "Inverses undo each other: both compositions must return $x$.",
     },
@@ -174,12 +174,12 @@ import Quiz from "../../../components/Quiz.astro";
       id: "q2",
       text: "The graph of $f^{-1}$ is the reflection of $f$ over:",
       options: [
-        "The line $y = x$",
         "The $x$-axis",
+        "The line $y = x$",
         "The $y$-axis",
         "The origin",
       ],
-      correctIndex: 0,
+      correctIndex: 1,
       explanation:
         "Every point $(a, b)$ on $f$ becomes $(b, a)$ on $f^{-1}$, which is a reflection over $y = x$.",
     },
@@ -187,12 +187,12 @@ import Quiz from "../../../components/Quiz.astro";
       id: "q3",
       text: "A function has an inverse only if it is:",
       options: [
-        "One-to-one",
         "Quadratic",
         "Always increasing",
         "Defined for all real numbers",
+        "One-to-one",
       ],
-      correctIndex: 0,
+      correctIndex: 3,
       explanation:
         "Only one-to-one functions (passing the horizontal line test) have inverses.",
     },
@@ -212,12 +212,12 @@ import Quiz from "../../../components/Quiz.astro";
       id: "q5",
       text: "The inverse of $f(x) = x^2 + 1$ (with $x \\geq 0$) is:",
       options: [
-        "$\\sqrt{x - 1}$",
         "$x^2 - 1$",
         "$(x - 1)^2$",
+        "$\\sqrt{x - 1}$",
         "$\\frac{1}{x^2 + 1}$",
       ],
-      correctIndex: 0,
+      correctIndex: 2,
       explanation:
         "Swap and solve: $x = y^2 + 1 \\Rightarrow y = \\sqrt{x - 1}$ (positive root since $x \\geq 0$).",
     },

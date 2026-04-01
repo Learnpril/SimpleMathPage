@@ -1,0 +1,100 @@
+---
+/**
+ * LimitExamples — three side-by-side graphs for the three limit examples.
+ */
+const s = 170;
+const pad = 28;
+const gs = s - 2 * pad;
+
+// Example 1: parabola f(x) = 3x²-5x+1, points from x=0 to x=4
+const pts1: string[] = [];
+for (let i = 0; i <= 40; i++) {
+  const x = i * 4 / 40;
+  const y = 3*x*x - 5*x + 1;
+  const px = pad + (x / 4) * gs;
+  const py = (s - pad) - ((y + 2) / 32) * gs;
+  if (py >= pad - 5 && py <= s - pad + 5) pts1.push(`${px},${py}`);
+}
+const dot1x = pad + (2/4) * gs;
+const dot1y = (s - pad) - ((3+2)/32) * gs;
+
+// Example 2: line y=x+3, x from 0 to 6
+const lx2 = (x: number) => pad + (x / 6) * gs;
+const ly2 = (y: number) => (s - pad) - (y / 10) * gs;
+
+// Example 3: step function
+const lx3 = (x: number) => pad + (x / 4) * gs;
+const ly3 = (y: number) => (s - pad) - ((y + 2) / 4) * gs;
+---
+
+<div class="le-wrap">
+  {/* Example 1: Direct substitution */}
+  <figure class="le-fig" role="img" aria-label="Example 1: smooth parabola passing through (2,3)">
+    <svg viewBox={`0 0 ${s} ${s}`} width={s} height={s} xmlns="http://www.w3.org/2000/svg">
+      <line x1={pad} y1={s - pad} x2={s - pad} y2={s - pad} class="le-axis" stroke-width="1" />
+      <line x1={pad} y1={s - pad} x2={pad} y2={pad} class="le-axis" stroke-width="1" />
+      <polyline points={pts1.join(' ')} fill="none" class="le-curve" stroke-width="2" />
+      <circle cx={dot1x} cy={dot1y} r="5" class="le-dot" />
+      <text class="le-lbl" x={dot1x + 10} y={dot1y - 8} font-size="9">limit = 3</text>
+    </svg>
+    <figcaption class="le-cap">Ex 1: Direct substitution</figcaption>
+  </figure>
+
+  {/* Example 2: Removable discontinuity */}
+  <figure class="le-fig" role="img" aria-label="Example 2: line with hole at (3,6)">
+    <svg viewBox={`0 0 ${s} ${s}`} width={s} height={s} xmlns="http://www.w3.org/2000/svg">
+      <line x1={pad} y1={s - pad} x2={s - pad} y2={s - pad} class="le-axis" stroke-width="1" />
+      <line x1={pad} y1={s - pad} x2={pad} y2={pad} class="le-axis" stroke-width="1" />
+      <line x1={lx2(0)} y1={ly2(3)} x2={lx2(2.9)} y2={ly2(5.9)} class="le-curve" stroke-width="2" />
+      <line x1={lx2(3.1)} y1={ly2(6.1)} x2={lx2(6)} y2={ly2(9)} class="le-curve" stroke-width="2" />
+      <circle cx={lx2(3)} cy={ly2(6)} r="5" fill="none" class="le-hole" stroke-width="2" />
+      <text class="le-lbl" x={lx2(0.2)} y={ly2(8)} font-size="9">limit = 6</text>
+      <text class="le-lbl-hole" x={lx2(3.8)} y={ly2(5)} font-size="8">hole</text>
+    </svg>
+    <figcaption class="le-cap">Ex 2: Hole (0/0 case)</figcaption>
+  </figure>
+
+  {/* Example 3: One-sided limits disagree */}
+  <figure class="le-fig" role="img" aria-label="Example 3: step function, left=-1, right=1">
+    <svg viewBox={`0 0 ${s} ${s}`} width={s} height={s} xmlns="http://www.w3.org/2000/svg">
+      <line x1={pad} y1={s - pad} x2={s - pad} y2={s - pad} class="le-axis" stroke-width="1" />
+      <line x1={pad} y1={s - pad} x2={pad} y2={pad} class="le-axis" stroke-width="1" />
+      <line x1={lx3(0)} y1={ly3(-1)} x2={lx3(1.95)} y2={ly3(-1)} class="le-curve" stroke-width="2.5" />
+      <line x1={lx3(2.05)} y1={ly3(1)} x2={lx3(4)} y2={ly3(1)} class="le-curve2" stroke-width="2.5" />
+      <circle cx={lx3(2)} cy={ly3(-1)} r="4" fill="none" class="le-hole" stroke-width="2" />
+      <circle cx={lx3(2)} cy={ly3(1)} r="4" fill="none" class="le-hole" stroke-width="2" />
+      <text class="le-lbl-left" x={lx3(0.1)} y={ly3(-1) - 8} font-size="8">y = -1</text>
+      <text class="le-lbl-right" x={lx3(2.6)} y={ly3(1) - 8} font-size="8">y = 1</text>
+      <text class="le-lbl-dne" x={lx3(0.8)} y={ly3(1.8)} font-size="8">limit DNE</text>
+    </svg>
+    <figcaption class="le-cap">Ex 3: Limit does not exist</figcaption>
+  </figure>
+</div>
+
+<style>
+  .le-wrap { display:flex; gap:0.8rem; justify-content:center; flex-wrap:wrap; margin:1.5rem 0; }
+  .le-fig { display:flex; flex-direction:column; align-items:center; margin:0; }
+  .le-fig svg { max-width:100%; height:auto; }
+  .le-cap { font-family:'Libre Baskerville',Georgia,serif; font-size:0.8rem; margin-top:0.3rem; text-align:center; color:#ccc; }
+  .le-axis { stroke:#555; }
+  .le-curve { stroke:#58a6ff; }
+  .le-curve2 { stroke:#f0883e; }
+  .le-dot { fill:#7ee787; }
+  .le-hole { stroke:#f0883e; }
+  .le-lbl { fill:#7ee787; font-family:'Libre Baskerville',Georgia,serif; font-weight:bold; }
+  .le-lbl-hole { fill:#f0883e; font-family:'Libre Baskerville',Georgia,serif; font-style:italic; }
+  .le-lbl-left { fill:#58a6ff; font-family:'Libre Baskerville',Georgia,serif; }
+  .le-lbl-right { fill:#f0883e; font-family:'Libre Baskerville',Georgia,serif; }
+  .le-lbl-dne { fill:#f47067; font-family:'Libre Baskerville',Georgia,serif; font-weight:bold; }
+  :global([data-theme="light"]) .le-cap { color:#444; }
+  :global([data-theme="light"]) .le-axis { stroke:#bbb; }
+  :global([data-theme="light"]) .le-curve { stroke:#0550ae; }
+  :global([data-theme="light"]) .le-curve2 { stroke:#b35900; }
+  :global([data-theme="light"]) .le-dot { fill:#116329; }
+  :global([data-theme="light"]) .le-hole { stroke:#b35900; }
+  :global([data-theme="light"]) .le-lbl { fill:#116329; }
+  :global([data-theme="light"]) .le-lbl-hole { fill:#b35900; }
+  :global([data-theme="light"]) .le-lbl-left { fill:#0550ae; }
+  :global([data-theme="light"]) .le-lbl-right { fill:#b35900; }
+  :global([data-theme="light"]) .le-lbl-dne { fill:#cf222e; }
+</style>

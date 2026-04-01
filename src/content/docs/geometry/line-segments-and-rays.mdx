@@ -63,15 +63,15 @@ import Quiz from "../../../components/Quiz.astro";
     {
       id: "q1",
       text: "Which figure has exactly two endpoints?",
-      options: ["Line segment", "Line", "Ray", "Plane"],
-      correctIndex: 0,
+      options: ["Line", "Line segment", "Ray", "Plane"],
+      correctIndex: 1,
       explanation: "A line segment has two definite endpoints.",
     },
     {
       id: "q2",
       text: "A figure starts at point A and goes through point B forever in one direction. What is it?",
-      options: ["Ray AB", "Line segment AB", "Line AB", "Plane AB"],
-      correctIndex: 0,
+      options: ["Plane AB", "Line segment AB", "Line AB", "Ray AB"],
+      correctIndex: 3,
       explanation:
         "It starts at one endpoint and extends forever. That's a ray.",
     },
@@ -87,20 +87,20 @@ import Quiz from "../../../components/Quiz.astro";
       id: "q4",
       text: "Which notation represents a line segment between A and B?",
       options: [
-        "AB with a bar on top",
-        "AB with arrows on both ends",
         "AB with an arrow on one end",
-        "Just AB",
+        "AB with arrows on both ends",
+        "AB with a bar on top",
+        "Just AB"
       ],
-      correctIndex: 0,
+      correctIndex: 2,
       explanation:
         "A bar over AB represents a line segment. Arrows on both ends means a line, and an arrow on one end means a ray.",
     },
     {
       id: "q5",
       text: "Two rays that share the same endpoint form a:",
-      options: ["Angle", "Line", "Plane", "Segment"],
-      correctIndex: 0,
+      options: ["Line", "Angle", "Plane", "Segment"],
+      correctIndex: 1,
       explanation:
         "An angle is formed by two rays sharing a common endpoint (the vertex).",
     },

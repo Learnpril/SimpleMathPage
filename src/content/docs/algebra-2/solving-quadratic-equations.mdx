@@ -126,19 +126,19 @@ import Quiz from "../../../components/Quiz.astro";
       id: "q1",
       text: "Solve by factoring: $x^2 - 5x - 6 = 0$",
       options: [
-        "$x = 6$ or $x = -1$",
         "$x = 3$ or $x = 2$",
+        "$x = 6$ or $x = -1$",
         "$x = 6$ or $x = 1$",
-        "$x = -6$ or $x = 1$",
+        "$x = -6$ or $x = 1$"
       ],
-      correctIndex: 0,
+      correctIndex: 1,
       explanation: "$(x - 6)(x + 1) = 0 \\rightarrow x = 6$ or $x = -1$.",
     },
     {
       id: "q2",
       text: "What is the discriminant of $3x^2 - 7x + 2 = 0$?",
-      options: ["$25$", "$49$", "$1$", "$13$"],
-      correctIndex: 0,
+      options: ["$13$", "$49$", "$1$", "$25$"],
+      correctIndex: 3,
       explanation: "$b^2 - 4ac = (-7)^2 - 4(3)(2) = 49 - 24 = 25$.",
     },
     {
@@ -157,12 +157,12 @@ import Quiz from "../../../components/Quiz.astro";
       id: "q4",
       text: "If the discriminant is negative, the equation has:",
       options: [
-        "Two complex (imaginary) solutions",
-        "Two real solutions",
         "One repeated real solution",
-        "No solutions at all",
+        "Two real solutions",
+        "Two complex (imaginary) solutions",
+        "No solutions at all"
       ],
-      correctIndex: 0,
+      correctIndex: 2,
       explanation:
         "A negative discriminant means the parabola doesn't cross the x-axis, so the solutions are complex numbers.",
     },
@@ -170,12 +170,12 @@ import Quiz from "../../../components/Quiz.astro";
       id: "q5",
       text: "Solve using the quadratic formula: $2x^2 + 3x - 2 = 0$.",
       options: [
-        "$x = \\frac{1}{2}$ or $x = -2$",
         "$x = 1$ or $x = -2$",
+        "$x = \\frac{1}{2}$ or $x = -2$",
         "$x = 2$ or $x = -\\frac{1}{2}$",
-        "$x = -1$ or $x = \\frac{3}{2}$",
+        "$x = -1$ or $x = \\frac{3}{2}$"
       ],
-      correctIndex: 0,
+      correctIndex: 1,
       explanation:
         "$x = \\frac{-3 \\pm \\sqrt{9 + 16}}{4} = \\frac{-3 \\pm 5}{4}$. So $x = \\frac{1}{2}$ or $x = -2$.",
     },

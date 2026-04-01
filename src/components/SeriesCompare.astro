@@ -1,0 +1,72 @@
+---
+/**
+ * SeriesCompare — side-by-side bar charts showing arithmetic vs
+ * geometric series growth. Arithmetic: 3, 7, 11, 15, 19 (d=4).
+ * Geometric: 3, 6, 12, 24, 48 (r=2).
+ */
+const w = 300;
+const h = 180;
+const pad = 30;
+const barW = 18;
+const gap = 6;
+const arith = [3, 7, 11, 15, 19];
+const geo = [3, 6, 12, 24, 48];
+const maxVal = 48;
+const barH = (v: number) => (v / maxVal) * (h - pad - 20);
+const groupW = barW * 2 + gap;
+const totalW = arith.length * groupW + (arith.length - 1) * 12;
+const startX = (w - totalW) / 2;
+---
+
+<figure class="sc" role="img" aria-label="Arithmetic series grows linearly, geometric series grows exponentially">
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    {/* Baseline */}
+    <line x1={startX - 5} y1={h - pad} x2={startX + totalW + 5} y2={h - pad} class="sc-base" stroke-width="1" />
+
+    {arith.map((a, i) => {
+      const x = startX + i * (groupW + 12);
+      const g = geo[i];
+      const aH = barH(a);
+      const gH = barH(g);
+      return (
+        <g>
+          {/* Arithmetic bar */}
+          <rect x={x} y={h - pad - aH} width={barW} height={aH} rx="2" class="sc-arith" fill-opacity="0.8" />
+          <text class="sc-val-a" x={x + barW / 2} y={h - pad - aH - 4} font-size="8" text-anchor="middle">{a}</text>
+
+          {/* Geometric bar */}
+          <rect x={x + barW + gap} y={h - pad - gH} width={barW} height={gH} rx="2" class="sc-geo" fill-opacity="0.8" />
+          <text class="sc-val-g" x={x + barW + gap + barW / 2} y={h - pad - gH - 4} font-size="8" text-anchor="middle">{g}</text>
+
+          {/* Term number */}
+          <text class="sc-term" x={x + groupW / 2} y={h - pad + 14} font-size="8" text-anchor="middle">n={i + 1}</text>
+        </g>
+      );
+    })}
+
+    {/* Legend */}
+    <rect x="10" y="6" width="10" height="10" rx="2" class="sc-arith" fill-opacity="0.8" />
+    <text class="sc-legend" x="24" y="15" font-size="9">Arithmetic (+4)</text>
+    <rect x="10" y="20" width="10" height="10" rx="2" class="sc-geo" fill-opacity="0.8" />
+    <text class="sc-legend" x="24" y="29" font-size="9">Geometric (×2)</text>
+  </svg>
+</figure>
+
+<style>
+  .sc { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .sc svg { max-width:100%; height:auto; }
+  .sc-base { stroke:#555; }
+  .sc-arith { fill:#58a6ff; }
+  .sc-geo { fill:#f0883e; }
+  .sc-val-a { fill:#58a6ff; font-family:'Libre Baskerville',Georgia,serif; }
+  .sc-val-g { fill:#f0883e; font-family:'Libre Baskerville',Georgia,serif; }
+  .sc-term { fill:#888; font-family:'Libre Baskerville',Georgia,serif; }
+  .sc-legend { fill:#aaa; font-family:'Libre Baskerville',Georgia,serif; }
+  :global([data-theme="light"]) .sc-base { stroke:#ccc; }
+  :global([data-theme="light"]) .sc-arith { fill:#0550ae; }
+  :global([data-theme="light"]) .sc-geo { fill:#b35900; }
+  :global([data-theme="light"]) .sc-val-a { fill:#0550ae; }
+  :global([data-theme="light"]) .sc-val-g { fill:#b35900; }
+  :global([data-theme="light"]) .sc-term { fill:#666; }
+  :global([data-theme="light"]) .sc-legend { fill:#666; }
+</style>

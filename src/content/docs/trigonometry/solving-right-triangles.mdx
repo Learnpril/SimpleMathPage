@@ -102,8 +102,8 @@ import Quiz from "../../../components/Quiz.astro";
     {
       id: "q1",
       text: "If you know an acute angle and the adjacent side, which ratio helps you find the hypotenuse?",
-      options: ["Cosine (CAH)", "Sine (SOH)", "Tangent (TOA)", "None of these"],
-      correctIndex: 0,
+      options: ["Sine (SOH)", "Cosine (CAH)", "Tangent (TOA)", "None of these"],
+      correctIndex: 1,
       explanation:
         "$\\cos(\\theta) = \\frac{\\text{adjacent}}{\\text{hypotenuse}}$, so hypotenuse $= \\frac{\\text{adjacent}}{\\cos(\\theta)}$.",
     },
@@ -111,12 +111,12 @@ import Quiz from "../../../components/Quiz.astro";
       id: "q2",
       text: "A ladder 20 feet long makes a 65° angle with the ground. How high up the wall does it reach?",
       options: [
-        "$\\approx 18.1$ feet",
+        "$\\approx 15$ feet",
         "$\\approx 8.5$ feet",
         "$\\approx 22.4$ feet",
-        "$\\approx 15$ feet",
+        "$\\approx 18.1$ feet"
       ],
-      correctIndex: 0,
+      correctIndex: 3,
       explanation:
         "Height $= 20 \\times \\sin(65°) \\approx 20 \\times 0.9063 \\approx 18.1$ feet.",
     },
@@ -136,12 +136,12 @@ import Quiz from "../../../components/Quiz.astro";
       id: "q4",
       text: "If you know the opposite and adjacent sides, which inverse function finds the angle?",
       options: [
-        "$\\tan^{-1}$",
-        "$\\sin^{-1}$",
         "$\\cos^{-1}$",
-        "None of these",
+        "$\\sin^{-1}$",
+        "$\\tan^{-1}$",
+        "None of these"
       ],
-      correctIndex: 0,
+      correctIndex: 2,
       explanation:
         "$\\tan(\\theta) = \\frac{\\text{opposite}}{\\text{adjacent}}$, so $\\theta = \\tan^{-1}\\left(\\frac{\\text{opposite}}{\\text{adjacent}}\\right)$.",
     },
@@ -149,12 +149,12 @@ import Quiz from "../../../components/Quiz.astro";
       id: "q5",
       text: "In a right triangle with a 50° angle and hypotenuse of 20, the opposite side is:",
       options: [
-        "$\\approx 15.3$",
         "$\\approx 12.9$",
+        "$\\approx 15.3$",
         "$\\approx 18.8$",
-        "$\\approx 10.0$",
+        "$\\approx 10.0$"
       ],
-      correctIndex: 0,
+      correctIndex: 1,
       explanation:
         "Opposite $= 20 \\times \\sin(50°) \\approx 20 \\times 0.766 \\approx 15.3$.",
     },

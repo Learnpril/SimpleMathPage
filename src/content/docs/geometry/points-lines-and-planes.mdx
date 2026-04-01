@@ -69,16 +69,16 @@ import Quiz from "../../../components/Quiz.astro";
     {
       id: "q1",
       text: "How many lines can pass through two distinct points?",
-      options: ["One", "Two", "Infinite", "Zero"],
-      correctIndex: 0,
+      options: ["Two", "One", "Infinite", "Zero"],
+      correctIndex: 1,
       explanation:
         "Exactly one unique line passes through any two distinct points.",
     },
     {
       id: "q2",
       text: "How many planes can three non-collinear points determine?",
-      options: ["One", "Two", "Three", "Infinite"],
-      correctIndex: 0,
+      options: ["Infinite", "Two", "Three", "One"],
+      correctIndex: 3,
       explanation: "Three non-collinear points determine exactly one plane.",
     },
     {
@@ -98,20 +98,20 @@ import Quiz from "../../../components/Quiz.astro";
       id: "q4",
       text: "If two lines intersect at two different points, what must be true?",
       options: [
-        "They are the same line",
-        "They are parallel",
         "They are perpendicular",
-        "They form a triangle",
+        "They are parallel",
+        "They are the same line",
+        "They form a triangle"
       ],
-      correctIndex: 0,
+      correctIndex: 2,
       explanation:
         "If two lines intersect at two points, they must actually be the same line.",
     },
     {
       id: "q5",
       text: "Points that lie on the same line are called:",
-      options: ["Collinear", "Coplanar", "Parallel", "Perpendicular"],
-      correctIndex: 0,
+      options: ["Coplanar", "Collinear", "Parallel", "Perpendicular"],
+      correctIndex: 1,
       explanation: "Collinear points all lie on the same straight line.",
     },
   ]}

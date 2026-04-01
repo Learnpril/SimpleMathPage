@@ -106,12 +106,12 @@ import Quiz from "../../../components/Quiz.astro";
       id: "q1",
       text: "If $f(x) = 4x - 8$, what is $f^{-1}(x)$?",
       options: [
-        "$\\frac{x + 8}{4}$",
         "$4x + 8$",
+        "$\\frac{x + 8}{4}$",
         "$\\frac{x - 8}{4}$",
-        "$\\frac{x}{4} + 2$",
+        "$\\frac{x}{4} + 2$"
       ],
-      correctIndex: 0,
+      correctIndex: 1,
       explanation:
         "$y = 4x - 8 \\rightarrow x = 4y - 8 \\rightarrow x + 8 = 4y \\rightarrow y = \\frac{x + 8}{4}$.",
     },
@@ -119,12 +119,12 @@ import Quiz from "../../../components/Quiz.astro";
       id: "q2",
       text: "Which statement is true about inverse functions?",
       options: [
-        "$f(f^{-1}(x)) = x$",
+        "They always have the same graph",
         "$f(f^{-1}(x)) = f(x)$",
         "$f^{-1}(x) = f(x)$",
-        "They always have the same graph",
+        "$f(f^{-1}(x)) = x$"
       ],
-      correctIndex: 0,
+      correctIndex: 3,
       explanation:
         "Applying a function and its inverse returns the original input.",
     },
@@ -144,12 +144,12 @@ import Quiz from "../../../components/Quiz.astro";
       id: "q4",
       text: "Why do we sometimes need to restrict the domain when finding an inverse?",
       options: [
-        "To make the inverse also a function",
-        "To make it easier to calculate",
         "To avoid negative numbers",
-        "To make the graph linear",
+        "To make it easier to calculate",
+        "To make the inverse also a function",
+        "To make the graph linear"
       ],
-      correctIndex: 0,
+      correctIndex: 2,
       explanation:
         "Some functions (like quadratics) are not one-to-one unless we restrict the domain.",
     },
@@ -157,12 +157,12 @@ import Quiz from "../../../components/Quiz.astro";
       id: "q5",
       text: "Find the inverse of $f(x) = \\frac{x}{3} + 7$.",
       options: [
-        "$f^{-1}(x) = 3(x - 7)$",
         "$f^{-1}(x) = 3x - 7$",
+        "$f^{-1}(x) = 3(x - 7)$",
         "$f^{-1}(x) = \\frac{x - 7}{3}$",
-        "$f^{-1}(x) = \\frac{x}{3} - 7$",
+        "$f^{-1}(x) = \\frac{x}{3} - 7$"
       ],
-      correctIndex: 0,
+      correctIndex: 1,
       explanation:
         "$y = \\frac{x}{3} + 7 \\rightarrow x = \\frac{y}{3} + 7 \\rightarrow x - 7 = \\frac{y}{3} \\rightarrow y = 3(x - 7)$.",
     },

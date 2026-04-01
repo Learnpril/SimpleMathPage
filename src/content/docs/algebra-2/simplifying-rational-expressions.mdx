@@ -86,8 +86,8 @@ import Quiz from "../../../components/Quiz.astro";
     {
       id: "q1",
       text: "Simplify $\\frac{x^2 - 4}{x - 2}$",
-      options: ["$x + 2$", "$x - 2$", "$x + 4$", "$x^2 - 2$"],
-      correctIndex: 0,
+      options: ["$x - 2$", "$x + 2$", "$x + 4$", "$x^2 - 2$"],
+      correctIndex: 1,
       explanation:
         "$x^2 - 4 = (x - 2)(x + 2)$, cancel $(x - 2) \\rightarrow x + 2$ ($x \\neq 2$).",
     },
@@ -95,12 +95,12 @@ import Quiz from "../../../components/Quiz.astro";
       id: "q2",
       text: "When simplifying rational expressions, you can cancel:",
       options: [
-        "Common factors",
+        "Only the leading coefficients",
         "Common terms that are added",
         "Only constants",
-        "Only the leading coefficients",
+        "Common factors"
       ],
-      correctIndex: 0,
+      correctIndex: 3,
       explanation: "You can only cancel common factors that are multiplied.",
     },
     {
@@ -115,24 +115,24 @@ import Quiz from "../../../components/Quiz.astro";
       id: "q4",
       text: "Why do we note excluded values when simplifying?",
       options: [
-        "They make the original denominator zero",
-        "To make the expression look nicer",
         "Because they are always roots",
-        "To avoid fractions",
+        "To make the expression look nicer",
+        "They make the original denominator zero",
+        "To avoid fractions"
       ],
-      correctIndex: 0,
+      correctIndex: 2,
       explanation: "Those values make the original expression undefined.",
     },
     {
       id: "q5",
       text: "Simplify $\\frac{x^2 + 5x + 6}{x^2 + 2x}$.",
       options: [
-        "$\\frac{x + 3}{x}$",
         "$\\frac{x + 2}{x}$",
+        "$\\frac{x + 3}{x}$",
         "$\\frac{x + 6}{2x}$",
-        "$\\frac{5x + 6}{2x}$",
+        "$\\frac{5x + 6}{2x}$"
       ],
-      correctIndex: 0,
+      correctIndex: 1,
       explanation:
         "$\\frac{(x+2)(x+3)}{x(x+2)} = \\frac{x+3}{x}$ ($x \\neq 0$, $x \\neq -2$).",
     },

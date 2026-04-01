@@ -95,20 +95,20 @@ import Quiz from "../../../components/Quiz.astro";
       id: "q1",
       text: "On the unit circle, the coordinates of a point at angle $\\theta$ are:",
       options: [
-        "$(\\cos\\theta,\\, \\sin\\theta)$",
         "$(\\sin\\theta,\\, \\cos\\theta)$",
+        "$(\\cos\\theta,\\, \\sin\\theta)$",
         "$(\\tan\\theta,\\, \\cot\\theta)$",
-        "$(r,\\, \\theta)$",
+        "$(r,\\, \\theta)$"
       ],
-      correctIndex: 0,
+      correctIndex: 1,
       explanation:
         "Any point on the unit circle is $(\\cos\\theta, \\sin\\theta)$.",
     },
     {
       id: "q2",
       text: "What is $\\cos\\left(\\frac{\\pi}{2}\\right)$?",
-      options: ["$0$", "$1$", "$-1$", "$\\frac{\\sqrt{2}}{2}$"],
-      correctIndex: 0,
+      options: ["$\\frac{\\sqrt{2}}{2}$", "$1$", "$-1$", "$0$"],
+      correctIndex: 3,
       explanation:
         "At $\\frac{\\pi}{2}$ (90°), the point is $(0, 1)$, so $\\cos\\left(\\frac{\\pi}{2}\\right) = 0$.",
     },
@@ -123,8 +123,8 @@ import Quiz from "../../../components/Quiz.astro";
     {
       id: "q4",
       text: "In which quadrant are both sine and cosine negative?",
-      options: ["Quadrant III", "Quadrant I", "Quadrant II", "Quadrant IV"],
-      correctIndex: 0,
+      options: ["Quadrant II", "Quadrant I", "Quadrant III", "Quadrant IV"],
+      correctIndex: 2,
       explanation:
         "In Quadrant III (angles between $\\pi$ and $\\frac{3\\pi}{2}$), both x and y are negative.",
     },
@@ -132,12 +132,12 @@ import Quiz from "../../../components/Quiz.astro";
       id: "q5",
       text: "What is $\\cos\\left(\\frac{\\pi}{3}\\right)$?",
       options: [
-        "$\\frac{1}{2}$",
         "$\\frac{\\sqrt{3}}{2}$",
+        "$\\frac{1}{2}$",
         "$\\frac{\\sqrt{2}}{2}$",
-        "$0$",
+        "$0$"
       ],
-      correctIndex: 0,
+      correctIndex: 1,
       explanation:
         "At $\\frac{\\pi}{3}$ (60°), the point is $\\left(\\frac{1}{2}, \\frac{\\sqrt{3}}{2}\\right)$, so $\\cos\\left(\\frac{\\pi}{3}\\right) = \\frac{1}{2}$.",
     },

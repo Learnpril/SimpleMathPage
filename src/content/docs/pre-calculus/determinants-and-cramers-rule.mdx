@@ -209,20 +209,20 @@ import Quiz from "../../../components/Quiz.astro";
     {
       id: "q1",
       text: "Find the determinant of the matrix shown above:",
-      options: ["$2$", "$5$", "$10$", "$-2$"],
-      correctIndex: 0,
+      options: ["$5$", "$2$", "$10$", "$-2$"],
+      correctIndex: 1,
       explanation: "$(3)(2) - (1)(4) = 6 - 4 = 2$.",
     },
     {
       id: "q2",
       text: "If the determinant of the coefficient matrix is zero, the system:",
       options: [
-        "Has no unique solution",
         "Always has exactly one solution",
         "Has exactly two solutions",
+        "Has no unique solution",
         "Must be a 3x3 system",
       ],
-      correctIndex: 0,
+      correctIndex: 2,
       explanation:
         "Zero determinant means the system is either inconsistent or dependent.",
     },
@@ -230,12 +230,12 @@ import Quiz from "../../../components/Quiz.astro";
       id: "q3",
       text: "In Cramer's Rule, to find x you replace:",
       options: [
-        "The x-column with the constants column",
         "The y-column with the constants column",
         "The entire matrix with constants",
         "The constants with zeros",
+        "The x-column with the constants column",
       ],
-      correctIndex: 0,
+      correctIndex: 3,
       explanation: "Replace the column of the variable you're solving for.",
     },
     {
@@ -248,8 +248,8 @@ import Quiz from "../../../components/Quiz.astro";
     {
       id: "q5",
       text: "A matrix with a zero determinant is called:",
-      options: ["Singular", "Identity", "Diagonal", "Symmetric"],
-      correctIndex: 0,
+      options: ["Identity", "Singular", "Diagonal", "Symmetric"],
+      correctIndex: 1,
       explanation: "Singular matrices have no inverse and determinant zero.",
     },
   ]}

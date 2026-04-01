@@ -148,12 +148,12 @@ import Quiz from "../../../components/Quiz.astro";
       id: "q1",
       text: "A system of three linear equations can have:",
       options: [
-        "One solution, no solution, or infinitely many",
         "Only one solution",
+        "One solution, no solution, or infinitely many",
         "Only two solutions",
-        "Only complex solutions",
+        "Only complex solutions"
       ],
-      correctIndex: 0,
+      correctIndex: 1,
       explanation:
         "Three possibilities exist for linear systems in three variables.",
     },
@@ -161,12 +161,12 @@ import Quiz from "../../../components/Quiz.astro";
       id: "q2",
       text: "The first step when solving a 3×3 system is usually to:",
       options: [
-        "Eliminate one variable using two pairs of equations",
+        "Find the determinant",
         "Graph all three equations",
         "Use substitution on all variables",
-        "Find the determinant",
+        "Eliminate one variable using two pairs of equations"
       ],
-      correctIndex: 0,
+      correctIndex: 3,
       explanation:
         "Elimination reduces the system to two equations with two variables.",
     },
@@ -186,20 +186,20 @@ import Quiz from "../../../components/Quiz.astro";
       id: "q4",
       text: "After finding values for x, y, and z, you should:",
       options: [
-        "Check them in all three original equations",
-        "Only check in one equation",
         "Graph the solution",
-        "Find the inverse",
+        "Only check in one equation",
+        "Check them in all three original equations",
+        "Find the inverse"
       ],
-      correctIndex: 0,
+      correctIndex: 2,
       explanation:
         "Verification in all original equations confirms the solution.",
     },
     {
       id: "q5",
       text: "Solve: $x + y = 5$, $y + z = 7$, $x + z = 6$. What is $x$?",
-      options: ["$2$", "$3$", "$4$", "$1$"],
-      correctIndex: 0,
+      options: ["$3$", "$2$", "$4$", "$1$"],
+      correctIndex: 1,
       explanation:
         "Add all three: $2x + 2y + 2z = 18 \\rightarrow x + y + z = 9$. Since $y + z = 7$, $x = 9 - 7 = 2$.",
     },

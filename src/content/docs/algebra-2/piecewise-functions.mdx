@@ -107,16 +107,16 @@ import Quiz from "../../../components/Quiz.astro";
     {
       id: "q1",
       text: "Using the function above: $f(x) = 2x - 1$ when $x < 3$, and $f(x) = x + 4$ when $x \\geq 3$. What is $f(3)$?",
-      options: ["$7$", "$5$", "$6$", "$3$"],
-      correctIndex: 0,
+      options: ["$5$", "$7$", "$6$", "$3$"],
+      correctIndex: 1,
       explanation:
         "Since $3 \\geq 3$, use the second piece: $f(3) = 3 + 4 = 7$.",
     },
     {
       id: "q2",
       text: "Same function: $f(x) = 2x - 1$ when $x < 3$, and $f(x) = x + 4$ when $x \\geq 3$. What is $f(0)$?",
-      options: ["$-1$", "$4$", "$0$", "$1$"],
-      correctIndex: 0,
+      options: ["$1$", "$4$", "$0$", "$-1$"],
+      correctIndex: 3,
       explanation:
         "Since $0 < 3$, use the first piece: $f(0) = 2(0) - 1 = -1$.",
     },
@@ -136,16 +136,16 @@ import Quiz from "../../../components/Quiz.astro";
     {
       id: "q4",
       text: "A gym charges 30 dollars per month for up to 10 classes, then 5 dollars per extra class. What is the cost for 14 classes?",
-      options: ["50 dollars", "70 dollars", "45 dollars", "35 dollars"],
-      correctIndex: 0,
+      options: ["45 dollars", "70 dollars", "50 dollars", "35 dollars"],
+      correctIndex: 2,
       explanation:
         "First 10 classes cost 30 dollars. 4 extra classes × 5 dollars = 20 dollars. Total = 30 + 20 = 50 dollars.",
     },
     {
       id: "q5",
       text: "Evaluate $f(x) = \\begin{cases} x^2 & \\text{if } x < 0 \\\\ 3x + 1 & \\text{if } x \\geq 0 \\end{cases}$ at $x = -3$.",
-      options: ["$9$", "$-8$", "$-9$", "$10$"],
-      correctIndex: 0,
+      options: ["$-8$", "$9$", "$-9$", "$10$"],
+      correctIndex: 1,
       explanation: "Since $-3 < 0$, use the first piece: $(-3)^2 = 9$.",
     },
   ]}

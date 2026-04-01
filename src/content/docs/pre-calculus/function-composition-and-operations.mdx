@@ -105,27 +105,27 @@ import Quiz from "../../../components/Quiz.astro";
       id: "q1",
       text: "$(f + g)(x)$ means:",
       options: [
-        "$f(x) + g(x)$",
         "$f(g(x))$",
         "$f(x) \\cdot g(x)$",
+        "$f(x) + g(x)$",
         "$f(x) / g(x)$",
       ],
-      correctIndex: 0,
+      correctIndex: 2,
       explanation:
         "The sum of two functions is their individual outputs added together.",
     },
     {
       id: "q2",
       text: "If $f(x) = 2x$ and $g(x) = x + 3$, what is $(f \\circ g)(x)$?",
-      options: ["$2(x + 3) = 2x + 6$", "$2x + 3$", "$2x(x + 3)$", "$x + 5$"],
-      correctIndex: 0,
+      options: ["$2x + 3$", "$2x(x + 3)$", "$x + 5$", "$2(x + 3) = 2x + 6$"],
+      correctIndex: 3,
       explanation: "$(f \\circ g)(x) = f(g(x)) = 2(x + 3) = 2x + 6$.",
     },
     {
       id: "q3",
       text: "In $(f \\circ g)(x)$, which function is applied first?",
-      options: ["$g$", "$f$", "Both at the same time", "It doesn't matter"],
-      correctIndex: 0,
+      options: ["$f$", "$g$", "Both at the same time", "It doesn't matter"],
+      correctIndex: 1,
       explanation:
         "Composition reads right to left: apply $g$ first, then $f$.",
     },
@@ -145,8 +145,8 @@ import Quiz from "../../../components/Quiz.astro";
     {
       id: "q5",
       text: "If $f(x) = x^2$ and $g(x) = 3x - 1$, then $(f \\circ g)(2)$ equals:",
-      options: ["$25$", "$11$", "$8$", "$17$"],
-      correctIndex: 0,
+      options: ["$11$", "$25$", "$8$", "$17$"],
+      correctIndex: 1,
       explanation: "$g(2) = 3(2) - 1 = 5$, then $f(5) = 5^2 = 25$.",
     },
   ]}

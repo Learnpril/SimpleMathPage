@@ -93,15 +93,15 @@ import Quiz from "../../../components/Quiz.astro";
     {
       id: "q1",
       text: "What is the center of the circle $(x - 5)^2 + (y + 2)^2 = 49$?",
-      options: ["$(5, -2)$", "$(-5, 2)$", "$(5, 2)$", "$(-5, -2)$"],
-      correctIndex: 0,
+      options: ["$(-5, 2)$", "$(5, -2)$", "$(5, 2)$", "$(-5, -2)$"],
+      correctIndex: 1,
       explanation: "The center is $(h, k) = (5, -2)$.",
     },
     {
       id: "q2",
       text: "The equation $y = -3(x + 1)^2 + 4$ opens:",
-      options: ["Downward", "Upward", "Left", "Right"],
-      correctIndex: 0,
+      options: ["Right", "Upward", "Left", "Downward"],
+      correctIndex: 3,
       explanation: "$a = -3 < 0$, so it opens downward.",
     },
     {
@@ -114,20 +114,20 @@ import Quiz from "../../../components/Quiz.astro";
     {
       id: "q4",
       text: "The vertex of $x = 2(y - 3)^2 + 5$ is:",
-      options: ["$(5, 3)$", "$(3, 5)$", "$(-5, 3)$", "$(2, 3)$"],
-      correctIndex: 0,
+      options: ["$(-5, 3)$", "$(3, 5)$", "$(5, 3)$", "$(2, 3)$"],
+      correctIndex: 2,
       explanation: "For $x = a(y - k)^2 + h$, vertex is $(h, k) = (5, 3)$.",
     },
     {
       id: "q5",
       text: "Write the equation of a circle with center $(-3, 4)$ and radius $5$.",
       options: [
-        "$(x + 3)^2 + (y - 4)^2 = 25$",
         "$(x - 3)^2 + (y + 4)^2 = 25$",
+        "$(x + 3)^2 + (y - 4)^2 = 25$",
         "$(x + 3)^2 + (y - 4)^2 = 5$",
-        "$(x - 3)^2 + (y - 4)^2 = 25$",
+        "$(x - 3)^2 + (y - 4)^2 = 25$"
       ],
-      correctIndex: 0,
+      correctIndex: 1,
       explanation:
         "Standard form: $(x - h)^2 + (y - k)^2 = r^2$ with $h = -3$, $k = 4$, $r = 5$.",
     },

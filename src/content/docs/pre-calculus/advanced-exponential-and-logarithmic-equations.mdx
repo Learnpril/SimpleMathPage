@@ -142,31 +142,31 @@ import Quiz from "../../../components/Quiz.astro";
       id: "q1",
       text: "To solve $5^{2x} = 25$, the best first step is:",
       options: [
-        "Rewrite 25 as $5^2$ and set exponents equal",
         "Take $\\log_{10}$ of both sides",
+        "Rewrite 25 as $5^2$ and set exponents equal",
         "Square both sides",
         "Divide both sides by 5",
       ],
-      correctIndex: 0,
+      correctIndex: 1,
       explanation: "$25 = 5^2$, so $2x = 2$ and $x = 1$.",
     },
     {
       id: "q2",
       text: "Solve $\\log_3(x) = 4$:",
-      options: ["$x = 81$", "$x = 12$", "$x = 27$", "$x = 64$"],
-      correctIndex: 0,
+      options: ["$x = 12$", "$x = 27$", "$x = 81$", "$x = 64$"],
+      correctIndex: 2,
       explanation: "Convert to exponential form: $3^4 = 81$.",
     },
     {
       id: "q3",
       text: "When solving logarithmic equations, you must always:",
       options: [
-        "Check that all log arguments are positive",
         "Use the quadratic formula",
         "Ignore the domain",
         "Square both sides first",
+        "Check that all log arguments are positive",
       ],
-      correctIndex: 0,
+      correctIndex: 3,
       explanation:
         "Logarithms are only defined for positive arguments. Extraneous solutions are common.",
     },
@@ -186,8 +186,8 @@ import Quiz from "../../../components/Quiz.astro";
     {
       id: "q5",
       text: "If $\\ln(x) + \\ln(x - 4) = \\ln(12)$, then $x$ equals:",
-      options: ["$6$", "$-2$", "$12$", "$8$"],
-      correctIndex: 0,
+      options: ["$-2$", "$6$", "$12$", "$8$"],
+      correctIndex: 1,
       explanation:
         "Combine: $\\ln[x(x-4)] = \\ln 12$, so $x^2 - 4x = 12$, giving $x = 6$ or $x = -2$. Only $x = 6$ is valid.",
     },

@@ -1,0 +1,74 @@
+---
+/**
+ * LimitDiagram — shows f(x) = (x²-9)/(x-3) with a hole at x=3.
+ * The function simplifies to y = x+3 everywhere except x=3.
+ * Shows the line approaching y=6 from both sides with a clear hole.
+ */
+const w = 300;
+const h = 240;
+const pad = 40;
+const gw = w - 2 * pad;
+const gh = h - 2 * pad;
+const xMin = -1, xMax = 7, yMin = -1, yMax = 9;
+const sx = (x: number) => pad + ((x - xMin) / (xMax - xMin)) * gw;
+const sy = (y: number) => pad + ((yMax - y) / (yMax - yMin)) * gh;
+---
+
+<figure class="ld" role="img" aria-label="Limit: function approaches y=6 as x approaches 3, with a hole at (3,6)">
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    {/* Grid */}
+    {[0,1,2,3,4,5,6].map(v => (
+      <g>
+        {v <= xMax && <line x1={sx(v)} y1={sy(yMin)} x2={sx(v)} y2={sy(yMax)} class="ld-grid" stroke-width="0.5" />}
+        {v > 0 && v <= 8 && <line x1={sx(xMin)} y1={sy(v)} x2={sx(xMax)} y2={sy(v)} class="ld-grid" stroke-width="0.5" />}
+      </g>
+    ))}
+    {/* Axes */}
+    <line x1={sx(xMin)} y1={sy(0)} x2={sx(xMax)} y2={sy(0)} class="ld-axis" stroke-width="1.5" />
+    <line x1={sx(0)} y1={sy(yMin)} x2={sx(0)} y2={sy(yMax)} class="ld-axis" stroke-width="1" />
+    {/* Axis tick labels */}
+    <text class="ld-tick" x={sx(3)} y={sy(0) + 14} font-size="8" text-anchor="middle">3</text>
+    <text class="ld-tick" x={sx(0) - 8} y={sy(6) + 3} font-size="8" text-anchor="end">6</text>
+
+    {/* Function line: y = x + 3 (with gap at x=3) */}
+    <line x1={sx(-1)} y1={sy(2)} x2={sx(2.9)} y2={sy(5.9)} class="ld-func" stroke-width="2.5" />
+    <line x1={sx(3.1)} y1={sy(6.1)} x2={sx(6)} y2={sy(9)} class="ld-func" stroke-width="2.5" />
+
+    {/* Hole at (3, 6) */}
+    <circle cx={sx(3)} cy={sy(6)} r="6" fill="none" class="ld-hole" stroke-width="2.5" />
+
+    {/* Dashed guide lines from axes to hole */}
+    <line x1={sx(3)} y1={sy(0)} x2={sx(3)} y2={sy(6)} class="ld-guide" stroke-width="1" stroke-dasharray="4,3" />
+    <line x1={sx(0)} y1={sy(6)} x2={sx(3)} y2={sy(6)} class="ld-guide-h" stroke-width="1" stroke-dasharray="4,3" />
+
+    {/* Labels — positioned to avoid all lines */}
+    <text class="ld-lbl" x={sx(0.3)} y={sy(8.5)} font-size="10">limit = 6</text>
+    <text class="ld-lbl-hole" x={sx(4.5)} y={sy(4.2)} font-size="9">hole</text>
+    <text class="ld-lbl-func" x={sx(0.3)} y={sy(1.2)} font-size="8">y = x + 3</text>
+  </svg>
+</figure>
+
+<style>
+  .ld { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .ld svg { max-width:100%; height:auto; }
+  .ld-grid { stroke:#333; }
+  .ld-axis { stroke:#666; }
+  .ld-tick { fill:#888; font-family:'Libre Baskerville',Georgia,serif; }
+  .ld-func { stroke:#58a6ff; }
+  .ld-hole { stroke:#f0883e; }
+  .ld-guide { stroke:#7ee787; }
+  .ld-guide-h { stroke:#7ee787; }
+  .ld-lbl { fill:#7ee787; font-family:'Libre Baskerville',Georgia,serif; font-weight:bold; }
+  .ld-lbl-hole { fill:#f0883e; font-family:'Libre Baskerville',Georgia,serif; font-style:italic; }
+  .ld-lbl-func { fill:#58a6ff; font-family:'Libre Baskerville',Georgia,serif; }
+  :global([data-theme="light"]) .ld-grid { stroke:#ddd; }
+  :global([data-theme="light"]) .ld-axis { stroke:#999; }
+  :global([data-theme="light"]) .ld-tick { fill:#666; }
+  :global([data-theme="light"]) .ld-func { stroke:#0550ae; }
+  :global([data-theme="light"]) .ld-hole { stroke:#b35900; }
+  :global([data-theme="light"]) .ld-guide { stroke:#116329; }
+  :global([data-theme="light"]) .ld-guide-h { stroke:#116329; }
+  :global([data-theme="light"]) .ld-lbl { fill:#116329; }
+  :global([data-theme="light"]) .ld-lbl-hole { fill:#b35900; }
+  :global([data-theme="light"]) .ld-lbl-func { fill:#0550ae; }
+</style>

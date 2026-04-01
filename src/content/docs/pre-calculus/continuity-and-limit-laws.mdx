@@ -5,4 +5,179 @@ sidebar:
   order: 21
 ---
 
-Content coming soon.
+## What You'll Learn
+
+In this lesson you'll learn what it means for a function to be continuous, how to spot the three types of discontinuities, and how to use the limit laws to evaluate limits efficiently.
+
+## The Concept
+
+A function is continuous at a point x = a if you can draw through that point without lifting your pencil. More precisely, three things must all be true:
+
+1. f(a) is defined (the function has a value at that point)
+2. The limit as x approaches a exists (the function approaches the same value from both sides)
+3. The limit equals the function value: the limit as x approaches a of f(x) equals f(a)
+
+If any of these fails, there's a discontinuity. There are three types:
+
+- Removable (a hole): the limit exists, but the function is either undefined or has a different value at that point. You could "fill in" the hole to fix it.
+- Jump: the left-hand and right-hand limits both exist but are different. The function literally jumps from one value to another.
+- Infinite (vertical asymptote): the function blows up to infinity near that point.
+
+**Limit Laws**
+
+These are the rules of arithmetic for limits. When the individual limits exist, you can break a complicated limit into simpler pieces:
+
+$$
+\lim_{x \to a} [f(x) + g(x)] = \lim_{x \to a} f(x) + \lim_{x \to a} g(x)
+$$
+
+$$
+\lim_{x \to a} [f(x) \cdot g(x)] = \lim_{x \to a} f(x) \cdot \lim_{x \to a} g(x)
+$$
+
+$$
+\lim_{x \to a} \frac{f(x)}{g(x)} = \frac{\lim_{x \to a} f(x)}{\lim_{x \to a} g(x)} \quad \text{(if denominator limit} \neq 0\text{)}
+$$
+
+$$
+\lim_{x \to a} [c \cdot f(x)] = c \cdot \lim_{x \to a} f(x)
+$$
+
+$$
+\lim_{x \to a} [f(x)]^n = \left[\lim_{x \to a} f(x)\right]^n
+$$
+
+In short: you can add, subtract, multiply, divide, and raise limits to powers, as long as you don't divide by zero. These laws let you evaluate most polynomial and rational limits by direct substitution.
+
+## Worked Example
+
+**Example 1: Using limit laws**
+
+Find the limit:
+
+$$
+\lim_{x \to 2} (3x^2 - 5x + 7)
+$$
+
+Using the sum, difference, constant multiple, and power laws, break it apart:
+
+$$
+= 3 \cdot \lim_{x \to 2} x^2 - 5 \cdot \lim_{x \to 2} x + \lim_{x \to 2} 7
+$$
+
+$$
+= 3(4) - 5(2) + 7 = 12 - 10 + 7 = 9
+$$
+
+For polynomials, the limit laws always let you just plug in the number directly. That's why direct substitution works for polynomials.
+
+**Example 2: Checking continuity**
+
+Is the function $f(x) = \frac{x^2 - 4}{x - 2}$ continuous at x = 2?
+
+Check the three conditions:
+
+1. Is f(2) defined? Plugging in gives 0/0, which is undefined. Already fails.
+
+Since condition 1 fails, the function is not continuous at x = 2. But the limit still exists: factor the numerator as (x - 2)(x + 2), cancel, and get x + 2. The limit as x approaches 2 is 4. This is a removable discontinuity (a hole at x = 2, y = 4).
+
+**Example 3: Jump discontinuity**
+
+Consider a piecewise function where f(x) = x + 1 when x is less than 3, f(3) = 5, and f(x) = 2x - 4 when x is greater than 3.
+
+Check continuity at x = 3:
+
+- Left-hand limit (approaching from below): 3 + 1 = 4
+- Right-hand limit (approaching from above): 2(3) - 4 = 2
+- f(3) = 5
+
+The left limit (4) does not equal the right limit (2), so the two-sided limit doesn't exist. This is a jump discontinuity. The function jumps from 4 to 2 at x = 3, and the actual value f(3) = 5 is somewhere else entirely.
+
+## Real-World Application
+
+Continuity is important in:
+
+- Physics and engineering (smooth motion without sudden jumps in force or velocity)
+- Economics (continuous growth models, marginal cost analysis)
+- Computer graphics (smooth animations and transitions between frames)
+- Medicine (continuous monitoring of vital signs without gaps)
+- Manufacturing (quality control where small input changes shouldn't cause big output jumps)
+
+Example: a thermostat that suddenly jumps from 68 to 75 degrees would be discontinuous and uncomfortable. Real systems aim for continuous, smooth behavior.
+
+:::note[You've Got This]
+Continuity is just "no breaks, holes, or jumps at that point." The limit laws are your best friends for evaluating limits. They let you break complicated expressions into simple pieces. When you see a polynomial, just plug in the number. When you get 0/0, simplify first. Mastering limits and continuity is the biggest step toward understanding Calculus.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="precalculus-continuity-limit-laws"
+  questions={[
+    {
+      id: "q1",
+      text: "For a function to be continuous at x = a, the limit must:",
+      options: [
+        "Be undefined",
+        "Be different from f(a)",
+        "Equal the function value at a",
+        "Not exist",
+      ],
+      correctIndex: 2,
+      explanation: "The limit must equal f(a) for continuity.",
+    },
+    {
+      id: "q2",
+      text: "The Product Law for limits says:",
+      options: [
+        "The limit of a product equals the product of the limits",
+        "The limit of a sum equals the sum of the limits",
+        "You can only multiply constants",
+        "Products always diverge",
+      ],
+      correctIndex: 0,
+      explanation: "When both limits exist, you can multiply them.",
+    },
+    {
+      id: "q3",
+      text: "A removable discontinuity looks like:",
+      options: [
+        "A vertical asymptote",
+        "A sudden jump",
+        "The graph ending",
+        "A hole in the graph",
+      ],
+      correctIndex: 3,
+      explanation:
+        "The limit exists but the function is undefined or has a different value there.",
+    },
+    {
+      id: "q4",
+      text: "For polynomials, you can find limits by:",
+      options: [
+        "Factoring only",
+        "Direct substitution",
+        "Graphing only",
+        "Using L'Hopital's Rule",
+      ],
+      correctIndex: 1,
+      explanation:
+        "The limit laws guarantee direct substitution works for polynomials.",
+    },
+    {
+      id: "q5",
+      text: "A jump discontinuity occurs when:",
+      options: [
+        "The function is undefined everywhere",
+        "The limit equals the function value",
+        "The left and right limits are different",
+        "The function is a polynomial",
+      ],
+      correctIndex: 2,
+      explanation:
+        "Different one-sided limits mean the function jumps at that point.",
+    },
+  ]}
+/>

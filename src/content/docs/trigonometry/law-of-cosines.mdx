@@ -135,12 +135,12 @@ import Quiz from "../../../components/Quiz.astro";
       id: "q1",
       text: "The Law of Cosines states:",
       options: [
-        "$a^2 = b^2 + c^2 - 2bc\\cos A$",
         "$\\frac{a}{\\sin A} = \\frac{b}{\\sin B}$",
+        "$a^2 = b^2 + c^2 - 2bc\\cos A$",
         "$a^2 + b^2 = c^2$ always",
-        "$a = b\\cos C + c\\cos B$",
+        "$a = b\\cos C + c\\cos B$"
       ],
-      correctIndex: 0,
+      correctIndex: 1,
       explanation:
         "The Law of Cosines relates the three sides and one angle of any triangle.",
     },
@@ -148,12 +148,12 @@ import Quiz from "../../../components/Quiz.astro";
       id: "q2",
       text: "When angle A = 90°, the Law of Cosines reduces to:",
       options: [
-        "The Pythagorean Theorem",
+        "Nothing useful",
         "The Law of Sines",
         "The quadratic formula",
-        "Nothing useful",
+        "The Pythagorean Theorem"
       ],
-      correctIndex: 0,
+      correctIndex: 3,
       explanation:
         "Since $\\cos 90° = 0$, the $-2bc\\cos A$ term disappears, leaving $a^2 = b^2 + c^2$.",
     },
@@ -174,12 +174,12 @@ import Quiz from "../../../components/Quiz.astro";
       id: "q4",
       text: "In a triangle with sides 5, 7, and 9, $\\cos A$ equals:",
       options: [
-        "$\\frac{105}{126} \\approx 0.833$",
-        "$\\frac{25}{63} \\approx 0.397$",
         "$\\frac{55}{90} \\approx 0.611$",
-        "$\\frac{81}{70} \\approx 1.157$",
+        "$\\frac{25}{63} \\approx 0.397$",
+        "$\\frac{105}{126} \\approx 0.833$",
+        "$\\frac{81}{70} \\approx 1.157$"
       ],
-      correctIndex: 0,
+      correctIndex: 2,
       explanation:
         "$\\cos A = \\frac{b^2 + c^2 - a^2}{2bc} = \\frac{49 + 81 - 25}{126} = \\frac{105}{126}$.",
     },
@@ -187,12 +187,12 @@ import Quiz from "../../../components/Quiz.astro";
       id: "q5",
       text: "If $p = 6$, $q = 10$, and angle $R = 60°$, then $r$ is approximately:",
       options: [
-        "$\\approx 8.72$",
         "$\\approx 12.0$",
+        "$\\approx 8.72$",
         "$\\approx 6.5$",
-        "$\\approx 10.4$",
+        "$\\approx 10.4$"
       ],
-      correctIndex: 0,
+      correctIndex: 1,
       explanation:
         "$r^2 = 36 + 100 - 120\\cos(60°) = 136 - 60 = 76$, so $r \\approx 8.72$.",
     },

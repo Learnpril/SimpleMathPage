@@ -136,12 +136,12 @@ import Quiz from "../../../components/Quiz.astro";
       id: "q1",
       text: "To add two matrices, they must:",
       options: [
-        "Have the same dimensions",
         "Be square",
         "Have the same determinant",
         "Be invertible",
+        "Have the same dimensions",
       ],
-      correctIndex: 0,
+      correctIndex: 3,
       explanation: "Addition is entry-by-entry, so dimensions must match.",
     },
     {
@@ -161,19 +161,19 @@ import Quiz from "../../../components/Quiz.astro";
       id: "q3",
       text: "Matrix multiplication is:",
       options: [
-        "Not commutative (AB ≠ BA in general)",
         "Always commutative",
+        "Not commutative (AB ≠ BA in general)",
         "Only defined for square matrices",
         "The same as entry-by-entry multiplication",
       ],
-      correctIndex: 0,
+      correctIndex: 1,
       explanation: "Order matters in matrix multiplication.",
     },
     {
       id: "q4",
       text: "A 2x2 matrix has no inverse when its determinant is:",
-      options: ["$0$", "$1$", "$-1$", "Positive"],
-      correctIndex: 0,
+      options: ["$1$", "$-1$", "$0$", "Positive"],
+      correctIndex: 2,
       explanation:
         "Zero determinant means the matrix is singular (no inverse).",
     },

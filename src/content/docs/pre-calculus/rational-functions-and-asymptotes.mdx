@@ -118,20 +118,20 @@ import Quiz from "../../../components/Quiz.astro";
       id: "q1",
       text: "Vertical asymptotes occur where:",
       options: [
-        "The denominator is zero and the numerator is not",
         "The numerator is zero",
+        "The denominator is zero and the numerator is not",
         "The degrees are equal",
         "The function equals zero",
       ],
-      correctIndex: 0,
+      correctIndex: 1,
       explanation:
         "Vertical asymptotes are at denominator zeros that don't cancel with the numerator.",
     },
     {
       id: "q2",
       text: "For $f(x) = \\frac{2x^2 + 3}{x^2 - 5x + 6}$, the horizontal asymptote is:",
-      options: ["$y = 2$", "$y = 0$", "$y = 1$", "$y = 3$"],
-      correctIndex: 0,
+      options: ["$y = 0$", "$y = 1$", "$y = 2$", "$y = 3$"],
+      correctIndex: 2,
       explanation:
         "Degrees are equal, so $y = 2/1 = 2$ (ratio of leading coefficients).",
     },
@@ -139,12 +139,12 @@ import Quiz from "../../../components/Quiz.astro";
       id: "q3",
       text: "If a factor cancels from both numerator and denominator, it creates:",
       options: [
-        "A hole (removable discontinuity)",
         "A vertical asymptote",
         "A horizontal asymptote",
         "No change to the graph",
+        "A hole (removable discontinuity)",
       ],
-      correctIndex: 0,
+      correctIndex: 3,
       explanation: "Cancellation creates a hole, not an asymptote.",
     },
     {
@@ -164,12 +164,12 @@ import Quiz from "../../../components/Quiz.astro";
       id: "q5",
       text: "The first step when analyzing a rational function is:",
       options: [
-        "Factor numerator and denominator completely",
         "Graph it immediately",
         "Find the domain only",
         "Calculate the $y$-intercept",
+        "Factor numerator and denominator completely",
       ],
-      correctIndex: 0,
+      correctIndex: 3,
       explanation:
         "Factoring reveals asymptotes, holes, and intercepts all at once.",
     },

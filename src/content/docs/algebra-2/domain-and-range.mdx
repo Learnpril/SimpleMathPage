@@ -144,19 +144,19 @@ import Quiz from "../../../components/Quiz.astro";
       id: "q1",
       text: "What is the domain of $f(x) = \\frac{10}{x - 5}$?",
       options: [
-        "All real numbers except $x = 5$",
         "All real numbers",
+        "All real numbers except $x = 5$",
         "$x \\geq 5$",
-        "$x \\leq 5$",
+        "$x \\leq 5$"
       ],
-      correctIndex: 0,
+      correctIndex: 1,
       explanation: "Denominator cannot be zero, so $x \\neq 5$.",
     },
     {
       id: "q2",
       text: "What is the domain of $g(x) = \\sqrt{x + 3}$?",
-      options: ["$x \\geq -3$", "$x > -3$", "All real numbers", "$x \\leq -3$"],
-      correctIndex: 0,
+      options: ["$x \\leq -3$", "$x > -3$", "All real numbers", "$x \\geq -3$"],
+      correctIndex: 3,
       explanation:
         "The expression inside the square root must be $\\geq 0$: $x + 3 \\geq 0 \\rightarrow x \\geq -3$.",
     },
@@ -176,20 +176,20 @@ import Quiz from "../../../components/Quiz.astro";
     {
       id: "q4",
       text: "A delivery service charges 8 dollars plus 2 dollars per mile. What is a reasonable domain for miles driven?",
-      options: ["miles ≥ 0", "All real numbers", "miles > 0", "miles ≤ 100"],
-      correctIndex: 0,
+      options: ["miles > 0", "All real numbers", "miles ≥ 0", "miles ≤ 100"],
+      correctIndex: 2,
       explanation: "You cannot drive a negative number of miles.",
     },
     {
       id: "q5",
       text: "What is the range of $f(x) = -x^2 + 6$?",
       options: [
-        "$y \\leq 6$",
         "$y \\geq 6$",
+        "$y \\leq 6$",
         "All real numbers",
-        "$y \\leq 0$",
+        "$y \\leq 0$"
       ],
-      correctIndex: 0,
+      correctIndex: 1,
       explanation:
         "The parabola opens downward with maximum value $6$ at $x = 0$, so $y \\leq 6$.",
     },

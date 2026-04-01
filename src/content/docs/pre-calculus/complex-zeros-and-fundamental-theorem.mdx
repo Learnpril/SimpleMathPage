@@ -107,20 +107,20 @@ import Quiz from "../../../components/Quiz.astro";
       id: "q1",
       text: "A degree $n$ polynomial has exactly:",
       options: [
-        "$n$ complex zeros (counting multiplicities)",
         "$n$ real zeros",
         "At most $n$ zeros",
+        "$n$ complex zeros (counting multiplicities)",
         "Only positive zeros",
       ],
-      correctIndex: 0,
+      correctIndex: 2,
       explanation:
         "The Fundamental Theorem guarantees exactly $n$ zeros in the complex numbers.",
     },
     {
       id: "q2",
       text: "If a polynomial with real coefficients has a zero at $2 + 3i$, it must also have:",
-      options: ["$2 - 3i$", "$-2 + 3i$", "$-2 - 3i$", "$3 + 2i$"],
-      correctIndex: 0,
+      options: ["$-2 + 3i$", "$-2 - 3i$", "$3 + 2i$", "$2 - 3i$"],
+      correctIndex: 3,
       explanation:
         "Complex zeros of real-coefficient polynomials come in conjugate pairs.",
     },
@@ -141,19 +141,19 @@ import Quiz from "../../../components/Quiz.astro";
       id: "q4",
       text: "The zeros of $x^2 + 9$ are:",
       options: [
-        "$3i$ and $-3i$",
         "$3$ and $-3$",
+        "$3i$ and $-3i$",
         "$9$ and $-9$",
         "No zeros exist",
       ],
-      correctIndex: 0,
+      correctIndex: 1,
       explanation: "$x^2 = -9 \\Rightarrow x = \\pm 3i$. A conjugate pair.",
     },
     {
       id: "q5",
       text: "A degree 4 polynomial with real coefficients has zeros $1$, $-2$, and $3 + i$. The fourth zero is:",
-      options: ["$3 - i$", "$-3 + i$", "$-1$", "$i$"],
-      correctIndex: 0,
+      options: ["$-3 + i$", "$-1$", "$i$", "$3 - i$"],
+      correctIndex: 3,
       explanation: "The conjugate of $3 + i$ must also be a zero: $3 - i$.",
     },
   ]}

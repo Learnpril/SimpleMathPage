@@ -155,15 +155,15 @@ import Quiz from "../../../components/Quiz.astro";
     {
       id: "q1",
       text: "The dot product of $\\langle 3, 4 \\rangle$ and $\\langle 2, -1 \\rangle$ is:",
-      options: ["$2$", "$10$", "$-1$", "$6$"],
-      correctIndex: 0,
+      options: ["$10$", "$2$", "$-1$", "$6$"],
+      correctIndex: 1,
       explanation: "$(3)(2) + (4)(-1) = 6 - 4 = 2$.",
     },
     {
       id: "q2",
       text: "Two vectors are perpendicular when their dot product is:",
-      options: ["$0$", "$1$", "$-1$", "Undefined"],
-      correctIndex: 0,
+      options: ["$1$", "$-1$", "$0$", "Undefined"],
+      correctIndex: 2,
       explanation:
         "Zero dot product means the angle between them is 90 degrees.",
     },
@@ -171,12 +171,12 @@ import Quiz from "../../../components/Quiz.astro";
       id: "q3",
       text: "The angle between vectors can be found using:",
       options: [
-        "$\\cos^{-1}\\left(\\frac{\\mathbf{u} \\cdot \\mathbf{v}}{|\\mathbf{u}||\\mathbf{v}|}\\right)$",
         "$\\sin^{-1}(\\mathbf{u} \\cdot \\mathbf{v})$",
         "$\\tan^{-1}(\\mathbf{u} + \\mathbf{v})$",
         "$|\\mathbf{u}| + |\\mathbf{v}|$",
+        "$\\cos^{-1}\\left(\\frac{\\mathbf{u} \\cdot \\mathbf{v}}{|\\mathbf{u}||\\mathbf{v}|}\\right)$",
       ],
-      correctIndex: 0,
+      correctIndex: 3,
       explanation:
         "This comes from the geometric definition of the dot product.",
     },
@@ -195,8 +195,8 @@ import Quiz from "../../../components/Quiz.astro";
     {
       id: "q5",
       text: "If a boat motor pushes east at 6 m/s and current flows south at 8 m/s, the actual speed is:",
-      options: ["$10$ m/s", "$14$ m/s", "$2$ m/s", "$48$ m/s"],
-      correctIndex: 0,
+      options: ["$14$ m/s", "$10$ m/s", "$2$ m/s", "$48$ m/s"],
+      correctIndex: 1,
       explanation: "$\\sqrt{36 + 64} = \\sqrt{100} = 10$ m/s.",
     },
   ]}

@@ -117,24 +117,24 @@ import Quiz from "../../../components/Quiz.astro";
       id: "q1",
       text: "The sum identity for sine is:",
       options: [
-        "$\\sin(A+B) = \\sin A \\cos B + \\cos A \\sin B$",
         "$\\sin(A+B) = \\sin A + \\sin B$",
+        "$\\sin(A+B) = \\sin A \\cos B + \\cos A \\sin B$",
         "$\\sin(A+B) = \\cos(A-B)$",
-        "$\\sin(A+B) = \\tan A + \\tan B$",
+        "$\\sin(A+B) = \\tan A + \\tan B$"
       ],
-      correctIndex: 0,
+      correctIndex: 1,
       explanation: "$\\sin(A+B) = \\sin A \\cos B + \\cos A \\sin B$.",
     },
     {
       id: "q2",
       text: "The exact value of $\\cos(75°)$ is:",
       options: [
-        "$\\frac{\\sqrt{6} - \\sqrt{2}}{4}$",
+        "$\\frac{\\sqrt{2}}{2}$",
         "$\\frac{\\sqrt{6} + \\sqrt{2}}{4}$",
         "$\\frac{\\sqrt{2} - \\sqrt{6}}{4}$",
-        "$\\frac{\\sqrt{2}}{2}$",
+        "$\\frac{\\sqrt{6} - \\sqrt{2}}{4}$"
       ],
-      correctIndex: 0,
+      correctIndex: 3,
       explanation:
         "$75° = 45° + 30°$. $\\cos 45° \\cos 30° - \\sin 45° \\sin 30° = \\frac{\\sqrt{6} - \\sqrt{2}}{4}$.",
     },
@@ -150,12 +150,12 @@ import Quiz from "../../../components/Quiz.astro";
       id: "q4",
       text: "Sum and difference identities are most useful for:",
       options: [
-        "Finding exact values of angles like 15° and 75°",
-        "Graphing only",
         "Solving linear equations",
-        "Finding domain and range",
+        "Graphing only",
+        "Finding exact values of angles like 15° and 75°",
+        "Finding domain and range"
       ],
-      correctIndex: 0,
+      correctIndex: 2,
       explanation:
         "They let you calculate exact trig values for angles that are sums or differences of standard angles.",
     },
@@ -163,12 +163,12 @@ import Quiz from "../../../components/Quiz.astro";
       id: "q5",
       text: "$\\sin(A - B)$ equals:",
       options: [
-        "$\\sin A \\cos B - \\cos A \\sin B$",
         "$\\sin A \\cos B + \\cos A \\sin B$",
+        "$\\sin A \\cos B - \\cos A \\sin B$",
         "$\\cos A \\cos B + \\sin A \\sin B$",
-        "$\\sin A - \\sin B$",
+        "$\\sin A - \\sin B$"
       ],
-      correctIndex: 0,
+      correctIndex: 1,
       explanation:
         "The sine difference identity has a minus in the middle, matching the minus in the argument.",
     },

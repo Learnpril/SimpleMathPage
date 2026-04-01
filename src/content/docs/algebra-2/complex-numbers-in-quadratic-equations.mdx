@@ -88,8 +88,8 @@ import Quiz from "../../../components/Quiz.astro";
     {
       id: "q1",
       text: "Solve $x^2 + 6x + 13 = 0$",
-      options: ["$-3 \\pm 2i$", "$-3 \\pm 4i$", "$3 \\pm 2i$", "$-6 \\pm i$"],
-      correctIndex: 0,
+      options: ["$-3 \\pm 4i$", "$-3 \\pm 2i$", "$3 \\pm 2i$", "$-6 \\pm i$"],
+      correctIndex: 1,
       explanation:
         "$D = 36 - 52 = -16$. $x = \\frac{-6 \\pm \\sqrt{-16}}{2} = \\frac{-6 \\pm 4i}{2} = -3 \\pm 2i$.",
     },
@@ -97,12 +97,12 @@ import Quiz from "../../../components/Quiz.astro";
       id: "q2",
       text: "If the discriminant is negative, the solutions are:",
       options: [
-        "Complex numbers",
+        "No solutions",
         "Only real numbers",
         "Only positive real numbers",
-        "No solutions",
+        "Complex numbers"
       ],
-      correctIndex: 0,
+      correctIndex: 3,
       explanation:
         "Negative discriminant means two complex (non-real) solutions.",
     },
@@ -117,20 +117,20 @@ import Quiz from "../../../components/Quiz.astro";
       id: "q4",
       text: "The solutions to a quadratic with negative discriminant always come in:",
       options: [
-        "Complex conjugate pairs",
-        "The same number twice",
         "Only positive values",
-        "Only negative values",
+        "The same number twice",
+        "Complex conjugate pairs",
+        "Only negative values"
       ],
-      correctIndex: 0,
+      correctIndex: 2,
       explanation:
         "Complex solutions to quadratics with real coefficients come in conjugate pairs (a + bi and a − bi).",
     },
     {
       id: "q5",
       text: "Solve $x^2 + 4x + 8 = 0$.",
-      options: ["$-2 \\pm 2i$", "$-4 \\pm 2i$", "$2 \\pm 2i$", "$-2 \\pm 4i$"],
-      correctIndex: 0,
+      options: ["$-4 \\pm 2i$", "$-2 \\pm 2i$", "$2 \\pm 2i$", "$-2 \\pm 4i$"],
+      correctIndex: 1,
       explanation:
         "$D = 16 - 32 = -16$. $x = \\frac{-4 \\pm \\sqrt{-16}}{2} = \\frac{-4 \\pm 4i}{2} = -2 \\pm 2i$.",
     },

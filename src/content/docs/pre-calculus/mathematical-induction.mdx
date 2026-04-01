@@ -5,4 +5,215 @@ sidebar:
   order: 19
 ---
 
-Content coming soon.
+## What You'll Learn
+
+In this lesson you'll learn mathematical induction, a technique for proving that a statement is true for all positive integers. This is your first real encounter with formal proof, and it's a tool you'll use throughout higher math.
+
+## The Concept
+
+Mathematical induction is like knocking over an infinite line of dominoes. You need two things:
+
+1. Knock over the first domino (the base case)
+2. Show that if any domino falls, it knocks over the next one (the inductive step)
+
+If both are true, every domino falls.
+
+import InductionSteps from "../../../components/InductionSteps.astro";
+
+<InductionSteps />
+
+The green domino is the base case (n = 1). The blue dominoes are falling because each one knocks over the next. The gray ones haven't been reached yet, but they will be.
+
+Here's the formal structure. To prove a statement P(n) is true for all positive integers n:
+
+- Step 1 (Base Case): Show P(1) is true.
+- Step 2 (Inductive Hypothesis): Assume P(k) is true for some positive integer k.
+- Step 3 (Inductive Step): Using the assumption that P(k) is true, prove P(k + 1) is true.
+- Conclusion: By the Principle of Mathematical Induction, P(n) is true for all positive integers n.
+
+The inductive hypothesis is the key move. You're not assuming the thing you're trying to prove. You're saying "if it works for one case, I can show it works for the next." Combined with the base case, that chain reaction covers every positive integer.
+
+Here's how k connects to n = 1. The base case proves the statement for n = 1. The inductive step proves that if it works for any number k, it also works for k + 1. So once you know it's true for n = 1 (base case), the inductive step tells you it's true for n = 2 (because k = 1 implies k + 1 = 2). Now that you know it's true for n = 2, the inductive step fires again and gives you n = 3. Then n = 4. Then n = 5. The chain never stops. The letter k is just a stand-in for "whatever number we're currently at." It's not a specific number. It represents any rung on the ladder, and the inductive step is the rule that lets you climb from that rung to the next one.
+
+## Worked Example
+
+**Example 1: Sum of the first n natural numbers**
+
+We want to prove that $1 + 2 + 3 + \dots + n = \frac{n(n+1)}{2}$ for all positive integers n.
+
+Here n represents "how many numbers we're adding up." When n = 3, the formula says 1 + 2 + 3 = 3(4)/2 = 6. When n = 5, it says 1 + 2 + 3 + 4 + 5 = 5(6)/2 = 15. We want to prove this works for every possible n, not just the ones we can check by hand.
+
+**Base case** (n = 1):
+
+The left side is just 1 (we're only adding one number). The right side is:
+
+$$
+\frac{1(1+1)}{2} = \frac{1 \cdot 2}{2} = \frac{2}{2} = 1
+$$
+
+Left side equals right side. The formula works for n = 1. First domino is down.
+
+**Inductive hypothesis**: Now assume the formula works for some specific (but unspecified) integer k. That means we're assuming:
+
+$$
+1 + 2 + 3 + \dots + k = \frac{k(k+1)}{2}
+$$
+
+We don't know which k this is. It could be 1, it could be 50, it could be a million. We're just saying "pick any k where the formula works."
+
+**Inductive step**: Using that assumption, we need to show the formula also works for k + 1. That means we need to show:
+
+$$
+1 + 2 + \dots + k + (k+1) = \frac{(k+1)(k+2)}{2}
+$$
+
+Start with the left side. It's the sum of the first k numbers, plus one more term (k + 1):
+
+$$
+\underbrace{1 + 2 + \dots + k}_{\text{this equals } \frac{k(k+1)}{2} \text{ by our assumption}} + (k+1)
+$$
+
+Replace the first k terms with what the inductive hypothesis tells us:
+
+$$
+= \frac{k(k+1)}{2} + (k+1)
+$$
+
+To add these, get a common denominator. Write (k + 1) as $\frac{2(k+1)}{2}$ and combine:
+
+$$
+= \frac{k(k+1)}{2} + \frac{2(k+1)}{2} = \frac{k(k+1) + 2(k+1)}{2}
+$$
+
+Factor out (k + 1) from the numerator:
+
+$$
+= \frac{(k+1)(k + 2)}{2}
+$$
+
+That's exactly the formula with n = k + 1. We started with the assumption that it works for k, and we showed it works for k + 1. The chain reaction is complete.
+
+**Example 2: Divisibility**
+
+Prove that $3^{2n} - 1$ is divisible by 8 for all positive integers n.
+
+Here n is the exponent controller. When n = 1, we get $3^2 - 1 = 8$. When n = 2, we get $3^4 - 1 = 80$. When n = 3, we get $3^6 - 1 = 728$. All divisible by 8. We want to prove it always works.
+
+**Base case** (n = 1):
+
+$$
+3^{2(1)} - 1 = 3^2 - 1 = 9 - 1 = 8
+$$
+
+8 is divisible by 8. Base case done.
+
+**Inductive hypothesis**: Assume $3^{2k} - 1$ is divisible by 8 for some integer k. In other words, $3^{2k} - 1 = 8m$ for some integer m. (We don't know what m is, just that it exists.)
+
+**Inductive step**: Show $3^{2(k+1)} - 1$ is also divisible by 8.
+
+First, simplify the exponent. Since 2(k + 1) = 2k + 2:
+
+$$
+3^{2(k+1)} - 1 = 3^{2k+2} - 1
+$$
+
+Rewrite $3^{2k+2}$ as $3^2 \cdot 3^{2k} = 9 \cdot 3^{2k}$:
+
+$$
+= 9 \cdot 3^{2k} - 1
+$$
+
+Now the trick: add and subtract 9 to create a term we can use our assumption on:
+
+$$
+= 9 \cdot 3^{2k} - 9 + 9 - 1 = 9(3^{2k} - 1) + 8
+$$
+
+Look at each piece. By the inductive hypothesis, $3^{2k} - 1$ is divisible by 8, so $9(3^{2k} - 1)$ is also divisible by 8 (a multiple of 8 times 9 is still a multiple of 8). And 8 is divisible by 8. The sum of two things divisible by 8 is divisible by 8. Done.
+
+## Real-World Application
+
+Mathematical induction is used in:
+
+- Computer science (proving algorithms terminate and produce correct results)
+- Cryptography and number theory (proving properties of primes and divisibility)
+- Physics (proving formulas for patterns in sequences)
+- Engineering (verifying properties that hold for any number of components)
+
+Example: proving that a recursive algorithm always produces the correct result no matter how large the input is. If you can show it works for the smallest input (base case) and that correctness at size k implies correctness at size k + 1 (inductive step), you've proven it works for all inputs.
+
+:::note[You've Got This]
+Induction can feel abstract at first, but the logic is simple: prove it works for the first case, then show that success at one step guarantees success at the next. The inductive step is where the real work happens. Start with the assumption, manipulate it algebraically, and show it leads to the formula for k + 1. Practice with sum formulas first, then try divisibility proofs.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="precalculus-math-induction"
+  questions={[
+    {
+      id: "q1",
+      text: "Mathematical induction requires proving:",
+      options: [
+        "Only the base case",
+        "Only the inductive step",
+        "A base case and an inductive step",
+        "The formula for n = 100 only",
+      ],
+      correctIndex: 2,
+      explanation: "Both the base case and the inductive step must be proven.",
+    },
+    {
+      id: "q2",
+      text: "The inductive hypothesis assumes the statement is true for:",
+      options: [
+        "All integers",
+        "Only n = 1",
+        "Only even numbers",
+        "Some integer k",
+      ],
+      correctIndex: 3,
+      explanation: "We assume it's true for k and then prove it for k + 1.",
+    },
+    {
+      id: "q3",
+      text: "Induction is typically used to prove:",
+      options: [
+        "Formulas that hold for all positive integers",
+        "Only trigonometric identities",
+        "Only quadratic equations",
+        "Only geometric series sums",
+      ],
+      correctIndex: 0,
+      explanation:
+        "Induction is ideal for statements about all positive integers.",
+    },
+    {
+      id: "q4",
+      text: "If the base case and inductive step are both proven, the statement is true for:",
+      options: [
+        "Only n = 1",
+        "All positive integers",
+        "Only even n",
+        "Only n up to 100",
+      ],
+      correctIndex: 1,
+      explanation: "That's the power of mathematical induction.",
+    },
+    {
+      id: "q5",
+      text: "Mathematical induction is especially useful in:",
+      options: [
+        "Only basic arithmetic",
+        "Only graphing",
+        "Only statistics",
+        "Computer science and proving algorithm correctness",
+      ],
+      correctIndex: 3,
+      explanation:
+        "It is a fundamental proof technique in many technical fields.",
+    },
+  ]}
+/>

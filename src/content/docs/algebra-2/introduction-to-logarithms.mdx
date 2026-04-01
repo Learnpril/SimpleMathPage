@@ -98,24 +98,24 @@ import Quiz from "../../../components/Quiz.astro";
       id: "q1",
       text: "The equation $\\log_3(27) = 3$ means:",
       options: [
-        "$3^3 = 27$",
         "$27^3 = 3$",
+        "$3^3 = 27$",
         "$3^{27} = 3$",
-        "$\\log_{27}(3) = 3$",
+        "$\\log_{27}(3) = 3$"
       ],
-      correctIndex: 0,
+      correctIndex: 1,
       explanation: "$\\log_b(a) = c$ means $b^c = a$.",
     },
     {
       id: "q2",
       text: "Convert $5^2 = 25$ to logarithmic form:",
       options: [
-        "$\\log_5(25) = 2$",
+        "$\\log(5) = 25$",
         "$\\log_{25}(5) = 2$",
         "$5 = \\log(25)$",
-        "$\\log(5) = 25$",
+        "$\\log_5(25) = 2$"
       ],
-      correctIndex: 0,
+      correctIndex: 3,
       explanation: "The exponent becomes the value of the log.",
     },
     {
@@ -129,19 +129,19 @@ import Quiz from "../../../components/Quiz.astro";
       id: "q4",
       text: "Logarithms and exponentials are:",
       options: [
-        "Inverses of each other",
-        "The same thing",
         "Never used together",
-        "Only used in physics",
+        "The same thing",
+        "Inverses of each other",
+        "Only used in physics"
       ],
-      correctIndex: 0,
+      correctIndex: 2,
       explanation: "A logarithm undoes an exponential, and vice versa.",
     },
     {
       id: "q5",
       text: "Evaluate $\\log_2(32)$.",
-      options: ["$5$", "$4$", "$6$", "$3$"],
-      correctIndex: 0,
+      options: ["$4$", "$5$", "$6$", "$3$"],
+      correctIndex: 1,
       explanation: "$2^5 = 32$, so $\\log_2(32) = 5$.",
     },
   ]}

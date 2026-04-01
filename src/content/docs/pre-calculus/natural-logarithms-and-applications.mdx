@@ -105,32 +105,32 @@ import Quiz from "../../../components/Quiz.astro";
     {
       id: "q1",
       text: "The natural logarithm is log base:",
-      options: ["$e$", "$10$", "$2$", "$\\pi$"],
-      correctIndex: 0,
+      options: ["$10$", "$e$", "$2$", "$\\pi$"],
+      correctIndex: 1,
       explanation: "$\\ln x$ means $\\log_e x$.",
     },
     {
       id: "q2",
       text: "Solve $e^{3x} = 8$:",
       options: [
-        "$x = \\frac{\\ln 8}{3}$",
         "$x = \\frac{8}{3}$",
         "$x = \\ln\\left(\\frac{8}{3}\\right)$",
+        "$x = \\frac{\\ln 8}{3}$",
         "$x = 3\\ln 8$",
       ],
-      correctIndex: 0,
+      correctIndex: 2,
       explanation: "Take ln: $3x = \\ln 8$, so $x = (\\ln 8)/3$.",
     },
     {
       id: "q3",
       text: "The formula for continuous compound interest is:",
       options: [
-        "$A = Pe^{rt}$",
         "$A = P(1 + r)^t$",
         "$A = P + rt$",
         "$A = P(1 - r)^t$",
+        "$A = Pe^{rt}$",
       ],
-      correctIndex: 0,
+      correctIndex: 3,
       explanation: "Continuous compounding uses base $e$.",
     },
     {
@@ -149,8 +149,8 @@ import Quiz from "../../../components/Quiz.astro";
     {
       id: "q5",
       text: "The inverse of $e^x$ is:",
-      options: ["$\\ln x$", "$\\log_{10} x$", "$x^e$", "$10^x$"],
-      correctIndex: 0,
+      options: ["$\\log_{10} x$", "$x^e$", "$\\ln x$", "$10^x$"],
+      correctIndex: 2,
       explanation: "The natural log undoes the exponential function $e^x$.",
     },
   ]}

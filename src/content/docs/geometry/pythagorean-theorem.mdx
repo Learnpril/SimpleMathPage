@@ -84,15 +84,15 @@ import Quiz from "../../../components/Quiz.astro";
     {
       id: "q1",
       text: "In a right triangle, the legs are 5 and 12. What is the hypotenuse?",
-      options: ["13", "17", "10", "7"],
-      correctIndex: 0,
+      options: ["17", "13", "10", "7"],
+      correctIndex: 1,
       explanation: "5² + 12² = 25 + 144 = 169 → √169 = 13.",
     },
     {
       id: "q2",
       text: "A right triangle has hypotenuse 10 and one leg 6. What is the other leg?",
-      options: ["8", "4", "12", "√136"],
-      correctIndex: 0,
+      options: ["√136", "4", "12", "8"],
+      correctIndex: 3,
       explanation: "6² + b² = 10² → 36 + b² = 100 → b² = 64 → b = 8.",
     },
     {
@@ -106,24 +106,24 @@ import Quiz from "../../../components/Quiz.astro";
       id: "q4",
       text: "Which statement is true about the Pythagorean Theorem?",
       options: [
-        "It only works for right triangles",
-        "It works for all triangles",
         "It only finds the hypotenuse",
-        "It only works with integers",
+        "It works for all triangles",
+        "It only works for right triangles",
+        "It only works with integers"
       ],
-      correctIndex: 0,
+      correctIndex: 2,
       explanation: "The Pythagorean Theorem applies only to right triangles.",
     },
     {
       id: "q5",
       text: "Do the sides $7$, $24$, and $25$ form a right triangle?",
       options: [
-        "Yes",
         "No",
+        "Yes",
         "Only if the angle is given",
-        "Cannot be determined",
+        "Cannot be determined"
       ],
-      correctIndex: 0,
+      correctIndex: 1,
       explanation:
         "$7^2 + 24^2 = 49 + 576 = 625 = 25^2$. Yes, it's a right triangle.",
     },

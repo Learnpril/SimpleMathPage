@@ -94,11 +94,23 @@ The key insight: each row operation is just algebra you already know (multiply b
 
 **What can go wrong (or go right)?**
 
-There are three possible outcomes:
+There are three possible outcomes when you row-reduce a system. Here's what each one looks like geometrically:
 
-- One unique solution: every variable ends up with its own pivot row, and you can solve for each one. Geometrically, the equations describe lines (in 2D) or planes (in 3D) that all meet at exactly one point. That point is your answer. The example above is this case: the two lines cross at (1, 2) and nowhere else.
-- No solution: you end up with a row like [0 0 | 5], which says 0 = 5. Think about what that row means if you translate it back to an equation: 0x + 0y = 5. No matter what x and y are, the left side is always zero, so it can never equal 5. That's a contradiction. Geometrically, the original equations describe parallel lines (in 2D) or parallel planes (in 3D) that never intersect. The system was asking "where do these lines meet?" and the answer is "they don't."
-- Infinitely many solutions: you get a row of all zeros like [0 0 | 0], which translates back to 0x + 0y = 0. That's true for every x and y, so it gives you no new information. It means one of the original equations was redundant (just a multiple or combination of the others). Geometrically, the lines or planes overlap along an entire line or surface, not just at a single point. You end up with a "free variable" that can be anything, and the other variables depend on it. Instead of one answer, you get a whole family of answers.
+import SystemOutcomes from "../../../components/SystemOutcomes.astro";
+
+<SystemOutcomes />
+
+**One unique solution**
+
+Every variable ends up with its own pivot row, and you can solve for each one. Geometrically, the equations describe lines (in 2D) or planes (in 3D) that all meet at exactly one point. That point is your answer. The example above is this case: the two lines cross at (1, 2) and nowhere else. In the left graph, the blue and orange lines intersect at the green dot.
+
+**No solution**
+
+You end up with a row like [0 0 | 5], which says 0 = 5. Think about what that row means if you translate it back to an equation: 0x + 0y = 5. No matter what x and y are, the left side is always zero, so it can never equal 5. That's a contradiction. Geometrically, the original equations describe parallel lines (in 2D) or parallel planes (in 3D) that never intersect. They have the same slope but different y-intercepts, so they run side by side forever. The system was asking "where do these lines meet?" and the answer is "they don't." The middle graph shows this: same direction, but they never touch.
+
+**Infinitely many solutions**
+
+You get a row of all zeros like [0 0 | 0], which translates back to 0x + 0y = 0. That's true for every x and y, so it gives you no new information. It means one of the original equations was redundant (just a multiple or combination of the others). Geometrically, the lines or planes overlap completely. They're the same line, so every point on it is a solution. You end up with a "free variable" that can be anything, and the other variables depend on it. Instead of one answer, you get a whole family of answers. The right graph shows this: the dashed orange line sits right on top of the blue one.
 
 ## Worked Example
 
@@ -197,12 +209,12 @@ import Quiz from "../../../components/Quiz.astro";
       id: "q1",
       text: "An augmented matrix combines:",
       options: [
-        "Coefficients and constants of the system",
         "Only the coefficients",
         "Only the constants",
+        "Coefficients and constants of the system",
         "The inverses of the matrices",
       ],
-      correctIndex: 0,
+      correctIndex: 2,
       explanation:
         "It includes both the coefficient matrix and the constant column.",
     },
@@ -210,12 +222,12 @@ import Quiz from "../../../components/Quiz.astro";
       id: "q2",
       text: "If row reduction produces a row [0 0 0 | 7], the system has:",
       options: [
-        "No solution",
         "Infinitely many solutions",
         "A unique solution",
         "Exactly two solutions",
+        "No solution",
       ],
-      correctIndex: 0,
+      correctIndex: 3,
       explanation: "0 = 7 is a contradiction, so no solution exists.",
     },
     {
@@ -235,24 +247,24 @@ import Quiz from "../../../components/Quiz.astro";
       id: "q4",
       text: "When a system has infinitely many solutions, you will see:",
       options: [
-        "A row of all zeros with at least one free variable",
         "A row [0 0 0 | nonzero]",
+        "A row of all zeros with at least one free variable",
         "Only leading 1s with no free variables",
         "A singular matrix with no solutions",
       ],
-      correctIndex: 0,
+      correctIndex: 1,
       explanation: "Free variables allow parameterization of the solution.",
     },
     {
       id: "q5",
       text: "Augmented matrices are particularly useful for:",
       options: [
-        "Larger systems and real-world modeling",
         "Only 2x2 systems",
         "Only quadratic equations",
         "Only trigonometric equations",
+        "Larger systems and real-world modeling",
       ],
-      correctIndex: 0,
+      correctIndex: 3,
       explanation: "The method scales well to systems of any size.",
     },
   ]}

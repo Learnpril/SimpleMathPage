@@ -108,19 +108,19 @@ import Quiz from "../../../components/Quiz.astro";
       id: "q1",
       text: "The matrix equation AX = B represents:",
       options: [
-        "A system of linear equations",
         "A single quadratic equation",
+        "A system of linear equations",
         "A circle",
-        "An exponential function",
+        "An exponential function"
       ],
-      correctIndex: 0,
+      correctIndex: 1,
       explanation: "AX = B is the matrix form of a system of linear equations.",
     },
     {
       id: "q2",
       text: "To solve $AX = B$ for $X$ when $A$ is invertible, you compute:",
-      options: ["$X = A^{-1}B$", "$X = AB$", "$X = B - A$", "$X = A + B$"],
-      correctIndex: 0,
+      options: ["$X = A + B$", "$X = AB$", "$X = B - A$", "$X = A^{-1}B$"],
+      correctIndex: 3,
       explanation: "Multiply both sides on the left by the inverse of $A$.",
     },
     {
@@ -134,20 +134,20 @@ import Quiz from "../../../components/Quiz.astro";
       id: "q4",
       text: "The main advantage of using matrices to solve systems is:",
       options: [
-        "It is systematic and scales to larger systems",
-        "It is always faster than substitution",
         "It never requires checking answers",
-        "It only works for 2 variables",
+        "It is always faster than substitution",
+        "It is systematic and scales to larger systems",
+        "It only works for 2 variables"
       ],
-      correctIndex: 0,
+      correctIndex: 2,
       explanation:
         "Matrix methods are organized and extend well to larger systems.",
     },
     {
       id: "q5",
       text: "Find the determinant of $\\begin{bmatrix} 3 & 1 \\\\ 5 & 2 \\end{bmatrix}$.",
-      options: ["$1$", "$-1$", "$6$", "$11$"],
-      correctIndex: 0,
+      options: ["$-1$", "$1$", "$6$", "$11$"],
+      correctIndex: 1,
       explanation: "$\\det = (3)(2) - (1)(5) = 6 - 5 = 1$.",
     },
   ]}

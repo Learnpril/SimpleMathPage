@@ -101,20 +101,20 @@ import Quiz from "../../../components/Quiz.astro";
       id: "q1",
       text: "When solving radical equations, why must you check your solutions?",
       options: [
-        "Some may be extraneous (don't satisfy the original)",
         "To make sure the answer is positive",
+        "Some may be extraneous (don't satisfy the original)",
         "To verify the degree",
-        "To find the range",
+        "To find the range"
       ],
-      correctIndex: 0,
+      correctIndex: 1,
       explanation:
         "Squaring both sides can introduce solutions that don't work in the original equation.",
     },
     {
       id: "q2",
       text: "Solve $\\sqrt{x + 3} = 5$",
-      options: ["$x = 22$", "$x = 2$", "$x = 8$", "$x = 25$"],
-      correctIndex: 0,
+      options: ["$x = 25$", "$x = 2$", "$x = 8$", "$x = 22$"],
+      correctIndex: 3,
       explanation:
         "Square both sides: $x + 3 = 25 \\rightarrow x = 22$. Check: $\\sqrt{25} = 5$. ✓",
     },
@@ -135,20 +135,20 @@ import Quiz from "../../../components/Quiz.astro";
       id: "q4",
       text: "If after squaring you get a quadratic, you should:",
       options: [
-        "Check both solutions in the original equation",
-        "Only take the positive root",
         "Ignore the check",
-        "Only use the quadratic formula",
+        "Only take the positive root",
+        "Check both solutions in the original equation",
+        "Only use the quadratic formula"
       ],
-      correctIndex: 0,
+      correctIndex: 2,
       explanation:
         "Always check both solutions because extraneous roots are common.",
     },
     {
       id: "q5",
       text: "Solve $\\sqrt{2x - 1} = x - 2$.",
-      options: ["$x = 5$", "$x = 1$", "$x = 1$ and $x = 5$", "No solution"],
-      correctIndex: 0,
+      options: ["$x = 1$", "$x = 5$", "$x = 1$ and $x = 5$", "No solution"],
+      correctIndex: 1,
       explanation:
         "Square both sides: $2x - 1 = x^2 - 4x + 4 \\rightarrow x^2 - 6x + 5 = 0 \\rightarrow (x-1)(x-5) = 0$. Check: $x = 1$ gives $\\sqrt{1} = -1$ (false). $x = 5$ gives $\\sqrt{9} = 3$ (true). Only $x = 5$.",
     },

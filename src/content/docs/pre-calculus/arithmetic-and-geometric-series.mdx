@@ -5,4 +5,169 @@ sidebar:
   order: 18
 ---
 
-Content coming soon.
+## What You'll Learn
+
+In this lesson you'll learn how to identify arithmetic and geometric series, find their nth terms, and calculate the sum of finite (and infinite geometric) series. You covered arithmetic and geometric sequences in Algebra 2. Here we focus on adding them up.
+
+## The Concept
+
+A series is the sum of the terms of a sequence. The difference between a sequence and a series: a sequence is a list (3, 7, 11, 15, ...), a series is the sum (3 + 7 + 11 + 15 + ...).
+
+**Arithmetic series** have a constant common difference d between terms. Each term grows by the same amount.
+
+The nth term:
+
+$$
+a_n = a_1 + (n - 1)d
+$$
+
+The sum of the first n terms:
+
+$$
+S_n = \frac{n}{2}(a_1 + a_n)
+$$
+
+This works because you're averaging the first and last terms, then multiplying by how many terms there are. Think of it as pairing up terms from opposite ends: the first and last add to the same total as the second and second-to-last, and so on.
+
+**Geometric series** have a constant common ratio r between terms. Each term is multiplied by the same factor.
+
+The nth term:
+
+$$
+a_n = a_1 \cdot r^{n-1}
+$$
+
+The sum of the first n terms:
+
+$$
+S_n = a_1 \cdot \frac{1 - r^n}{1 - r} \quad (r \neq 1)
+$$
+
+import SeriesCompare from "../../../components/SeriesCompare.astro";
+
+<SeriesCompare />
+
+The chart shows the difference visually. The arithmetic series (blue) grows steadily by adding 4 each time. The geometric series (orange) doubles each time and quickly dwarfs the arithmetic one. This is the power of exponential growth.
+
+**Infinite geometric series** are a special case. If the common ratio r has absolute value less than 1 (meaning each term gets smaller), the sum actually settles on a finite number:
+
+$$
+S_\infty = \frac{a_1}{1 - r} \quad (|r| \lt 1)
+$$
+
+If the absolute value of r is 1 or greater, the terms don't shrink, so the sum keeps growing forever (it diverges).
+
+## Worked Example
+
+**Example 1: Arithmetic series**
+
+Find the sum of the first 20 terms of 3 + 7 + 11 + 15 + ...
+
+Here $a_1 = 3$ and $d = 4$. First find the 20th term: $a_{20} = 3 + 19(4) = 79$.
+
+$$
+S_{20} = \frac{20}{2}(3 + 79) = 10 \times 82 = 820
+$$
+
+**Example 2: Geometric series**
+
+Find the sum of the first 10 terms of 5 + 10 + 20 + 40 + ...
+
+Here $a_1 = 5$ and $r = 2$.
+
+$$
+S_{10} = 5 \cdot \frac{1 - 2^{10}}{1 - 2} = 5 \cdot \frac{1 - 1024}{-1} = 5 \times 1023 = 5115
+$$
+
+**Example 3: Infinite geometric series**
+
+Find the sum of 9 + 3 + 1 + 1/3 + 1/9 + ...
+
+Here $a_1 = 9$ and $r = 1/3$. Since $|r| \lt 1$, it converges:
+
+$$
+S_\infty = \frac{9}{1 - \frac{1}{3}} = \frac{9}{\frac{2}{3}} = \frac{27}{2} = 13.5
+$$
+
+import ConvergenceDiagram from "../../../components/ConvergenceDiagram.astro";
+
+<ConvergenceDiagram />
+
+The blue dots show the partial sums (how much you've added so far after each term). They climb quickly at first, then slow down and flatten out, approaching the green dashed line at 13.5 but never quite reaching it. That's convergence: the sum settles on a finite value even though you're adding infinitely many terms.
+
+## Real-World Application
+
+Series are used in:
+
+- Finance (calculating total interest from regular deposits, annuities, loan payments)
+- Physics (summing distances in bouncing ball problems, harmonic motion)
+- Computer science (analyzing algorithm complexity, geometric progressions in graphics)
+- Business (projecting total sales growth over time)
+- Music (harmonic series and overtones)
+
+Example: if you save 100 dollars per month with 0.5% monthly interest, the total amount after many years involves the sum of a geometric series. Each month's deposit earns a slightly different amount of interest, and the geometric sum formula tells you the total.
+
+:::note[You've Got This]
+Arithmetic series grow linearly (constant addition), while geometric series grow exponentially (constant multiplication). The formulas look intimidating at first, but they're just shortcuts for adding up lots of terms without writing them all out. Always start by identifying whether you have a common difference (arithmetic) or a common ratio (geometric), then pick the right formula.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="precalculus-arith-geo-series"
+  questions={[
+    {
+      id: "q1",
+      text: "In an arithmetic series, the difference between consecutive terms is:",
+      options: [
+        "Multiplied by a fixed ratio",
+        "Constant",
+        "Getting larger each time",
+        "Random",
+      ],
+      correctIndex: 1,
+      explanation: "Arithmetic sequences have a constant common difference.",
+    },
+    {
+      id: "q2",
+      text: "The sum formula for a finite geometric series is:",
+      options: [
+        "$\\frac{n}{2}(a_1 + a_n)$",
+        "$a_1 / (1 - r)$",
+        "$n \\cdot a_1 \\cdot r$",
+        "$a_1(1 - r^n) / (1 - r)$",
+      ],
+      correctIndex: 3,
+      explanation:
+        "This is the standard finite geometric sum formula when r is not 1.",
+    },
+    {
+      id: "q3",
+      text: "An infinite geometric series converges only if:",
+      options: ["$|r| \\gt 1$", "$r = 1$", "$|r| \\lt 1$", "$r = 0$"],
+      correctIndex: 2,
+      explanation: "The common ratio must have absolute value less than 1.",
+    },
+    {
+      id: "q4",
+      text: "The series 2 + 4 + 6 + 8 + ... is:",
+      options: ["Arithmetic", "Geometric", "Neither", "Both"],
+      correctIndex: 0,
+      explanation: "It has a constant difference of 2.",
+    },
+    {
+      id: "q5",
+      text: "Series are commonly used in:",
+      options: [
+        "Only basic counting",
+        "Only geometry",
+        "Only trigonometry",
+        "Finance, physics, and growth modeling",
+      ],
+      correctIndex: 3,
+      explanation: "They model many real-world cumulative processes.",
+    },
+  ]}
+/>

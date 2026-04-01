@@ -115,12 +115,12 @@ import Quiz from "../../../components/Quiz.astro";
       id: "q1",
       text: "Using the product property: $\\log_b(MN) =$",
       options: [
-        "$\\log_b(M) + \\log_b(N)$",
         "$\\log_b(M) - \\log_b(N)$",
+        "$\\log_b(M) + \\log_b(N)$",
         "$\\log_b(M) \\cdot \\log_b(N)$",
-        "$\\log_b(M/N)$",
+        "$\\log_b(M/N)$"
       ],
-      correctIndex: 0,
+      correctIndex: 1,
       explanation:
         "The product property says the log of a product is the sum of the logs.",
     },
@@ -128,12 +128,12 @@ import Quiz from "../../../components/Quiz.astro";
       id: "q2",
       text: "Condense: $3\\log_2(x) - \\log_2(5)$",
       options: [
-        "$\\log_2(x^3/5)$",
+        "$\\log_2(3x - 5)$",
         "$\\log_2(3x/5)$",
         "$\\log_2(x^3) - 5$",
-        "$\\log_2(3x - 5)$",
+        "$\\log_2(x^3/5)$"
       ],
-      correctIndex: 0,
+      correctIndex: 3,
       explanation:
         "$3\\log_2(x) = \\log_2(x^3)$, then $\\log_2(x^3) - \\log_2(5) = \\log_2(x^3/5)$.",
     },
@@ -153,12 +153,12 @@ import Quiz from "../../../components/Quiz.astro";
       id: "q4",
       text: "Which is equivalent to $\\log_3(27x)$?",
       options: [
-        "$3 + \\log_3(x)$",
-        "$27 \\cdot \\log_3(x)$",
         "$3 \\cdot \\log_3(x)$",
-        "$\\log_3(27) \\cdot \\log_3(x)$",
+        "$27 \\cdot \\log_3(x)$",
+        "$3 + \\log_3(x)$",
+        "$\\log_3(27) \\cdot \\log_3(x)$"
       ],
-      correctIndex: 0,
+      correctIndex: 2,
       explanation:
         "Product property: $\\log_3(27) + \\log_3(x) = 3 + \\log_3(x)$.",
     },
@@ -166,12 +166,12 @@ import Quiz from "../../../components/Quiz.astro";
       id: "q5",
       text: "Expand: $\\log_5\\left(\\frac{x^2}{y}\\right)$",
       options: [
-        "$2\\log_5(x) - \\log_5(y)$",
         "$\\log_5(x^2) + \\log_5(y)$",
+        "$2\\log_5(x) - \\log_5(y)$",
         "$2\\log_5(x) + \\log_5(y)$",
-        "$\\log_5(x) - 2\\log_5(y)$",
+        "$\\log_5(x) - 2\\log_5(y)$"
       ],
-      correctIndex: 0,
+      correctIndex: 1,
       explanation:
         "Quotient property then power property: $\\log_5(x^2) - \\log_5(y) = 2\\log_5(x) - \\log_5(y)$.",
     },

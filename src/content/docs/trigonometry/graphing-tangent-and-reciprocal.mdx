@@ -112,20 +112,20 @@ import Quiz from "../../../components/Quiz.astro";
     {
       id: "q1",
       text: "The period of $y = \\tan(x)$ is:",
-      options: ["$\\pi$", "$2\\pi$", "$\\frac{\\pi}{2}$", "$4\\pi$"],
-      correctIndex: 0,
+      options: ["$2\\pi$", "$\\pi$", "$\\frac{\\pi}{2}$", "$4\\pi$"],
+      correctIndex: 1,
       explanation: "Tangent repeats every $\\pi$ radians.",
     },
     {
       id: "q2",
       text: "The asymptotes of $y = \\tan(x)$ occur where:",
       options: [
-        "$\\cos(x) = 0$",
+        "$x = k\\pi$",
         "$\\sin(x) = 0$",
         "$\\tan(x) = 0$",
-        "$x = k\\pi$",
+        "$\\cos(x) = 0$"
       ],
-      correctIndex: 0,
+      correctIndex: 3,
       explanation:
         "Since $\\tan(x) = \\frac{\\sin(x)}{\\cos(x)}$, it's undefined where $\\cos(x) = 0$.",
     },
@@ -144,15 +144,15 @@ import Quiz from "../../../components/Quiz.astro";
     {
       id: "q4",
       text: "The period of $y = \\csc(x)$ is:",
-      options: ["$2\\pi$", "$\\pi$", "$\\frac{\\pi}{2}$", "$4\\pi$"],
-      correctIndex: 0,
+      options: ["$\\frac{\\pi}{2}$", "$\\pi$", "$2\\pi$", "$4\\pi$"],
+      correctIndex: 2,
       explanation: "Cosecant has the same period as sine: $2\\pi$.",
     },
     {
       id: "q5",
       text: "At $x = 0$, $\\tan(x)$ equals:",
-      options: ["$0$", "$1$", "Undefined", "$-1$"],
-      correctIndex: 0,
+      options: ["$1$", "$0$", "Undefined", "$-1$"],
+      correctIndex: 1,
       explanation:
         "$\\tan(0) = \\frac{\\sin(0)}{\\cos(0)} = \\frac{0}{1} = 0$.",
     },

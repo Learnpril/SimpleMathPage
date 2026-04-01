@@ -113,15 +113,15 @@ import Quiz from "../../../components/Quiz.astro";
     {
       id: "q1",
       text: "Add: $(5 + 3i) + (2 - 7i)$",
-      options: ["$7 - 4i$", "$3 + 10i$", "$7 + 4i$", "$3 - 4i$"],
-      correctIndex: 0,
+      options: ["$3 + 10i$", "$7 - 4i$", "$7 + 4i$", "$3 - 4i$"],
+      correctIndex: 1,
       explanation: "$(5 + 2) + (3i - 7i) = 7 - 4i$.",
     },
     {
       id: "q2",
       text: "Multiply: $(3 + 2i)(4 - i)$",
-      options: ["$14 + 5i$", "$10 + 5i$", "$14 - 5i$", "$12 + 11i$"],
-      correctIndex: 0,
+      options: ["$12 + 11i$", "$10 + 5i$", "$14 - 5i$", "$14 + 5i$"],
+      correctIndex: 3,
       explanation: "$12 - 3i + 8i - 2i^2 = 12 + 5i + 2 = 14 + 5i$.",
     },
     {
@@ -135,20 +135,20 @@ import Quiz from "../../../components/Quiz.astro";
       id: "q4",
       text: "To divide complex numbers, multiply numerator and denominator by:",
       options: [
-        "The complex conjugate of the denominator",
-        "i",
         "The real part only",
-        "The imaginary part only",
+        "i",
+        "The complex conjugate of the denominator",
+        "The imaginary part only"
       ],
-      correctIndex: 0,
+      correctIndex: 2,
       explanation:
         "The conjugate changes the sign of the imaginary part and makes the denominator a real number.",
     },
     {
       id: "q5",
       text: "Subtract: $(8 - 2i) - (3 + 5i)$",
-      options: ["$5 - 7i$", "$5 + 3i$", "$11 - 7i$", "$11 + 3i$"],
-      correctIndex: 0,
+      options: ["$5 + 3i$", "$5 - 7i$", "$11 - 7i$", "$11 + 3i$"],
+      correctIndex: 1,
       explanation: "$(8 - 3) + (-2i - 5i) = 5 - 7i$.",
     },
   ]}

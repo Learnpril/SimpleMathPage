@@ -87,16 +87,16 @@ import Quiz from "../../../components/Quiz.astro";
     {
       id: "q1",
       text: "The amplitude of $y = \\sin(x)$ is:",
-      options: ["$1$", "$2\\pi$", "$0$", "$\\pi$"],
-      correctIndex: 0,
+      options: ["$2\\pi$", "$1$", "$0$", "$\\pi$"],
+      correctIndex: 1,
       explanation:
         "Amplitude is the distance from the midline to the peak, which is 1.",
     },
     {
       id: "q2",
       text: "The period of both $y = \\sin(x)$ and $y = \\cos(x)$ is:",
-      options: ["$2\\pi$", "$\\pi$", "$\\frac{\\pi}{2}$", "$4\\pi$"],
-      correctIndex: 0,
+      options: ["$4\\pi$", "$\\pi$", "$\\frac{\\pi}{2}$", "$2\\pi$"],
+      correctIndex: 3,
       explanation:
         "Both functions complete one full cycle every $2\\pi$ radians.",
     },
@@ -110,20 +110,20 @@ import Quiz from "../../../components/Quiz.astro";
     {
       id: "q4",
       text: "At $x = 0$, $\\cos(x)$ equals:",
-      options: ["$1$", "$0$", "$-1$", "$\\frac{\\sqrt{2}}{2}$"],
-      correctIndex: 0,
+      options: ["$-1$", "$0$", "$1$", "$\\frac{\\sqrt{2}}{2}$"],
+      correctIndex: 2,
       explanation: "$\\cos(0) = 1$.",
     },
     {
       id: "q5",
       text: "The relationship between sine and cosine is:",
       options: [
-        "$\\cos(x) = \\sin\\left(x + \\frac{\\pi}{2}\\right)$",
         "$\\sin(x) = \\cos(x + \\pi)$",
+        "$\\cos(x) = \\sin\\left(x + \\frac{\\pi}{2}\\right)$",
         "They have different periods",
-        "They never intersect",
+        "They never intersect"
       ],
-      correctIndex: 0,
+      correctIndex: 1,
       explanation: "Cosine is sine shifted left by $\\frac{\\pi}{2}$.",
     },
   ]}

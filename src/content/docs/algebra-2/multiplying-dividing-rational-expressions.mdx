@@ -108,19 +108,19 @@ import Quiz from "../../../components/Quiz.astro";
       id: "q1",
       text: "To divide two rational expressions, first:",
       options: [
-        "Multiply by the reciprocal of the second fraction",
         "Add the numerators",
+        "Multiply by the reciprocal of the second fraction",
         "Cancel before multiplying",
-        "Factor only the denominator",
+        "Factor only the denominator"
       ],
-      correctIndex: 0,
+      correctIndex: 1,
       explanation: "Division of fractions is multiplication by the reciprocal.",
     },
     {
       id: "q2",
       text: "Simplify: $\\frac{x^2 - 4}{x + 3} \\cdot \\frac{x + 3}{x - 2}$",
-      options: ["$x + 2$", "$x - 2$", "$x + 3$", "$x^2 - 4$"],
-      correctIndex: 0,
+      options: ["$x^2 - 4$", "$x - 2$", "$x + 3$", "$x + 2$"],
+      correctIndex: 3,
       explanation:
         "$x^2 - 4 = (x - 2)(x + 2)$, cancel $(x + 3)$ and $(x - 2) \\rightarrow x + 2$.",
     },
@@ -140,24 +140,24 @@ import Quiz from "../../../components/Quiz.astro";
       id: "q4",
       text: "After simplifying, you should always note:",
       options: [
-        "Values that make any original denominator zero",
-        "Only positive values",
         "The degree of the result",
-        "The leading coefficient",
+        "Only positive values",
+        "Values that make any original denominator zero",
+        "The leading coefficient"
       ],
-      correctIndex: 0,
+      correctIndex: 2,
       explanation: "Those values make the original expression undefined.",
     },
     {
       id: "q5",
       text: "Simplify: $\\frac{x^2 - 9}{x + 1} \\div \\frac{x - 3}{x + 1}$",
       options: [
-        "$x + 3$",
         "$x - 3$",
+        "$x + 3$",
         "$\\frac{x + 3}{x - 3}$",
-        "$\\frac{(x-3)(x+1)}{x+3}$",
+        "$\\frac{(x-3)(x+1)}{x+3}$"
       ],
-      correctIndex: 0,
+      correctIndex: 1,
       explanation:
         "Flip and multiply: $\\frac{(x-3)(x+3)}{x+1} \\cdot \\frac{x+1}{x-3} = x + 3$.",
     },

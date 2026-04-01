@@ -92,20 +92,20 @@ import Quiz from "../../../components/Quiz.astro";
     {
       id: "q1",
       text: "What is the discriminant of $x^2 - 8x + 12 = 0$?",
-      options: ["$16$", "$4$", "$64$", "$32$"],
-      correctIndex: 0,
+      options: ["$4$", "$16$", "$64$", "$32$"],
+      correctIndex: 1,
       explanation: "$b^2 - 4ac = (-8)^2 - 4(1)(12) = 64 - 48 = 16$.",
     },
     {
       id: "q2",
       text: "If the discriminant is positive, how many real solutions does the quadratic have?",
       options: [
-        "Two distinct real solutions",
+        "Infinitely many",
         "One real solution",
         "No real solutions",
-        "Infinitely many",
+        "Two distinct real solutions"
       ],
-      correctIndex: 0,
+      correctIndex: 3,
       explanation: "$D > 0$ means two different real solutions.",
     },
     {
@@ -124,20 +124,20 @@ import Quiz from "../../../components/Quiz.astro";
       id: "q4",
       text: "If $D = -24$, what kind of solutions does the equation have?",
       options: [
-        "Complex (no real solutions)",
-        "Two real solutions",
         "One real solution",
-        "Infinitely many",
+        "Two real solutions",
+        "Complex (no real solutions)",
+        "Infinitely many"
       ],
-      correctIndex: 0,
+      correctIndex: 2,
       explanation:
         "Negative discriminant means no real solutions. The solutions are complex numbers.",
     },
     {
       id: "q5",
       text: "Find the discriminant of $3x^2 + 2x + 5 = 0$.",
-      options: ["$-56$", "$56$", "$-4$", "$64$"],
-      correctIndex: 0,
+      options: ["$56$", "$-56$", "$-4$", "$64$"],
+      correctIndex: 1,
       explanation: "$D = b^2 - 4ac = (2)^2 - 4(3)(5) = 4 - 60 = -56$.",
     },
   ]}

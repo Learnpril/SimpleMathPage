@@ -80,8 +80,8 @@ import Quiz from "../../../components/Quiz.astro";
     {
       id: "q1",
       text: "A triangle with all three sides equal is called:",
-      options: ["Equilateral", "Isosceles", "Scalene", "Right"],
-      correctIndex: 0,
+      options: ["Isosceles", "Equilateral", "Scalene", "Right"],
+      correctIndex: 1,
       explanation:
         "Equilateral triangles have all sides equal (and all angles 60°).",
     },
@@ -89,12 +89,12 @@ import Quiz from "../../../components/Quiz.astro";
       id: "q2",
       text: "A triangle with one 90° angle is called:",
       options: [
-        "Right triangle",
+        "Isosceles triangle",
         "Acute triangle",
         "Obtuse triangle",
-        "Isosceles triangle",
+        "Right triangle"
       ],
-      correctIndex: 0,
+      correctIndex: 3,
       explanation: "A right triangle has exactly one right angle (90°).",
     },
     {
@@ -113,16 +113,16 @@ import Quiz from "../../../components/Quiz.astro";
     {
       id: "q4",
       text: "In any triangle, the sum of the interior angles is:",
-      options: ["180°", "360°", "90°", "270°"],
-      correctIndex: 0,
+      options: ["90°", "360°", "180°", "270°"],
+      correctIndex: 2,
       explanation:
         "The sum of the interior angles in any triangle is always 180°.",
     },
     {
       id: "q5",
       text: "A triangle has angles $45°$ and $90°$. What is the third angle?",
-      options: ["$45°$", "$55°$", "$90°$", "$30°$"],
-      correctIndex: 0,
+      options: ["$55°$", "$45°$", "$90°$", "$30°$"],
+      correctIndex: 1,
       explanation:
         "$180° - 45° - 90° = 45°$. This is an isosceles right triangle.",
     },

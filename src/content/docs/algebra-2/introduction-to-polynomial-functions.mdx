@@ -85,15 +85,15 @@ import Quiz from "../../../components/Quiz.astro";
     {
       id: "q1",
       text: "What is the degree of $f(x) = 3x^4 - 2x^2 + 7$?",
-      options: ["$4$", "$3$", "$2$", "$7$"],
-      correctIndex: 0,
+      options: ["$3$", "$4$", "$2$", "$7$"],
+      correctIndex: 1,
       explanation: "The highest exponent is 4.",
     },
     {
       id: "q2",
       text: "The leading coefficient of $g(x) = -5x^3 + 2x^2 - 8$ is:",
-      options: ["$-5$", "$5$", "$2$", "$-8$"],
-      correctIndex: 0,
+      options: ["$-8$", "$5$", "$2$", "$-5$"],
+      correctIndex: 3,
       explanation:
         "The coefficient of the highest-degree term ($x^3$) is $-5$.",
     },
@@ -112,20 +112,20 @@ import Quiz from "../../../components/Quiz.astro";
     {
       id: "q4",
       text: "The maximum number of real roots a degree 4 polynomial can have is:",
-      options: ["4", "3", "2", "5"],
-      correctIndex: 0,
+      options: ["2", "3", "4", "5"],
+      correctIndex: 2,
       explanation: "A degree n polynomial can have up to n real roots.",
     },
     {
       id: "q5",
       text: "What is the end behavior of $f(x) = -2x^5 + x^2 - 1$?",
       options: [
-        "As $x \\rightarrow \\infty$, $f(x) \\rightarrow -\\infty$; as $x \\rightarrow -\\infty$, $f(x) \\rightarrow \\infty$",
         "As $x \\rightarrow \\infty$, $f(x) \\rightarrow \\infty$; as $x \\rightarrow -\\infty$, $f(x) \\rightarrow -\\infty$",
+        "As $x \\rightarrow \\infty$, $f(x) \\rightarrow -\\infty$; as $x \\rightarrow -\\infty$, $f(x) \\rightarrow \\infty$",
         "Both ends go to $\\infty$",
-        "Both ends go to $-\\infty$",
+        "Both ends go to $-\\infty$"
       ],
-      correctIndex: 0,
+      correctIndex: 1,
       explanation:
         "Odd degree with negative leading coefficient: falls right, rises left.",
     },

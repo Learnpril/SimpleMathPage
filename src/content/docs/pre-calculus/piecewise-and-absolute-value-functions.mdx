@@ -142,20 +142,20 @@ import Quiz from "../../../components/Quiz.astro";
       id: "q1",
       text: "A piecewise function is defined by:",
       options: [
-        "Different rules for different parts of the domain",
         "Only one rule for all $x$",
+        "Different rules for different parts of the domain",
         "Only linear terms",
         "Only quadratic terms",
       ],
-      correctIndex: 0,
+      correctIndex: 1,
       explanation:
         "It uses different expressions depending on which condition the input satisfies.",
     },
     {
       id: "q2",
       text: "The graph of $y = |x - 3| + 2$ has its vertex at:",
-      options: ["$(3, 2)$", "$(2, 3)$", "$(-3, 2)$", "$(3, -2)$"],
-      correctIndex: 0,
+      options: ["$(2, 3)$", "$(-3, 2)$", "$(3, -2)$", "$(3, 2)$"],
+      correctIndex: 3,
       explanation:
         "The form $y = |x - h| + k$ has vertex at $(h, k)$. Here $h = 3$, $k = 2$.",
     },
@@ -163,12 +163,12 @@ import Quiz from "../../../components/Quiz.astro";
       id: "q3",
       text: "When evaluating a piecewise function, the first step is to:",
       options: [
-        "Check which condition the input satisfies",
         "Add all pieces together",
         "Graph the function",
+        "Check which condition the input satisfies",
         "Find the inverse",
       ],
-      correctIndex: 0,
+      correctIndex: 2,
       explanation: "Determine which rule applies to your specific input value.",
     },
     {
@@ -188,12 +188,12 @@ import Quiz from "../../../components/Quiz.astro";
       id: "q5",
       text: "A piecewise function has a jump discontinuity at $x = a$ when:",
       options: [
-        "The left and right limits at $x = a$ are different",
         "The function is undefined at $x = a$",
         "The function equals zero at $x = a$",
         "The slope changes at $x = a$",
+        "The left and right limits at $x = a$ are different",
       ],
-      correctIndex: 0,
+      correctIndex: 3,
       explanation:
         "If the two pieces don't meet at the same value, there's a jump.",
     },

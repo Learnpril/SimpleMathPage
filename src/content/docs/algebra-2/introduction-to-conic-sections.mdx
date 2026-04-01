@@ -99,15 +99,15 @@ import Quiz from "../../../components/Quiz.astro";
     {
       id: "q1",
       text: "Which conic section is formed when a plane cuts parallel to the base of a cone?",
-      options: ["Circle", "Parabola", "Ellipse", "Hyperbola"],
-      correctIndex: 0,
+      options: ["Parabola", "Circle", "Ellipse", "Hyperbola"],
+      correctIndex: 1,
       explanation: "A horizontal cut parallel to the base produces a circle.",
     },
     {
       id: "q2",
       text: "The equation $y = x^2 - 6x + 5$ represents a:",
-      options: ["Parabola", "Circle", "Ellipse", "Hyperbola"],
-      correctIndex: 0,
+      options: ["Hyperbola", "Circle", "Ellipse", "Parabola"],
+      correctIndex: 3,
       explanation: "Only one variable is squared.",
     },
     {
@@ -126,12 +126,12 @@ import Quiz from "../../../components/Quiz.astro";
       id: "q4",
       text: "A hyperbola is formed when the plane cuts:",
       options: [
-        "Both halves of the double cone",
-        "Parallel to the base",
         "Parallel to the side",
-        "At a shallow angle",
+        "Parallel to the base",
+        "Both halves of the double cone",
+        "At a shallow angle"
       ],
-      correctIndex: 0,
+      correctIndex: 2,
       explanation:
         "A hyperbola is created when the cutting plane intersects both nappes.",
     },
@@ -139,12 +139,12 @@ import Quiz from "../../../components/Quiz.astro";
       id: "q5",
       text: "An ellipse is formed when the cutting plane intersects the cone at:",
       options: [
-        "An angle between the base and the side",
         "Parallel to the base",
+        "An angle between the base and the side",
         "Parallel to the side",
-        "Through both nappes",
+        "Through both nappes"
       ],
-      correctIndex: 0,
+      correctIndex: 1,
       explanation:
         "A tilted cut through one nappe (not parallel to the base or side) produces an ellipse.",
     },

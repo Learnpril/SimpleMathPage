@@ -97,20 +97,20 @@ import Quiz from "../../../components/Quiz.astro";
       id: "q1",
       text: "Simplify and add: $4\\sqrt{18} + 3\\sqrt{2}$",
       options: [
-        "$15\\sqrt{2}$",
         "$12\\sqrt{2}$",
+        "$15\\sqrt{2}$",
         "$9\\sqrt{2}$",
-        "$7\\sqrt{2}$",
+        "$7\\sqrt{2}$"
       ],
-      correctIndex: 0,
+      correctIndex: 1,
       explanation:
         "$4\\sqrt{9 \\cdot 2} = 4 \\cdot 3\\sqrt{2} = 12\\sqrt{2}$. Then $12\\sqrt{2} + 3\\sqrt{2} = 15\\sqrt{2}$.",
     },
     {
       id: "q2",
       text: "Multiply: $\\sqrt{6} \\cdot \\sqrt{24}$",
-      options: ["$12$", "$6\\sqrt{4}$", "$4\\sqrt{6}$", "$\\sqrt{30}$"],
-      correctIndex: 0,
+      options: ["$\\sqrt{30}$", "$6\\sqrt{4}$", "$4\\sqrt{6}$", "$12$"],
+      correctIndex: 3,
       explanation: "$\\sqrt{6 \\cdot 24} = \\sqrt{144} = 12$.",
     },
     {
@@ -130,20 +130,20 @@ import Quiz from "../../../components/Quiz.astro";
       id: "q4",
       text: "You can add or subtract radicals only when they have:",
       options: [
-        "The same index and same radicand",
-        "Different indices",
         "The same coefficient",
-        "No common factors",
+        "Different indices",
+        "The same index and same radicand",
+        "No common factors"
       ],
-      correctIndex: 0,
+      correctIndex: 2,
       explanation:
         "Like radicals must have identical index and radicand after simplification.",
     },
     {
       id: "q5",
       text: "Multiply and simplify: $(\\sqrt{5} + 2)(\\sqrt{5} - 2)$",
-      options: ["$1$", "$5$", "$9$", "$\\sqrt{5}$"],
-      correctIndex: 0,
+      options: ["$5$", "$1$", "$9$", "$\\sqrt{5}$"],
+      correctIndex: 1,
       explanation: "Difference of squares: $(\\sqrt{5})^2 - 2^2 = 5 - 4 = 1$.",
     },
   ]}

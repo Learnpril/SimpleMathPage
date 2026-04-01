@@ -103,12 +103,12 @@ import Quiz from "../../../components/Quiz.astro";
       id: "q1",
       text: "According to the Rational Root Theorem, possible rational roots are factors of the constant term over factors of the:",
       options: [
-        "Leading coefficient",
         "Middle coefficient",
+        "Leading coefficient",
         "Degree",
-        "Number of terms",
+        "Number of terms"
       ],
-      correctIndex: 0,
+      correctIndex: 1,
       explanation:
         "p/q where p divides the constant term and q divides the leading coefficient.",
     },
@@ -116,12 +116,12 @@ import Quiz from "../../../components/Quiz.astro";
       id: "q2",
       text: "What is a good first step when factoring a cubic polynomial?",
       options: [
-        "Test possible rational roots",
+        "Add all terms together",
         "Use the quadratic formula",
         "Graph the function",
-        "Add all terms together",
+        "Test possible rational roots"
       ],
-      correctIndex: 0,
+      correctIndex: 3,
       explanation:
         "The Rational Root Theorem gives a list of possible rational roots to test.",
     },
@@ -141,24 +141,24 @@ import Quiz from "../../../components/Quiz.astro";
       id: "q4",
       text: "The polynomial $x^3 - 6x^2 + 11x - 6$ factors as:",
       options: [
-        "$(x - 1)(x - 2)(x - 3)$",
-        "$(x + 1)(x + 2)(x + 3)$",
         "$(x - 1)(x - 3)(x - 6)$",
-        "$(x - 6)(x - 1)(x + 1)$",
+        "$(x + 1)(x + 2)(x + 3)$",
+        "$(x - 1)(x - 2)(x - 3)$",
+        "$(x - 6)(x - 1)(x + 1)$"
       ],
-      correctIndex: 0,
+      correctIndex: 2,
       explanation: "Testing roots shows $x = 1, 2, 3$ are all roots.",
     },
     {
       id: "q5",
       text: "Factor $x^3 + 2x^2 - 5x - 6$ given that $x = -1$ is a root.",
       options: [
-        "$(x + 1)(x - 2)(x + 3)$",
         "$(x - 1)(x + 2)(x + 3)$",
+        "$(x + 1)(x - 2)(x + 3)$",
         "$(x + 1)(x + 2)(x - 3)$",
-        "$(x + 1)(x - 2)(x - 3)$",
+        "$(x + 1)(x - 2)(x - 3)$"
       ],
-      correctIndex: 0,
+      correctIndex: 1,
       explanation:
         "Synthetic division by $(x + 1)$ gives $x^2 + x - 6 = (x - 2)(x + 3)$.",
     },

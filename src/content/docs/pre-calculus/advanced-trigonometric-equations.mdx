@@ -125,12 +125,12 @@ import Quiz from "../../../components/Quiz.astro";
       id: "q1",
       text: "To solve $2\\sin^2\\theta - 3\\sin\\theta + 1 = 0$, the best first step is:",
       options: [
-        "Let $u = \\sin\\theta$ and solve the quadratic",
         "Take the square root of both sides",
         "Use the double-angle formula",
+        "Let $u = \\sin\\theta$ and solve the quadratic",
         "Graph the function",
       ],
-      correctIndex: 0,
+      correctIndex: 2,
       explanation:
         "Substitution turns it into a standard quadratic equation in $u$.",
     },
@@ -138,12 +138,12 @@ import Quiz from "../../../components/Quiz.astro";
       id: "q2",
       text: "To solve $\\sin 2x = \\cos x$, replace $\\sin 2x$ with:",
       options: [
-        "$2\\sin x\\cos x$",
         "$\\cos^2 x - \\sin^2 x$",
         "$1 - 2\\sin^2 x$",
         "$\\sin x + \\cos x$",
+        "$2\\sin x\\cos x$",
       ],
-      correctIndex: 0,
+      correctIndex: 3,
       explanation: "The double-angle formula lets you factor out $\\cos x$.",
     },
     {
@@ -163,19 +163,19 @@ import Quiz from "../../../components/Quiz.astro";
       id: "q4",
       text: "$\\cos x(2\\sin x - 1) = 0$ gives solutions when:",
       options: [
-        "$\\cos x = 0$ or $\\sin x = 1/2$",
         "Only $\\cos x = 0$",
+        "$\\cos x = 0$ or $\\sin x = 1/2$",
         "Only $\\sin x = 1/2$",
         "$\\cos x = 1$ and $\\sin x = 0$",
       ],
-      correctIndex: 0,
+      correctIndex: 1,
       explanation: "Zero product property: either factor can be zero.",
     },
     {
       id: "q5",
       text: "How many solutions does $\\sin\\theta = -1/2$ have in $[0, 2\\pi)$?",
-      options: ["$2$", "$1$", "$3$", "$4$"],
-      correctIndex: 0,
+      options: ["$1$", "$3$", "$2$", "$4$"],
+      correctIndex: 2,
       explanation: "Sine equals $-1/2$ in Q3 ($7\\pi/6$) and Q4 ($11\\pi/6$).",
     },
   ]}

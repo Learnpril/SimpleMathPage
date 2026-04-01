@@ -107,15 +107,15 @@ import Quiz from "../../../components/Quiz.astro";
     {
       id: "q1",
       text: "What is the value of $i^2$?",
-      options: ["$-1$", "$1$", "$i$", "$-i$"],
-      correctIndex: 0,
+      options: ["$1$", "$-1$", "$i$", "$-i$"],
+      correctIndex: 1,
       explanation: "By definition, $i^2 = -1$.",
     },
     {
       id: "q2",
       text: "Write $\\sqrt{-36}$ using $i$.",
-      options: ["$6i$", "$-6i$", "$6$", "$36i$"],
-      correctIndex: 0,
+      options: ["$36i$", "$-6i$", "$6$", "$6i$"],
+      correctIndex: 3,
       explanation: "$\\sqrt{-36} = \\sqrt{36 \\times (-1)} = 6i$.",
     },
     {
@@ -129,19 +129,19 @@ import Quiz from "../../../components/Quiz.astro";
       id: "q4",
       text: "A quadratic equation has a negative discriminant. Its solutions are:",
       options: [
-        "Complex numbers",
-        "Only real numbers",
         "Only positive numbers",
-        "No solutions at all",
+        "Only real numbers",
+        "Complex numbers",
+        "No solutions at all"
       ],
-      correctIndex: 0,
+      correctIndex: 2,
       explanation: "Negative discriminant means two complex solutions.",
     },
     {
       id: "q5",
       text: "Simplify $i^4$.",
-      options: ["$1$", "$-1$", "$i$", "$-i$"],
-      correctIndex: 0,
+      options: ["$-1$", "$1$", "$i$", "$-i$"],
+      correctIndex: 1,
       explanation: "$i^4 = (i^2)^2 = (-1)^2 = 1$.",
     },
   ]}

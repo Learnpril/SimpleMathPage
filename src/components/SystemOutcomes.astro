@@ -1,0 +1,88 @@
+---
+/**
+ * SystemOutcomes — three small graphs showing the three possible
+ * outcomes of a system of equations:
+ * 1. One solution (two lines crossing at a point)
+ * 2. No solution (two parallel lines)
+ * 3. Infinite solutions (two overlapping lines)
+ */
+const s = 160; // each graph size
+const pad = 25;
+const gs = s - 2 * pad;
+const xMin = -4, xMax = 4, yMin = -4, yMax = 4;
+const sx = (x: number) => pad + ((x - xMin) / (xMax - xMin)) * gs;
+const sy = (y: number) => pad + ((yMax - y) / (yMax - yMin)) * gs;
+---
+
+<div class="so-wrap">
+  {/* Graph 1: One unique solution — lines cross */}
+  <figure class="so-fig" role="img" aria-label="One solution: two lines crossing at a single point">
+    <svg viewBox={`0 0 ${s} ${s}`} width={s} height={s} xmlns="http://www.w3.org/2000/svg">
+      <line x1={sx(xMin)} y1={sy(0)} x2={sx(xMax)} y2={sy(0)} class="so-axis" stroke-width="1" />
+      <line x1={sx(0)} y1={sy(yMin)} x2={sx(0)} y2={sy(yMax)} class="so-axis" stroke-width="1" />
+      {/* y = x + 1 */}
+      <line x1={sx(-4)} y1={sy(-3)} x2={sx(3)} y2={sy(4)} class="so-line1" stroke-width="2" />
+      {/* y = -0.5x + 2.5 */}
+      <line x1={sx(-3)} y1={sy(4)} x2={sx(4)} y2={sy(0.5)} class="so-line2" stroke-width="2" />
+      {/* Intersection at (1, 2) */}
+      <circle cx={sx(1)} cy={sy(2)} r="5" class="so-dot" />
+      <text class="so-dot-lbl" x={sx(2.2)} y={sy(2.2)} font-size="9">(1, 2)</text>
+    </svg>
+    <figcaption class="so-cap">One solution</figcaption>
+  </figure>
+
+  {/* Graph 2: No solution — parallel lines */}
+  <figure class="so-fig" role="img" aria-label="No solution: two parallel lines that never meet">
+    <svg viewBox={`0 0 ${s} ${s}`} width={s} height={s} xmlns="http://www.w3.org/2000/svg">
+      <line x1={sx(xMin)} y1={sy(0)} x2={sx(xMax)} y2={sy(0)} class="so-axis" stroke-width="1" />
+      <line x1={sx(0)} y1={sy(yMin)} x2={sx(0)} y2={sy(yMax)} class="so-axis" stroke-width="1" />
+      {/* y = x + 2 */}
+      <line x1={sx(-4)} y1={sy(-2)} x2={sx(2)} y2={sy(4)} class="so-line1" stroke-width="2" />
+      {/* y = x - 1 */}
+      <line x1={sx(-3)} y1={sy(-4)} x2={sx(4)} y2={sy(3)} class="so-line2" stroke-width="2" />
+      {/* Gap arrows */}
+      <text class="so-gap-lbl" x={sx(-0.5)} y={sy(-2.5)} font-size="8">same slope,</text>
+      <text class="so-gap-lbl" x={sx(-0.5)} y={sy(-3.3)} font-size="8">different y-int</text>
+    </svg>
+    <figcaption class="so-cap">No solution</figcaption>
+  </figure>
+
+  {/* Graph 3: Infinite solutions — same line */}
+  <figure class="so-fig" role="img" aria-label="Infinite solutions: two equations describe the same line">
+    <svg viewBox={`0 0 ${s} ${s}`} width={s} height={s} xmlns="http://www.w3.org/2000/svg">
+      <line x1={sx(xMin)} y1={sy(0)} x2={sx(xMax)} y2={sy(0)} class="so-axis" stroke-width="1" />
+      <line x1={sx(0)} y1={sy(yMin)} x2={sx(0)} y2={sy(yMax)} class="so-axis" stroke-width="1" />
+      {/* Both equations are the same line: y = 0.5x + 1 */}
+      {/* Draw a thicker "glow" line behind to show overlap */}
+      <line x1={sx(-4)} y1={sy(-1)} x2={sx(4)} y2={sy(3)} class="so-line-glow" stroke-width="6" opacity="0.3" />
+      <line x1={sx(-4)} y1={sy(-1)} x2={sx(4)} y2={sy(3)} class="so-line1" stroke-width="2" />
+      <line x1={sx(-4)} y1={sy(-1)} x2={sx(4)} y2={sy(3)} class="so-line2" stroke-width="2" stroke-dasharray="6,4" />
+      <text class="so-gap-lbl" x={sx(-3.5)} y={sy(-2.5)} font-size="8">same line,</text>
+      <text class="so-gap-lbl" x={sx(-3.5)} y={sy(-3.3)} font-size="8">all points work</text>
+    </svg>
+    <figcaption class="so-cap">Infinite solutions</figcaption>
+  </figure>
+</div>
+
+<style>
+  .so-wrap { display:flex; gap:1rem; justify-content:center; flex-wrap:wrap; margin:1.5rem 0; }
+  .so-fig { display:flex; flex-direction:column; align-items:center; margin:0; }
+  .so-fig svg { max-width:100%; height:auto; }
+  .so-cap { font-family:'Libre Baskerville',Georgia,serif; font-size:0.85rem; margin-top:0.3rem; text-align:center; }
+  .so-axis { stroke:#555; }
+  .so-line1 { stroke:#58a6ff; }
+  .so-line2 { stroke:#f0883e; }
+  .so-line-glow { stroke:#d2a8ff; }
+  .so-dot { fill:#7ee787; }
+  .so-dot-lbl { fill:#7ee787; font-family:'Libre Baskerville',Georgia,serif; }
+  .so-gap-lbl { fill:#aaa; font-family:'Libre Baskerville',Georgia,serif; }
+  .so-cap { color:#ccc; }
+  :global([data-theme="light"]) .so-axis { stroke:#bbb; }
+  :global([data-theme="light"]) .so-line1 { stroke:#0550ae; }
+  :global([data-theme="light"]) .so-line2 { stroke:#b35900; }
+  :global([data-theme="light"]) .so-line-glow { stroke:#6639ba; }
+  :global([data-theme="light"]) .so-dot { fill:#116329; }
+  :global([data-theme="light"]) .so-dot-lbl { fill:#116329; }
+  :global([data-theme="light"]) .so-gap-lbl { fill:#666; }
+  :global([data-theme="light"]) .so-cap { color:#444; }
+</style>

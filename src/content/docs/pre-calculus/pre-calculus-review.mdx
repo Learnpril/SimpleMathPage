@@ -5,4 +5,456 @@ sidebar:
   order: 22
 ---
 
-Content coming soon.
+## What You'll Learn
+
+This is the capstone review for Pre-Calculus. It brings together everything you've covered, from advanced functions through limits, with key formulas, mixed examples, and connections to what comes next in Calculus.
+
+import PreCalcTopicMap from "../../../components/PreCalcTopicMap.astro";
+
+<PreCalcTopicMap />
+
+## 1. Advanced Functions
+
+Function composition takes the output of one function and feeds it into another. If f(x) = 2x + 1 and g(x) = x², then:
+
+$$
+(f \circ g)(x) = f(g(x)) = 2x^2 + 1
+$$
+
+$$
+(g \circ f)(x) = g(f(x)) = (2x + 1)^2 = 4x^2 + 4x + 1
+$$
+
+Order matters. Composition is not commutative.
+
+Inverse functions "undo" each other. If f(x) = 3x - 2, then its inverse swaps x and y and solves:
+
+$$
+f^{-1}(x) = \frac{x + 2}{3}
+$$
+
+Piecewise functions use different rules on different intervals. Absolute value functions are a special case where the function "bounces" at a point.
+
+## 2. Polynomial and Rational Functions
+
+End behavior depends on the degree and leading coefficient. Even degree with positive leading coefficient: both ends go up. Odd degree with positive leading coefficient: left goes down, right goes up.
+
+import EndBehaviorDiagram from "../../../components/EndBehaviorDiagram.astro";
+
+<EndBehaviorDiagram />
+
+The Fundamental Theorem of Algebra says a degree-n polynomial has exactly n zeros (counting multiplicity and complex zeros). Complex zeros of polynomials with real coefficients always come in conjugate pairs: if a + bi is a zero, so is a - bi.
+
+Rational functions can have vertical asymptotes (where the denominator is zero and doesn't cancel), horizontal asymptotes (determined by comparing degrees), and holes (where a factor cancels).
+
+## 3. Exponential and Logarithmic Functions
+
+The key relationship:
+
+$$
+y = b^x \iff x = \log_b y
+$$
+
+The natural logarithm ln(x) uses base e (approximately 2.718). Continuous growth and decay use the formula:
+
+$$
+A = Pe^{rt}
+$$
+
+import GrowthDecayGraph from "../../../components/GrowthDecayGraph.astro";
+
+<GrowthDecayGraph />
+
+## 4. Advanced Trigonometry
+
+The double-angle identities extend the sum formulas:
+
+$$
+\sin 2\theta = 2\sin\theta\cos\theta
+$$
+
+$$
+\cos 2\theta = \cos^2\theta - \sin^2\theta
+$$
+
+Polar coordinates represent points using distance and angle (r, θ) instead of (x, y). Conversion formulas:
+
+$$
+x = r\cos\theta, \quad y = r\sin\theta, \quad r = \sqrt{x^2 + y^2}
+$$
+
+Polar curves include cardioids, roses, limacons, lemniscates, and spirals.
+
+## 5. Vectors and Matrices
+
+Vectors have magnitude and direction. The dot product returns a scalar:
+
+$$
+\mathbf{u} \cdot \mathbf{v} = u_1v_1 + u_2v_2 = \lvert\mathbf{u}\rvert\lvert\mathbf{v}\rvert\cos\theta
+$$
+
+Two vectors are perpendicular when their dot product is zero.
+
+Matrix multiplication: row times column. The 2x2 inverse formula:
+
+$$
+A^{-1} = \frac{1}{ad - bc}\begin{bmatrix} d & -b \\ -c & a \end{bmatrix}
+$$
+
+If the determinant (ad - bc) is zero, the matrix has no inverse.
+
+Row reduction (Gaussian elimination) solves systems by converting to row echelon form. Cramer's Rule uses determinants to find solutions by swapping columns.
+
+import SystemOutcomes from "../../../components/SystemOutcomes.astro";
+
+<SystemOutcomes />
+
+Systems can have one solution (lines cross), no solution (parallel lines), or infinitely many solutions (same line).
+
+## 6. Sequences, Series, and Induction
+
+Arithmetic series sum (constant difference d):
+
+$$
+S_n = \frac{n}{2}(a_1 + a_n)
+$$
+
+Geometric series sum (constant ratio r):
+
+$$
+S_n = a_1 \cdot \frac{1 - r^n}{1 - r}
+$$
+
+Infinite geometric series (converges when the absolute value of r is less than 1):
+
+$$
+S_\infty = \frac{a_1}{1 - r}
+$$
+
+import ConvergenceDiagram from "../../../components/ConvergenceDiagram.astro";
+
+<ConvergenceDiagram />
+
+Mathematical induction proves statements for all positive integers using two steps: prove the base case (n = 1), then show that if it works for k, it works for k + 1.
+
+## 7. Limits and Continuity
+
+A limit describes what a function approaches as x gets close to a value:
+
+$$
+\lim_{x \to a} f(x) = L
+$$
+
+When direct substitution gives 0/0, simplify first (usually by factoring).
+
+A function is continuous at x = a when three conditions hold: f(a) is defined, the limit exists, and the limit equals f(a). Discontinuities come in three types: removable (holes), jump, and infinite (vertical asymptotes).
+
+The limit laws let you break complicated limits into simpler pieces by adding, subtracting, multiplying, dividing, and raising to powers.
+
+## Key Formulas
+
+Here are the formulas worth having at your fingertips:
+
+$$
+\text{Dot product: } \mathbf{u} \cdot \mathbf{v} = u_1v_1 + u_2v_2
+$$
+
+$$
+\text{Geometric sum: } S_n = a_1 \cdot \frac{1 - r^n}{1 - r}
+$$
+
+$$
+\text{Infinite geometric: } S_\infty = \frac{a_1}{1 - r}
+$$
+
+$$
+\text{Continuous growth: } A = Pe^{rt}
+$$
+
+$$
+\text{Double angle: } \sin 2\theta = 2\sin\theta\cos\theta
+$$
+
+## Mixed Worked Examples
+
+**1. Function composition**
+
+If f(x) = 2x + 1 and g(x) = x², find (f composed with g)(3):
+
+$$
+g(3) = 9, \quad f(9) = 2(9) + 1 = 19
+$$
+
+**2. Rational function asymptotes**
+
+Find all asymptotes of f(x) = (2x² - 3) / (x² - 4):
+
+Vertical asymptotes where the denominator is zero: x = 2 and x = -2.
+
+Horizontal asymptote: degrees are equal, so y = 2/1 = 2.
+
+**3. Infinite geometric series**
+
+Sum of 6 + 2 + 2/3 + 2/9 + ...
+
+Here a₁ = 6 and r = 1/3. Since the absolute value of r is less than 1, it converges:
+
+$$
+S_\infty = \frac{6}{1 - \frac{1}{3}} = \frac{6}{\frac{2}{3}} = 9
+$$
+
+**4. Limit with factoring**
+
+$$
+\lim_{x \to 4} \frac{x^2 - 16}{x - 4}
+$$
+
+Direct substitution gives 0/0. Factor the numerator:
+
+$$
+= \lim_{x \to 4} \frac{(x-4)(x+4)}{x-4} = \lim_{x \to 4} (x + 4) = 8
+$$
+
+## What Comes Next
+
+Everything in Pre-Calculus builds the tools you need for Calculus. Limits become derivatives (instantaneous rates of change). Series become integrals (accumulation). Vectors extend to multivariable calculus. Matrices power linear algebra. The concepts you've learned here aren't just prerequisites. They're the language that Calculus is written in.
+
+:::note[You've Got This]
+You've completed a full Pre-Calculus course, from function composition all the way to limits and continuity. Some topics felt challenging, and that's normal. Mathematics builds layer by layer, and you now have a strong foundation: advanced algebra, trigonometry in new forms, vectors and matrices, series, induction, and the crucial idea of limits. When you're ready, Calculus will feel like a natural next step rather than a scary leap.
+:::
+
+## Comprehensive Review Quiz (20 Questions)
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="precalculus-final-review"
+  questions={[
+    {
+      id: "q1",
+      text: "(f composed with g)(x) means:",
+      options: ["g(f(x))", "f(g(x))", "f(x) + g(x)", "f(x) times g(x)"],
+      correctIndex: 1,
+      explanation: "Composition applies g first, then f.",
+    },
+    {
+      id: "q2",
+      text: "End behavior of a polynomial with even degree and positive leading coefficient:",
+      options: [
+        "Both ends go down",
+        "Left down, right up",
+        "Both ends go up",
+        "Left up, right down",
+      ],
+      correctIndex: 2,
+      explanation:
+        "Even degree + positive leading coefficient means it rises on both sides.",
+    },
+    {
+      id: "q3",
+      text: "Complex zeros of polynomials with real coefficients come in:",
+      options: [
+        "Groups of three",
+        "Only real numbers",
+        "Random order",
+        "Conjugate pairs",
+      ],
+      correctIndex: 3,
+      explanation: "If a + bi is a zero, a - bi is also a zero.",
+    },
+    {
+      id: "q4",
+      text: "For an infinite geometric series to converge, the common ratio must satisfy:",
+      options: [
+        "Its absolute value is less than 1",
+        "Its absolute value is greater than 1",
+        "r = 1",
+        "r = 0",
+      ],
+      correctIndex: 0,
+      explanation: "Only then does the sum approach a finite value.",
+    },
+    {
+      id: "q5",
+      text: "A function is continuous at x = a if:",
+      options: [
+        "The function is undefined at a",
+        "The limit exists and equals f(a)",
+        "There is a vertical asymptote",
+        "The left and right limits differ",
+      ],
+      correctIndex: 1,
+      explanation: "All three continuity conditions must hold.",
+    },
+    {
+      id: "q6",
+      text: "When the dot product of two vectors is zero, the vectors are:",
+      options: [
+        "Parallel",
+        "In the same direction",
+        "Perpendicular",
+        "Equal in magnitude",
+      ],
+      correctIndex: 2,
+      explanation: "Zero dot product means a 90-degree angle.",
+    },
+    {
+      id: "q7",
+      text: "Cramer's Rule solves systems using:",
+      options: [
+        "Row reduction only",
+        "Graphing",
+        "Substitution only",
+        "Determinants",
+      ],
+      correctIndex: 3,
+      explanation: "It provides solutions via ratios of determinants.",
+    },
+    {
+      id: "q8",
+      text: "Mathematical induction proves statements for:",
+      options: [
+        "All positive integers",
+        "Only n = 1",
+        "Only even numbers",
+        "Only specific values",
+      ],
+      correctIndex: 0,
+      explanation: "Base case + inductive step covers every positive integer.",
+    },
+    {
+      id: "q9",
+      text: "A removable discontinuity occurs when:",
+      options: [
+        "Left and right limits differ",
+        "The limit exists but the function is undefined there",
+        "The limit goes to infinity",
+        "The function is continuous",
+      ],
+      correctIndex: 1,
+      explanation: "Often fixed by simplifying the expression.",
+    },
+    {
+      id: "q10",
+      text: "The sum of an infinite geometric series (when it converges) is:",
+      options: [
+        "$\\frac{n}{2}(a_1 + a_n)$",
+        "Always infinite",
+        "$a_1 / (1 - r)$",
+        "Only for arithmetic series",
+      ],
+      correctIndex: 2,
+      explanation: "This is the convergence formula.",
+    },
+    {
+      id: "q11",
+      text: "The polar equation r = a(1 + cos θ) produces a:",
+      options: ["Rose curve", "Spiral", "Lemniscate", "Cardioid"],
+      correctIndex: 3,
+      explanation: "This is the standard cardioid shape.",
+    },
+    {
+      id: "q12",
+      text: "A matrix with determinant zero:",
+      options: [
+        "Has no inverse",
+        "Is always invertible",
+        "Has determinant 1",
+        "Cannot be added",
+      ],
+      correctIndex: 0,
+      explanation: "Zero determinant means the matrix is singular.",
+    },
+    {
+      id: "q13",
+      text: "The limit laws allow you to:",
+      options: [
+        "Only evaluate at the point",
+        "Break complicated limits into simpler parts",
+        "Ignore discontinuities",
+        "Only use graphs",
+      ],
+      correctIndex: 1,
+      explanation: "They are the algebraic rules for limits.",
+    },
+    {
+      id: "q14",
+      text: "A jump discontinuity happens when:",
+      options: [
+        "There is a hole",
+        "The limit is infinite",
+        "Left and right limits exist but are different",
+        "The function is defined everywhere",
+      ],
+      correctIndex: 2,
+      explanation: "The graph has a sudden break.",
+    },
+    {
+      id: "q15",
+      text: "Pre-Calculus primarily prepares you for:",
+      options: [
+        "Only basic algebra",
+        "Geometry only",
+        "Statistics only",
+        "Calculus (limits, derivatives, integrals)",
+      ],
+      correctIndex: 3,
+      explanation: "It bridges algebra and trigonometry to calculus.",
+    },
+    {
+      id: "q16",
+      text: "The inductive step assumes the statement is true for:",
+      options: [
+        "Some k and proves it for k + 1",
+        "All n at once",
+        "Only n = 1",
+        "Only even numbers",
+      ],
+      correctIndex: 0,
+      explanation: "This is the core of the inductive step.",
+    },
+    {
+      id: "q17",
+      text: "Continuous behavior means:",
+      options: [
+        "A graph with a hole",
+        "A smooth curve with no breaks",
+        "A graph with a vertical asymptote",
+        "A graph that jumps",
+      ],
+      correctIndex: 1,
+      explanation: "Continuity means no sudden jumps or holes.",
+    },
+    {
+      id: "q18",
+      text: "Matrix row reduction is used to:",
+      options: [
+        "Find determinants only",
+        "Graph polar curves",
+        "Solve systems of linear equations",
+        "Prove induction",
+      ],
+      correctIndex: 2,
+      explanation: "It is an efficient method for solving systems.",
+    },
+    {
+      id: "q19",
+      text: "The natural logarithm ln(x) uses base:",
+      options: ["10", "2", "pi", "e"],
+      correctIndex: 3,
+      explanation: "ln is log base e, where e is approximately 2.718.",
+    },
+    {
+      id: "q20",
+      text: "The most important thing Pre-Calculus gives you is:",
+      options: [
+        "Only memorized formulas",
+        "A foundation for understanding change and continuous processes",
+        "Only graphing skills",
+        "Only triangle solving",
+      ],
+      correctIndex: 1,
+      explanation: "Pre-Calculus builds the tools needed for Calculus.",
+    },
+  ]}
+/>

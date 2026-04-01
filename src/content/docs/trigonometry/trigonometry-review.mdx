@@ -154,24 +154,24 @@ import Quiz from "../../../components/Quiz.astro";
       id: "q1",
       text: "In a right triangle, $\\sin\\theta$ equals:",
       options: [
-        "opposite / hypotenuse",
-        "adjacent / hypotenuse",
         "opposite / adjacent",
-        "hypotenuse / opposite",
+        "adjacent / hypotenuse",
+        "opposite / hypotenuse",
+        "hypotenuse / opposite"
       ],
-      correctIndex: 0,
+      correctIndex: 2,
       explanation: "SOH: Sine = Opposite / Hypotenuse.",
     },
     {
       id: "q2",
       text: "Convert 135° to radians:",
       options: [
-        "$\\frac{3\\pi}{4}$",
         "$\\frac{\\pi}{2}$",
+        "$\\frac{3\\pi}{4}$",
         "$\\frac{2\\pi}{3}$",
-        "$\\frac{5\\pi}{6}$",
+        "$\\frac{5\\pi}{6}$"
       ],
-      correctIndex: 0,
+      correctIndex: 1,
       explanation:
         "$135 \\times \\frac{\\pi}{180} = \\frac{135\\pi}{180} = \\frac{3\\pi}{4}$.",
     },
@@ -179,12 +179,12 @@ import Quiz from "../../../components/Quiz.astro";
       id: "q3",
       text: "On the unit circle, $\\cos(\\pi/3)$ equals:",
       options: [
-        "$\\frac{1}{2}$",
+        "$0$",
         "$\\frac{\\sqrt{3}}{2}$",
         "$\\frac{\\sqrt{2}}{2}$",
-        "$0$",
+        "$\\frac{1}{2}$"
       ],
-      correctIndex: 0,
+      correctIndex: 3,
       explanation:
         "At $\\pi/3$ (60°), the point is $(1/2,\\, \\sqrt{3}/2)$, so $\\cos = 1/2$.",
     },
@@ -198,8 +198,8 @@ import Quiz from "../../../components/Quiz.astro";
     {
       id: "q5",
       text: "The amplitude of $y = 4\\sin(3x) - 2$ is:",
-      options: ["$4$", "$3$", "$2$", "$\\pi$"],
-      correctIndex: 0,
+      options: ["$2$", "$3$", "$4$", "$\\pi$"],
+      correctIndex: 2,
       explanation:
         "Amplitude is $|a| = |4| = 4$. The coefficient of $x$ affects period, not amplitude.",
     },
@@ -207,24 +207,24 @@ import Quiz from "../../../components/Quiz.astro";
       id: "q6",
       text: "The identity $\\sin^2\\theta + \\cos^2\\theta = 1$ is a:",
       options: [
-        "Pythagorean identity",
         "Quotient identity",
+        "Pythagorean identity",
         "Reciprocal identity",
-        "Sum identity",
+        "Sum identity"
       ],
-      correctIndex: 0,
+      correctIndex: 1,
       explanation: "This is the fundamental Pythagorean identity.",
     },
     {
       id: "q7",
       text: "Solve $\\sin(2\\theta) = \\frac{1}{2}$ for $\\theta$ in $[0, 2\\pi)$. The solutions are:",
       options: [
-        "$\\frac{\\pi}{12},\\, \\frac{5\\pi}{12},\\, \\frac{13\\pi}{12},\\, \\frac{17\\pi}{12}$",
+        "$\\frac{\\pi}{3},\\, \\frac{2\\pi}{3}$",
         "$\\frac{\\pi}{6},\\, \\frac{5\\pi}{6}$",
         "$\\frac{\\pi}{4},\\, \\frac{3\\pi}{4}$",
-        "$\\frac{\\pi}{3},\\, \\frac{2\\pi}{3}$",
+        "$\\frac{\\pi}{12},\\, \\frac{5\\pi}{12},\\, \\frac{13\\pi}{12},\\, \\frac{17\\pi}{12}$"
       ],
-      correctIndex: 0,
+      correctIndex: 3,
       explanation:
         "Solve $2\\theta = \\pi/6,\\, 5\\pi/6,\\, 13\\pi/6,\\, 17\\pi/6$, then divide each by 2.",
     },
@@ -244,12 +244,12 @@ import Quiz from "../../../components/Quiz.astro";
       id: "q9",
       text: "In $y = 2\\cos(4(x - \\pi/6)) + 1$, the phase shift is:",
       options: [
-        "$\\frac{\\pi}{6}$ to the right",
-        "$\\frac{\\pi}{6}$ to the left",
         "$4$ to the right",
-        "$2$ units up",
+        "$\\frac{\\pi}{6}$ to the left",
+        "$\\frac{\\pi}{6}$ to the right",
+        "$2$ units up"
       ],
-      correctIndex: 0,
+      correctIndex: 2,
       explanation:
         "The phase shift is $c$ in $(x - c)$. Here $c = \\pi/6$, so shift right by $\\pi/6$.",
     },
@@ -257,19 +257,19 @@ import Quiz from "../../../components/Quiz.astro";
       id: "q10",
       text: "The Law of Cosines is best used when you know:",
       options: [
-        "Two sides and the included angle",
         "Two angles and one side",
+        "Two sides and the included angle",
         "Only the hypotenuse",
-        "Only right triangles",
+        "Only right triangles"
       ],
-      correctIndex: 0,
+      correctIndex: 1,
       explanation: "SAS or SSS cases are ideal for the Law of Cosines.",
     },
     {
       id: "q11",
       text: "The period of $y = \\tan(x)$ is:",
-      options: ["$\\pi$", "$2\\pi$", "$\\frac{\\pi}{2}$", "$4\\pi$"],
-      correctIndex: 0,
+      options: ["$4\\pi$", "$2\\pi$", "$\\frac{\\pi}{2}$", "$\\pi$"],
+      correctIndex: 3,
       explanation: "Tangent has a period of $\\pi$.",
     },
     {
@@ -289,32 +289,32 @@ import Quiz from "../../../components/Quiz.astro";
       id: "q13",
       text: "When solving trig equations, you should always:",
       options: [
-        "Check solutions in the original equation",
-        "Only use the quadratic formula",
         "Ignore the period",
-        "Only solve for $\\theta$ directly",
+        "Only use the quadratic formula",
+        "Check solutions in the original equation",
+        "Only solve for $\\theta$ directly"
       ],
-      correctIndex: 0,
+      correctIndex: 2,
       explanation:
         "Extraneous solutions are common, especially after squaring both sides.",
     },
     {
       id: "q14",
       text: "The reciprocal of sine is:",
-      options: ["Cosecant", "Secant", "Tangent", "Cotangent"],
-      correctIndex: 0,
+      options: ["Secant", "Cosecant", "Tangent", "Cotangent"],
+      correctIndex: 1,
       explanation: "$\\csc\\theta = 1 / \\sin\\theta$.",
     },
     {
       id: "q15",
       text: "A ramp rises 5 feet over 60 feet horizontally. The angle is approximately:",
       options: [
-        "$\\approx 4.76°$",
+        "$\\approx 15°$",
         "$\\approx 8.5°$",
         "$\\approx 12°$",
-        "$\\approx 15°$",
+        "$\\approx 4.76°$"
       ],
-      correctIndex: 0,
+      correctIndex: 3,
       explanation:
         "$\\tan(\\theta) = 5/60 \\approx 0.0833$, so $\\theta \\approx \\tan^{-1}(0.0833) \\approx 4.76°$.",
     },
@@ -333,28 +333,28 @@ import Quiz from "../../../components/Quiz.astro";
     {
       id: "q17",
       text: "In the ambiguous case (SSA), the number of possible triangles can be:",
-      options: ["0, 1, or 2", "Always 1", "Always 2", "Only 3"],
-      correctIndex: 0,
+      options: ["Always 2", "Always 1", "0, 1, or 2", "Only 3"],
+      correctIndex: 2,
       explanation:
         "SSA can result in zero, one, or two triangles depending on the given values.",
     },
     {
       id: "q18",
       text: "The period of $y = \\cos(2x)$ is:",
-      options: ["$\\pi$", "$2\\pi$", "$\\frac{\\pi}{2}$", "$4\\pi$"],
-      correctIndex: 0,
+      options: ["$2\\pi$", "$\\pi$", "$\\frac{\\pi}{2}$", "$4\\pi$"],
+      correctIndex: 1,
       explanation: "Period $= 2\\pi / b = 2\\pi / 2 = \\pi$.",
     },
     {
       id: "q19",
       text: "Trigonometry is most directly useful for solving problems involving:",
       options: [
-        "Angles and sides of triangles",
+        "Only circles",
         "Only linear equations",
         "Only polynomials",
-        "Only circles",
+        "Angles and sides of triangles"
       ],
-      correctIndex: 0,
+      correctIndex: 3,
       explanation:
         "Trigonometry fundamentally studies relationships between angles and sides.",
     },

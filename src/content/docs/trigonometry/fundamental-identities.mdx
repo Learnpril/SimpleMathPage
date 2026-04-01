@@ -109,12 +109,12 @@ import Quiz from "../../../components/Quiz.astro";
       id: "q1",
       text: "Which identity is correct?",
       options: [
-        "$\\sin^2\\theta + \\cos^2\\theta = 1$",
         "$\\sin^2\\theta - \\cos^2\\theta = 1$",
+        "$\\sin^2\\theta + \\cos^2\\theta = 1$",
         "$\\tan^2\\theta + \\cot^2\\theta = 1$",
-        "$\\sec^2\\theta - \\csc^2\\theta = 1$",
+        "$\\sec^2\\theta - \\csc^2\\theta = 1$"
       ],
-      correctIndex: 0,
+      correctIndex: 1,
       explanation:
         "The fundamental Pythagorean identity is $\\sin^2\\theta + \\cos^2\\theta = 1$.",
     },
@@ -122,12 +122,12 @@ import Quiz from "../../../components/Quiz.astro";
       id: "q2",
       text: "$\\tan\\theta$ equals:",
       options: [
-        "$\\frac{\\sin\\theta}{\\cos\\theta}$",
+        "$\\frac{1}{\\cos\\theta}$",
         "$\\frac{\\cos\\theta}{\\sin\\theta}$",
         "$\\frac{1}{\\sin\\theta}$",
-        "$\\frac{1}{\\cos\\theta}$",
+        "$\\frac{\\sin\\theta}{\\cos\\theta}$"
       ],
-      correctIndex: 0,
+      correctIndex: 3,
       explanation: "Tangent is sine over cosine (quotient identity).",
     },
     {
@@ -140,8 +140,8 @@ import Quiz from "../../../components/Quiz.astro";
     {
       id: "q4",
       text: "$\\sec^2\\theta - \\tan^2\\theta$ equals:",
-      options: ["$1$", "$0$", "$-1$", "$\\sin^2\\theta$"],
-      correctIndex: 0,
+      options: ["$-1$", "$0$", "$1$", "$\\sin^2\\theta$"],
+      correctIndex: 2,
       explanation:
         "From $1 + \\tan^2\\theta = \\sec^2\\theta$, rearranging gives $\\sec^2\\theta - \\tan^2\\theta = 1$.",
     },
@@ -149,12 +149,12 @@ import Quiz from "../../../components/Quiz.astro";
       id: "q5",
       text: "$\\sin^2\\theta$ can be rewritten as:",
       options: [
-        "$1 - \\cos^2\\theta$",
         "$1 + \\cos^2\\theta$",
+        "$1 - \\cos^2\\theta$",
         "$\\cos^2\\theta - 1$",
-        "$\\tan^2\\theta$",
+        "$\\tan^2\\theta$"
       ],
-      correctIndex: 0,
+      correctIndex: 1,
       explanation:
         "From $\\sin^2\\theta + \\cos^2\\theta = 1$, subtract $\\cos^2\\theta$: $\\sin^2\\theta = 1 - \\cos^2\\theta$.",
     },

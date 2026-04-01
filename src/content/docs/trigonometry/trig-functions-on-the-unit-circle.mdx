@@ -104,12 +104,12 @@ import Quiz from "../../../components/Quiz.astro";
       id: "q1",
       text: "On the unit circle, the coordinates of any point are:",
       options: [
-        "$(\\cos\\theta,\\, \\sin\\theta)$",
         "$(\\sin\\theta,\\, \\cos\\theta)$",
+        "$(\\cos\\theta,\\, \\sin\\theta)$",
         "$(\\tan\\theta,\\, \\cot\\theta)$",
-        "$(r,\\, \\theta)$",
+        "$(r,\\, \\theta)$"
       ],
-      correctIndex: 0,
+      correctIndex: 1,
       explanation:
         "The x-coordinate is $\\cos\\theta$ and the y-coordinate is $\\sin\\theta$.",
     },
@@ -117,12 +117,12 @@ import Quiz from "../../../components/Quiz.astro";
       id: "q2",
       text: "What is $\\cos\\left(\\frac{\\pi}{3}\\right)$?",
       options: [
-        "$\\frac{1}{2}$",
+        "$0$",
         "$\\frac{\\sqrt{3}}{2}$",
         "$\\frac{\\sqrt{2}}{2}$",
-        "$0$",
+        "$\\frac{1}{2}$"
       ],
-      correctIndex: 0,
+      correctIndex: 3,
       explanation:
         "At $\\frac{\\pi}{3}$ (60°), the point is $\\left(\\frac{1}{2}, \\frac{\\sqrt{3}}{2}\\right)$.",
     },
@@ -136,20 +136,20 @@ import Quiz from "../../../components/Quiz.astro";
     {
       id: "q4",
       text: "In the second quadrant, which trig function is positive?",
-      options: ["Sine", "Cosine", "Tangent", "None"],
-      correctIndex: 0,
+      options: ["Tangent", "Cosine", "Sine", "None"],
+      correctIndex: 2,
       explanation: "In Q II, sine is positive (the y-coordinate is positive).",
     },
     {
       id: "q5",
       text: "The reference angle for $\\frac{5\\pi}{6}$ is:",
       options: [
-        "$\\frac{\\pi}{6}$",
         "$\\frac{\\pi}{3}$",
+        "$\\frac{\\pi}{6}$",
         "$\\frac{\\pi}{4}$",
-        "$\\frac{\\pi}{2}$",
+        "$\\frac{\\pi}{2}$"
       ],
-      correctIndex: 0,
+      correctIndex: 1,
       explanation:
         "$\\frac{5\\pi}{6}$ is in Q II. Reference angle $= \\pi - \\frac{5\\pi}{6} = \\frac{\\pi}{6}$.",
     },
