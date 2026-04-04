@@ -1,0 +1,149 @@
+---
+title: Introduction to Derivatives
+description: Learn what a derivative is and what it represents
+sidebar:
+  order: 2
+---
+
+## What You'll Learn
+
+In this lesson you'll learn what a derivative represents, the difference between average and instantaneous rate of change, and why derivatives are one of the most useful ideas in all of mathematics.
+
+## The Concept
+
+You already know how to find the slope between two points: rise over run. If a car travels 120 miles in 2 hours, its average speed is 60 mph. That's the slope of the line connecting the start and end points on a distance-vs-time graph.
+
+But what if you want to know how fast the car is going at one specific instant? Not over 2 hours, but right now, at this exact second? That's a different question, and algebra can't answer it. Calculus can.
+
+The derivative of a function at a point is the instantaneous rate of change at that point. It's the slope of the curve at a single location, not between two locations.
+
+**Average rate of change** over an interval [a, b] is the slope of the line connecting two points on the curve:
+
+$$
+\text{Average rate} = \frac{f(b) - f(a)}{b - a}
+$$
+
+**Instantaneous rate of change** at a single point x = a is the slope of the tangent line at that point. This is the derivative.
+
+import TangentIdeaDiagram from "../../../components/TangentIdeaDiagram.astro";
+
+<TangentIdeaDiagram />
+
+The blue curve is the function. The green line just touches the curve at the orange dot without crossing it. The slope of that green tangent line is the derivative at that point. It tells you exactly how steep the curve is right there.
+
+We write the derivative of f at x using two common notations:
+
+- f'(x) (read "f prime of x") is Lagrange notation
+- dy/dx (read "dee y dee x") is Leibniz notation
+
+Both mean the same thing: the instantaneous rate of change of y with respect to x.
+
+## Worked Example
+
+**Example 1: Average vs. instantaneous**
+
+A ball is dropped, and its position after t seconds is s(t) = 5t² meters.
+
+Average speed from t = 1 to t = 3:
+
+$$
+\frac{s(3) - s(1)}{3 - 1} = \frac{45 - 5}{2} = \frac{40}{2} = 20 \text{ m/s}
+$$
+
+That's the average over 2 seconds. But the ball is accelerating, so it's going slower at t = 1 and faster at t = 3. The derivative will tell us the exact speed at any single moment. (We'll compute it properly in the next lesson using the limit definition.)
+
+**Example 2: Linear functions**
+
+For f(x) = 3x + 2, the derivative is 3 everywhere. A straight line has the same slope at every point, so the rate of change never varies. The tangent line at any point is the line itself.
+
+**Example 3: Why nonlinear functions are different**
+
+For f(x) = x², the rate of change is not constant. At x = 1, the curve is rising gently. At x = 5, it's rising steeply. The derivative captures this: it gives a different number at each x-value, telling you exactly how fast the function is changing at that specific spot.
+
+## Real-World Application
+
+Derivatives show up everywhere:
+
+- Physics: velocity is the derivative of position, acceleration is the derivative of velocity. Newton's second law (F = ma) is a statement about derivatives.
+- Economics: marginal cost is the derivative of total cost. It tells you how much one more unit costs to produce.
+- Biology: the rate of population growth at a specific time is a derivative.
+- Medicine: how fast a drug's concentration in the blood is changing is a derivative.
+- Engineering: stress and strain rates in materials are derivatives.
+
+Example: when a doctor reads your heart rate monitor, they're looking at a derivative. The monitor shows how fast your heart is beating right now, not your average heart rate over the last hour.
+
+:::note[You've Got This]
+The derivative is just "how fast is it changing right now?" at a specific point. Everything else in Calculus 1 builds on this one idea. If you can picture a curve and imagine the slope of the line that just barely touches it at one point, you already understand what a derivative is. The math we'll learn next is just the machinery for computing that slope precisely.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="calculus1-intro-derivatives"
+  questions={[
+    {
+      id: "q1",
+      text: "The derivative of a function represents:",
+      options: [
+        "The total accumulation",
+        "The instantaneous rate of change",
+        "The average rate of change over an interval",
+        "The area under the curve",
+      ],
+      correctIndex: 1,
+      explanation:
+        "The derivative tells you how fast the function is changing at a specific point.",
+    },
+    {
+      id: "q2",
+      text: "The slope of the tangent line to a curve at a point is:",
+      options: [
+        "The average rate of change",
+        "The definite integral",
+        "The derivative at that point",
+        "The limit as x approaches infinity",
+      ],
+      correctIndex: 2,
+      explanation: "The tangent line slope is exactly the derivative.",
+    },
+    {
+      id: "q3",
+      text: "For a linear function f(x) = mx + b, the derivative is:",
+      options: [
+        "Zero everywhere",
+        "Equal to b",
+        "Changing at every point",
+        "Constant and equal to m",
+      ],
+      correctIndex: 3,
+      explanation:
+        "Linear functions have constant rate of change equal to the slope.",
+    },
+    {
+      id: "q4",
+      text: "Which question is best answered using a derivative?",
+      options: [
+        "How far has the car traveled in total?",
+        "How fast is the car moving right now?",
+        "What is the average speed over 2 hours?",
+        "What will the position be in 10 hours?",
+      ],
+      correctIndex: 1,
+      explanation: "Derivatives answer instantaneous rate questions.",
+    },
+    {
+      id: "q5",
+      text: "The study of derivatives is called:",
+      options: [
+        "Integral calculus",
+        "Pre-calculus",
+        "Trigonometry",
+        "Differential calculus",
+      ],
+      correctIndex: 3,
+      explanation: "Differential calculus focuses on rates of change.",
+    },
+  ]}
+/>

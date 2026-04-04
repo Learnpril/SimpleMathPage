@@ -1,0 +1,77 @@
+---
+/**
+ * BalloonDiffDiagram — two concentric circles showing a balloon
+ * at r=5 and r=5.1, with the thin shell (dr) highlighted.
+ * Demonstrates dV = 4πr² dr visually.
+ */
+const w = 340;
+const h = 340;
+const cx = w / 2;
+const cy = h / 2;
+const scale = 26; // pixels per inch
+const r1 = 5 * scale;   // 130px
+const r2 = r1 + 12;    // exaggerated dr for visibility (actual 2.6px)
+---
+
+<figure class="bdd" role="img" aria-label="Balloon expanding from radius 5 to 5.1, showing the thin shell of added volume">
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    {/* Outer circle (r = 5.1) — the shell fill */}
+    <circle cx={cx} cy={cy} r={r2} class="bdd-shell" />
+
+    {/* Inner circle (r = 5) — covers the shell to show only the ring */}
+    <circle cx={cx} cy={cy} r={r1} class="bdd-inner" />
+
+    {/* Inner circle outline */}
+    <circle cx={cx} cy={cy} r={r1} fill="none" class="bdd-circle" stroke-width="2.5" />
+
+    {/* Outer circle outline */}
+    <circle cx={cx} cy={cy} r={r2} fill="none" class="bdd-circle-outer" stroke-width="1.5" stroke-dasharray="5,4" />
+
+    {/* Radius line from center to edge */}
+    <line x1={cx} y1={cy} x2={cx + r1} y2={cy} class="bdd-radius" stroke-width="2" />
+
+    {/* dr bracket — spans from inner to outer circle on the right */}
+    <line x1={cx + r1} y1={cy - 20} x2={cx + r2} y2={cy - 20}
+          class="bdd-dr" stroke-width="2.5" />
+
+    {/* Center dot */}
+    <circle cx={cx} cy={cy} r="4" class="bdd-dot" />
+  </svg>
+  <div class="bdd-legend">
+    <span class="bdd-leg-item"><span class="bdd-swatch bdd-sw-circle"></span> r = 5</span>
+    <span class="bdd-leg-item"><span class="bdd-swatch bdd-sw-shell"></span> dr = 0.1 (shell = dV, exaggerated)</span>
+    <span class="bdd-leg-item bdd-leg-note">dV = 4πr² dr ≈ 31.4 in³</span>
+  </div>
+</figure>
+
+<style>
+  .bdd { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .bdd svg { max-width:100%; height:auto; }
+  .bdd-shell { fill:rgba(126,231,135,0.25); }
+  .bdd-inner { fill:var(--sl-color-bg, #121212); }
+  .bdd-circle { stroke:#58a6ff; }
+  .bdd-circle-outer { stroke:#7ee787; }
+  .bdd-radius { stroke:#d2a8ff; }
+  .bdd-dr { stroke:#f0883e; }
+  .bdd-dot { fill:#f0883e; }
+  .bdd-legend {
+    display:flex; gap:1.2rem; flex-wrap:wrap; justify-content:center;
+    margin-top:0.5rem; font-family:'Libre Baskerville',Georgia,serif; font-size:0.85rem;
+  }
+  .bdd-leg-item { display:flex; align-items:center; gap:0.35rem; }
+  .bdd-swatch { display:inline-block; width:18px; height:4px; border-radius:2px; }
+  .bdd-sw-circle { background:#58a6ff; }
+  .bdd-sw-shell { background:#7ee787; }
+  .bdd-leg-note { color:#d2a8ff; font-style:italic; }
+
+  :global([data-theme="light"]) .bdd-inner { fill:var(--sl-color-bg, #f8f9fa); }
+  :global([data-theme="light"]) .bdd-shell { fill:rgba(17,99,41,0.15); }
+  :global([data-theme="light"]) .bdd-circle { stroke:#0550ae; }
+  :global([data-theme="light"]) .bdd-circle-outer { stroke:#116329; }
+  :global([data-theme="light"]) .bdd-radius { stroke:#6639ba; }
+  :global([data-theme="light"]) .bdd-dr { stroke:#b35900; }
+  :global([data-theme="light"]) .bdd-dot { fill:#b35900; }
+  :global([data-theme="light"]) .bdd-sw-circle { background:#0550ae; }
+  :global([data-theme="light"]) .bdd-sw-shell { background:#116329; }
+  :global([data-theme="light"]) .bdd-leg-note { color:#6639ba; }
+</style>

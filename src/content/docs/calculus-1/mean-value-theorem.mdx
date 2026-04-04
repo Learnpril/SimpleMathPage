@@ -1,0 +1,161 @@
+---
+title: Mean Value Theorem
+description: Understand the connection between average and instantaneous rates
+sidebar:
+  order: 13
+---
+
+## What You'll Learn
+
+In this lesson you'll learn the Mean Value Theorem, which connects the average rate of change over an interval to the instantaneous rate of change at some point inside that interval.
+
+## The Concept
+
+The Mean Value Theorem (MVT) says: if f is continuous on [a, b] and differentiable on (a, b), then there's at least one point c between a and b where the instantaneous rate of change equals the average rate of change:
+
+$$
+f'(c) = \frac{f(b) - f(a)}{b - a}
+$$
+
+Geometrically, this means there's a point on the curve where the tangent line is parallel to the secant line connecting the endpoints.
+
+import MVTDiagram from "../../../components/MVTDiagram.astro";
+
+<MVTDiagram />
+
+The dashed purple line is the secant from (1, 1) to (3, 9) with slope 4. The solid green line is the tangent at c = 2, also with slope 4. They're parallel. The MVT guarantees that such a point c exists.
+
+Think of it this way: if you drive 120 miles in 2 hours (average 60 mph), at some moment during the trip your speedometer must have read exactly 60 mph. You might have been going faster or slower at other times, but at least once you hit the average.
+
+### Key Conditions
+
+Both conditions matter:
+
+- Continuous on [a, b]: no breaks or gaps
+- Differentiable on (a, b): no sharp corners or vertical tangents
+
+If either fails, the theorem doesn't apply.
+
+## Worked Example
+
+**Example 1: Verifying MVT**
+
+Verify the MVT for f(x) = x² on [1, 3].
+
+Average rate of change:
+
+$$
+\frac{f(3) - f(1)}{3 - 1} = \frac{9 - 1}{2} = 4
+$$
+
+Set f'(c) equal to the average rate:
+
+$$
+f'(c) = 2c = 4 \quad \Rightarrow \quad c = 2
+$$
+
+Since c = 2 is in (1, 3), the MVT is verified. At x = 2, the tangent line has the same slope as the secant.
+
+**Example 2: Finding c for a square root**
+
+For f(x) = the square root of x on [1, 4], find c.
+
+Average rate:
+
+$$
+\frac{\sqrt{4} - \sqrt{1}}{4 - 1} = \frac{2 - 1}{3} = \frac{1}{3}
+$$
+
+Set f'(c) = 1/3:
+
+$$
+\frac{1}{2\sqrt{c}} = \frac{1}{3} \quad \Rightarrow \quad 2\sqrt{c} = 3 \quad \Rightarrow \quad \sqrt{c} = \frac{3}{2} \quad \Rightarrow \quad c = \frac{9}{4} = 2.25
+$$
+
+Since 2.25 is in (1, 4), the MVT holds.
+
+**Example 3: Using MVT to prove a fact**
+
+If f'(x) = 0 for all x in an interval, prove f is constant.
+
+Pick any two points a and b in the interval. By MVT:
+
+$$
+f'(c) = \frac{f(b) - f(a)}{b - a}
+$$
+
+Since f'(c) = 0, we get f(b) - f(a) = 0, so f(b) = f(a). This holds for any pair of points, so f is constant.
+
+## Real-World Application
+
+The MVT has practical consequences:
+
+- Speed traps: if you enter a highway at mile 0 and exit at mile 60 exactly one hour later, the MVT proves you were going exactly 60 mph at some point. Some toll systems use this logic.
+- Physics: if an object's position is the same at two times, the MVT guarantees it had zero velocity at some moment in between (it stopped or reversed).
+- Economics: if average profit over a quarter equals some value, marginal profit must have equaled that value at some point during the quarter.
+
+:::note[You've Got This]
+The MVT is one of those theorems that sounds abstract but has a very concrete meaning: somewhere between the endpoints, the instantaneous rate matches the average rate. The car analogy makes it click for most people. The conditions (continuous + differentiable) are usually satisfied for the functions you'll work with in Calculus 1.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="calculus1-mvt"
+  questions={[
+    {
+      id: "q1",
+      text: "The MVT guarantees a point c where:",
+      options: [
+        "f(c) = 0",
+        "f'(c) = 0",
+        "f'(c) equals the average rate of change",
+        "f''(c) is positive",
+      ],
+      correctIndex: 2,
+      explanation:
+        "The instantaneous rate at c equals the average rate over [a, b].",
+    },
+    {
+      id: "q2",
+      text: "For the MVT to apply, f must be:",
+      options: [
+        "Only differentiable",
+        "Continuous on [a,b] and differentiable on (a,b)",
+        "Only continuous",
+        "Defined at every real number",
+      ],
+      correctIndex: 1,
+      explanation: "Both conditions are required.",
+    },
+    {
+      id: "q3",
+      text: "Geometrically, the MVT says the tangent at c is:",
+      options: [
+        "Perpendicular to the secant",
+        "Horizontal",
+        "Vertical",
+        "Parallel to the secant from a to b",
+      ],
+      correctIndex: 3,
+      explanation: "Same slope means parallel lines.",
+    },
+    {
+      id: "q4",
+      text: "For f(x) = x² on [1, 3], the value of c from the MVT is:",
+      options: ["1", "3", "2", "4"],
+      correctIndex: 2,
+      explanation: "f'(c) = 2c = 4 gives c = 2.",
+    },
+    {
+      id: "q5",
+      text: "If f'(x) = 0 everywhere on an interval, the MVT proves f is:",
+      options: ["Increasing", "Decreasing", "Undefined", "Constant"],
+      correctIndex: 3,
+      explanation:
+        "Zero derivative everywhere means no change between any two points.",
+    },
+  ]}
+/>

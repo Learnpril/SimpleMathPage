@@ -1,0 +1,147 @@
+---
+title: Derivatives of Trigonometric Functions
+description: Find derivatives of sin, cos, tan, and their inverses
+sidebar:
+  order: 7
+---
+
+## What You'll Learn
+
+In this lesson you'll learn the derivatives of all six trig functions and how to use them with the chain rule, product rule, and quotient rule.
+
+## The Concept
+
+You already know the derivatives of polynomials. Now we add trig functions to the toolkit. There are six to memorize, but they come in pairs and the pattern is consistent.
+
+The big two:
+
+$$
+\frac{d}{dx}[\sin x] = \cos x
+$$
+
+$$
+\frac{d}{dx}[\cos x] = -\sin x
+$$
+
+Notice the negative sign on cosine's derivative. That's the one people forget.
+
+The tangent and cotangent pair:
+
+$$
+\frac{d}{dx}[\tan x] = \sec^2 x
+$$
+
+$$
+\frac{d}{dx}[\cot x] = -\csc^2 x
+$$
+
+The secant and cosecant pair:
+
+$$
+\frac{d}{dx}[\sec x] = \sec x \tan x
+$$
+
+$$
+\frac{d}{dx}[\csc x] = -\csc x \cot x
+$$
+
+The pattern: the "co" functions (cos, cot, csc) all pick up a negative sign. If you remember that, you only need to memorize three derivatives and negate them for the co-versions.
+
+These almost always show up with the chain rule. When the argument isn't just x (like sin(3x²) or cos(5t + 1)), you differentiate the trig part first, then multiply by the derivative of the inside.
+
+## Worked Example
+
+**Example 1: Chain rule with sine**
+
+Find the derivative of f(x) = sin(4x).
+
+The outside is sin(u), derivative is cos(u). The inside is 4x, derivative is 4.
+
+$$
+f'(x) = \cos(4x) \cdot 4 = 4\cos(4x)
+$$
+
+**Example 2: Product rule with cosine**
+
+Differentiate y = x² cos(x).
+
+Let u = x², u' = 2x. Let v = cos(x), v' = -sin(x).
+
+$$
+y' = 2x\cos(x) + x^2(-\sin x) = 2x\cos x - x^2\sin x
+$$
+
+**Example 3: Chain rule with tangent**
+
+Find the derivative of y = tan(3x² + 1).
+
+Outside: tan(u), derivative is sec²(u). Inside: 3x² + 1, derivative is 6x.
+
+$$
+y' = \sec^2(3x^2 + 1) \cdot 6x = 6x\sec^2(3x^2 + 1)
+$$
+
+## Real-World Application
+
+Trig derivatives are everywhere in physics and engineering:
+
+- Simple harmonic motion: a mass on a spring has position s(t) = A sin(wt). The velocity is s'(t) = Aw cos(wt) and acceleration is s''(t) = -Aw² sin(wt). The derivatives cycle between sin and cos.
+- Waves: sound, light, and water waves are all modeled with sin and cos. Their derivatives describe how fast the wave is changing at each point.
+- Electrical engineering: AC voltage is V(t) = V₀ sin(wt). The rate of voltage change is V'(t) = V₀w cos(wt).
+- Pendulums, vibrations, and anything that oscillates uses these derivatives.
+
+:::note[You've Got This]
+Six derivatives, but really just three patterns with a negative sign rule for the "co" functions. The derivative of sin is cos. The derivative of cos is negative sin. The derivative of tan is sec². Everything else follows the same logic. Once you've done a few problems combining these with the chain rule, the pattern becomes second nature.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="calculus1-trig-derivatives"
+  questions={[
+    {
+      id: "q1",
+      text: "The derivative of cos(x) is:",
+      options: ["sin x", "-sin x", "cos x", "-cos x"],
+      correctIndex: 1,
+      explanation:
+        "The derivative of cos x is -sin x. Don't forget the negative.",
+    },
+    {
+      id: "q2",
+      text: "The derivative of sin(3x) is:",
+      options: ["cos(3x)", "-3sin(3x)", "3cos(3x)", "3sin(3x)"],
+      correctIndex: 2,
+      explanation: "Chain rule: cos(3x) times 3 = 3cos(3x).",
+    },
+    {
+      id: "q3",
+      text: "The derivative of tan(x) is:",
+      options: ["sec x tan x", "-csc² x", "cos² x", "sec² x"],
+      correctIndex: 3,
+      explanation: "One of the standard trig derivatives to memorize.",
+    },
+    {
+      id: "q4",
+      text: "Which trig derivatives have a negative sign?",
+      options: [
+        "sin, tan, sec",
+        "All six of them",
+        "cos, cot, csc (the co-functions)",
+        "None of them",
+      ],
+      correctIndex: 2,
+      explanation:
+        "The co-functions all pick up a negative in their derivatives.",
+    },
+    {
+      id: "q5",
+      text: "The derivative of sec(x) is:",
+      options: ["sec² x", "-csc x cot x", "sec x tan x", "tan² x"],
+      correctIndex: 2,
+      explanation: "d/dx[sec x] = sec x tan x.",
+    },
+  ]}
+/>

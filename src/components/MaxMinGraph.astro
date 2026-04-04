@@ -1,0 +1,92 @@
+---
+/**
+ * MaxMinGraph — shows f(x) = x³ - 6x² + 9x + 2 on [0, 5]
+ * with local max at x=1 (f=6), local min at x=3 (f=2),
+ * and absolute max at x=5 (f=22). Dots at critical points and endpoints.
+ */
+const w = 460;
+const h = 320;
+const pad = 55;
+const gw = w - 2 * pad;
+const gh = h - 2 * pad;
+const xMin = -0.5, xMax = 5.5, yMin = -1, yMax = 24;
+const sx = (x: number) => pad + ((x - xMin) / (xMax - xMin)) * gw;
+const sy = (y: number) => pad + ((yMax - y) / (yMax - yMin)) * gh;
+
+const f = (x: number) => x * x * x - 6 * x * x + 9 * x + 2;
+const pts: string[] = [];
+for (let i = 0; i <= 100; i++) {
+  const x = 0 + i * 5 / 100;
+  pts.push(`${sx(x)},${sy(f(x))}`);
+}
+
+// Key points
+const keyPts = [
+  { x: 0, y: f(0), label: "(0, 2)", pos: "left" },
+  { x: 1, y: f(1), label: "local max (1, 6)", pos: "above" },
+  { x: 3, y: f(3), label: "local min (3, 2)", pos: "below" },
+  { x: 5, y: f(5), label: "abs max (5, 22)", pos: "left" },
+];
+---
+
+<figure class="mmg" role="img" aria-label="Graph showing local max, local min, and absolute max of a cubic function">
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    {/* Grid */}
+    {[0,1,2,3,4,5].map(v => (
+      <line x1={sx(v)} y1={sy(yMin)} x2={sx(v)} y2={sy(yMax)} class="mmg-grid" stroke-width="0.5" />
+    ))}
+    {[0,5,10,15,20].map(v => (
+      <line x1={sx(xMin)} y1={sy(v)} x2={sx(xMax)} y2={sy(v)} class="mmg-grid" stroke-width="0.5" />
+    ))}
+    <line x1={sx(xMin)} y1={sy(0)} x2={sx(xMax)} y2={sy(0)} class="mmg-axis" stroke-width="1.5" />
+    <line x1={sx(0)} y1={sy(yMin)} x2={sx(0)} y2={sy(yMax)} class="mmg-axis" stroke-width="1.2" />
+
+    {/* Curve */}
+    <polyline points={pts.join(' ')} fill="none" class="mmg-curve" stroke-width="3" />
+
+    {/* Key points */}
+    <circle cx={sx(0)} cy={sy(f(0))} r="6" class="mmg-dot-end" />
+    <circle cx={sx(1)} cy={sy(f(1))} r="7" class="mmg-dot-max" />
+    <circle cx={sx(3)} cy={sy(f(3))} r="7" class="mmg-dot-min" />
+    <circle cx={sx(5)} cy={sy(f(5))} r="7" class="mmg-dot-abs" />
+  </svg>
+  <div class="mmg-legend">
+    <span class="mmg-leg-item"><span class="mmg-swatch mmg-sw-curve"></span> f(x) = x³ - 6x² + 9x + 2</span>
+    <span class="mmg-leg-item"><span class="mmg-swatch mmg-sw-max"></span> local max at (1, 6)</span>
+    <span class="mmg-leg-item"><span class="mmg-swatch mmg-sw-min"></span> local min at (3, 2)</span>
+    <span class="mmg-leg-item"><span class="mmg-swatch mmg-sw-abs"></span> abs max at (5, 22)</span>
+  </div>
+</figure>
+
+<style>
+  .mmg { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .mmg svg { max-width:100%; height:auto; }
+  .mmg-grid { stroke:#333; }
+  .mmg-axis { stroke:#666; }
+  .mmg-curve { stroke:#58a6ff; }
+  .mmg-dot-end { fill:#888; }
+  .mmg-dot-max { fill:#7ee787; }
+  .mmg-dot-min { fill:#f47067; }
+  .mmg-dot-abs { fill:#f0883e; }
+  .mmg-legend {
+    display:flex; gap:1rem; flex-wrap:wrap; justify-content:center;
+    margin-top:0.5rem; font-family:'Libre Baskerville',Georgia,serif; font-size:0.82rem;
+  }
+  .mmg-leg-item { display:flex; align-items:center; gap:0.35rem; }
+  .mmg-swatch { display:inline-block; width:12px; height:12px; border-radius:50%; }
+  .mmg-sw-curve { background:#58a6ff; border-radius:2px; width:18px; height:4px; }
+  .mmg-sw-max { background:#7ee787; }
+  .mmg-sw-min { background:#f47067; }
+  .mmg-sw-abs { background:#f0883e; }
+
+  :global([data-theme="light"]) .mmg-grid { stroke:#ddd; }
+  :global([data-theme="light"]) .mmg-axis { stroke:#999; }
+  :global([data-theme="light"]) .mmg-curve { stroke:#0550ae; }
+  :global([data-theme="light"]) .mmg-dot-max { fill:#116329; }
+  :global([data-theme="light"]) .mmg-dot-min { fill:#cf222e; }
+  :global([data-theme="light"]) .mmg-dot-abs { fill:#b35900; }
+  :global([data-theme="light"]) .mmg-sw-curve { background:#0550ae; }
+  :global([data-theme="light"]) .mmg-sw-max { background:#116329; }
+  :global([data-theme="light"]) .mmg-sw-min { background:#cf222e; }
+  :global([data-theme="light"]) .mmg-sw-abs { background:#b35900; }
+</style>

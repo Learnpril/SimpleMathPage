@@ -1,0 +1,86 @@
+---
+/**
+ * AntiderivativeFamily — shows f(x) = 2x (green, the derivative)
+ * and several antiderivatives F(x) = x² + C for C = -2, 0, 2, 4 (blue).
+ * Demonstrates the +C concept: all shifted vertically, same derivative.
+ */
+const w = 440;
+const h = 300;
+const pad = 55;
+const gw = w - 2 * pad;
+const gh = h - 2 * pad;
+const xMin = -3, xMax = 3, yMin = -4, yMax = 10;
+const sx = (x: number) => pad + ((x - xMin) / (xMax - xMin)) * gw;
+const sy = (y: number) => pad + ((yMax - y) / (yMax - yMin)) * gh;
+
+// Antiderivatives: F(x) = x² + C for various C
+const cValues = [-2, 0, 2, 4];
+const families: string[][] = cValues.map(c => {
+  const pts: string[] = [];
+  for (let i = 0; i <= 80; i++) {
+    const x = xMin + i * (xMax - xMin) / 80;
+    const y = x * x + c;
+    if (y >= yMin && y <= yMax) pts.push(`${sx(x)},${sy(y)}`);
+  }
+  return pts;
+});
+
+// Derivative: f(x) = 2x
+const dPts: string[] = [];
+for (let i = 0; i <= 60; i++) {
+  const x = xMin + i * (xMax - xMin) / 60;
+  const y = 2 * x;
+  if (y >= yMin && y <= yMax) dPts.push(`${sx(x)},${sy(y)}`);
+}
+---
+
+<figure class="afm" role="img" aria-label="Family of antiderivatives x squared plus C for different values of C, all sharing the same derivative 2x">
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    {[-2,-1,0,1,2].map(v => (
+      <line x1={sx(v)} y1={sy(yMin)} x2={sx(v)} y2={sy(yMax)} class="afm-grid" stroke-width="0.5" />
+    ))}
+    {[-2,0,2,4,6,8].map(v => (
+      <line x1={sx(xMin)} y1={sy(v)} x2={sx(xMax)} y2={sy(v)} class="afm-grid" stroke-width="0.5" />
+    ))}
+    <line x1={sx(xMin)} y1={sy(0)} x2={sx(xMax)} y2={sy(0)} class="afm-axis" stroke-width="1.5" />
+    <line x1={sx(0)} y1={sy(yMin)} x2={sx(0)} y2={sy(yMax)} class="afm-axis" stroke-width="1.2" />
+
+    {/* Antiderivative family (blue, multiple curves) */}
+    {families.map(pts => (
+      <polyline points={pts.join(' ')} fill="none" class="afm-anti" stroke-width="2" />
+    ))}
+
+    {/* Derivative (green) */}
+    <polyline points={dPts.join(' ')} fill="none" class="afm-deriv" stroke-width="3" />
+  </svg>
+  <div class="afm-legend">
+    <span class="afm-leg-item"><span class="afm-swatch afm-sw-anti"></span> F(x) = x² + C (C = -2, 0, 2, 4)</span>
+    <span class="afm-leg-item"><span class="afm-swatch afm-sw-deriv"></span> f(x) = 2x (the derivative)</span>
+    <span class="afm-leg-item afm-leg-note">all four curves have the same derivative</span>
+  </div>
+</figure>
+
+<style>
+  .afm { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .afm svg { max-width:100%; height:auto; }
+  .afm-grid { stroke:#333; }
+  .afm-axis { stroke:#666; }
+  .afm-anti { stroke:#58a6ff; opacity:0.7; }
+  .afm-deriv { stroke:#7ee787; }
+  .afm-legend {
+    display:flex; gap:1rem; flex-wrap:wrap; justify-content:center;
+    margin-top:0.5rem; font-family:'Libre Baskerville',Georgia,serif; font-size:0.82rem;
+  }
+  .afm-leg-item { display:flex; align-items:center; gap:0.35rem; }
+  .afm-swatch { display:inline-block; width:18px; height:4px; border-radius:2px; }
+  .afm-sw-anti { background:#58a6ff; }
+  .afm-sw-deriv { background:#7ee787; }
+  .afm-leg-note { color:#d2a8ff; font-style:italic; }
+  :global([data-theme="light"]) .afm-grid { stroke:#ddd; }
+  :global([data-theme="light"]) .afm-axis { stroke:#999; }
+  :global([data-theme="light"]) .afm-anti { stroke:#0550ae; }
+  :global([data-theme="light"]) .afm-deriv { stroke:#116329; }
+  :global([data-theme="light"]) .afm-sw-anti { background:#0550ae; }
+  :global([data-theme="light"]) .afm-sw-deriv { background:#116329; }
+  :global([data-theme="light"]) .afm-leg-note { color:#6639ba; }
+</style>

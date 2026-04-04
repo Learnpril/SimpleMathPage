@@ -1,0 +1,52 @@
+---
+/**
+ * MultTable — a clean 12x12 multiplication table with
+ * header row/column highlighting and hover-friendly styling.
+ */
+const size = 12;
+const rows: number[][] = [];
+for (let r = 1; r <= size; r++) {
+  const row: number[] = [];
+  for (let c = 1; c <= size; c++) {
+    row.push(r * c);
+  }
+  rows.push(row);
+}
+---
+
+<figure class="mt" role="img" aria-label="Multiplication table from 1 to 12">
+  <table class="mt-tbl">
+    <thead>
+      <tr>
+        <th class="mt-corner">×</th>
+        {Array.from({length: size}, (_, i) => (
+          <th class="mt-hdr">{i + 1}</th>
+        ))}
+      </tr>
+    </thead>
+    <tbody>
+      {rows.map((row, ri) => (
+        <tr>
+          <th class="mt-hdr">{ri + 1}</th>
+          {row.map((val, ci) => (
+            <td class={ri === ci ? "mt-diag" : "mt-cell"}>{val}</td>
+          ))}
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</figure>
+
+<style>
+  .mt { display:flex; justify-content:center; margin:1.5rem 0; overflow-x:auto; }
+  .mt-tbl { border-collapse:collapse; font-family:'Courier New',monospace; font-size:0.8rem; }
+  .mt-tbl th, .mt-tbl td { padding:0.3rem 0.5rem; text-align:center; min-width:2rem; }
+  .mt-corner { background:#333; color:#888; border:1px solid #444; }
+  .mt-hdr { background:#2a2a3a; color:#58a6ff; font-weight:bold; border:1px solid #444; }
+  .mt-cell { background:#1a1a2a; color:#ccc; border:1px solid #333; }
+  .mt-diag { background:#1a2a1a; color:#7ee787; font-weight:bold; border:1px solid #333; }
+  :global([data-theme="light"]) .mt-corner { background:#e8e8e8; color:#666; border-color:#ccc; }
+  :global([data-theme="light"]) .mt-hdr { background:#e0ecf8; color:#0550ae; border-color:#ccc; }
+  :global([data-theme="light"]) .mt-cell { background:#fff; color:#333; border-color:#ddd; }
+  :global([data-theme="light"]) .mt-diag { background:#e8f5e8; color:#116329; border-color:#ddd; }
+</style>

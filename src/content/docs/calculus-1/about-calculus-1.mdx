@@ -1,0 +1,87 @@
+---
+title: About Calculus 1
+description: Welcome to Calculus, the mathematics of change, motion, and accumulation
+sidebar:
+  order: 0
+---
+
+## What is Calculus?
+
+Every math course you've taken so far has dealt with things that stay still. Algebra asks "what is x?" Geometry asks "how big is this shape?" Trigonometry asks "what are the angles?" Even Pre-Calculus, with its limits, is mostly about approaching a value without quite getting there.
+
+Calculus is different. Calculus is the mathematics of things that move, grow, shrink, speed up, slow down, and accumulate. It answers two questions that no earlier branch of math can handle:
+
+1. How fast is something changing at this exact instant? (This is the derivative.)
+2. How much total stuff has accumulated over a stretch of time? (This is the integral.)
+
+These two ideas turn out to be deeply connected, and that connection, the Fundamental Theorem of Calculus, is one of the most elegant results in all of mathematics.
+
+import TangentIdeaDiagram from "../../../components/TangentIdeaDiagram.astro";
+
+<TangentIdeaDiagram />
+
+The diagram shows the core idea. The blue curve is a function. The green line just touches the curve at the orange dot without crossing it. That's the tangent line. The slope of that green line at that point is the derivative. It tells you how steep the curve is at that exact spot, which is the same as asking "how fast is the function changing right here?"
+
+## Where Calculus Came From
+
+Calculus wasn't invented in a vacuum. For centuries, mathematicians struggled with two problems that seemed unrelated:
+
+The tangent problem: given a curve, how do you find the slope at a single point? You can find the slope between two points easily (rise over run), but a single point has no "run." The area problem: given a curve, how do you find the area underneath it? Rectangles have easy areas, but curves don't fit neatly into rectangles.
+
+In the late 1600s, Isaac Newton and Gottfried Wilhelm Leibniz independently realized that these two problems are inverses of each other. Newton was trying to describe planetary motion and falling objects. He needed a way to talk about instantaneous velocity (how fast something is moving right now, not just on average). Leibniz was more interested in the logical structure and notation. He invented the dy/dx notation and the integral sign that we still use today.
+
+Their insight was that differentiation (finding slopes) and integration (finding areas) undo each other, the same way addition undoes subtraction. This single idea unified centuries of scattered results and launched modern science and engineering.
+
+## Why We're Learning It
+
+Calculus is the natural next step after Pre-Calculus. You've already learned about functions, limits, and continuity. Calculus takes those tools and puts them to work on the real question: how do things change?
+
+Without calculus, you can say "the car traveled 120 miles in 2 hours, so it averaged 60 mph." With calculus, you can say "at exactly 1 hour and 23 minutes, the car was going 67.4 mph and accelerating at 2.1 mph per second." That's a fundamentally different kind of answer, and it requires fundamentally different math.
+
+## Why It Matters
+
+Calculus isn't just an academic exercise. It's the language that science and engineering are written in.
+
+- Physics uses derivatives to describe velocity, acceleration, force, and energy. Newton's second law (F = ma) is a statement about derivatives.
+- Engineering uses integrals to calculate stress, fluid flow, heat transfer, and signal processing. Every bridge, airplane, and circuit board was designed with calculus.
+- Economics uses derivatives for marginal cost and revenue (how much does one more unit cost to produce?) and integrals for total surplus and consumer benefit.
+- Biology uses differential equations (which build on calculus) to model population growth, disease spread, and drug metabolism.
+- Computer science uses calculus in machine learning (gradient descent is literally "follow the derivative downhill"), computer graphics, and optimization algorithms.
+- Data science uses calculus to understand how models change with their parameters, which is how training works.
+
+import Calc1TopicMap from "../../../components/Calc1TopicMap.astro";
+
+## What You'll Cover
+
+**Limits and Continuity Review** warms you up with the foundation from Pre-Calculus. You'll revisit evaluation techniques, one-sided limits, and the three conditions for continuity.
+
+**The Derivative** is the central concept of the course. You'll learn what it means geometrically (slope of the tangent line) and physically (instantaneous rate of change), then master the rules that make computing derivatives fast: power rule, product rule, quotient rule, chain rule, and the derivatives of trig, exponential, and logarithmic functions.
+
+**Applications of Derivatives** is where it gets real. Related rates (how fast is the shadow growing?), implicit differentiation (curves that aren't functions), optimization (what dimensions maximize volume?), the Mean Value Theorem, and curve sketching using first and second derivatives.
+
+**The Integral** introduces the reverse of differentiation. You'll learn antiderivatives, definite integrals, the Fundamental Theorem of Calculus (which ties everything together), and integration by substitution.
+
+**Applications of Integration** puts integrals to work: area under curves, average value of a function, and net change problems.
+
+## Prerequisites
+
+You should be comfortable with:
+
+- Functions: composition, inverses, piecewise, domain and range
+- Trigonometry: unit circle values, identities, graphs of sin/cos/tan
+- Limits: evaluation by substitution and factoring, one-sided limits, continuity
+- Algebra: factoring, rational expressions, exponent and logarithm rules
+
+If any of those feel shaky, review the relevant Pre-Calculus lessons first. Calculus builds directly on all of them, and gaps in prerequisites are the number one reason students struggle.
+
+## How to Approach This Course
+
+Calculus has a reputation for being hard. Some of that reputation is earned, but a lot of it comes from students trying to memorize formulas without understanding what they mean. Here's the thing: if you understand what a derivative actually is (the slope of the tangent line, the instantaneous rate of change), the rules and applications follow naturally.
+
+Work problems by hand. Draw pictures. When a formula feels abstract, plug in numbers and see what happens. Calculus is deeply visual, and sketching graphs will help more than you'd expect. When you get stuck, go back to the definition and ask "what is this actually measuring?"
+
+The students who do well in calculus aren't the ones who memorize the most formulas. They're the ones who understand the ideas and can figure out the formulas when they need them.
+
+:::note[You've Got This]
+You've come from arithmetic all the way through Pre-Calculus. That's years of building, layer by layer, and every layer matters here. Calculus can feel like a big jump, but you have all the tools. Take it one concept at a time. Many students find that once the initial "aha" moments click, calculus becomes surprisingly intuitive. The derivative is just a slope. The integral is just an area. Everything else is details.
+:::

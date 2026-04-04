@@ -1,0 +1,125 @@
+---
+/**
+ * SecantToTangent — shows f(x) = x^2 with a secant line through
+ * (a, f(a)) and (a+h, f(a+h)), plus the tangent line at x=a.
+ * Larger, more legible version with labels in clear space.
+ * a = 1.5, so the lower part of the curve has more room for labels.
+ */
+const w = 500;
+const h = 360;
+const pad = 55;
+const gw = w - 2 * pad;
+const gh = h - 2 * pad;
+const xMin = 0, xMax = 5, yMin = 0, yMax = 18;
+const sx = (x: number) => pad + ((x - xMin) / (xMax - xMin)) * gw;
+const sy = (y: number) => pad + ((yMax - y) / (yMax - yMin)) * gh;
+
+const f = (x: number) => x * x;
+const a = 1.5;
+const aH = 3.5; // a + h where h = 2
+const fa = f(a);     // 2.25
+const faH = f(aH);   // 12.25
+
+// Curve points
+const pts: string[] = [];
+for (let i = 0; i <= 80; i++) {
+  const x = xMin + i * (xMax - xMin) / 80;
+  const y = f(x);
+  if (y <= yMax) pts.push(`${sx(x)},${sy(y)}`);
+}
+
+// Tangent line at x=1.5: slope = 2*1.5 = 3, through (1.5, 2.25)
+const tanSlope = 2 * a; // 3
+const tanX1 = 0.3, tanX2 = 4.2;
+const tanY1 = fa + tanSlope * (tanX1 - a);
+const tanY2 = fa + tanSlope * (tanX2 - a);
+
+// Secant line through (1.5, 2.25) and (3.5, 12.25): slope = 5
+const secSlope = (faH - fa) / (aH - a); // 5
+const secX1 = 0.5, secX2 = 4.5;
+const secY1 = fa + secSlope * (secX1 - a);
+const secY2 = fa + secSlope * (secX2 - a);
+---
+
+<figure class="stt" role="img" aria-label="Secant line approaching the tangent line as h shrinks to 0">
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    {/* Grid */}
+    {[1,2,3,4].map(v => (
+      <line x1={sx(v)} y1={sy(yMin)} x2={sx(v)} y2={sy(yMax)} class="stt-grid" stroke-width="0.5" />
+    ))}
+    {[4,8,12,16].map(v => (
+      <line x1={sx(xMin)} y1={sy(v)} x2={sx(xMax)} y2={sy(v)} class="stt-grid" stroke-width="0.5" />
+    ))}
+    <line x1={sx(xMin)} y1={sy(0)} x2={sx(xMax)} y2={sy(0)} class="stt-axis" stroke-width="1.5" />
+    <line x1={sx(0)} y1={sy(yMin)} x2={sx(0)} y2={sy(yMax)} class="stt-axis" stroke-width="1.2" />
+
+    {/* Tangent line (green, solid) */}
+    <line x1={sx(tanX1)} y1={sy(tanY1)} x2={sx(tanX2)} y2={sy(tanY2)}
+          class="stt-tangent" stroke-width="2.5" />
+
+    {/* Secant line (purple, dashed) */}
+    <line x1={sx(secX1)} y1={sy(secY1)} x2={sx(secX2)} y2={sy(secY2)}
+          class="stt-secant" stroke-width="2.5" stroke-dasharray="8,6" />
+
+    {/* Curve (on top of lines) */}
+    <polyline points={pts.join(' ')} fill="none" class="stt-curve" stroke-width="3" />
+
+    {/* h bracket: horizontal dashed from a to a+h at y = fa */}
+    <line x1={sx(a)} y1={sy(fa) + 3} x2={sx(aH)} y2={sy(fa) + 3}
+          class="stt-bracket" stroke-width="1.5" stroke-dasharray="4,3" />
+
+    {/* Points */}
+    <circle cx={sx(a)} cy={sy(fa)} r="7" class="stt-dot" />
+    <circle cx={sx(aH)} cy={sy(faH)} r="7" class="stt-dot-sec" />
+
+    {/* Tick labels */}
+    <text class="stt-tick" x={sx(a)} y={sy(0) + 18} font-size="12" text-anchor="middle">a</text>
+    <text class="stt-tick" x={sx(aH)} y={sy(0) + 18} font-size="12" text-anchor="middle">a + h</text>
+  </svg>
+</figure>
+
+<div class="stt-legend">
+  <span class="stt-leg-item"><span class="stt-leg-swatch stt-leg-curve"></span> f(x) = x²</span>
+  <span class="stt-leg-item"><span class="stt-leg-swatch stt-leg-tan"></span> tangent (slope = f'(a))</span>
+  <span class="stt-leg-item"><span class="stt-leg-swatch stt-leg-sec"></span> secant line</span>
+  <span class="stt-leg-item"><span class="stt-leg-swatch stt-leg-h"></span> h</span>
+</div>
+
+<style>
+  .stt { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .stt svg { max-width:100%; height:auto; }
+  .stt-grid { stroke:#333; }
+  .stt-axis { stroke:#666; }
+  .stt-curve { stroke:#58a6ff; }
+  .stt-tangent { stroke:#7ee787; }
+  .stt-secant { stroke:#d2a8ff; }
+  .stt-bracket { stroke:#f0883e; }
+  .stt-dot { fill:#f0883e; }
+  .stt-dot-sec { fill:#d2a8ff; }
+  .stt-tick { fill:#888; font-family:'Libre Baskerville',Georgia,serif; font-style:italic; }
+
+  .stt-legend {
+    display:flex; gap:1.2rem; flex-wrap:wrap; justify-content:center;
+    margin-top:0.5rem; font-family:'Libre Baskerville',Georgia,serif; font-size:0.85rem;
+  }
+  .stt-leg-item { display:flex; align-items:center; gap:0.35rem; }
+  .stt-leg-swatch { display:inline-block; width:18px; height:4px; border-radius:2px; }
+  .stt-leg-curve { background:#58a6ff; }
+  .stt-leg-tan { background:#7ee787; }
+  .stt-leg-sec { background:#d2a8ff; }
+  .stt-leg-h { background:#f0883e; border-style:dashed; }
+
+  :global([data-theme="light"]) .stt-grid { stroke:#ddd; }
+  :global([data-theme="light"]) .stt-axis { stroke:#999; }
+  :global([data-theme="light"]) .stt-curve { stroke:#0550ae; }
+  :global([data-theme="light"]) .stt-tangent { stroke:#116329; }
+  :global([data-theme="light"]) .stt-secant { stroke:#6639ba; }
+  :global([data-theme="light"]) .stt-bracket { stroke:#b35900; }
+  :global([data-theme="light"]) .stt-dot { fill:#b35900; }
+  :global([data-theme="light"]) .stt-dot-sec { fill:#6639ba; }
+  :global([data-theme="light"]) .stt-tick { fill:#666; }
+  :global([data-theme="light"]) .stt-leg-curve { background:#0550ae; }
+  :global([data-theme="light"]) .stt-leg-tan { background:#116329; }
+  :global([data-theme="light"]) .stt-leg-sec { background:#6639ba; }
+  :global([data-theme="light"]) .stt-leg-h { background:#b35900; }
+</style>

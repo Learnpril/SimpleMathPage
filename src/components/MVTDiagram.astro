@@ -1,0 +1,115 @@
+---
+/**
+ * MVTDiagram — shows f(x) = x^2 on [1, 3] with:
+ * - The curve
+ * - Secant line from (1,1) to (3,9) (slope = 4, dashed purple)
+ * - Tangent line at c=2 (slope = 4, solid green, parallel to secant)
+ * - Dots at endpoints and at c
+ * Demonstrates: tangent at c is parallel to the secant.
+ */
+const w = 440;
+const h = 320;
+const pad = 55;
+const gw = w - 2 * pad;
+const gh = h - 2 * pad;
+const xMin = 0, xMax = 4, yMin = 0, yMax = 10;
+const sx = (x: number) => pad + ((x - xMin) / (xMax - xMin)) * gw;
+const sy = (y: number) => pad + ((yMax - y) / (yMax - yMin)) * gh;
+
+const f = (x: number) => x * x;
+const pts: string[] = [];
+for (let i = 0; i <= 60; i++) {
+  const x = xMin + i * (xMax - xMin) / 60;
+  const y = f(x);
+  if (y <= yMax) pts.push(`${sx(x)},${sy(y)}`);
+}
+
+// Secant from (1,1) to (3,9), slope = 4
+const secSlope = 4;
+const secX1 = 0.5, secX2 = 3.5;
+const secY1 = 1 + secSlope * (secX1 - 1);
+const secY2 = 1 + secSlope * (secX2 - 1);
+
+// Tangent at c=2, f(2)=4, slope=4 (same as secant)
+const c = 2, fc = 4;
+const tanX1 = 0.5, tanX2 = 3.5;
+const tanY1 = fc + secSlope * (tanX1 - c);
+const tanY2 = fc + secSlope * (tanX2 - c);
+---
+
+<figure class="mvt" role="img" aria-label="Mean Value Theorem: tangent at c is parallel to the secant from a to b">
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    {/* Grid */}
+    {[1,2,3].map(v => (
+      <line x1={sx(v)} y1={sy(yMin)} x2={sx(v)} y2={sy(yMax)} class="mvt-grid" stroke-width="0.5" />
+    ))}
+    {[2,4,6,8].map(v => (
+      <line x1={sx(xMin)} y1={sy(v)} x2={sx(xMax)} y2={sy(v)} class="mvt-grid" stroke-width="0.5" />
+    ))}
+    <line x1={sx(xMin)} y1={sy(0)} x2={sx(xMax)} y2={sy(0)} class="mvt-axis" stroke-width="1.5" />
+    <line x1={sx(0)} y1={sy(yMin)} x2={sx(0)} y2={sy(yMax)} class="mvt-axis" stroke-width="1.2" />
+
+    {/* Secant line (dashed purple) */}
+    <line x1={sx(secX1)} y1={sy(secY1)} x2={sx(secX2)} y2={sy(secY2)}
+          class="mvt-secant" stroke-width="2" stroke-dasharray="7,5" />
+
+    {/* Tangent line at c (solid green, parallel) */}
+    <line x1={sx(tanX1)} y1={sy(tanY1)} x2={sx(tanX2)} y2={sy(tanY2)}
+          class="mvt-tangent" stroke-width="2.5" />
+
+    {/* Curve */}
+    <polyline points={pts.join(' ')} fill="none" class="mvt-curve" stroke-width="3" />
+
+    {/* Endpoint dots */}
+    <circle cx={sx(1)} cy={sy(1)} r="6" class="mvt-dot-end" />
+    <circle cx={sx(3)} cy={sy(9)} r="6" class="mvt-dot-end" />
+    {/* c dot */}
+    <circle cx={sx(c)} cy={sy(fc)} r="7" class="mvt-dot-c" />
+
+    {/* Tick labels */}
+    <text class="mvt-tick" x={sx(1)} y={sy(0) + 30} font-size="11" text-anchor="middle">a = 1</text>
+    <text class="mvt-tick" x={sx(3)} y={sy(0) + 16} font-size="11" text-anchor="middle">b = 3</text>
+    <text class="mvt-tick" x={sx(2)} y={sy(0) + 16} font-size="11" text-anchor="middle">c = 2</text>
+  </svg>
+  <div class="mvt-legend">
+    <span class="mvt-leg-item"><span class="mvt-swatch mvt-sw-curve"></span> f(x) = x²</span>
+    <span class="mvt-leg-item"><span class="mvt-swatch mvt-sw-sec"></span> secant (avg rate = 4)</span>
+    <span class="mvt-leg-item"><span class="mvt-swatch mvt-sw-tan"></span> tangent at c (slope = 4)</span>
+    <span class="mvt-leg-item mvt-leg-note">parallel lines = same slope</span>
+  </div>
+</figure>
+
+<style>
+  .mvt { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .mvt svg { max-width:100%; height:auto; }
+  .mvt-grid { stroke:#333; }
+  .mvt-axis { stroke:#666; }
+  .mvt-curve { stroke:#58a6ff; }
+  .mvt-secant { stroke:#d2a8ff; }
+  .mvt-tangent { stroke:#7ee787; }
+  .mvt-dot-end { fill:#888; }
+  .mvt-dot-c { fill:#f0883e; }
+  .mvt-tick { fill:#888; font-family:'Libre Baskerville',Georgia,serif; }
+  .mvt-legend {
+    display:flex; gap:1rem; flex-wrap:wrap; justify-content:center;
+    margin-top:0.5rem; font-family:'Libre Baskerville',Georgia,serif; font-size:0.82rem;
+  }
+  .mvt-leg-item { display:flex; align-items:center; gap:0.35rem; }
+  .mvt-swatch { display:inline-block; width:18px; height:4px; border-radius:2px; }
+  .mvt-sw-curve { background:#58a6ff; }
+  .mvt-sw-sec { background:#d2a8ff; }
+  .mvt-sw-tan { background:#7ee787; }
+  .mvt-leg-note { color:#f0883e; font-style:italic; }
+
+  :global([data-theme="light"]) .mvt-grid { stroke:#ddd; }
+  :global([data-theme="light"]) .mvt-axis { stroke:#999; }
+  :global([data-theme="light"]) .mvt-curve { stroke:#0550ae; }
+  :global([data-theme="light"]) .mvt-secant { stroke:#6639ba; }
+  :global([data-theme="light"]) .mvt-tangent { stroke:#116329; }
+  :global([data-theme="light"]) .mvt-dot-c { fill:#b35900; }
+  :global([data-theme="light"]) .mvt-tick { fill:#666; }
+  :global([data-theme="light"]) .mvt-sw-curve { background:#0550ae; }
+  :global([data-theme="light"]) .mvt-sw-sec { background:#6639ba; }
+  :global([data-theme="light"]) .mvt-sw-tan { background:#116329; }
+  :global([data-theme="light"]) .mvt-leg-note { color:#b35900; }
+</style>

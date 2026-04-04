@@ -1,0 +1,172 @@
+---
+title: Product and Quotient Rules
+description: Differentiate products and quotients of functions
+sidebar:
+  order: 5
+---
+
+## What You'll Learn
+
+In this lesson you'll learn how to differentiate functions that are multiplied together (product rule) and functions that are divided (quotient rule). The basic rules from the last lesson only handle sums and individual terms. These two rules handle everything else.
+
+## The Concept
+
+### Product Rule
+
+When two functions are multiplied, you can't just differentiate each one separately and multiply the results. That doesn't work. Instead, use the product rule.
+
+If f(x) = u(x) times v(x), then:
+
+$$
+f'(x) = u'(x) \cdot v(x) + u(x) \cdot v'(x)
+$$
+
+In plain English: take the derivative of the first and multiply by the second (leave it alone), then add the first (leave it alone) times the derivative of the second.
+
+A quick way to remember: "derivative of the first times the second, plus the first times derivative of the second."
+
+### Quotient Rule
+
+When one function is divided by another:
+
+If f(x) = u(x) / v(x), then:
+
+$$
+f'(x) = \frac{u'(x) \cdot v(x) - u(x) \cdot v'(x)}{[v(x)]^2}
+$$
+
+The classic mnemonic: "low d-high minus high d-low, over the square of what's below." Here "low" is the denominator v(x), "high" is the numerator u(x), and "d" means "derivative of."
+
+The minus sign is the key difference from the product rule. Get it backwards and the whole answer flips.
+
+## Worked Example
+
+**Example 1: Product Rule**
+
+Find the derivative of f(x) = (3x² + 1)(x³ - 5).
+
+Let u = 3x² + 1, so u' = 6x.
+Let v = x³ - 5, so v' = 3x².
+
+Apply the product rule:
+
+$$
+f'(x) = (6x)(x^3 - 5) + (3x^2 + 1)(3x^2)
+$$
+
+Expand each piece:
+
+$$
+= 6x^4 - 30x + 9x^4 + 3x^2
+$$
+
+Combine like terms:
+
+$$
+= 15x^4 + 3x^2 - 30x
+$$
+
+**Example 2: Quotient Rule**
+
+Find the derivative of f(x) = (5x + 2) / (x² + 1).
+
+Let u = 5x + 2, so u' = 5.
+Let v = x² + 1, so v' = 2x.
+
+Apply the quotient rule:
+
+$$
+f'(x) = \frac{5(x^2 + 1) - (5x + 2)(2x)}{(x^2 + 1)^2}
+$$
+
+Expand the numerator:
+
+$$
+= \frac{5x^2 + 5 - 10x^2 - 4x}{(x^2 + 1)^2} = \frac{-5x^2 - 4x + 5}{(x^2 + 1)^2}
+$$
+
+**Example 3: When to use which**
+
+Find the derivative of f(x) = x² sin(x).
+
+This is a product of x² and sin(x). Let u = x², u' = 2x. Let v = sin(x), v' = cos(x).
+
+$$
+f'(x) = 2x \sin(x) + x^2 \cos(x)
+$$
+
+No need to simplify further. The product rule gives you the answer in one step once you know the derivatives of the pieces.
+
+## Real-World Application
+
+These rules show up whenever two changing quantities interact:
+
+- Physics: power = force times velocity. If both force and velocity are changing, the product rule gives the rate of change of power.
+- Economics: revenue = price times quantity. If you're adjusting price while demand shifts, the product rule captures the combined effect.
+- Biology: drug effectiveness might be modeled as concentration divided by time, requiring the quotient rule to find the rate of change.
+- Engineering: efficiency ratios (output/input) change over time, and the quotient rule tells you how fast.
+
+:::note[You've Got This]
+The product and quotient rules look like a lot of algebra, and honestly, they are. But the pattern is always the same. For products: derivative of first times second, plus first times derivative of second. For quotients: low d-high minus high d-low, over low squared. Practice the pattern a few times and it becomes automatic. The algebra cleanup at the end is just combining like terms, which you've been doing since Pre-Algebra.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="calculus1-product-quotient-rules"
+  questions={[
+    {
+      id: "q1",
+      text: "The Product Rule states that if f(x) = u(x) v(x), then f'(x) =",
+      options: ["u'v - uv'", "u'v + uv'", "u' + v'", "u' / v'"],
+      correctIndex: 1,
+      explanation:
+        "Derivative of first times second, plus first times derivative of second.",
+    },
+    {
+      id: "q2",
+      text: "The Quotient Rule mnemonic is:",
+      options: [
+        "High d-low minus low d-high",
+        "Just use the power rule",
+        "Low d-high minus high d-low, over the square of what's below",
+        "Top times bottom minus bottom times top",
+      ],
+      correctIndex: 2,
+      explanation: "This mnemonic keeps the sign and denominator correct.",
+    },
+    {
+      id: "q3",
+      text: "The derivative of (x²)(cos x) using the product rule is:",
+      options: [
+        "2x cos x",
+        "-x² sin x",
+        "2x cos x + x² sin x",
+        "2x cos x - x² sin x",
+      ],
+      correctIndex: 3,
+      explanation: "u' v + u v' = 2x cos x + x²(-sin x) = 2x cos x - x² sin x.",
+    },
+    {
+      id: "q4",
+      text: "When should you use the Quotient Rule?",
+      options: [
+        "When two functions are added",
+        "Only for polynomials",
+        "When one function is divided by another",
+        "Only for constants",
+      ],
+      correctIndex: 2,
+      explanation: "The quotient rule handles f(x) = u(x)/v(x).",
+    },
+    {
+      id: "q5",
+      text: "In the quotient rule, the denominator of the result is:",
+      options: ["v(x)", "u(x)", "v(x) + u(x)", "[v(x)]²"],
+      correctIndex: 3,
+      explanation: "The square of the original denominator.",
+    },
+  ]}
+/>

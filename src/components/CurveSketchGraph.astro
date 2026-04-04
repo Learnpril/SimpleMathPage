@@ -1,0 +1,84 @@
+---
+/**
+ * CurveSketchGraph — f(x) = x³ - 3x² - 9x + 5 with labeled features:
+ * local max at (-1, 10), local min at (3, -22), inflection at (1, -6).
+ * Shows the full curve sketching result.
+ */
+const w = 460;
+const h = 360;
+const pad = 55;
+const gw = w - 2 * pad;
+const gh = h - 2 * pad;
+const xMin = -3, xMax = 5, yMin = -28, yMax = 16;
+const sx = (x: number) => pad + ((x - xMin) / (xMax - xMin)) * gw;
+const sy = (y: number) => pad + ((yMax - y) / (yMax - yMin)) * gh;
+
+const f = (x: number) => x * x * x - 3 * x * x - 9 * x + 5;
+const pts: string[] = [];
+for (let i = 0; i <= 100; i++) {
+  const x = xMin + i * (xMax - xMin) / 100;
+  const y = f(x);
+  if (y >= yMin && y <= yMax) pts.push(`${sx(x)},${sy(y)}`);
+}
+---
+
+<figure class="csg" role="img" aria-label="Curve sketch of x cubed minus 3x squared minus 9x plus 5 with critical points and inflection point labeled">
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    {/* Grid */}
+    {[-2,-1,0,1,2,3,4].map(v => (
+      <line x1={sx(v)} y1={sy(yMin)} x2={sx(v)} y2={sy(yMax)} class="csg-grid" stroke-width="0.5" />
+    ))}
+    {[-20,-10,0,10].map(v => (
+      <line x1={sx(xMin)} y1={sy(v)} x2={sx(xMax)} y2={sy(v)} class="csg-grid" stroke-width="0.5" />
+    ))}
+    <line x1={sx(xMin)} y1={sy(0)} x2={sx(xMax)} y2={sy(0)} class="csg-axis" stroke-width="1.5" />
+    <line x1={sx(0)} y1={sy(yMin)} x2={sx(0)} y2={sy(yMax)} class="csg-axis" stroke-width="1.2" />
+
+    {/* Curve */}
+    <polyline points={pts.join(' ')} fill="none" class="csg-curve" stroke-width="3" />
+
+    {/* Key points */}
+    <circle cx={sx(-1)} cy={sy(10)} r="7" class="csg-dot-max" />
+    <circle cx={sx(3)} cy={sy(-22)} r="7" class="csg-dot-min" />
+    <circle cx={sx(1)} cy={sy(-6)} r="6" class="csg-dot-inf" />
+  </svg>
+  <div class="csg-legend">
+    <span class="csg-leg-item"><span class="csg-swatch csg-sw-curve"></span> f(x) = x³ - 3x² - 9x + 5</span>
+    <span class="csg-leg-item"><span class="csg-dot-swatch csg-sw-max"></span> local max (-1, 10)</span>
+    <span class="csg-leg-item"><span class="csg-dot-swatch csg-sw-min"></span> local min (3, -22)</span>
+    <span class="csg-leg-item"><span class="csg-dot-swatch csg-sw-inf"></span> inflection (1, -6)</span>
+  </div>
+</figure>
+
+<style>
+  .csg { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .csg svg { max-width:100%; height:auto; }
+  .csg-grid { stroke:#333; }
+  .csg-axis { stroke:#666; }
+  .csg-curve { stroke:#58a6ff; }
+  .csg-dot-max { fill:#7ee787; }
+  .csg-dot-min { fill:#f47067; }
+  .csg-dot-inf { fill:#d2a8ff; }
+  .csg-legend {
+    display:flex; gap:1rem; flex-wrap:wrap; justify-content:center;
+    margin-top:0.5rem; font-family:'Libre Baskerville',Georgia,serif; font-size:0.82rem;
+  }
+  .csg-leg-item { display:flex; align-items:center; gap:0.35rem; }
+  .csg-swatch { display:inline-block; width:18px; height:4px; border-radius:2px; }
+  .csg-dot-swatch { display:inline-block; width:12px; height:12px; border-radius:50%; }
+  .csg-sw-curve { background:#58a6ff; }
+  .csg-sw-max { background:#7ee787; }
+  .csg-sw-min { background:#f47067; }
+  .csg-sw-inf { background:#d2a8ff; }
+
+  :global([data-theme="light"]) .csg-grid { stroke:#ddd; }
+  :global([data-theme="light"]) .csg-axis { stroke:#999; }
+  :global([data-theme="light"]) .csg-curve { stroke:#0550ae; }
+  :global([data-theme="light"]) .csg-dot-max { fill:#116329; }
+  :global([data-theme="light"]) .csg-dot-min { fill:#cf222e; }
+  :global([data-theme="light"]) .csg-dot-inf { fill:#6639ba; }
+  :global([data-theme="light"]) .csg-sw-curve { background:#0550ae; }
+  :global([data-theme="light"]) .csg-sw-max { background:#116329; }
+  :global([data-theme="light"]) .csg-sw-min { background:#cf222e; }
+  :global([data-theme="light"]) .csg-sw-inf { background:#6639ba; }
+</style>

@@ -46,10 +46,10 @@ export default defineConfig({
           label: "Pre-Calculus",
           autogenerate: { directory: "pre-calculus" },
         },
-        // {
-        //   label: "Calculus 1",
-        //   autogenerate: { directory: "calculus-1" },
-        // },
+        {
+          label: "Calculus 1",
+          autogenerate: { directory: "calculus-1" },
+        },
         // {
         //   label: "Calculus 2",
         //   autogenerate: { directory: "calculus-2" },

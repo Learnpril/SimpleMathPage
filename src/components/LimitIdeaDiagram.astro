@@ -1,0 +1,121 @@
+---
+/**
+ * LimitIdeaDiagram — shows the core idea of a limit:
+ * A curve with arrows from left and right converging toward
+ * the limit value L at x = a. Dashed guides show the approach.
+ * The function has a hole at the point to emphasize "near, not at."
+ */
+const w = 340;
+const h = 230;
+const pad = 44;
+const gw = w - 2 * pad;
+const gh = h - 2 * pad;
+const xMin = 0, xMax = 6, yMin = 0, yMax = 5;
+const sx = (x: number) => pad + ((x - xMin) / (xMax - xMin)) * gw;
+const sy = (y: number) => pad + ((yMax - y) / (yMax - yMin)) * gh;
+
+// Curve: y = 0.15(x-3)² + 3  (parabola with vertex near (3,3))
+const f = (x: number) => 0.15 * (x - 3) * (x - 3) + 3;
+const a = 3;
+const L = f(a); // = 3
+
+// Build curve points with a small gap at x=a
+const leftPts: string[] = [];
+const rightPts: string[] = [];
+for (let i = 0; i <= 60; i++) {
+  const x = xMin + i * (xMax - xMin) / 60;
+  const y = f(x);
+  if (y > yMax) continue;
+  if (x < a - 0.12) leftPts.push(`${sx(x)},${sy(y)}`);
+  if (x > a + 0.12) rightPts.push(`${sx(x)},${sy(y)}`);
+}
+
+// Arrow approach points (where the arrows sit on the curve)
+const arL = 1.4; // left arrow x
+const arR = 4.6; // right arrow x
+// Arrow tip directions (tangent-ish toward a)
+const arLtipX = sx(arL + 0.5);
+const arLtipY = sy(f(arL + 0.5));
+const arRtipX = sx(arR - 0.5);
+const arRtipY = sy(f(arR - 0.5));
+---
+
+<figure class="lid" role="img" aria-label="Diagram showing a limit: as x approaches a, f(x) approaches L">
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <marker id="lid-arrow-l" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+        <path d="M0,0 L8,3 L0,6" fill="none" class="lid-arrow-stroke" stroke-width="1.5" />
+      </marker>
+      <marker id="lid-arrow-r" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+        <path d="M0,0 L8,3 L0,6" fill="none" class="lid-arrow-stroke" stroke-width="1.5" />
+      </marker>
+    </defs>
+
+    {/* Grid */}
+    {[1,2,3,4,5].map(v => (
+      <line x1={sx(v)} y1={sy(yMin)} x2={sx(v)} y2={sy(yMax)} class="lid-grid" stroke-width="0.5" />
+    ))}
+    {[1,2,3,4].map(v => (
+      <line x1={sx(xMin)} y1={sy(v)} x2={sx(xMax)} y2={sy(v)} class="lid-grid" stroke-width="0.5" />
+    ))}
+    {/* Axes */}
+    <line x1={sx(xMin)} y1={sy(0)} x2={sx(xMax)} y2={sy(0)} class="lid-axis" stroke-width="1.5" />
+    <line x1={sx(0)} y1={sy(yMin)} x2={sx(0)} y2={sy(yMax)} class="lid-axis" stroke-width="1" />
+
+    {/* Dashed guide lines to (a, L) */}
+    <line x1={sx(a)} y1={sy(0)} x2={sx(a)} y2={sy(L)} class="lid-guide" stroke-width="1" stroke-dasharray="4,3" />
+    <line x1={sx(0)} y1={sy(L)} x2={sx(a)} y2={sy(L)} class="lid-guide" stroke-width="1" stroke-dasharray="4,3" />
+
+    {/* Curve — left side */}
+    <polyline points={leftPts.join(' ')} fill="none" class="lid-curve" stroke-width="2.5" />
+    {/* Curve — right side */}
+    <polyline points={rightPts.join(' ')} fill="none" class="lid-curve" stroke-width="2.5" />
+
+    {/* Approach arrows on the curve */}
+    <line x1={sx(arL)} y1={sy(f(arL))} x2={arLtipX} y2={arLtipY}
+          class="lid-approach" stroke-width="2" marker-end="url(#lid-arrow-l)" />
+    <line x1={sx(arR)} y1={sy(f(arR))} x2={arRtipX} y2={arRtipY}
+          class="lid-approach" stroke-width="2" marker-end="url(#lid-arrow-r)" />
+
+    {/* Hole at (a, L) */}
+    <circle cx={sx(a)} cy={sy(L)} r="5.5" fill="none" class="lid-hole" stroke-width="2" />
+
+    {/* Tick labels */}
+    <text class="lid-tick" x={sx(a)} y={sy(0) + 15} font-size="10" text-anchor="middle">a</text>
+    <text class="lid-tick" x={sx(0) - 6} y={sy(L) + 4} font-size="10" text-anchor="end">L</text>
+
+    {/* Labels in clear space */}
+    <text class="lid-lbl-curve" x={sx(5.2)} y={sy(4.6)} font-size="9">f(x)</text>
+    <text class="lid-lbl-green" x={sx(0.2)} y={sy(4.6)} font-size="9">limit = L</text>
+    <text class="lid-lbl-purple" x={sx(0.8)} y={sy(0.6)} font-size="8">from the left</text>
+    <text class="lid-lbl-purple" x={sx(3.8)} y={sy(0.6)} font-size="8">from the right</text>
+  </svg>
+</figure>
+
+<style>
+  .lid { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .lid svg { max-width:100%; height:auto; }
+  .lid-grid { stroke:#333; }
+  .lid-axis { stroke:#666; }
+  .lid-curve { stroke:#58a6ff; }
+  .lid-hole { stroke:#f0883e; }
+  .lid-guide { stroke:#7ee787; }
+  .lid-approach { stroke:#d2a8ff; }
+  .lid-arrow-stroke { stroke:#d2a8ff; }
+  .lid-tick { fill:#888; font-family:'Libre Baskerville',Georgia,serif; font-style:italic; }
+  .lid-lbl-curve { fill:#58a6ff; font-family:'Libre Baskerville',Georgia,serif; }
+  .lid-lbl-green { fill:#7ee787; font-family:'Libre Baskerville',Georgia,serif; font-weight:bold; }
+  .lid-lbl-purple { fill:#d2a8ff; font-family:'Libre Baskerville',Georgia,serif; font-style:italic; }
+
+  :global([data-theme="light"]) .lid-grid { stroke:#ddd; }
+  :global([data-theme="light"]) .lid-axis { stroke:#999; }
+  :global([data-theme="light"]) .lid-curve { stroke:#0550ae; }
+  :global([data-theme="light"]) .lid-hole { stroke:#b35900; }
+  :global([data-theme="light"]) .lid-guide { stroke:#116329; }
+  :global([data-theme="light"]) .lid-approach { stroke:#6639ba; }
+  :global([data-theme="light"]) .lid-arrow-stroke { stroke:#6639ba; }
+  :global([data-theme="light"]) .lid-tick { fill:#666; }
+  :global([data-theme="light"]) .lid-lbl-curve { fill:#0550ae; }
+  :global([data-theme="light"]) .lid-lbl-green { fill:#116329; }
+  :global([data-theme="light"]) .lid-lbl-purple { fill:#6639ba; }
+</style>

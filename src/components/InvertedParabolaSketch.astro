@@ -1,0 +1,70 @@
+---
+/**
+ * InvertedParabolaSketch — shows a concave-down curve with peak at x=2.
+ * f' > 0 left of 2, f' < 0 right of 2, f'' < 0 everywhere.
+ * Simple visual for "sketch from derivative info" example.
+ */
+const w = 380;
+const h = 240;
+const pad = 45;
+const gw = w - 2 * pad;
+const gh = h - 2 * pad;
+const xMin = -1, xMax = 5, yMin = -2, yMax = 6;
+const sx = (x: number) => pad + ((x - xMin) / (xMax - xMin)) * gw;
+const sy = (y: number) => pad + ((yMax - y) / (yMax - yMin)) * gh;
+
+// f(x) = -(x-2)^2 + 5
+const f = (x: number) => -(x - 2) * (x - 2) + 5;
+const pts: string[] = [];
+for (let i = 0; i <= 80; i++) {
+  const x = xMin + i * (xMax - xMin) / 80;
+  const y = f(x);
+  if (y >= yMin && y <= yMax) pts.push(`${sx(x)},${sy(y)}`);
+}
+---
+
+<figure class="ips" role="img" aria-label="Inverted parabola with peak at x equals 2, concave down everywhere">
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    {[0,1,2,3,4].map(v => (
+      <line x1={sx(v)} y1={sy(yMin)} x2={sx(v)} y2={sy(yMax)} class="ips-grid" stroke-width="0.5" />
+    ))}
+    {[0,2,4].map(v => (
+      <line x1={sx(xMin)} y1={sy(v)} x2={sx(xMax)} y2={sy(v)} class="ips-grid" stroke-width="0.5" />
+    ))}
+    <line x1={sx(xMin)} y1={sy(0)} x2={sx(xMax)} y2={sy(0)} class="ips-axis" stroke-width="1.5" />
+    <line x1={sx(0)} y1={sy(yMin)} x2={sx(0)} y2={sy(yMax)} class="ips-axis" stroke-width="1.2" />
+    <polyline points={pts.join(' ')} fill="none" class="ips-curve" stroke-width="3" />
+    <circle cx={sx(2)} cy={sy(5)} r="7" class="ips-dot" />
+  </svg>
+  <div class="ips-legend">
+    <span class="ips-leg-item"><span class="ips-swatch ips-sw-curve"></span> concave down everywhere</span>
+    <span class="ips-leg-item"><span class="ips-dot-sw ips-sw-dot"></span> local max at x = 2</span>
+    <span class="ips-leg-item ips-leg-note">f' + then f' −, f'' always negative</span>
+  </div>
+</figure>
+
+<style>
+  .ips { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .ips svg { max-width:100%; height:auto; }
+  .ips-grid { stroke:#333; }
+  .ips-axis { stroke:#666; }
+  .ips-curve { stroke:#58a6ff; }
+  .ips-dot { fill:#7ee787; }
+  .ips-legend {
+    display:flex; gap:1rem; flex-wrap:wrap; justify-content:center;
+    margin-top:0.5rem; font-family:'Libre Baskerville',Georgia,serif; font-size:0.82rem;
+  }
+  .ips-leg-item { display:flex; align-items:center; gap:0.35rem; }
+  .ips-swatch { display:inline-block; width:18px; height:4px; border-radius:2px; }
+  .ips-dot-sw { display:inline-block; width:12px; height:12px; border-radius:50%; }
+  .ips-sw-curve { background:#58a6ff; }
+  .ips-sw-dot { background:#7ee787; }
+  .ips-leg-note { color:#d2a8ff; font-style:italic; }
+  :global([data-theme="light"]) .ips-grid { stroke:#ddd; }
+  :global([data-theme="light"]) .ips-axis { stroke:#999; }
+  :global([data-theme="light"]) .ips-curve { stroke:#0550ae; }
+  :global([data-theme="light"]) .ips-dot { fill:#116329; }
+  :global([data-theme="light"]) .ips-sw-curve { background:#0550ae; }
+  :global([data-theme="light"]) .ips-sw-dot { background:#116329; }
+  :global([data-theme="light"]) .ips-leg-note { color:#6639ba; }
+</style>

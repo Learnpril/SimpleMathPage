@@ -1,0 +1,178 @@
+---
+title: Related Rates
+description: Solve problems where multiple quantities change together
+sidebar:
+  order: 9
+---
+
+## What You'll Learn
+
+In this lesson you'll learn how to solve related rates problems, where two or more quantities are changing over time and you need to find how fast one is changing based on information about the other.
+
+## The Concept
+
+Up to now, you've differentiated functions of x with respect to x. Related rates problems are different: everything is changing with respect to time t, and you use implicit differentiation to connect the rates.
+
+The setup is always the same:
+
+1. Draw a picture and label the changing quantities with variables (not numbers yet)
+2. Write an equation that relates those variables
+3. Differentiate both sides with respect to t (using the chain rule on every variable, since they all depend on t)
+4. Plug in the known values at the specific moment you care about
+5. Solve for the unknown rate
+
+The key insight: you differentiate first, then plug in numbers. Never plug in numbers before differentiating, because that would freeze the variables and kill the rates of change.
+
+## Worked Example
+
+**Example 1: Ladder sliding down a wall**
+
+A 13-foot ladder leans against a wall. The bottom is sliding away from the wall at 2 ft/s. How fast is the top sliding down when the bottom is 5 feet from the wall?
+
+import LadderDiagram from "../../../components/LadderDiagram.astro";
+
+<LadderDiagram />
+
+Let x = distance from wall to the base, y = height of the top on the wall. By the Pythagorean theorem:
+
+$$
+x^2 + y^2 = 13^2 = 169
+$$
+
+Differentiate both sides with respect to t:
+
+$$
+2x\frac{dx}{dt} + 2y\frac{dy}{dt} = 0
+$$
+
+At the moment we care about: x = 5, dx/dt = 2 ft/s. We need y. From the equation: 25 + y² = 169, so y² = 144, y = 12.
+
+Plug in:
+
+$$
+2(5)(2) + 2(12)\frac{dy}{dt} = 0
+$$
+
+$$
+20 + 24\frac{dy}{dt} = 0 \quad \Rightarrow \quad \frac{dy}{dt} = -\frac{20}{24} = -\frac{5}{6} \text{ ft/s}
+$$
+
+The negative sign means the top is sliding down (y is decreasing), which makes sense. The top is falling at 5/6 feet per second.
+
+**Example 2: Inflating balloon**
+
+Air is pumped into a spherical balloon at 4 cubic inches per second. How fast is the radius increasing when the radius is 3 inches?
+
+The volume of a sphere is V = (4/3) pi r³. Differentiate with respect to t:
+
+$$
+\frac{dV}{dt} = 4\pi r^2 \frac{dr}{dt}
+$$
+
+We know dV/dt = 4 and r = 3. Plug in:
+
+$$
+4 = 4\pi(9)\frac{dr}{dt} = 36\pi\frac{dr}{dt}
+$$
+
+$$
+\frac{dr}{dt} = \frac{4}{36\pi} = \frac{1}{9\pi} \approx 0.035 \text{ in/s}
+$$
+
+The radius is growing at about 0.035 inches per second. Notice how slowly the radius changes even though volume is increasing at 4 cubic inches per second. That's because volume scales with the cube of the radius.
+
+**Example 3: Expanding oil spill**
+
+Oil spills in a circular pattern. The radius is growing at 0.5 m/s. How fast is the area increasing when the radius is 10 meters?
+
+Area of a circle: A = pi r². Differentiate:
+
+$$
+\frac{dA}{dt} = 2\pi r \frac{dr}{dt}
+$$
+
+Plug in r = 10 and dr/dt = 0.5:
+
+$$
+\frac{dA}{dt} = 2\pi(10)(0.5) = 10\pi \approx 31.4 \text{ m}^2\text{/s}
+$$
+
+## Real-World Application
+
+Related rates connect changing quantities in the real world:
+
+- Physics: a shadow lengthens as a person walks away from a streetlight. The walking speed and shadow speed are related through similar triangles.
+- Medicine: as a drug dissolves in the bloodstream, the concentration and volume are related. Related rates tell doctors how fast the concentration is changing.
+- Engineering: as water drains from a conical tank, the depth and volume are related. The drain rate determines how fast the water level drops.
+- Navigation: two ships moving on perpendicular courses. Their individual speeds determine how fast the distance between them is changing.
+
+:::note[You've Got This]
+Related rates problems are word problems, and the hardest part is usually setting up the equation. Once you have the relationship between variables, the calculus part is just implicit differentiation (which you already know). Draw the picture, label everything, write the equation, differentiate, then plug in. Same five steps every time.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="calculus1-related-rates"
+  questions={[
+    {
+      id: "q1",
+      text: "In a related rates problem, you differentiate with respect to:",
+      options: ["x", "y", "t (time)", "The radius"],
+      correctIndex: 2,
+      explanation:
+        "Everything is changing over time, so t is the independent variable.",
+    },
+    {
+      id: "q2",
+      text: "Why should you differentiate before plugging in numbers?",
+      options: [
+        "It makes the algebra easier",
+        "Plugging in first freezes the variables and kills the rates",
+        "It doesn't matter which order",
+        "You should always plug in first",
+      ],
+      correctIndex: 1,
+      explanation:
+        "If you substitute constants before differentiating, their derivatives become zero.",
+    },
+    {
+      id: "q3",
+      text: "In the ladder problem, a negative dy/dt means:",
+      options: [
+        "The ladder is getting longer",
+        "There is no solution",
+        "The bottom is moving left",
+        "The top is sliding down",
+      ],
+      correctIndex: 3,
+      explanation: "Negative rate means y is decreasing (the top is falling).",
+    },
+    {
+      id: "q4",
+      text: "The relationship equation in the ladder problem comes from:",
+      options: [
+        "The area formula",
+        "The Pythagorean theorem",
+        "The volume formula",
+        "The chain rule directly",
+      ],
+      correctIndex: 1,
+      explanation: "The wall, ground, and ladder form a right triangle.",
+    },
+    {
+      id: "q5",
+      text: "For a sphere with volume V = (4/3) pi r³, dV/dt equals:",
+      options: [
+        "(4/3) pi r²",
+        "4 pi r³ dr/dt",
+        "4 pi r² dr/dt",
+        "2 pi r dr/dt",
+      ],
+      correctIndex: 2,
+      explanation: "Differentiate V with respect to t using the chain rule.",
+    },
+  ]}
+/>

@@ -1,0 +1,83 @@
+---
+/**
+ * PowerRuleGraph — shows f(x) = x^3 (blue) and f'(x) = 3x^2 (green)
+ * on the same axes, demonstrating how the derivative relates to the
+ * original function. Legend below the graph, no overlapping labels.
+ */
+const w = 460;
+const h = 320;
+const pad = 55;
+const gw = w - 2 * pad;
+const gh = h - 2 * pad;
+const xMin = -2.5, xMax = 2.5, yMin = -8, yMax = 12;
+const sx = (x: number) => pad + ((x - xMin) / (xMax - xMin)) * gw;
+const sy = (y: number) => pad + ((yMax - y) / (yMax - yMin)) * gh;
+
+// f(x) = x^3
+const fPts: string[] = [];
+for (let i = 0; i <= 80; i++) {
+  const x = xMin + i * (xMax - xMin) / 80;
+  const y = x * x * x;
+  if (y >= yMin && y <= yMax) fPts.push(`${sx(x)},${sy(y)}`);
+}
+
+// f'(x) = 3x^2
+const dPts: string[] = [];
+for (let i = 0; i <= 80; i++) {
+  const x = xMin + i * (xMax - xMin) / 80;
+  const y = 3 * x * x;
+  if (y >= yMin && y <= yMax) dPts.push(`${sx(x)},${sy(y)}`);
+}
+---
+
+<figure class="prg" role="img" aria-label="Graph of f(x) = x cubed and its derivative 3x squared">
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    {/* Grid */}
+    {[-2,-1,1,2].map(v => (
+      <line x1={sx(v)} y1={sy(yMin)} x2={sx(v)} y2={sy(yMax)} class="prg-grid" stroke-width="0.5" />
+    ))}
+    {[-6,-4,-2,2,4,6,8,10].map(v => (
+      <line x1={sx(xMin)} y1={sy(v)} x2={sx(xMax)} y2={sy(v)} class="prg-grid" stroke-width="0.5" />
+    ))}
+    <line x1={sx(xMin)} y1={sy(0)} x2={sx(xMax)} y2={sy(0)} class="prg-axis" stroke-width="1.5" />
+    <line x1={sx(0)} y1={sy(yMin)} x2={sx(0)} y2={sy(yMax)} class="prg-axis" stroke-width="1.2" />
+
+    {/* f(x) = x^3 */}
+    <polyline points={fPts.join(' ')} fill="none" class="prg-f" stroke-width="3" />
+    {/* f'(x) = 3x^2 */}
+    <polyline points={dPts.join(' ')} fill="none" class="prg-d" stroke-width="2.5" />
+
+    {/* Dot at origin where f has inflection and f' has minimum */}
+    <circle cx={sx(0)} cy={sy(0)} r="5" class="prg-dot" />
+  </svg>
+  <div class="prg-legend">
+    <span class="prg-leg-item"><span class="prg-swatch prg-sw-f"></span> f(x) = x³</span>
+    <span class="prg-leg-item"><span class="prg-swatch prg-sw-d"></span> f'(x) = 3x²</span>
+  </div>
+</figure>
+
+<style>
+  .prg { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .prg svg { max-width:100%; height:auto; }
+  .prg-grid { stroke:#333; }
+  .prg-axis { stroke:#666; }
+  .prg-f { stroke:#58a6ff; }
+  .prg-d { stroke:#7ee787; }
+  .prg-dot { fill:#f0883e; }
+  .prg-legend {
+    display:flex; gap:1.2rem; flex-wrap:wrap; justify-content:center;
+    margin-top:0.5rem; font-family:'Libre Baskerville',Georgia,serif; font-size:0.85rem;
+  }
+  .prg-leg-item { display:flex; align-items:center; gap:0.35rem; }
+  .prg-swatch { display:inline-block; width:18px; height:4px; border-radius:2px; }
+  .prg-sw-f { background:#58a6ff; }
+  .prg-sw-d { background:#7ee787; }
+
+  :global([data-theme="light"]) .prg-grid { stroke:#ddd; }
+  :global([data-theme="light"]) .prg-axis { stroke:#999; }
+  :global([data-theme="light"]) .prg-f { stroke:#0550ae; }
+  :global([data-theme="light"]) .prg-d { stroke:#116329; }
+  :global([data-theme="light"]) .prg-dot { fill:#b35900; }
+  :global([data-theme="light"]) .prg-sw-f { background:#0550ae; }
+  :global([data-theme="light"]) .prg-sw-d { background:#116329; }
+</style>

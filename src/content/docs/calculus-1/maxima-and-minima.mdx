@@ -1,0 +1,191 @@
+---
+title: Maxima and Minima
+description: Find critical points and extreme values
+sidebar:
+  order: 12
+---
+
+## What You'll Learn
+
+In this lesson you'll learn how to find where a function reaches its highest and lowest values, both locally and on a closed interval. This is the foundation for optimization problems.
+
+## The Concept
+
+### Critical Points
+
+A critical point is where f'(x) = 0 or f'(x) doesn't exist. These are the only places where a local max or min can happen. If the derivative exists and isn't zero, the function is either going up or going down, so there's no peak or valley.
+
+import CriticalPointTypes from "../../../components/CriticalPointTypes.astro";
+
+<CriticalPointTypes />
+
+At a local maximum (left), the function rises (f' positive, green arrow) then falls (f' negative, red arrow). The tangent line is horizontal at the peak. At a local minimum (right), the function falls then rises. The tangent line is horizontal at the valley.
+
+### First Derivative Test
+
+Check the sign of f' on either side of a critical point:
+
+- f' goes from positive to negative: local maximum (the function was rising, now it's falling)
+- f' goes from negative to positive: local minimum (the function was falling, now it's rising)
+- f' doesn't change sign: no extremum (just a flat spot)
+
+### Second Derivative Test
+
+At a critical point c where f'(c) = 0:
+
+- f''(c) is positive: local minimum (concave up, like a bowl)
+- f''(c) is negative: local maximum (concave down, like a hill)
+- f''(c) = 0: inconclusive, use the first derivative test instead
+
+### Absolute Extrema on Closed Intervals
+
+On a closed interval [a, b], the absolute max and min must occur at either a critical point inside the interval or at one of the endpoints. Evaluate f at all candidates and compare.
+
+## Worked Example
+
+**Example 1: First Derivative Test**
+
+Find the local extrema of f(x) = x³ - 3x² - 9x + 5.
+
+$$
+f'(x) = 3x^2 - 6x - 9 = 3(x^2 - 2x - 3) = 3(x - 3)(x + 1)
+$$
+
+Critical points: x = -1 and x = 3.
+
+Check the sign of f' in each interval:
+
+- x less than -1: f'(-2) = 3(4 + 4 - 3) = 15, positive (rising)
+- Between -1 and 3: f'(0) = 3(0 - 0 - 3) = -9, negative (falling)
+- x greater than 3: f'(4) = 3(16 - 8 - 3) = 15, positive (rising)
+
+f' goes from positive to negative at x = -1: local max.
+f' goes from negative to positive at x = 3: local min.
+
+**Example 2: Second Derivative Test**
+
+For f(x) = x⁴ - 4x², find and classify the critical points.
+
+$$
+f'(x) = 4x^3 - 8x = 4x(x^2 - 2)
+$$
+
+Critical points: x = 0, x = sqrt(2), x = -sqrt(2).
+
+$$
+f''(x) = 12x^2 - 8
+$$
+
+f''(0) = -8, which is negative: local max at x = 0.
+f''(sqrt(2)) = 12(2) - 8 = 16, which is positive: local min at x = sqrt(2).
+f''(-sqrt(2)) = 16, positive: local min at x = -sqrt(2).
+
+**Example 3: Absolute extrema on [0, 5]**
+
+Find the absolute max and min of f(x) = x³ - 6x² + 9x + 2 on [0, 5].
+
+$$
+f'(x) = 3x^2 - 12x + 9 = 3(x - 1)(x - 3)
+$$
+
+Critical points in [0, 5]: x = 1 and x = 3.
+
+Evaluate f at all candidates:
+
+- f(0) = 2
+- f(1) = 1 - 6 + 9 + 2 = 6
+- f(3) = 27 - 54 + 27 + 2 = 2
+- f(5) = 125 - 150 + 45 + 2 = 22
+
+import MaxMinGraph from "../../../components/MaxMinGraph.astro";
+
+<MaxMinGraph />
+
+The absolute maximum is 22 at x = 5 (the right endpoint). The absolute minimum is 2, occurring at both x = 0 and x = 3. The local max at (1, 6) is not the absolute max because the endpoint at x = 5 is higher. This is why you always check endpoints on closed intervals.
+
+## Real-World Application
+
+Finding maxima and minima is the core of optimization:
+
+- Business: maximize profit or minimize cost given constraints
+- Engineering: find the dimensions that maximize strength while minimizing material
+- Physics: find the angle that maximizes projectile range, or the path that minimizes travel time
+- Medicine: find the dosage that maximizes effectiveness while minimizing side effects
+
+:::note[You've Got This]
+The process is systematic: find critical points (set f' = 0), classify them (first or second derivative test), and on closed intervals, check the endpoints too. The hardest part is the algebra of finding the critical points. The calculus part is straightforward once you have them.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="calculus1-maxima-minima"
+  questions={[
+    {
+      id: "q1",
+      text: "A critical point occurs where:",
+      options: [
+        "f(x) = 0",
+        "f'(x) = 0 or f'(x) is undefined",
+        "f''(x) = 0",
+        "The function is continuous",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Critical points are where the derivative is zero or doesn't exist.",
+    },
+    {
+      id: "q2",
+      text: "If f' changes from positive to negative at a critical point, there is a:",
+      options: [
+        "Local minimum",
+        "Inflection point",
+        "Local maximum",
+        "Horizontal asymptote",
+      ],
+      correctIndex: 2,
+      explanation: "The function goes from rising to falling, creating a peak.",
+    },
+    {
+      id: "q3",
+      text: "The Second Derivative Test is inconclusive when:",
+      options: [
+        "f''(c) is positive",
+        "f''(c) is negative",
+        "f'(c) is not zero",
+        "f''(c) = 0",
+      ],
+      correctIndex: 3,
+      explanation:
+        "When f'' is zero at the critical point, you need the first derivative test.",
+    },
+    {
+      id: "q4",
+      text: "On a closed interval [a, b], absolute extrema can occur at:",
+      options: [
+        "Only the midpoint",
+        "Critical points and endpoints",
+        "Only critical points",
+        "Only endpoints",
+      ],
+      correctIndex: 1,
+      explanation:
+        "You must check both critical points inside the interval and the endpoints.",
+    },
+    {
+      id: "q5",
+      text: "If f''(c) is positive at a critical point c, then c is a:",
+      options: [
+        "Local maximum",
+        "Inflection point",
+        "Local minimum",
+        "Saddle point",
+      ],
+      correctIndex: 2,
+      explanation:
+        "Positive second derivative means concave up (bowl shape), so it's a minimum.",
+    },
+  ]}
+/>

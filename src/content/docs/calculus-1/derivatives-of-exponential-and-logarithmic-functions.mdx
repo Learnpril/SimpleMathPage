@@ -1,0 +1,166 @@
+---
+title: Derivatives of Exponential and Logarithmic Functions
+description: Differentiate exponential and logarithmic functions
+sidebar:
+  order: 8
+---
+
+## What You'll Learn
+
+In this lesson you'll learn the derivatives of exponential functions (especially e to the x) and logarithmic functions (especially ln x), and how to combine them with the chain rule.
+
+## The Concept
+
+### The Natural Exponential
+
+The derivative of e to the x is itself:
+
+$$
+\frac{d}{dx}[e^x] = e^x
+$$
+
+This is the single most remarkable fact in calculus. No other function has this property. It's the reason e shows up everywhere in math, science, and engineering. The function e to the x grows at a rate exactly equal to its current value.
+
+import ExpSelfDerivative from "../../../components/ExpSelfDerivative.astro";
+
+<ExpSelfDerivative />
+
+At x = 1, the y-value is e (about 2.718). The slope of the green tangent line at that point is also e. That's the whole idea: wherever you are on the curve, the slope equals the height. The function's rate of growth is always equal to its current value.
+
+For a general base a (where a is positive and not 1):
+
+$$
+\frac{d}{dx}[a^x] = a^x \ln a
+$$
+
+The extra ln(a) factor accounts for the base not being e. When a = e, ln(e) = 1, so the formula reduces to the first one.
+
+### The Natural Logarithm
+
+$$
+\frac{d}{dx}[\ln x] = \frac{1}{x}
+$$
+
+The derivative of ln(x) is 1/x. Simple and clean. For a general base:
+
+$$
+\frac{d}{dx}[\log_a x] = \frac{1}{x \ln a}
+$$
+
+Again, when a = e, ln(e) = 1 and you get 1/x.
+
+Both of these show up constantly with the chain rule. When the argument isn't just x, you differentiate the outside and multiply by the derivative of the inside, same as always.
+
+## Worked Example
+
+**Example 1: Exponential with chain rule**
+
+Find the derivative of f(x) = e to the 4x.
+
+$$
+f'(x) = e^{4x} \cdot 4 = 4e^{4x}
+$$
+
+The outside is e to the u, whose derivative is e to the u. The inside is 4x, whose derivative is 4.
+
+**Example 2: Natural log with chain rule**
+
+Differentiate y = ln(3x² + 7x).
+
+$$
+y' = \frac{1}{3x^2 + 7x} \cdot (6x + 7) = \frac{6x + 7}{3x^2 + 7x}
+$$
+
+The outside is ln(u), derivative is 1/u. The inside is 3x² + 7x, derivative is 6x + 7.
+
+**Example 3: Product rule with exponential**
+
+Find the derivative of y = x² times e to the negative 2x.
+
+Let u = x², so u' = 2x. Let v = e to the negative 2x, so v' = -2e to the negative 2x (chain rule).
+
+$$
+y' = 2x \cdot e^{-2x} + x^2 \cdot (-2e^{-2x})
+$$
+
+Factor out common terms:
+
+$$
+= 2xe^{-2x} - 2x^2 e^{-2x} = 2x(1 - x)e^{-2x}
+$$
+
+## Real-World Application
+
+Exponential and logarithmic derivatives model anything that grows or decays continuously:
+
+- Finance: continuous compound interest uses e to the rt. The derivative gives the instantaneous rate of return.
+- Biology: population growth P(t) = P₀ e to the kt. The derivative P'(t) = kP₀ e to the kt tells you the growth rate at any moment.
+- Physics: radioactive decay follows N(t) = N₀ e to the negative lambda t. The derivative gives the decay rate.
+- Medicine: drug concentration in the bloodstream often follows exponential decay. The derivative tells doctors how fast the drug is wearing off.
+- Machine learning: the gradient of the loss function often involves exponentials and logs.
+
+:::note[You've Got This]
+Two key facts to remember: the derivative of e to the x is e to the x, and the derivative of ln(x) is 1/x. Everything else is just the chain rule on top of those. If you can handle the chain rule (and you can, since you just practiced it), these derivatives are straightforward.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="calculus1-exp-log-derivatives"
+  questions={[
+    {
+      id: "q1",
+      text: "The derivative of e to the x is:",
+      options: ["x times e to the (x-1)", "ln(x)", "e to the x", "1/x"],
+      correctIndex: 2,
+      explanation: "The natural exponential is its own derivative.",
+    },
+    {
+      id: "q2",
+      text: "The derivative of ln(x) is:",
+      options: ["x", "1/x", "e to the x", "ln(x)/x"],
+      correctIndex: 1,
+      explanation: "One of the most important derivatives to know.",
+    },
+    {
+      id: "q3",
+      text: "The derivative of e to the 5x is:",
+      options: [
+        "e to the 5x",
+        "5x times e to the 4x",
+        "ln(5) times e to the 5x",
+        "5 times e to the 5x",
+      ],
+      correctIndex: 3,
+      explanation:
+        "Chain rule: derivative of e to the u is e to the u, times derivative of inside (5).",
+    },
+    {
+      id: "q4",
+      text: "The derivative of 2 to the x is:",
+      options: [
+        "x times 2 to the (x-1)",
+        "2 to the x",
+        "2 to the x times ln(2)",
+        "ln(2)/x",
+      ],
+      correctIndex: 2,
+      explanation: "For base a, the derivative is a to the x times ln(a).",
+    },
+    {
+      id: "q5",
+      text: "Why is e special in calculus?",
+      options: [
+        "It only works with integers",
+        "It makes logarithms unnecessary",
+        "Its exponential function is its own derivative",
+        "It simplifies all fractions",
+      ],
+      correctIndex: 2,
+      explanation:
+        "e to the x is the only function equal to its own derivative (up to scaling).",
+    },
+  ]}
+/>

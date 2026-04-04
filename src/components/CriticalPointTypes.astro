@@ -1,0 +1,119 @@
+---
+/**
+ * CriticalPointTypes — two mini-graphs side by side:
+ * 1. Local maximum: hill shape with horizontal tangent, f' + then -
+ * 2. Local minimum: valley shape with horizontal tangent, f' - then +
+ */
+const pw = 200; // per-panel width
+const ph = 160;
+const pad = 25;
+const gw = pw - 2 * pad;
+const gh = ph - 2 * pad;
+
+// Panel 1: hill (local max) using -x^2 + 4
+const maxPts: string[] = [];
+for (let i = 0; i <= 40; i++) {
+  const t = -2 + i * 4 / 40;
+  const x = pad + (i / 40) * gw;
+  const y = pad + gh - ((-t * t + 4) / 5) * gh;
+  maxPts.push(`${x},${y}`);
+}
+const maxPeakX = pad + gw / 2;
+const maxPeakY = pad + gh - (4 / 5) * gh;
+
+// Panel 2: valley (local min) using x^2 - 4 + 5 = x^2 + 1
+const minPts: string[] = [];
+for (let i = 0; i <= 40; i++) {
+  const t = -2 + i * 4 / 40;
+  const x = pad + (i / 40) * gw;
+  const y = pad + gh - ((t * t + 1) / 6) * gh;
+  minPts.push(`${x},${y}`);
+}
+const minValX = pad + gw / 2;
+const minValY = pad + gh - (1 / 6) * gh;
+---
+
+<figure class="cpt" role="img" aria-label="Two diagrams showing local maximum (hill) and local minimum (valley) at critical points">
+  <div class="cpt-row">
+    {/* Panel 1: Local Maximum */}
+    <div class="cpt-panel">
+      <svg viewBox={`0 0 ${pw} ${ph}`} width={pw} height={ph} xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <marker id="cpt-arr" markerWidth="7" markerHeight="5" refX="6" refY="2.5" orient="auto">
+            <path d="M0,0 L7,2.5 L0,5" fill="none" class="cpt-arr-s" stroke-width="1.2" />
+          </marker>
+        </defs>
+        {/* Curve */}
+        <polyline points={maxPts.join(' ')} fill="none" class="cpt-curve" stroke-width="3" />
+        {/* Horizontal tangent at peak */}
+        <line x1={maxPeakX - 35} y1={maxPeakY} x2={maxPeakX + 35} y2={maxPeakY}
+              class="cpt-tangent" stroke-width="2" stroke-dasharray="5,4" />
+        {/* Peak dot */}
+        <circle cx={maxPeakX} cy={maxPeakY} r="6" class="cpt-dot-max" />
+        {/* f' > 0 arrow (left, going up) */}
+        <line x1={pad + 15} y1={ph - pad - 10} x2={pad + 15} y2={pad + 30}
+              class="cpt-arrow-pos" stroke-width="2" marker-end="url(#cpt-arr)" />
+        {/* f' < 0 arrow (right, going down) */}
+        <line x1={pw - pad - 15} y1={pad + 30} x2={pw - pad - 15} y2={ph - pad - 10}
+              class="cpt-arrow-neg" stroke-width="2" marker-end="url(#cpt-arr)" />
+      </svg>
+      <span class="cpt-caption cpt-cap-max">Local Maximum</span>
+      <span class="cpt-sub">f' + then f' −</span>
+    </div>
+
+    {/* Panel 2: Local Minimum */}
+    <div class="cpt-panel">
+      <svg viewBox={`0 0 ${pw} ${ph}`} width={pw} height={ph} xmlns="http://www.w3.org/2000/svg">
+        {/* Curve */}
+        <polyline points={minPts.join(' ')} fill="none" class="cpt-curve" stroke-width="3" />
+        {/* Horizontal tangent at valley */}
+        <line x1={minValX - 35} y1={minValY} x2={minValX + 35} y2={minValY}
+              class="cpt-tangent" stroke-width="2" stroke-dasharray="5,4" />
+        {/* Valley dot */}
+        <circle cx={minValX} cy={minValY} r="6" class="cpt-dot-min" />
+        {/* f' < 0 arrow (left, going down) */}
+        <line x1={pad + 15} y1={pad + 30} x2={pad + 15} y2={ph - pad - 10}
+              class="cpt-arrow-neg" stroke-width="2" marker-end="url(#cpt-arr)" />
+        {/* f' > 0 arrow (right, going up) */}
+        <line x1={pw - pad - 15} y1={ph - pad - 10} x2={pw - pad - 15} y2={pad + 30}
+              class="cpt-arrow-pos" stroke-width="2" marker-end="url(#cpt-arr)" />
+      </svg>
+      <span class="cpt-caption cpt-cap-min">Local Minimum</span>
+      <span class="cpt-sub">f' − then f' +</span>
+    </div>
+  </div>
+</figure>
+
+<style>
+  .cpt { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .cpt-row { display:flex; gap:1.5rem; flex-wrap:wrap; justify-content:center; }
+  .cpt-panel { display:flex; flex-direction:column; align-items:center; }
+  .cpt-panel svg { max-width:100%; height:auto; }
+  .cpt-caption {
+    font-family:'Libre Baskerville',Georgia,serif;
+    font-size:0.9rem; font-weight:600; margin-top:0.25rem;
+  }
+  .cpt-cap-max { color:#7ee787; }
+  .cpt-cap-min { color:#f47067; }
+  .cpt-sub {
+    font-family:'Libre Baskerville',Georgia,serif;
+    font-size:0.8rem; font-style:italic; color:#d2a8ff;
+  }
+  .cpt-curve { stroke:#58a6ff; }
+  .cpt-tangent { stroke:#888; }
+  .cpt-dot-max { fill:#7ee787; }
+  .cpt-dot-min { fill:#f47067; }
+  .cpt-arrow-pos { stroke:#7ee787; }
+  .cpt-arrow-neg { stroke:#f47067; }
+  .cpt-arr-s { stroke:#888; }
+
+  :global([data-theme="light"]) .cpt-cap-max { color:#116329; }
+  :global([data-theme="light"]) .cpt-cap-min { color:#cf222e; }
+  :global([data-theme="light"]) .cpt-sub { color:#6639ba; }
+  :global([data-theme="light"]) .cpt-curve { stroke:#0550ae; }
+  :global([data-theme="light"]) .cpt-tangent { stroke:#aaa; }
+  :global([data-theme="light"]) .cpt-dot-max { fill:#116329; }
+  :global([data-theme="light"]) .cpt-dot-min { fill:#cf222e; }
+  :global([data-theme="light"]) .cpt-arrow-pos { fill:#116329; stroke:#116329; }
+  :global([data-theme="light"]) .cpt-arrow-neg { fill:#cf222e; stroke:#cf222e; }
+</style>

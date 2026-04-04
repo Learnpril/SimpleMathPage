@@ -1,0 +1,170 @@
+---
+title: Antiderivatives and Indefinite Integrals
+description: Reverse the process of differentiation
+sidebar:
+  order: 16
+---
+
+## What You'll Learn
+
+In this lesson you'll learn how to go backwards from a derivative to the original function. This is the beginning of integral calculus.
+
+## The Concept
+
+An antiderivative of f(x) is a function F(x) whose derivative is f(x). In other words, F'(x) = f(x).
+
+The indefinite integral is the notation for finding all antiderivatives:
+
+$$
+\int f(x) \, dx = F(x) + C
+$$
+
+The + C is the constant of integration. It's there because if F(x) is an antiderivative, so is F(x) + 7, or F(x) - 3, or F(x) + any constant. The derivative of a constant is zero, so you can't tell which constant was there just from the derivative.
+
+### Basic Integration Rules
+
+Power rule (reverse):
+
+$$
+\int x^n \, dx = \frac{x^{n+1}}{n+1} + C \quad (n \neq -1)
+$$
+
+Special case for 1/x:
+
+$$
+\int \frac{1}{x} \, dx = \ln|x| + C
+$$
+
+Exponential:
+
+$$
+\int e^x \, dx = e^x + C
+$$
+
+Trig:
+
+$$
+\int \sin x \, dx = -\cos x + C
+$$
+
+$$
+\int \cos x \, dx = \sin x + C
+$$
+
+Constants and sums pass through the integral, just like with derivatives.
+
+import AntiderivativeFamily from "../../../components/AntiderivativeFamily.astro";
+
+<AntiderivativeFamily />
+
+The green line is f(x) = 2x, the derivative. The four blue parabolas are all antiderivatives: x² - 2, x², x² + 2, and x² + 4. They're the same shape, just shifted up or down. All four have the same derivative (2x), which is why you need + C to capture the whole family.
+
+## Worked Example
+
+**Example 1: Polynomial**
+
+Find the integral of 3x² - 4x + 7.
+
+$$
+\int (3x^2 - 4x + 7) \, dx = x^3 - 2x^2 + 7x + C
+$$
+
+Each term uses the power rule: add 1 to the exponent, divide by the new exponent. The constant 7 integrates to 7x.
+
+**Example 2: Exponential and trig**
+
+Find the integral of e to the x plus 2 sin(x).
+
+$$
+\int (e^x + 2\sin x) \, dx = e^x - 2\cos x + C
+$$
+
+The integral of e to the x is itself. The integral of sin(x) is negative cos(x), and the 2 passes through.
+
+**Example 3: Fractional exponents**
+
+Find the integral of x to the 1/2 plus 5x to the negative 3.
+
+$$
+\int (x^{1/2} + 5x^{-3}) \, dx = \frac{x^{3/2}}{3/2} + 5 \cdot \frac{x^{-2}}{-2} + C = \frac{2}{3}x^{3/2} - \frac{5}{2}x^{-2} + C
+$$
+
+The power rule works for any exponent except -1. Add 1 to the exponent, divide by the new exponent.
+
+## Real-World Application
+
+Antiderivatives connect rates of change back to total quantities:
+
+- Physics: if you know acceleration a(t), integrating gives velocity v(t). Integrating again gives position s(t).
+- Economics: if you know marginal cost (the derivative of total cost), integrating gives total cost.
+- Biology: if you know the rate of population growth, integrating gives the total population.
+- Game dev: if a character's speed function is known, integrating gives the total distance traveled.
+
+:::note[You've Got This]
+Integration is just differentiation in reverse. The power rule flips: instead of "bring down the exponent and subtract 1," you "add 1 to the exponent and divide by the new exponent." Always add + C. If you can differentiate, you can integrate. The two skills are mirror images of each other.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="calculus1-antiderivatives"
+  questions={[
+    {
+      id: "q1",
+      text: "Every indefinite integral must include:",
+      options: [
+        "A limit",
+        "A derivative",
+        "+ C (constant of integration)",
+        "A definite bound",
+      ],
+      correctIndex: 2,
+      explanation:
+        "The constant of integration accounts for all possible antiderivatives.",
+    },
+    {
+      id: "q2",
+      text: "The antiderivative of x⁴ is:",
+      options: ["4x³ + C", "(1/5)x⁵ + C", "x⁵ + C", "5x⁴ + C"],
+      correctIndex: 1,
+      explanation:
+        "Add 1 to the exponent (5), divide by the new exponent (1/5).",
+    },
+    {
+      id: "q3",
+      text: "The integral of e to the x is:",
+      options: [
+        "ln(x) + C",
+        "x times e to the x + C",
+        "e to the x + C",
+        "e to the (x+1) + C",
+      ],
+      correctIndex: 2,
+      explanation:
+        "e to the x is its own antiderivative, just like it's its own derivative.",
+    },
+    {
+      id: "q4",
+      text: "The integral of sin(x) is:",
+      options: ["cos(x) + C", "sin(x) + C", "-sin(x) + C", "-cos(x) + C"],
+      correctIndex: 3,
+      explanation:
+        "The derivative of -cos(x) is sin(x), so -cos(x) is the antiderivative.",
+    },
+    {
+      id: "q5",
+      text: "Why is + C necessary in indefinite integrals?",
+      options: [
+        "It makes the math harder",
+        "Constants have derivative zero, so infinitely many antiderivatives exist",
+        "It's optional",
+        "It only applies to trig functions",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Any constant disappears when you differentiate, so you can't recover it from the derivative alone.",
+    },
+  ]}
+/>

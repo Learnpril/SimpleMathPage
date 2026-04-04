@@ -1,0 +1,168 @@
+---
+title: Basic Derivative Rules
+description: Power rule, constant rule, and constant multiple rule
+sidebar:
+  order: 4
+---
+
+## What You'll Learn
+
+In this lesson you'll learn the first set of shortcut rules for computing derivatives without going back to the limit definition every time. These rules handle polynomials and simple combinations of functions.
+
+## The Concept
+
+The limit definition works, but it's slow. For every new function you'd have to expand, simplify, and take a limit. The good news: mathematicians already did that work for entire categories of functions and packaged the results into rules.
+
+### Constant Rule
+
+The derivative of any constant is zero.
+
+$$
+\frac{d}{dx}[c] = 0
+$$
+
+A constant doesn't change, so its rate of change is zero. The graph of y = 5 is a flat horizontal line. No slope anywhere.
+
+### Power Rule
+
+This is the workhorse. For any real number n:
+
+$$
+\frac{d}{dx}[x^n] = n \cdot x^{n-1}
+$$
+
+Bring the exponent down as a coefficient, then subtract 1 from the exponent. That's it.
+
+Some examples: the derivative of x³ is 3x². The derivative of x is 1 (since x = x¹, so 1 times x⁰ = 1). The derivative of x⁷ is 7x⁶.
+
+### Constant Multiple Rule
+
+Constants pass through the derivative:
+
+$$
+\frac{d}{dx}[c \cdot f(x)] = c \cdot f'(x)
+$$
+
+So the derivative of 5x³ is 5 times 3x², which is 15x².
+
+### Sum and Difference Rule
+
+Derivatives distribute over addition and subtraction:
+
+$$
+\frac{d}{dx}[f(x) \pm g(x)] = f'(x) \pm g'(x)
+$$
+
+Differentiate each term separately, then add or subtract the results.
+
+import PowerRuleGraph from "../../../components/PowerRuleGraph.astro";
+
+<PowerRuleGraph />
+
+The blue curve is f(x) = x³ and the green curve is its derivative f'(x) = 3x². Notice that where the blue curve is flat (near x = 0), the green curve is at zero. Where the blue curve is steep, the green curve is large. The derivative literally measures the steepness of the original function at each point.
+
+## Worked Example
+
+**Example 1: Polynomial derivative**
+
+Find the derivative of f(x) = 7x⁴ - 3x² + 8.
+
+Apply the rules term by term:
+
+- 7x⁴: power rule gives 7 times 4x³ = 28x³
+- -3x²: power rule gives -3 times 2x = -6x
+- 8: constant rule gives 0
+
+$$
+f'(x) = 28x^3 - 6x
+$$
+
+**Example 2: Fractional coefficients**
+
+Find the derivative of y = (1/2)x⁵ + 6x³ - 2.
+
+$$
+y' = \frac{1}{2} \cdot 5x^4 + 6 \cdot 3x^2 - 0 = \frac{5}{2}x^4 + 18x^2
+$$
+
+**Example 3: Finding a tangent slope**
+
+Find the slope of the tangent line to f(x) = x³ - 4x + 1 at x = 2.
+
+First, differentiate:
+
+$$
+f'(x) = 3x^2 - 4
+$$
+
+Now plug in x = 2:
+
+$$
+f'(2) = 3(4) - 4 = 12 - 4 = 8
+$$
+
+The tangent line at x = 2 has slope 8. That means the function is increasing at a rate of 8 units of y per unit of x at that point.
+
+## Real-World Application
+
+These rules let you find rates of change instantly for any polynomial:
+
+- Physics: if position is s(t) = 4t³ - 2t² + t, velocity is v(t) = 12t² - 4t + 1 and acceleration is a(t) = 24t - 4. No limits needed.
+- Economics: if total cost is C(x) = 0.01x³ - 0.5x² + 20x + 500, marginal cost is C'(x) = 0.03x² - x + 20.
+- Biology: if a population model is P(t) = 100t² + 50t, the growth rate is P'(t) = 200t + 50.
+
+The power rule alone handles every polynomial you'll ever see. Combined with the other rules, it covers a huge range of practical problems.
+
+:::note[You've Got This]
+The power rule is the single most-used rule in all of calculus. Once you can differentiate polynomials term by term without thinking, you've unlocked a massive amount of problem-solving power. Practice a few by hand until the pattern is automatic: bring the exponent down, subtract one. That's the whole thing.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="calculus1-basic-derivative-rules"
+  questions={[
+    {
+      id: "q1",
+      text: "The derivative of a constant (like 7) is:",
+      options: ["7", "1", "0", "undefined"],
+      correctIndex: 2,
+      explanation: "Constants have zero rate of change.",
+    },
+    {
+      id: "q2",
+      text: "Using the power rule, the derivative of x⁵ is:",
+      options: ["x⁴", "5x⁵", "5x⁴", "x⁶"],
+      correctIndex: 2,
+      explanation: "Bring the 5 down, subtract 1 from the exponent: 5x⁴.",
+    },
+    {
+      id: "q3",
+      text: "The derivative of 4x³ - 2x + 9 is:",
+      options: ["4x² - 2", "12x³ - 2", "12x²", "12x² - 2"],
+      correctIndex: 3,
+      explanation: "Apply the power rule to each term: 12x² - 2 + 0.",
+    },
+    {
+      id: "q4",
+      text: "The sum rule says the derivative of f(x) + g(x) is:",
+      options: [
+        "f'(x) times g'(x)",
+        "f(x) + g'(x)",
+        "f'(x) + g'(x)",
+        "f'(x) - g'(x)",
+      ],
+      correctIndex: 2,
+      explanation: "Derivatives distribute over addition.",
+    },
+    {
+      id: "q5",
+      text: "If f(x) = 6x⁴, then f'(x) =",
+      options: ["6x³", "4x³", "24x⁴", "24x³"],
+      correctIndex: 3,
+      explanation: "Constant multiple rule + power rule: 6 times 4x³ = 24x³.",
+    },
+  ]}
+/>

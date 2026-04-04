@@ -1,0 +1,82 @@
+---
+/**
+ * ConcavityGraph — f(x) = x⁴ - 4x² showing concavity regions.
+ * Local max at (0, 0), local mins at (±√2, -4).
+ * Inflection points at x ≈ ±0.816.
+ */
+const w = 460;
+const h = 300;
+const pad = 55;
+const gw = w - 2 * pad;
+const gh = h - 2 * pad;
+const xMin = -2.5, xMax = 2.5, yMin = -5, yMax = 4;
+const sx = (x: number) => pad + ((x - xMin) / (xMax - xMin)) * gw;
+const sy = (y: number) => pad + ((yMax - y) / (yMax - yMin)) * gh;
+
+const f = (x: number) => x * x * x * x - 4 * x * x;
+const pts: string[] = [];
+for (let i = 0; i <= 100; i++) {
+  const x = xMin + i * (xMax - xMin) / 100;
+  const y = f(x);
+  if (y >= yMin && y <= yMax) pts.push(`${sx(x)},${sy(y)}`);
+}
+const sq2 = Math.sqrt(2);
+const infX = Math.sqrt(2 / 3);
+---
+
+<figure class="ccg" role="img" aria-label="Graph of x to the fourth minus 4x squared showing concavity and inflection points">
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    {[-2,-1,0,1,2].map(v => (
+      <line x1={sx(v)} y1={sy(yMin)} x2={sx(v)} y2={sy(yMax)} class="ccg-grid" stroke-width="0.5" />
+    ))}
+    {[-4,-2,0,2].map(v => (
+      <line x1={sx(xMin)} y1={sy(v)} x2={sx(xMax)} y2={sy(v)} class="ccg-grid" stroke-width="0.5" />
+    ))}
+    <line x1={sx(xMin)} y1={sy(0)} x2={sx(xMax)} y2={sy(0)} class="ccg-axis" stroke-width="1.5" />
+    <line x1={sx(0)} y1={sy(yMin)} x2={sx(0)} y2={sy(yMax)} class="ccg-axis" stroke-width="1.2" />
+    <polyline points={pts.join(' ')} fill="none" class="ccg-curve" stroke-width="3" />
+    <circle cx={sx(0)} cy={sy(0)} r="7" class="ccg-dot-max" />
+    <circle cx={sx(sq2)} cy={sy(-4)} r="7" class="ccg-dot-min" />
+    <circle cx={sx(-sq2)} cy={sy(-4)} r="7" class="ccg-dot-min" />
+    <circle cx={sx(infX)} cy={sy(f(infX))} r="5" class="ccg-dot-inf" />
+    <circle cx={sx(-infX)} cy={sy(f(-infX))} r="5" class="ccg-dot-inf" />
+  </svg>
+  <div class="ccg-legend">
+    <span class="ccg-leg-item"><span class="ccg-swatch ccg-sw-curve"></span> f(x) = x⁴ - 4x²</span>
+    <span class="ccg-leg-item"><span class="ccg-dot-sw ccg-sw-max"></span> local max (0, 0)</span>
+    <span class="ccg-leg-item"><span class="ccg-dot-sw ccg-sw-min"></span> local mins (±√2, -4)</span>
+    <span class="ccg-leg-item"><span class="ccg-dot-sw ccg-sw-inf"></span> inflection pts</span>
+  </div>
+</figure>
+
+<style>
+  .ccg { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .ccg svg { max-width:100%; height:auto; }
+  .ccg-grid { stroke:#333; }
+  .ccg-axis { stroke:#666; }
+  .ccg-curve { stroke:#58a6ff; }
+  .ccg-dot-max { fill:#7ee787; }
+  .ccg-dot-min { fill:#f47067; }
+  .ccg-dot-inf { fill:#d2a8ff; }
+  .ccg-legend {
+    display:flex; gap:1rem; flex-wrap:wrap; justify-content:center;
+    margin-top:0.5rem; font-family:'Libre Baskerville',Georgia,serif; font-size:0.82rem;
+  }
+  .ccg-leg-item { display:flex; align-items:center; gap:0.35rem; }
+  .ccg-swatch { display:inline-block; width:18px; height:4px; border-radius:2px; }
+  .ccg-dot-sw { display:inline-block; width:12px; height:12px; border-radius:50%; }
+  .ccg-sw-curve { background:#58a6ff; }
+  .ccg-sw-max { background:#7ee787; }
+  .ccg-sw-min { background:#f47067; }
+  .ccg-sw-inf { background:#d2a8ff; }
+  :global([data-theme="light"]) .ccg-grid { stroke:#ddd; }
+  :global([data-theme="light"]) .ccg-axis { stroke:#999; }
+  :global([data-theme="light"]) .ccg-curve { stroke:#0550ae; }
+  :global([data-theme="light"]) .ccg-dot-max { fill:#116329; }
+  :global([data-theme="light"]) .ccg-dot-min { fill:#cf222e; }
+  :global([data-theme="light"]) .ccg-dot-inf { fill:#6639ba; }
+  :global([data-theme="light"]) .ccg-sw-curve { background:#0550ae; }
+  :global([data-theme="light"]) .ccg-sw-max { background:#116329; }
+  :global([data-theme="light"]) .ccg-sw-min { background:#cf222e; }
+  :global([data-theme="light"]) .ccg-sw-inf { background:#6639ba; }
+</style>

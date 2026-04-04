@@ -1,0 +1,207 @@
+---
+title: Limits and Continuity Review
+description: Review limits and continuity before diving into derivatives
+sidebar:
+  order: 1
+---
+
+## What You'll Learn
+
+This lesson reviews the critical ideas of limits and continuity from Pre-Calculus. These aren't just background knowledge anymore. In Calculus, limits become the tool you use to define everything else. The derivative is a limit. The integral is a limit. If limits feel solid, the rest of Calculus will follow.
+
+## The Concept
+
+**Limits** describe what a function approaches as x gets close to a value. The function doesn't have to equal that value at the point. It just has to be heading toward it.
+
+$$
+\lim_{x \to a} f(x) = L
+$$
+
+import LimitIdeaDiagram from "../../../components/LimitIdeaDiagram.astro";
+
+<LimitIdeaDiagram />
+
+The blue curve is f(x). As x approaches a from both sides (purple arrows), the function values converge on L (green dashed line). The open circle shows the function doesn't need to be defined at a for the limit to exist. It only matters what the function is heading toward.
+
+Key reminders:
+
+- Limits care about behavior near a point, not at the point
+- Direct substitution works when the function is continuous there
+- When you get 0/0 (indeterminate form), simplify first by factoring, rationalizing, or using limit laws
+- For the two-sided limit to exist, the left-hand and right-hand limits must agree
+
+**Continuity** means the function has no breaks, holes, or jumps at a point. Three conditions must all hold at x = a:
+
+1. f(a) is defined
+2. The limit as x approaches a exists
+3. The limit equals f(a)
+
+If any condition fails, there's a discontinuity:
+
+- Removable (hole): the limit exists but f(a) is undefined or different
+- Jump: left and right limits both exist but are different
+- Infinite (vertical asymptote): the function blows up near that point
+
+import DiscontinuityTypes from "../../../components/DiscontinuityTypes.astro";
+
+<DiscontinuityTypes />
+
+**Why this matters for Calculus:** the derivative is defined as a limit:
+
+$$
+f'(a) = \lim_{h \to 0} \frac{f(a + h) - f(a)}{h}
+$$
+
+If this limit exists, the function is **differentiable** at a. Differentiable just means "the derivative exists there." In plain terms, the curve is smooth enough at that point that you can draw exactly one tangent line. Sharp corners, vertical tangents, and discontinuities all break differentiability.
+
+The key relationship: differentiable functions are always continuous (though continuous functions aren't always differentiable). So continuity is the minimum requirement for doing calculus at a point.
+
+## Worked Example
+
+**Example 1: Evaluating a limit (0/0 case)**
+
+Find the limit:
+
+$$
+\lim_{x \to 4} \frac{x^2 - 16}{x - 4}
+$$
+
+Direct substitution gives (16 - 16)/(4 - 4) = 0/0. That's indeterminate, so simplify.
+
+Factor the numerator using difference of squares:
+
+$$
+\frac{(x - 4)(x + 4)}{x - 4} = x + 4 \quad \text{(for } x \neq 4\text{)}
+$$
+
+Now substitute:
+
+$$
+\lim_{x \to 4} (x + 4) = 8
+$$
+
+The function has a hole at x = 4, but the limit is 8 because the function approaches 8 from both sides. This is the removable discontinuity from the diagram above.
+
+import HoleLimitGraph from "../../../components/HoleLimitGraph.astro";
+
+<HoleLimitGraph />
+
+**Example 2: Checking continuity (piecewise function)**
+
+Consider a function where f(x) = x + 1 when x is less than 3, f(3) = 7, and f(x) = 2x - 2 when x is greater than 3.
+
+Check continuity at x = 3:
+
+- Left-hand limit: 3 + 1 = 4
+- Right-hand limit: 2(3) - 2 = 4
+- f(3) = 7
+
+The left and right limits agree (both 4), so the limit exists and equals 4. But f(3) = 7, which is not equal to 4. Condition 3 fails. This is a removable discontinuity: the limit exists, but the function value doesn't match.
+
+**Example 3: The derivative as a limit (preview)**
+
+The derivative of f(x) = x² at x = 3 is defined as:
+
+$$
+f'(3) = \lim_{h \to 0} \frac{(3 + h)^2 - 3^2}{h}
+$$
+
+Expand:
+
+$$
+= \lim_{h \to 0} \frac{9 + 6h + h^2 - 9}{h} = \lim_{h \to 0} \frac{6h + h^2}{h}
+$$
+
+Factor out h:
+
+$$
+= \lim_{h \to 0} (6 + h) = 6
+$$
+
+So the slope of f(x) = x² at x = 3 is exactly 6. This is a preview of what we'll do systematically in the next lessons.
+
+## Real-World Application
+
+Limits and continuity are the foundation for:
+
+- Calculating instantaneous velocity (the derivative is a limit)
+- Designing smooth systems in engineering (continuity ensures no sudden jumps in force or voltage)
+- Modeling real phenomena where gradual change is expected (population, temperature, stock prices)
+- Understanding when a model breaks down (discontinuities signal problems)
+
+Example: engineers use continuity to ensure a bridge doesn't have sudden stress points. A discontinuity in the stress function would mean a potential failure point.
+
+:::note[You've Got This]
+Limits and continuity were the hardest conceptual shift in Pre-Calculus, and you've already worked through them. Now we're going to use these ideas as tools rather than just studying them. The derivative is literally a limit in disguise. Trust the foundation you've built.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="calculus1-limits-continuity-review"
+  questions={[
+    {
+      id: "q1",
+      text: "A limit describes:",
+      options: [
+        "The exact value of f(a)",
+        "The area under the curve",
+        "What the function approaches as x gets close to a value",
+        "The slope at infinity",
+      ],
+      correctIndex: 2,
+      explanation: "Limits focus on behavior near a point, not at the point.",
+    },
+    {
+      id: "q2",
+      text: "For a function to be continuous at x = a, the limit must:",
+      options: [
+        "Not exist",
+        "Equal the function value at a",
+        "Go to infinity",
+        "Be different from left and right",
+      ],
+      correctIndex: 1,
+      explanation: "The limit must equal f(a) for continuity.",
+    },
+    {
+      id: "q3",
+      text: "A removable discontinuity is usually caused by:",
+      options: [
+        "A vertical asymptote",
+        "The function being undefined everywhere",
+        "A jump in the graph",
+        "A hole that can be fixed by simplifying",
+      ],
+      correctIndex: 3,
+      explanation: "Factoring often removes the discontinuity for the limit.",
+    },
+    {
+      id: "q4",
+      text: "The derivative is defined using:",
+      options: [
+        "Direct substitution only",
+        "The area under the curve",
+        "A limit as h approaches 0",
+        "Average rate of change",
+      ],
+      correctIndex: 2,
+      explanation: "The formal definition of the derivative is a limit.",
+    },
+    {
+      id: "q5",
+      text: "Why is continuity important in Calculus?",
+      options: [
+        "It makes graphs prettier",
+        "It replaces the need for derivatives",
+        "It only matters for graphing",
+        "Differentiable functions must be continuous",
+      ],
+      correctIndex: 3,
+      explanation:
+        "If a function is not continuous at a point, it cannot be differentiable there.",
+    },
+  ]}
+/>

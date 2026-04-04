@@ -1,0 +1,109 @@
+---
+/**
+ * TangentIdeaDiagram — larger version with slope triangle.
+ * A curve with ONE tangent line touching at one point,
+ * plus a dashed purple rise/run triangle showing the slope.
+ */
+const w = 440;
+const h = 300;
+const pad = 50;
+const gw = w - 2 * pad;
+const gh = h - 2 * pad;
+const xMin = 0, xMax = 5, yMin = 0, yMax = 6;
+const sx = (x: number) => pad + ((x - xMin) / (xMax - xMin)) * gw;
+const sy = (y: number) => pad + ((yMax - y) / (yMax - yMin)) * gh;
+
+// Curve: y = 0.3x^2 + 0.5
+const f = (x: number) => 0.3 * x * x + 0.5;
+const pts: string[] = [];
+for (let i = 0; i <= 60; i++) {
+  const x = xMin + i * (xMax - xMin) / 60;
+  const y = f(x);
+  if (y <= yMax) pts.push(`${sx(x)},${sy(y)}`);
+}
+
+// Tangent at x=2.5: y=f(2.5)=2.375, slope=f'(2.5)=1.5
+const tx = 2.5, ty = f(tx), slope = 0.6 * tx;
+const tX1 = 0.6, tX2 = 4.4;
+const tY1 = ty + slope * (tX1 - tx);
+const tY2 = ty + slope * (tX2 - tx);
+
+// Slope triangle: from tangent point, go right 1.2, up by rise
+const run = 1.2;
+const rise = slope * run; // 1.8
+// Triangle corners in graph coords
+const slopeX0 = tx;          // start at tangent point
+const slopeY0 = ty;
+const slopeX1 = tx + run;    // end of horizontal run (same y)
+const slopeY1 = ty;
+const slopeX2 = tx + run;    // top of vertical rise
+const slopeY2 = ty + rise;
+---
+
+<figure class="tid" role="img" aria-label="A curve with a tangent line and slope triangle showing rise over run">
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    {/* Grid */}
+    {[1,2,3,4].map(v => (
+      <line x1={sx(v)} y1={sy(yMin)} x2={sx(v)} y2={sy(yMax)} class="tid-grid" stroke-width="0.5" />
+    ))}
+    {[1,2,3,4,5].map(v => (
+      <line x1={sx(xMin)} y1={sy(v)} x2={sx(xMax)} y2={sy(v)} class="tid-grid" stroke-width="0.5" />
+    ))}
+    <line x1={sx(xMin)} y1={sy(0)} x2={sx(xMax)} y2={sy(0)} class="tid-axis" stroke-width="1.5" />
+    <line x1={sx(0)} y1={sy(yMin)} x2={sx(0)} y2={sy(yMax)} class="tid-axis" stroke-width="1.2" />
+
+    {/* Curve */}
+    <polyline points={pts.join(' ')} fill="none" class="tid-curve" stroke-width="3" />
+
+    {/* Tangent line */}
+    <line x1={sx(tX1)} y1={sy(tY1)}
+          x2={sx(tX2)} y2={sy(tY2)}
+          class="tid-tangent" stroke-width="2.5" />
+
+    {/* Slope triangle — dashed purple */}
+    {/* Horizontal run */}
+    <line x1={sx(slopeX0)} y1={sy(slopeY0)}
+          x2={sx(slopeX1)} y2={sy(slopeY1)}
+          class="tid-slope" stroke-width="2" stroke-dasharray="6,4" />
+    {/* Vertical rise */}
+    <line x1={sx(slopeX1)} y1={sy(slopeY1)}
+          x2={sx(slopeX2)} y2={sy(slopeY2)}
+          class="tid-slope" stroke-width="2" stroke-dasharray="6,4" />
+
+    {/* Run label — below the horizontal line */}
+    <text class="tid-lbl-slope" x={(sx(slopeX0) + sx(slopeX1)) / 2} y={sy(slopeY0) + 16} font-size="11" text-anchor="middle">run</text>
+    {/* Rise label — right of the vertical line */}
+    <text class="tid-lbl-slope" x={sx(slopeX1) + 10} y={sy(slopeY1) - 6} font-size="11" text-anchor="start">rise</text>
+
+    {/* The point where curve and tangent touch */}
+    <circle cx={sx(tx)} cy={sy(ty)} r="7" class="tid-dot" />
+
+    {/* Labels in clear space */}
+    <text class="tid-lbl-curve" x={sx(4.3)} y={sy(5.6)} font-size="13">f(x)</text>
+    <text class="tid-lbl-tan" x={sx(3.8)} y={sy(3.4)} font-size="12">tangent line</text>
+    <text class="tid-lbl-slope" x={sx(0.15)} y={sy(5.6)} font-size="12">slope = derivative</text>
+  </svg>
+</figure>
+
+<style>
+  .tid { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .tid svg { max-width:100%; height:auto; }
+  .tid-grid { stroke:#333; }
+  .tid-axis { stroke:#666; }
+  .tid-curve { stroke:#58a6ff; }
+  .tid-tangent { stroke:#7ee787; }
+  .tid-dot { fill:#f0883e; }
+  .tid-slope { stroke:#d2a8ff; }
+  .tid-lbl-curve { fill:#58a6ff; font-family:'Libre Baskerville',Georgia,serif; }
+  .tid-lbl-tan { fill:#7ee787; font-family:'Libre Baskerville',Georgia,serif; }
+  .tid-lbl-slope { fill:#d2a8ff; font-family:'Libre Baskerville',Georgia,serif; font-style:italic; }
+  :global([data-theme="light"]) .tid-grid { stroke:#ddd; }
+  :global([data-theme="light"]) .tid-axis { stroke:#999; }
+  :global([data-theme="light"]) .tid-curve { stroke:#0550ae; }
+  :global([data-theme="light"]) .tid-tangent { stroke:#116329; }
+  :global([data-theme="light"]) .tid-dot { fill:#b35900; }
+  :global([data-theme="light"]) .tid-slope { stroke:#6639ba; }
+  :global([data-theme="light"]) .tid-lbl-curve { fill:#0550ae; }
+  :global([data-theme="light"]) .tid-lbl-tan { fill:#116329; }
+  :global([data-theme="light"]) .tid-lbl-slope { fill:#6639ba; }
+</style>

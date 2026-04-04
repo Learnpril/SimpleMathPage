@@ -1,0 +1,91 @@
+---
+/**
+ * LadderDiagram — shows the classic related rates ladder problem.
+ * A ladder of length 13 leaning against a wall, with x=5 from wall
+ * and y=12 up the wall. Arrows show dx/dt (rightward) and dy/dt (downward).
+ * Legend below, no overlapping labels.
+ */
+const w = 300;
+const h = 340;
+const pad = 40;
+// Wall is on the left, ground on the bottom
+// Ladder from (wallX, topY) to (baseX, groundY)
+const wallX = pad + 20;
+const groundY = h - pad;
+const baseX = wallX + 140; // x = 5 ft (scaled)
+const topY = groundY - 200; // y = 12 ft (scaled)
+---
+
+<figure class="ldr" role="img" aria-label="Ladder leaning against a wall, showing x, y, and the 13-foot ladder">
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <marker id="ldr-arr" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+        <path d="M0,0 L8,3 L0,6" fill="none" class="ldr-arr-stroke" stroke-width="1.5" />
+      </marker>
+    </defs>
+
+    {/* Wall (vertical line on left) */}
+    <line x1={wallX} y1={topY - 30} x2={wallX} y2={groundY} class="ldr-wall" stroke-width="3" />
+    {/* Ground (horizontal line on bottom) */}
+    <line x1={wallX - 10} y1={groundY} x2={baseX + 60} y2={groundY} class="ldr-wall" stroke-width="3" />
+    {/* Right angle marker */}
+    <polyline points={`${wallX + 12},${groundY} ${wallX + 12},${groundY - 12} ${wallX},${groundY - 12}`}
+             fill="none" class="ldr-angle" stroke-width="1.5" />
+
+    {/* Ladder */}
+    <line x1={wallX} y1={topY} x2={baseX} y2={groundY} class="ldr-ladder" stroke-width="4" />
+
+    {/* x label (along ground) */}
+    <line x1={wallX} y1={groundY + 18} x2={baseX} y2={groundY + 18}
+          class="ldr-dim" stroke-width="1" />
+    <text class="ldr-lbl-dim" x={(wallX + baseX) / 2} y={groundY + 32} font-size="13" text-anchor="middle">x = 5</text>
+
+    {/* y label (along wall) */}
+    <line x1={wallX - 18} y1={topY} x2={wallX - 18} y2={groundY}
+          class="ldr-dim" stroke-width="1" />
+    <text class="ldr-lbl-dim" x={wallX - 28} y={(topY + groundY) / 2 + 4} font-size="13" text-anchor="middle" transform={`rotate(-90, ${wallX - 28}, ${(topY + groundY) / 2 + 4})`}>y = 12</text>
+
+    {/* Ladder length label */}
+    <text class="ldr-lbl-ladder" x={(wallX + baseX) / 2 + 14} y={(topY + groundY) / 2 - 8} font-size="13" text-anchor="start">13 ft</text>
+
+    {/* dx/dt arrow (rightward from base) */}
+    <line x1={baseX + 8} y1={groundY - 8} x2={baseX + 45} y2={groundY - 8}
+          class="ldr-arrow" stroke-width="2" marker-end="url(#ldr-arr)" />
+    <text class="ldr-lbl-rate" x={baseX + 50} y={groundY - 4} font-size="11">dx/dt</text>
+
+    {/* dy/dt arrow (downward, to the right of the ladder) */}
+    <line x1={wallX + 40} y1={topY - 20} x2={wallX + 40} y2={topY + 17}
+          class="ldr-arrow" stroke-width="2" marker-end="url(#ldr-arr)" />
+    <text class="ldr-lbl-rate" x={wallX + 48} y={topY + 10} font-size="11">dy/dt</text>
+
+    {/* Dots at endpoints */}
+    <circle cx={wallX} cy={topY} r="5" class="ldr-dot" />
+    <circle cx={baseX} cy={groundY} r="5" class="ldr-dot" />
+  </svg>
+</figure>
+
+<style>
+  .ldr { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .ldr svg { max-width:100%; height:auto; }
+  .ldr-wall { stroke:#666; }
+  .ldr-angle { stroke:#666; }
+  .ldr-ladder { stroke:#58a6ff; }
+  .ldr-dim { stroke:#888; }
+  .ldr-arrow { stroke:#7ee787; }
+  .ldr-arr-stroke { stroke:#7ee787; }
+  .ldr-dot { fill:#f0883e; }
+  .ldr-lbl-dim { fill:#d2a8ff; font-family:'Libre Baskerville',Georgia,serif; }
+  .ldr-lbl-ladder { fill:#58a6ff; font-family:'Libre Baskerville',Georgia,serif; }
+  .ldr-lbl-rate { fill:#7ee787; font-family:'Libre Baskerville',Georgia,serif; font-style:italic; }
+
+  :global([data-theme="light"]) .ldr-wall { stroke:#999; }
+  :global([data-theme="light"]) .ldr-angle { stroke:#999; }
+  :global([data-theme="light"]) .ldr-ladder { stroke:#0550ae; }
+  :global([data-theme="light"]) .ldr-dim { stroke:#aaa; }
+  :global([data-theme="light"]) .ldr-arrow { stroke:#116329; }
+  :global([data-theme="light"]) .ldr-arr-stroke { stroke:#116329; }
+  :global([data-theme="light"]) .ldr-dot { fill:#b35900; }
+  :global([data-theme="light"]) .ldr-lbl-dim { fill:#6639ba; }
+  :global([data-theme="light"]) .ldr-lbl-ladder { fill:#0550ae; }
+  :global([data-theme="light"]) .ldr-lbl-rate { fill:#116329; }
+</style>

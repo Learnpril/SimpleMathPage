@@ -1,0 +1,170 @@
+---
+title: Implicit Differentiation
+description: Differentiate equations not solved for y
+sidebar:
+  order: 10
+---
+
+## What You'll Learn
+
+In this lesson you'll learn how to find dy/dx when y isn't isolated on one side of the equation. This technique is called implicit differentiation, and it unlocks derivatives for curves like circles, ellipses, and other relationships where solving for y first would be messy or impossible.
+
+## The Concept
+
+So far, every function you've differentiated has been in the form y = f(x), where y is explicitly written in terms of x. But many important equations aren't written that way.
+
+Consider the equation of a circle:
+
+$$
+x^2 + y^2 = 25
+$$
+
+You could solve for y (getting two square root expressions), but that's awkward. Implicit differentiation lets you find dy/dx directly from the equation as written.
+
+The process:
+
+1. Differentiate both sides with respect to x
+2. Every time you differentiate a term containing y, tack on a dy/dx (because y depends on x, so the chain rule applies)
+3. Solve for dy/dx
+
+That's it. The chain rule is doing all the work. When you see y² and differentiate with respect to x, the chain rule gives you 2y times dy/dx. When you see x², you just get 2x (no dy/dx needed because x is the variable you're differentiating with respect to).
+
+import CircleTangent from "../../../components/CircleTangent.astro";
+
+<CircleTangent />
+
+The blue circle is x² + y² = 25. You can't write it as a single y = f(x) function (it's two halves). But implicit differentiation gives you the slope at any point anyway. The green tangent line at (3, 4) has slope -3/4, found by implicit differentiation. The dashed purple line is the radius, which is always perpendicular to the tangent on a circle.
+
+## Worked Example
+
+**Example 1: Circle**
+
+Find dy/dx for x² + y² = 25.
+
+Differentiate both sides with respect to x:
+
+$$
+2x + 2y\frac{dy}{dx} = 0
+$$
+
+Solve for dy/dx:
+
+$$
+2y\frac{dy}{dx} = -2x \quad \Rightarrow \quad \frac{dy}{dx} = -\frac{x}{y}
+$$
+
+At the point (3, 4) on the circle, the slope is -3/4. At (0, 5), the slope is 0 (horizontal tangent at the top). At (5, 0), the slope is undefined (vertical tangent on the side). All of that makes geometric sense if you picture the circle.
+
+**Example 2: Product of x and y**
+
+Find dy/dx for xy + y³ = 6.
+
+The xy term needs the product rule (x and y are both functions of x):
+
+$$
+\left(1 \cdot y + x \cdot \frac{dy}{dx}\right) + 3y^2\frac{dy}{dx} = 0
+$$
+
+Group the dy/dx terms:
+
+$$
+x\frac{dy}{dx} + 3y^2\frac{dy}{dx} = -y
+$$
+
+Factor out dy/dx:
+
+$$
+\frac{dy}{dx}(x + 3y^2) = -y \quad \Rightarrow \quad \frac{dy}{dx} = \frac{-y}{x + 3y^2}
+$$
+
+**Example 3: Finding a tangent line**
+
+For x² + y² = 25, find the equation of the tangent line at (3, 4).
+
+We already found dy/dx = -x/y. At (3, 4):
+
+$$
+\text{slope} = -\frac{3}{4}
+$$
+
+Using point-slope form:
+
+$$
+y - 4 = -\frac{3}{4}(x - 3)
+$$
+
+$$
+y = -\frac{3}{4}x + \frac{9}{4} + 4 = -\frac{3}{4}x + \frac{25}{4}
+$$
+
+## Real-World Application
+
+Implicit differentiation is essential when variables are naturally intertwined:
+
+- Physics: the ideal gas law PV = nRT relates pressure, volume, and temperature. If you want dP/dT while V changes, implicit differentiation handles it.
+- Economics: indifference curves and production possibility frontiers are defined implicitly. Implicit differentiation gives marginal rates of substitution.
+- Engineering: stress-strain relationships in materials are often implicit. Finding how one changes with respect to the other requires this technique.
+- Geometry: finding tangent lines to circles, ellipses, and other curves defined by equations.
+
+:::note[You've Got This]
+Implicit differentiation is just the chain rule applied systematically. Every time you see y, treat it as a function of x and multiply by dy/dx. Then solve for dy/dx like it's a regular algebra problem. The hardest part is remembering to apply the product rule when x and y are multiplied together. Once that clicks, you can differentiate any equation.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="calculus1-implicit-diff"
+  questions={[
+    {
+      id: "q1",
+      text: "When differentiating y² with respect to x, you get:",
+      options: ["2y", "y²", "2y dy/dx", "2x"],
+      correctIndex: 2,
+      explanation:
+        "The chain rule requires multiplying by dy/dx since y depends on x.",
+    },
+    {
+      id: "q2",
+      text: "For x² + y² = 25, dy/dx equals:",
+      options: ["-y/x", "-x/y", "x/y", "2x + 2y"],
+      correctIndex: 1,
+      explanation: "Differentiate both sides, then solve for dy/dx.",
+    },
+    {
+      id: "q3",
+      text: "Implicit differentiation is needed when:",
+      options: [
+        "y is already isolated",
+        "The function is a polynomial in x only",
+        "The equation is linear",
+        "y is not solved for explicitly",
+      ],
+      correctIndex: 3,
+      explanation:
+        "When y is tangled up with x in the equation, implicit differentiation is the way.",
+    },
+    {
+      id: "q4",
+      text: "When differentiating xy with respect to x, you use:",
+      options: [
+        "The power rule",
+        "The product rule",
+        "The quotient rule only",
+        "No special rule needed",
+      ],
+      correctIndex: 1,
+      explanation:
+        "x and y are both functions of x, so the product rule applies.",
+    },
+    {
+      id: "q5",
+      text: "At the point (0, 5) on x² + y² = 25, the tangent line is:",
+      options: ["Vertical", "Has slope 5", "Horizontal", "Has slope -5"],
+      correctIndex: 2,
+      explanation:
+        "dy/dx = -0/5 = 0, so the tangent is horizontal at the top of the circle.",
+    },
+  ]}
+/>

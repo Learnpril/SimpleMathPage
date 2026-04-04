@@ -1,0 +1,54 @@
+---
+/**
+ * FenceDiagram — shows the fence-against-wall optimization problem.
+ * Rectangle with wall on top, fence on three sides.
+ * x = 100 (width), y = 200 (length along wall).
+ */
+const w = 360;
+const h = 240;
+const pad = 30;
+// Rectangle dimensions in SVG
+const rectW = 240;
+const rectH = 130;
+const rx = (w - rectW) / 2;
+const ry = pad + 20;
+---
+
+<figure class="fcd" role="img" aria-label="Rectangular pen against a wall, width x and length y">
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    {/* Wall (thick line on top) */}
+    <line x1={rx - 20} y1={ry} x2={rx + rectW + 20} y2={ry}
+          class="fcd-wall" stroke-width="6" />
+
+    {/* Fence (three sides) */}
+    <line x1={rx} y1={ry} x2={rx} y2={ry + rectH}
+          class="fcd-fence" stroke-width="3" />
+    <line x1={rx} y1={ry + rectH} x2={rx + rectW} y2={ry + rectH}
+          class="fcd-fence" stroke-width="3" />
+    <line x1={rx + rectW} y1={ry + rectH} x2={rx + rectW} y2={ry}
+          class="fcd-fence" stroke-width="3" />
+
+    {/* Dimension labels */}
+    <text class="fcd-lbl" x={rx - 14} y={ry + rectH / 2 + 4} font-size="13" text-anchor="end">x = 100</text>
+    <text class="fcd-lbl" x={rx + rectW / 2} y={ry + rectH + 22} font-size="13" text-anchor="middle">y = 200</text>
+    <text class="fcd-lbl-wall" x={rx + rectW / 2} y={ry - 8} font-size="12" text-anchor="middle">wall (no fence needed)</text>
+
+    {/* Area label in center */}
+    <text class="fcd-lbl-area" x={rx + rectW / 2} y={ry + rectH / 2 + 5} font-size="14" text-anchor="middle">A = 20,000 ft²</text>
+  </svg>
+</figure>
+
+<style>
+  .fcd { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .fcd svg { max-width:100%; height:auto; }
+  .fcd-wall { stroke:#888; }
+  .fcd-fence { stroke:#7ee787; }
+  .fcd-lbl { fill:#d2a8ff; font-family:'Libre Baskerville',Georgia,serif; }
+  .fcd-lbl-wall { fill:#888; font-family:'Libre Baskerville',Georgia,serif; font-style:italic; }
+  .fcd-lbl-area { fill:#f0883e; font-family:'Libre Baskerville',Georgia,serif; font-weight:bold; }
+  :global([data-theme="light"]) .fcd-wall { stroke:#aaa; }
+  :global([data-theme="light"]) .fcd-fence { stroke:#116329; }
+  :global([data-theme="light"]) .fcd-lbl { fill:#6639ba; }
+  :global([data-theme="light"]) .fcd-lbl-wall { fill:#999; }
+  :global([data-theme="light"]) .fcd-lbl-area { fill:#b35900; }
+</style>

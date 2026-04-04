@@ -1,0 +1,183 @@
+---
+title: Limit Definition of the Derivative
+description: Derive the derivative from first principles using limits
+sidebar:
+  order: 3
+---
+
+## What You'll Learn
+
+In this lesson you'll learn the formal definition of the derivative, how to compute derivatives directly from that definition, and why this matters even though faster rules exist.
+
+## The Concept
+
+In the last lesson you learned that the derivative is the slope of the tangent line at a point. Now we make that precise.
+
+The **derivative** of f at x = a is defined as:
+
+$$
+f'(a) = \lim_{h \to 0} \frac{f(a + h) - f(a)}{h}
+$$
+
+Here's what's happening. Pick a point on the curve at x = a. Now pick a second point at x = a + h, where h is some small number. Draw a line through both points. That's a **secant line**, and its slope is the difference quotient:
+
+$$
+\text{secant slope} = \frac{f(a + h) - f(a)}{h}
+$$
+
+As h gets smaller, the second point slides closer to the first, and the secant line rotates toward the tangent line. When h reaches 0, the secant becomes the tangent. The limit captures that exact moment.
+
+import SecantToTangent from "../../../components/SecantToTangent.astro";
+
+<SecantToTangent />
+
+The blue curve is f(x). The orange dot is the point at x = a, and the purple dot is at x = a + h. The dashed purple line is the secant through both points. The solid green line is the tangent at x = a. As h shrinks toward 0, the purple dot slides toward the orange dot, and the secant rotates to match the tangent.
+
+If this limit exists, f is **differentiable** at a, meaning the curve is smooth enough there to have a well-defined tangent line.
+
+To find the derivative as a function (not just at one point), replace a with x:
+
+$$
+f'(x) = \lim_{h \to 0} \frac{f(x + h) - f(x)}{h}
+$$
+
+This gives you a formula that works at every x where the limit exists.
+
+## Worked Example
+
+**Example 1: Derivative of f(x) = x² at x = 3**
+
+Set up the definition with a = 3:
+
+$$
+f'(3) = \lim_{h \to 0} \frac{(3 + h)^2 - 3^2}{h}
+$$
+
+Expand the numerator:
+
+$$
+= \lim_{h \to 0} \frac{9 + 6h + h^2 - 9}{h} = \lim_{h \to 0} \frac{6h + h^2}{h}
+$$
+
+Factor out h:
+
+$$
+= \lim_{h \to 0} (6 + h) = 6
+$$
+
+The slope of the tangent line to y = x² at x = 3 is exactly 6.
+
+**Example 2: Derivative of f(x) = 3x + 2 (at any point)**
+
+$$
+f'(a) = \lim_{h \to 0} \frac{3(a + h) + 2 - (3a + 2)}{h}
+$$
+
+Simplify the numerator:
+
+$$
+= \lim_{h \to 0} \frac{3a + 3h + 2 - 3a - 2}{h} = \lim_{h \to 0} \frac{3h}{h} = 3
+$$
+
+The derivative is 3 everywhere. That makes sense: a line with slope 3 has the same steepness at every point. The tangent line to a straight line is the line itself.
+
+**Example 3: General derivative of f(x) = x²**
+
+Instead of plugging in a specific number, leave x as a variable:
+
+$$
+f'(x) = \lim_{h \to 0} \frac{(x + h)^2 - x^2}{h}
+$$
+
+Expand:
+
+$$
+= \lim_{h \to 0} \frac{x^2 + 2xh + h^2 - x^2}{h} = \lim_{h \to 0} \frac{2xh + h^2}{h}
+$$
+
+Factor:
+
+$$
+= \lim_{h \to 0} (2x + h) = 2x
+$$
+
+So the derivative of x² is 2x. At x = 1 the slope is 2, at x = 3 the slope is 6, at x = 5 the slope is 10. The curve gets steeper as x increases, and the derivative tells you exactly how steep.
+
+## Real-World Application
+
+The limit definition is the rigorous foundation for all derivative calculations:
+
+- Physics: if position is s(t) = t², the limit definition gives velocity v(t) = 2t. At t = 3 seconds, you're moving at exactly 6 units per second.
+- Economics: marginal cost is the derivative of total cost. The limit definition is how you prove that the marginal cost formula actually works.
+- Engineering: stress analysis requires knowing exact rates of change, not approximations. The limit definition guarantees precision.
+
+The shortcut rules you'll learn next (power rule, product rule, chain rule) all come from applying this definition to general cases and simplifying. Understanding the definition means you'll know why those rules work, not just how to use them.
+
+:::note[You've Got This]
+The limit definition is the most mechanical part of calculus. Plug in, expand, simplify, cancel h, take the limit. It's the same four steps every time. Once you've done a few by hand, the pattern clicks. And the payoff is huge: you'll understand where every derivative rule comes from, which means you'll never have to blindly memorize anything.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="calculus1-limit-definition-derivative"
+  questions={[
+    {
+      id: "q1",
+      text: "The formal definition of the derivative at x = a is:",
+      options: [
+        "The slope of the secant line",
+        "lim (h\\to 0) [f(a+h) - f(a)] / h",
+        "f(a+h) - f(a)",
+        "lim (x\\to a) f(x)",
+      ],
+      correctIndex: 1,
+      explanation:
+        "The derivative is defined as this specific limit of the difference quotient.",
+    },
+    {
+      id: "q2",
+      text: "Using the limit definition, the derivative of f(x) = x² is:",
+      options: ["x", "2", "x²", "2x"],
+      correctIndex: 3,
+      explanation:
+        "Expanding (x+h)², subtracting x², dividing by h, and taking the limit gives 2x.",
+    },
+    {
+      id: "q3",
+      text: "As h approaches 0, the secant line becomes:",
+      options: [
+        "A vertical line",
+        "The x-axis",
+        "The tangent line",
+        "A horizontal line",
+      ],
+      correctIndex: 2,
+      explanation:
+        "The secant rotates into the tangent as the two points merge.",
+    },
+    {
+      id: "q4",
+      text: "For f(x) = 5x + 1, the derivative using the limit definition is:",
+      options: ["5", "1", "5x", "5x + 1"],
+      correctIndex: 0,
+      explanation:
+        "Linear functions have constant derivatives equal to their slope.",
+    },
+    {
+      id: "q5",
+      text: "Why study the limit definition when shortcut rules exist?",
+      options: [
+        "It is faster than all other methods",
+        "It only applies to polynomials",
+        "It replaces the need for limits entirely",
+        "It shows where the shortcut rules come from",
+      ],
+      correctIndex: 3,
+      explanation:
+        "Understanding the definition gives meaning to the rules you'll learn next.",
+    },
+  ]}
+/>

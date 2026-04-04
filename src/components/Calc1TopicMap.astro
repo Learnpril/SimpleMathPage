@@ -1,0 +1,83 @@
+---
+/**
+ * Calc1TopicMap — visual roadmap of Calculus 1 topics,
+ * showing the flow from Limits → Derivatives → Applications → Integrals.
+ */
+const w = 420;
+const h = 180;
+const boxW = 150;
+const boxH = 36;
+const gap = 30;
+// Four boxes in a 2x2 grid
+const boxes = [
+  { x: 20, y: 20, label: "Limits & Continuity", sub: "Foundation" },
+  { x: 20 + boxW + gap, y: 20, label: "The Derivative", sub: "Rates of change" },
+  { x: 20, y: 20 + boxH + gap + 20, label: "Applications", sub: "Optimization, sketching" },
+  { x: 20 + boxW + gap, y: 20 + boxH + gap + 20, label: "The Integral", sub: "Accumulation, area" },
+];
+---
+
+<figure class="c1tm" role="img" aria-label="Calculus 1 topic roadmap: Limits to Derivatives to Applications and Integrals">
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    {/* Arrows */}
+    {/* Limits → Derivative */}
+    <line x1={boxes[0].x + boxW} y1={boxes[0].y + boxH/2} x2={boxes[1].x} y2={boxes[1].y + boxH/2} class="c1tm-arrow" stroke-width="2" marker-end="url(#c1tm-ah)" />
+    {/* Derivative → Applications (down-left) */}
+    <line x1={boxes[1].x + boxW/2} y1={boxes[1].y + boxH} x2={boxes[2].x + boxW/2} y2={boxes[2].y} class="c1tm-arrow" stroke-width="2" marker-end="url(#c1tm-ah)" />
+    {/* Derivative → Integral (down) */}
+    <line x1={boxes[1].x + boxW/2} y1={boxes[1].y + boxH} x2={boxes[3].x + boxW/2} y2={boxes[3].y} class="c1tm-arrow" stroke-width="2" marker-end="url(#c1tm-ah)" />
+    {/* FTC connection: Integral ↔ Derivative (dashed) */}
+    <line x1={boxes[2].x + boxW} y1={boxes[2].y + boxH/2} x2={boxes[3].x} y2={boxes[3].y + boxH/2} class="c1tm-ftc" stroke-width="1.5" stroke-dasharray="5,3" />
+    <text class="c1tm-ftc-lbl" x={(boxes[2].x + boxW + boxes[3].x) / 2} y={boxes[2].y + boxH/2 - 6} font-size="7" text-anchor="middle">linked by the</text>
+    <text class="c1tm-ftc-lbl" x={(boxes[2].x + boxW + boxes[3].x) / 2} y={boxes[2].y + boxH/2 + 4} font-size="7" text-anchor="middle">Fundamental Theorem</text>
+
+    <defs>
+      <marker id="c1tm-ah" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+        <polygon points="0 0, 8 3, 0 6" class="c1tm-ah-fill" />
+      </marker>
+    </defs>
+
+    {/* Boxes */}
+    {boxes.map((b, i) => (
+      <g>
+        <rect x={b.x} y={b.y} width={boxW} height={boxH} rx="6"
+          class={i === 0 ? "c1tm-box-lim" : i === 1 ? "c1tm-box-der" : i === 2 ? "c1tm-box-app" : "c1tm-box-int"}
+          fill-opacity="0.15" stroke-width="1.5" />
+        <text class={`c1tm-lbl c1tm-lbl-${i}`} x={b.x + boxW/2} y={b.y + 16} font-size="11" text-anchor="middle" font-weight="bold">{b.label}</text>
+        <text class="c1tm-sub" x={b.x + boxW/2} y={b.y + 30} font-size="8" text-anchor="middle">{b.sub}</text>
+      </g>
+    ))}
+  </svg>
+</figure>
+
+<style>
+  .c1tm { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .c1tm svg { max-width:100%; height:auto; }
+  .c1tm-arrow { stroke:#d2a8ff; }
+  .c1tm-ah-fill { fill:#d2a8ff; }
+  .c1tm-ftc { stroke:#7ee787; }
+  .c1tm-ftc-lbl { fill:#7ee787; font-family:'Libre Baskerville',Georgia,serif; font-style:italic; }
+  .c1tm-box-lim { stroke:#58a6ff; fill:#58a6ff; }
+  .c1tm-box-der { stroke:#f0883e; fill:#f0883e; }
+  .c1tm-box-app { stroke:#d2a8ff; fill:#d2a8ff; }
+  .c1tm-box-int { stroke:#7ee787; fill:#7ee787; }
+  .c1tm-lbl { font-family:'Libre Baskerville',Georgia,serif; }
+  .c1tm-lbl-0 { fill:#58a6ff; }
+  .c1tm-lbl-1 { fill:#f0883e; }
+  .c1tm-lbl-2 { fill:#d2a8ff; }
+  .c1tm-lbl-3 { fill:#7ee787; }
+  .c1tm-sub { fill:#888; font-family:'Libre Baskerville',Georgia,serif; }
+  :global([data-theme="light"]) .c1tm-arrow { stroke:#6639ba; }
+  :global([data-theme="light"]) .c1tm-ah-fill { fill:#6639ba; }
+  :global([data-theme="light"]) .c1tm-ftc { stroke:#116329; }
+  :global([data-theme="light"]) .c1tm-ftc-lbl { fill:#116329; }
+  :global([data-theme="light"]) .c1tm-box-lim { stroke:#0550ae; fill:#0550ae; }
+  :global([data-theme="light"]) .c1tm-box-der { stroke:#b35900; fill:#b35900; }
+  :global([data-theme="light"]) .c1tm-box-app { stroke:#6639ba; fill:#6639ba; }
+  :global([data-theme="light"]) .c1tm-box-int { stroke:#116329; fill:#116329; }
+  :global([data-theme="light"]) .c1tm-lbl-0 { fill:#0550ae; }
+  :global([data-theme="light"]) .c1tm-lbl-1 { fill:#b35900; }
+  :global([data-theme="light"]) .c1tm-lbl-2 { fill:#6639ba; }
+  :global([data-theme="light"]) .c1tm-lbl-3 { fill:#116329; }
+  :global([data-theme="light"]) .c1tm-sub { fill:#666; }
+</style>

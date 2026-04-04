@@ -1,0 +1,155 @@
+---
+title: Chain Rule
+description: Differentiate composite functions
+sidebar:
+  order: 6
+---
+
+## What You'll Learn
+
+In this lesson you'll learn the chain rule, which handles composite functions. Any time one function is plugged into another, the chain rule is how you differentiate it.
+
+## The Concept
+
+You already know how to differentiate x⁵ (power rule) and sin(x) (trig derivative). But what about sin(x⁵)? Or (3x² + 1)⁷? These are composite functions: one function wrapped around another. The basic rules don't cover this directly. The chain rule does.
+
+If y = f(g(x)), the derivative is:
+
+$$
+\frac{dy}{dx} = f'(g(x)) \cdot g'(x)
+$$
+
+In words: differentiate the outside function first (leaving the inside alone), then multiply by the derivative of the inside.
+
+In Leibniz notation, if y depends on u and u depends on x:
+
+$$
+\frac{dy}{dx} = \frac{dy}{du} \cdot \frac{du}{dx}
+$$
+
+The du's look like they cancel, which is a nice way to remember it (though it's not literally fraction cancellation, it works as a memory trick).
+
+The process is always the same:
+
+1. Identify the outside function and the inside function
+2. Differentiate the outside, leaving the inside untouched
+3. Multiply by the derivative of the inside
+
+## Worked Example
+
+**Example 1: Power of a function**
+
+Find the derivative of y = (3x² + 5)⁴.
+
+Outside: u⁴. Inside: u = 3x² + 5.
+
+Derivative of outside: 4u³. Derivative of inside: 6x.
+
+$$
+y' = 4(3x^2 + 5)^3 \cdot 6x = 24x(3x^2 + 5)^3
+$$
+
+**Example 2: Trig of a function**
+
+Differentiate y = sin(5x³ - 2x).
+
+Outside: sin(u). Inside: u = 5x³ - 2x.
+
+Derivative of outside: cos(u). Derivative of inside: 15x² - 2.
+
+$$
+y' = \cos(5x^3 - 2x) \cdot (15x^2 - 2)
+$$
+
+**Example 3: Chain rule combined with product rule**
+
+Find y' for y = (x² + 1)³ sin(2x).
+
+This is a product of two functions, and each one needs the chain rule internally.
+
+Let u = (x² + 1)³ and v = sin(2x).
+
+For u: chain rule gives u' = 3(x² + 1)² times 2x = 6x(x² + 1)².
+
+For v: chain rule gives v' = cos(2x) times 2 = 2cos(2x).
+
+Now apply the product rule:
+
+$$
+y' = 6x(x^2 + 1)^2 \sin(2x) + (x^2 + 1)^3 \cdot 2\cos(2x)
+$$
+
+This is a common pattern in Calculus 1: the chain rule rarely shows up alone. It almost always combines with the product rule, quotient rule, or both.
+
+## Real-World Application
+
+The chain rule shows up whenever one rate of change depends on another:
+
+- Physics: if temperature depends on altitude and altitude depends on time, the chain rule connects the rate of temperature change to the rate of climbing.
+- Economics: if profit depends on sales volume and sales volume depends on advertising spend, the chain rule tells you how profit changes with advertising.
+- Biology: if population growth rate depends on food supply and food supply depends on rainfall, the chain rule links them.
+- Related rates problems (coming soon) are entirely built on the chain rule.
+
+:::note[You've Got This]
+The chain rule is just "derivative of the outside times derivative of the inside." That's the whole thing. The tricky part is identifying what's outside and what's inside, and that comes with practice. Start by asking: "what's the last operation I'd do if I were evaluating this function?" That's the outside. Everything it wraps around is the inside.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="calculus1-chain-rule"
+  questions={[
+    {
+      id: "q1",
+      text: "The Chain Rule is used when:",
+      options: [
+        "Two functions are multiplied",
+        "A function is composed of other functions",
+        "One function is divided by another",
+        "The function is a constant",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Composite functions (one inside another) require the chain rule.",
+    },
+    {
+      id: "q2",
+      text: "If y = (x³ + 2)⁵, then dy/dx =",
+      options: ["15x²", "5(x³ + 2)⁵", "5(x³ + 2)⁴ times 3x²", "3x²(x³ + 2)⁴"],
+      correctIndex: 2,
+      explanation:
+        "Derivative of outside (5u⁴) times derivative of inside (3x²).",
+    },
+    {
+      id: "q3",
+      text: "The derivative of sin(4x) is:",
+      options: ["cos(4x)", "4sin(4x)", "4cos(4x)", "-cos(4x)"],
+      correctIndex: 2,
+      explanation:
+        "Derivative of sin is cos, then multiply by derivative of inside (4).",
+    },
+    {
+      id: "q4",
+      text: "In the chain rule, you first differentiate:",
+      options: [
+        "The inside function",
+        "Both at the same time",
+        "Neither, just use the power rule",
+        "The outside function, leaving the inside alone",
+      ],
+      correctIndex: 3,
+      explanation:
+        "Outside first, then multiply by the derivative of the inside.",
+    },
+    {
+      id: "q5",
+      text: "Which function requires the chain rule to differentiate?",
+      options: ["x⁴ + 3x", "5x - 7", "cos(x² + 1)", "3x²"],
+      correctIndex: 2,
+      explanation:
+        "cos of (something) is a composition, so the chain rule applies.",
+    },
+  ]}
+/>

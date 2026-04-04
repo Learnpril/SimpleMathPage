@@ -1,0 +1,166 @@
+---
+title: Optimization Problems
+description: Find maximum and minimum values in real-world contexts
+sidebar:
+  order: 15
+---
+
+## What You'll Learn
+
+In this lesson you'll learn how to use derivatives to solve real-world optimization problems: finding the best, biggest, smallest, cheapest, or most efficient value of something.
+
+## The Concept
+
+Optimization is the practical payoff of everything you've learned about derivatives. The process:
+
+1. Read the problem and identify what you're maximizing or minimizing
+2. Draw a picture if possible
+3. Write the quantity to optimize as a function of one variable (use constraints to eliminate extras)
+4. Find the domain (what values make physical sense)
+5. Take the derivative, set it to zero, find critical points
+6. Test critical points (and endpoints if on a closed interval)
+7. Answer the question in context
+
+## Worked Example
+
+**Example 1: Fence against a wall**
+
+You have 400 feet of fencing to enclose a rectangular pen against a straight wall. The wall forms one side, so you only need fence for three sides. What dimensions maximize the area?
+
+Let x = width (perpendicular to wall), y = length (along wall).
+
+Constraint: 2x + y = 400, so y = 400 - 2x.
+
+Area as a function of x:
+
+$$
+A(x) = x(400 - 2x) = 400x - 2x^2
+$$
+
+Domain: x must be between 0 and 200 (if x = 200, there's no length left).
+
+Take the derivative and set it to zero:
+
+$$
+A'(x) = 400 - 4x = 0 \quad \Rightarrow \quad x = 100
+$$
+
+Then y = 400 - 2(100) = 200.
+
+import FenceDiagram from "../../../components/FenceDiagram.astro";
+
+<FenceDiagram />
+
+Maximum area is 100 times 200 = 20,000 square feet. The second derivative A'' = -4 is negative, confirming this is a maximum.
+
+**Example 2: Open-top box**
+
+A box with a square base and no top must hold 500 cm³. What dimensions minimize the surface area?
+
+Let x = side of the square base, h = height. Volume constraint: x²h = 500, so h = 500/x².
+
+Surface area (base + four sides, no top):
+
+$$
+S(x) = x^2 + 4xh = x^2 + 4x \cdot \frac{500}{x^2} = x^2 + \frac{2000}{x}
+$$
+
+Take the derivative:
+
+$$
+S'(x) = 2x - \frac{2000}{x^2}
+$$
+
+Set to zero:
+
+$$
+2x = \frac{2000}{x^2} \quad \Rightarrow \quad 2x^3 = 2000 \quad \Rightarrow \quad x^3 = 1000 \quad \Rightarrow \quad x = 10
+$$
+
+Then h = 500/100 = 5 cm. The box is 10 cm by 10 cm by 5 cm tall.
+
+**Example 3: Maximum profit**
+
+A company's profit function is P(x) = -0.01x² + 50x - 200, where x is units produced.
+
+$$
+P'(x) = -0.02x + 50 = 0 \quad \Rightarrow \quad x = 2500
+$$
+
+P''(x) = -0.02, which is negative, so x = 2500 is a maximum. Maximum profit is P(2500) = -0.01(6250000) + 125000 - 200 = 62,300.
+
+## Real-World Application
+
+Optimization is everywhere:
+
+- Manufacturing: minimize material cost for a container that holds a required volume
+- Business: find the price point that maximizes revenue (price times quantity, where quantity depends on price)
+- Engineering: design the lightest beam that can support a given load
+- Logistics: find the route that minimizes fuel cost
+- Game design: balance resource costs so the game economy feels fair
+
+:::note[You've Got This]
+Optimization problems are word problems, and the hardest part is the setup. Once you have the function of one variable, the calculus is the same as finding critical points. Draw a picture, label everything, write the constraint, eliminate a variable, differentiate, solve. The pattern is always the same. Practice the setup and the rest follows.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="calculus1-optimization"
+  questions={[
+    {
+      id: "q1",
+      text: "The first step in optimization is usually:",
+      options: [
+        "Take the second derivative",
+        "Identify what to maximize or minimize",
+        "Graph the function",
+        "Find all critical points",
+      ],
+      correctIndex: 1,
+      explanation:
+        "You need to know what you're optimizing before anything else.",
+    },
+    {
+      id: "q2",
+      text: "In the fence problem (400 ft, wall on one side), the optimal width is:",
+      options: ["200 ft", "50 ft", "100 ft", "133 ft"],
+      correctIndex: 2,
+      explanation: "A'(x) = 400 - 4x = 0 gives x = 100.",
+    },
+    {
+      id: "q3",
+      text: "Why do you use constraints in optimization?",
+      options: [
+        "To make the problem harder",
+        "To eliminate variables so you have a function of one variable",
+        "To find the domain only",
+        "Constraints aren't needed",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Constraints let you express the objective as a function of one variable.",
+    },
+    {
+      id: "q4",
+      text: "A negative second derivative at a critical point means:",
+      options: [
+        "Local minimum",
+        "Inflection point",
+        "No extremum",
+        "Local maximum",
+      ],
+      correctIndex: 3,
+      explanation: "Concave down at the critical point means it's a peak.",
+    },
+    {
+      id: "q5",
+      text: "For the open-top box holding 500 cm³, the optimal base side is:",
+      options: ["5 cm", "10 cm", "15 cm", "20 cm"],
+      correctIndex: 1,
+      explanation: "Solving S'(x) = 0 gives x = 10 cm.",
+    },
+  ]}
+/>

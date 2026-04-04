@@ -1,0 +1,177 @@
+---
+title: Curve Sketching
+description: Use derivatives to analyze and sketch function graphs
+sidebar:
+  order: 14
+---
+
+## What You'll Learn
+
+In this lesson you'll learn how to combine everything you know about derivatives to sketch accurate graphs of functions. This is where all the derivative tools come together.
+
+## The Concept
+
+Curve sketching is a systematic process. You gather information from the function and its derivatives, then assemble it into a picture.
+
+The checklist:
+
+1. Domain: where is the function defined?
+2. Intercepts: where does it cross the axes?
+3. Symmetry: is it even, odd, or neither?
+4. First derivative: where is f increasing (f' positive) or decreasing (f' negative)? Where are the critical points?
+5. Second derivative: where is f concave up (f'' positive) or concave down (f'' negative)? Where are the inflection points?
+6. Asymptotes: any vertical, horizontal, or oblique asymptotes?
+7. Sketch: put it all together.
+
+You don't always need every step. For polynomials, there are no asymptotes. For simple functions, symmetry might be obvious. Use what's relevant.
+
+## Worked Example
+
+**Example 1: Full sketch of a cubic**
+
+Sketch f(x) = x³ - 3x² - 9x + 5.
+
+Step 1: Domain is all real numbers. y-intercept: f(0) = 5.
+
+Step 2: First derivative.
+
+$$
+f'(x) = 3x^2 - 6x - 9 = 3(x + 1)(x - 3)
+$$
+
+Critical points: x = -1 and x = 3.
+
+Sign of f': positive on x less than -1 (increasing), negative between -1 and 3 (decreasing), positive on x greater than 3 (increasing).
+
+So x = -1 is a local max, x = 3 is a local min.
+
+f(-1) = -1 - 3 + 9 + 5 = 10. f(3) = 27 - 27 - 27 + 5 = -22.
+
+Step 3: Second derivative.
+
+$$
+f''(x) = 6x - 6
+$$
+
+f'' = 0 at x = 1. f'' is negative for x less than 1 (concave down), positive for x greater than 1 (concave up). So x = 1 is an inflection point where the concavity switches.
+
+f(1) = 1 - 3 - 9 + 5 = -6.
+
+Putting it together: the curve rises to a local max at (-1, 10), falls through the inflection point at (1, -6), continues falling to a local min at (3, -22), then rises again.
+
+import CurveSketchGraph from "../../../components/CurveSketchGraph.astro";
+
+<CurveSketchGraph />
+
+**Example 2: Concavity analysis**
+
+For f(x) = x⁴ - 4x², analyze concavity.
+
+$$
+f'(x) = 4x^3 - 8x = 4x(x^2 - 2)
+$$
+
+$$
+f''(x) = 12x^2 - 8
+$$
+
+f'' = 0 when 12x² = 8, so x² = 2/3, meaning x is about plus or minus 0.816.
+
+f'' is positive outside these points (concave up) and negative between them (concave down). The inflection points are at x = plus or minus sqrt(2/3).
+
+import ConcavityGraph from "../../../components/ConcavityGraph.astro";
+
+<ConcavityGraph />
+
+**Example 3: Quick sketch from derivative info**
+
+If you know f' is positive on (-infinity, 2) and negative on (2, infinity), and f'' is negative everywhere, then:
+
+- f is increasing then decreasing: local max at x = 2
+- f is concave down everywhere: the curve bends downward like an upside-down bowl
+- The graph looks like an inverted parabola shape with its peak at x = 2
+
+import InvertedParabolaSketch from "../../../components/InvertedParabolaSketch.astro";
+
+<InvertedParabolaSketch />
+
+## Real-World Application
+
+Curve sketching is used whenever you need to understand the shape of a relationship:
+
+- Economics: sketching cost, revenue, and profit curves to find break-even points and optimal production levels
+- Physics: sketching position, velocity, and acceleration to understand motion
+- Engineering: understanding stress-strain curves to find failure points
+- Data science: understanding the shape of loss functions to know if gradient descent will converge
+
+:::note[You've Got This]
+Curve sketching is the payoff for everything you've learned about derivatives. You're not just computing numbers anymore. You're reading the story of a function: where it rises, where it falls, where it bends, where it peaks. The checklist (domain, intercepts, f', f'', asymptotes, sketch) keeps you organized. Practice on a few cubics and you'll get the flow.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="calculus1-curve-sketching"
+  questions={[
+    {
+      id: "q1",
+      text: "If f'(x) is positive on an interval, the function is:",
+      options: ["Decreasing", "Concave up", "Increasing", "Constant"],
+      correctIndex: 2,
+      explanation: "Positive first derivative means the function is going up.",
+    },
+    {
+      id: "q2",
+      text: "Concave up means:",
+      options: [
+        "f'(x) is negative",
+        "f''(x) is positive",
+        "f''(x) is negative",
+        "The function is decreasing",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Positive second derivative means the curve bends upward like a bowl.",
+    },
+    {
+      id: "q3",
+      text: "An inflection point is where:",
+      options: [
+        "f'(x) = 0",
+        "The function crosses the x-axis",
+        "Concavity changes",
+        "The function has a maximum",
+      ],
+      correctIndex: 2,
+      explanation:
+        "The curve switches from concave up to concave down or vice versa.",
+    },
+    {
+      id: "q4",
+      text: "If f' changes from positive to negative at x = c, then x = c is a:",
+      options: [
+        "Local minimum",
+        "Inflection point",
+        "Local maximum",
+        "Vertical asymptote",
+      ],
+      correctIndex: 2,
+      explanation: "Rising then falling creates a peak.",
+    },
+    {
+      id: "q5",
+      text: "The first step in curve sketching is usually:",
+      options: [
+        "Find the second derivative",
+        "Find the domain and intercepts",
+        "Draw the asymptotes",
+        "Compute the integral",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Start with the basics: where is the function defined and where does it cross the axes.",
+    },
+  ]}
+/>

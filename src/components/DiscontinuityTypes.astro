@@ -1,0 +1,157 @@
+---
+/**
+ * DiscontinuityTypes — three mini-graphs showing the three types:
+ * 1. Removable (hole): y = x+3 with hole at (3,6)
+ * 2. Jump: piecewise, left piece ends at (2,3), right piece starts at (2,5)
+ * 3. Infinite: vertical asymptote at x=2 (like 1/(x-2))
+ */
+const pw = 180; // per-panel width
+const ph = 160;
+const pad = 30;
+const gw = pw - 2 * pad;
+const gh = ph - 2 * pad;
+
+// --- Panel 1: Removable (hole) ---
+// y = x + 1, hole at x=2 => y=3
+const r1 = { xMin: 0, xMax: 4, yMin: 0, yMax: 5 };
+const rsx = (x: number) => pad + ((x - r1.xMin) / (r1.xMax - r1.xMin)) * gw;
+const rsy = (y: number) => pad + ((r1.yMax - y) / (r1.yMax - r1.yMin)) * gh;
+
+// --- Panel 2: Jump ---
+// left: y = x + 1 for x < 2 (approaches 3)
+// right: y = x + 3 for x >= 2 (starts at 5)
+const j1 = { xMin: 0, xMax: 4, yMin: 0, yMax: 7 };
+const jsx = (x: number) => pad + ((x - j1.xMin) / (j1.xMax - j1.xMin)) * gw;
+const jsy = (y: number) => pad + ((j1.yMax - y) / (j1.yMax - j1.yMin)) * gh;
+
+// --- Panel 3: Infinite (vertical asymptote) ---
+// y = 1/(x-2) + 3, asymptote at x=2
+const i1 = { xMin: 0, xMax: 4, yMin: -1, yMax: 7 };
+const isx = (x: number) => pad + ((x - i1.xMin) / (i1.xMax - i1.xMin)) * gw;
+const isy = (y: number) => pad + ((i1.yMax - y) / (i1.yMax - y < 0 ? i1.yMax - i1.yMin : i1.yMax - i1.yMin)) * gh;
+// fix isy
+const isyF = (y: number) => pad + ((i1.yMax - y) / (i1.yMax - i1.yMin)) * gh;
+
+// Generate curve points for infinite panel
+const leftBranch: string[] = [];
+for (let i = 0; i <= 40; i++) {
+  const x = 0.2 + i * (1.7 / 40);
+  const y = 1 / (x - 2) + 3;
+  if (y >= i1.yMin && y <= i1.yMax) leftBranch.push(`${isx(x)},${isyF(y)}`);
+}
+const rightBranch: string[] = [];
+for (let i = 0; i <= 40; i++) {
+  const x = 2.3 + i * (1.5 / 40);
+  const y = 1 / (x - 2) + 3;
+  if (y >= i1.yMin && y <= i1.yMax) rightBranch.push(`${isx(x)},${isyF(y)}`);
+}
+---
+
+<figure class="dtypes" role="img" aria-label="Three types of discontinuity: removable, jump, and infinite">
+  <div class="dtypes-row">
+    {/* Panel 1: Removable */}
+    <div class="dtypes-panel">
+      <svg viewBox={`0 0 ${pw} ${ph}`} width={pw} height={ph} xmlns="http://www.w3.org/2000/svg">
+        {/* Grid */}
+        {[1,2,3].map(v => (
+          <line x1={rsx(v)} y1={rsy(r1.yMin)} x2={rsx(v)} y2={rsy(r1.yMax)} class="dt-grid" stroke-width="0.5" />
+        ))}
+        {[1,2,3,4].map(v => (
+          <line x1={rsx(r1.xMin)} y1={rsy(v)} x2={rsx(r1.xMax)} y2={rsy(v)} class="dt-grid" stroke-width="0.5" />
+        ))}
+        <line x1={rsx(r1.xMin)} y1={rsy(0)} x2={rsx(r1.xMax)} y2={rsy(0)} class="dt-axis" stroke-width="1.5" />
+        <line x1={rsx(0)} y1={rsy(r1.yMin)} x2={rsx(0)} y2={rsy(r1.yMax)} class="dt-axis" stroke-width="1" />
+        {/* Line y = x+1 with gap at x=2 */}
+        <line x1={rsx(0)} y1={rsy(1)} x2={rsx(1.9)} y2={rsy(2.9)} class="dt-curve" stroke-width="2.5" />
+        <line x1={rsx(2.1)} y1={rsy(3.1)} x2={rsx(4)} y2={rsy(5)} class="dt-curve" stroke-width="2.5" />
+        {/* Hole */}
+        <circle cx={rsx(2)} cy={rsy(3)} r="5" fill="none" class="dt-hole" stroke-width="2" />
+        {/* Label */}
+        <text class="dt-lbl-orange" x={rsx(2.6)} y={rsy(4.2)} font-size="9">hole</text>
+      </svg>
+      <span class="dtypes-caption">Removable</span>
+    </div>
+
+    {/* Panel 2: Jump */}
+    <div class="dtypes-panel">
+      <svg viewBox={`0 0 ${pw} ${ph}`} width={pw} height={ph} xmlns="http://www.w3.org/2000/svg">
+        {/* Grid */}
+        {[1,2,3].map(v => (
+          <line x1={jsx(v)} y1={jsy(j1.yMin)} x2={jsx(v)} y2={jsy(j1.yMax)} class="dt-grid" stroke-width="0.5" />
+        ))}
+        {[1,2,3,4,5,6].map(v => (
+          <line x1={jsx(j1.xMin)} y1={jsy(v)} x2={jsx(j1.xMax)} y2={jsy(v)} class="dt-grid" stroke-width="0.5" />
+        ))}
+        <line x1={jsx(j1.xMin)} y1={jsy(0)} x2={jsx(j1.xMax)} y2={jsy(0)} class="dt-axis" stroke-width="1.5" />
+        <line x1={jsx(0)} y1={jsy(j1.yMin)} x2={jsx(0)} y2={jsy(j1.yMax)} class="dt-axis" stroke-width="1" />
+        {/* Left piece: y = x+1, x < 2 */}
+        <line x1={jsx(0)} y1={jsy(1)} x2={jsx(2)} y2={jsy(3)} class="dt-curve" stroke-width="2.5" />
+        {/* Open circle at (2,3) — left limit */}
+        <circle cx={jsx(2)} cy={jsy(3)} r="5" fill="none" class="dt-hole" stroke-width="2" />
+        {/* Right piece: y = x+3, x >= 2 */}
+        <line x1={jsx(2)} y1={jsy(5)} x2={jsx(4)} y2={jsy(7)} class="dt-curve" stroke-width="2.5" />
+        {/* Filled circle at (2,5) — right value */}
+        <circle cx={jsx(2)} cy={jsy(5)} r="5" class="dt-dot" />
+        {/* Label */}
+        <text class="dt-lbl-orange" x={jsx(2.5)} y={jsy(3.8)} font-size="9">jump</text>
+      </svg>
+      <span class="dtypes-caption">Jump</span>
+    </div>
+
+    {/* Panel 3: Infinite */}
+    <div class="dtypes-panel">
+      <svg viewBox={`0 0 ${pw} ${ph}`} width={pw} height={ph} xmlns="http://www.w3.org/2000/svg">
+        {/* Grid */}
+        {[1,2,3].map(v => (
+          <line x1={isx(v)} y1={isyF(i1.yMin)} x2={isx(v)} y2={isyF(i1.yMax)} class="dt-grid" stroke-width="0.5" />
+        ))}
+        {[0,1,2,3,4,5,6].map(v => (
+          <line x1={isx(i1.xMin)} y1={isyF(v)} x2={isx(i1.xMax)} y2={isyF(v)} class="dt-grid" stroke-width="0.5" />
+        ))}
+        <line x1={isx(i1.xMin)} y1={isyF(0)} x2={isx(i1.xMax)} y2={isyF(0)} class="dt-axis" stroke-width="1.5" />
+        <line x1={isx(0)} y1={isyF(i1.yMin)} x2={isx(0)} y2={isyF(i1.yMax)} class="dt-axis" stroke-width="1" />
+        {/* Vertical asymptote dashed line */}
+        <line x1={isx(2)} y1={isyF(i1.yMin)} x2={isx(2)} y2={isyF(i1.yMax)} class="dt-asymptote" stroke-width="1.5" stroke-dasharray="5,4" />
+        {/* Left branch */}
+        <polyline points={leftBranch.join(' ')} fill="none" class="dt-curve" stroke-width="2.5" />
+        {/* Right branch */}
+        <polyline points={rightBranch.join(' ')} fill="none" class="dt-curve" stroke-width="2.5" />
+        {/* Label */}
+        <text class="dt-lbl-red" x={isx(2.4)} y={isyF(6.2)} font-size="8">asymptote</text>
+      </svg>
+      <span class="dtypes-caption">Infinite</span>
+    </div>
+  </div>
+</figure>
+
+<style>
+  .dtypes { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .dtypes-row { display:flex; gap:0.75rem; flex-wrap:wrap; justify-content:center; }
+  .dtypes-panel { display:flex; flex-direction:column; align-items:center; }
+  .dtypes-panel svg { max-width:100%; height:auto; }
+  .dtypes-caption {
+    font-family:'Libre Baskerville',Georgia,serif;
+    font-size:0.85rem;
+    font-weight:600;
+    margin-top:0.25rem;
+    color:#d2a8ff;
+  }
+  .dt-grid { stroke:#333; }
+  .dt-axis { stroke:#666; }
+  .dt-curve { stroke:#58a6ff; }
+  .dt-hole { stroke:#f0883e; }
+  .dt-dot { fill:#f0883e; }
+  .dt-asymptote { stroke:#f47067; }
+  .dt-lbl-orange { fill:#f0883e; font-family:'Libre Baskerville',Georgia,serif; font-style:italic; }
+  .dt-lbl-red { fill:#f47067; font-family:'Libre Baskerville',Georgia,serif; font-style:italic; }
+
+  :global([data-theme="light"]) .dtypes-caption { color:#6639ba; }
+  :global([data-theme="light"]) .dt-grid { stroke:#ddd; }
+  :global([data-theme="light"]) .dt-axis { stroke:#999; }
+  :global([data-theme="light"]) .dt-curve { stroke:#0550ae; }
+  :global([data-theme="light"]) .dt-hole { stroke:#b35900; }
+  :global([data-theme="light"]) .dt-dot { fill:#b35900; }
+  :global([data-theme="light"]) .dt-asymptote { stroke:#cf222e; }
+  :global([data-theme="light"]) .dt-lbl-orange { fill:#b35900; }
+  :global([data-theme="light"]) .dt-lbl-red { fill:#cf222e; }
+</style>
