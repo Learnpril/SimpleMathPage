@@ -1,8 +1,398 @@
 ---
-title: "Calculus 1 Review"
-description: "Comprehensive review of all Calculus 1 topics"
+title: Calculus 1 Review
+description: Comprehensive review of all Calculus 1 topics
 sidebar:
   order: 22
 ---
 
-Content coming soon.
+## The Big Picture
+
+Calculus 1 answers two questions:
+
+1. How fast is something changing right now? (Derivatives)
+2. How much total change has accumulated? (Integrals)
+
+These two ideas are connected by the Fundamental Theorem of Calculus, which says differentiation and integration are inverse operations. That single insight ties the entire course together.
+
+import TangentIdeaDiagram from "../../../components/TangentIdeaDiagram.astro";
+
+<TangentIdeaDiagram />
+
+The derivative (slope of the tangent line) tells you the instantaneous rate of change. The integral (area under the curve) tells you the total accumulation. Every topic in this course builds on one of these two ideas.
+
+## Limits and Continuity
+
+Limits are the foundation. The derivative is a limit. The integral is a limit. Without limits, calculus doesn't exist.
+
+Key skills: evaluate limits by substitution, factoring, and rationalizing. Recognize indeterminate forms (0/0). Check continuity using the three conditions. Identify removable, jump, and infinite discontinuities.
+
+import DiscontinuityTypes from "../../../components/DiscontinuityTypes.astro";
+
+<DiscontinuityTypes />
+
+## Derivatives
+
+The derivative of f at x = a is:
+
+$$
+f'(a) = \lim_{h \to 0} \frac{f(a+h) - f(a)}{h}
+$$
+
+The rules that make this fast:
+
+- Power rule: derivative of x to the n is n times x to the (n-1)
+- Product rule: (uv)' = u'v + uv'
+- Quotient rule: (u/v)' = (u'v - uv') / v²
+- Chain rule: derivative of f(g(x)) is f'(g(x)) times g'(x)
+- Trig: sin becomes cos, cos becomes negative sin, tan becomes sec²
+- Exponential: derivative of e to the x is e to the x
+- Logarithmic: derivative of ln(x) is 1/x
+
+## Applications of Derivatives
+
+Derivatives solve real problems:
+
+- Related rates: when two quantities change together, differentiate with respect to time
+- Implicit differentiation: find dy/dx when y isn't isolated
+- Linear approximation: use the tangent line to estimate function values near a known point
+- Maxima and minima: set f' = 0, classify with the first or second derivative test
+- Mean Value Theorem: somewhere between a and b, the instantaneous rate equals the average rate
+- Curve sketching: combine f' (increasing/decreasing) and f'' (concavity) to draw the graph
+- Optimization: maximize or minimize a quantity under constraints
+
+import CriticalPointTypes from "../../../components/CriticalPointTypes.astro";
+
+<CriticalPointTypes />
+
+## Integration
+
+Integration is differentiation in reverse.
+
+The indefinite integral gives a family of antiderivatives (don't forget + C). The definite integral gives a number: the net signed area under the curve.
+
+$$
+\int_a^b f(x)\,dx = F(b) - F(a)
+$$
+
+Key techniques: power rule for integration, basic trig and exponential integrals, u-substitution (chain rule in reverse).
+
+import DefiniteIntegralArea from "../../../components/DefiniteIntegralArea.astro";
+
+<DefiniteIntegralArea />
+
+Applications: area under curves, area between curves, average value of a function, net change vs total change.
+
+## Key Formulas
+
+Power rule (derivative):
+
+$$
+\frac{d}{dx}[x^n] = nx^{n-1}
+$$
+
+Power rule (integral):
+
+$$
+\int x^n\,dx = \frac{x^{n+1}}{n+1} + C \quad (n \neq -1)
+$$
+
+FTC:
+
+$$
+\int_a^b f(x)\,dx = F(b) - F(a)
+$$
+
+Average value:
+
+$$
+f_{\text{avg}} = \frac{1}{b-a}\int_a^b f(x)\,dx
+$$
+
+## Mixed Worked Examples
+
+**Derivative with product and chain rule:**
+
+Find the derivative of x² sin(3x).
+
+Product rule: u = x², v = sin(3x).
+
+$$
+\frac{d}{dx}[x^2\sin(3x)] = 2x\sin(3x) + x^2 \cdot 3\cos(3x) = 2x\sin(3x) + 3x^2\cos(3x)
+$$
+
+**Definite integral:**
+
+$$
+\int_0^{\pi/2}\sin x\,dx = [-\cos x]_0^{\pi/2} = -\cos(\pi/2) + \cos(0) = 0 + 1 = 1
+$$
+
+**Optimization:**
+
+Maximize area of a rectangle with 400 ft of fencing against a wall. Let x = width, y = 400 - 2x.
+
+$$
+A(x) = x(400 - 2x), \quad A'(x) = 400 - 4x = 0 \quad \Rightarrow \quad x = 100, \; y = 200
+$$
+
+Maximum area = 20,000 sq ft.
+
+**Average value:**
+
+Average of x² on [0, 3]:
+
+$$
+\frac{1}{3}\int_0^3 x^2\,dx = \frac{1}{3}\cdot 9 = 3
+$$
+
+:::note[You've Got This]
+You've gone from arithmetic all the way through Calculus 1. That's years of building, and every layer matters. Derivatives answer "how fast?" Integrals answer "how much?" The Fundamental Theorem connects them. You now have the tools to model change, optimize systems, and calculate totals from rates. When you're ready, Calculus 2 builds directly on this foundation. Take a breath. You earned this.
+:::
+
+## Comprehensive Review Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="calculus1-final-review"
+  questions={[
+    {
+      id: "q1",
+      text: "The derivative represents:",
+      options: [
+        "Total accumulation",
+        "Instantaneous rate of change",
+        "Average value",
+        "Net signed area",
+      ],
+      correctIndex: 1,
+      explanation:
+        "The derivative tells you how fast something is changing at a specific point.",
+    },
+    {
+      id: "q2",
+      text: "The Chain Rule is used when:",
+      options: [
+        "Two functions are multiplied",
+        "Functions are composed (nested)",
+        "One is divided by another",
+        "The function is linear",
+      ],
+      correctIndex: 1,
+      explanation: "Composite functions require the chain rule.",
+    },
+    {
+      id: "q3",
+      text: "The FTC says the definite integral equals:",
+      options: [
+        "F(a) - F(b)",
+        "The derivative at b",
+        "F(b) - F(a)",
+        "F(x) + C",
+      ],
+      correctIndex: 2,
+      explanation: "Evaluate the antiderivative at the bounds and subtract.",
+    },
+    {
+      id: "q4",
+      text: "In related rates, you differentiate with respect to:",
+      options: ["x only", "y only", "t (time)", "The radius"],
+      correctIndex: 2,
+      explanation: "Everything changes over time in related rates problems.",
+    },
+    {
+      id: "q5",
+      text: "The average value formula is:",
+      options: [
+        "f(b) - f(a)",
+        "(1/(b-a)) times the integral",
+        "The maximum value",
+        "The slope at the midpoint",
+      ],
+      correctIndex: 1,
+      explanation: "Divide the total accumulation by the interval length.",
+    },
+    {
+      id: "q6",
+      text: "If f'(c) = 0 and f''(c) is positive, then c is a:",
+      options: [
+        "Local maximum",
+        "Inflection point",
+        "Local minimum",
+        "Vertical asymptote",
+      ],
+      correctIndex: 2,
+      explanation:
+        "Positive second derivative means concave up (bowl), so it's a minimum.",
+    },
+    {
+      id: "q7",
+      text: "U-substitution is the reverse of:",
+      options: [
+        "The power rule",
+        "The chain rule",
+        "The product rule",
+        "The quotient rule",
+      ],
+      correctIndex: 1,
+      explanation: "It undoes the chain rule for integration.",
+    },
+    {
+      id: "q8",
+      text: "The definite integral (without absolute values) gives:",
+      options: [
+        "Total unsigned area",
+        "The derivative",
+        "The limit",
+        "Net signed area",
+      ],
+      correctIndex: 3,
+      explanation: "Positive above the axis, negative below.",
+    },
+    {
+      id: "q9",
+      text: "The MVT guarantees a point where:",
+      options: [
+        "The derivative is zero",
+        "Instantaneous rate equals average rate",
+        "The function is constant",
+        "f'' is positive",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Somewhere between a and b, the slope matches the average slope.",
+    },
+    {
+      id: "q10",
+      text: "For optimization on a closed interval, check:",
+      options: [
+        "Only the midpoint",
+        "Only critical points",
+        "Critical points and endpoints",
+        "Every point",
+      ],
+      correctIndex: 2,
+      explanation:
+        "Absolute extrema can occur at critical points or endpoints.",
+    },
+    {
+      id: "q11",
+      text: "The derivative of e to the kx is:",
+      options: [
+        "e to the kx",
+        "k",
+        "ln(k) times e to the kx",
+        "k times e to the kx",
+      ],
+      correctIndex: 3,
+      explanation:
+        "Chain rule: derivative of e to the u is e to the u times u'.",
+    },
+    {
+      id: "q12",
+      text: "Implicit differentiation is needed when:",
+      options: [
+        "The equation is linear",
+        "y is already isolated",
+        "y is not solved for explicitly",
+        "Only polynomials are involved",
+      ],
+      correctIndex: 2,
+      explanation: "When y is tangled with x in the equation.",
+    },
+    {
+      id: "q13",
+      text: "Area between f(x) and g(x) where f is on top:",
+      options: [
+        "The integral of f + g",
+        "The average of f and g",
+        "The integral of (f - g)",
+        "Only the upper curve",
+      ],
+      correctIndex: 2,
+      explanation: "Top minus bottom, integrated.",
+    },
+    {
+      id: "q14",
+      text: "The linear approximation formula is:",
+      options: ["f(x)", "f'(x)", "f(a) + f'(a)(x - a)", "f(a)"],
+      correctIndex: 2,
+      explanation: "The tangent line at x = a approximates f near a.",
+    },
+    {
+      id: "q15",
+      text: "Calculus 1 primarily covers:",
+      options: [
+        "Only integration",
+        "Derivatives, their applications, and beginning integration",
+        "Only limits",
+        "Only abstract theory",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Derivatives are the main focus, with integration introduced at the end.",
+    },
+    {
+      id: "q16",
+      text: "Integrating velocity gives:",
+      options: [
+        "Acceleration",
+        "Net displacement",
+        "Average speed",
+        "Maximum velocity",
+      ],
+      correctIndex: 1,
+      explanation:
+        "The integral of velocity is position change (displacement).",
+    },
+    {
+      id: "q17",
+      text: "The Second Derivative Test is inconclusive when:",
+      options: [
+        "f''(c) is positive",
+        "f''(c) is negative",
+        "f'(c) is not zero",
+        "f''(c) = 0",
+      ],
+      correctIndex: 3,
+      explanation:
+        "Use the First Derivative Test when f'' is zero at the critical point.",
+    },
+    {
+      id: "q18",
+      text: "The power rule for integration gives:",
+      options: [
+        "n times x to the (n-1)",
+        "x to the (n+1) divided by (n+1), plus C",
+        "Only for n = 1",
+        "Only for constants",
+      ],
+      correctIndex: 1,
+      explanation: "Add 1 to the exponent, divide by the new exponent, add C.",
+    },
+    {
+      id: "q19",
+      text: "The most important connection in Calculus 1 is:",
+      options: [
+        "Limits are unnecessary",
+        "Derivatives and integrals are inverse operations",
+        "Only polynomials matter",
+        "Graphing is optional",
+      ],
+      correctIndex: 1,
+      explanation: "The Fundamental Theorem of Calculus is the bridge.",
+    },
+    {
+      id: "q20",
+      text: "After Calculus 1, you should be confident with:",
+      options: [
+        "Only memorizing formulas",
+        "Rates of change, optimization, and basic integration",
+        "Only graphing",
+        "Only abstract proofs",
+      ],
+      correctIndex: 1,
+      explanation:
+        "You've built a strong foundation for everything that comes next.",
+    },
+  ]}
+/>

@@ -1,8 +1,157 @@
 ---
-title: "Net Change and Total Change"
-description: "Use integrals to find total and net change"
+title: Net Change and Total Change
+description: Use integrals to find total and net change
 sidebar:
   order: 21
 ---
 
-Content coming soon.
+## What You'll Learn
+
+In this lesson you'll learn the difference between net change and total change, and when you need to use absolute values with integrals.
+
+## The Concept
+
+The definite integral always gives net signed change. That means positive and negative contributions cancel each other out.
+
+Sometimes that's what you want. Sometimes it isn't.
+
+- Net change: the integral as-is. Positive and negative parts cancel. This tells you the overall result.
+- Total change: you need the absolute value of each piece. Nothing cancels. This tells you the total amount of activity.
+
+The classic example: velocity.
+
+- Integrating velocity gives net displacement (where you ended up relative to where you started). If you walk 5 miles east then 3 miles west, your net displacement is 2 miles east.
+- Integrating the absolute value of velocity gives total distance traveled. You walked 8 miles total.
+
+import NetVsTotalGraph from "../../../components/NetVsTotalGraph.astro";
+
+<NetVsTotalGraph />
+
+For f(x) = x on [-2, 3]: the green triangle above the axis has area 4.5, the red triangle below has area 2. The net change (integral) is 4.5 - 2 = 2.5. The total change (sum of absolute values) is 4.5 + 2 = 6.5.
+
+## Worked Example
+
+**Example 1: Net displacement vs total distance**
+
+A particle has velocity v(t) = t - 2 on [0, 5].
+
+The velocity is negative on [0, 2] (moving backward) and positive on [2, 5] (moving forward).
+
+Net displacement:
+
+$$
+\int_0^5 (t - 2)\,dt = \left[\frac{t^2}{2} - 2t\right]_0^5 = \frac{25}{2} - 10 = 2.5
+$$
+
+Total distance: split at t = 2 where v changes sign.
+
+$$
+\left|\int_0^2 (t-2)\,dt\right| + \int_2^5 (t-2)\,dt = |-2| + 4.5 = 2 + 4.5 = 6.5
+$$
+
+The particle ended up 2.5 units from where it started, but it traveled 6.5 units total.
+
+**Example 2: Simple net change**
+
+For f(x) = x on [-2, 3]:
+
+$$
+\int_{-2}^3 x\,dx = \left[\frac{x^2}{2}\right]_{-2}^3 = \frac{9}{2} - \frac{4}{2} = 2.5
+$$
+
+That's the net change. The total area is 4.5 + 2 = 6.5 (as shown in the visual above).
+
+**Example 3: Rate of change context**
+
+A company's profit rate is P'(t) = 100 - 20t (thousands per month) on [0, 8].
+
+P' = 0 at t = 5. Positive on [0, 5], negative on [5, 8].
+
+Net profit change:
+
+$$
+\int_0^8 (100 - 20t)\,dt = \left[100t - 10t^2\right]_0^8 = 800 - 640 = 160
+$$
+
+The company gained 160 thousand net. But it gained more than that in the first 5 months and lost some in months 5 through 8. The total activity (gains + losses) would be larger.
+
+## Real-World Application
+
+- Physics: net displacement vs total distance from velocity
+- Finance: net profit vs total revenue + total costs
+- Game design: net health change vs total damage taken + healing received
+- Biology: net population change vs total births + total deaths
+
+:::note[You've Got This]
+The rule is simple: the integral gives net change. If you want total change, split at zeros and add absolute values. Ask yourself: "Do I care about the final result, or the total amount of activity?" Net change answers the first question. Total change answers the second.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="calculus1-net-total-change"
+  questions={[
+    {
+      id: "q1",
+      text: "The definite integral (without absolute values) gives:",
+      options: [
+        "Total unsigned change",
+        "Net signed change",
+        "The derivative",
+        "The average value",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Positive and negative contributions cancel in the integral.",
+    },
+    {
+      id: "q2",
+      text: "Integrating velocity gives:",
+      options: [
+        "Total distance",
+        "Average speed",
+        "Net displacement",
+        "Acceleration",
+      ],
+      correctIndex: 2,
+      explanation:
+        "Net displacement accounts for direction; it can be positive or negative.",
+    },
+    {
+      id: "q3",
+      text: "To find total distance from velocity, you:",
+      options: [
+        "Integrate velocity directly",
+        "Take the derivative",
+        "Integrate the absolute value of velocity",
+        "Find the maximum velocity",
+      ],
+      correctIndex: 2,
+      explanation:
+        "Absolute value removes the sign, so backward and forward motion both count positively.",
+    },
+    {
+      id: "q4",
+      text: "For f(x) = x on [-2, 3], the net change is 2.5. The total change is:",
+      options: ["2.5", "4.5", "6.5", "9"],
+      correctIndex: 2,
+      explanation:
+        "Positive area (4.5) plus absolute value of negative area (2) = 6.5.",
+    },
+    {
+      id: "q5",
+      text: "Net change is most useful when you care about:",
+      options: [
+        "Total amount of activity",
+        "The final result relative to the start",
+        "Only the maximum value",
+        "Only the minimum value",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Net change tells you where you ended up compared to where you started.",
+    },
+  ]}
+/>

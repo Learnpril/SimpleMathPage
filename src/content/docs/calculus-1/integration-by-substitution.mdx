@@ -1,8 +1,188 @@
 ---
-title: "Integration by Substitution"
-description: "Use u-substitution to evaluate integrals"
+title: Integration by Substitution
+description: Use u-substitution to evaluate integrals
 sidebar:
   order: 18
 ---
 
-Content coming soon.
+## What You'll Learn
+
+In this lesson you'll learn u-substitution, the most common integration technique. It's the chain rule in reverse.
+
+## The Concept
+
+When you learned the chain rule for derivatives, you saw that the derivative of a composite function like (x² + 5)⁴ involves differentiating the outside and multiplying by the derivative of the inside:
+
+$$
+\frac{d}{dx}(x^2 + 5)^4 = 4(x^2 + 5)^3 \cdot 2x
+$$
+
+U-substitution is this process in reverse. If you see an integral that looks like it came from a chain rule derivative, you can undo it.
+
+The idea: temporarily replace the complicated inside part with a single variable u. This turns a hard integral into an easy one.
+
+### Why it works
+
+Consider the integral:
+
+$$
+\int 2x(x^2 + 5)^3 \, dx
+$$
+
+This looks messy. But notice: x² + 5 is inside the cube, and 2x (the derivative of x² + 5) is sitting right there as a factor. If you let u = x² + 5, then du = 2x dx. The entire integral collapses to:
+
+$$
+\int u^3 \, du
+$$
+
+That's just the power rule. You integrate, get u⁴/4 + C, then swap u back for x² + 5.
+
+### The procedure
+
+1. Choose u = (the inside function, the part that's nested inside something else)
+2. Compute du = (derivative of u) dx
+3. Check: does du (or a constant multiple of it) appear in the integrand?
+4. Rewrite the entire integral in terms of u and du. No x's should remain.
+5. Integrate with respect to u using the basic rules
+6. Substitute back: replace u with the original expression in x
+
+### What if du doesn't match exactly?
+
+Sometimes the derivative of u is off by a constant factor. For example, if u = 3x, then du = 3 dx, but you only have dx in the integral. That's fine: just solve for dx = du/3 and adjust with the constant. You can always pull constant factors in or out. What you can't do is pull x's in or out.
+
+The general formula:
+
+$$
+\int f(g(x)) \cdot g'(x) \, dx = \int f(u) \, du \quad \text{where } u = g(x)
+$$
+
+### How to spot a good substitution
+
+Ask yourself: "Is there a function inside another function? Is the derivative of the inside function (or something close to it) also in the integrand?" If yes, let u be the inside function.
+
+## Worked Example
+
+**Example 1: Power of a function**
+
+Evaluate:
+
+$$
+\int 2x(x^2 + 5)^3 \, dx
+$$
+
+Let u = x² + 5. Then du = 2x dx. The 2x dx in the integrand is exactly du.
+
+$$
+\int u^3 \, du = \frac{u^4}{4} + C = \frac{(x^2 + 5)^4}{4} + C
+$$
+
+**Example 2: Trig with chain rule**
+
+Evaluate:
+
+$$
+\int \sin(3x) \, dx
+$$
+
+Let u = 3x. Then du = 3 dx, so dx = du/3.
+
+$$
+\int \sin(u) \cdot \frac{du}{3} = -\frac{1}{3}\cos(u) + C = -\frac{1}{3}\cos(3x) + C
+$$
+
+The 1/3 factor comes from adjusting for the chain rule. When the inside function has a constant multiplier, you divide by that constant.
+
+**Example 3: Square root with substitution**
+
+Evaluate:
+
+$$
+\int x\sqrt{x^2 + 1} \, dx
+$$
+
+Let u = x² + 1. Then du = 2x dx, so x dx = du/2.
+
+$$
+\frac{1}{2}\int \sqrt{u} \, du = \frac{1}{2} \cdot \frac{2}{3}u^{3/2} + C = \frac{1}{3}(x^2 + 1)^{3/2} + C
+$$
+
+## Real-World Application
+
+U-substitution shows up whenever you integrate a composite function:
+
+- Physics: integrating force along a curved path where the path variable needs substitution
+- Economics: computing total revenue when the rate function involves a composition
+- Biology: integrating growth models where the rate depends on a transformed variable
+- Engineering: computing work done by a variable force
+
+:::note[You've Got This]
+U-substitution is pattern recognition. Look for something inside a function whose derivative is floating around in the integrand. If you see x² + 1 inside a power or root, and 2x (or a multiple of it) is also there, that's your cue. Choose u = the inside, compute du, rewrite, integrate, substitute back. Same five steps every time.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="calculus1-u-sub"
+  questions={[
+    {
+      id: "q1",
+      text: "U-substitution is the reverse of:",
+      options: [
+        "The power rule",
+        "The product rule",
+        "The chain rule",
+        "The quotient rule",
+      ],
+      correctIndex: 2,
+      explanation:
+        "The chain rule for derivatives becomes u-substitution for integrals.",
+    },
+    {
+      id: "q2",
+      text: "For the integral of 2x(x² + 5)³ dx, the best choice for u is:",
+      options: ["2x", "x² + 5", "(x² + 5)³", "x"],
+      correctIndex: 1,
+      explanation:
+        "u = x² + 5 because its derivative 2x appears in the integrand.",
+    },
+    {
+      id: "q3",
+      text: "The integral of sin(3x) dx equals:",
+      options: [
+        "cos(3x) + C",
+        "3cos(3x) + C",
+        "-(1/3)cos(3x) + C",
+        "-3cos(3x) + C",
+      ],
+      correctIndex: 2,
+      explanation: "Substitute u = 3x, du = 3dx, so you get -(1/3)cos(u) + C.",
+    },
+    {
+      id: "q4",
+      text: "After integrating with respect to u, you must:",
+      options: [
+        "Take the derivative",
+        "Add limits of integration",
+        "Substitute back to the original variable",
+        "Multiply by 2",
+      ],
+      correctIndex: 2,
+      explanation: "The final answer should be in terms of x, not u.",
+    },
+    {
+      id: "q5",
+      text: "A good u is usually:",
+      options: [
+        "The entire integrand",
+        "A constant",
+        "The outside function",
+        "The inside of a composite function",
+      ],
+      correctIndex: 3,
+      explanation:
+        "Choose the inner function whose derivative appears in the integrand.",
+    },
+  ]}
+/>

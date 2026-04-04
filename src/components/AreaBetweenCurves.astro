@@ -1,0 +1,96 @@
+---
+/**
+ * AreaBetweenCurves — shows y = x (green line) and y = x² (blue curve)
+ * from 0 to 1, with the area between them shaded.
+ * Area = ∫₀¹ (x - x²) dx = 1/6
+ */
+const w = 380;
+const h = 300;
+const pad = 55;
+const gw = w - 2 * pad;
+const gh = h - 2 * pad;
+const xMin = -0.3, xMax = 1.5, yMin = -0.2, yMax = 1.5;
+const sx = (x: number) => pad + ((x - xMin) / (xMax - xMin)) * gw;
+const sy = (y: number) => pad + ((yMax - y) / (yMax - yMin)) * gh;
+
+// y = x² curve
+const sqPts: string[] = [];
+for (let i = 0; i <= 60; i++) {
+  const x = xMin + i * (xMax - xMin) / 60;
+  const y = x * x;
+  if (y <= yMax && x >= 0) sqPts.push(`${sx(x)},${sy(y)}`);
+}
+
+// y = x line
+const linePts: string[] = [];
+for (let i = 0; i <= 40; i++) {
+  const x = xMin + i * (xMax - xMin) / 40;
+  const y = x;
+  if (y <= yMax && y >= yMin) linePts.push(`${sx(x)},${sy(y)}`);
+}
+
+// Shaded area between x and x² from 0 to 1
+const shadePts: string[] = [];
+// Top edge: y = x from 0 to 1
+for (let i = 0; i <= 30; i++) {
+  const x = i / 30;
+  shadePts.push(`${sx(x)},${sy(x)}`);
+}
+// Bottom edge: y = x² from 1 back to 0
+for (let i = 30; i >= 0; i--) {
+  const x = i / 30;
+  shadePts.push(`${sx(x)},${sy(x * x)}`);
+}
+---
+
+<figure class="abc" role="img" aria-label="Area between y equals x and y equals x squared from 0 to 1">
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    {[0,1].map(v => (
+      <line x1={sx(v)} y1={sy(yMin)} x2={sx(v)} y2={sy(yMax)} class="abc-grid" stroke-width="0.5" />
+    ))}
+    {[0,1].map(v => (
+      <line x1={sx(xMin)} y1={sy(v)} x2={sx(xMax)} y2={sy(v)} class="abc-grid" stroke-width="0.5" />
+    ))}
+    <line x1={sx(xMin)} y1={sy(0)} x2={sx(xMax)} y2={sy(0)} class="abc-axis" stroke-width="1.5" />
+    <line x1={sx(0)} y1={sy(yMin)} x2={sx(0)} y2={sy(yMax)} class="abc-axis" stroke-width="1.2" />
+    <polygon points={shadePts.join(' ')} class="abc-shade" />
+    <polyline points={sqPts.join(' ')} fill="none" class="abc-sq" stroke-width="3" />
+    <polyline points={linePts.join(' ')} fill="none" class="abc-line" stroke-width="2.5" />
+    <circle cx={sx(0)} cy={sy(0)} r="5" class="abc-dot" />
+    <circle cx={sx(1)} cy={sy(1)} r="5" class="abc-dot" />
+  </svg>
+  <div class="abc-legend">
+    <span class="abc-leg-item"><span class="abc-swatch abc-sw-line"></span> y = x (upper)</span>
+    <span class="abc-leg-item"><span class="abc-swatch abc-sw-sq"></span> y = x² (lower)</span>
+    <span class="abc-leg-item"><span class="abc-swatch abc-sw-shade"></span> area = 1/6</span>
+  </div>
+</figure>
+
+<style>
+  .abc { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .abc svg { max-width:100%; height:auto; }
+  .abc-grid { stroke:#333; }
+  .abc-axis { stroke:#666; }
+  .abc-sq { stroke:#58a6ff; }
+  .abc-line { stroke:#7ee787; }
+  .abc-shade { fill:rgba(126,231,135,0.2); stroke:none; }
+  .abc-dot { fill:#f0883e; }
+  .abc-legend {
+    display:flex; gap:1rem; flex-wrap:wrap; justify-content:center;
+    margin-top:0.5rem; font-family:'Libre Baskerville',Georgia,serif; font-size:0.82rem;
+  }
+  .abc-leg-item { display:flex; align-items:center; gap:0.35rem; }
+  .abc-swatch { display:inline-block; width:18px; height:4px; border-radius:2px; }
+  .abc-sw-line { background:#7ee787; }
+  .abc-sw-sq { background:#58a6ff; }
+  .abc-sw-shade { background:rgba(126,231,135,0.35); height:12px; }
+  :global([data-theme="light"]) .abc-grid { stroke:#ddd; }
+  :global([data-theme="light"]) .abc-axis { stroke:#999; }
+  :global([data-theme="light"]) .abc-sq { stroke:#0550ae; }
+  :global([data-theme="light"]) .abc-line { stroke:#116329; }
+  :global([data-theme="light"]) .abc-shade { fill:rgba(17,99,41,0.12); }
+  :global([data-theme="light"]) .abc-dot { fill:#b35900; }
+  :global([data-theme="light"]) .abc-sw-line { background:#116329; }
+  :global([data-theme="light"]) .abc-sw-sq { background:#0550ae; }
+  :global([data-theme="light"]) .abc-sw-shade { background:rgba(17,99,41,0.2); }
+</style>
