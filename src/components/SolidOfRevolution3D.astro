@@ -1,0 +1,182 @@
+---
+/**
+ * SolidOfRevolution3D — real Three.js 3D solid of revolution.
+ * Renders y = sqrt(x) rotated around the x-axis using LatheGeometry.
+ * Lazy-loads Three.js only when the element scrolls into view.
+ */
+---
+
+<figure class="rev3d" role="img" aria-label="Interactive 3D solid of revolution: y equals square root of x rotated around the x-axis">
+  <div class="rev3d-canvas" data-rev3d></div>
+  <div class="rev3d-hint">Drag to rotate</div>
+</figure>
+
+<script>
+  import * as THREE from "three";
+  import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+
+  function initScene(container: HTMLElement) {
+    const width = Math.min(container.clientWidth, 500);
+    const height = 320;
+
+    // Detect theme
+    const isDark = document.documentElement.dataset.theme !== "light";
+    const bgColor = isDark ? 0x121212 : 0xf8f9fa;
+    const solidColor = isDark ? 0x58a6ff : 0x0550ae;
+    const wireColor = isDark ? 0xd2a8ff : 0x6639ba;
+    const axisColor = isDark ? 0x666666 : 0x999999;
+
+    // Scene
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(bgColor);
+
+    // Camera
+    const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 100);
+    camera.position.set(4, 2.5, 4);
+    camera.lookAt(2, 0, 0);
+
+    // Renderer
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(width, height);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    container.appendChild(renderer.domElement);
+
+    // Orbit controls
+    const controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.05;
+    controls.target.set(2, 0, 0);
+    controls.update();
+
+    // Generate profile points for y = sqrt(x), x from 0 to 4
+    // LatheGeometry rotates around its local Y axis.
+    // We want the solid along the X axis, so we'll build the profile
+    // with Y = x position (0 to 4) and X = radius = sqrt(x),
+    // then rotate the mesh to lay it along the world X axis.
+    const profilePoints: THREE.Vector2[] = [];
+    const segments = 60;
+    // Start at the tip (x=0, radius=0)
+    for (let i = 0; i <= segments; i++) {
+      const t = i / segments;       // 0 to 1
+      const xVal = t * 4;           // math x: 0 to 4
+      const radius = Math.sqrt(xVal); // radius at this x
+      profilePoints.push(new THREE.Vector2(radius, t * 4));
+    }
+
+    // Lathe geometry (rotates profile around Y axis)
+    const latheGeo = new THREE.LatheGeometry(profilePoints, 48);
+    
+    // Solid mesh (semi-transparent)
+    const solidMat = new THREE.MeshPhongMaterial({
+      color: solidColor,
+      transparent: true,
+      opacity: 0.35,
+      side: THREE.DoubleSide,
+      shininess: 60,
+    });
+    const solidMesh = new THREE.Mesh(latheGeo, solidMat);
+    // Rotate so the lathe Y axis becomes the world X axis
+    solidMesh.rotation.z = -Math.PI / 2;
+    scene.add(solidMesh);
+
+    // Wireframe overlay
+    const wireMat = new THREE.MeshBasicMaterial({
+      color: wireColor,
+      wireframe: true,
+      transparent: true,
+      opacity: 0.15,
+    });
+    const wireMesh = new THREE.Mesh(latheGeo, wireMat);
+    wireMesh.rotation.z = -Math.PI / 2;
+    scene.add(wireMesh);
+
+    // Axis of rotation (x-axis line)
+    const axisGeo = new THREE.BufferGeometry().setFromPoints([
+      new THREE.Vector3(-0.5, 0, 0),
+      new THREE.Vector3(4.5, 0, 0),
+    ]);
+    const axisMat = new THREE.LineBasicMaterial({ color: axisColor });
+    scene.add(new THREE.Line(axisGeo, axisMat));
+
+    // Profile curve on the surface (y = sqrt(x) in the xz=0 plane)
+    const curvePoints: THREE.Vector3[] = [];
+    for (let i = 0; i <= 80; i++) {
+      const x = (i / 80) * 4;
+      curvePoints.push(new THREE.Vector3(x, Math.sqrt(x), 0));
+    }
+    const curveGeo = new THREE.BufferGeometry().setFromPoints(curvePoints);
+    const curveMat = new THREE.LineBasicMaterial({ color: 0x7ee787 });
+    scene.add(new THREE.Line(curveGeo, curveMat));
+
+    // Bottom profile (reflection for visual clarity)
+    const curveBottom: THREE.Vector3[] = [];
+    for (let i = 0; i <= 80; i++) {
+      const x = (i / 80) * 4;
+      curveBottom.push(new THREE.Vector3(x, -Math.sqrt(x), 0));
+    }
+    const curveGeo2 = new THREE.BufferGeometry().setFromPoints(curveBottom);
+    scene.add(new THREE.Line(curveGeo2, curveMat));
+
+    // Lighting
+    const ambient = new THREE.AmbientLight(0xffffff, 0.6);
+    scene.add(ambient);
+    const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
+    dirLight.position.set(5, 5, 5);
+    scene.add(dirLight);
+    const dirLight2 = new THREE.DirectionalLight(0xffffff, 0.3);
+    dirLight2.position.set(-3, -2, -3);
+    scene.add(dirLight2);
+
+    // Animation loop
+    function animate() {
+      requestAnimationFrame(animate);
+      controls.update();
+      renderer.render(scene, camera);
+    }
+    animate();
+
+    // Handle resize
+    const ro = new ResizeObserver(() => {
+      const w = Math.min(container.clientWidth, 500);
+      camera.aspect = w / height;
+      camera.updateProjectionMatrix();
+      renderer.setSize(w, height);
+    });
+    ro.observe(container);
+
+    // Theme change listener
+    const observer = new MutationObserver(() => {
+      const dark = document.documentElement.dataset.theme !== "light";
+      scene.background = new THREE.Color(dark ? 0x121212 : 0xf8f9fa);
+      solidMat.color.set(dark ? 0x58a6ff : 0x0550ae);
+      wireMat.color.set(dark ? 0xd2a8ff : 0x6639ba);
+      axisMat.color.set(dark ? 0x666666 : 0x999999);
+      curveMat.color.set(dark ? 0x7ee787 : 0x116329);
+    });
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+  }
+
+  // Lazy init with IntersectionObserver
+  document.querySelectorAll<HTMLElement>("[data-rev3d]").forEach((el) => {
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          io.disconnect();
+          initScene(el);
+        }
+      },
+      { threshold: 0.1 }
+    );
+    io.observe(el);
+  });
+</script>
+
+<style>
+  .rev3d { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .rev3d-canvas { width:100%; max-width:500px; border-radius:0.5rem; overflow:hidden; }
+  .rev3d-canvas canvas { display:block; border-radius:0.5rem; }
+  .rev3d-hint {
+    margin-top:0.4rem; font-size:0.78rem; color:#888;
+    font-family:'Libre Baskerville',Georgia,serif; font-style:italic;
+  }
+</style>

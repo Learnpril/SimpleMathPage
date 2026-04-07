@@ -1,0 +1,126 @@
+---
+/**
+ * DiskSolid3D — pseudo-3D solid of revolution for y = sqrt(x) rotated around x-axis.
+ * Uses top/bottom profile curves and elliptical cross-sections to fake 3D.
+ */
+const w = 440;
+const h = 280;
+const cx = 60;  // left margin for axis
+const cy = h / 2; // center y (axis of rotation)
+const scaleX = 85; // pixels per unit x
+const scaleY = 70; // pixels per unit y (radius)
+const ellipseRatio = 0.35; // how "squished" the ellipses are (depth illusion)
+
+// Map math coords to SVG
+const mx = (x: number) => cx + x * scaleX;
+const my = (y: number) => cy - y * scaleY;
+
+// Profile: y = sqrt(x) from 0 to 4
+const topPts: string[] = [];
+const botPts: string[] = [];
+for (let i = 0; i <= 80; i++) {
+  const x = i * 4 / 80;
+  const r = Math.sqrt(x);
+  topPts.push(`${mx(x)},${my(r)}`);
+  botPts.push(`${mx(x)},${my(-r)}`);
+}
+
+// Surface fill: top curve forward, bottom curve backward
+const surfacePts = [...topPts, ...botPts.reverse()].join(' ');
+
+// Ellipse cross-sections at specific x values
+const sliceXs = [0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0];
+---
+
+<figure class="ds3" role="img" aria-label="Pseudo 3D view of the solid formed by rotating y equals square root of x around the x-axis from 0 to 4, showing elliptical cross-sections">
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+
+    {/* Axis of rotation */}
+    <line x1={mx(-0.3)} y1={cy} x2={mx(4.5)} y2={cy} class="ds3-axis" stroke-width="1" stroke-dasharray="6,4" />
+
+    {/* Surface fill */}
+    <polygon points={surfacePts} class="ds3-surface" />
+
+    {/* Back halves of ellipses (behind surface) */}
+    {sliceXs.map(x => {
+      const r = Math.sqrt(x) * scaleY;
+      const rx = r * ellipseRatio;
+      return (
+        <ellipse cx={mx(x)} cy={cy} rx={rx} ry={r}
+          fill="none" class="ds3-slice-back" stroke-width="1"
+          stroke-dasharray="4,3" />
+      );
+    })}
+
+    {/* Top profile curve */}
+    <polyline points={topPts.join(' ')} fill="none" class="ds3-profile" stroke-width="2.5" />
+
+    {/* Bottom profile curve */}
+    <polyline points={botPts.reverse().join(' ')} fill="none" class="ds3-profile" stroke-width="2.5" />
+
+    {/* Front halves of ellipses */}
+    {sliceXs.map(x => {
+      const r = Math.sqrt(x) * scaleY;
+      const rx = r * ellipseRatio;
+      // Draw only the front half (right semicircle in SVG terms)
+      return (
+        <path d={`M ${mx(x)},${cy - r} A ${rx},${r} 0 0,1 ${mx(x)},${cy + r}`}
+          fill="none" class="ds3-slice-front" stroke-width="1.5" />
+      );
+    })}
+
+    {/* End cap ellipse at x=4 (solid) */}
+    {(() => {
+      const r = Math.sqrt(4) * scaleY;
+      const rx = r * ellipseRatio;
+      return (
+        <ellipse cx={mx(4)} cy={cy} rx={rx} ry={r}
+          class="ds3-endcap" stroke-width="2" />
+      );
+    })()}
+
+    {/* Tip dot at origin */}
+    <circle cx={mx(0)} cy={cy} r="3" class="ds3-dot" />
+
+    {/* Labels */}
+    <text class="ds3-tick" x={mx(0)} y={cy + 16} font-size="10" text-anchor="middle">0</text>
+    <text class="ds3-tick" x={mx(2)} y={cy + 16} font-size="10" text-anchor="middle">2</text>
+    <text class="ds3-tick" x={mx(4)} y={cy + 16} font-size="10" text-anchor="middle">4</text>
+    <text class="ds3-tick" x={mx(4.5)} y={cy + 5} font-size="11" text-anchor="start">x</text>
+  </svg>
+  <div class="ds3-legend">
+    <span class="ds3-leg"><span class="ds3-sw ds3-sw-profile"></span> y = sqrt(x) profile</span>
+    <span class="ds3-leg"><span class="ds3-sw ds3-sw-slice"></span> disk cross-sections</span>
+    <span class="ds3-leg"><span class="ds3-sw ds3-sw-axis"></span> axis of rotation</span>
+  </div>
+</figure>
+
+<style>
+  .ds3 { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .ds3 svg { max-width:100%; height:auto; }
+  .ds3-axis { stroke:#666; }
+  .ds3-surface { fill:rgba(88,166,255,0.1); stroke:none; }
+  .ds3-profile { stroke:#58a6ff; }
+  .ds3-slice-back { stroke:rgba(210,168,255,0.3); }
+  .ds3-slice-front { stroke:#d2a8ff; }
+  .ds3-endcap { fill:rgba(210,168,255,0.15); stroke:#d2a8ff; }
+  .ds3-dot { fill:#7ee787; }
+  .ds3-tick { fill:#888; font-family:'Libre Baskerville',Georgia,serif; }
+  .ds3-legend { display:flex; gap:1rem; flex-wrap:wrap; justify-content:center; margin-top:0.5rem; font-family:'Libre Baskerville',Georgia,serif; font-size:0.82rem; }
+  .ds3-leg { display:flex; align-items:center; gap:0.35rem; }
+  .ds3-sw { display:inline-block; width:18px; height:12px; border-radius:2px; }
+  .ds3-sw-profile { background:#58a6ff; height:4px; }
+  .ds3-sw-slice { background:#d2a8ff; height:4px; }
+  .ds3-sw-axis { background:#666; height:2px; }
+  :global([data-theme="light"]) .ds3-axis { stroke:#999; }
+  :global([data-theme="light"]) .ds3-surface { fill:rgba(5,80,174,0.08); }
+  :global([data-theme="light"]) .ds3-profile { stroke:#0550ae; }
+  :global([data-theme="light"]) .ds3-slice-back { stroke:rgba(102,57,186,0.2); }
+  :global([data-theme="light"]) .ds3-slice-front { stroke:#6639ba; }
+  :global([data-theme="light"]) .ds3-endcap { fill:rgba(102,57,186,0.1); stroke:#6639ba; }
+  :global([data-theme="light"]) .ds3-dot { fill:#116329; }
+  :global([data-theme="light"]) .ds3-tick { fill:#666; }
+  :global([data-theme="light"]) .ds3-sw-profile { background:#0550ae; }
+  :global([data-theme="light"]) .ds3-sw-slice { background:#6639ba; }
+  :global([data-theme="light"]) .ds3-sw-axis { background:#999; }
+</style>

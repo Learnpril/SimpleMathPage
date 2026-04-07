@@ -1,0 +1,117 @@
+---
+/**
+ * YAxisSolid3D — 3D solid: x = y² from y=0 to y=2 rotated around the y-axis.
+ * This is a bowl/paraboloid shape opening upward.
+ */
+---
+
+<figure class="rev3d" role="img" aria-label="Interactive 3D solid of revolution: x equals y squared rotated around the y-axis">
+  <div class="rev3d-canvas" data-yaxis3d></div>
+  <div class="rev3d-hint">Drag to rotate</div>
+</figure>
+
+<script>
+  import * as THREE from "three";
+  import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+
+  function initYAxis(container: HTMLElement) {
+    const width = Math.min(container.clientWidth, 500);
+    const height = 320;
+    const isDark = document.documentElement.dataset.theme !== "light";
+
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(isDark ? 0x121212 : 0xf8f9fa);
+
+    const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 100);
+    camera.position.set(6, 4, 6);
+    camera.lookAt(0, 1, 0);
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(width, height);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    container.appendChild(renderer.domElement);
+
+    const controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.target.set(0, 1, 0);
+    controls.update();
+
+    // Profile: x = y², rotating around Y axis
+    // At height y, the radius is y² (distance from y-axis)
+    // LatheGeometry rotates around Y axis natively, so no rotation needed
+    const profile: THREE.Vector2[] = [];
+    const seg = 60;
+    for (let i = 0; i <= seg; i++) {
+      const y = (i / seg) * 2; // y from 0 to 2
+      const r = y * y;          // radius = y²
+      profile.push(new THREE.Vector2(r, y));
+    }
+
+    const latheGeo = new THREE.LatheGeometry(profile, 48);
+
+    const solidMat = new THREE.MeshPhongMaterial({
+      color: isDark ? 0x58a6ff : 0x0550ae,
+      transparent: true, opacity: 0.35, side: THREE.DoubleSide, shininess: 60,
+    });
+    scene.add(new THREE.Mesh(latheGeo, solidMat));
+
+    const wireMat = new THREE.MeshBasicMaterial({
+      color: isDark ? 0xd2a8ff : 0x6639ba,
+      wireframe: true, transparent: true, opacity: 0.12,
+    });
+    scene.add(new THREE.Mesh(latheGeo, wireMat));
+
+    // Y-axis (axis of rotation)
+    const axisGeo = new THREE.BufferGeometry().setFromPoints([
+      new THREE.Vector3(0, -0.3, 0), new THREE.Vector3(0, 2.5, 0),
+    ]);
+    scene.add(new THREE.Line(axisGeo, new THREE.LineBasicMaterial({ color: isDark ? 0x666666 : 0x999999 })));
+
+    // Profile curve in xz=0 plane
+    const curvePoints: THREE.Vector3[] = [];
+    for (let i = 0; i <= 80; i++) {
+      const y = (i / 80) * 2;
+      curvePoints.push(new THREE.Vector3(y * y, y, 0));
+    }
+    const curveGeo = new THREE.BufferGeometry().setFromPoints(curvePoints);
+    scene.add(new THREE.Line(curveGeo, new THREE.LineBasicMaterial({ color: isDark ? 0x7ee787 : 0x116329 })));
+
+    // Lighting
+    scene.add(new THREE.AmbientLight(0xffffff, 0.6));
+    const d1 = new THREE.DirectionalLight(0xffffff, 0.8);
+    d1.position.set(5, 5, 5);
+    scene.add(d1);
+    const d2 = new THREE.DirectionalLight(0xffffff, 0.3);
+    d2.position.set(-3, -2, -3);
+    scene.add(d2);
+
+    function animate() {
+      requestAnimationFrame(animate);
+      controls.update();
+      renderer.render(scene, camera);
+    }
+    animate();
+
+    const ro = new ResizeObserver(() => {
+      const w = Math.min(container.clientWidth, 500);
+      camera.aspect = w / height;
+      camera.updateProjectionMatrix();
+      renderer.setSize(w, height);
+    });
+    ro.observe(container);
+  }
+
+  document.querySelectorAll<HTMLElement>("[data-yaxis3d]").forEach((el) => {
+    const io = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting) { io.disconnect(); initYAxis(el); }
+    }, { threshold: 0.1 });
+    io.observe(el);
+  });
+</script>
+
+<style>
+  .rev3d { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .rev3d-canvas { width:100%; max-width:500px; border-radius:0.5rem; overflow:hidden; }
+  .rev3d-canvas canvas { display:block; border-radius:0.5rem; }
+  .rev3d-hint { margin-top:0.4rem; font-size:0.78rem; color:#888; font-family:'Libre Baskerville',Georgia,serif; font-style:italic; }
+</style>
