@@ -1,0 +1,123 @@
+---
+/**
+ * AreaXvsX3 — y = x and y = x³ from -1 to 1, two shaded regions showing the crossing.
+ */
+const w = 380;
+const h = 320;
+const pad = 50;
+const gw = w - 2 * pad;
+const gh = h - 2 * pad;
+const xMin = -1.4, xMax = 1.4, yMin = -1.4, yMax = 1.4;
+const sx = (x: number) => pad + ((x - xMin) / (xMax - xMin)) * gw;
+const sy = (y: number) => pad + ((yMax - y) / (yMax - yMin)) * gh;
+
+// y = x line
+const linePts: string[] = [];
+for (let i = 0; i <= 60; i++) {
+  const x = xMin + i * (xMax - xMin) / 60;
+  linePts.push(`${sx(x)},${sy(x)}`);
+}
+
+// y = x³ curve
+const cubPts: string[] = [];
+for (let i = 0; i <= 100; i++) {
+  const x = xMin + i * (xMax - xMin) / 100;
+  const y = x * x * x;
+  if (y >= yMin && y <= yMax) cubPts.push(`${sx(x)},${sy(y)}`);
+}
+
+// Region 1: [-1, 0] where x³ >= x (shade between x³ on top, x on bottom)
+const shade1: string[] = [];
+for (let i = 0; i <= 40; i++) {
+  const x = -1 + i / 40;
+  shade1.push(`${sx(x)},${sy(x * x * x)}`);
+}
+for (let i = 40; i >= 0; i--) {
+  const x = -1 + i / 40;
+  shade1.push(`${sx(x)},${sy(x)}`);
+}
+
+// Region 2: [0, 1] where x >= x³ (shade between x on top, x³ on bottom)
+const shade2: string[] = [];
+for (let i = 0; i <= 40; i++) {
+  const x = i / 40;
+  shade2.push(`${sx(x)},${sy(x)}`);
+}
+for (let i = 40; i >= 0; i--) {
+  const x = i / 40;
+  shade2.push(`${sx(x)},${sy(x * x * x)}`);
+}
+---
+
+<figure class="axc" role="img" aria-label="Area between y equals x and y equals x cubed from negative 1 to 1, showing two shaded regions where the curves cross at the origin">
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    {/* Grid */}
+    {[-1, 1].map(v => (
+      <line x1={sx(v)} y1={sy(yMin)} x2={sx(v)} y2={sy(yMax)} class="axc-grid" stroke-width="0.5" />
+    ))}
+    {[-1, 1].map(v => (
+      <line x1={sx(xMin)} y1={sy(v)} x2={sx(xMax)} y2={sy(v)} class="axc-grid" stroke-width="0.5" />
+    ))}
+
+    {/* Axes */}
+    <line x1={sx(xMin)} y1={sy(0)} x2={sx(xMax)} y2={sy(0)} class="axc-axis" stroke-width="1.5" />
+    <line x1={sx(0)} y1={sy(yMin)} x2={sx(0)} y2={sy(yMax)} class="axc-axis" stroke-width="1.2" />
+
+    {/* Shaded regions */}
+    <polygon points={shade1.join(' ')} class="axc-shade1" />
+    <polygon points={shade2.join(' ')} class="axc-shade2" />
+
+    {/* Curves */}
+    <polyline points={linePts.join(' ')} fill="none" class="axc-line" stroke-width="2.5" />
+    <polyline points={cubPts.join(' ')} fill="none" class="axc-cub" stroke-width="2.5" />
+
+    {/* Intersection dots */}
+    <circle cx={sx(-1)} cy={sy(-1)} r="4" class="axc-dot" />
+    <circle cx={sx(0)} cy={sy(0)} r="4" class="axc-dot" />
+    <circle cx={sx(1)} cy={sy(1)} r="4" class="axc-dot" />
+
+    {/* Tick labels */}
+    <text class="axc-tick" x={sx(-1)} y={sy(0)+16} font-size="10" text-anchor="middle">-1</text>
+    <text class="axc-tick" x={sx(1)} y={sy(0)+16} font-size="10" text-anchor="middle">1</text>
+    <text class="axc-tick" x={sx(0)-6} y={sy(-1)+4} font-size="10" text-anchor="end">-1</text>
+    <text class="axc-tick" x={sx(0)-6} y={sy(1)+4} font-size="10" text-anchor="end">1</text>
+  </svg>
+  <div class="axc-legend">
+    <span class="axc-leg"><span class="axc-sw axc-sw-line"></span> y = x</span>
+    <span class="axc-leg"><span class="axc-sw axc-sw-cub"></span> y = x³</span>
+    <span class="axc-leg"><span class="axc-sw axc-sw-s1"></span> region 1 (x³ on top)</span>
+    <span class="axc-leg"><span class="axc-sw axc-sw-s2"></span> region 2 (x on top)</span>
+  </div>
+</figure>
+
+<style>
+  .axc { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .axc svg { max-width:100%; height:auto; }
+  .axc-grid { stroke:#333; }
+  .axc-axis { stroke:#666; }
+  .axc-line { stroke:#58a6ff; }
+  .axc-cub { stroke:#f0883e; }
+  .axc-shade1 { fill:rgba(210,168,255,0.25); stroke:none; }
+  .axc-shade2 { fill:rgba(126,231,135,0.25); stroke:none; }
+  .axc-dot { fill:#7ee787; }
+  .axc-tick { fill:#888; font-family:'Libre Baskerville',Georgia,serif; }
+  .axc-legend { display:flex; gap:1rem; flex-wrap:wrap; justify-content:center; margin-top:0.5rem; font-family:'Libre Baskerville',Georgia,serif; font-size:0.82rem; }
+  .axc-leg { display:flex; align-items:center; gap:0.35rem; }
+  .axc-sw { display:inline-block; width:18px; height:12px; border-radius:2px; }
+  .axc-sw-line { background:#58a6ff; height:4px; }
+  .axc-sw-cub { background:#f0883e; height:4px; }
+  .axc-sw-s1 { background:rgba(210,168,255,0.5); }
+  .axc-sw-s2 { background:rgba(126,231,135,0.5); }
+  :global([data-theme="light"]) .axc-grid { stroke:#ddd; }
+  :global([data-theme="light"]) .axc-axis { stroke:#999; }
+  :global([data-theme="light"]) .axc-line { stroke:#0550ae; }
+  :global([data-theme="light"]) .axc-cub { stroke:#b35900; }
+  :global([data-theme="light"]) .axc-shade1 { fill:rgba(102,57,186,0.15); }
+  :global([data-theme="light"]) .axc-shade2 { fill:rgba(17,99,41,0.15); }
+  :global([data-theme="light"]) .axc-dot { fill:#116329; }
+  :global([data-theme="light"]) .axc-tick { fill:#666; }
+  :global([data-theme="light"]) .axc-sw-line { background:#0550ae; }
+  :global([data-theme="light"]) .axc-sw-cub { background:#b35900; }
+  :global([data-theme="light"]) .axc-sw-s1 { background:rgba(102,57,186,0.3); }
+  :global([data-theme="light"]) .axc-sw-s2 { background:rgba(17,99,41,0.3); }
+</style>

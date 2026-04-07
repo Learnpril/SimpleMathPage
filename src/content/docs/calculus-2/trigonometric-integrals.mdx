@@ -1,0 +1,213 @@
+---
+title: Trigonometric Integrals
+description: Learn techniques for integrating products and powers of trigonometric functions
+sidebar:
+  order: 3
+---
+
+## What You'll Learn
+
+In this lesson you'll learn strategies for integrating products and powers of sine, cosine, tangent, and secant. These come up constantly in physics, engineering, and signal processing.
+
+## The Concept
+
+Trigonometric integrals follow a few predictable patterns. Once you recognize which pattern you're looking at, the strategy is straightforward.
+
+### Powers of sine and cosine
+
+The key identity is the Pythagorean identity:
+
+$$
+\sin^2 x + \cos^2 x = 1
+$$
+
+If at least one power is odd, peel off one factor for du and convert the rest using the identity above.
+
+If both powers are even, use the power-reducing (half-angle) identities:
+
+$$
+\sin^2 x = \frac{1 - \cos 2x}{2}
+$$
+
+$$
+\cos^2 x = \frac{1 + \cos 2x}{2}
+$$
+
+These convert even powers into expressions with double angles that you can integrate directly.
+
+### Powers of tangent and secant
+
+The key identity here is:
+
+$$
+\tan^2 x = \sec^2 x - 1
+$$
+
+Combined with the fact that the derivative of tan(x) is sec²(x) and the derivative of sec(x) is sec(x)tan(x), you get two main strategies:
+
+- If the power of secant is even: save sec²(x) for du, convert the rest to tangent
+- If the power of tangent is odd: save sec(x)tan(x) for du, convert the rest to secant
+
+### Quick reference
+
+Here's the decision process:
+
+1. Look at the powers of sine/cosine (or tangent/secant)
+2. Is one power odd? Peel off one factor, convert the rest with the Pythagorean identity, substitute
+3. Are both powers even? Use half-angle identities to reduce
+4. Does nothing fit? Try rewriting everything in terms of sine and cosine first
+
+## Worked Example
+
+**Example 1: Odd power of sine**
+
+Evaluate:
+
+$$
+\int \sin^3 x \, dx
+$$
+
+Since the power of sine is odd (3), peel off one sin(x) for du and convert the rest:
+
+$$
+\int \sin^2 x \cdot \sin x \, dx = \int (1 - \cos^2 x) \sin x \, dx
+$$
+
+Let u = cos(x), du = -sin(x) dx:
+
+$$
+-\int (1 - u^2) \, du = -(u - \tfrac{u^3}{3}) + C
+$$
+
+$$
+= -\cos x + \frac{\cos^3 x}{3} + C
+$$
+
+**Example 2: Both powers even**
+
+Evaluate:
+
+$$
+\int \sin^2 x \cos^2 x \, dx
+$$
+
+Both powers are even, so apply the half-angle identities:
+
+$$
+\sin^2 x \cos^2 x = \frac{1 - \cos 2x}{2} \cdot \frac{1 + \cos 2x}{2} = \frac{1 - \cos^2 2x}{4}
+$$
+
+Apply the half-angle identity again to cos²(2x):
+
+$$
+= \frac{1}{4} - \frac{\cos^2 2x}{4} = \frac{1}{4} - \frac{1}{4} \cdot \frac{1 + \cos 4x}{2} = \frac{1}{4} - \frac{1}{8} - \frac{\cos 4x}{8}
+$$
+
+$$
+= \frac{1}{8} - \frac{\cos 4x}{8} = \frac{1 - \cos 4x}{8}
+$$
+
+Now integrate:
+
+$$
+\int \frac{1 - \cos 4x}{8} \, dx = \frac{1}{8}\left(x - \frac{\sin 4x}{4}\right) + C = \frac{x}{8} - \frac{\sin 4x}{32} + C
+$$
+
+**Example 3: Tangent and secant**
+
+Evaluate:
+
+$$
+\int \tan^3 x \sec^2 x \, dx
+$$
+
+The derivative of tan(x) is sec²(x), so this is a direct substitution.
+
+Let u = tan(x), du = sec²(x) dx:
+
+$$
+\int u^3 \, du = \frac{u^4}{4} + C = \frac{\tan^4 x}{4} + C
+$$
+
+## Real-World Application
+
+Trigonometric integrals show up anywhere periodic functions are involved:
+
+- In electrical engineering, computing power in AC circuits requires integrating products of sine and cosine
+- In physics, energy calculations for oscillating systems (springs, pendulums) involve these integrals
+- In audio and signal processing, Fourier analysis decomposes signals into sine and cosine components, and computing coefficients requires exactly these types of integrals
+- In game development, smooth periodic animations and wave effects use trig functions, and integrating them gives accumulated displacement or energy
+
+:::note[You've Got This]
+The patterns here are very consistent. Odd power? Peel one off, convert the rest, substitute. Both even? Half-angle identities. Tangent and secant? Check if sec²(x) or sec(x)tan(x) is sitting there ready to be du. You don't need to memorize every case. Just ask: "Is there an odd power I can exploit?" If yes, you know what to do. If no, reach for the half-angle formulas. That's really it.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="calculus2-trigonometric-integrals"
+  questions={[
+    {
+      id: "q1",
+      text: "When integrating sin³(x), the best first step is to:",
+      options: [
+        "Use the half-angle identity",
+        "Apply integration by parts",
+        "Save one sin(x) for du and write sin²(x) as 1 - cos²(x)",
+        "Substitute u = sin(x) directly",
+      ],
+      correctIndex: 2,
+      explanation:
+        "Odd power of sine: peel off one sin(x) for du, convert the rest using the Pythagorean identity.",
+    },
+    {
+      id: "q2",
+      text: "For integrals with even powers of both sine and cosine, you should use:",
+      options: [
+        "U-substitution with u = sin(x)",
+        "Power-reducing (half-angle) identities",
+        "Integration by parts",
+        "The Pythagorean identity directly",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Half-angle identities convert even powers into expressions with double angles that integrate directly.",
+    },
+    {
+      id: "q3",
+      text: "The integral of sin²(x) cos²(x) dx simplifies to:",
+      options: [
+        "(1/4)sin²(2x) + C",
+        "x/8 + sin(4x)/32 + C",
+        "x/8 - sin(4x)/32 + C",
+        "(1/2)x - (1/4)sin(2x) + C",
+      ],
+      correctIndex: 2,
+      explanation:
+        "After applying half-angle identities twice, you get (1 - cos 4x)/8, which integrates to x/8 - sin(4x)/32 + C.",
+    },
+    {
+      id: "q4",
+      text: "For the integral of tan³(x) sec²(x) dx, the best substitution is:",
+      options: ["u = sec(x)", "u = sin(x)", "u = cos(x)", "u = tan(x)"],
+      correctIndex: 3,
+      explanation:
+        "Since du = sec²(x) dx appears in the integrand, u = tan(x) turns this into a simple power integral.",
+    },
+    {
+      id: "q5",
+      text: "Which identity is most useful for converting between tangent and secant?",
+      options: [
+        "sin²(x) + cos²(x) = 1",
+        "sin(2x) = 2 sin(x) cos(x)",
+        "tan²(x) = sec²(x) - 1",
+        "cos(2x) = 1 - 2sin²(x)",
+      ],
+      correctIndex: 2,
+      explanation:
+        "This identity lets you convert between powers of tangent and secant, which is essential for those integrals.",
+    },
+  ]}
+/>

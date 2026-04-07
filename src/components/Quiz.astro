@@ -234,5 +234,18 @@ const validation = validateQuizData({ quizId, questions });
   }
 
   // init all quiz containers on the page
-  document.querySelectorAll<HTMLElement>(".quiz-container").forEach(initQuiz);
+  // Use astro:page-load so quizzes re-init after Starlight view transitions
+  function initAllQuizzes() {
+    document.querySelectorAll<HTMLElement>(".quiz-container").forEach((el) => {
+      if (!el.dataset.quizInit) {
+        el.dataset.quizInit = "true";
+        initQuiz(el);
+      }
+    });
+  }
+
+  // astro:page-load fires on initial load AND after every client-side navigation
+  document.addEventListener("astro:page-load", initAllQuizzes);
+  // Also run immediately in case the event already fired before this script loaded
+  initAllQuizzes();
 </script>

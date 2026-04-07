@@ -1,0 +1,110 @@
+---
+/**
+ * AreaBetweenXandX2 — shows y = x and y = x² from 0 to 1 with shaded area between.
+ */
+const w = 380;
+const h = 280;
+const pad = 50;
+const gw = w - 2 * pad;
+const gh = h - 2 * pad;
+const xMin = -0.2, xMax = 1.4, yMin = -0.1, yMax = 1.4;
+const sx = (x: number) => pad + ((x - xMin) / (xMax - xMin)) * gw;
+const sy = (y: number) => pad + ((yMax - y) / (yMax - yMin)) * gh;
+
+// y = x curve
+const linePts: string[] = [];
+for (let i = 0; i <= 60; i++) {
+  const x = xMin + i * (xMax - xMin) / 60;
+  linePts.push(`${sx(x)},${sy(x)}`);
+}
+
+// y = x² curve
+const parPts: string[] = [];
+for (let i = 0; i <= 80; i++) {
+  const x = xMin + i * (xMax - xMin) / 80;
+  const y = x * x;
+  if (y <= yMax) parPts.push(`${sx(x)},${sy(y)}`);
+}
+
+// Shaded area between x and x² from 0 to 1
+const shadePts: string[] = [];
+// Top edge: y = x from 0 to 1
+for (let i = 0; i <= 40; i++) {
+  const x = i / 40;
+  shadePts.push(`${sx(x)},${sy(x)}`);
+}
+// Bottom edge: y = x² from 1 back to 0
+for (let i = 40; i >= 0; i--) {
+  const x = i / 40;
+  shadePts.push(`${sx(x)},${sy(x * x)}`);
+}
+---
+
+<figure class="abc" role="img" aria-label="Area between y equals x and y equals x squared from 0 to 1, shaded region showing area equals one sixth">
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    {/* Grid */}
+    {[0, 0.5, 1].map(v => (
+      <line x1={sx(v)} y1={sy(yMin)} x2={sx(v)} y2={sy(yMax)} class="abc-grid" stroke-width="0.5" />
+    ))}
+    {[0, 0.5, 1].map(v => (
+      <line x1={sx(xMin)} y1={sy(v)} x2={sx(xMax)} y2={sy(v)} class="abc-grid" stroke-width="0.5" />
+    ))}
+
+    {/* Axes */}
+    <line x1={sx(xMin)} y1={sy(0)} x2={sx(xMax)} y2={sy(0)} class="abc-axis" stroke-width="1.5" />
+    <line x1={sx(0)} y1={sy(yMin)} x2={sx(0)} y2={sy(yMax)} class="abc-axis" stroke-width="1.2" />
+
+    {/* Shaded area */}
+    <polygon points={shadePts.join(' ')} class="abc-shade" />
+
+    {/* Curves */}
+    <polyline points={linePts.join(' ')} fill="none" class="abc-line" stroke-width="2.5" />
+    <polyline points={parPts.join(' ')} fill="none" class="abc-par" stroke-width="2.5" />
+
+    {/* Intersection dots */}
+    <circle cx={sx(0)} cy={sy(0)} r="4" class="abc-dot" />
+    <circle cx={sx(1)} cy={sy(1)} r="4" class="abc-dot" />
+
+    {/* Tick labels */}
+    <text class="abc-tick" x={sx(0.5)} y={sy(0)+16} font-size="10" text-anchor="middle">0.5</text>
+    <text class="abc-tick" x={sx(1)} y={sy(0)+16} font-size="10" text-anchor="middle">1</text>
+    <text class="abc-tick" x={sx(0)-6} y={sy(0.5)+4} font-size="10" text-anchor="end">0.5</text>
+    <text class="abc-tick" x={sx(0)-6} y={sy(1)+4} font-size="10" text-anchor="end">1</text>
+  </svg>
+  <div class="abc-legend">
+    <span class="abc-leg"><span class="abc-sw abc-sw-line"></span> y = x</span>
+    <span class="abc-leg"><span class="abc-sw abc-sw-par"></span> y = x²</span>
+    <span class="abc-leg"><span class="abc-sw abc-sw-shade"></span> area = 1/6</span>
+  </div>
+</figure>
+
+<style>
+  .abc { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .abc svg { max-width:100%; height:auto; }
+  .abc-grid { stroke:#333; }
+  .abc-axis { stroke:#666; }
+  .abc-line { stroke:#58a6ff; }
+  .abc-par { stroke:#f0883e; }
+  .abc-shade { fill:rgba(126,231,135,0.22); stroke:none; }
+  .abc-dot { fill:#7ee787; }
+  .abc-tick { fill:#888; font-family:'Libre Baskerville',Georgia,serif; }
+  .abc-legend {
+    display:flex; gap:1rem; flex-wrap:wrap; justify-content:center;
+    margin-top:0.5rem; font-family:'Libre Baskerville',Georgia,serif; font-size:0.82rem;
+  }
+  .abc-leg { display:flex; align-items:center; gap:0.35rem; }
+  .abc-sw { display:inline-block; width:18px; height:12px; border-radius:2px; }
+  .abc-sw-line { background:#58a6ff; height:4px; }
+  .abc-sw-par { background:#f0883e; height:4px; }
+  .abc-sw-shade { background:rgba(126,231,135,0.4); }
+  :global([data-theme="light"]) .abc-grid { stroke:#ddd; }
+  :global([data-theme="light"]) .abc-axis { stroke:#999; }
+  :global([data-theme="light"]) .abc-line { stroke:#0550ae; }
+  :global([data-theme="light"]) .abc-par { stroke:#b35900; }
+  :global([data-theme="light"]) .abc-shade { fill:rgba(17,99,41,0.15); }
+  :global([data-theme="light"]) .abc-dot { fill:#116329; }
+  :global([data-theme="light"]) .abc-tick { fill:#666; }
+  :global([data-theme="light"]) .abc-sw-line { background:#0550ae; }
+  :global([data-theme="light"]) .abc-sw-par { background:#b35900; }
+  :global([data-theme="light"]) .abc-sw-shade { background:rgba(17,99,41,0.25); }
+</style>

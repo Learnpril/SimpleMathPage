@@ -1,0 +1,119 @@
+---
+/**
+ * ImproperDiscontinuityGraph — shows f(x) = 1/√x from 0 to 1.
+ * The function blows up at x=0 (vertical asymptote) but the shaded area converges to 2.
+ * Shows the epsilon buffer concept visually.
+ */
+const w = 400;
+const h = 220;
+const pad = 50;
+const gw = w - 2 * pad;
+const gh = h - 2 * pad;
+const xMin = -0.3, xMax = 1.5, yMin = 0, yMax = 8;
+const sx = (x: number) => pad + ((x - xMin) / (xMax - xMin)) * gw;
+const sy = (y: number) => pad + ((yMax - y) / (yMax - yMin)) * gh;
+
+// Curve points for 1/√x from x=0.02 to 1.4
+const curvePts: string[] = [];
+for (let i = 0; i <= 120; i++) {
+  const x = 0.02 + i * 1.38 / 120;
+  const y = 1 / Math.sqrt(x);
+  if (y <= yMax) curvePts.push(`${sx(x)},${sy(y)}`);
+}
+
+// Shaded area from epsilon (0.02) to 1
+const eps = 0.02;
+const shadePts: string[] = [`${sx(eps)},${sy(0)}`];
+for (let i = 0; i <= 80; i++) {
+  const x = eps + i * (1 - eps) / 80;
+  const y = 1 / Math.sqrt(x);
+  if (y <= yMax) shadePts.push(`${sx(x)},${sy(y)}`);
+  else shadePts.push(`${sx(x)},${sy(yMax)}`);
+}
+shadePts.push(`${sx(1)},${sy(0)}`);
+
+const xTicks = [0.5, 1];
+const yTickVals = [2, 4, 6];
+---
+
+<figure class="dsc" role="img" aria-label="Graph of 1 over square root of x from 0 to 1, showing the function shooting up near zero but the shaded area converging to 2">
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg" class="dsc-svg">
+    <text class="dsc-title" x={w/2} y={16} font-size="13" text-anchor="middle" font-weight="600">Discontinuity at x = 0: area under 1/sqrt(x) from 0 to 1 = 2</text>
+
+    {/* Grid */}
+    {xTicks.map(v => (
+      <line x1={sx(v)} y1={sy(yMin)} x2={sx(v)} y2={sy(yMax)} class="dsc-grid" stroke-width="0.5" />
+    ))}
+    {yTickVals.map(v => (
+      <line x1={sx(xMin)} y1={sy(v)} x2={sx(xMax)} y2={sy(v)} class="dsc-grid" stroke-width="0.5" />
+    ))}
+
+    {/* Axes */}
+    <line x1={sx(xMin)} y1={sy(0)} x2={sx(xMax)} y2={sy(0)} class="dsc-axis" stroke-width="1.5" />
+    <line x1={sx(0)} y1={sy(yMin)} x2={sx(0)} y2={sy(yMax)} class="dsc-axis" stroke-width="1.2" />
+
+    {/* Shaded area */}
+    <polygon points={shadePts.join(' ')} class="dsc-shade" />
+
+    {/* Curve */}
+    <polyline points={curvePts.join(' ')} fill="none" class="dsc-curve" stroke-width="2.5" />
+
+    {/* x=1 marker */}
+    <line x1={sx(1)} y1={sy(0)} x2={sx(1)} y2={sy(1)} class="dsc-marker" stroke-width="1" stroke-dasharray="4,3" />
+
+    {/* Epsilon marker */}
+    <line x1={sx(eps)} y1={sy(0)} x2={sx(eps)} y2={sy(Math.min(1/Math.sqrt(eps), yMax))} class="dsc-eps" stroke-width="1.5" stroke-dasharray="3,3" />
+
+    {/* Tick labels */}
+    <text class="dsc-tick" x={sx(0.5)} y={sy(0)+16} font-size="10" text-anchor="middle">0.5</text>
+    <text class="dsc-tick" x={sx(1)} y={sy(0)+16} font-size="10" text-anchor="middle">1</text>
+    <text class="dsc-tick" x={sx(0)-6} y={sy(2)+4} font-size="10" text-anchor="end">2</text>
+    <text class="dsc-tick" x={sx(0)-6} y={sy(4)+4} font-size="10" text-anchor="end">4</text>
+    <text class="dsc-tick" x={sx(0)-6} y={sy(6)+4} font-size="10" text-anchor="end">6</text>
+
+    {/* Epsilon label */}
+    <text class="dsc-eps-lbl" x={sx(eps)+4} y={sy(yMax)+12} font-size="10">ε</text>
+  </svg>
+
+  <div class="dsc-legend">
+    <span class="dsc-leg"><span class="dsc-sw dsc-sw-curve"></span> f(x) = 1/sqrt(x)</span>
+    <span class="dsc-leg"><span class="dsc-sw dsc-sw-shade"></span> area = 2 (converges)</span>
+    <span class="dsc-leg"><span class="dsc-sw dsc-sw-eps"></span> ε buffer near discontinuity</span>
+  </div>
+</figure>
+
+<style>
+  .dsc { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .dsc-svg { max-width:100%; height:auto; }
+  .dsc-grid { stroke:#333; }
+  .dsc-axis { stroke:#666; }
+  .dsc-curve { stroke:#d2a8ff; }
+  .dsc-shade { fill:rgba(210,168,255,0.2); stroke:none; }
+  .dsc-marker { stroke:#888; }
+  .dsc-eps { stroke:#f47067; }
+  .dsc-title { fill:#ccc; font-family:'Libre Baskerville',Georgia,serif; }
+  .dsc-tick { fill:#888; font-family:'Libre Baskerville',Georgia,serif; }
+  .dsc-eps-lbl { fill:#f47067; font-family:'Libre Baskerville',Georgia,serif; font-style:italic; }
+  .dsc-legend {
+    display:flex; gap:1rem; flex-wrap:wrap; justify-content:center;
+    margin-top:0.5rem; font-family:'Libre Baskerville',Georgia,serif; font-size:0.82rem;
+  }
+  .dsc-leg { display:flex; align-items:center; gap:0.35rem; }
+  .dsc-sw { display:inline-block; width:18px; height:12px; border-radius:2px; }
+  .dsc-sw-curve { background:#d2a8ff; }
+  .dsc-sw-shade { background:rgba(210,168,255,0.4); }
+  .dsc-sw-eps { background:#f47067; height:4px; }
+
+  :global([data-theme="light"]) .dsc-grid { stroke:#ddd; }
+  :global([data-theme="light"]) .dsc-axis { stroke:#999; }
+  :global([data-theme="light"]) .dsc-curve { stroke:#6639ba; }
+  :global([data-theme="light"]) .dsc-shade { fill:rgba(102,57,186,0.12); }
+  :global([data-theme="light"]) .dsc-marker { stroke:#aaa; }
+  :global([data-theme="light"]) .dsc-eps { stroke:#cf222e; }
+  :global([data-theme="light"]) .dsc-title { fill:#333; }
+  :global([data-theme="light"]) .dsc-tick { fill:#666; }
+  :global([data-theme="light"]) .dsc-eps-lbl { fill:#cf222e; }
+  :global([data-theme="light"]) .dsc-sw-curve { background:#6639ba; }
+  :global([data-theme="light"]) .dsc-sw-shade { background:rgba(102,57,186,0.25); }
+  :global([data-theme="light"]) .dsc-sw-eps { background:#cf222e; }
+</style>

@@ -1,0 +1,160 @@
+---
+/**
+ * ImproperIntegralGraphs — two stacked graphs comparing convergent vs divergent.
+ * Top: f(x) = 1/x² from 1 to ∞ (converges, area = 1)
+ * Bottom: f(x) = 1/x from 1 to ∞ (diverges, area = ∞)
+ */
+const w = 400;
+const h = 200;
+const pad = 50;
+const gw = w - 2 * pad;
+const gh = h - 2 * pad;
+const xMin = 0, xMax = 8, yMin = 0, yMax = 2.5;
+const sx = (x: number) => pad + ((x - xMin) / (xMax - xMin)) * gw;
+const sy = (y: number) => pad + ((yMax - y) / (yMax - yMin)) * gh;
+
+// Curve points for 1/x² from x=0.5 to 8
+const curve1: string[] = [];
+for (let i = 0; i <= 100; i++) {
+  const x = 0.5 + i * 7.5 / 100;
+  const y = 1 / (x * x);
+  if (y <= yMax) curve1.push(`${sx(x)},${sy(y)}`);
+}
+
+// Shaded area for 1/x² from 1 to 8 (approximating to infinity)
+const shade1: string[] = [`${sx(1)},${sy(0)}`];
+for (let i = 0; i <= 80; i++) {
+  const x = 1 + i * 7 / 80;
+  shade1.push(`${sx(x)},${sy(1 / (x * x))}`);
+}
+shade1.push(`${sx(8)},${sy(0)}`);
+
+// Curve points for 1/x from x=0.5 to 8
+const curve2: string[] = [];
+for (let i = 0; i <= 100; i++) {
+  const x = 0.5 + i * 7.5 / 100;
+  const y = 1 / x;
+  if (y <= yMax) curve2.push(`${sx(x)},${sy(y)}`);
+}
+
+// Shaded area for 1/x from 1 to 8
+const shade2: string[] = [`${sx(1)},${sy(0)}`];
+for (let i = 0; i <= 80; i++) {
+  const x = 1 + i * 7 / 80;
+  shade2.push(`${sx(x)},${sy(1 / x)}`);
+}
+shade2.push(`${sx(8)},${sy(0)}`);
+
+const ticks = [1, 2, 3, 4, 5, 6, 7];
+const yTicks = [0.5, 1, 1.5, 2];
+---
+
+<figure class="imp" role="img" aria-label="Two graphs comparing convergent and divergent improper integrals">
+
+  {/* Graph 1: 1/x² converges */}
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg" class="imp-svg">
+    <text class="imp-title" x={w/2} y={16} font-size="13" text-anchor="middle" font-weight="600">Converges: area under 1/x² from 1 to infinity = 1</text>
+
+    {/* Grid */}
+    {ticks.map(v => (
+      <line x1={sx(v)} y1={sy(yMin)} x2={sx(v)} y2={sy(yMax)} class="imp-grid" stroke-width="0.5" />
+    ))}
+    {yTicks.map(v => (
+      <line x1={sx(xMin)} y1={sy(v)} x2={sx(xMax)} y2={sy(v)} class="imp-grid" stroke-width="0.5" />
+    ))}
+
+    {/* Axes */}
+    <line x1={sx(xMin)} y1={sy(0)} x2={sx(xMax)} y2={sy(0)} class="imp-axis" stroke-width="1.5" />
+    <line x1={sx(0)} y1={sy(yMin)} x2={sx(0)} y2={sy(yMax)} class="imp-axis" stroke-width="1.2" />
+
+    {/* Shaded area */}
+    <polygon points={shade1.join(' ')} class="imp-shade-conv" />
+
+    {/* Curve */}
+    <polyline points={curve1.join(' ')} fill="none" class="imp-curve" stroke-width="2.5" />
+
+    {/* x=1 marker */}
+    <line x1={sx(1)} y1={sy(0)} x2={sx(1)} y2={sy(1)} class="imp-marker" stroke-width="1" stroke-dasharray="4,3" />
+
+    {/* Tick labels */}
+    <text class="imp-tick" x={sx(1)} y={sy(0)+16} font-size="10" text-anchor="middle">1</text>
+    <text class="imp-tick" x={sx(4)} y={sy(0)+16} font-size="10" text-anchor="middle">4</text>
+    <text class="imp-tick" x={sx(7)} y={sy(0)+16} font-size="10" text-anchor="middle">7</text>
+    <text class="imp-tick" x={sx(xMax)-4} y={sy(0)+16} font-size="10" text-anchor="end">→ ∞</text>
+    <text class="imp-tick" x={sx(0)-6} y={sy(1)+4} font-size="10" text-anchor="end">1</text>
+    <text class="imp-tick" x={sx(0)-6} y={sy(2)+4} font-size="10" text-anchor="end">2</text>
+  </svg>
+
+  {/* Graph 2: 1/x diverges */}
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg" class="imp-svg">
+    <text class="imp-title" x={w/2} y={16} font-size="13" text-anchor="middle" font-weight="600">Diverges: area under 1/x from 1 to infinity = infinity</text>
+
+    {/* Grid */}
+    {ticks.map(v => (
+      <line x1={sx(v)} y1={sy(yMin)} x2={sx(v)} y2={sy(yMax)} class="imp-grid" stroke-width="0.5" />
+    ))}
+    {yTicks.map(v => (
+      <line x1={sx(xMin)} y1={sy(v)} x2={sx(xMax)} y2={sy(v)} class="imp-grid" stroke-width="0.5" />
+    ))}
+
+    {/* Axes */}
+    <line x1={sx(xMin)} y1={sy(0)} x2={sx(xMax)} y2={sy(0)} class="imp-axis" stroke-width="1.5" />
+    <line x1={sx(0)} y1={sy(yMin)} x2={sx(0)} y2={sy(yMax)} class="imp-axis" stroke-width="1.2" />
+
+    {/* Shaded area */}
+    <polygon points={shade2.join(' ')} class="imp-shade-div" />
+
+    {/* Curve */}
+    <polyline points={curve2.join(' ')} fill="none" class="imp-curve-div" stroke-width="2.5" />
+
+    {/* x=1 marker */}
+    <line x1={sx(1)} y1={sy(0)} x2={sx(1)} y2={sy(1)} class="imp-marker" stroke-width="1" stroke-dasharray="4,3" />
+
+    {/* Tick labels */}
+    <text class="imp-tick" x={sx(1)} y={sy(0)+16} font-size="10" text-anchor="middle">1</text>
+    <text class="imp-tick" x={sx(4)} y={sy(0)+16} font-size="10" text-anchor="middle">4</text>
+    <text class="imp-tick" x={sx(7)} y={sy(0)+16} font-size="10" text-anchor="middle">7</text>
+    <text class="imp-tick" x={sx(xMax)-4} y={sy(0)+16} font-size="10" text-anchor="end">→ ∞</text>
+    <text class="imp-tick" x={sx(0)-6} y={sy(1)+4} font-size="10" text-anchor="end">1</text>
+    <text class="imp-tick" x={sx(0)-6} y={sy(2)+4} font-size="10" text-anchor="end">2</text>
+  </svg>
+
+  <div class="imp-legend">
+    <span class="imp-leg"><span class="imp-sw imp-sw-conv"></span> 1/x² (converges)</span>
+    <span class="imp-leg"><span class="imp-sw imp-sw-div"></span> 1/x (diverges)</span>
+  </div>
+</figure>
+
+<style>
+  .imp { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; gap:0.5rem; }
+  .imp-svg { max-width:100%; height:auto; }
+  .imp-grid { stroke:#333; }
+  .imp-axis { stroke:#666; }
+  .imp-curve { stroke:#58a6ff; }
+  .imp-curve-div { stroke:#f0883e; }
+  .imp-shade-conv { fill:rgba(88,166,255,0.2); stroke:none; }
+  .imp-shade-div { fill:rgba(240,136,62,0.2); stroke:none; }
+  .imp-marker { stroke:#888; }
+  .imp-title { fill:#ccc; font-family:'Libre Baskerville',Georgia,serif; }
+  .imp-tick { fill:#888; font-family:'Libre Baskerville',Georgia,serif; }
+  .imp-legend {
+    display:flex; gap:1rem; flex-wrap:wrap; justify-content:center;
+    margin-top:0.25rem; font-family:'Libre Baskerville',Georgia,serif; font-size:0.82rem;
+  }
+  .imp-leg { display:flex; align-items:center; gap:0.35rem; }
+  .imp-sw { display:inline-block; width:18px; height:12px; border-radius:2px; }
+  .imp-sw-conv { background:#58a6ff; }
+  .imp-sw-div { background:#f0883e; }
+
+  :global([data-theme="light"]) .imp-grid { stroke:#ddd; }
+  :global([data-theme="light"]) .imp-axis { stroke:#999; }
+  :global([data-theme="light"]) .imp-curve { stroke:#0550ae; }
+  :global([data-theme="light"]) .imp-curve-div { stroke:#b35900; }
+  :global([data-theme="light"]) .imp-shade-conv { fill:rgba(5,80,174,0.12); }
+  :global([data-theme="light"]) .imp-shade-div { fill:rgba(179,89,0,0.12); }
+  :global([data-theme="light"]) .imp-marker { stroke:#aaa; }
+  :global([data-theme="light"]) .imp-title { fill:#333; }
+  :global([data-theme="light"]) .imp-tick { fill:#666; }
+  :global([data-theme="light"]) .imp-sw-conv { background:#0550ae; }
+  :global([data-theme="light"]) .imp-sw-div { background:#b35900; }
+</style>

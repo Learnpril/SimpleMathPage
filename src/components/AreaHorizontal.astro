@@ -1,0 +1,112 @@
+---
+/**
+ * AreaHorizontal — x = y² and x = y + 2, integrated with respect to y.
+ * Shows the parabola opening right and the line, with shaded area between.
+ */
+const w = 380;
+const h = 320;
+const pad = 50;
+const gw = w - 2 * pad;
+const gh = h - 2 * pad;
+const xMin = -1, xMax = 5, yMin = -2, yMax = 3;
+const sx = (x: number) => pad + ((x - xMin) / (xMax - xMin)) * gw;
+const sy = (y: number) => pad + ((yMax - y) / (yMax - yMin)) * gh;
+
+// x = y² (parabola opening right)
+const parPts: string[] = [];
+for (let i = 0; i <= 100; i++) {
+  const y = yMin + i * (yMax - yMin) / 100;
+  const x = y * y;
+  if (x <= xMax) parPts.push(`${sx(x)},${sy(y)}`);
+}
+
+// x = y + 2 (line)
+const linePts: string[] = [];
+for (let i = 0; i <= 60; i++) {
+  const y = yMin + i * (yMax - yMin) / 60;
+  const x = y + 2;
+  if (x >= xMin && x <= xMax) linePts.push(`${sx(x)},${sy(y)}`);
+}
+
+// Shaded area between curves from y = -1 to y = 2
+// Right curve: x = y + 2, Left curve: x = y²
+const shadePts: string[] = [];
+// Right edge (line) from y = -1 to y = 2
+for (let i = 0; i <= 60; i++) {
+  const y = -1 + i * 3 / 60;
+  shadePts.push(`${sx(y + 2)},${sy(y)}`);
+}
+// Left edge (parabola) from y = 2 back to y = -1
+for (let i = 60; i >= 0; i--) {
+  const y = -1 + i * 3 / 60;
+  shadePts.push(`${sx(y * y)},${sy(y)}`);
+}
+---
+
+<figure class="ahz" role="img" aria-label="Area between x equals y squared and x equals y plus 2, integrated horizontally from y equals negative 1 to y equals 2">
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    {/* Grid */}
+    {[1, 2, 3, 4].map(v => (
+      <line x1={sx(v)} y1={sy(yMin)} x2={sx(v)} y2={sy(yMax)} class="ahz-grid" stroke-width="0.5" />
+    ))}
+    {[-1, 0, 1, 2].map(v => (
+      <line x1={sx(xMin)} y1={sy(v)} x2={sx(xMax)} y2={sy(v)} class="ahz-grid" stroke-width="0.5" />
+    ))}
+
+    {/* Axes */}
+    <line x1={sx(xMin)} y1={sy(0)} x2={sx(xMax)} y2={sy(0)} class="ahz-axis" stroke-width="1.5" />
+    <line x1={sx(0)} y1={sy(yMin)} x2={sx(0)} y2={sy(yMax)} class="ahz-axis" stroke-width="1.2" />
+
+    {/* Shaded area */}
+    <polygon points={shadePts.join(' ')} class="ahz-shade" />
+
+    {/* Curves */}
+    <polyline points={parPts.join(' ')} fill="none" class="ahz-par" stroke-width="2.5" />
+    <polyline points={linePts.join(' ')} fill="none" class="ahz-line" stroke-width="2.5" />
+
+    {/* Intersection dots: y = -1 (x=1) and y = 2 (x=4) */}
+    <circle cx={sx(1)} cy={sy(-1)} r="4" class="ahz-dot" />
+    <circle cx={sx(4)} cy={sy(2)} r="4" class="ahz-dot" />
+
+    {/* Tick labels */}
+    <text class="ahz-tick" x={sx(1)} y={sy(0)+16} font-size="10" text-anchor="middle">1</text>
+    <text class="ahz-tick" x={sx(2)} y={sy(0)+16} font-size="10" text-anchor="middle">2</text>
+    <text class="ahz-tick" x={sx(4)} y={sy(0)+16} font-size="10" text-anchor="middle">4</text>
+    <text class="ahz-tick" x={sx(0)-6} y={sy(-1)+4} font-size="10" text-anchor="end">-1</text>
+    <text class="ahz-tick" x={sx(0)-6} y={sy(1)+4} font-size="10" text-anchor="end">1</text>
+    <text class="ahz-tick" x={sx(0)-6} y={sy(2)+4} font-size="10" text-anchor="end">2</text>
+  </svg>
+  <div class="ahz-legend">
+    <span class="ahz-leg"><span class="ahz-sw ahz-sw-par"></span> x = y²</span>
+    <span class="ahz-leg"><span class="ahz-sw ahz-sw-line"></span> x = y + 2</span>
+    <span class="ahz-leg"><span class="ahz-sw ahz-sw-shade"></span> area = 9/2</span>
+  </div>
+</figure>
+
+<style>
+  .ahz { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .ahz svg { max-width:100%; height:auto; }
+  .ahz-grid { stroke:#333; }
+  .ahz-axis { stroke:#666; }
+  .ahz-par { stroke:#f0883e; }
+  .ahz-line { stroke:#58a6ff; }
+  .ahz-shade { fill:rgba(126,231,135,0.22); stroke:none; }
+  .ahz-dot { fill:#7ee787; }
+  .ahz-tick { fill:#888; font-family:'Libre Baskerville',Georgia,serif; }
+  .ahz-legend { display:flex; gap:1rem; flex-wrap:wrap; justify-content:center; margin-top:0.5rem; font-family:'Libre Baskerville',Georgia,serif; font-size:0.82rem; }
+  .ahz-leg { display:flex; align-items:center; gap:0.35rem; }
+  .ahz-sw { display:inline-block; width:18px; height:12px; border-radius:2px; }
+  .ahz-sw-par { background:#f0883e; height:4px; }
+  .ahz-sw-line { background:#58a6ff; height:4px; }
+  .ahz-sw-shade { background:rgba(126,231,135,0.4); }
+  :global([data-theme="light"]) .ahz-grid { stroke:#ddd; }
+  :global([data-theme="light"]) .ahz-axis { stroke:#999; }
+  :global([data-theme="light"]) .ahz-par { stroke:#b35900; }
+  :global([data-theme="light"]) .ahz-line { stroke:#0550ae; }
+  :global([data-theme="light"]) .ahz-shade { fill:rgba(17,99,41,0.15); }
+  :global([data-theme="light"]) .ahz-dot { fill:#116329; }
+  :global([data-theme="light"]) .ahz-tick { fill:#666; }
+  :global([data-theme="light"]) .ahz-sw-par { background:#b35900; }
+  :global([data-theme="light"]) .ahz-sw-line { background:#0550ae; }
+  :global([data-theme="light"]) .ahz-sw-shade { background:rgba(17,99,41,0.25); }
+</style>

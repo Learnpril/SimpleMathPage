@@ -1,0 +1,172 @@
+---
+title: Area Between Curves
+description: Learn how to calculate the area between two curves using definite integrals
+sidebar:
+  order: 7
+---
+
+## What You'll Learn
+
+In this lesson you'll learn how to find the area trapped between two curves using definite integrals. This is one of the most visual and satisfying applications of integration.
+
+## The Concept
+
+If f(x) is above g(x) on the interval [a, b], the area between them is
+
+$$
+A = \int_a^b \bigl[f(x) - g(x)\bigr]\,dx
+$$
+
+The idea is simple: upper curve minus lower curve, integrated over the interval. The result is always positive because you're subtracting the lower from the upper.
+
+### The process
+
+1. Find the intersection points by solving f(x) = g(x). These become your limits of integration.
+2. Determine which function is on top in each interval (plug in a test point).
+3. Set up the integral as (top function) minus (bottom function).
+4. If the curves cross within the interval, split into separate integrals at each crossing point.
+
+### Integrating with respect to y
+
+Sometimes the region is easier to describe horizontally. If you can write x as a function of y, integrate with respect to y instead. The formula becomes right curve minus left curve.
+
+## Worked Example
+
+**Example 1: y = x vs y = x²**
+
+Find the area between y = x and y = x² from x = 0 to x = 1.
+
+import AreaBetweenXandX2 from "../../../components/AreaBetweenXandX2.astro";
+
+<AreaBetweenXandX2 />
+
+The curves intersect at x = 0 and x = 1 (set x = x², so x² - x = 0, giving x(x - 1) = 0). On [0, 1], the line y = x is above the parabola y = x².
+
+$$
+A = \int_0^1 (x - x^2)\,dx = \left[\frac{x^2}{2} - \frac{x^3}{3}\right]_0^1 = \frac{1}{2} - \frac{1}{3} = \frac{1}{6}
+$$
+
+**Example 2: Curves that cross (y = x vs y = x³)**
+
+Find the area between y = x and y = x³ from x = -1 to x = 1.
+
+import AreaXvsX3 from "../../../components/AreaXvsX3.astro";
+
+<AreaXvsX3 />
+
+The curves intersect at x = -1, 0, and 1. The key is that which curve is on top switches at x = 0.
+
+On [-1, 0]: x³ is above x (test x = -0.5: x³ = -0.125, x = -0.5, so x³ > x).
+
+On [0, 1]: x is above x³ (test x = 0.5: x = 0.5, x³ = 0.125, so x > x³).
+
+$$
+A = \int_{-1}^0 (x^3 - x)\,dx + \int_0^1 (x - x^3)\,dx
+$$
+
+$$
+= \left[\frac{x^4}{4} - \frac{x^2}{2}\right]_{-1}^0 + \left[\frac{x^2}{2} - \frac{x^4}{4}\right]_0^1
+$$
+
+$$
+= \left(0 - \left(\frac{1}{4} - \frac{1}{2}\right)\right) + \left(\frac{1}{2} - \frac{1}{4} - 0\right) = \frac{1}{4} + \frac{1}{4} = \frac{1}{2}
+$$
+
+**Example 3: Integrating with respect to y**
+
+Find the area between x = y² and x = y + 2 from y = -1 to y = 2.
+
+import AreaHorizontal from "../../../components/AreaHorizontal.astro";
+
+<AreaHorizontal />
+
+The line x = y + 2 is to the right of the parabola x = y² on this interval (check y = 0: line gives 2, parabola gives 0).
+
+$$
+A = \int_{-1}^2 \bigl[(y + 2) - y^2\bigr]\,dy = \left[\frac{y^2}{2} + 2y - \frac{y^3}{3}\right]_{-1}^2
+$$
+
+$$
+= \left(2 + 4 - \frac{8}{3}\right) - \left(\frac{1}{2} - 2 + \frac{1}{3}\right) = \frac{10}{3} - \left(-\frac{7}{6}\right) = \frac{10}{3} + \frac{7}{6} = \frac{9}{2}
+$$
+
+## Real-World Application
+
+Area between curves shows up whenever you need to measure the difference between two quantities over an interval.
+
+- In economics, the area between supply and demand curves gives consumer and producer surplus
+- In physics, the area between a velocity curve and the x-axis gives displacement, and the area between two force curves gives net work
+- In game development, comparing two difficulty curves over time tells you how much harder one path is than another
+- In biology, the area between two population growth curves measures the competitive advantage of one species over another
+
+:::note[You've Got This]
+The biggest source of errors in these problems is getting the "top minus bottom" wrong. Always sketch the curves first, even a rough one. Find the intersection points, test which function is larger in each interval, and split the integral if the curves cross. Once the setup is right, the integration itself is usually straightforward.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="calculus2-area-between-curves"
+  questions={[
+    {
+      id: "q1",
+      text: "The area between f(x) and g(x) where f(x) is above g(x) on [a, b] is",
+      options: [
+        "The integral of f(x) plus g(x)",
+        "The integral of f(x) minus g(x) from a to b",
+        "The integral of g(x) minus f(x) from a to b",
+        "f(b) minus g(a)",
+      ],
+      correctIndex: 1,
+      explanation: "Upper minus lower, integrated over the interval.",
+    },
+    {
+      id: "q2",
+      text: "The area between y = x and y = x² from 0 to 1 equals",
+      options: ["1/2", "1/3", "1/6", "1/4"],
+      correctIndex: 2,
+      explanation: "Integral of (x - x²) from 0 to 1 = 1/2 - 1/3 = 1/6.",
+    },
+    {
+      id: "q3",
+      text: "When two curves cross within the interval, you should",
+      options: [
+        "Ignore the crossing and integrate once",
+        "Take the absolute value of the integrand",
+        "Split the integral at each intersection point",
+        "Only integrate the positive region",
+      ],
+      correctIndex: 2,
+      explanation:
+        "Which curve is on top changes at each crossing, so you need separate integrals for each piece.",
+    },
+    {
+      id: "q4",
+      text: "When a region is easier to describe horizontally, you should",
+      options: [
+        "Integrate with respect to y (right minus left)",
+        "Always use x regardless",
+        "Use polar coordinates",
+        "Skip the problem",
+      ],
+      correctIndex: 0,
+      explanation:
+        "Integrating with respect to y uses right curve minus left curve, which can simplify the setup.",
+    },
+    {
+      id: "q5",
+      text: "The first step in any area-between-curves problem is",
+      options: [
+        "Take the antiderivative",
+        "Evaluate at the endpoints",
+        "Find the intersection points of the two curves",
+        "Apply the chain rule",
+      ],
+      correctIndex: 2,
+      explanation:
+        "Intersection points determine the limits of integration and where to split the integral.",
+    },
+  ]}
+/>

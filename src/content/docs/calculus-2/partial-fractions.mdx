@@ -1,0 +1,226 @@
+---
+title: Partial Fractions
+description: Learn how to decompose rational functions into partial fractions for integration
+sidebar:
+  order: 5
+---
+
+## What You'll Learn
+
+In this lesson you'll learn partial fraction decomposition, a technique for breaking complicated rational functions into simpler pieces you can integrate directly.
+
+## The Concept
+
+A rational function is a ratio of two polynomials. When the denominator factors, you can split the fraction into a sum of simpler fractions, each of which integrates to a logarithm or an arctangent.
+
+### Before you start
+
+If the degree of the numerator is greater than or equal to the degree of the denominator, do polynomial long division first. Partial fractions only work on proper fractions (numerator degree strictly less than denominator degree).
+
+### The three cases
+
+After factoring the denominator completely, set up the decomposition based on what you see.
+
+Distinct linear factors. For each factor (x - c), add a term A/(x - c)
+
+$$
+\frac{P(x)}{(x - a)(x - b)} = \frac{A}{x - a} + \frac{B}{x - b}
+$$
+
+Repeated linear factors. For a factor (x - c) to the n, add one term for each power from 1 to n
+
+$$
+\frac{P(x)}{(x - c)^3} = \frac{A}{x - c} + \frac{B}{(x - c)^2} + \frac{C}{(x - c)^3}
+$$
+
+Irreducible quadratic factors. For a factor (x² + px + q) that doesn't factor further, the numerator is linear
+
+$$
+\frac{P(x)}{(x^2 + px + q)} = \frac{Ax + B}{x^2 + px + q}
+$$
+
+### Solving for the coefficients
+
+Two approaches work well.
+
+The cover-up method (for distinct linear factors): plug in the value that makes each factor zero. This isolates one coefficient at a time.
+
+Equating coefficients: expand both sides, then match the coefficients of each power of x. This always works, even for repeated and quadratic factors.
+
+## Worked Example
+
+**Example 1: Distinct linear factors**
+
+Evaluate
+
+$$
+\int \frac{5x + 2}{(x - 1)(x + 3)}\,dx
+$$
+
+Set up the decomposition
+
+$$
+\frac{5x + 2}{(x - 1)(x + 3)} = \frac{A}{x - 1} + \frac{B}{x + 3}
+$$
+
+Multiply both sides by (x - 1)(x + 3)
+
+$$
+5x + 2 = A(x + 3) + B(x - 1)
+$$
+
+Cover-up: let x = 1, so 7 = 4A, giving A = 7/4. Let x = -3, so -13 = -4B, giving B = 13/4.
+
+$$
+\int \frac{7/4}{x - 1} + \frac{13/4}{x + 3}\,dx = \frac{7}{4}\ln|x - 1| + \frac{13}{4}\ln|x + 3| + C
+$$
+
+**Example 2: Repeated linear factor**
+
+Evaluate
+
+$$
+\int \frac{x + 4}{(x - 2)^2}\,dx
+$$
+
+Set up the decomposition
+
+$$
+\frac{x + 4}{(x - 2)^2} = \frac{A}{x - 2} + \frac{B}{(x - 2)^2}
+$$
+
+Multiply both sides by (x - 2)²
+
+$$
+x + 4 = A(x - 2) + B
+$$
+
+Let x = 2, so 6 = B. Expand: x + 4 = Ax - 2A + 6, so matching the x coefficient gives A = 1.
+
+$$
+\int \frac{1}{x - 2} + \frac{6}{(x - 2)^2}\,dx = \ln|x - 2| - \frac{6}{x - 2} + C
+$$
+
+**Example 3: Irreducible quadratic factor**
+
+Evaluate
+
+$$
+\int \frac{2x + 3}{x^2 + 4}\,dx
+$$
+
+This denominator doesn't factor (x² + 4 is always positive). Split the integral by separating the numerator
+
+$$
+\int \frac{2x}{x^2 + 4}\,dx + \int \frac{3}{x^2 + 4}\,dx
+$$
+
+The first integral uses u = x² + 4, du = 2x dx
+
+$$
+\ln(x^2 + 4)
+$$
+
+The second matches the standard arctangent integral formula. Here a = 2
+
+$$
+\int \frac{1}{x^2 + a^2}\,dx = \frac{1}{a}\arctan\!\left(\frac{x}{a}\right) + C
+$$
+
+$$
+3 \cdot \frac{1}{2}\arctan\!\left(\frac{x}{2}\right) = \frac{3}{2}\arctan\!\left(\frac{x}{2}\right)
+$$
+
+Combining
+
+$$
+\ln(x^2 + 4) + \frac{3}{2}\arctan\!\left(\frac{x}{2}\right) + C
+$$
+
+## Real-World Application
+
+Partial fractions show up anywhere rational functions need to be integrated or inverse-transformed.
+
+- In electrical engineering, Laplace transforms turn differential equations into rational functions, and partial fractions are how you invert them back to time-domain solutions
+- In control systems, transfer functions are rational, and partial fractions decompose them into first-order and second-order components
+- In physics, certain potential energy and wave function calculations produce rational integrands
+- In probability, moment-generating functions sometimes require partial fraction techniques
+
+:::note[You've Got This]
+Partial fractions is really just algebra followed by easy integrals. The hardest part is the setup and solving for coefficients. Once you have the decomposition, each piece integrates to either a logarithm (from linear factors) or an arctangent (from quadratic factors). The cover-up method makes distinct linear factors fast. For repeated or quadratic factors, equating coefficients is reliable. Practice the algebra and the integration becomes the easy part.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="calculus2-partial-fractions"
+  questions={[
+    {
+      id: "q1",
+      text: "Partial fraction decomposition is used to integrate",
+      options: [
+        "Trigonometric functions",
+        "Rational functions (ratios of polynomials)",
+        "Exponential functions only",
+        "Square root expressions",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Partial fractions break ratios of polynomials into simpler pieces that integrate to logarithms and arctangents.",
+    },
+    {
+      id: "q2",
+      text: "Before applying partial fractions, if the numerator degree equals or exceeds the denominator degree, you must first",
+      options: [
+        "Factor the numerator",
+        "Use integration by parts",
+        "Perform polynomial long division",
+        "Apply u-substitution",
+      ],
+      correctIndex: 2,
+      explanation:
+        "Long division reduces it to a polynomial plus a proper fraction, which you can then decompose.",
+    },
+    {
+      id: "q3",
+      text: "For the decomposition of $\\frac{P(x)}{(x-1)(x+2)}$, the correct setup is",
+      options: [
+        "$\\frac{A}{(x-1)(x+2)}$",
+        "$\\frac{Ax+B}{(x-1)(x+2)}$",
+        "$\\frac{A}{x-1} + \\frac{B}{x+2}$",
+        "$\\frac{A}{x-1} + \\frac{B}{(x+2)^2}$",
+      ],
+      correctIndex: 2,
+      explanation:
+        "Distinct linear factors each get their own constant numerator.",
+    },
+    {
+      id: "q4",
+      text: "Integrating $\\frac{1}{x-3}$ gives",
+      options: [
+        "$\\frac{1}{(x-3)^2} + C$",
+        "$\\ln|x-3| + C$",
+        "$\\arctan(x-3) + C$",
+        "$-\\frac{1}{x-3} + C$",
+      ],
+      correctIndex: 1,
+      explanation:
+        "The integral of 1/(x - a) is ln|x - a| + C. This is the payoff of partial fractions: each piece becomes a simple log.",
+    },
+    {
+      id: "q5",
+      text: "For an irreducible quadratic factor $x^2 + 4$ in the denominator, the partial fraction numerator is",
+      options: [
+        "A constant $A$",
+        "A quadratic $Ax^2 + Bx + C$",
+        "A linear expression $Ax + B$",
+        "Always zero",
+      ],
+      correctIndex: 2,
+      explanation:
+        "Irreducible quadratic factors get a linear numerator (one degree less than the factor).",
+    },
+  ]}
+/>

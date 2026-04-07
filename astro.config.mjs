@@ -50,10 +50,10 @@ export default defineConfig({
           label: "Calculus 1",
           autogenerate: { directory: "calculus-1" },
         },
-        // {
-        //   label: "Calculus 2",
-        //   autogenerate: { directory: "calculus-2" },
-        // },
+        {
+          label: "Calculus 2",
+          autogenerate: { directory: "calculus-2" },
+        },
         // {
         //   label: "Calculus 3",
         //   autogenerate: { directory: "calculus-3" },

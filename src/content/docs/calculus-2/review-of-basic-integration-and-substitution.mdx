@@ -1,0 +1,187 @@
+---
+title: Review of Basic Integration and Substitution
+description: Review antiderivatives, basic rules, and u-substitution
+sidebar:
+  order: 1
+---
+
+## What You'll Learn
+
+This lesson reviews the integration tools from Calculus 1 to make sure your foundation is solid before we add new techniques.
+
+## The Concept
+
+### Basic Integration Rules
+
+Power rule:
+
+$$
+\int x^n \, dx = \frac{x^{n+1}}{n+1} + C \quad (n \neq -1)
+$$
+
+Special cases:
+
+$$
+\int \frac{1}{x} \, dx = \ln|x| + C
+$$
+
+$$
+\int e^x \, dx = e^x + C
+$$
+
+Trig:
+
+$$
+\int \sin x \, dx = -\cos x + C \qquad \int \cos x \, dx = \sin x + C
+$$
+
+Constants factor out, and sums/differences split term by term. These rules handle any polynomial, basic trig, and exponential integral directly.
+
+### U-Substitution
+
+When the integrand contains a composite function and the derivative of the inside is present (or close to it), substitution simplifies the integral.
+
+1. Choose u = the inside function
+2. Compute du
+3. Rewrite entirely in terms of u and du
+4. Integrate
+5. Substitute back to x
+
+For a general exponential:
+
+$$
+\int e^{kx}\,dx = \frac{1}{k}e^{kx} + C
+$$
+
+This comes from substituting u = kx, du = k dx.
+
+## Worked Example
+
+**Example 1: Polynomial**
+
+$$
+\int (4x^3 - 6x + 7)\,dx = x^4 - 3x^2 + 7x + C
+$$
+
+Each term uses the power rule independently.
+
+**Example 2: Basic substitution**
+
+Evaluate:
+
+$$
+\int 2x(x^2 + 5)^3\,dx
+$$
+
+Let u = x² + 5, du = 2x dx.
+
+$$
+\int u^3\,du = \frac{u^4}{4} + C = \frac{(x^2 + 5)^4}{4} + C
+$$
+
+**Example 3: Trig with substitution**
+
+Evaluate:
+
+$$
+\int \sin(4x)\,dx
+$$
+
+Let u = 4x, du = 4 dx, so dx = du/4.
+
+$$
+\frac{1}{4}\int \sin u\,du = -\frac{1}{4}\cos u + C = -\frac{1}{4}\cos(4x) + C
+$$
+
+**Example 4: Square root substitution**
+
+Evaluate:
+
+$$
+\int x\sqrt{x^2 - 1}\,dx
+$$
+
+Let u = x² - 1, du = 2x dx, so x dx = du/2.
+
+$$
+\frac{1}{2}\int \sqrt{u}\,du = \frac{1}{2}\cdot\frac{2}{3}u^{3/2} + C = \frac{1}{3}(x^2 - 1)^{3/2} + C
+$$
+
+## Real-World Application
+
+These are the building blocks for everything in Calculus 2:
+
+- Every advanced technique (integration by parts, partial fractions, trig substitution) eventually reduces to basic rules
+- Physics problems start with setting up the integral, then you need these rules to evaluate it
+- U-substitution is the most frequently used technique in all of calculus
+
+:::note[You've Got This]
+If you can do the power rule and u-substitution without hesitation, you're ready for Calculus 2. Everything that follows builds on these two skills. If any of the examples above felt rusty, work a few more practice problems before moving on. A solid foundation here makes every future lesson easier.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="calculus2-basic-integration-review"
+  questions={[
+    {
+      id: "q1",
+      text: "The antiderivative of x⁵ is:",
+      options: ["5x⁴ + C", "x⁶ + C", "(1/6)x⁶ + C", "(1/5)x⁵ + C"],
+      correctIndex: 2,
+      explanation:
+        "Add 1 to the exponent (6), divide by the new exponent (1/6).",
+    },
+    {
+      id: "q2",
+      text: "U-substitution is the reverse of:",
+      options: [
+        "The power rule",
+        "The product rule",
+        "The chain rule",
+        "The quotient rule",
+      ],
+      correctIndex: 2,
+      explanation:
+        "The chain rule for derivatives becomes u-substitution for integrals.",
+    },
+    {
+      id: "q3",
+      text: "The integral of sin(3x) dx equals:",
+      options: [
+        "3cos(3x) + C",
+        "cos(3x) + C",
+        "-(1/3)cos(3x) + C",
+        "-3cos(3x) + C",
+      ],
+      correctIndex: 2,
+      explanation: "Substitute u = 3x, du = 3dx, giving -(1/3)cos(u) + C.",
+    },
+    {
+      id: "q4",
+      text: "After integrating with respect to u, you must:",
+      options: [
+        "Take the derivative",
+        "Add limits of integration",
+        "Substitute back to the original variable",
+        "Multiply by 2",
+      ],
+      correctIndex: 2,
+      explanation: "The final answer should be in terms of x, not u.",
+    },
+    {
+      id: "q5",
+      text: "The integral of e to the 5x dx is:",
+      options: [
+        "5 times e to the 5x + C",
+        "e to the 5x + C",
+        "(1/5) times e to the 5x + C",
+        "ln(5x) + C",
+      ],
+      correctIndex: 2,
+      explanation: "Substitute u = 5x; the 1/5 factor comes from du = 5dx.",
+    },
+  ]}
+/>

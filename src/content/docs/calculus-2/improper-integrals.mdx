@@ -1,0 +1,195 @@
+---
+title: Improper Integrals
+description: Learn how to evaluate integrals with infinite limits or discontinuities
+sidebar:
+  order: 6
+---
+
+## What You'll Learn
+
+In this lesson you'll learn how to recognize and evaluate improper integrals, which are integrals that have infinite limits or discontinuities within the interval of integration.
+
+## The Concept
+
+An integral is improper if one or both limits of integration are infinite, or if the integrand has a discontinuity (like a vertical asymptote) within the interval.
+
+You can't just plug infinity into an antiderivative. Instead, you replace the problematic bound with a variable and take a limit.
+
+### Type 1: Infinite limits
+
+$$
+\int_a^\infty f(x)\,dx = \lim_{b \to \infty} \int_a^b f(x)\,dx
+$$
+
+$$
+\int_{-\infty}^b f(x)\,dx = \lim_{a \to -\infty} \int_a^b f(x)\,dx
+$$
+
+For both limits infinite, split at any convenient point c
+
+$$
+\int_{-\infty}^\infty f(x)\,dx = \int_{-\infty}^c f(x)\,dx + \int_c^\infty f(x)\,dx
+$$
+
+### Type 2: Discontinuities in the interval
+
+If f has a discontinuity at x = c in [a, b], split there and use limits from each side
+
+$$
+\int_a^b f(x)\,dx = \lim_{\varepsilon \to 0^+} \int_a^{c-\varepsilon} f(x)\,dx + \lim_{\varepsilon \to 0^+} \int_{c+\varepsilon}^b f(x)\,dx
+$$
+
+The epsilon (ε) is just a small positive number that acts as a buffer around the discontinuity. Instead of integrating right up to the point where the function blows up, you stop a tiny distance epsilon away from it. Then you let that distance shrink to zero. If the integral settles on a finite value as epsilon vanishes, the integral converges despite the discontinuity.
+
+### Convergence vs divergence
+
+If the limit exists and is a finite number, the integral converges. If the limit is infinite or doesn't exist, the integral diverges.
+
+The key visual intuition: some functions decay fast enough that the total area under the curve stays finite even as you extend to infinity, while others decay too slowly and the area keeps growing forever.
+
+import ImproperIntegralGraphs from "../../../components/ImproperIntegralGraphs.astro";
+
+<ImproperIntegralGraphs />
+
+Notice how 1/x² drops off much faster than 1/x. That faster decay is what makes the area finite (converges to 1) instead of infinite.
+
+## Worked Example
+
+**Example 1: Infinite upper limit (converges)**
+
+Evaluate
+
+$$
+\int_1^\infty \frac{1}{x^2}\,dx
+$$
+
+Replace the upper bound with b and take the limit
+
+$$
+\lim_{b \to \infty} \int_1^b x^{-2}\,dx = \lim_{b \to \infty} \left[-\frac{1}{x}\right]_1^b = \lim_{b \to \infty} \left(-\frac{1}{b} + 1\right) = 1
+$$
+
+As b goes to infinity, -1/b goes to 0. The integral converges to 1.
+
+**Example 2: Discontinuity at an endpoint (converges)**
+
+Evaluate
+
+$$
+\int_0^1 \frac{1}{\sqrt{x}}\,dx
+$$
+
+The integrand (the function inside the integral, 1/sqrt(x) in this case) blows up at x = 0 because dividing by zero is undefined. So we replace the lower bound with epsilon
+
+$$
+\lim_{\varepsilon \to 0^+} \int_\varepsilon^1 x^{-1/2}\,dx = \lim_{\varepsilon \to 0^+} \left[2x^{1/2}\right]_\varepsilon^1 = \lim_{\varepsilon \to 0^+} \left(2 - 2\sqrt{\varepsilon}\right) = 2
+$$
+
+As epsilon approaches 0, the square root term vanishes. The integral converges to 2.
+
+import ImproperDiscontinuityGraph from "../../../components/ImproperDiscontinuityGraph.astro";
+
+<ImproperDiscontinuityGraph />
+
+Even though the curve shoots up to infinity near x = 0, the area underneath stays finite. The red dashed line shows the epsilon buffer: we integrate from epsilon to 1, then let epsilon shrink to zero.
+
+**Example 3: Divergent case**
+
+Evaluate
+
+$$
+\int_1^\infty \frac{1}{x}\,dx
+$$
+
+$$
+\lim_{b \to \infty} \int_1^b \frac{1}{x}\,dx = \lim_{b \to \infty} \left[\ln x\right]_1^b = \lim_{b \to \infty} (\ln b - 0) = \infty
+$$
+
+The natural log grows without bound, so this integral diverges. This is the classic example showing that 1/x decays too slowly for the area to be finite.
+
+## Real-World Application
+
+Improper integrals show up whenever you're dealing with infinite domains or singularities.
+
+- In probability, the entire normal distribution is defined by an improper integral from negative infinity to infinity, and it converges to 1
+- In physics, gravitational and electric potential calculations involve integrating force over infinite distance
+- In engineering, Laplace transforms are improper integrals (integrating from 0 to infinity)
+- In game development, expected value calculations for random events over unbounded time use improper integrals
+
+:::note[You've Got This]
+Improper integrals are just regular definite integrals with a limit wrapper. Replace the infinity or the discontinuity with a variable, evaluate the integral normally, then take the limit at the end. If you get a finite number, it converges. If you get infinity or the limit doesn't exist, it diverges. The hardest part is remembering to check for discontinuities inside the interval, not just at the endpoints.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="calculus2-improper-integrals"
+  questions={[
+    {
+      id: "q1",
+      text: "An integral is improper when",
+      options: [
+        "The integrand is a polynomial",
+        "Both bounds are finite and the integrand is continuous",
+        "It has an infinite limit or a discontinuity in the interval",
+        "It can be evaluated with basic antiderivatives",
+      ],
+      correctIndex: 2,
+      explanation:
+        "Infinite bounds or discontinuities within the interval make an integral improper.",
+    },
+    {
+      id: "q2",
+      text: "The integral from 1 to infinity of 1/x² dx",
+      options: [
+        "Diverges to infinity",
+        "Converges to 1",
+        "Converges to 2",
+        "Is undefined",
+      ],
+      correctIndex: 1,
+      explanation:
+        "The limit of [-1/x] from 1 to b as b approaches infinity equals -0 + 1 = 1.",
+    },
+    {
+      id: "q3",
+      text: "The integral from 1 to infinity of 1/x dx",
+      options: [
+        "Converges to 1",
+        "Converges to ln(2)",
+        "Diverges",
+        "Converges to 0",
+      ],
+      correctIndex: 2,
+      explanation:
+        "ln(b) grows without bound as b approaches infinity, so the integral diverges.",
+    },
+    {
+      id: "q4",
+      text: "To handle a discontinuity at x = 0 in the integral from 0 to 1, you should",
+      options: [
+        "Ignore it and integrate normally",
+        "Split the integral at x = 1/2",
+        "Replace the lower bound with epsilon and take the limit as epsilon approaches 0 from the right",
+        "Use integration by parts",
+      ],
+      correctIndex: 2,
+      explanation:
+        "Replace the problematic bound with a variable and take the limit to handle the discontinuity.",
+    },
+    {
+      id: "q5",
+      text: "If the limit in an improper integral equals a finite number, the integral",
+      options: [
+        "Diverges",
+        "Is undefined",
+        "Needs more information",
+        "Converges",
+      ],
+      correctIndex: 3,
+      explanation: "A finite limit means the integral converges to that value.",
+    },
+  ]}
+/>

@@ -1,0 +1,79 @@
+---
+title: About Calculus 2
+description: Welcome to Calculus 2, integration techniques, applications, and infinite series
+sidebar:
+  order: 0
+---
+
+## What is Calculus 2?
+
+Calculus 1 gave you two big ideas: derivatives (how fast things change) and the basics of integration (how much has accumulated). You learned the rules, applied them to real problems, and connected the two halves with the Fundamental Theorem.
+
+Calculus 2 takes the integration side and goes deep. You'll learn how to integrate functions that the basic rules can't touch, use integrals to compute volumes, arc lengths, and surface areas of three-dimensional objects, and then enter the world of infinite series, where you'll discover that you can represent complicated functions as infinite sums of simple terms.
+
+If Calculus 1 was about learning to drive, Calculus 2 is about learning to drive on every kind of road.
+
+## Where Calculus 2 Came From
+
+After Newton and Leibniz established the foundations of calculus in the late 1600s, the next generation of mathematicians spent over a century expanding the toolkit. Euler developed many of the integration techniques you'll learn here and pioneered the study of infinite series. The Bernoulli family contributed to applications in physics and engineering. Fourier showed that almost any function can be decomposed into a sum of sines and cosines, an idea that powers everything from audio compression to medical imaging today.
+
+The formal rigor came later. Cauchy and Weierstrass in the 19th century made the definitions precise, especially around convergence of series and improper integrals. What you'll learn in this course is the practical result of centuries of mathematical development, distilled into techniques that work.
+
+## Why We're Learning It
+
+Calculus 1 gave you the power rule, chain rule, and basic integration. That handles a lot, but not everything. What do you do when you need to integrate x times e to the x? Or 1/(x² + 1)? Or a rational function with a complicated denominator? Calculus 2 gives you systematic methods for all of these.
+
+Beyond techniques, Calculus 2 introduces ideas that are genuinely new. Infinite series let you write sin(x) as an infinite polynomial, which is how calculators actually compute trig functions. Volumes of revolution let you calculate the exact capacity of a wine glass or a rocket nozzle. Improper integrals let you handle situations where the interval is infinite or the function blows up.
+
+This course is also the gateway to more advanced mathematics. Differential equations, linear algebra, multivariable calculus, and probability theory all assume you're comfortable with the material in Calculus 2.
+
+## Why It Matters
+
+Calculus 2 is where math starts solving problems that feel genuinely impressive:
+
+- Physics and engineering use integration to calculate work done by variable forces, center of mass of irregular objects, fluid pressure on curved surfaces, and the behavior of electrical circuits. Every bridge, engine, and satellite relies on these calculations.
+- Computer science and machine learning use series expansions and numerical integration constantly. When a neural network computes a gradient, it's using calculus. When a graphics engine renders a curved surface, it's approximating integrals. Taylor series are how computers evaluate functions like sin, cos, and e to the x internally.
+- Economics and finance use continuous compounding (which involves improper integrals), present value calculations, and probability distributions that require integration techniques from this course.
+- Biology and medicine model drug absorption, population dynamics, and epidemiology using differential equations and integration. The area under a drug concentration curve (AUC) is a standard pharmacological measurement.
+- Game development uses volumes of revolution for procedural 3D generation, arc length for path calculations, and series for smooth animations and physics approximations.
+
+## What You'll Cover
+
+**Integration Techniques** expands your toolkit dramatically. You'll learn integration by parts (the product rule in reverse), trigonometric integrals, trigonometric substitution, partial fractions (breaking complicated fractions into simple pieces), and improper integrals (where the bounds go to infinity or the function has a vertical asymptote).
+
+**Applications of Integration** puts these techniques to work on real geometry. Volumes of solids of revolution (disk, washer, and shell methods), arc length of curves, surface area of surfaces of revolution, work done by variable forces, and center of mass.
+
+import SolidRevDiagram from "../../../components/SolidRevDiagram.astro";
+
+<SolidRevDiagram />
+
+The diagram shows the idea behind volumes of revolution: take a curve (like y = the square root of x), rotate it around the x-axis, and the result is a 3D solid. The dashed green ellipses are cross-section disks. The volume is the integral of those disk areas. This is one of the signature techniques of Calculus 2.
+
+**Differential Equations** introduces equations where the unknown is a function. You'll solve separable equations and first-order linear equations, which model growth, decay, mixing, and cooling.
+
+**Sequences and Series** is the most conceptually new material. You'll study infinite sequences, infinite series, convergence tests (ratio test, comparison test, integral test, and more), power series, and Taylor/Maclaurin series. This is where you learn to represent functions as infinite polynomials, which is one of the most powerful ideas in all of mathematics.
+
+**Parametric Equations and Polar Coordinates** revisits curves from a new perspective, using calculus to find slopes, areas, and arc lengths in these coordinate systems.
+
+## Prerequisites
+
+You should be solid on everything from Calculus 1:
+
+- Derivative rules: power, product, quotient, chain, trig, exponential, logarithmic
+- Applications: related rates, optimization, curve sketching, implicit differentiation
+- Integration basics: antiderivatives, FTC, u-substitution, area under curves
+- Limits and continuity
+
+If any of those feel shaky, review the relevant Calculus 1 lessons first. Calculus 2 builds directly on all of them, and gaps in Calculus 1 will slow you down here.
+
+## How to Approach This Course
+
+Calculus 2 has a reputation for being harder than Calculus 1. Some of that is earned: the integration techniques require more pattern recognition, and series convergence can feel abstract at first. But the difficulty is different, not necessarily greater. Calculus 1 required a big conceptual shift (limits, instantaneous rates). Calculus 2 is more about expanding your toolkit and building fluency.
+
+The students who do well in Calculus 2 are the ones who practice the techniques until they become automatic. Integration by parts, partial fractions, and convergence tests all have clear procedures. Learn the procedures, practice them on varied problems, and the course becomes manageable.
+
+For series: draw pictures. Partial sums are just adding up terms. Convergence means the partial sums settle down to a number. Taylor series are just polynomials that get better and better at approximating a function. Keep the intuition front and center, and the formalism will follow.
+
+:::note[You've Got This]
+You made it through Calculus 1. That's the hardest conceptual leap for most people. Calculus 2 is about building a bigger, more versatile toolkit on the foundation you already have. Some topics will click immediately. Others (especially series) might take a few passes. That's normal. The payoff is huge: by the end of this course, you'll be able to integrate almost anything, compute volumes of 3D objects, and represent functions as infinite sums. That's a serious level of mathematical power.
+:::

@@ -1,0 +1,226 @@
+---
+title: Integration by Parts
+description: Learn the integration by parts technique
+sidebar:
+  order: 2
+---
+
+## What You'll Learn
+
+In this lesson you'll learn integration by parts, the technique for integrating products of functions. It's the product rule in reverse.
+
+## The Concept
+
+When you see an integral like x times e to the x, or x times sin(x), or ln(x), u-substitution won't help because there's no chain rule pattern. Instead, you use integration by parts.
+
+The formula comes from reversing the product rule:
+
+$$
+\int u \, dv = uv - \int v \, du
+$$
+
+You split the integrand into two pieces: u (which you'll differentiate) and dv (which you'll integrate). The goal is to make the new integral on the right simpler than the original.
+
+### How to choose u and dv
+
+Use the LIATE priority for choosing u (pick the first one that appears):
+
+- Logarithmic (ln x, log x)
+- Inverse trig (arctan, arcsin)
+- Algebraic (polynomials like x, x², x³)
+- Trigonometric (sin, cos, tan)
+- Exponential (e to the x, 2 to the x)
+
+Whatever you pick for u, everything else becomes dv. The idea: u should get simpler when you differentiate it, and dv should be something you can integrate.
+
+### When to use it
+
+If you see a product of two different types of functions (polynomial times exponential, polynomial times trig, logarithm times anything), integration by parts is probably the move. If the integral has a chain rule pattern, try u-substitution first.
+
+### Tabular method (repeated integration by parts)
+
+When u is a polynomial and dv is an exponential or trig function, you'll need to apply integration by parts multiple times. The tabular method speeds this up:
+
+1. List successive derivatives of u in one column (until you hit 0)
+2. List successive integrals of dv in another column
+3. Multiply diagonally with alternating signs: +, -, +, -, ...
+4. Add them all up
+
+This avoids writing out the formula over and over for integrals like x³ times e to the x.
+
+## Worked Example
+
+**Example 1: x times e to the x**
+
+Evaluate:
+
+$$
+\int x\,e^x\,dx
+$$
+
+Pick u = x (algebraic, gets simpler) and dv = e to the x dx (easy to integrate).
+
+$$
+u = x \qquad dv = e^x\,dx
+$$
+
+$$
+du = dx \qquad v = e^x
+$$
+
+Apply the formula:
+
+$$
+\int x\,e^x\,dx = x\,e^x - \int e^x\,dx = x\,e^x - e^x + C
+$$
+
+Factor:
+
+$$
+= e^x(x - 1) + C
+$$
+
+**Example 2: x² times e to the x (repeated)**
+
+Evaluate:
+
+$$
+\int x^2\,e^x\,dx
+$$
+
+First pass: u = x², dv = e to the x dx.
+
+$$
+u = x^2 \qquad dv = e^x\,dx
+$$
+
+$$
+du = 2x\,dx \qquad v = e^x
+$$
+
+$$
+= x^2\,e^x - \int 2x\,e^x\,dx
+$$
+
+The remaining integral still needs integration by parts (we just did this one in Example 1):
+
+$$
+\int 2x\,e^x\,dx = 2(x\,e^x - e^x) = 2e^x(x - 1)
+$$
+
+Putting it together:
+
+$$
+\int x^2\,e^x\,dx = x^2\,e^x - 2e^x(x - 1) + C = e^x(x^2 - 2x + 2) + C
+$$
+
+**Example 3: x times sin(x)**
+
+Evaluate:
+
+$$
+\int x\,\sin x\,dx
+$$
+
+Pick u = x, dv = sin(x) dx.
+
+$$
+u = x \qquad dv = \sin x\,dx
+$$
+
+$$
+du = dx \qquad v = -\cos x
+$$
+
+$$
+= -x\cos x - \int (-\cos x)\,dx = -x\cos x + \int \cos x\,dx
+$$
+
+$$
+= -x\cos x + \sin x + C
+$$
+
+## Real-World Application
+
+Integration by parts shows up whenever you need to integrate a product of different function types:
+
+- In physics, calculating the work done by a force that depends on position and time simultaneously
+- In probability, finding expected values where you integrate x times a probability density function
+- In signal processing, computing Fourier coefficients requires integrating products of functions with sines and cosines
+- In game development, smooth animation curves often involve polynomial-exponential blends that need this technique
+
+Any time you see "x times something" in an integral, integration by parts is likely your tool.
+
+:::note[You've Got This]
+Integration by parts can feel mechanical at first, and that's fine. The key is picking u and dv well (LIATE helps), then just following the formula. If the new integral is harder than the original, you probably picked u and dv backwards. Flip them and try again. For repeated applications, the tabular method saves a lot of writing. Practice a few and the pattern clicks fast.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="calculus2-integration-by-parts"
+  questions={[
+    {
+      id: "q1",
+      text: "In the integration by parts formula, what does u represent?",
+      options: [
+        "The part you integrate",
+        "The part you differentiate",
+        "The entire integrand",
+        "The constant of integration",
+      ],
+      correctIndex: 1,
+      explanation:
+        "u is the part you differentiate. dv is the part you integrate.",
+    },
+    {
+      id: "q2",
+      text: "Using LIATE, which function should be u in the integral of x times e to the x?",
+      options: ["e to the x", "x dx", "x", "x times e to the x"],
+      correctIndex: 2,
+      explanation:
+        "Algebraic (x) comes before Exponential (e to the x) in LIATE, so u = x.",
+    },
+    {
+      id: "q3",
+      text: "The integral of x times cos(x) dx equals:",
+      options: [
+        "x sin(x) + cos(x) + C",
+        "-x sin(x) + cos(x) + C",
+        "x sin(x) - cos(x) + C",
+        "-x cos(x) + sin(x) + C",
+      ],
+      correctIndex: 0,
+      explanation:
+        "With u = x and dv = cos(x) dx: v = sin(x), so x sin(x) - integral of sin(x) dx = x sin(x) + cos(x) + C.",
+    },
+    {
+      id: "q4",
+      text: "If applying integration by parts makes the integral more complicated, you should:",
+      options: [
+        "Add a constant and stop",
+        "Use L'Hopital's rule instead",
+        "Switch your choices of u and dv",
+        "Apply the chain rule",
+      ],
+      correctIndex: 2,
+      explanation:
+        "A harder integral means you picked u and dv in the wrong order. Swap them.",
+    },
+    {
+      id: "q5",
+      text: "How many times must you apply integration by parts to evaluate the integral of x² times e to the x dx?",
+      options: [
+        "Once",
+        "Three times",
+        "Two times",
+        "It can't be done with integration by parts",
+      ],
+      correctIndex: 2,
+      explanation:
+        "x² needs two differentiations to reach 0, so you apply the formula twice (or use the tabular method).",
+    },
+  ]}
+/>

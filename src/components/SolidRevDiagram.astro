@@ -1,0 +1,84 @@
+---
+/**
+ * SolidRevDiagram — shows a curve y = sqrt(x) from 0 to 4 with
+ * a suggestion of rotation around the x-axis (ellipses at cross-sections).
+ * Previews the "solid of revolution" concept for Calc 2.
+ */
+const w = 420;
+const h = 260;
+const pad = 50;
+const gw = w - 2 * pad;
+const gh = h - 2 * pad;
+const xMin = 0, xMax = 4.5, yMin = -2.5, yMax = 2.5;
+const sx = (x: number) => pad + ((x - xMin) / (xMax - xMin)) * gw;
+const sy = (y: number) => pad + ((yMax - y) / (yMax - yMin)) * gh;
+
+// Upper curve: y = sqrt(x)
+const upperPts: string[] = [];
+for (let i = 0; i <= 60; i++) {
+  const x = i * 4 / 60;
+  upperPts.push(`${sx(x)},${sy(Math.sqrt(x))}`);
+}
+// Lower curve: y = -sqrt(x) (reflection)
+const lowerPts: string[] = [];
+for (let i = 60; i >= 0; i--) {
+  const x = i * 4 / 60;
+  lowerPts.push(`${sx(x)},${sy(-Math.sqrt(x))}`);
+}
+// Cross-section ellipses at x = 1, 2, 3
+const slices = [1, 2, 3];
+---
+
+<figure class="srd" role="img" aria-label="Solid of revolution formed by rotating y equals square root of x around the x-axis">
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    <line x1={sx(xMin)} y1={sy(0)} x2={sx(xMax)} y2={sy(0)} class="srd-axis" stroke-width="1.5" />
+
+    {/* Filled shape (the solid outline) */}
+    <polygon points={[...upperPts, ...lowerPts].join(' ')} class="srd-fill" />
+
+    {/* Cross-section ellipses */}
+    {slices.map(x => {
+      const r = Math.sqrt(x);
+      const cx = sx(x);
+      const ry = Math.abs(sy(0) - sy(r));
+      return (
+        <ellipse cx={cx} cy={sy(0)} rx={8} ry={ry}
+                 fill="none" class="srd-slice" stroke-width="1.5" stroke-dasharray="4,3" />
+      );
+    })}
+
+    {/* Upper and lower curves */}
+    <polyline points={upperPts.join(' ')} fill="none" class="srd-curve" stroke-width="2.5" />
+    <polyline points={lowerPts.reverse().join(' ')} fill="none" class="srd-curve" stroke-width="2.5" />
+  </svg>
+  <div class="srd-legend">
+    <span class="srd-leg-item"><span class="srd-swatch srd-sw-curve"></span> y = √x rotated around x-axis</span>
+    <span class="srd-leg-item"><span class="srd-swatch srd-sw-slice"></span> cross-section disks</span>
+    <span class="srd-leg-item srd-leg-note">volume = integral of disk areas</span>
+  </div>
+</figure>
+
+<style>
+  .srd { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .srd svg { max-width:100%; height:auto; }
+  .srd-axis { stroke:#666; }
+  .srd-fill { fill:rgba(88,166,255,0.12); stroke:none; }
+  .srd-curve { stroke:#58a6ff; }
+  .srd-slice { stroke:#7ee787; }
+  .srd-legend {
+    display:flex; gap:1rem; flex-wrap:wrap; justify-content:center;
+    margin-top:0.5rem; font-family:'Libre Baskerville',Georgia,serif; font-size:0.82rem;
+  }
+  .srd-leg-item { display:flex; align-items:center; gap:0.35rem; }
+  .srd-swatch { display:inline-block; width:18px; height:4px; border-radius:2px; }
+  .srd-sw-curve { background:#58a6ff; }
+  .srd-sw-slice { background:#7ee787; border-style:dashed; }
+  .srd-leg-note { color:#d2a8ff; font-style:italic; }
+  :global([data-theme="light"]) .srd-axis { stroke:#999; }
+  :global([data-theme="light"]) .srd-fill { fill:rgba(5,80,174,0.08); }
+  :global([data-theme="light"]) .srd-curve { stroke:#0550ae; }
+  :global([data-theme="light"]) .srd-slice { stroke:#116329; }
+  :global([data-theme="light"]) .srd-sw-curve { background:#0550ae; }
+  :global([data-theme="light"]) .srd-sw-slice { background:#116329; }
+  :global([data-theme="light"]) .srd-leg-note { color:#6639ba; }
+</style>

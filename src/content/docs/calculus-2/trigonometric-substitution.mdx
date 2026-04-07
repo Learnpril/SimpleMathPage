@@ -1,0 +1,287 @@
+---
+title: Trigonometric Substitution
+description: Learn how to use trigonometric substitutions to evaluate integrals involving square roots of quadratic expressions
+sidebar:
+  order: 4
+---
+
+## What You'll Learn
+
+In this lesson you'll learn trigonometric substitution, a technique for handling integrals with square roots of quadratic expressions. It turns ugly radicals into clean trig functions.
+
+## The Concept
+
+When you see a square root like $\sqrt{a^2 - x^2}$, $\sqrt{x^2 + a^2}$, or $\sqrt{x^2 - a^2}$, none of the earlier techniques (u-sub, by parts, trig integrals) will simplify it directly. Trig substitution works by replacing $x$ with a trig expression that eliminates the radical via a Pythagorean identity.
+
+### Quick trig identity refresher
+
+These are the identities that make trig substitution work. You'll use them constantly in this lesson.
+
+Pythagorean identities
+
+$$
+\sin^2\theta + \cos^2\theta = 1
+$$
+
+$$
+1 + \tan^2\theta = \sec^2\theta
+$$
+
+$$
+\sec^2\theta - 1 = \tan^2\theta
+$$
+
+Double angle and half-angle (for simplifying after substitution)
+
+$$
+\sin(2\theta) = 2\sin\theta\cos\theta
+$$
+
+$$
+\cos^2\theta = \frac{1 + \cos 2\theta}{2}
+$$
+
+$$
+\sin^2\theta = \frac{1 - \cos 2\theta}{2}
+$$
+
+Key derivatives (you'll need these for computing dx)
+
+$$
+\frac{d}{d\theta}[\sin\theta] = \cos\theta \qquad \frac{d}{d\theta}[\tan\theta] = \sec^2\theta \qquad \frac{d}{d\theta}[\sec\theta] = \sec\theta\tan\theta
+$$
+
+And one integral that shows up in the tan and sec cases
+
+$$
+\int \sec\theta\,d\theta = \ln|\sec\theta + \tan\theta| + C
+$$
+
+### The three cases
+
+Each form of square root has a specific substitution.
+
+For $\sqrt{a^2 - x^2}$, let $x = a\sin\theta$
+
+$$
+\sqrt{a^2 - x^2} = \sqrt{a^2 - a^2\sin^2\theta} = a\cos\theta
+$$
+
+For $\sqrt{x^2 + a^2}$, let $x = a\tan\theta$
+
+$$
+\sqrt{x^2 + a^2} = \sqrt{a^2\tan^2\theta + a^2} = a\sec\theta
+$$
+
+For $\sqrt{x^2 - a^2}$, let $x = a\sec\theta$
+
+$$
+\sqrt{x^2 - a^2} = \sqrt{a^2\sec^2\theta - a^2} = a\tan\theta
+$$
+
+### The process
+
+1. Identify which form is under the radical
+2. Make the substitution ($x = a\sin\theta$, $a\tan\theta$, or $a\sec\theta$)
+3. Compute $dx$
+4. Replace everything in the integral (no $x$ should remain)
+5. Simplify and integrate the trig expression
+6. Draw a reference triangle to convert back to $x$
+
+### The reference triangle
+
+This is the key step students often skip. After integrating in terms of $\theta$, you need to get back to $x$. Draw a right triangle where
+
+For $x = a\sin\theta$: opposite $= x$, hypotenuse $= a$, adjacent $= \sqrt{a^2 - x^2}$
+
+For $x = a\tan\theta$: opposite $= x$, adjacent $= a$, hypotenuse $= \sqrt{x^2 + a^2}$
+
+For $x = a\sec\theta$: hypotenuse $= x$, adjacent $= a$, opposite $= \sqrt{x^2 - a^2}$
+
+Read off whatever trig functions you need from the triangle.
+
+import TrigSubTriangles from "../../../components/TrigSubTriangles.astro";
+
+<TrigSubTriangles />
+
+## Worked Example
+
+**Example 1: $\sqrt{a^2 - x^2}$ form**
+
+Evaluate
+
+$$
+\int \sqrt{9 - x^2}\,dx
+$$
+
+Here $a = 3$. Let $x = 3\sin\theta$, so $dx = 3\cos\theta\,d\theta$.
+
+$$
+\sqrt{9 - x^2} = \sqrt{9 - 9\sin^2\theta} = 3\cos\theta
+$$
+
+The integral becomes
+
+$$
+\int 3\cos\theta \cdot 3\cos\theta\,d\theta = 9\int \cos^2\theta\,d\theta
+$$
+
+Use the half-angle identity $\cos^2\theta = (1 + \cos 2\theta)/2$
+
+$$
+9\int \frac{1 + \cos 2\theta}{2}\,d\theta = \frac{9}{2}\left(\theta + \frac{\sin 2\theta}{2}\right) + C
+$$
+
+Since $\sin(2\theta) = 2\sin\theta\cos\theta$
+
+$$
+= \frac{9}{2}\theta + \frac{9}{2}\sin\theta\cos\theta + C
+$$
+
+Now convert back. From $x = 3\sin\theta$: $\sin\theta = x/3$, so $\theta = \arcsin(x/3)$. From the reference triangle: $\cos\theta = \sqrt{9 - x^2}/3$.
+
+$$
+= \frac{9}{2}\arcsin\!\left(\frac{x}{3}\right) + \frac{x\sqrt{9 - x^2}}{2} + C
+$$
+
+**Example 2: $\sqrt{x^2 + a^2}$ form**
+
+Evaluate
+
+$$
+\int \frac{dx}{\sqrt{x^2 + 4}}
+$$
+
+Here $a = 2$. Let $x = 2\tan\theta$, so $dx = 2\sec^2\theta\,d\theta$.
+
+$$
+\sqrt{x^2 + 4} = \sqrt{4\tan^2\theta + 4} = 2\sec\theta
+$$
+
+The integral becomes
+
+$$
+\int \frac{2\sec^2\theta\,d\theta}{2\sec\theta} = \int \sec\theta\,d\theta = \ln|\sec\theta + \tan\theta| + C
+$$
+
+From the reference triangle with $x = 2\tan\theta$: $\tan\theta = x/2$, and the hypotenuse is $\sqrt{x^2 + 4}$, so $\sec\theta = \sqrt{x^2 + 4}/2$.
+
+$$
+= \ln\left|\frac{\sqrt{x^2+4}}{2} + \frac{x}{2}\right| + C = \ln\left|x + \sqrt{x^2+4}\right| + C_1
+$$
+
+(The ln(2) got absorbed into the constant.)
+
+**Example 3: $\sqrt{x^2 - a^2}$ form**
+
+Evaluate
+
+$$
+\int \frac{dx}{\sqrt{x^2 - 9}} \qquad (x > 3)
+$$
+
+Here $a = 3$. Let $x = 3\sec\theta$, so $dx = 3\sec\theta\tan\theta\,d\theta$.
+
+$$
+\sqrt{x^2 - 9} = \sqrt{9\sec^2\theta - 9} = 3\tan\theta
+$$
+
+The integral becomes
+
+$$
+\int \frac{3\sec\theta\tan\theta\,d\theta}{3\tan\theta} = \int \sec\theta\,d\theta = \ln|\sec\theta + \tan\theta| + C
+$$
+
+From the reference triangle: $\sec\theta = x/3$, $\tan\theta = \sqrt{x^2 - 9}/3$.
+
+$$
+= \ln\left|\frac{x}{3} + \frac{\sqrt{x^2-9}}{3}\right| + C = \ln\left|x + \sqrt{x^2-9}\right| + C_1
+$$
+
+## Real-World Application
+
+Trig substitution shows up in problems involving circles, ellipses, and other curved geometry.
+
+- Computing the area of an ellipse or a circular segment requires integrals with $\sqrt{a^2 - x^2}$
+- In physics, gravitational and electric field calculations for continuous charge distributions often produce these radical forms
+- Arc length and surface area formulas frequently lead to $\sqrt{1 + (dy/dx)^2}$, which is the $\sqrt{x^2 + a^2}$ pattern
+- In engineering, stress analysis on curved beams and fluid flow around cylindrical objects use these integrals
+
+:::note[You've Got This]
+Trig substitution is really just pattern matching. Look at the radical, pick the substitution from the three cases, and follow the steps. The reference triangle is your best friend for converting back. If you can draw the triangle correctly, the back-substitution is just reading off sides. Don't let the $\theta$ intimidate you. It's a temporary variable that disappears at the end.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="calculus2-trigonometric-substitution"
+  questions={[
+    {
+      id: "q1",
+      text: "For an integral containing $\\sqrt{a^2 - x^2}$, the correct substitution is",
+      options: [
+        "$x = a\\tan\\theta$",
+        "$x = a\\sec\\theta$",
+        "$x = a\\sin\\theta$",
+        "$x = a\\cos\\theta$",
+      ],
+      correctIndex: 2,
+      explanation:
+        "$x = a\\sin\\theta$ turns $\\sqrt{a^2 - x^2}$ into $a\\cos\\theta$ via the Pythagorean identity.",
+    },
+    {
+      id: "q2",
+      text: "For an integral containing $\\sqrt{x^2 + a^2}$, the correct substitution is",
+      options: [
+        "$x = a\\sin\\theta$",
+        "$x = a\\tan\\theta$",
+        "$x = a\\sec\\theta$",
+        "$x = a\\cos\\theta$",
+      ],
+      correctIndex: 1,
+      explanation:
+        "$x = a\\tan\\theta$ turns $\\sqrt{x^2 + a^2}$ into $a\\sec\\theta$.",
+    },
+    {
+      id: "q3",
+      text: "After integrating with trig substitution, you convert back to $x$ using",
+      options: [
+        "L'Hopital's rule",
+        "A reference right triangle",
+        "Another round of substitution",
+        "The quadratic formula",
+      ],
+      correctIndex: 1,
+      explanation:
+        "The reference triangle lets you express trig functions of $\\theta$ in terms of $x$.",
+    },
+    {
+      id: "q4",
+      text: "$\\int \\sqrt{9 - x^2}\\,dx$ evaluates to",
+      options: [
+        "$\\frac{9}{2}\\arcsin\\!\\left(\\frac{x}{3}\\right) - \\frac{x\\sqrt{9-x^2}}{2} + C$",
+        "$\\frac{9}{2}\\arctan\\!\\left(\\frac{x}{3}\\right) + \\frac{x\\sqrt{9-x^2}}{2} + C$",
+        "$\\frac{9}{2}\\arcsin\\!\\left(\\frac{x}{3}\\right) + \\frac{x\\sqrt{9-x^2}}{2} + C$",
+        "$3\\arcsin\\!\\left(\\frac{x}{3}\\right) + x\\sqrt{9-x^2} + C$",
+      ],
+      correctIndex: 2,
+      explanation:
+        "Using $x = 3\\sin\\theta$, the integral reduces to $\\frac{9}{2}(\\theta + \\sin\\theta\\cos\\theta) + C$, which converts back to this form.",
+    },
+    {
+      id: "q5",
+      text: "After substituting $x = 3\\sec\\theta$ into $\\int \\frac{dx}{\\sqrt{x^2 - 9}}$, the integral simplifies to",
+      options: [
+        "$\\int \\cos\\theta\\,d\\theta$",
+        "$\\int \\sec\\theta\\,d\\theta$",
+        "$\\int \\tan\\theta\\,d\\theta$",
+        "$\\int \\csc\\theta\\,d\\theta$",
+      ],
+      correctIndex: 1,
+      explanation:
+        "With $x = 3\\sec\\theta$, $dx = 3\\sec\\theta\\tan\\theta\\,d\\theta$ and $\\sqrt{x^2-9} = 3\\tan\\theta$, so the integral becomes $\\int \\sec\\theta\\,d\\theta$.",
+    },
+  ]}
+/>

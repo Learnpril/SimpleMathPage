@@ -1,0 +1,141 @@
+---
+/**
+ * TrigSubTriangles — three reference triangles for trig substitution, stacked vertically.
+ * Case 1: x = a sin θ  →  opp = x, hyp = a, adj = √(a²−x²)
+ * Case 2: x = a tan θ  →  opp = x, adj = a, hyp = √(x²+a²)
+ * Case 3: x = a sec θ  →  hyp = x, adj = a, opp = √(x²−a²)
+ */
+const w = 360;
+const rowH = 180;
+const gap = 30;
+const totalH = rowH * 3 + gap * 2 + 50; // 50 for legend
+
+// Triangle coords for each row (right angle at bottom-left)
+const size = 140;
+const triX = 80;
+const makeRow = (row: number) => {
+  const topY = row * (rowH + gap);
+  const bx = triX;
+  const by = topY + rowH - 20;
+  return {
+    topY,
+    // bottom-left (right angle)
+    ax: bx, ay: by,
+    // bottom-right
+    cx: bx + size, cy: by,
+    // top-left
+    dx: bx, dy: by - size * 0.8,
+  };
+};
+
+const sq = 10;
+---
+
+<figure class="tst" role="img" aria-label="Three reference triangles for trigonometric substitution, one for each case, stacked vertically">
+
+  {/* Case 1 */}
+  {(() => {
+    const { topY, ax, ay, cx, cy, dx, dy } = makeRow(0);
+    return (
+      <svg viewBox={`0 0 ${w} ${rowH}`} width={w} height={rowH} xmlns="http://www.w3.org/2000/svg" class="tst-svg">
+        <text class="tst-title" x={w/2} y={18} font-size="14" text-anchor="middle" font-weight="600">Case 1: x = a sin θ</text>
+
+        {/* Triangle */}
+        <polygon points={`${ax},${ay} ${cx},${cy} ${dx},${dy}`} fill="none" class="tst-line" stroke-width="2.5" />
+        <polyline points={`${ax+sq},${ay} ${ax+sq},${ay-sq} ${ax},${ay-sq}`} fill="none" class="tst-line" stroke-width="1.5" />
+
+        {/* θ arc */}
+        <path d={`M ${cx-22},${cy} A 22 22 0 0 1 ${cx - 22*(cx-dx)/Math.sqrt((cx-dx)**2+(cy-dy)**2)},${cy - 22*(cy-dy)/Math.sqrt((cx-dx)**2+(cy-dy)**2)}`} fill="none" class="tst-angle" stroke-width="1.5" />
+        <text class="tst-theta" x={cx-34} y={cy-10} font-size="13">θ</text>
+
+        {/* Labels: opp=x (left), hyp=a (hypotenuse), adj=√(a²−x²) (bottom) */}
+        <text class="tst-opp" x={ax-14} y={(ay+dy)/2 + 4} font-size="14" text-anchor="end">x</text>
+        <text class="tst-hyp" x={(dx+cx)/2 + 14} y={(dy+cy)/2 - 8} font-size="14" text-anchor="start">a</text>
+        <text class="tst-adj" x={(ax+cx)/2} y={ay+18} font-size="13" text-anchor="middle">√(a² − x²)</text>
+      </svg>
+    );
+  })()}
+
+  {/* Case 2 */}
+  {(() => {
+    const { topY, ax, ay, cx, cy, dx, dy } = makeRow(0);
+    return (
+      <svg viewBox={`0 0 ${w} ${rowH}`} width={w} height={rowH} xmlns="http://www.w3.org/2000/svg" class="tst-svg">
+        <text class="tst-title" x={w/2} y={18} font-size="14" text-anchor="middle" font-weight="600">Case 2: x = a tan θ</text>
+
+        <polygon points={`${ax},${ay} ${cx},${cy} ${dx},${dy}`} fill="none" class="tst-line" stroke-width="2.5" />
+        <polyline points={`${ax+sq},${ay} ${ax+sq},${ay-sq} ${ax},${ay-sq}`} fill="none" class="tst-line" stroke-width="1.5" />
+
+        <path d={`M ${cx-22},${cy} A 22 22 0 0 1 ${cx - 22*(cx-dx)/Math.sqrt((cx-dx)**2+(cy-dy)**2)},${cy - 22*(cy-dy)/Math.sqrt((cx-dx)**2+(cy-dy)**2)}`} fill="none" class="tst-angle" stroke-width="1.5" />
+        <text class="tst-theta" x={cx-34} y={cy-10} font-size="13">θ</text>
+
+        {/* Labels: opp=x (left), hyp=√(x²+a²) (hypotenuse), adj=a (bottom) */}
+        <text class="tst-opp" x={ax-14} y={(ay+dy)/2 + 4} font-size="14" text-anchor="end">x</text>
+        <text class="tst-hyp" x={(dx+cx)/2 + 14} y={(dy+cy)/2 - 8} font-size="14" text-anchor="start">√(x² + a²)</text>
+        <text class="tst-adj" x={(ax+cx)/2} y={ay+18} font-size="13" text-anchor="middle">a</text>
+      </svg>
+    );
+  })()}
+
+  {/* Case 3 */}
+  {(() => {
+    const { topY, ax, ay, cx, cy, dx, dy } = makeRow(0);
+    return (
+      <svg viewBox={`0 0 ${w} ${rowH}`} width={w} height={rowH} xmlns="http://www.w3.org/2000/svg" class="tst-svg">
+        <text class="tst-title" x={w/2} y={18} font-size="14" text-anchor="middle" font-weight="600">Case 3: x = a sec θ</text>
+
+        <polygon points={`${ax},${ay} ${cx},${cy} ${dx},${dy}`} fill="none" class="tst-line" stroke-width="2.5" />
+        <polyline points={`${ax+sq},${ay} ${ax+sq},${ay-sq} ${ax},${ay-sq}`} fill="none" class="tst-line" stroke-width="1.5" />
+
+        <path d={`M ${cx-22},${cy} A 22 22 0 0 1 ${cx - 22*(cx-dx)/Math.sqrt((cx-dx)**2+(cy-dy)**2)},${cy - 22*(cy-dy)/Math.sqrt((cx-dx)**2+(cy-dy)**2)}`} fill="none" class="tst-angle" stroke-width="1.5" />
+        <text class="tst-theta" x={cx-34} y={cy-10} font-size="13">θ</text>
+
+        {/* Labels: opp=√(x²−a²) (left), hyp=x (hypotenuse), adj=a (bottom) */}
+        <text class="tst-opp" x={ax-14} y={(ay+dy)/2 + 4} font-size="14" text-anchor="end">√(x² − a²)</text>
+        <text class="tst-hyp" x={(dx+cx)/2 + 14} y={(dy+cy)/2 - 8} font-size="14" text-anchor="start">x</text>
+        <text class="tst-adj" x={(ax+cx)/2} y={ay+18} font-size="13" text-anchor="middle">a</text>
+      </svg>
+    );
+  })()}
+
+  <div class="tst-legend">
+    <span class="tst-leg"><span class="tst-sw tst-sw-opp"></span> opposite</span>
+    <span class="tst-leg"><span class="tst-sw tst-sw-hyp"></span> hypotenuse</span>
+    <span class="tst-leg"><span class="tst-sw tst-sw-adj"></span> adjacent</span>
+    <span class="tst-leg"><span class="tst-sw tst-sw-angle"></span> θ angle</span>
+  </div>
+</figure>
+
+<style>
+  .tst { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; gap:0.25rem; }
+  .tst-svg { max-width:100%; height:auto; }
+  .tst-line { stroke:#58a6ff; }
+  .tst-angle { stroke:#d2a8ff; }
+  .tst-title { fill:#ccc; font-family:'Libre Baskerville',Georgia,serif; }
+  .tst-theta { fill:#d2a8ff; font-family:'Libre Baskerville',Georgia,serif; font-style:italic; }
+  .tst-opp { fill:#f0883e; font-family:'Libre Baskerville',Georgia,serif; font-weight:600; }
+  .tst-hyp { fill:#7ee787; font-family:'Libre Baskerville',Georgia,serif; font-weight:600; }
+  .tst-adj { fill:#58a6ff; font-family:'Libre Baskerville',Georgia,serif; font-weight:600; }
+  .tst-legend {
+    display:flex; gap:1rem; flex-wrap:wrap; justify-content:center;
+    margin-top:0.5rem; font-family:'Libre Baskerville',Georgia,serif; font-size:0.82rem;
+  }
+  .tst-leg { display:flex; align-items:center; gap:0.35rem; }
+  .tst-sw { display:inline-block; width:18px; height:12px; border-radius:2px; }
+  .tst-sw-opp { background:#f0883e; }
+  .tst-sw-hyp { background:#7ee787; }
+  .tst-sw-adj { background:#58a6ff; }
+  .tst-sw-angle { background:#d2a8ff; }
+
+  :global([data-theme="light"]) .tst-line { stroke:#0550ae; }
+  :global([data-theme="light"]) .tst-angle { stroke:#6639ba; }
+  :global([data-theme="light"]) .tst-title { fill:#333; }
+  :global([data-theme="light"]) .tst-theta { fill:#6639ba; }
+  :global([data-theme="light"]) .tst-opp { fill:#b35900; }
+  :global([data-theme="light"]) .tst-hyp { fill:#116329; }
+  :global([data-theme="light"]) .tst-adj { fill:#0550ae; }
+  :global([data-theme="light"]) .tst-sw-opp { background:#b35900; }
+  :global([data-theme="light"]) .tst-sw-hyp { background:#116329; }
+  :global([data-theme="light"]) .tst-sw-adj { background:#0550ae; }
+  :global([data-theme="light"]) .tst-sw-angle { background:#6639ba; }
+</style>
