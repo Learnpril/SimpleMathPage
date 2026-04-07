@@ -1,8 +1,216 @@
 ---
-title: "Convergence Tests"
-description: "Determine whether a series converges or diverges"
+title: Convergence Tests
+description: Learn how to determine whether an infinite series converges or diverges using various tests
 sidebar:
   order: 17
 ---
 
-Content coming soon.
+## What You'll Learn
+
+In this lesson you'll learn the major convergence tests, which are your toolkit for deciding whether an infinite series adds up to a finite number or not.
+
+## The Concept
+
+### The nth-Term Test (Divergence Test)
+
+The simplest check. If the terms don't approach zero, the series can't converge
+
+$$
+\text{If } \lim_{n \to \infty} a_n \neq 0, \text{ then } \sum a_n \text{ diverges}
+$$
+
+Important: if the limit is 0, this test tells you nothing. The harmonic series has terms going to 0 but still diverges.
+
+### p-Series Test
+
+$$
+\sum_{n=1}^{\infty} \frac{1}{n^p} \quad \text{converges if } p \gt 1, \quad \text{diverges if } p \leq 1
+$$
+
+The bigger the exponent p, the faster the terms shrink, and the easier it is for the sum to stay finite.
+
+import PSeriesGraph from "../../../components/PSeriesGraph.astro";
+
+<PSeriesGraph />
+
+The red dots (p = 1, harmonic) keep climbing. The blue dots (p = 2) level off near π²/6. The green dots (p = 3) converge even faster to about 1.202.
+
+### Geometric Series Test
+
+$$
+\sum_{n=0}^{\infty} ar^n = \frac{a}{1 - r} \quad \text{when } |r| \lt 1
+$$
+
+### Comparison Test
+
+If you have two series with positive terms where each term of one is less than or equal to the corresponding term of the other
+
+- If the bigger series converges, the smaller one does too
+- If the smaller series diverges, the bigger one does too
+
+### Limit Comparison Test
+
+If two series have positive terms and
+
+$$
+\lim_{n \to \infty} \frac{a_n}{b_n} = L \quad \text{where } 0 \lt L \lt \infty
+$$
+
+then both series either converge or both diverge. This is often easier than direct comparison because you only need the limit of the ratio.
+
+### Ratio Test
+
+$$
+L = \lim_{n \to \infty} \left|\frac{a_{n+1}}{a_n}\right|
+$$
+
+- L less than 1: converges absolutely
+- L greater than 1: diverges
+- L equals 1: inconclusive
+
+The ratio test is your go-to for series with factorials or exponentials.
+
+### Root Test
+
+$$
+L = \lim_{n \to \infty} \sqrt[n]{|a_n|}
+$$
+
+Same conclusions as the ratio test. Useful when the entire term is raised to the nth power.
+
+## Worked Examples
+
+**Example 1: p-Series**
+
+Determine convergence of the following
+
+$$
+\sum_{n=1}^{\infty} \frac{1}{n^2}
+$$
+
+This is a p-series with p = 2. Since 2 is greater than 1, the series converges. (Its sum is π²/6, but the p-series test only tells you it converges, not what it converges to.)
+
+$$
+\sum_{n=1}^{\infty} \frac{1}{\sqrt{n}} = \sum_{n=1}^{\infty} \frac{1}{n^{1/2}}
+$$
+
+This is a p-series with p = 1/2. Since 1/2 is less than or equal to 1, the series diverges.
+
+**Example 2: Ratio Test**
+
+Does the series converge or diverge?
+
+$$
+\sum_{n=1}^{\infty} \frac{n!}{3^n}
+$$
+
+Apply the ratio test
+
+$$
+L = \lim_{n \to \infty} \frac{a_{n+1}}{a_n} = \lim_{n \to \infty} \frac{(n+1)!}{3^{n+1}} \cdot \frac{3^n}{n!}
+$$
+
+$$
+= \lim_{n \to \infty} \frac{(n+1)! \cdot 3^n}{3^{n+1} \cdot n!} = \lim_{n \to \infty} \frac{n+1}{3} = \infty
+$$
+
+Since L = infinity, which is greater than 1, the series diverges. The factorial grows much faster than the exponential.
+
+**Example 3: Comparison Test**
+
+Does the following series converge?
+
+$$
+\sum_{n=1}^{\infty} \frac{1}{n^2 + 1}
+$$
+
+For all n at least 1, we have n² + 1 greater than n², so
+
+$$
+\frac{1}{n^2 + 1} \lt \frac{1}{n^2}
+$$
+
+We know the p-series with p = 2 converges. Since every term of our series is smaller than the corresponding term of a convergent series, our series converges by the comparison test.
+
+## Real-World Application
+
+Convergence tests matter whenever you use infinite series in practice:
+
+- Fourier series in audio processing need to converge for the signal reconstruction to work
+- Power series approximations in game engines are only valid within their radius of convergence
+- Numerical methods (like Newton's method) are analyzed for convergence speed using ratio-like tests
+- Machine learning gradient descent convergence is studied with similar tools
+
+:::note[You've Got This]
+Think of convergence tests as a decision tree. Start with the nth-term test (if terms don't go to zero, you're done). For factorials or exponentials, try the ratio test. For powers of n, use the p-series test or comparison. If a test is inconclusive, just try another one. With practice you'll develop a feel for which test to reach for first.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="calculus2-convergence-tests"
+  questions={[
+    {
+      id: "q1",
+      text: "If $\\lim_{n \\to \\infty} a_n \\neq 0$, the series $\\sum a_n$",
+      options: [
+        "converges",
+        "diverges",
+        "could go either way",
+        "converges conditionally",
+      ],
+      correctIndex: 1,
+      explanation:
+        "The nth-term test: if terms don't approach zero, the series must diverge.",
+    },
+    {
+      id: "q2",
+      text: "The p-series $\\sum 1/n^p$ converges when",
+      options: ["$p = 1$", "$p \\leq 1$", "$p \\gt 1$", "for all $p \\gt 0$"],
+      correctIndex: 2,
+      explanation:
+        "The exponent must be strictly greater than 1 for the terms to shrink fast enough.",
+    },
+    {
+      id: "q3",
+      text: "The ratio test gives $L = \\infty$ for $\\sum n!/3^n$, so the series",
+      options: [
+        "converges",
+        "is inconclusive",
+        "converges conditionally",
+        "diverges",
+      ],
+      correctIndex: 3,
+      explanation:
+        "L greater than 1 means divergence. Factorials grow faster than exponentials.",
+    },
+    {
+      id: "q4",
+      text: "To show $\\sum 1/(n^2 + 1)$ converges, you can compare it to",
+      options: [
+        "$\\sum 1/n$ (harmonic)",
+        "$\\sum 1/n^2$ (convergent p-series)",
+        "$\\sum n^2$",
+        "$\\sum 1/2^n$",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Since 1/(n² + 1) is less than 1/n² and the p=2 series converges, comparison works.",
+    },
+    {
+      id: "q5",
+      text: "The ratio test is especially useful for series involving",
+      options: [
+        "only constants",
+        "only polynomials in n",
+        "factorials or exponentials",
+        "only alternating signs",
+      ],
+      correctIndex: 2,
+      explanation:
+        "Factorials and exponentials simplify nicely in the ratio a(n+1)/a(n).",
+    },
+  ]}
+/>

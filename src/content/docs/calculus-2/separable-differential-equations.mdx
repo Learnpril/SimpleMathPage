@@ -1,8 +1,233 @@
 ---
-title: "Separable Differential Equations"
-description: "Solve differential equations by separation of variables"
+title: Separable Differential Equations
+description: Learn how to solve first-order differential equations by separating variables
 sidebar:
   order: 14
 ---
 
-Content coming soon.
+## What You'll Learn
+
+In this lesson you'll learn how to solve separable differential equations, the most approachable class of first-order DEs. If you can integrate, you can solve these.
+
+## The Concept
+
+A first-order differential equation is separable if you can write it in the form
+
+$$
+\frac{dy}{dx} = f(x) \cdot g(y)
+$$
+
+The key idea: get all the y stuff on one side and all the x stuff on the other, then integrate both sides independently.
+
+$$
+\frac{1}{g(y)}\,dy = f(x)\,dx
+$$
+
+$$
+\int \frac{1}{g(y)}\,dy = \int f(x)\,dx
+$$
+
+After integrating, solve for y if possible and include the constant of integration. If you have an initial condition like y(0) = 3, plug it in to find the specific constant.
+
+## Worked Examples
+
+**Example 1: Basic separable equation**
+
+Solve dy/dx = 2xy.
+
+Separate the variables by dividing both sides by y
+
+$$
+\frac{1}{y}\,dy = 2x\,dx
+$$
+
+Integrate both sides
+
+$$
+\int \frac{1}{y}\,dy = \int 2x\,dx
+$$
+
+$$
+\ln|y| = x^2 + C
+$$
+
+Exponentiate both sides to solve for y
+
+$$
+|y| = e^{x^2 + C} = e^C \cdot e^{x^2}
+$$
+
+$$
+y = Ae^{x^2}
+$$
+
+where A = ±e^C is an arbitrary constant. The slope field below shows this equation with three solution curves for different values of A.
+
+import SlopeFieldSeparable from "../../../components/SlopeFieldSeparable.astro";
+
+<SlopeFieldSeparable />
+
+The curves grow rapidly away from x = 0 because the slope 2xy gets larger as both x and y increase. Near x = 0 the slopes are nearly flat, which matches the horizontal segments in the field.
+
+**Example 2: Initial value problem**
+
+Solve dy/dx = y² with y(0) = 2.
+
+Separate variables
+
+$$
+\frac{1}{y^2}\,dy = dx
+$$
+
+Integrate both sides
+
+$$
+\int y^{-2}\,dy = \int dx
+$$
+
+$$
+-\frac{1}{y} = x + C
+$$
+
+Apply the initial condition y(0) = 2
+
+$$
+-\frac{1}{2} = 0 + C \quad \Rightarrow \quad C = -\frac{1}{2}
+$$
+
+So the specific solution is
+
+$$
+-\frac{1}{y} = x - \frac{1}{2}
+$$
+
+Solve for y
+
+$$
+y = \frac{1}{\frac{1}{2} - x} = \frac{2}{1 - 2x}
+$$
+
+This solution has a vertical asymptote at x = 1/2. The function blows up to infinity there, which makes sense: the slope y² grows faster and faster as y increases, creating a runaway effect.
+
+import BlowupGraph from "../../../components/BlowupGraph.astro";
+
+<BlowupGraph />
+
+The solid blue curve is the actual solution starting from (0, 2). It shoots up toward infinity as x approaches 1/2 from the left. The faded branch on the right side of the asymptote is the other piece of the function, but it's not part of our solution since we can't cross the asymptote.
+
+**Example 3: Newton's Law of Cooling**
+
+A cup of coffee at 90°C is placed in a room at 20°C. The temperature T satisfies
+
+$$
+\frac{dT}{dt} = -k(T - 20)
+$$
+
+where k is a positive constant. Separate variables by letting u = T - 20, so du = dT
+
+$$
+\frac{du}{u} = -k\,dt
+$$
+
+$$
+\ln|u| = -kt + C
+$$
+
+$$
+u = Ae^{-kt}
+$$
+
+Substituting back
+
+$$
+T - 20 = Ae^{-kt} \quad \Rightarrow \quad T(t) = 20 + Ae^{-kt}
+$$
+
+At t = 0, T = 90, so A = 70. The temperature decays exponentially toward the room temperature of 20°C, never quite reaching it.
+
+$$
+T(t) = 20 + 70e^{-kt}
+$$
+
+## Real-World Application
+
+Separable DEs model tons of real-world processes:
+
+- Population growth and radioactive decay (exponential models)
+- Newton's Law of Cooling (temperature equilibration)
+- Drug concentration in the bloodstream over time
+- Charging and discharging capacitors in circuits
+- Game design: health regeneration, resource decay, and difficulty scaling over time
+
+:::note[You've Got This]
+Separable equations are the friendliest type of differential equation. The whole strategy is: separate, integrate, solve. If you can split the y terms from the x terms, you're in business. The most common mistakes are forgetting the constant of integration and forgetting to apply the initial condition. Take it step by step and you'll be fine.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="calculus2-separable-differential-equations"
+  questions={[
+    {
+      id: "q1",
+      text: "A differential equation is separable if it can be written as",
+      options: [
+        "$\\frac{dy}{dx} = f(x) + g(y)$",
+        "$\\frac{dy}{dx} = f(x) \\cdot g(y)$",
+        "$\\frac{d^2y}{dx^2} = f(x)$",
+        "$y = f(x) \\cdot g(x)$",
+      ],
+      correctIndex: 1,
+      explanation:
+        "The product form lets you move g(y) to the left side and f(x) to the right.",
+    },
+    {
+      id: "q2",
+      text: "After separating dy/dx = 2xy, the left side becomes",
+      options: ["2x dx", "y dy", "(1/y) dy", "2xy dx"],
+      correctIndex: 2,
+      explanation: "Divide both sides by y to get (1/y) dy = 2x dx.",
+    },
+    {
+      id: "q3",
+      text: "The solution to dy/dx = y² with y(0) = 2 is",
+      options: [
+        "$y = e^{2x}$",
+        "$y = 2x + 2$",
+        "$y = \\frac{2}{1 - 2x}$",
+        "$y = 2e^x$",
+      ],
+      correctIndex: 2,
+      explanation:
+        "Separating and integrating gives -1/y = x - 1/2, which solves to 2/(1 - 2x).",
+    },
+    {
+      id: "q4",
+      text: "In Newton's Law of Cooling, the temperature approaches",
+      options: [
+        "infinity",
+        "zero",
+        "the initial temperature",
+        "the ambient (room) temperature",
+      ],
+      correctIndex: 3,
+      explanation:
+        "The exponential decay term drives the temperature toward the surrounding temperature.",
+    },
+    {
+      id: "q5",
+      text: "The constant of integration in a separable equation is determined by",
+      options: [
+        "the degree of the polynomial",
+        "an initial condition",
+        "the order of the equation",
+        "the coefficient of x",
+      ],
+      correctIndex: 1,
+      explanation:
+        "An initial condition like y(0) = 2 pins down the specific value of C.",
+    },
+  ]}
+/>

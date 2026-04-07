@@ -1,8 +1,217 @@
 ---
-title: "Taylor and Maclaurin Series"
-description: "Represent functions as infinite polynomial series"
+title: Taylor and Maclaurin Series
+description: Learn how to represent functions as infinite polynomial series using Taylor and Maclaurin expansions
 sidebar:
   order: 20
 ---
 
-Content coming soon.
+## What You'll Learn
+
+In this lesson you'll learn how to build Taylor and Maclaurin series, which represent functions as infinite polynomials. This is one of the most powerful ideas in all of calculus.
+
+## The Concept
+
+### Taylor Series
+
+The Taylor series of f(x) centered at x = a is
+
+$$
+f(x) = \sum_{n=0}^{\infty} \frac{f^{(n)}(a)}{n!}(x - a)^n
+$$
+
+Each coefficient comes from the nth derivative of f evaluated at the center, divided by n factorial. The more terms you include, the better the polynomial matches the function near x = a.
+
+### Maclaurin Series
+
+A Maclaurin series is just a Taylor series centered at a = 0
+
+$$
+f(x) = \sum_{n=0}^{\infty} \frac{f^{(n)}(0)}{n!}\,x^n
+$$
+
+### Common Maclaurin Series
+
+These four are worth memorizing
+
+$$
+e^x = 1 + x + \frac{x^2}{2!} + \frac{x^3}{3!} + \frac{x^4}{4!} + \cdots = \sum_{n=0}^{\infty} \frac{x^n}{n!}
+$$
+
+$$
+\sin x = x - \frac{x^3}{3!} + \frac{x^5}{5!} - \frac{x^7}{7!} + \cdots = \sum_{n=0}^{\infty} (-1)^n \frac{x^{2n+1}}{(2n+1)!}
+$$
+
+$$
+\cos x = 1 - \frac{x^2}{2!} + \frac{x^4}{4!} - \frac{x^6}{6!} + \cdots = \sum_{n=0}^{\infty} (-1)^n \frac{x^{2n}}{(2n)!}
+$$
+
+$$
+\frac{1}{1 - x} = 1 + x + x^2 + x^3 + \cdots = \sum_{n=0}^{\infty} x^n \quad \text{for } |x| \lt 1
+$$
+
+Notice that sin x only has odd powers and cos x only has even powers. The exponential has all powers. The geometric series 1/(1 - x) is the simplest of all.
+
+import TaylorApproxGraph from "../../../components/TaylorApproxGraph.astro";
+
+<TaylorApproxGraph />
+
+The blue curve is the actual sin(x). Each colored line is a Taylor polynomial of increasing degree. Near x = 0 they all agree, but higher-degree polynomials stay accurate over a wider range. The degree-7 polynomial (purple) tracks sin(x) closely all the way out to about x = 4.
+
+## Worked Examples
+
+**Example 1: Maclaurin series for e to the x**
+
+All derivatives of e to the x are e to the x, so every derivative evaluated at 0 gives 1
+
+$$
+f(0) = 1, \quad f'(0) = 1, \quad f''(0) = 1, \quad f'''(0) = 1, \quad \ldots
+$$
+
+Plugging into the formula
+
+$$
+e^x = \sum_{n=0}^{\infty} \frac{1}{n!}\,x^n = 1 + x + \frac{x^2}{2} + \frac{x^3}{6} + \frac{x^4}{24} + \cdots
+$$
+
+This converges for all real x (radius of convergence is infinity).
+
+**Example 2: Taylor series for ln x centered at x = 1**
+
+Compute the first few derivatives at x = 1
+
+$$
+f(x) = \ln x \quad \Rightarrow \quad f(1) = 0
+$$
+
+$$
+f'(x) = \frac{1}{x} \quad \Rightarrow \quad f'(1) = 1
+$$
+
+$$
+f''(x) = -\frac{1}{x^2} \quad \Rightarrow \quad f''(1) = -1
+$$
+
+$$
+f'''(x) = \frac{2}{x^3} \quad \Rightarrow \quad f'''(1) = 2
+$$
+
+$$
+f^{(4)}(x) = -\frac{6}{x^4} \quad \Rightarrow \quad f^{(4)}(1) = -6
+$$
+
+The pattern for the nth derivative at 1 is (-1)^(n+1) times (n - 1) factorial. Plugging into the Taylor formula
+
+$$
+\ln x = (x - 1) - \frac{(x - 1)^2}{2} + \frac{(x - 1)^3}{3} - \frac{(x - 1)^4}{4} + \cdots
+$$
+
+$$
+= \sum_{n=1}^{\infty} \frac{(-1)^{n+1}}{n}(x - 1)^n
+$$
+
+This converges for 0 less than x less than or equal to 2 (radius R = 1 centered at 1).
+
+import TaylorLnGraph from "../../../components/TaylorLnGraph.astro";
+
+<TaylorLnGraph />
+
+The blue curve is ln(x). The Taylor polynomials all pass through (1, 0) and match ln(x) well near the center, but diverge outside the interval (0, 2]. Higher-degree polynomials hug the curve longer before peeling away.
+
+**Example 3: Building new series from known ones**
+
+Find the Maclaurin series for x times e to the x.
+
+Start with the known series for e to the x and multiply every term by x
+
+$$
+xe^x = x\left(1 + x + \frac{x^2}{2!} + \frac{x^3}{3!} + \cdots\right)
+$$
+
+$$
+= x + x^2 + \frac{x^3}{2!} + \frac{x^4}{3!} + \cdots = \sum_{n=1}^{\infty} \frac{x^n}{(n-1)!}
+$$
+
+You don't need to recompute derivatives from scratch. Multiplying, substituting, differentiating, or integrating known series is often the fastest approach.
+
+## Real-World Application
+
+Taylor and Maclaurin series are used constantly in practice:
+
+- Game engines approximate sin, cos, and exp with low-degree Taylor polynomials for speed
+- Physics uses Taylor expansions to linearize complex equations near equilibrium points
+- Machine learning uses Taylor expansions to analyze loss functions and optimization landscapes
+- Signal processing represents signals as polynomial approximations for filtering and compression
+- Numerical computing uses series to evaluate special functions to arbitrary precision
+
+:::note[You've Got This]
+Taylor series turn complicated functions into infinite polynomials. The recipe is simple: take derivatives, evaluate at the center, divide by n factorial. The four common Maclaurin series (e to the x, sin x, cos x, 1/(1 - x)) are worth memorizing because you can build many other series from them by multiplying, substituting, or differentiating. The visual really tells the story: more terms means a better approximation over a wider range.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="calculus2-taylor-and-maclaurin-series"
+  questions={[
+    {
+      id: "q1",
+      text: "A Maclaurin series is a Taylor series centered at",
+      options: ["$a = 1$", "$a = -1$", "$a = 0$", "any point $a$"],
+      correctIndex: 2,
+      explanation: "Maclaurin is the special case of Taylor with center a = 0.",
+    },
+    {
+      id: "q2",
+      text: "The coefficient of the nth term in a Taylor series is",
+      options: [
+        "$f(a) \\cdot n!$",
+        "$f^{(n)}(a)$",
+        "$\\frac{f^{(n)}(a)}{n!}$",
+        "$\\frac{n!}{f^{(n)}(a)}$",
+      ],
+      correctIndex: 2,
+      explanation:
+        "Each coefficient is the nth derivative at the center divided by n factorial.",
+    },
+    {
+      id: "q3",
+      text: "The Maclaurin series for $\\sin x$ contains only",
+      options: [
+        "even powers of x",
+        "odd powers of x",
+        "all powers of x",
+        "constant terms",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Sin is an odd function, so its series has only odd-powered terms: x, x³, x⁵, ...",
+    },
+    {
+      id: "q4",
+      text: "To find the series for $xe^x$, you can",
+      options: [
+        "only compute derivatives from scratch",
+        "multiply the known $e^x$ series by $x$",
+        "divide the $\\sin x$ series by $x$",
+        "use the geometric series formula",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Multiplying a known series by x shifts every power up by one. Much faster than recomputing.",
+    },
+    {
+      id: "q5",
+      text: "Adding more terms to a Taylor polynomial",
+      options: [
+        "makes the approximation worse",
+        "has no effect",
+        "improves the approximation over a wider range",
+        "changes the center point",
+      ],
+      correctIndex: 2,
+      explanation:
+        "Higher-degree polynomials match the function over a larger interval around the center.",
+    },
+  ]}
+/>

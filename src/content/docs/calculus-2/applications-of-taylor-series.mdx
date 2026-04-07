@@ -1,8 +1,194 @@
 ---
-title: "Applications of Taylor Series"
-description: "Use Taylor series for approximation and computation"
+title: Applications of Taylor Series
+description: Learn practical uses of Taylor series for approximation, error estimation, and computation
 sidebar:
   order: 21
 ---
 
-Content coming soon.
+## What You'll Learn
+
+In this lesson you'll see Taylor series in action: approximating function values, estimating errors, and understanding why these approximations work so well in practice.
+
+## The Concept
+
+### Taylor Polynomials
+
+The nth-degree Taylor polynomial centered at a is the first n + 1 terms of the Taylor series
+
+$$
+P_n(x) = \sum_{k=0}^{n} \frac{f^{(k)}(a)}{k!}(x - a)^k
+$$
+
+This is your approximation. The more terms you keep, the better it matches f(x) near the center.
+
+### The Remainder (Error Bound)
+
+The error when using the polynomial instead of the actual function is bounded by the Lagrange remainder
+
+$$
+R_n(x) = \frac{f^{(n+1)}(c)}{(n+1)!}(x - a)^{n+1}
+$$
+
+for some c between a and x. You don't know exactly what c is, but you can bound the (n+1)th derivative on the interval to get a worst-case error estimate.
+
+The key insight: the (n+1) factorial in the denominator grows extremely fast, which is why Taylor approximations get accurate so quickly with just a few terms.
+
+## Worked Examples
+
+**Example 1: Approximating e**
+
+Use the Maclaurin series for e to the x to approximate e (that is, evaluate at x = 1) using terms up to degree 4.
+
+$$
+e \approx P_4(1) = 1 + 1 + \frac{1}{2!} + \frac{1}{3!} + \frac{1}{4!}
+$$
+
+$$
+= 1 + 1 + 0.5 + 0.16667 + 0.04167 = 2.70833
+$$
+
+The actual value is e = 2.71828..., so the error is about 0.01. Not bad for just 5 terms.
+
+We can bound the error using the remainder. The 5th derivative of e to the x is still e to the x, and on [0, 1] the maximum is e itself (less than 3)
+
+$$
+|R_4(1)| \leq \frac{3}{5!} \cdot 1^5 = \frac{3}{120} = 0.025
+$$
+
+The actual error (0.00995) is well within this bound.
+
+import TaylorErrorGraph from "../../../components/TaylorErrorGraph.astro";
+
+<TaylorErrorGraph />
+
+Each curve shows how the error grows as you move away from x = 0. Higher-degree polynomials (green, blue) keep the error tiny over a much wider range. Near x = 0, all approximations are excellent.
+
+**Example 2: Approximating sin(0.1)**
+
+Use the Maclaurin series for sin x with the first two nonzero terms
+
+$$
+\sin x \approx x - \frac{x^3}{3!} = x - \frac{x^3}{6}
+$$
+
+At x = 0.1
+
+$$
+\sin(0.1) \approx 0.1 - \frac{(0.1)^3}{6} = 0.1 - \frac{0.001}{6} = 0.1 - 0.000167 = 0.099833
+$$
+
+The actual value is 0.0998334..., so the error is less than 0.0000004. For small x, even two terms give extraordinary accuracy because the next term involves x to the 5th, which is (0.1)⁵ = 0.00001, divided by 120.
+
+**Example 3: Approximating square root of 1.1**
+
+Use the Taylor polynomial for f(x) = sqrt(x) centered at x = 1, degree 2.
+
+The derivatives at x = 1
+
+$$
+f(1) = 1 \qquad f'(1) = \frac{1}{2} \qquad f''(1) = -\frac{1}{4}
+$$
+
+The degree-2 polynomial is
+
+$$
+P_2(x) = 1 + \frac{1}{2}(x - 1) + \frac{-1/4}{2!}(x - 1)^2 = 1 + \frac{1}{2}(x - 1) - \frac{1}{8}(x - 1)^2
+$$
+
+At x = 1.1
+
+$$
+P_2(1.1) = 1 + \frac{1}{2}(0.1) - \frac{1}{8}(0.01) = 1 + 0.05 - 0.00125 = 1.04875
+$$
+
+The actual value is sqrt(1.1) = 1.04881..., so the error is about 0.00006. The third derivative of sqrt(x) is 3/(8x^(5/2)), which at x = 1 gives 3/8. The remainder bound is
+
+$$
+|R_2| \leq \frac{3/8}{3!}(0.1)^3 = \frac{0.375}{6}(0.001) = 0.0000625
+$$
+
+The actual error fits within this bound.
+
+## Real-World Application
+
+Taylor approximations are used constantly in computing:
+
+- Game engines approximate sin, cos, and exp with degree-3 or degree-5 polynomials for speed
+- Physics simulations linearize equations near equilibrium using degree-1 Taylor polynomials
+- Machine learning uses Taylor expansions to analyze how loss functions behave near optima
+- Financial models approximate option pricing formulas with polynomial expansions
+- Scientific computing uses error bounds to determine how many terms are needed for a given precision
+
+:::note[You've Got This]
+Taylor series turn complicated functions into polynomials that are easy to evaluate. The error bound tells you exactly how good your approximation is. For values close to the center, even a few terms give remarkable accuracy. The factorial in the denominator is your friend: it makes the error shrink fast. This is one of the most practical tools you'll take away from Calculus 2.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="calculus2-applications-of-taylor-series"
+  questions={[
+    {
+      id: "q1",
+      text: "Using 5 terms of the Maclaurin series for $e^x$ at $x = 1$ gives approximately",
+      options: ["3.0", "2.5", "2.708", "2.718"],
+      correctIndex: 2,
+      explanation:
+        "The sum 1 + 1 + 1/2 + 1/6 + 1/24 = 2.70833, which rounds to 2.708.",
+    },
+    {
+      id: "q2",
+      text: "The Lagrange remainder helps you",
+      options: [
+        "find the exact function value",
+        "bound the error of the polynomial approximation",
+        "determine the radius of convergence",
+        "compute derivatives",
+      ],
+      correctIndex: 1,
+      explanation:
+        "It gives an upper bound on how far the polynomial can be from the true value.",
+    },
+    {
+      id: "q3",
+      text: "For small x, the approximation $\\sin x \\approx x$ is accurate because",
+      options: [
+        "sin is always equal to x",
+        "the next term $x^3/6$ is tiny when x is small",
+        "the series diverges",
+        "cos x equals 1",
+      ],
+      correctIndex: 1,
+      explanation:
+        "When x is small, x³ is much smaller than x, so the correction term is negligible.",
+    },
+    {
+      id: "q4",
+      text: "Adding more terms to a Taylor polynomial",
+      options: [
+        "always makes it worse",
+        "has no effect on accuracy",
+        "reduces the error near the center",
+        "changes the center point",
+      ],
+      correctIndex: 2,
+      explanation:
+        "Each additional term improves the approximation, especially near the center.",
+    },
+    {
+      id: "q5",
+      text: "The factorial in the remainder denominator means the error",
+      options: [
+        "grows with more terms",
+        "stays constant",
+        "shrinks rapidly with more terms",
+        "depends only on the center",
+      ],
+      correctIndex: 2,
+      explanation:
+        "Factorials grow extremely fast, making each successive error term much smaller.",
+    },
+  ]}
+/>

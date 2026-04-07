@@ -1,0 +1,98 @@
+---
+/**
+ * IntervalOfConvergence — number line diagram showing the interval
+ * of convergence for Example 3: centered at a=2, R=1, interval [1, 3).
+ * Shows converges region, diverges regions, and endpoint behavior.
+ */
+const w = 420;
+const h = 100;
+const pad = 40;
+const lineY = 40;
+const gw = w - 2 * pad;
+
+// Map x values to SVG coords (range 0 to 4 on number line)
+const xMin = -0.5, xMax = 4.5;
+const sx = (x: number) => pad + ((x - xMin) / (xMax - xMin)) * gw;
+
+const ticks = [0, 1, 2, 3, 4];
+---
+
+<figure class="ioc" role="img" aria-label="Number line showing interval of convergence from 1 exclusive to 3 inclusive, centered at 2 with radius 1">
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    {/* Number line */}
+    <line x1={sx(xMin)} y1={lineY} x2={sx(xMax)} y2={lineY} class="ioc-line" stroke-width="1.5" />
+
+    {/* Converges region shading */}
+    <rect x={sx(1)} y={lineY - 14} width={sx(3) - sx(1)} height={28} rx="3" class="ioc-conv" />
+
+    {/* Diverges labels */}
+    <text class="ioc-label ioc-div-text" x={sx(0.2)} y={lineY - 20} font-size="10" text-anchor="middle">diverges</text>
+    <text class="ioc-label ioc-div-text" x={sx(3.8)} y={lineY - 20} font-size="10" text-anchor="middle">diverges</text>
+    <text class="ioc-label ioc-conv-text" x={sx(2)} y={lineY - 20} font-size="10" text-anchor="middle">converges</text>
+
+    {/* Endpoint markers */}
+    {/* x=1: open circle (diverges) */}
+    <circle cx={sx(1)} cy={lineY} r="5" class="ioc-open" stroke-width="2" />
+    {/* x=3: filled circle (converges) */}
+    <circle cx={sx(3)} cy={lineY} r="5" class="ioc-closed" />
+
+    {/* Center marker */}
+    <line x1={sx(2)} y1={lineY - 8} x2={sx(2)} y2={lineY + 8} class="ioc-center" stroke-width="2" />
+
+    {/* Tick marks and labels */}
+    {ticks.map(v => (
+      <line x1={sx(v)} y1={lineY + 4} x2={sx(v)} y2={lineY - 4} class="ioc-tick" stroke-width="1" />
+    ))}
+    {ticks.map(v => (
+      <text class="ioc-label" x={sx(v)} y={lineY + 22} font-size="11" text-anchor="middle">{v}</text>
+    ))}
+
+    {/* R bracket */}
+    <line x1={sx(2)} y1={lineY + 32} x2={sx(3)} y2={lineY + 32} class="ioc-dim" stroke-width="1" />
+    <line x1={sx(2)} y1={lineY + 28} x2={sx(2)} y2={lineY + 36} class="ioc-dim" stroke-width="1" />
+    <line x1={sx(3)} y1={lineY + 28} x2={sx(3)} y2={lineY + 36} class="ioc-dim" stroke-width="1" />
+    <text class="ioc-label" x={(sx(2) + sx(3)) / 2} y={lineY + 46} font-size="10" text-anchor="middle">R = 1</text>
+  </svg>
+  <div class="ioc-legend">
+    <span class="ioc-leg-item"><span class="ioc-swatch ioc-sw-conv"></span> converges</span>
+    <span class="ioc-leg-item"><span class="ioc-swatch ioc-sw-closed"></span> endpoint converges</span>
+    <span class="ioc-leg-item"><span class="ioc-swatch ioc-sw-open"></span> endpoint diverges</span>
+  </div>
+</figure>
+
+<style>
+  .ioc { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .ioc svg { max-width:100%; height:auto; }
+  .ioc-line { stroke:#666; }
+  .ioc-conv { fill:rgba(88,166,255,0.15); }
+  .ioc-closed { fill:#7ee787; }
+  .ioc-open { fill:none; stroke:#f47067; }
+  .ioc-center { stroke:#f0883e; }
+  .ioc-tick { stroke:#666; }
+  .ioc-dim { stroke:#888; }
+  .ioc-label { fill:#999; font-family:'Libre Baskerville',Georgia,serif; }
+  .ioc-div-text { fill:#f47067; }
+  .ioc-conv-text { fill:#58a6ff; }
+  .ioc-legend {
+    display:flex; gap:1rem; flex-wrap:wrap; justify-content:center;
+    margin-top:0.5rem; font-family:'Libre Baskerville',Georgia,serif; font-size:0.82rem;
+  }
+  .ioc-leg-item { display:flex; align-items:center; gap:0.35rem; }
+  .ioc-swatch { display:inline-block; width:12px; height:12px; border-radius:50%; }
+  .ioc-sw-conv { background:rgba(88,166,255,0.35); }
+  .ioc-sw-closed { background:#7ee787; }
+  .ioc-sw-open { background:none; border:2px solid #f47067; }
+  :global([data-theme="light"]) .ioc-line { stroke:#999; }
+  :global([data-theme="light"]) .ioc-conv { fill:rgba(5,80,174,0.1); }
+  :global([data-theme="light"]) .ioc-closed { fill:#116329; }
+  :global([data-theme="light"]) .ioc-open { stroke:#cf222e; }
+  :global([data-theme="light"]) .ioc-center { stroke:#b35900; }
+  :global([data-theme="light"]) .ioc-tick { stroke:#999; }
+  :global([data-theme="light"]) .ioc-dim { stroke:#999; }
+  :global([data-theme="light"]) .ioc-label { fill:#555; }
+  :global([data-theme="light"]) .ioc-div-text { fill:#cf222e; }
+  :global([data-theme="light"]) .ioc-conv-text { fill:#0550ae; }
+  :global([data-theme="light"]) .ioc-sw-conv { background:rgba(5,80,174,0.2); }
+  :global([data-theme="light"]) .ioc-sw-closed { background:#116329; }
+  :global([data-theme="light"]) .ioc-sw-open { border-color:#cf222e; }
+</style>

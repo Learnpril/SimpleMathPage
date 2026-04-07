@@ -1,0 +1,133 @@
+---
+/**
+ * TaylorLnGraph — shows ln(x) and its Taylor polynomial
+ * approximations of degree 1, 2, 3, 4 centered at x = 1.
+ */
+const w = 420;
+const h = 300;
+const pad = 50;
+const gw = w - 2 * pad;
+const gh = h - 2 * pad;
+const xMin = 0.05, xMax = 2.8, yMin = -2.5, yMax = 1.5;
+const sx = (x: number) => pad + ((x - xMin) / (xMax - xMin)) * gw;
+const sy = (y: number) => pad + ((yMax - y) / (yMax - yMin)) * gh;
+
+const N = 300;
+
+// ln(x) exact
+const lnPts: string[] = [];
+for (let i = 0; i <= N; i++) {
+  const x = xMin + (i / N) * (xMax - xMin);
+  const y = Math.log(x);
+  if (y >= yMin && y <= yMax) lnPts.push(`${sx(x)},${sy(y)}`);
+}
+
+// Taylor polynomial for ln(x) centered at 1:
+// T_n(x) = sum_{k=1}^{n} (-1)^{k+1} (x-1)^k / k
+const taylorLn = (x: number, deg: number): number => {
+  let sum = 0;
+  const u = x - 1;
+  for (let k = 1; k <= deg; k++) {
+    sum += Math.pow(-1, k + 1) * Math.pow(u, k) / k;
+  }
+  return sum;
+};
+
+const makePts = (deg: number): string[] => {
+  const pts: string[] = [];
+  for (let i = 0; i <= N; i++) {
+    const x = xMin + (i / N) * (xMax - xMin);
+    const y = taylorLn(x, deg);
+    if (y >= yMin && y <= yMax) pts.push(`${sx(x)},${sy(y)}`);
+  }
+  return pts;
+};
+
+const t1 = makePts(1);
+const t2 = makePts(2);
+const t3 = makePts(3);
+const t4 = makePts(4);
+
+const xTicks = [0.5, 1, 1.5, 2, 2.5];
+const yTicks = [-2, -1, 0, 1];
+---
+
+<figure class="tln" role="img" aria-label="Graph of ln x with Taylor polynomial approximations of degree 1 through 4 centered at x equals 1">
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    {xTicks.map(v => (
+      <line x1={sx(v)} y1={sy(yMin)} x2={sx(v)} y2={sy(yMax)} class="tln-grid" stroke-width="0.5" />
+    ))}
+    {yTicks.map(v => (
+      <line x1={sx(xMin)} y1={sy(v)} x2={sx(xMax)} y2={sy(v)} class="tln-grid" stroke-width="0.5" />
+    ))}
+    <line x1={sx(xMin)} y1={sy(0)} x2={sx(xMax)} y2={sy(0)} class="tln-axis" stroke-width="1.5" />
+    <line x1={sx(1)} y1={sy(yMin)} x2={sx(1)} y2={sy(yMax)} class="tln-center" stroke-width="1" stroke-dasharray="4,3" />
+
+    {/* Taylor approximations */}
+    <polyline points={t1.join(" ")} fill="none" class="tln-t1" stroke-width="1.5" />
+    <polyline points={t2.join(" ")} fill="none" class="tln-t2" stroke-width="1.5" />
+    <polyline points={t3.join(" ")} fill="none" class="tln-t3" stroke-width="1.5" />
+    <polyline points={t4.join(" ")} fill="none" class="tln-t4" stroke-width="1.5" />
+
+    {/* ln(x) exact */}
+    <polyline points={lnPts.join(" ")} fill="none" class="tln-ln" stroke-width="2.5" />
+
+    {/* Center dot at (1, 0) */}
+    <circle cx={sx(1)} cy={sy(0)} r="4" class="tln-dot" />
+
+    {xTicks.map(v => (
+      <text class="tln-tick" x={sx(v)} y={sy(0) + 16} font-size="10" text-anchor="middle">{v}</text>
+    ))}
+    {yTicks.filter(v => v !== 0).map(v => (
+      <text class="tln-tick" x={sx(xMin) + 4} y={sy(v) - 4} font-size="10" text-anchor="start">{v}</text>
+    ))}
+  </svg>
+  <div class="tln-legend">
+    <span class="tln-leg-item"><span class="tln-swatch tln-sw-ln"></span> ln(x)</span>
+    <span class="tln-leg-item"><span class="tln-swatch tln-sw-t1"></span> degree 1</span>
+    <span class="tln-leg-item"><span class="tln-swatch tln-sw-t2"></span> degree 2</span>
+    <span class="tln-leg-item"><span class="tln-swatch tln-sw-t3"></span> degree 3</span>
+    <span class="tln-leg-item"><span class="tln-swatch tln-sw-t4"></span> degree 4</span>
+  </div>
+</figure>
+
+<style>
+  .tln { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .tln svg { max-width:100%; height:auto; }
+  .tln-grid { stroke:#333; }
+  .tln-axis { stroke:#666; }
+  .tln-center { stroke:#666; opacity:0.4; }
+  .tln-ln { stroke:#58a6ff; }
+  .tln-t1 { stroke:#f47067; opacity:0.6; }
+  .tln-t2 { stroke:#f0883e; opacity:0.6; }
+  .tln-t3 { stroke:#7ee787; opacity:0.6; }
+  .tln-t4 { stroke:#d2a8ff; opacity:0.7; }
+  .tln-dot { fill:#7ee787; }
+  .tln-tick { fill:#888; font-family:'Libre Baskerville',Georgia,serif; }
+  .tln-legend {
+    display:flex; gap:0.8rem; flex-wrap:wrap; justify-content:center;
+    margin-top:0.5rem; font-family:'Libre Baskerville',Georgia,serif; font-size:0.82rem;
+  }
+  .tln-leg-item { display:flex; align-items:center; gap:0.35rem; }
+  .tln-swatch { display:inline-block; width:18px; height:4px; border-radius:2px; }
+  .tln-sw-ln { background:#58a6ff; }
+  .tln-sw-t1 { background:#f47067; }
+  .tln-sw-t2 { background:#f0883e; }
+  .tln-sw-t3 { background:#7ee787; }
+  .tln-sw-t4 { background:#d2a8ff; }
+  :global([data-theme="light"]) .tln-grid { stroke:#ddd; }
+  :global([data-theme="light"]) .tln-axis { stroke:#999; }
+  :global([data-theme="light"]) .tln-center { stroke:#999; }
+  :global([data-theme="light"]) .tln-ln { stroke:#0550ae; }
+  :global([data-theme="light"]) .tln-t1 { stroke:#cf222e; }
+  :global([data-theme="light"]) .tln-t2 { stroke:#b35900; }
+  :global([data-theme="light"]) .tln-t3 { stroke:#116329; }
+  :global([data-theme="light"]) .tln-t4 { stroke:#6639ba; }
+  :global([data-theme="light"]) .tln-dot { fill:#116329; }
+  :global([data-theme="light"]) .tln-tick { fill:#666; }
+  :global([data-theme="light"]) .tln-sw-ln { background:#0550ae; }
+  :global([data-theme="light"]) .tln-sw-t1 { background:#cf222e; }
+  :global([data-theme="light"]) .tln-sw-t2 { background:#b35900; }
+  :global([data-theme="light"]) .tln-sw-t3 { background:#116329; }
+  :global([data-theme="light"]) .tln-sw-t4 { background:#6639ba; }
+</style>

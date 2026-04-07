@@ -1,0 +1,121 @@
+---
+/**
+ * FluidForceDiagram — shows a rectangular plate (2m wide, 3m tall)
+ * submerged vertically with its top edge 1m below the water surface.
+ * Pressure arrows increase with depth. A thin horizontal strip is highlighted.
+ */
+const w = 360;
+const h = 300;
+const pad = 45;
+
+// Water surface
+const surfY = pad + 15;
+// Scale: 1m = 50px
+const mPx = 50;
+
+// Plate: top at 1m depth, bottom at 4m depth
+const plateTop = surfY + 1 * mPx;
+const plateBot = surfY + 4 * mPx;
+const plateL = (w - 2 * mPx) / 2;
+const plateR = plateL + 2 * mPx;
+
+// Strip at depth ~2.5m
+const stripDepth = 2.5;
+const stripY = surfY + stripDepth * mPx;
+const stripH = 7;
+
+// Pressure arrows (pointing right, getting longer with depth)
+const arrowDepths = [1.3, 2.0, 2.7, 3.4];
+---
+
+<figure class="flf" role="img" aria-label="Rectangular plate submerged in water with pressure increasing with depth">
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <marker id="flf-arr" markerWidth="7" markerHeight="5" refX="7" refY="2.5" orient="auto">
+        <path d="M0,0 L7,2.5 L0,5" class="flf-arr-mark" fill="none" stroke-width="1.2" />
+      </marker>
+    </defs>
+
+    {/* Water background */}
+    <rect x={pad - 10} y={surfY} width={w - 2 * pad + 20} height={h - pad - surfY}
+          class="flf-water" rx="2" />
+
+    {/* Surface line */}
+    <line x1={pad - 10} y1={surfY} x2={w - pad + 10} y2={surfY}
+          class="flf-surface" stroke-width="2" />
+
+    {/* Plate */}
+    <rect x={plateL} y={plateTop} width={plateR - plateL} height={plateBot - plateTop}
+          class="flf-plate" rx="2" stroke-width="2" />
+
+    {/* Highlighted strip */}
+    <rect x={plateL + 2} y={stripY - stripH / 2} width={plateR - plateL - 4} height={stripH}
+          class="flf-strip" rx="1" />
+
+    {/* Pressure arrows on left side */}
+    {arrowDepths.map(d => {
+      const ay = surfY + d * mPx;
+      const len = d * 14 + 8;
+      return (
+        <line x1={plateL - len - 4} y1={ay} x2={plateL - 6} y2={ay}
+              class="flf-pressure" stroke-width="1.5" marker-end="url(#flf-arr)" />
+      );
+    })}
+
+    {/* Depth labels on right */}
+    <text class="flf-label" x={plateR + 10} y={surfY + 16} font-size="10" text-anchor="start">surface</text>
+    <line x1={plateR + 8} y1={surfY} x2={plateR + 8} y2={plateBot}
+          class="flf-dim" stroke-width="1" stroke-dasharray="3,3" />
+    {/* Notch at surface */}
+    <line x1={plateR + 3} y1={surfY} x2={plateR + 13} y2={surfY} class="flf-dim" stroke-width="1" />
+    {/* Notch at plate top (end of 1m / start of 3m) */}
+    <line x1={plateR + 3} y1={plateTop} x2={plateR + 13} y2={plateTop} class="flf-dim" stroke-width="1" />
+    {/* Notch at plate bottom */}
+    <line x1={plateR + 3} y1={plateBot} x2={plateR + 13} y2={plateBot} class="flf-dim" stroke-width="1" />
+    <text class="flf-label" x={plateR + 16} y={(surfY + plateTop) / 2 + 8} font-size="10" text-anchor="start">1 m</text>
+
+    {/* Plate height label */}
+    <text class="flf-label" x={plateR + 16} y={(plateTop + plateBot) / 2 + 4} font-size="10" text-anchor="start">3 m</text>
+
+    {/* Width label */}
+    <text class="flf-label" x={(plateL + plateR) / 2} y={plateBot + 18} font-size="10" text-anchor="middle">2 m wide</text>
+  </svg>
+  <div class="flf-legend">
+    <span class="flf-leg-item"><span class="flf-swatch flf-sw-plate"></span> submerged plate</span>
+    <span class="flf-leg-item"><span class="flf-swatch flf-sw-strip"></span> thin strip at depth y</span>
+    <span class="flf-leg-item"><span class="flf-swatch flf-sw-pressure"></span> pressure (increases with depth)</span>
+  </div>
+</figure>
+
+<style>
+  .flf { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .flf svg { max-width:100%; height:auto; }
+  .flf-water { fill:rgba(88,166,255,0.08); }
+  .flf-surface { stroke:#58a6ff; }
+  .flf-plate { fill:rgba(210,168,255,0.15); stroke:#d2a8ff; }
+  .flf-strip { fill:rgba(240,136,62,0.45); stroke:#f0883e; stroke-width:1.5; }
+  .flf-pressure { stroke:#7ee787; }
+  .flf-arr-mark { stroke:#7ee787; }
+  .flf-dim { stroke:#666; }
+  .flf-label { fill:#999; font-family:'Libre Baskerville',Georgia,serif; }
+  .flf-legend {
+    display:flex; gap:1rem; flex-wrap:wrap; justify-content:center;
+    margin-top:0.5rem; font-family:'Libre Baskerville',Georgia,serif; font-size:0.82rem;
+  }
+  .flf-leg-item { display:flex; align-items:center; gap:0.35rem; }
+  .flf-swatch { display:inline-block; width:18px; height:12px; border-radius:2px; }
+  .flf-sw-plate { background:rgba(210,168,255,0.3); border:1.5px solid #d2a8ff; }
+  .flf-sw-strip { background:rgba(240,136,62,0.5); border:1.5px solid #f0883e; }
+  .flf-sw-pressure { background:#7ee787; height:3px; }
+  :global([data-theme="light"]) .flf-water { fill:rgba(5,80,174,0.05); }
+  :global([data-theme="light"]) .flf-surface { stroke:#0550ae; }
+  :global([data-theme="light"]) .flf-plate { fill:rgba(102,57,186,0.1); stroke:#6639ba; }
+  :global([data-theme="light"]) .flf-strip { fill:rgba(179,89,0,0.3); stroke:#b35900; }
+  :global([data-theme="light"]) .flf-pressure { stroke:#116329; }
+  :global([data-theme="light"]) .flf-arr-mark { stroke:#116329; }
+  :global([data-theme="light"]) .flf-dim { stroke:#999; }
+  :global([data-theme="light"]) .flf-label { fill:#555; }
+  :global([data-theme="light"]) .flf-sw-plate { background:rgba(102,57,186,0.2); border-color:#6639ba; }
+  :global([data-theme="light"]) .flf-sw-strip { background:rgba(179,89,0,0.35); border-color:#b35900; }
+  :global([data-theme="light"]) .flf-sw-pressure { background:#116329; }
+</style>

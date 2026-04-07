@@ -1,0 +1,130 @@
+---
+/**
+ * ConeSurface3D — 3D cone: y = x from x=0 to x=1 rotated around x-axis.
+ * Shows the surface (not filled solid) to emphasize surface area.
+ */
+---
+
+<figure class="rev3d" role="img" aria-label="Interactive 3D cone surface: y equals x rotated around the x-axis from 0 to 1">
+  <div class="rev3d-canvas" data-cone3d></div>
+  <div class="rev3d-hint">Drag to rotate</div>
+</figure>
+
+<script>
+  import * as THREE from "three";
+  import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+
+  function initCone(container: HTMLElement) {
+    const width = Math.min(container.clientWidth, 500);
+    const height = 320;
+    const isDark = document.documentElement.dataset.theme !== "light";
+
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(isDark ? 0x121212 : 0xf8f9fa);
+
+    const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 100);
+    camera.position.set(2, 1.5, 2);
+    camera.lookAt(0.5, 0, 0);
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(width, height);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    container.appendChild(renderer.domElement);
+
+    const controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.target.set(0.5, 0, 0);
+    controls.update();
+
+    // Profile: y = x from 0 to 1, rotated around x-axis
+    // LatheGeometry Y axis = our x-axis after rotation
+    const profile: THREE.Vector2[] = [];
+    const seg = 40;
+    for (let i = 0; i <= seg; i++) {
+      const t = i / seg;
+      profile.push(new THREE.Vector2(t, t)); // radius = x, height = x
+    }
+
+    const latheGeo = new THREE.LatheGeometry(profile, 48);
+
+    // Surface only (not filled) - use wireframe + transparent solid
+    const surfaceMat = new THREE.MeshPhongMaterial({
+      color: isDark ? 0x58a6ff : 0x0550ae,
+      transparent: true, opacity: 0.3, side: THREE.DoubleSide, shininess: 60,
+    });
+    const surfaceMesh = new THREE.Mesh(latheGeo, surfaceMat);
+    surfaceMesh.rotation.z = -Math.PI / 2;
+    scene.add(surfaceMesh);
+
+    const wireMat = new THREE.MeshBasicMaterial({
+      color: isDark ? 0xd2a8ff : 0x6639ba,
+      wireframe: true, transparent: true, opacity: 0.12,
+    });
+    const wireMesh = new THREE.Mesh(latheGeo, wireMat);
+    wireMesh.rotation.z = -Math.PI / 2;
+    scene.add(wireMesh);
+
+    // Axis of rotation
+    const axisGeo = new THREE.BufferGeometry().setFromPoints([
+      new THREE.Vector3(-0.2, 0, 0), new THREE.Vector3(1.3, 0, 0),
+    ]);
+    scene.add(new THREE.Line(axisGeo, new THREE.LineBasicMaterial({ color: isDark ? 0x666666 : 0x999999 })));
+
+    // Profile curve y = x
+    const curvePts: THREE.Vector3[] = [];
+    for (let i = 0; i <= 40; i++) {
+      const x = i / 40;
+      curvePts.push(new THREE.Vector3(x, x, 0));
+    }
+    scene.add(new THREE.Line(
+      new THREE.BufferGeometry().setFromPoints(curvePts),
+      new THREE.LineBasicMaterial({ color: isDark ? 0x7ee787 : 0x116329 })
+    ));
+    // Bottom reflection
+    const curveBot: THREE.Vector3[] = [];
+    for (let i = 0; i <= 40; i++) {
+      const x = i / 40;
+      curveBot.push(new THREE.Vector3(x, -x, 0));
+    }
+    scene.add(new THREE.Line(
+      new THREE.BufferGeometry().setFromPoints(curveBot),
+      new THREE.LineBasicMaterial({ color: isDark ? 0x7ee787 : 0x116329 })
+    ));
+
+    // Lighting
+    scene.add(new THREE.AmbientLight(0xffffff, 0.6));
+    const d1 = new THREE.DirectionalLight(0xffffff, 0.8);
+    d1.position.set(3, 3, 3);
+    scene.add(d1);
+    scene.add(new THREE.DirectionalLight(0xffffff, 0.3).translateX(-2));
+
+    function animate() {
+      requestAnimationFrame(animate);
+      controls.update();
+      renderer.render(scene, camera);
+    }
+    animate();
+
+    const ro = new ResizeObserver(() => {
+      const w = Math.min(container.clientWidth, 500);
+      camera.aspect = w / height;
+      camera.updateProjectionMatrix();
+      renderer.setSize(w, height);
+    });
+    ro.observe(container);
+  }
+
+  document.querySelectorAll<HTMLElement>("[data-cone3d]").forEach((el) => {
+    const io = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting) { io.disconnect(); initCone(el); }
+    }, { threshold: 0.1 });
+    io.observe(el);
+  });
+</script>
+
+<style>
+  .rev3d { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .rev3d-canvas { width:100%; max-width:500px; border-radius:0.5rem; overflow:hidden; }
+  .rev3d-canvas canvas { display:block; border-radius:0.5rem; }
+  .rev3d-hint { margin-top:0.4rem; font-size:0.78rem; color:#888; font-family:'Libre Baskerville',Georgia,serif; font-style:italic; }
+</style>

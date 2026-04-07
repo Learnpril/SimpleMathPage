@@ -1,0 +1,108 @@
+---
+/**
+ * BlowupGraph — plots y = 2/(1 - 2x) showing the solution to
+ * dy/dx = y² with y(0) = 2. Vertical asymptote at x = 0.5.
+ * Initial point (0, 2) marked with a dot.
+ */
+const w = 420;
+const h = 320;
+const pad = 50;
+const gw = w - 2 * pad;
+const gh = h - 2 * pad;
+const xMin = -1.5, xMax = 1.5, yMin = -6, yMax = 14;
+const sx = (x: number) => pad + ((x - xMin) / (xMax - xMin)) * gw;
+const sy = (y: number) => pad + ((yMax - y) / (yMax - yMin)) * gh;
+
+const f = (x: number) => 2 / (1 - 2 * x);
+
+// Left branch: x < 0.5
+const leftPts: string[] = [];
+for (let i = 0; i <= 200; i++) {
+  const x = xMin + (i / 200) * (0.48 - xMin);
+  const y = f(x);
+  if (y >= yMin && y <= yMax) leftPts.push(`${sx(x)},${sy(y)}`);
+}
+
+// Right branch: x > 0.5
+const rightPts: string[] = [];
+for (let i = 0; i <= 200; i++) {
+  const x = 0.52 + (i / 200) * (xMax - 0.52);
+  const y = f(x);
+  if (y >= yMin && y <= yMax) rightPts.push(`${sx(x)},${sy(y)}`);
+}
+
+const xTicks = [-1, 0, 1];
+const yTicks = [-4, 0, 2, 4, 6, 8, 10, 12];
+---
+
+<figure class="blw" role="img" aria-label="Graph of y = 2 over (1 minus 2x) with vertical asymptote at x = one half">
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    {xTicks.map(v => (
+      <line x1={sx(v)} y1={sy(yMin)} x2={sx(v)} y2={sy(yMax)} class="blw-grid" stroke-width="0.5" />
+    ))}
+    {yTicks.map(v => (
+      <line x1={sx(xMin)} y1={sy(v)} x2={sx(xMax)} y2={sy(v)} class="blw-grid" stroke-width="0.5" />
+    ))}
+
+    <line x1={sx(xMin)} y1={sy(0)} x2={sx(xMax)} y2={sy(0)} class="blw-axis" stroke-width="1.5" />
+    <line x1={sx(0)} y1={sy(yMin)} x2={sx(0)} y2={sy(yMax)} class="blw-axis" stroke-width="1.2" />
+
+    {/* Vertical asymptote */}
+    <line x1={sx(0.5)} y1={sy(yMin)} x2={sx(0.5)} y2={sy(yMax)}
+          class="blw-asymp" stroke-width="1.5" stroke-dasharray="6,4" />
+
+    {/* Left branch (the actual solution for x < 0.5) */}
+    <polyline points={leftPts.join(" ")} fill="none" class="blw-curve" stroke-width="2.5" />
+
+    {/* Right branch */}
+    <polyline points={rightPts.join(" ")} fill="none" class="blw-curve-dim" stroke-width="2" />
+
+    {/* Initial point (0, 2) */}
+    <circle cx={sx(0)} cy={sy(2)} r="5" class="blw-dot" />
+
+    {/* Tick labels */}
+    {xTicks.filter(v => v !== 0).map(v => (
+      <text class="blw-tick" x={sx(v)} y={sy(0) + 16} font-size="10" text-anchor="middle">{v}</text>
+    ))}
+    {yTicks.filter(v => v !== 0 && v !== 2).map(v => (
+      <text class="blw-tick" x={sx(0) - 8} y={sy(v) + 4} font-size="10" text-anchor="end">{v}</text>
+    ))}
+    <text class="blw-tick" x={sx(0.5)} y={sy(yMin) + 14} font-size="10" text-anchor="middle">½</text>
+  </svg>
+  <div class="blw-legend">
+    <span class="blw-leg-item"><span class="blw-swatch blw-sw-curve"></span> y = 2/(1 − 2x)</span>
+    <span class="blw-leg-item"><span class="blw-swatch blw-sw-dot"></span> initial point (0, 2)</span>
+    <span class="blw-leg-item"><span class="blw-swatch blw-sw-asymp"></span> asymptote x = ½</span>
+  </div>
+</figure>
+
+<style>
+  .blw { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .blw svg { max-width:100%; height:auto; }
+  .blw-grid { stroke:#333; }
+  .blw-axis { stroke:#666; }
+  .blw-asymp { stroke:#f47067; }
+  .blw-curve { stroke:#58a6ff; }
+  .blw-curve-dim { stroke:#58a6ff; opacity:0.3; }
+  .blw-dot { fill:#7ee787; stroke:#7ee787; }
+  .blw-tick { fill:#888; font-family:'Libre Baskerville',Georgia,serif; }
+  .blw-legend {
+    display:flex; gap:1rem; flex-wrap:wrap; justify-content:center;
+    margin-top:0.5rem; font-family:'Libre Baskerville',Georgia,serif; font-size:0.82rem;
+  }
+  .blw-leg-item { display:flex; align-items:center; gap:0.35rem; }
+  .blw-swatch { display:inline-block; width:18px; height:12px; border-radius:2px; }
+  .blw-sw-curve { background:#58a6ff; height:4px; }
+  .blw-sw-dot { background:#7ee787; border-radius:50%; width:10px; height:10px; }
+  .blw-sw-asymp { background:none; border-bottom:2px dashed #f47067; height:0; margin-top:6px; }
+  :global([data-theme="light"]) .blw-grid { stroke:#ddd; }
+  :global([data-theme="light"]) .blw-axis { stroke:#999; }
+  :global([data-theme="light"]) .blw-asymp { stroke:#cf222e; }
+  :global([data-theme="light"]) .blw-curve { stroke:#0550ae; }
+  :global([data-theme="light"]) .blw-curve-dim { stroke:#0550ae; opacity:0.25; }
+  :global([data-theme="light"]) .blw-dot { fill:#116329; stroke:#116329; }
+  :global([data-theme="light"]) .blw-tick { fill:#666; }
+  :global([data-theme="light"]) .blw-sw-curve { background:#0550ae; }
+  :global([data-theme="light"]) .blw-sw-dot { background:#116329; }
+  :global([data-theme="light"]) .blw-sw-asymp { border-color:#cf222e; }
+</style>

@@ -1,8 +1,204 @@
 ---
-title: "Physics Applications"
-description: "Center of mass, fluid force, and other physics applications"
+title: Physics Applications
+description: Learn how to use integration to solve physics problems involving pumping work, center of mass, and fluid force
 sidebar:
   order: 12
 ---
 
-Content coming soon.
+## What You'll Learn
+
+In this lesson you'll see how integration handles three classic physics problems: pumping liquid out of a tank, finding the center of mass of a region, and calculating the force of water on a submerged plate.
+
+## The Concept
+
+### Pumping Work
+
+To find the work needed to pump liquid out of a tank, slice the liquid into thin horizontal layers. Each layer has a volume, a weight, and a distance it needs to travel to exit the tank. Add them all up with an integral.
+
+For a layer at height y with cross-sectional area A(y) and density ρ, the work to lift that layer a distance d(y) to the top is
+
+$$
+dW = \rho g \cdot A(y) \cdot d(y)\,dy
+$$
+
+Total work is the integral over the full depth of liquid.
+
+### Center of Mass
+
+For a flat region (lamina) with uniform density between y = f(x) and the x-axis from x = a to x = b, the centroid coordinates are
+
+$$
+\bar{x} = \frac{1}{A}\int_a^b x\,f(x)\,dx
+$$
+
+$$
+\bar{y} = \frac{1}{A}\int_a^b \frac{1}{2}[f(x)]^2\,dx
+$$
+
+where A is the total area of the region. The centroid is the balance point. If you cut the shape out of cardboard, it would balance on a pin placed at that point.
+
+### Hydrostatic Force
+
+Water pressure increases with depth. The pressure at depth h is ρgh, where ρ is the density of water (1000 kg/m³) and g = 9.8 m/s². For a submerged vertical plate, the total force is
+
+$$
+F = \int_a^b \rho g\,h(y)\,w(y)\,dy
+$$
+
+where h(y) is the depth and w(y) is the width of the plate at position y.
+
+## Worked Examples
+
+**Example 1: Pumping water from a cylindrical tank**
+
+A cylindrical tank has radius 2 m and height 6 m, and it's full of water. How much work is needed to pump all the water out over the top?
+
+import PumpWorkDiagram from "../../../components/PumpWorkDiagram.astro";
+
+<PumpWorkDiagram />
+
+Slice the water into thin horizontal disks. A disk at height y (measured from the bottom) has area π(2)² = 4π m² and thickness dy. Its weight is ρg times its volume, so 1000(9.8)(4π)dy = 39200π dy newtons. That disk needs to be lifted (6 - y) meters to clear the top.
+
+$$
+W = \int_0^6 39200\pi(6 - y)\,dy = 39200\pi\left[6y - \frac{y^2}{2}\right]_0^6
+$$
+
+$$
+= 39200\pi\left(36 - 18\right) = 39200\pi(18) = 705{,}600\pi \approx 2{,}216{,}708 \text{ J}
+$$
+
+That's about 2.2 million joules. The slices near the bottom contribute more work because they have to travel farther.
+
+**Example 2: Center of mass of a region**
+
+Find the centroid of the region between y = √x and the x-axis from x = 0 to x = 4.
+
+First, the area
+
+$$
+A = \int_0^4 \sqrt{x}\,dx = \left[\frac{2}{3}x^{3/2}\right]_0^4 = \frac{2}{3}(8) = \frac{16}{3}
+$$
+
+Now the x-coordinate of the centroid
+
+$$
+\bar{x} = \frac{1}{A}\int_0^4 x\sqrt{x}\,dx = \frac{3}{16}\int_0^4 x^{3/2}\,dx = \frac{3}{16}\left[\frac{2}{5}x^{5/2}\right]_0^4
+$$
+
+$$
+= \frac{3}{16}\cdot\frac{2}{5}(32) = \frac{3}{16}\cdot\frac{64}{5} = \frac{192}{80} = \frac{12}{5} = 2.4
+$$
+
+And the y-coordinate
+
+$$
+\bar{y} = \frac{1}{A}\int_0^4 \frac{1}{2}(\sqrt{x})^2\,dx = \frac{3}{16}\cdot\frac{1}{2}\int_0^4 x\,dx = \frac{3}{32}\left[\frac{x^2}{2}\right]_0^4
+$$
+
+$$
+= \frac{3}{32}\cdot 8 = \frac{24}{32} = \frac{3}{4} = 0.75
+$$
+
+The centroid is at (2.4, 0.75). Notice it's shifted right of center because the curve y = √x puts more area on the right side of the region.
+
+**Example 3: Hydrostatic force on a submerged plate**
+
+A rectangular plate is 2 m wide and 3 m tall, submerged vertically with its top edge 1 m below the water surface. Find the total force on one side.
+
+import FluidForceDiagram from "../../../components/FluidForceDiagram.astro";
+
+<FluidForceDiagram />
+
+Set up coordinates with y measuring depth from the surface. The plate runs from y = 1 to y = 4. At depth y, the pressure is ρgy and the width is a constant 2 m.
+
+$$
+F = \int_1^4 \rho g \cdot y \cdot 2\,dy = 2(1000)(9.8)\int_1^4 y\,dy
+$$
+
+$$
+= 19600\left[\frac{y^2}{2}\right]_1^4 = 19600\left(\frac{16}{2} - \frac{1}{2}\right) = 19600\cdot\frac{15}{2} = 147{,}000 \text{ N}
+$$
+
+That's 147 kN of force. The bottom of the plate experiences much more pressure than the top, which is why you can't just use the average depth and multiply. Well, you actually can for a rectangle (the average depth is 2.5 m, and 2.5 times 2 times ρg times 3 gives the same answer), but for non-rectangular shapes you need the integral.
+
+## Real-World Application
+
+These physics applications show up everywhere in engineering:
+
+- Civil engineers calculate hydrostatic force to design dams, retaining walls, and underwater structures
+- Mechanical engineers use pumping work calculations to size motors and pumps for water systems
+- Center of mass determines where to support a structure so it doesn't tip over
+- Game engines use similar calculations for buoyancy, rope physics, and realistic fluid simulation
+
+:::note[You've Got This]
+All three of these problems follow the same pattern: slice the object into thin pieces, figure out the contribution of each piece, and integrate. For pumping work, each slice has a weight and a distance. For center of mass, each slice has a position and an area. For fluid force, each strip has a pressure and a width. Set up the slice, write the integral, evaluate. The setup is the hard part, and a good diagram makes it much easier.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="calculus2-physics-applications"
+  questions={[
+    {
+      id: "q1",
+      text: "When calculating pumping work, each thin slice contributes",
+      options: [
+        "weight times horizontal distance",
+        "weight times the distance it must be lifted",
+        "pressure times area",
+        "density times volume only",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Each slice has a weight (ρg times volume) and must be lifted a certain distance to exit the tank.",
+    },
+    {
+      id: "q2",
+      text: "The centroid of a region is",
+      options: [
+        "always at the geometric center",
+        "the point where the region would balance",
+        "the highest point of the curve",
+        "the midpoint of the x-interval",
+      ],
+      correctIndex: 1,
+      explanation:
+        "The centroid is the balance point, found by weighting position by area.",
+    },
+    {
+      id: "q3",
+      text: "Hydrostatic pressure at depth h in water is",
+      options: ["$\\rho h$", "$\\rho g / h$", "$\\rho g h$", "$g h / \\rho$"],
+      correctIndex: 2,
+      explanation: "Pressure equals density times gravity times depth.",
+    },
+    {
+      id: "q4",
+      text: "In the pumping problem, slices near the bottom of the tank require",
+      options: [
+        "less work because they weigh less",
+        "the same work as slices near the top",
+        "no work at all",
+        "more work because they must be lifted farther",
+      ],
+      correctIndex: 3,
+      explanation:
+        "Bottom slices travel the greatest distance to reach the top of the tank.",
+    },
+    {
+      id: "q5",
+      text: "The common strategy for all three physics applications is to",
+      options: [
+        "use only the average value",
+        "differentiate the force function",
+        "slice the object, find each piece's contribution, and integrate",
+        "multiply total mass by total distance",
+      ],
+      correctIndex: 2,
+      explanation:
+        "Slicing and integrating is the universal approach for variable quantities in physics.",
+    },
+  ]}
+/>

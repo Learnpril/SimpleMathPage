@@ -1,0 +1,114 @@
+---
+/**
+ * PumpWorkDiagram — cross-section of a cylindrical tank (radius 2, height 6)
+ * showing a thin horizontal slice at height y being lifted (6 - y) to the top.
+ * Arrows show the lift distance. Water shaded blue, slice highlighted.
+ */
+const w = 340;
+const h = 320;
+const pad = 45;
+
+// Tank dimensions in diagram coords
+const tankL = pad + 40;
+const tankR = w - pad - 40;
+const tankW = tankR - tankL;
+const tankTop = pad + 20;
+const tankBot = h - pad - 10;
+const tankH = tankBot - tankTop;
+
+// Slice at y = 2 (from bottom), so diagram y = tankBot - (2/6)*tankH
+const sliceY = tankBot - (2 / 6) * tankH;
+const sliceH = 8;
+
+// Arrow from slice to top
+const arrowX = tankR + 28;
+---
+
+<figure class="pump" role="img" aria-label="Cross-section of cylindrical tank showing a water slice at height y being pumped to the top">
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <marker id="pump-arrow-up" markerWidth="8" markerHeight="6" refX="4" refY="0" orient="auto">
+        <polygon points="0,6 4,0 8,6" class="pump-marker-fill" />
+      </marker>
+      <marker id="pump-arrow-dn" markerWidth="8" markerHeight="6" refX="4" refY="6" orient="auto">
+        <polygon points="0,0 4,6 8,0" class="pump-marker-fill" />
+      </marker>
+    </defs>
+
+    {/* Water fill */}
+    <rect x={tankL} y={tankTop} width={tankW} height={tankH}
+          class="pump-water" rx="2" />
+
+    {/* Tank walls */}
+    <line x1={tankL} y1={tankTop} x2={tankL} y2={tankBot} class="pump-wall" stroke-width="2.5" />
+    <line x1={tankR} y1={tankTop} x2={tankR} y2={tankBot} class="pump-wall" stroke-width="2.5" />
+    <line x1={tankL} y1={tankBot} x2={tankR} y2={tankBot} class="pump-wall" stroke-width="2.5" />
+
+    {/* Open top (dashed) */}
+    <line x1={tankL} y1={tankTop} x2={tankR} y2={tankTop}
+          class="pump-top" stroke-width="1.5" stroke-dasharray="6,4" />
+
+    {/* Highlighted slice */}
+    <rect x={tankL + 2} y={sliceY - sliceH / 2} width={tankW - 4} height={sliceH}
+          class="pump-slice" rx="1" />
+
+    {/* dy label */}
+    <text class="pump-label" x={tankL - 8} y={sliceY + 4} font-size="11" text-anchor="end">y</text>
+
+    {/* Lift distance arrow: slice to top */}
+    <line x1={arrowX} y1={sliceY} x2={arrowX} y2={tankTop}
+          class="pump-lift" stroke-width="1.5"
+          marker-start="url(#pump-arrow-dn)" marker-end="url(#pump-arrow-up)" />
+    <text class="pump-label" x={arrowX + 10} y={(sliceY + tankTop) / 2 + 4} font-size="11" text-anchor="start">6 − y</text>
+
+    {/* Height label on left */}
+    <line x1={tankL - 20} y1={tankTop} x2={tankL - 20} y2={tankBot}
+          class="pump-dim" stroke-width="1" />
+    <line x1={tankL - 25} y1={tankTop} x2={tankL - 15} y2={tankTop} class="pump-dim" stroke-width="1" />
+    <line x1={tankL - 25} y1={tankBot} x2={tankL - 15} y2={tankBot} class="pump-dim" stroke-width="1" />
+    <text class="pump-label" x={tankL - 24} y={(tankTop + tankBot) / 2 + 4} font-size="11" text-anchor="end">6 m</text>
+
+    {/* Width label on bottom */}
+    <line x1={tankL} y1={tankBot + 18} x2={tankR} y2={tankBot + 18}
+          class="pump-dim" stroke-width="1" />
+    <text class="pump-label" x={(tankL + tankR) / 2} y={tankBot + 32} font-size="11" text-anchor="middle">r = 2 m</text>
+  </svg>
+  <div class="pump-legend">
+    <span class="pump-leg-item"><span class="pump-swatch pump-sw-water"></span> water in tank</span>
+    <span class="pump-leg-item"><span class="pump-swatch pump-sw-slice"></span> thin slice at height y</span>
+    <span class="pump-leg-item"><span class="pump-swatch pump-sw-lift"></span> lift distance (6 − y)</span>
+  </div>
+</figure>
+
+<style>
+  .pump { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .pump svg { max-width:100%; height:auto; }
+  .pump-water { fill:rgba(88,166,255,0.15); }
+  .pump-wall { stroke:#888; }
+  .pump-top { stroke:#888; }
+  .pump-slice { fill:rgba(240,136,62,0.45); stroke:#f0883e; stroke-width:1.5; }
+  .pump-lift { stroke:#f0883e; }
+  .pump-marker-fill { fill:#f0883e; }
+  .pump-dim { stroke:#666; }
+  .pump-label { fill:#999; font-family:'Libre Baskerville',Georgia,serif; }
+  .pump-legend {
+    display:flex; gap:1rem; flex-wrap:wrap; justify-content:center;
+    margin-top:0.5rem; font-family:'Libre Baskerville',Georgia,serif; font-size:0.82rem;
+  }
+  .pump-leg-item { display:flex; align-items:center; gap:0.35rem; }
+  .pump-swatch { display:inline-block; width:18px; height:12px; border-radius:2px; }
+  .pump-sw-water { background:rgba(88,166,255,0.3); }
+  .pump-sw-slice { background:rgba(240,136,62,0.5); border:1.5px solid #f0883e; }
+  .pump-sw-lift { background:#f0883e; height:3px; }
+  :global([data-theme="light"]) .pump-water { fill:rgba(5,80,174,0.1); }
+  :global([data-theme="light"]) .pump-wall { stroke:#666; }
+  :global([data-theme="light"]) .pump-top { stroke:#666; }
+  :global([data-theme="light"]) .pump-slice { fill:rgba(179,89,0,0.3); stroke:#b35900; }
+  :global([data-theme="light"]) .pump-lift { stroke:#b35900; }
+  :global([data-theme="light"]) .pump-marker-fill { fill:#b35900; }
+  :global([data-theme="light"]) .pump-dim { stroke:#999; }
+  :global([data-theme="light"]) .pump-label { fill:#555; }
+  :global([data-theme="light"]) .pump-sw-water { background:rgba(5,80,174,0.18); }
+  :global([data-theme="light"]) .pump-sw-slice { background:rgba(179,89,0,0.35); border-color:#b35900; }
+  :global([data-theme="light"]) .pump-sw-lift { background:#b35900; }
+</style>

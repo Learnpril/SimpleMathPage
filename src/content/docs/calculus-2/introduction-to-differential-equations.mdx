@@ -1,8 +1,217 @@
 ---
-title: "Introduction to Differential Equations"
-description: "Understand what differential equations are and their basic types"
+title: Introduction to Differential Equations
+description: Understand what differential equations are, their basic types, and why they matter
 sidebar:
   order: 13
 ---
 
-Content coming soon.
+## What You'll Learn
+
+In this lesson you'll get an introduction to differential equations, which are equations that involve derivatives of an unknown function. You'll learn how to classify them and see why they're everywhere in science and engineering.
+
+## The Concept
+
+A differential equation is an equation that relates a function to one or more of its derivatives. Instead of solving for a number, you solve for a function.
+
+### Classification
+
+By type:
+
+- Ordinary differential equation (ODE): involves derivatives with respect to one variable
+- Partial differential equation (PDE): involves partial derivatives with respect to multiple variables
+
+By order (the highest derivative that appears):
+
+First-order: the highest derivative is the first derivative
+
+$$
+\frac{dy}{dx} = f(x, y)
+$$
+
+Second-order: the highest derivative is the second derivative
+
+$$
+\frac{d^2y}{dx^2} = f\!\left(x,\, y,\, \frac{dy}{dx}\right)
+$$
+
+By linearity:
+
+- Linear: the unknown function and its derivatives appear only to the first power, with no products like y times dy/dx
+- Nonlinear: anything else
+
+### Solutions
+
+The solution to a differential equation is a function (or family of functions) that satisfies the equation. A general solution contains arbitrary constants. An initial condition pins down a specific solution from that family.
+
+### Slope Fields
+
+A slope field is a visual tool for understanding a first-order ODE. At each point (x, y) in the plane, you draw a short line segment whose slope equals the value of dy/dx at that point. The result is a grid of tiny direction indicators that show you where a solution curve would go if it passed through that location.
+
+Think of it like a current in a river. If you drop a leaf at any point, it follows the flow. A solution curve does the same thing: it threads through the slope field, always matching the local slope. This means you can sketch approximate solutions without ever solving the equation algebraically.
+
+Slope fields are especially useful when an equation has no closed-form solution. You can still see the qualitative behavior: where solutions grow, shrink, level off, or diverge.
+
+We'll dig deeper into slope fields, solution techniques, and more advanced differential equations in the dedicated Differential Equations section. For now in Calculus 2, the goal is to get comfortable with the basic vocabulary, recognize the main types, and solve the simpler first-order equations.
+
+## Worked Examples
+
+**Example 1: A simple first-order ODE**
+
+Solve dy/dx = 2x.
+
+This is asking: what function has a derivative of 2x? Just integrate both sides with respect to x.
+
+$$
+y = \int 2x\,dx = x^2 + C
+$$
+
+The constant C gives a whole family of parabolas. Each value of C shifts the parabola up or down. The slope field below shows the direction field for this equation, with three solution curves for C = -2, 0, and 2.
+
+import SlopeFieldBasic from "../../../components/SlopeFieldBasic.astro";
+
+<SlopeFieldBasic />
+
+Notice how every solution curve follows the tiny slope segments. At x = 0 the slope is 0 (horizontal), and the slopes get steeper as you move away from the y-axis.
+
+**Example 2: Exponential growth**
+
+The rate of change of a population P is proportional to the population itself
+
+$$
+\frac{dP}{dt} = kP
+$$
+
+where k is a positive constant. Separate variables by dividing both sides by P
+
+$$
+\frac{1}{P}\,dP = k\,dt
+$$
+
+Integrate both sides
+
+$$
+\ln|P| = kt + C_1
+$$
+
+Exponentiate
+
+$$
+P = e^{kt + C_1} = e^{C_1}\cdot e^{kt} = P_0\,e^{kt}
+$$
+
+where P₀ = e^(C₁) is the initial population at t = 0. This is the exponential growth model. If k is negative, you get exponential decay instead.
+
+**Example 3: Verifying a solution**
+
+Verify that y = A cos x + B sin x is a solution to the second-order ODE
+
+$$
+\frac{d^2y}{dx^2} + y = 0
+$$
+
+Take the first derivative
+
+$$
+\frac{dy}{dx} = -A\sin x + B\cos x
+$$
+
+Take the second derivative
+
+$$
+\frac{d^2y}{dx^2} = -A\cos x - B\sin x
+$$
+
+Now substitute into the equation
+
+$$
+(-A\cos x - B\sin x) + (A\cos x + B\sin x) = 0
+$$
+
+Everything cancels. The equation is satisfied for any values of A and B, so y = A cos x + B sin x is the general solution. This is the equation for simple harmonic motion, like a mass on a spring or a pendulum.
+
+## Real-World Application
+
+Differential equations are the language of change:
+
+- Physics uses them for motion, waves, electricity, and heat flow
+- Biology models population growth, disease spread, and chemical reactions with DEs
+- Engineering relies on them for control systems, circuit analysis, and structural dynamics
+- Game engines solve differential equations every frame for physics simulation, spring-damper systems, and smooth AI movement
+
+:::note[You've Got This]
+Differential equations can look intimidating, but the core idea is simple: they describe how things change. In Calculus 2 we focus on first-order ODEs that can be solved by direct integration, separation of variables, or integrating factors. The most important skill is recognizing what type of equation you're looking at and choosing the right technique. You already know how to integrate, so you're more prepared than you think.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="calculus2-introduction-to-differential-equations"
+  questions={[
+    {
+      id: "q1",
+      text: "A differential equation relates a function to",
+      options: [
+        "its average value",
+        "its integral only",
+        "one or more of its derivatives",
+        "a system of algebraic equations",
+      ],
+      correctIndex: 2,
+      explanation:
+        "Differential equations involve derivatives of an unknown function.",
+    },
+    {
+      id: "q2",
+      text: "The general solution to dy/dx = 2x is",
+      options: [
+        "$y = 2x + C$",
+        "$y = x^2 + C$",
+        "$y = 2x^2 + C$",
+        "$y = x^3 + C$",
+      ],
+      correctIndex: 1,
+      explanation: "Integrate 2x to get x² + C.",
+    },
+    {
+      id: "q3",
+      text: "The order of a differential equation is determined by",
+      options: [
+        "the number of terms",
+        "the degree of the polynomial",
+        "the highest derivative that appears",
+        "the number of constants",
+      ],
+      correctIndex: 2,
+      explanation:
+        "A second-order equation has d²y/dx² as its highest derivative.",
+    },
+    {
+      id: "q4",
+      text: "The solution to dP/dt = kP with P(0) = P₀ is",
+      options: [
+        "$P = P_0 + kt$",
+        "$P = P_0\\,e^{kt}$",
+        "$P = kt^2$",
+        "$P = P_0\\cos(kt)$",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Separating variables and integrating gives exponential growth.",
+    },
+    {
+      id: "q5",
+      text: "A slope field shows",
+      options: [
+        "the area under a curve",
+        "the second derivative at each point",
+        "the direction a solution curve would travel at each point",
+        "only the equilibrium solutions",
+      ],
+      correctIndex: 2,
+      explanation:
+        "Each segment shows the slope dy/dx at that point, so solution curves follow the field.",
+    },
+  ]}
+/>

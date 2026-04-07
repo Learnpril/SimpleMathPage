@@ -1,8 +1,194 @@
 ---
-title: "Sequences and Series Basics"
-description: "Understand sequences, series, and partial sums"
+title: Sequences and Series Basics
+description: Understand sequences, series, partial sums, and the difference between convergence and divergence
 sidebar:
   order: 16
 ---
 
-Content coming soon.
+## What You'll Learn
+
+In this lesson you'll learn the fundamentals of sequences and series: what they are, how partial sums work, and the critical distinction between convergence and divergence.
+
+## The Concept
+
+### Sequences
+
+A sequence is an ordered list of numbers, usually defined by a formula
+
+$$
+a_1,\, a_2,\, a_3,\, \dots \quad \text{written as } \{a_n\}
+$$
+
+The big question is: what happens as n gets large? If the terms approach a specific number L, the sequence converges to L. If they don't settle down, the sequence diverges.
+
+### Series
+
+A series is what you get when you add up the terms of a sequence
+
+$$
+\sum_{n=1}^{\infty} a_n = a_1 + a_2 + a_3 + \cdots
+$$
+
+### Partial Sums
+
+You can't literally add infinitely many numbers at once. Instead, define the nth partial sum
+
+$$
+S_n = a_1 + a_2 + \cdots + a_n
+$$
+
+The series converges if the sequence of partial sums has a finite limit. If the partial sums keep growing or oscillating without settling, the series diverges.
+
+import ConvergeDivergeDiagram from "../../../components/ConvergeDivergeDiagram.astro";
+
+<ConvergeDivergeDiagram />
+
+### Key Series to Know
+
+Geometric series with first term a and common ratio r
+
+$$
+\sum_{n=0}^{\infty} ar^n = \frac{a}{1 - r} \quad \text{when } |r| \lt 1
+$$
+
+This converges only when the absolute value of r is less than 1. If r is 1 or larger, the terms don't shrink and the sum blows up.
+
+Harmonic series
+
+$$
+\sum_{n=1}^{\infty} \frac{1}{n} = 1 + \frac{1}{2} + \frac{1}{3} + \frac{1}{4} + \cdots
+$$
+
+This one diverges, even though the terms go to zero. The terms shrink too slowly for the sum to stay finite.
+
+## Worked Examples
+
+**Example 1: Limit of a sequence**
+
+Find the limit of the sequence n/(n + 1) as n approaches infinity.
+
+Divide numerator and denominator by n
+
+$$
+\lim_{n \to \infty} \frac{n}{n + 1} = \lim_{n \to \infty} \frac{1}{1 + \frac{1}{n}} = \frac{1}{1 + 0} = 1
+$$
+
+The terms get closer and closer to 1 but never quite reach it: 1/2, 2/3, 3/4, 4/5, ...
+
+**Example 2: Geometric series**
+
+Find the sum of the series
+
+$$
+\sum_{n=1}^{\infty} \left(\frac{1}{2}\right)^n = \frac{1}{2} + \frac{1}{4} + \frac{1}{8} + \frac{1}{16} + \cdots
+$$
+
+This is geometric with first term a = 1/2 and ratio r = 1/2. Since r is less than 1 in absolute value, it converges
+
+$$
+S = \frac{a}{1 - r} = \frac{\frac{1}{2}}{1 - \frac{1}{2}} = \frac{\frac{1}{2}}{\frac{1}{2}} = 1
+$$
+
+The partial sums approach 1: 0.5, 0.75, 0.875, 0.9375, ... getting closer with each term.
+
+import PartialSumsGraph from "../../../components/PartialSumsGraph.astro";
+
+<PartialSumsGraph />
+
+The blue dots (geometric series) level off at 1. The red dots (harmonic series) keep climbing, even though they slow down. That's the difference between convergence and divergence.
+
+**Example 3: The harmonic series diverges**
+
+Show that the harmonic series diverges.
+
+Group the terms
+
+$$
+1 + \frac{1}{2} + \left(\frac{1}{3} + \frac{1}{4}\right) + \left(\frac{1}{5} + \frac{1}{6} + \frac{1}{7} + \frac{1}{8}\right) + \cdots
+$$
+
+Each group sums to at least 1/2
+
+$$
+\frac{1}{3} + \frac{1}{4} \geq \frac{1}{4} + \frac{1}{4} = \frac{1}{2}
+$$
+
+$$
+\frac{1}{5} + \frac{1}{6} + \frac{1}{7} + \frac{1}{8} \geq \frac{1}{8} + \frac{1}{8} + \frac{1}{8} + \frac{1}{8} = \frac{1}{2}
+$$
+
+Since you keep adding at least 1/2 with each doubling group, the partial sums grow without bound. The series diverges even though the individual terms go to zero. This is a classic example showing that terms going to zero is necessary but not sufficient for convergence.
+
+## Real-World Application
+
+Sequences and series are everywhere in computing and science:
+
+- Game engines use Taylor series to approximate trig functions and square roots quickly
+- Fourier series decompose sound waves and images into frequency components
+- Algorithm analysis uses series to measure total running time of loops
+- Finance uses geometric series for compound interest and annuity calculations
+- Machine learning uses convergent iterative methods (gradient descent) that are analyzed with series
+
+:::note[You've Got This]
+Sequences are lists, series are sums. The key question is always: do the partial sums settle down to a finite number? Geometric series are the friendliest because you have a clean formula. The harmonic series is the classic trap: the terms go to zero but the sum still diverges. Everything in the next few lessons builds on these definitions, so make sure you're comfortable with convergence vs divergence before moving on.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="calculus2-sequences-and-series-basics"
+  questions={[
+    {
+      id: "q1",
+      text: "A series $\\sum a_n$ converges if",
+      options: [
+        "the terms $a_n$ go to zero",
+        "the sequence of partial sums $\\{S_n\\}$ approaches a finite limit",
+        "the first term is positive",
+        "it has finitely many terms",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Convergence is defined by the partial sums having a finite limit. Terms going to zero is necessary but not sufficient.",
+    },
+    {
+      id: "q2",
+      text: "The geometric series $\\sum ar^n$ converges when",
+      options: ["$r = 1$", "$r \\gt 1$", "$|r| \\lt 1$", "$a = 0$"],
+      correctIndex: 2,
+      explanation:
+        "The ratio must have absolute value less than 1 for the terms to shrink fast enough.",
+    },
+    {
+      id: "q3",
+      text: "The sum of $\\sum_{n=1}^{\\infty} (1/2)^n$ is",
+      options: ["$2$", "$1$", "$1/2$", "it diverges"],
+      correctIndex: 1,
+      explanation:
+        "Geometric series with a = 1/2 and r = 1/2 gives (1/2)/(1 - 1/2) = 1.",
+    },
+    {
+      id: "q4",
+      text: "The harmonic series $\\sum 1/n$",
+      options: [
+        "converges to 1",
+        "converges to $\\pi^2/6$",
+        "converges to $\\ln 2$",
+        "diverges",
+      ],
+      correctIndex: 3,
+      explanation:
+        "Despite the terms going to zero, the partial sums grow without bound.",
+    },
+    {
+      id: "q5",
+      text: "The limit of the sequence $\\frac{n}{n+1}$ as $n \\to \\infty$ is",
+      options: ["$0$", "$1$", "$\\infty$", "does not exist"],
+      correctIndex: 1,
+      explanation:
+        "Dividing top and bottom by n gives 1/(1 + 1/n), which approaches 1.",
+    },
+  ]}
+/>

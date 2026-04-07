@@ -1,8 +1,191 @@
 ---
-title: "Power Series"
-description: "Understand power series and their intervals of convergence"
+title: Power Series
+description: Learn what power series are, how to find their radius and interval of convergence
 sidebar:
   order: 19
 ---
 
-Content coming soon.
+## What You'll Learn
+
+In this lesson you'll learn what a power series is, how to find where it converges, and why power series are one of the most useful tools in all of mathematics.
+
+## The Concept
+
+A power series centered at a is an infinite polynomial
+
+$$
+\sum_{n=0}^{\infty} c_n(x - a)^n = c_0 + c_1(x - a) + c_2(x - a)^2 + c_3(x - a)^3 + \cdots
+$$
+
+The coefficients c₀, c₁, c₂, ... are constants, and a is the center. When a = 0, you get the simpler form
+
+$$
+\sum_{n=0}^{\infty} c_n x^n = c_0 + c_1 x + c_2 x^2 + \cdots
+$$
+
+### Radius and Interval of Convergence
+
+Every power series has a radius of convergence R such that
+
+$$
+\text{converges when } |x - a| \lt R \qquad \text{diverges when } |x - a| \gt R
+$$
+
+R can be 0 (converges only at the center), a finite positive number, or infinity (converges everywhere).
+
+To find R, apply the ratio test to the absolute values of the terms. At the endpoints where the distance from center equals exactly R, you have to test each one separately using the convergence tests from previous lessons.
+
+The interval of convergence is the full set of x values where the series converges, including any endpoints that pass their individual tests.
+
+## Worked Examples
+
+**Example 1: Radius of convergence equals zero**
+
+Find the radius of convergence of
+
+$$
+\sum_{n=0}^{\infty} n!\,x^n
+$$
+
+Apply the ratio test
+
+$$
+L = \lim_{n \to \infty} \left|\frac{(n+1)!\,x^{n+1}}{n!\,x^n}\right| = \lim_{n \to \infty} (n+1)|x| = \infty
+$$
+
+For any x other than 0, the limit is infinity, which is greater than 1. The series only converges at x = 0, so R = 0. Factorials grow so fast that they overpower any power of x.
+
+**Example 2: Radius of convergence equals infinity**
+
+Find the radius of convergence of
+
+$$
+\sum_{n=0}^{\infty} \frac{x^n}{n!}
+$$
+
+This is the series for e to the x. Apply the ratio test
+
+$$
+L = \lim_{n \to \infty} \left|\frac{x^{n+1}/(n+1)!}{x^n/n!}\right| = \lim_{n \to \infty} \frac{|x|}{n+1} = 0
+$$
+
+The limit is 0 for every value of x, which is less than 1. The series converges for all real x, so R = infinity. The factorial in the denominator shrinks the terms fast enough to overpower any power of x.
+
+**Example 3: Finite radius with endpoint analysis**
+
+Find the interval of convergence of
+
+$$
+\sum_{n=1}^{\infty} \frac{(-1)^n(x - 2)^n}{n}
+$$
+
+Apply the ratio test
+
+$$
+L = \lim_{n \to \infty} \left|\frac{(x-2)^{n+1}/(n+1)}{(x-2)^n/n}\right| = \lim_{n \to \infty} |x - 2| \cdot \frac{n}{n+1} = |x - 2|
+$$
+
+For convergence we need L less than 1, so the distance from center must be less than 1. The radius is R = 1, and the open interval is 1 less than x less than 3.
+
+Now check the endpoints.
+
+At x = 1: substitute x - 2 = -1
+
+$$
+\sum_{n=1}^{\infty} \frac{(-1)^n(-1)^n}{n} = \sum_{n=1}^{\infty} \frac{1}{n}
+$$
+
+This is the harmonic series, which diverges.
+
+At x = 3: substitute x - 2 = 1
+
+$$
+\sum_{n=1}^{\infty} \frac{(-1)^n}{n}
+$$
+
+This is the alternating harmonic series, which converges (conditionally).
+
+import IntervalOfConvergence from "../../../components/IntervalOfConvergence.astro";
+
+<IntervalOfConvergence />
+
+The interval of convergence is (1, 3]. The left endpoint x = 1 is excluded (harmonic series diverges) and the right endpoint x = 3 is included (alternating harmonic converges).
+
+## Real-World Application
+
+Power series are everywhere in computing and science:
+
+- Game engines replace expensive functions (sin, cos, exp) with truncated power series for speed
+- Physics uses power series to solve differential equations that have no closed-form solution
+- Signal processing represents signals as power series (z-transforms)
+- Machine learning uses Taylor expansions to analyze and optimize loss functions
+- Computer graphics uses polynomial approximations for lighting and shading models
+
+:::note[You've Got This]
+Power series are infinite polynomials, and the radius of convergence tells you how far from the center they're valid. The ratio test finds R quickly. The only tricky part is the endpoints, where you need to test each one individually. This lesson sets up Taylor and Maclaurin series in the next lesson, where you'll learn how to build power series for specific functions.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="calculus2-power-series"
+  questions={[
+    {
+      id: "q1",
+      text: "A power series centered at a has the form",
+      options: [
+        "$\\sum c_n(x - a)^n$",
+        "$\\sum c_n x^n$ only",
+        "$\\sum (-1)^n x^n$",
+        "$\\sum 1/n^x$",
+      ],
+      correctIndex: 0,
+      explanation:
+        "The general form allows any center a with coefficients c_n.",
+    },
+    {
+      id: "q2",
+      text: "The radius of convergence of $\\sum x^n/n!$ is",
+      options: ["$0$", "$1$", "$2$", "$\\infty$"],
+      correctIndex: 3,
+      explanation:
+        "The ratio test gives L = 0 for all x, so it converges everywhere.",
+    },
+    {
+      id: "q3",
+      text: "The radius of convergence of $\\sum n!\\,x^n$ is",
+      options: ["$\\infty$", "$1$", "$0$", "$n$"],
+      correctIndex: 2,
+      explanation:
+        "The ratio gives infinity for any nonzero x, so it only converges at x = 0.",
+    },
+    {
+      id: "q4",
+      text: "At the endpoints of the interval of convergence, you should",
+      options: [
+        "assume convergence",
+        "assume divergence",
+        "test each endpoint separately",
+        "skip them entirely",
+      ],
+      correctIndex: 2,
+      explanation:
+        "The ratio test is inconclusive at the boundary, so each endpoint needs its own test.",
+    },
+    {
+      id: "q5",
+      text: "Power series are used in game engines primarily to",
+      options: [
+        "replace expensive functions with fast polynomial approximations",
+        "draw sprites",
+        "handle collision detection",
+        "manage memory allocation",
+      ],
+      correctIndex: 0,
+      explanation:
+        "Truncated series approximate sin, cos, exp, etc. much faster than computing them directly.",
+    },
+  ]}
+/>

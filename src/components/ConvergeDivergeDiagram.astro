@@ -1,0 +1,115 @@
+---
+/**
+ * ConvergeDivergeDiagram — three mini plots side by side showing:
+ * 1. Converging partial sums (settling to a limit)
+ * 2. Diverging partial sums (growing without bound)
+ * 3. Oscillating partial sums (bouncing, no limit)
+ */
+const pw = 130; // each panel width
+const ph = 110; // each panel height
+const gap = 16;
+const w = pw * 3 + gap * 2 + 40;
+const h = ph + 60;
+const padL = 20;
+const padT = 15;
+
+// Helper: map data coords to SVG coords within a panel
+const makeMap = (ox: number) => {
+  const sx = (x: number) => ox + (x / 12) * (pw - 10);
+  const sy = (y: number) => padT + ph - (y / 1.1) * ph;
+  return { sx, sy };
+};
+
+// Panel 1: converging — S_n = 1 - (1/2)^n → 1
+const p1x = padL;
+const m1 = makeMap(p1x);
+const conv: { x: number; y: number }[] = [];
+let s1 = 0;
+for (let n = 1; n <= 12; n++) {
+  s1 += Math.pow(0.5, n);
+  conv.push({ x: n, y: s1 });
+}
+
+// Panel 2: diverging — S_n = sum 1/sqrt(k), grows
+const p2x = padL + pw + gap;
+const m2 = makeMap(p2x);
+const divg: { x: number; y: number }[] = [];
+let s2 = 0;
+for (let n = 1; n <= 12; n++) {
+  s2 += 1 / Math.sqrt(n);
+  divg.push({ x: n, y: s2 / 6 }); // scale to fit
+}
+
+// Panel 3: oscillating — S_n = sum (-1)^(n+1) = 1, 0, 1, 0, ...
+const p3x = padL + (pw + gap) * 2;
+const m3 = makeMap(p3x);
+const osc: { x: number; y: number }[] = [];
+let s3 = 0;
+for (let n = 1; n <= 12; n++) {
+  s3 += Math.pow(-1, n + 1);
+  osc.push({ x: n, y: (s3 + 0.2) / 1.4 }); // scale 0 and 1 to fit
+}
+---
+
+<figure class="cdv" role="img" aria-label="Three behaviors of partial sums: converging to a limit, diverging to infinity, and oscillating without settling">
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    {/* Panel 1: Converges */}
+    <rect x={p1x - 4} y={padT - 4} width={pw + 8} height={ph + 8} rx="4" class="cdv-panel" />
+    {/* Limit line */}
+    <line x1={m1.sx(0)} y1={m1.sy(1)} x2={m1.sx(12)} y2={m1.sy(1)}
+          class="cdv-limit" stroke-width="1" stroke-dasharray="4,3" />
+    {/* Dots */}
+    {conv.map(p => (
+      <circle cx={m1.sx(p.x)} cy={m1.sy(p.y)} r="3" class="cdv-conv" />
+    ))}
+    <text class="cdv-label" x={p1x + pw / 2} y={padT + ph + 22} font-size="11" text-anchor="middle">converges</text>
+
+    {/* Panel 2: Diverges */}
+    <rect x={p2x - 4} y={padT - 4} width={pw + 8} height={ph + 8} rx="4" class="cdv-panel" />
+    {divg.map(p => (
+      <circle cx={m2.sx(p.x)} cy={m2.sy(p.y)} r="3" class="cdv-divg" />
+    ))}
+    <text class="cdv-label" x={p2x + pw / 2} y={padT + ph + 22} font-size="11" text-anchor="middle">diverges</text>
+
+    {/* Panel 3: Oscillates */}
+    <rect x={p3x - 4} y={padT - 4} width={pw + 8} height={ph + 8} rx="4" class="cdv-panel" />
+    {osc.map(p => (
+      <circle cx={m3.sx(p.x)} cy={m3.sy(p.y)} r="3" class="cdv-osc" />
+    ))}
+    <text class="cdv-label" x={p3x + pw / 2} y={padT + ph + 22} font-size="11" text-anchor="middle">oscillates (diverges)</text>
+  </svg>
+  <div class="cdv-legend">
+    <span class="cdv-leg-item"><span class="cdv-swatch cdv-sw-conv"></span> settles to a finite limit</span>
+    <span class="cdv-leg-item"><span class="cdv-swatch cdv-sw-divg"></span> grows without bound</span>
+    <span class="cdv-leg-item"><span class="cdv-swatch cdv-sw-osc"></span> bounces, never settles</span>
+  </div>
+</figure>
+
+<style>
+  .cdv { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .cdv svg { max-width:100%; height:auto; }
+  .cdv-panel { fill:rgba(88,166,255,0.04); stroke:#444; stroke-width:1; }
+  .cdv-limit { stroke:#f0883e; }
+  .cdv-conv { fill:#58a6ff; }
+  .cdv-divg { fill:#f47067; }
+  .cdv-osc { fill:#d2a8ff; }
+  .cdv-label { fill:#999; font-family:'Libre Baskerville',Georgia,serif; }
+  .cdv-legend {
+    display:flex; gap:1rem; flex-wrap:wrap; justify-content:center;
+    margin-top:0.5rem; font-family:'Libre Baskerville',Georgia,serif; font-size:0.82rem;
+  }
+  .cdv-leg-item { display:flex; align-items:center; gap:0.35rem; }
+  .cdv-swatch { display:inline-block; border-radius:50%; width:10px; height:10px; }
+  .cdv-sw-conv { background:#58a6ff; }
+  .cdv-sw-divg { background:#f47067; }
+  .cdv-sw-osc { background:#d2a8ff; }
+  :global([data-theme="light"]) .cdv-panel { fill:rgba(5,80,174,0.03); stroke:#ccc; }
+  :global([data-theme="light"]) .cdv-limit { stroke:#b35900; }
+  :global([data-theme="light"]) .cdv-conv { fill:#0550ae; }
+  :global([data-theme="light"]) .cdv-divg { fill:#cf222e; }
+  :global([data-theme="light"]) .cdv-osc { fill:#6639ba; }
+  :global([data-theme="light"]) .cdv-label { fill:#555; }
+  :global([data-theme="light"]) .cdv-sw-conv { background:#0550ae; }
+  :global([data-theme="light"]) .cdv-sw-divg { background:#cf222e; }
+  :global([data-theme="light"]) .cdv-sw-osc { background:#6639ba; }
+</style>

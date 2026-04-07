@@ -1,0 +1,109 @@
+---
+/**
+ * PSeriesGraph — partial sums of 1/n (p=1, diverges) vs 1/n² (p=2, converges)
+ * vs 1/n³ (p=3, converges faster). Shows how p affects convergence.
+ */
+const w = 420;
+const h = 300;
+const pad = 55;
+const gw = w - 2 * pad;
+const gh = h - 2 * pad;
+const xMin = 0, xMax = 20, yMin = 0, yMax = 4.5;
+const sx = (x: number) => pad + ((x - xMin) / (xMax - xMin)) * gw;
+const sy = (y: number) => pad + ((yMax - y) / (yMax - yMin)) * gh;
+
+const N = 19;
+
+// p=1: harmonic (diverges)
+const h1: { x: number; y: number }[] = [];
+let s1 = 0;
+for (let n = 1; n <= N; n++) { s1 += 1 / n; if (s1 <= yMax) h1.push({ x: n, y: s1 }); }
+
+// p=2: converges to pi²/6 ≈ 1.6449
+const h2: { x: number; y: number }[] = [];
+let s2 = 0;
+for (let n = 1; n <= N; n++) { s2 += 1 / (n * n); h2.push({ x: n, y: s2 }); }
+
+// p=3: converges to ~1.202
+const h3: { x: number; y: number }[] = [];
+let s3 = 0;
+for (let n = 1; n <= N; n++) { s3 += 1 / (n * n * n); h3.push({ x: n, y: s3 }); }
+
+const xTicks = [5, 10, 15];
+const yTicks = [1, 2, 3, 4];
+---
+
+<figure class="psr" role="img" aria-label="Partial sums of p-series for p equals 1, 2, and 3 showing divergence versus convergence">
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    {xTicks.map(v => (
+      <line x1={sx(v)} y1={sy(yMin)} x2={sx(v)} y2={sy(yMax)} class="psr-grid" stroke-width="0.5" />
+    ))}
+    {yTicks.map(v => (
+      <line x1={sx(xMin)} y1={sy(v)} x2={sx(xMax)} y2={sy(v)} class="psr-grid" stroke-width="0.5" />
+    ))}
+    <line x1={sx(xMin)} y1={sy(0)} x2={sx(xMax)} y2={sy(0)} class="psr-axis" stroke-width="1.5" />
+    <line x1={sx(0)} y1={sy(yMin)} x2={sx(0)} y2={sy(yMax)} class="psr-axis" stroke-width="1.2" />
+
+    {/* Limit lines */}
+    <line x1={sx(0)} y1={sy(1.6449)} x2={sx(xMax)} y2={sy(1.6449)}
+          class="psr-lim2" stroke-width="1" stroke-dasharray="4,3" />
+    <line x1={sx(0)} y1={sy(1.202)} x2={sx(xMax)} y2={sy(1.202)}
+          class="psr-lim3" stroke-width="1" stroke-dasharray="4,3" />
+
+    {/* p=1 line + dots */}
+    {h1.length > 1 && <polyline points={h1.map(p => `${sx(p.x)},${sy(p.y)}`).join(" ")} fill="none" class="psr-l1" stroke-width="1.5" />}
+    {h1.map(p => <circle cx={sx(p.x)} cy={sy(p.y)} r="3" class="psr-d1" />)}
+
+    {/* p=2 line + dots */}
+    {h2.length > 1 && <polyline points={h2.map(p => `${sx(p.x)},${sy(p.y)}`).join(" ")} fill="none" class="psr-l2" stroke-width="1.5" />}
+    {h2.map(p => <circle cx={sx(p.x)} cy={sy(p.y)} r="3" class="psr-d2" />)}
+
+    {/* p=3 line + dots */}
+    {h3.length > 1 && <polyline points={h3.map(p => `${sx(p.x)},${sy(p.y)}`).join(" ")} fill="none" class="psr-l3" stroke-width="1.5" />}
+    {h3.map(p => <circle cx={sx(p.x)} cy={sy(p.y)} r="3" class="psr-d3" />)}
+
+    {xTicks.map(v => (
+      <text class="psr-tick" x={sx(v)} y={sy(0) + 16} font-size="10" text-anchor="middle">{v}</text>
+    ))}
+    {yTicks.map(v => (
+      <text class="psr-tick" x={sx(0) - 8} y={sy(v) + 4} font-size="10" text-anchor="end">{v}</text>
+    ))}
+    <text class="psr-tick" x={sx(xMax) - 2} y={sy(0) + 16} font-size="10" text-anchor="end">n</text>
+  </svg>
+  <div class="psr-legend">
+    <span class="psr-leg-item"><span class="psr-swatch psr-sw1"></span> p = 1 (diverges)</span>
+    <span class="psr-leg-item"><span class="psr-swatch psr-sw2"></span> p = 2 → π²/6</span>
+    <span class="psr-leg-item"><span class="psr-swatch psr-sw3"></span> p = 3 → 1.202</span>
+  </div>
+</figure>
+
+<style>
+  .psr { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .psr svg { max-width:100%; height:auto; }
+  .psr-grid { stroke:#333; }
+  .psr-axis { stroke:#666; }
+  .psr-l1 { stroke:#f47067; } .psr-d1 { fill:#f47067; }
+  .psr-l2 { stroke:#58a6ff; } .psr-d2 { fill:#58a6ff; }
+  .psr-l3 { stroke:#7ee787; } .psr-d3 { fill:#7ee787; }
+  .psr-lim2 { stroke:#58a6ff; opacity:0.4; }
+  .psr-lim3 { stroke:#7ee787; opacity:0.4; }
+  .psr-tick { fill:#888; font-family:'Libre Baskerville',Georgia,serif; }
+  .psr-legend {
+    display:flex; gap:1rem; flex-wrap:wrap; justify-content:center;
+    margin-top:0.5rem; font-family:'Libre Baskerville',Georgia,serif; font-size:0.82rem;
+  }
+  .psr-leg-item { display:flex; align-items:center; gap:0.35rem; }
+  .psr-swatch { display:inline-block; border-radius:50%; width:10px; height:10px; }
+  .psr-sw1 { background:#f47067; } .psr-sw2 { background:#58a6ff; } .psr-sw3 { background:#7ee787; }
+  :global([data-theme="light"]) .psr-grid { stroke:#ddd; }
+  :global([data-theme="light"]) .psr-axis { stroke:#999; }
+  :global([data-theme="light"]) .psr-l1 { stroke:#cf222e; } :global([data-theme="light"]) .psr-d1 { fill:#cf222e; }
+  :global([data-theme="light"]) .psr-l2 { stroke:#0550ae; } :global([data-theme="light"]) .psr-d2 { fill:#0550ae; }
+  :global([data-theme="light"]) .psr-l3 { stroke:#116329; } :global([data-theme="light"]) .psr-d3 { fill:#116329; }
+  :global([data-theme="light"]) .psr-lim2 { stroke:#0550ae; }
+  :global([data-theme="light"]) .psr-lim3 { stroke:#116329; }
+  :global([data-theme="light"]) .psr-tick { fill:#666; }
+  :global([data-theme="light"]) .psr-sw1 { background:#cf222e; }
+  :global([data-theme="light"]) .psr-sw2 { background:#0550ae; }
+  :global([data-theme="light"]) .psr-sw3 { background:#116329; }
+</style>

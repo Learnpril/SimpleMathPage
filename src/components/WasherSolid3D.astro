@@ -88,6 +88,48 @@
     ]);
     scene.add(new THREE.Line(axisGeo, new THREE.LineBasicMaterial({ color: isDark ? 0x666666 : 0x999999 })));
 
+    // Profile curve: y = x (outer) in the xz=0 plane
+    const outerCurve: THREE.Vector3[] = [];
+    for (let i = 0; i <= 60; i++) {
+      const x = i / 60;
+      outerCurve.push(new THREE.Vector3(x, x, 0));
+    }
+    scene.add(new THREE.Line(
+      new THREE.BufferGeometry().setFromPoints(outerCurve),
+      new THREE.LineBasicMaterial({ color: isDark ? 0x58a6ff : 0x0550ae })
+    ));
+    // Bottom reflection of y = x
+    const outerCurveBot: THREE.Vector3[] = [];
+    for (let i = 0; i <= 60; i++) {
+      const x = i / 60;
+      outerCurveBot.push(new THREE.Vector3(x, -x, 0));
+    }
+    scene.add(new THREE.Line(
+      new THREE.BufferGeometry().setFromPoints(outerCurveBot),
+      new THREE.LineBasicMaterial({ color: isDark ? 0x58a6ff : 0x0550ae })
+    ));
+
+    // Profile curve: y = x² (inner) in the xz=0 plane
+    const innerCurve: THREE.Vector3[] = [];
+    for (let i = 0; i <= 60; i++) {
+      const x = i / 60;
+      innerCurve.push(new THREE.Vector3(x, x * x, 0));
+    }
+    scene.add(new THREE.Line(
+      new THREE.BufferGeometry().setFromPoints(innerCurve),
+      new THREE.LineBasicMaterial({ color: isDark ? 0xf0883e : 0xb35900 })
+    ));
+    // Bottom reflection of y = x²
+    const innerCurveBot: THREE.Vector3[] = [];
+    for (let i = 0; i <= 60; i++) {
+      const x = i / 60;
+      innerCurveBot.push(new THREE.Vector3(x, -(x * x), 0));
+    }
+    scene.add(new THREE.Line(
+      new THREE.BufferGeometry().setFromPoints(innerCurveBot),
+      new THREE.LineBasicMaterial({ color: isDark ? 0xf0883e : 0xb35900 })
+    ));
+
     // Lighting
     scene.add(new THREE.AmbientLight(0xffffff, 0.6));
     const d1 = new THREE.DirectionalLight(0xffffff, 0.8);

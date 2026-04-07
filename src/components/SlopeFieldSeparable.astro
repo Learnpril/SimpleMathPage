@@ -1,0 +1,118 @@
+---
+/**
+ * SlopeFieldSeparable — slope field for dy/dx = 2xy
+ * with three solution curves y = A·e^(x²) for A = 0.2, 0.5, 1.
+ */
+const w = 420;
+const h = 340;
+const pad = 50;
+const gw = w - 2 * pad;
+const gh = h - 2 * pad;
+const xMin = -2.5, xMax = 2.5, yMin = -1, yMax = 6;
+const sx = (x: number) => pad + ((x - xMin) / (xMax - xMin)) * gw;
+const sy = (y: number) => pad + ((yMax - y) / (yMax - yMin)) * gh;
+
+// Slope field segments
+const segLen = 9;
+const segments: { x1: number; y1: number; x2: number; y2: number }[] = [];
+for (let xi = -2; xi <= 2; xi += 0.5) {
+  for (let yi = -0.5; yi <= 5.5; yi += 0.5) {
+    const slope = 2 * xi * yi;
+    const angle = Math.atan(slope);
+    const dx = segLen * Math.cos(angle);
+    const dy = -segLen * Math.sin(angle);
+    const cx = sx(xi);
+    const cy = sy(yi);
+    segments.push({ x1: cx - dx / 2, y1: cy - dy / 2, x2: cx + dx / 2, y2: cy + dy / 2 });
+  }
+}
+
+// Solution curves y = A * e^(x²)
+const curveData = [
+  { a: 0.2, cls: "sfs-c1" },
+  { a: 0.5, cls: "sfs-c2" },
+  { a: 1.0, cls: "sfs-c3" },
+];
+const curvePaths: { pts: string; cls: string }[] = [];
+for (const { a, cls } of curveData) {
+  const pts: string[] = [];
+  for (let i = 0; i <= 200; i++) {
+    const x = xMin + (i / 200) * (xMax - xMin);
+    const y = a * Math.exp(x * x);
+    if (y >= yMin && y <= yMax) {
+      pts.push(`${sx(x)},${sy(y)}`);
+    }
+  }
+  if (pts.length > 1) curvePaths.push({ pts: pts.join(" "), cls });
+}
+
+const xTicks = [-2, -1, 0, 1, 2];
+const yTicks = [0, 1, 2, 3, 4, 5];
+---
+
+<figure class="sfs" role="img" aria-label="Slope field for dy/dx = 2xy with solution curves y = A times e to the x squared">
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    {xTicks.map(v => (
+      <line x1={sx(v)} y1={sy(yMin)} x2={sx(v)} y2={sy(yMax)} class="sfs-grid" stroke-width="0.5" />
+    ))}
+    {yTicks.map(v => (
+      <line x1={sx(xMin)} y1={sy(v)} x2={sx(xMax)} y2={sy(v)} class="sfs-grid" stroke-width="0.5" />
+    ))}
+    <line x1={sx(xMin)} y1={sy(0)} x2={sx(xMax)} y2={sy(0)} class="sfs-axis" stroke-width="1.5" />
+    <line x1={sx(0)} y1={sy(yMin)} x2={sx(0)} y2={sy(yMax)} class="sfs-axis" stroke-width="1.2" />
+
+    {segments.map(s => (
+      <line x1={s.x1} y1={s.y1} x2={s.x2} y2={s.y2} class="sfs-seg" stroke-width="1" />
+    ))}
+
+    {curvePaths.map(c => (
+      <polyline points={c.pts} fill="none" class={c.cls} stroke-width="2.5" />
+    ))}
+
+    {xTicks.filter(v => v !== 0).map(v => (
+      <text class="sfs-tick" x={sx(v)} y={sy(0) + 16} font-size="10" text-anchor="middle">{v}</text>
+    ))}
+    {yTicks.filter(v => v !== 0).map(v => (
+      <text class="sfs-tick" x={sx(0) - 8} y={sy(v) + 4} font-size="10" text-anchor="end">{v}</text>
+    ))}
+  </svg>
+  <div class="sfs-legend">
+    <span class="sfs-leg-item"><span class="sfs-swatch sfs-sw-seg"></span> slope field: dy/dx = 2xy</span>
+    <span class="sfs-leg-item"><span class="sfs-swatch sfs-sw-c1"></span> y = 0.2e^(x²)</span>
+    <span class="sfs-leg-item"><span class="sfs-swatch sfs-sw-c2"></span> y = 0.5e^(x²)</span>
+    <span class="sfs-leg-item"><span class="sfs-swatch sfs-sw-c3"></span> y = e^(x²)</span>
+  </div>
+</figure>
+
+<style>
+  .sfs { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .sfs svg { max-width:100%; height:auto; }
+  .sfs-grid { stroke:#333; }
+  .sfs-axis { stroke:#666; }
+  .sfs-seg { stroke:#666; opacity:0.5; }
+  .sfs-c1 { stroke:#f47067; }
+  .sfs-c2 { stroke:#58a6ff; }
+  .sfs-c3 { stroke:#7ee787; }
+  .sfs-tick { fill:#888; font-family:'Libre Baskerville',Georgia,serif; }
+  .sfs-legend {
+    display:flex; gap:1rem; flex-wrap:wrap; justify-content:center;
+    margin-top:0.5rem; font-family:'Libre Baskerville',Georgia,serif; font-size:0.82rem;
+  }
+  .sfs-leg-item { display:flex; align-items:center; gap:0.35rem; }
+  .sfs-swatch { display:inline-block; width:18px; height:12px; border-radius:2px; }
+  .sfs-sw-seg { background:#666; opacity:0.5; height:3px; }
+  .sfs-sw-c1 { background:#f47067; height:4px; }
+  .sfs-sw-c2 { background:#58a6ff; height:4px; }
+  .sfs-sw-c3 { background:#7ee787; height:4px; }
+  :global([data-theme="light"]) .sfs-grid { stroke:#ddd; }
+  :global([data-theme="light"]) .sfs-axis { stroke:#999; }
+  :global([data-theme="light"]) .sfs-seg { stroke:#999; opacity:0.45; }
+  :global([data-theme="light"]) .sfs-c1 { stroke:#cf222e; }
+  :global([data-theme="light"]) .sfs-c2 { stroke:#0550ae; }
+  :global([data-theme="light"]) .sfs-c3 { stroke:#116329; }
+  :global([data-theme="light"]) .sfs-tick { fill:#666; }
+  :global([data-theme="light"]) .sfs-sw-seg { background:#999; }
+  :global([data-theme="light"]) .sfs-sw-c1 { background:#cf222e; }
+  :global([data-theme="light"]) .sfs-sw-c2 { background:#0550ae; }
+  :global([data-theme="light"]) .sfs-sw-c3 { background:#116329; }
+</style>

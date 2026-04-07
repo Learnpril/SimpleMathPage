@@ -1,0 +1,107 @@
+---
+/**
+ * TaylorErrorGraph — shows the absolute error when approximating e^x
+ * with Taylor polynomials of degree 1, 2, 3, 4 centered at 0.
+ * Error = |e^x - P_n(x)| plotted on a log-ish scale for x in [0, 2].
+ */
+const w = 420;
+const h = 280;
+const pad = 55;
+const gw = w - 2 * pad;
+const gh = h - 2 * pad;
+const xMin = 0, xMax = 2.2, yMin = 0, yMax = 1.2;
+const sx = (x: number) => pad + ((x - xMin) / (xMax - xMin)) * gw;
+const sy = (y: number) => pad + ((yMax - y) / (yMax - yMin)) * gh;
+
+const N = 200;
+const factorial = (n: number): number => { let r = 1; for (let i = 2; i <= n; i++) r *= i; return r; };
+
+const taylorExp = (x: number, deg: number): number => {
+  let sum = 0;
+  for (let k = 0; k <= deg; k++) sum += Math.pow(x, k) / factorial(k);
+  return sum;
+};
+
+const makeErr = (deg: number): string[] => {
+  const pts: string[] = [];
+  for (let i = 0; i <= N; i++) {
+    const x = xMin + (i / N) * (xMax - xMin);
+    const err = Math.abs(Math.exp(x) - taylorExp(x, deg));
+    if (err <= yMax && err >= 0) pts.push(`${sx(x)},${sy(err)}`);
+  }
+  return pts;
+};
+
+const e1 = makeErr(1);
+const e2 = makeErr(2);
+const e3 = makeErr(3);
+const e4 = makeErr(4);
+
+const xTicks = [0.5, 1, 1.5, 2];
+const yTicks = [0.2, 0.4, 0.6, 0.8, 1.0];
+---
+
+<figure class="ter" role="img" aria-label="Error of Taylor polynomial approximations of e to the x showing error decreasing with more terms">
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    {xTicks.map(v => (
+      <line x1={sx(v)} y1={sy(yMin)} x2={sx(v)} y2={sy(yMax)} class="ter-grid" stroke-width="0.5" />
+    ))}
+    {yTicks.map(v => (
+      <line x1={sx(xMin)} y1={sy(v)} x2={sx(xMax)} y2={sy(v)} class="ter-grid" stroke-width="0.5" />
+    ))}
+    <line x1={sx(xMin)} y1={sy(0)} x2={sx(xMax)} y2={sy(0)} class="ter-axis" stroke-width="1.5" />
+    <line x1={sx(0)} y1={sy(yMin)} x2={sx(0)} y2={sy(yMax)} class="ter-axis" stroke-width="1.2" />
+
+    <polyline points={e1.join(" ")} fill="none" class="ter-e1" stroke-width="2" />
+    <polyline points={e2.join(" ")} fill="none" class="ter-e2" stroke-width="2" />
+    <polyline points={e3.join(" ")} fill="none" class="ter-e3" stroke-width="2" />
+    <polyline points={e4.join(" ")} fill="none" class="ter-e4" stroke-width="2" />
+
+    {xTicks.map(v => (
+      <text class="ter-tick" x={sx(v)} y={sy(0) + 16} font-size="10" text-anchor="middle">{v}</text>
+    ))}
+    {yTicks.filter((_, i) => i % 2 === 0).map(v => (
+      <text class="ter-tick" x={sx(0) - 8} y={sy(v) + 4} font-size="10" text-anchor="end">{v}</text>
+    ))}
+    <text class="ter-tick" x={sx(xMax) - 2} y={sy(0) + 16} font-size="10" text-anchor="end">x</text>
+  </svg>
+  <div class="ter-legend">
+    <span class="ter-leg-item"><span class="ter-swatch ter-sw1"></span> degree 1 error</span>
+    <span class="ter-leg-item"><span class="ter-swatch ter-sw2"></span> degree 2</span>
+    <span class="ter-leg-item"><span class="ter-swatch ter-sw3"></span> degree 3</span>
+    <span class="ter-leg-item"><span class="ter-swatch ter-sw4"></span> degree 4</span>
+  </div>
+</figure>
+
+<style>
+  .ter { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .ter svg { max-width:100%; height:auto; }
+  .ter-grid { stroke:#333; }
+  .ter-axis { stroke:#666; }
+  .ter-e1 { stroke:#f47067; }
+  .ter-e2 { stroke:#f0883e; }
+  .ter-e3 { stroke:#58a6ff; }
+  .ter-e4 { stroke:#7ee787; }
+  .ter-tick { fill:#888; font-family:'Libre Baskerville',Georgia,serif; }
+  .ter-legend {
+    display:flex; gap:0.8rem; flex-wrap:wrap; justify-content:center;
+    margin-top:0.5rem; font-family:'Libre Baskerville',Georgia,serif; font-size:0.82rem;
+  }
+  .ter-leg-item { display:flex; align-items:center; gap:0.35rem; }
+  .ter-swatch { display:inline-block; width:18px; height:4px; border-radius:2px; }
+  .ter-sw1 { background:#f47067; }
+  .ter-sw2 { background:#f0883e; }
+  .ter-sw3 { background:#58a6ff; }
+  .ter-sw4 { background:#7ee787; }
+  :global([data-theme="light"]) .ter-grid { stroke:#ddd; }
+  :global([data-theme="light"]) .ter-axis { stroke:#999; }
+  :global([data-theme="light"]) .ter-e1 { stroke:#cf222e; }
+  :global([data-theme="light"]) .ter-e2 { stroke:#b35900; }
+  :global([data-theme="light"]) .ter-e3 { stroke:#0550ae; }
+  :global([data-theme="light"]) .ter-e4 { stroke:#116329; }
+  :global([data-theme="light"]) .ter-tick { fill:#666; }
+  :global([data-theme="light"]) .ter-sw1 { background:#cf222e; }
+  :global([data-theme="light"]) .ter-sw2 { background:#b35900; }
+  :global([data-theme="light"]) .ter-sw3 { background:#0550ae; }
+  :global([data-theme="light"]) .ter-sw4 { background:#116329; }
+</style>

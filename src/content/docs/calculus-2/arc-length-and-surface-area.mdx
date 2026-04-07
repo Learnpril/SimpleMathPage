@@ -1,8 +1,170 @@
 ---
-title: "Arc Length and Surface Area of Revolution"
-description: "Calculate arc length and surface area using integrals"
+title: Arc Length and Surface Area of Revolution
+description: Learn how to calculate arc length of a curve and surface area of a solid of revolution
 sidebar:
   order: 10
 ---
 
-Content coming soon.
+## What You'll Learn
+
+In this lesson you'll learn two applications of integration: finding the length of a curve and finding the surface area when a curve is rotated around an axis.
+
+## The Concept
+
+### Arc length
+
+The length of a curve y = f(x) from x = a to x = b is
+
+$$
+L = \int_a^b \sqrt{1 + \bigl[f'(x)\bigr]^2}\,dx
+$$
+
+The idea: zoom in on a tiny piece of the curve. It looks like a straight line segment with horizontal run dx and vertical rise f'(x) dx. By the Pythagorean theorem, the length of that tiny segment is sqrt(dx² + (f'(x) dx)²) = sqrt(1 + [f'(x)]²) dx. Add up all the tiny segments and you get the integral.
+
+### Surface area of revolution
+
+When you rotate y = f(x) around the x-axis, the surface area is
+
+$$
+S = 2\pi \int_a^b f(x)\,\sqrt{1 + \bigl[f'(x)\bigr]^2}\,dx
+$$
+
+Each tiny arc segment traces out a thin band (like a ring) when rotated. The band has circumference 2 pi f(x) and width equal to the arc length element. Multiply and integrate.
+
+## Worked Example
+
+**Example 1: Arc length of y = x^(3/2)**
+
+Find the arc length of y = x^(3/2) from x = 0 to x = 4.
+
+First find the derivative: f'(x) = (3/2) x^(1/2).
+
+$$
+L = \int_0^4 \sqrt{1 + \left(\frac{3}{2}\sqrt{x}\right)^2}\,dx = \int_0^4 \sqrt{1 + \frac{9x}{4}}\,dx
+$$
+
+Let u = 1 + 9x/4, so du = 9/4 dx, giving dx = 4/9 du. When x = 0, u = 1. When x = 4, u = 10.
+
+$$
+= \frac{4}{9}\int_1^{10} \sqrt{u}\,du = \frac{4}{9}\left[\frac{2}{3}u^{3/2}\right]_1^{10} = \frac{8}{27}\left(10^{3/2} - 1\right) = \frac{8}{27}\left(10\sqrt{10} - 1\right)
+$$
+
+**Example 2: Surface area of y = x rotated around the x-axis**
+
+Find the surface area when y = x from x = 0 to x = 1 is rotated around the x-axis. This creates a cone.
+
+f'(x) = 1, so sqrt(1 + 1²) = sqrt(2).
+
+$$
+S = 2\pi \int_0^1 x\sqrt{2}\,dx = 2\pi\sqrt{2}\left[\frac{x^2}{2}\right]_0^1 = 2\pi\sqrt{2} \cdot \frac{1}{2} = \pi\sqrt{2}
+$$
+
+import ConeSurface3D from "../../../components/ConeSurface3D.astro";
+
+<ConeSurface3D />
+
+The cone surface is what you get when the line y = x spins around the x-axis. The green profile curve shows the generating line.
+
+**Example 3: Surface area of y = sqrt(x) rotated around the x-axis**
+
+Find the surface area when y = sqrt(x) from x = 0 to x = 1 is rotated around the x-axis.
+
+import SolidOfRevolution3D from "../../../components/SolidOfRevolution3D.astro";
+
+<SolidOfRevolution3D />
+
+This is the same trumpet shape from the volumes lesson. Here we're calculating the surface area of the skin, not the volume inside. The green profile curve shows y = sqrt(x).
+
+f'(x) = 1/(2 sqrt(x)), so [f'(x)]² = 1/(4x).
+
+$$
+S = 2\pi \int_0^1 \sqrt{x}\,\sqrt{1 + \frac{1}{4x}}\,dx = 2\pi \int_0^1 \sqrt{x + \frac{1}{4}}\,dx
+$$
+
+Let u = x + 1/4, du = dx. When x = 0, u = 1/4. When x = 1, u = 5/4.
+
+$$
+= 2\pi\left[\frac{2}{3}u^{3/2}\right]_{1/4}^{5/4} = \frac{4\pi}{3}\left[\left(\frac{5}{4}\right)^{3/2} - \left(\frac{1}{4}\right)^{3/2}\right] = \frac{4\pi}{3}\left[\frac{5\sqrt{5}}{8} - \frac{1}{8}\right] = \frac{\pi(5\sqrt{5} - 1)}{6}
+$$
+
+## Real-World Application
+
+Arc length and surface area show up whenever you need to measure curves or curved surfaces.
+
+- In engineering, calculating the length of cable needed to follow a curved path, or the amount of sheet metal to wrap a curved surface
+- In game development, arc length is used for animation timing along curved paths (so objects move at constant speed along a spline)
+- In manufacturing, surface area determines how much paint, coating, or material is needed for a curved part
+- In physics, surface area calculations are essential for heat transfer and fluid dynamics around curved objects
+
+:::note[You've Got This]
+The arc length and surface area formulas both start with the same building block: sqrt(1 + [f'(x)]²). For arc length, you just integrate that. For surface area, you multiply by 2 pi times the radius (the distance from the axis). The integrals can get messy, but the setup is always the same. Many real-world arc length and surface area problems are solved numerically because the integrals don't simplify nicely, and that's completely fine.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="calculus2-arc-length-surface-area"
+  questions={[
+    {
+      id: "q1",
+      text: "The arc length integrand contains",
+      options: [
+        "$[f(x)]^2$",
+        "$\\sqrt{1 + [f'(x)]^2}$",
+        "$2\\pi f(x)$",
+        "Just $f'(x)$",
+      ],
+      correctIndex: 1,
+      explanation:
+        "The Pythagorean theorem on tiny curve segments gives $\\sqrt{1 + [f'(x)]^2}$.",
+    },
+    {
+      id: "q2",
+      text: "The surface area of $y = x$ from 0 to 1 rotated around the x-axis is",
+      options: ["$\\pi$", "$2\\pi$", "$\\pi\\sqrt{2}$", "$\\pi/2$"],
+      correctIndex: 2,
+      explanation: "$2\\pi\\int_0^1 x\\sqrt{2}\\,dx = \\pi\\sqrt{2}$.",
+    },
+    {
+      id: "q3",
+      text: "The surface area formula for rotation around the x-axis includes the factor",
+      options: [
+        "$2\\pi x$",
+        "$\\pi[f(x)]^2$",
+        "$2\\pi f(x)$ (the circumference at each point)",
+        "Just $\\sqrt{1 + [f'(x)]^2}$",
+      ],
+      correctIndex: 2,
+      explanation:
+        "Each thin band has circumference $2\\pi f(x)$ when rotated around the x-axis.",
+    },
+    {
+      id: "q4",
+      text: "Arc length integrals often require",
+      options: [
+        "Only the power rule",
+        "Substitution, trig sub, or numerical methods",
+        "No calculus at all",
+        "Only integration by parts",
+      ],
+      correctIndex: 1,
+      explanation:
+        "The $\\sqrt{1 + [f'(x)]^2}$ factor usually makes the integral non-trivial.",
+    },
+    {
+      id: "q5",
+      text: "In game development, arc length is used for",
+      options: [
+        "Texture mapping only",
+        "Constant-speed animation along curved paths",
+        "Calculating gravity",
+        "Rendering shadows",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Parameterizing a curve by arc length ensures objects move at uniform speed along splines.",
+    },
+  ]}
+/>

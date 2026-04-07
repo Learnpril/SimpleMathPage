@@ -1,0 +1,146 @@
+---
+/**
+ * ShellSqrtX3D — 3D solid: y = sqrt(x) from x=0 to x=4 rotated around the y-axis.
+ * Using shells: the solid looks like a wide bowl/dome shape.
+ * At each x, the shell has radius x and height sqrt(x).
+ * The outer boundary at height y is x = 4, inner boundary is x = y².
+ */
+---
+
+<figure class="rev3d" role="img" aria-label="Interactive 3D solid: y equals square root of x rotated around the y-axis using the shell method">
+  <div class="rev3d-canvas" data-shellsqrt3d></div>
+  <div class="rev3d-hint">Drag to rotate</div>
+</figure>
+
+<script>
+  import * as THREE from "three";
+  import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+
+  function initShellSqrt(container: HTMLElement) {
+    const width = Math.min(container.clientWidth, 500);
+    const height = 320;
+    const isDark = document.documentElement.dataset.theme !== "light";
+
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(isDark ? 0x121212 : 0xf8f9fa);
+
+    const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 100);
+    camera.position.set(6, 4, 6);
+    camera.lookAt(0, 1, 0);
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(width, height);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    container.appendChild(renderer.domElement);
+
+    const controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.target.set(0, 1, 0);
+    controls.update();
+
+    // The solid formed by rotating y = sqrt(x) (0 to 4) around the y-axis.
+    // Equivalently: at height y (0 to 2), the cross-section is a disk from
+    // x = y² to x = 4 (washer around y-axis).
+    // Profile for LatheGeometry (rotates around Y axis natively):
+    // At each y, outer radius = 4, inner radius = y².
+    // We'll show the outer cylinder and inner paraboloid surface.
+
+    const seg = 60;
+
+    // Inner surface: radius = y² at height y (0 to 2)
+    const innerProfile: THREE.Vector2[] = [];
+    for (let i = 0; i <= seg; i++) {
+      const y = (i / seg) * 2;
+      innerProfile.push(new THREE.Vector2(y * y, y));
+    }
+    const innerGeo = new THREE.LatheGeometry(innerProfile, 48);
+    const innerMat = new THREE.MeshPhongMaterial({
+      color: isDark ? 0xf0883e : 0xb35900,
+      transparent: true, opacity: 0.3, side: THREE.DoubleSide,
+    });
+    scene.add(new THREE.Mesh(innerGeo, innerMat));
+    scene.add(new THREE.Mesh(innerGeo, new THREE.MeshBasicMaterial({
+      color: isDark ? 0xf0883e : 0xb35900, wireframe: true, transparent: true, opacity: 0.1,
+    })));
+
+    // Outer surface: cylinder of radius 4, height 0 to 2
+    const outerProfile: THREE.Vector2[] = [
+      new THREE.Vector2(4, 0),
+      new THREE.Vector2(4, 2),
+    ];
+    const outerGeo = new THREE.LatheGeometry(outerProfile, 48);
+    const outerMat = new THREE.MeshPhongMaterial({
+      color: isDark ? 0x58a6ff : 0x0550ae,
+      transparent: true, opacity: 0.15, side: THREE.DoubleSide,
+    });
+    scene.add(new THREE.Mesh(outerGeo, outerMat));
+
+    // Top cap: washer at y = 2 from r = 4 (outer) to r = 4 (inner = 2² = 4)
+    // Actually at y=2, inner radius = 4 = outer radius, so they meet. No cap needed.
+
+    // Bottom cap: disk at y = 0 from r = 0 to r = 4
+    const bottomProfile: THREE.Vector2[] = [
+      new THREE.Vector2(0, 0),
+      new THREE.Vector2(4, 0),
+    ];
+    const bottomGeo = new THREE.LatheGeometry(bottomProfile, 48);
+    const bottomMat = new THREE.MeshPhongMaterial({
+      color: isDark ? 0x58a6ff : 0x0550ae,
+      transparent: true, opacity: 0.1, side: THREE.DoubleSide,
+    });
+    scene.add(new THREE.Mesh(bottomGeo, bottomMat));
+
+    // Y-axis
+    const axisGeo = new THREE.BufferGeometry().setFromPoints([
+      new THREE.Vector3(0, -0.3, 0), new THREE.Vector3(0, 2.5, 0),
+    ]);
+    scene.add(new THREE.Line(axisGeo, new THREE.LineBasicMaterial({ color: isDark ? 0x666666 : 0x999999 })));
+
+    // Profile curve: y = sqrt(x) in xz=0 plane
+    const curvePts: THREE.Vector3[] = [];
+    for (let i = 0; i <= 80; i++) {
+      const x = (i / 80) * 4;
+      curvePts.push(new THREE.Vector3(x, Math.sqrt(x), 0));
+    }
+    scene.add(new THREE.Line(
+      new THREE.BufferGeometry().setFromPoints(curvePts),
+      new THREE.LineBasicMaterial({ color: isDark ? 0x7ee787 : 0x116329 })
+    ));
+
+    // Lighting
+    scene.add(new THREE.AmbientLight(0xffffff, 0.6));
+    const d1 = new THREE.DirectionalLight(0xffffff, 0.8);
+    d1.position.set(5, 5, 5);
+    scene.add(d1);
+    scene.add(new THREE.DirectionalLight(0xffffff, 0.3).translateX(-3));
+
+    function animate() {
+      requestAnimationFrame(animate);
+      controls.update();
+      renderer.render(scene, camera);
+    }
+    animate();
+
+    const ro = new ResizeObserver(() => {
+      const w = Math.min(container.clientWidth, 500);
+      camera.aspect = w / height;
+      camera.updateProjectionMatrix();
+      renderer.setSize(w, height);
+    });
+    ro.observe(container);
+  }
+
+  document.querySelectorAll<HTMLElement>("[data-shellsqrt3d]").forEach((el) => {
+    const io = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting) { io.disconnect(); initShellSqrt(el); }
+    }, { threshold: 0.1 });
+    io.observe(el);
+  });
+</script>
+
+<style>
+  .rev3d { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .rev3d-canvas { width:100%; max-width:500px; border-radius:0.5rem; overflow:hidden; }
+  .rev3d-canvas canvas { display:block; border-radius:0.5rem; }
+  .rev3d-hint { margin-top:0.4rem; font-size:0.78rem; color:#888; font-family:'Libre Baskerville',Georgia,serif; font-style:italic; }
+</style>

@@ -1,8 +1,204 @@
 ---
-title: "Alternating Series and Absolute Convergence"
-description: "Work with alternating series and absolute vs conditional convergence"
+title: Alternating Series and Absolute Convergence
+description: Learn about alternating series, the Alternating Series Test, and absolute vs conditional convergence
 sidebar:
   order: 18
 ---
 
-Content coming soon.
+## What You'll Learn
+
+In this lesson you'll learn how to handle series whose terms alternate between positive and negative, and the important distinction between absolute and conditional convergence.
+
+## The Concept
+
+### Alternating Series
+
+An alternating series has terms that flip sign with each step
+
+$$
+\sum_{n=1}^{\infty} (-1)^{n+1} a_n = a_1 - a_2 + a_3 - a_4 + \cdots
+$$
+
+where each term in the sequence (ignoring sign) satisfies
+
+$$
+a_n \gt 0
+$$
+
+### Alternating Series Test (Leibniz Test)
+
+An alternating series converges if two conditions hold:
+
+1. The terms decrease in absolute value
+
+$$
+a_{n+1} \leq a_n \quad \text{for all } n \text{ large enough}
+$$
+
+2. The terms approach zero
+
+$$
+\lim_{n \to \infty} a_n = 0
+$$
+
+When both conditions are met, the partial sums zigzag toward a finite limit, with each overshoot getting smaller.
+
+### Absolute vs Conditional Convergence
+
+A series converges absolutely if the series of absolute values also converges
+
+$$
+\sum |a_n| \text{ converges} \quad \Rightarrow \quad \sum a_n \text{ converges absolutely}
+$$
+
+A series converges conditionally if it converges, but the series of absolute values diverges. The alternating harmonic series is the classic example: it converges, but the regular harmonic series (absolute values) diverges.
+
+Why does this matter? Absolutely convergent series are well-behaved. You can rearrange the terms in any order and still get the same sum. Conditionally convergent series are fragile: rearranging terms can change the sum to any number you want, or even make it diverge. (This is the Riemann rearrangement theorem, and it's wild.)
+
+## Worked Examples
+
+**Example 1: Alternating harmonic series (conditional convergence)**
+
+$$
+\sum_{n=1}^{\infty} \frac{(-1)^{n+1}}{n} = 1 - \frac{1}{2} + \frac{1}{3} - \frac{1}{4} + \cdots
+$$
+
+Check the alternating series test. The terms 1/n are decreasing and approach 0, so the series converges.
+
+Now check absolute convergence. The series of absolute values is the harmonic series, which diverges
+
+$$
+\sum_{n=1}^{\infty} \frac{1}{n} = \infty
+$$
+
+So the alternating harmonic series converges conditionally. Its sum is ln 2, approximately 0.693.
+
+import AlternatingSeriesGraph from "../../../components/AlternatingSeriesGraph.astro";
+
+<AlternatingSeriesGraph />
+
+The partial sums bounce above and below ln 2, with each bounce getting smaller. That zigzag pattern narrowing toward a limit is the signature of a convergent alternating series.
+
+**Example 2: Absolute convergence via the ratio test**
+
+$$
+\sum_{n=1}^{\infty} \frac{(-1)^n \cdot n}{2^n}
+$$
+
+Check absolute convergence by looking at the series of absolute values
+
+$$
+\sum_{n=1}^{\infty} \frac{n}{2^n}
+$$
+
+Apply the ratio test
+
+$$
+L = \lim_{n \to \infty} \frac{(n+1)/2^{n+1}}{n/2^n} = \lim_{n \to \infty} \frac{n+1}{2n} = \frac{1}{2}
+$$
+
+Since L = 1/2, which is less than 1, the series of absolute values converges. Therefore the original alternating series converges absolutely.
+
+Absolute convergence is the stronger result. It means the series converges regardless of the signs.
+
+**Example 3: A series that fails the alternating series test**
+
+$$
+\sum_{n=1}^{\infty} (-1)^{n+1} \frac{n}{n+1}
+$$
+
+The terms n/(n + 1) approach 1 as n goes to infinity, not 0
+
+$$
+\lim_{n \to \infty} \frac{n}{n+1} = 1 \neq 0
+$$
+
+The alternating series test fails (condition 2 is not met). In fact, the nth-term test tells us this series diverges outright, since the terms don't approach zero.
+
+import DivergentAltGraph from "../../../components/DivergentAltGraph.astro";
+
+<DivergentAltGraph />
+
+Compare this to the zigzag in Example 1. There, the bounces got smaller and smaller, narrowing toward ln 2. Here, the bounces stay roughly the same size forever, jumping between values near 0 and 1. No settling means no convergence.
+
+## Real-World Application
+
+Alternating series and convergence types matter in practice:
+
+- Fourier series for audio and image processing involve alternating terms
+- Error bounds for alternating series give guaranteed accuracy in numerical approximations
+- Taylor series for functions like ln(1 + x) and arctan(x) are alternating series
+- Game engines use truncated alternating series with known error bounds for fast approximations
+
+:::note[You've Got This]
+Alternating series are often friendlier than they look. The alternating series test only needs two things: terms decrease and terms go to zero. If both hold, it converges. Then check absolute convergence separately by looking at the series without the signs. If that converges too, you have absolute convergence (the strong kind). If only the alternating version converges, it's conditional. The zigzag pattern of partial sums is your visual cue that an alternating series is behaving.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="calculus2-alternating-series-and-absolute-convergence"
+  questions={[
+    {
+      id: "q1",
+      text: "The alternating series test requires that the terms $a_n$",
+      options: [
+        "are increasing",
+        "approach infinity",
+        "are decreasing and approach zero",
+        "are all equal",
+      ],
+      correctIndex: 2,
+      explanation:
+        "Both conditions must hold: terms decrease in size and approach zero.",
+    },
+    {
+      id: "q2",
+      text: "The alternating harmonic series converges",
+      options: [
+        "absolutely",
+        "conditionally",
+        "it diverges",
+        "only for even terms",
+      ],
+      correctIndex: 1,
+      explanation:
+        "It converges by the alternating series test, but the harmonic series of absolute values diverges.",
+    },
+    {
+      id: "q3",
+      text: "A series converges absolutely if",
+      options: [
+        "the terms alternate in sign",
+        "the nth term goes to zero",
+        "$\\sum |a_n|$ converges",
+        "it has finitely many terms",
+      ],
+      correctIndex: 2,
+      explanation:
+        "Absolute convergence means the series of absolute values is also convergent.",
+    },
+    {
+      id: "q4",
+      text: "If $\\sum |a_n|$ diverges but $\\sum a_n$ converges, the convergence is",
+      options: ["absolute", "impossible", "conditional", "geometric"],
+      correctIndex: 2,
+      explanation: "This is the definition of conditional convergence.",
+    },
+    {
+      id: "q5",
+      text: "The ratio test gives $L = 1/2$ for $\\sum n/2^n$, so the series",
+      options: [
+        "diverges",
+        "is inconclusive",
+        "converges absolutely",
+        "converges conditionally",
+      ],
+      correctIndex: 2,
+      explanation:
+        "L less than 1 means the series of absolute values converges, giving absolute convergence.",
+    },
+  ]}
+/>

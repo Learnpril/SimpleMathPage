@@ -1,8 +1,147 @@
 ---
-title: "Work and Average Value"
-description: "Use integrals to calculate work and average value"
+title: Work and Average Value
+description: Learn how to use definite integrals to calculate work and the average value of a function
 sidebar:
   order: 11
 ---
 
-Content coming soon.
+## What You'll Learn
+
+In this lesson you'll learn two practical applications of definite integrals: calculating the work done by a variable force and finding the average value of a function over an interval.
+
+## The Concept
+
+### Work
+
+When a force varies with position, the work done moving an object from x = a to x = b is
+
+$$
+W = \int_a^b F(x)\,dx
+$$
+
+If the force is constant, this just gives W = F times d (force times distance). But when the force changes, like with a spring or gravity at different distances, you need the integral.
+
+A common example is Hooke's Law: the force to stretch a spring is F(x) = kx, where k is the spring constant and x is the displacement from the natural length.
+
+### Average Value
+
+The average value of a continuous function f(x) on [a, b] is
+
+$$
+f_{\text{avg}} = \frac{1}{b - a}\int_a^b f(x)\,dx
+$$
+
+Think of it this way: the integral gives the total area under the curve. Dividing by the width of the interval gives the height of a rectangle with the same area. That height is the average value.
+
+## Worked Examples
+
+**Example 1: Work done by a spring**
+
+A spring requires 10 N to stretch it 0.1 m beyond its natural length. How much work is done stretching it 0.5 m?
+
+First find k from Hooke's Law: F = kx, so 10 = k(0.1), giving k = 100 N/m.
+
+$$
+W = \int_0^{0.5} 100x\,dx = 100\left[\frac{x^2}{2}\right]_0^{0.5} = 50(0.25) = 12.5 \text{ J}
+$$
+
+**Example 2: Average value of a function**
+
+Find the average value of f(x) = x² on the interval [0, 3].
+
+$$
+f_{\text{avg}} = \frac{1}{3 - 0}\int_0^3 x^2\,dx = \frac{1}{3}\left[\frac{x^3}{3}\right]_0^3 = \frac{1}{3}\cdot\frac{27}{3} = \frac{9}{3} = 3
+$$
+
+So the average value is 3. That means a rectangle with base 3 and height 3 has the same area (9) as the region under the parabola from 0 to 3.
+
+import AvgValueGraph from "../../../components/AvgValueGraph.astro";
+
+<AvgValueGraph />
+
+**Example 3: Work done by a variable force**
+
+A force F(x) = 4x - x² (in newtons) acts on an object as it moves from x = 1 to x = 4 meters. Find the total work done.
+
+$$
+W = \int_1^4 (4x - x^2)\,dx = \left[2x^2 - \frac{x^3}{3}\right]_1^4
+$$
+
+Evaluate at the bounds:
+
+$$
+\left(2(16) - \frac{64}{3}\right) - \left(2(1) - \frac{1}{3}\right) = \left(32 - \frac{64}{3}\right) - \left(2 - \frac{1}{3}\right)
+$$
+
+$$
+= \frac{96 - 64}{3} - \frac{6 - 1}{3} = \frac{32}{3} - \frac{5}{3} = \frac{27}{3} = 9 \text{ J}
+$$
+
+The force starts at F(1) = 3 N, peaks at F(2) = 4 N, and drops to F(4) = 0 N. The integral captures the total accumulated work across that changing force.
+
+## Real-World Application
+
+Work and average value show up constantly in physics and engineering:
+
+- Springs, pumps, and lifting problems all involve variable forces where you need the integral to get total work
+- Average value is used in signal processing to find the mean of a continuous signal over time
+- Game physics engines calculate work done by forces to determine energy changes in objects
+- Temperature modeling uses average value to find the mean temperature over a day or season
+
+:::note[You've Got This]
+Work is just force times distance, but when the force changes, you need the integral to add up all the tiny contributions. Average value is the continuous version of taking the mean of a list of numbers. Both formulas are straightforward once you set up the integral correctly. If you can evaluate a definite integral, you can handle these applications.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="calculus2-work-and-average-value"
+  questions={[
+    {
+      id: "q1",
+      text: "The work done by a variable force F(x) from a to b is",
+      options: [
+        "$F \\cdot d$",
+        "$\\int_a^b F(x)\\,dx$",
+        "$F(b) - F(a)$",
+        "$\\frac{1}{b-a}\\int_a^b F(x)\\,dx$",
+      ],
+      correctIndex: 1,
+      explanation:
+        "When force varies, you integrate F(x) over the interval to get total work.",
+    },
+    {
+      id: "q2",
+      text: "A spring has constant k = 200 N/m. The work to stretch it 0.3 m from its natural length is",
+      options: ["60 J", "30 J", "9 J", "90 J"],
+      correctIndex: 2,
+      explanation:
+        "W = integral of 200x from 0 to 0.3 = 200(0.09/2) = 100(0.09) = 9 J.",
+    },
+    {
+      id: "q3",
+      text: "The average value formula divides the integral by",
+      options: ["$b + a$", "$b \\cdot a$", "$b - a$", "$2(b - a)$"],
+      correctIndex: 2,
+      explanation:
+        "The average value is 1/(b - a) times the integral, so you divide by the width of the interval.",
+    },
+    {
+      id: "q4",
+      text: "The average value of f(x) = 6x on [0, 4] is",
+      options: ["48", "24", "6", "12"],
+      correctIndex: 3,
+      explanation:
+        "The integral of 6x from 0 to 4 is 3(16) = 48. Average = 48/4 = 12.",
+    },
+    {
+      id: "q5",
+      text: "If the work to stretch a spring 0.5 m is 12.5 J, the spring constant k is",
+      options: ["25 N/m", "50 N/m", "100 N/m", "200 N/m"],
+      correctIndex: 2,
+      explanation: "W = k(0.5)²/2 = 0.125k = 12.5, so k = 100 N/m.",
+    },
+  ]}
+/>

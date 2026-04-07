@@ -1,8 +1,271 @@
 ---
-title: "Linear Differential Equations"
-description: "Solve first-order linear differential equations"
+title: Linear Differential Equations
+description: Learn how to solve first-order linear differential equations using integrating factors
 sidebar:
   order: 15
 ---
 
-Content coming soon.
+## What You'll Learn
+
+In this lesson you'll learn the integrating factor method for solving first-order linear differential equations. This handles equations that aren't separable.
+
+## The Concept
+
+A first-order linear DE has the standard form
+
+$$
+\frac{dy}{dx} + P(x)\,y = Q(x)
+$$
+
+The trick is to multiply both sides by an integrating factor that turns the left side into the derivative of a product.
+
+The integrating factor is
+
+$$
+\mu(x) = e^{\int P(x)\,dx}
+$$
+
+Here's what each piece means:
+
+- **μ(x)** (the Greek letter mu) is the integrating factor itself. It's a function of x that you'll multiply through the entire equation. The name "integrating factor" comes from the fact that it makes the equation integrable.
+- **e** is Euler's number (approximately 2.718), the base of the natural exponential.
+- **∫ P(x) dx** is the antiderivative of P(x), the coefficient of y in the standard form. You don't need a constant of integration here because any antiderivative works (the constant would just multiply through and cancel).
+- The whole expression says: take the coefficient of y, integrate it, then raise e to that result. That's your multiplier.
+
+After multiplying through by this factor, the left side becomes the derivative of a product. Quick refresher on the product rule from Calculus 1: the derivative of two functions multiplied together is
+
+$$
+\frac{d}{dx}[u \cdot v] = u'\,v + u\,v'
+$$
+
+The integrating factor is specifically designed so that the left side of the equation matches this pattern in reverse. After multiplying, you get
+
+$$
+\frac{d}{dx}\left[\mu(x)\,y\right] = \mu(x)\,Q(x)
+$$
+
+Integrate both sides and solve for y
+
+$$
+y = \frac{1}{\mu(x)}\left(\int \mu(x)\,Q(x)\,dx + C\right)
+$$
+
+The whole method boils down to: find the integrating factor, multiply, recognize the product rule, integrate, solve.
+
+## Worked Examples
+
+**Example 1: Basic linear equation**
+
+Solve dy/dx + 2y = 4x.
+
+Here P(x) = 2 and Q(x) = 4x. The integrating factor is
+
+$$
+\mu(x) = e^{\int 2\,dx} = e^{2x}
+$$
+
+Multiply both sides by e^(2x)
+
+$$
+e^{2x}\frac{dy}{dx} + 2e^{2x}y = 4xe^{2x}
+$$
+
+The left side is the derivative of the product
+
+$$
+\frac{d}{dx}\left[e^{2x}y\right] = 4xe^{2x}
+$$
+
+Integrate both sides. The right side needs integration by parts with u = 4x, dv = e^(2x) dx
+
+$$
+\int 4xe^{2x}\,dx = 4\left(\frac{x\,e^{2x}}{2} - \frac{e^{2x}}{4}\right) = 2xe^{2x} - e^{2x}
+$$
+
+So
+
+$$
+e^{2x}y = 2xe^{2x} - e^{2x} + C
+$$
+
+Divide both sides by e^(2x)
+
+$$
+y = 2x - 1 + Ce^{-2x}
+$$
+
+The term 2x - 1 is the steady-state behavior, and Ce^(-2x) is a transient that decays to zero as x grows. No matter what C is, the solution eventually looks like y = 2x - 1.
+
+**Example 2: Initial value problem**
+
+Solve dy/dx + (1/x)y = x with y(1) = 0, for x > 0.
+
+Here P(x) = 1/x and Q(x) = x. The integrating factor is
+
+$$
+\mu(x) = e^{\int (1/x)\,dx} = e^{\ln x} = x
+$$
+
+Multiply both sides by x
+
+$$
+x\frac{dy}{dx} + y = x^2
+$$
+
+The left side is the derivative of xy
+
+$$
+\frac{d}{dx}[xy] = x^2
+$$
+
+Integrate both sides
+
+$$
+xy = \frac{x^3}{3} + C
+$$
+
+Divide by x
+
+$$
+y = \frac{x^2}{3} + \frac{C}{x}
+$$
+
+Apply the initial condition y(1) = 0
+
+$$
+0 = \frac{1}{3} + C \quad \Rightarrow \quad C = -\frac{1}{3}
+$$
+
+The specific solution is
+
+$$
+y = \frac{x^2}{3} - \frac{1}{3x}
+$$
+
+import LinearDESolutionGraph from "../../../components/LinearDESolutionGraph.astro";
+
+<LinearDESolutionGraph />
+
+The curve passes through (1, 0) and grows roughly like x²/3 for large x. Near x = 0 the -1/(3x) term dominates and the function drops toward negative infinity, but our solution only applies for x > 0 starting from x = 1.
+
+**Example 3: Mixing problem**
+
+A 100-liter tank initially contains pure water. Brine with 3 g/L of salt flows in at 5 L/min, and the well-mixed solution flows out at 5 L/min. Find the amount of salt A(t) in the tank at time t.
+
+Salt comes in at 3 times 5 = 15 g/min. Salt leaves at (A/100) times 5 = A/20 g/min. The DE is
+
+$$
+\frac{dA}{dt} = 15 - \frac{A}{20}
+$$
+
+Rewrite in standard form
+
+$$
+\frac{dA}{dt} + \frac{1}{20}A = 15
+$$
+
+The integrating factor is
+
+$$
+\mu(t) = e^{\int (1/20)\,dt} = e^{t/20}
+$$
+
+Multiply and integrate
+
+$$
+\frac{d}{dt}\left[e^{t/20}A\right] = 15e^{t/20}
+$$
+
+$$
+e^{t/20}A = 15 \cdot 20\,e^{t/20} + C = 300e^{t/20} + C
+$$
+
+$$
+A(t) = 300 + Ce^{-t/20}
+$$
+
+At t = 0, A = 0 (pure water), so C = -300
+
+$$
+A(t) = 300\left(1 - e^{-t/20}\right)
+$$
+
+The salt amount approaches 300 g (which is 3 g/L times 100 L) as t goes to infinity. The exponential term decays with a time constant of 20 minutes.
+
+## Real-World Application
+
+Linear DEs with integrating factors model situations where something accumulates or decays with a forcing term:
+
+- Mixing problems (salt, chemicals, pollutants flowing through tanks)
+- RC circuits (voltage across a capacitor with a driving signal)
+- Population models with constant immigration
+- Drug concentration in the bloodstream with continuous dosing
+- Game design: resource pools that fill and drain simultaneously
+
+:::note[You've Got This]
+The integrating factor method is a recipe. Find P(x), compute the factor, multiply, recognize the product rule on the left, integrate the right side, solve for y. The hardest part is usually the integral on the right side, which might need integration by parts or substitution. But the setup is always the same five steps.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="calculus2-linear-differential-equations"
+  questions={[
+    {
+      id: "q1",
+      text: "The standard form of a first-order linear DE is",
+      options: [
+        "$\\frac{dy}{dx} = f(x) \\cdot g(y)$",
+        "$\\frac{dy}{dx} + P(x)\\,y = Q(x)$",
+        "$\\frac{d^2y}{dx^2} + y = 0$",
+        "$y = mx + b$",
+      ],
+      correctIndex: 1,
+      explanation:
+        "This form has y and dy/dx to the first power with coefficients that depend only on x.",
+    },
+    {
+      id: "q2",
+      text: "The integrating factor for $\\frac{dy}{dx} + 2y = 4x$ is",
+      options: ["$e^{2x}$", "$2x$", "$e^{4x}$", "$\\ln(2x)$"],
+      correctIndex: 0,
+      explanation:
+        "The integrating factor is e raised to the integral of P(x) = 2, which gives e to the 2x.",
+    },
+    {
+      id: "q3",
+      text: "After multiplying by the integrating factor, the left side becomes",
+      options: [
+        "a second derivative",
+        "zero",
+        "$\\frac{d}{dx}[\\mu(x)\\,y]$, the derivative of a product",
+        "a constant",
+      ],
+      correctIndex: 2,
+      explanation:
+        "It becomes d/dx of (integrating factor times y), which is the whole point of the method.",
+    },
+    {
+      id: "q4",
+      text: "In the mixing problem, the salt amount $A(t)$ approaches",
+      options: [
+        "zero",
+        "infinity",
+        "the initial amount",
+        "the equilibrium concentration times the tank volume",
+      ],
+      correctIndex: 3,
+      explanation:
+        "The tank reaches equilibrium when inflow concentration matches outflow concentration.",
+    },
+    {
+      id: "q5",
+      text: "The integrating factor for $\\frac{dy}{dx} + \\frac{1}{x}y = x$ is",
+      options: ["$\\frac{1}{x}$", "$\\ln x$", "$x$", "$e^x$"],
+      correctIndex: 2,
+      explanation: "The integral of 1/x is ln x, and e to the ln x equals x.",
+    },
+  ]}
+/>
