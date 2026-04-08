@@ -54,10 +54,10 @@ export default defineConfig({
           label: "Calculus 2",
           autogenerate: { directory: "calculus-2" },
         },
-        // {
-        //   label: "Calculus 3",
-        //   autogenerate: { directory: "calculus-3" },
-        // },
+        {
+          label: "Calculus 3",
+          autogenerate: { directory: "calculus-3" },
+        },
         // {
         //   label: "Linear Algebra",
         //   autogenerate: { directory: "linear-algebra" },

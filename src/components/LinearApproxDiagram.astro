@@ -1,0 +1,133 @@
+---
+/**
+ * LinearApproxDiagram — shows the idea of linear approximation:
+ * a curve f(x) with a tangent line at a point, and the approximation
+ * being the tangent line value at a nearby point.
+ * Uses a 1D slice: f(x) = x² + 4 (the y=2 slice of f(x,y) = x² + y²),
+ * tangent at x=1. Approximation shown at x=1.5 for visual clarity.
+ */
+const w = 440;
+const h = 300;
+const pad = 50;
+const gw = w - 2 * pad;
+const gh = h - 2 * pad;
+
+// f(x) = x² + 4, range x: 0 to 2.5
+const xMin = 0;
+const xMax = 2.5;
+const fMin = 3.5;
+const fMax = 11;
+
+const sx = (x: number) => pad + ((x - xMin) / (xMax - xMin)) * gw;
+const sy = (f: number) => pad + gh - ((f - fMin) / (fMax - fMin)) * gh;
+
+// Curve points
+const curvePts: string[] = [];
+for (let i = 0; i <= 80; i++) {
+  const x = xMin + (i / 80) * (xMax - xMin);
+  const f = x * x + 4;
+  curvePts.push(`${sx(x)},${sy(f)}`);
+}
+
+// Point at x=1: f(1) = 5
+const px = sx(1);
+const pf = sy(5);
+
+// Tangent line: f'(x) = 2x, slope = 2 at x=1
+// L(x) = 5 + 2(x - 1) = 2x + 3
+const tanX1 = 0.1;
+const tanX2 = 2.3;
+const tanY1 = 2 * tanX1 + 3;
+const tanY2 = 2 * tanX2 + 3;
+
+// Approximation at x=1.5 (bigger gap so labels don't overlap)
+// Actual: 1.5² + 4 = 6.25
+// Approx: 2(1.5) + 3 = 6
+const approxX = 1.5;
+const ax = sx(approxX);
+const aActual = sy(approxX * approxX + 4); // 6.25
+const aApprox = sy(2 * approxX + 3);       // 6.0
+---
+
+<figure class="la" role="img" aria-label="Graph showing a curve, its tangent line at x equals 1, and the linear approximation at x equals 1.5">
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    {/* Axes */}
+    <line x1={pad} y1={pad + gh} x2={pad + gw} y2={pad + gh} class="la-axis" stroke-width="1" />
+    <line x1={pad} y1={pad + gh} x2={pad} y2={pad} class="la-axis" stroke-width="1" />
+    <text class="la-axlabel" x={pad + gw + 6} y={pad + gh + 4} font-size="11">x</text>
+    <text class="la-axlabel" x={pad - 14} y={pad - 4} font-size="11">f</text>
+
+    {/* Curve */}
+    <polyline points={curvePts.join(" ")} fill="none" class="la-curve" stroke-width="2.5" />
+
+    {/* Tangent line */}
+    <line x1={sx(tanX1)} y1={sy(tanY1)} x2={sx(tanX2)} y2={sy(tanY2)}
+          class="la-tangent" stroke-width="1.5" stroke-dasharray="5,3" />
+
+    {/* Point at (1, 5) */}
+    <circle cx={px} cy={pf} r="4.5" class="la-dot" />
+    <text class="la-dot-label" x={px - 44} y={pf - 12} font-size="10">(1, 5)</text>
+
+    {/* Vertical line at x=1.5 */}
+    <line x1={ax} y1={aActual} x2={ax} y2={pad + gh}
+          class="la-vline" stroke-width="0.8" stroke-dasharray="2,2" />
+
+    {/* Actual point on curve at x=1.5 */}
+    <circle cx={ax} cy={aActual} r="3.5" class="la-actual" />
+
+    {/* Approx point on tangent at x=1.5 */}
+    <circle cx={ax} cy={aApprox} r="3.5" class="la-approx" />
+
+    {/* Label: actual — above-left of the blue dot */}
+    <text class="la-label-actual" x={ax - 65} y={aActual - 10} font-size="10">actual: 6.25</text>
+
+    {/* Label: approx — below the orange dot, to the right */}
+    <text class="la-label-approx" x={ax + 10} y={aApprox + 16} font-size="10">approx: 6.0</text>
+
+    {/* x label on axis */}
+    <text class="la-label-x" x={ax - 6} y={pad + gh + 16} font-size="9">1.5</text>
+  </svg>
+  <div class="la-legend">
+    <span class="la-leg-item"><span class="la-swatch la-sw-curve"></span> actual surface (slice at y = 2)</span>
+    <span class="la-leg-item"><span class="la-swatch la-sw-tangent"></span> tangent line (linear approx)</span>
+  </div>
+</figure>
+
+<style>
+  .la { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .la svg { max-width:100%; height:auto; }
+  .la-axis { stroke:#555; }
+  .la-axlabel { fill:#888; font-family:'Libre Baskerville',Georgia,serif; }
+  .la-curve { stroke:#58a6ff; }
+  .la-tangent { stroke:#f0883e; }
+  .la-dot { fill:#d2a8ff; }
+  .la-dot-label { fill:#d2a8ff; font-family:'Libre Baskerville',Georgia,serif; }
+  .la-vline { stroke:#666; }
+  .la-actual { fill:#58a6ff; }
+  .la-approx { fill:#f0883e; }
+  .la-label-actual { fill:#58a6ff; font-family:'Libre Baskerville',Georgia,serif; }
+  .la-label-approx { fill:#f0883e; font-family:'Libre Baskerville',Georgia,serif; }
+  .la-label-x { fill:#888; font-family:'Libre Baskerville',Georgia,serif; }
+  .la-legend {
+    display:flex; gap:1rem; flex-wrap:wrap; justify-content:center;
+    margin-top:0.5rem; font-family:'Libre Baskerville',Georgia,serif; font-size:0.82rem;
+  }
+  .la-leg-item { display:flex; align-items:center; gap:0.35rem; }
+  .la-swatch { display:inline-block; width:18px; height:4px; border-radius:2px; }
+  .la-sw-curve { background:#58a6ff; }
+  .la-sw-tangent { background:none; border-bottom:2px dashed #f0883e; height:0; margin-top:6px; }
+  :global([data-theme="light"]) .la-axis { stroke:#bbb; }
+  :global([data-theme="light"]) .la-axlabel { fill:#666; }
+  :global([data-theme="light"]) .la-curve { stroke:#0550ae; }
+  :global([data-theme="light"]) .la-tangent { stroke:#b35900; }
+  :global([data-theme="light"]) .la-dot { fill:#6639ba; }
+  :global([data-theme="light"]) .la-dot-label { fill:#6639ba; }
+  :global([data-theme="light"]) .la-vline { stroke:#aaa; }
+  :global([data-theme="light"]) .la-actual { fill:#0550ae; }
+  :global([data-theme="light"]) .la-approx { fill:#b35900; }
+  :global([data-theme="light"]) .la-label-actual { fill:#0550ae; }
+  :global([data-theme="light"]) .la-label-approx { fill:#b35900; }
+  :global([data-theme="light"]) .la-label-x { fill:#666; }
+  :global([data-theme="light"]) .la-sw-curve { background:#0550ae; }
+  :global([data-theme="light"]) .la-sw-tangent { border-color:#b35900; }
+</style>

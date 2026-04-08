@@ -1,0 +1,249 @@
+---
+title: Vectors and Geometry in 3D Space
+description: Learn vectors in three dimensions, dot and cross products, and basic geometry in 3D
+sidebar:
+  order: 1
+---
+
+## What You'll Learn
+
+In this lesson you'll extend vectors from 2D to 3D, learn the dot product and cross product, and see how to describe lines and planes in three-dimensional space.
+
+## The Concept
+
+### Vectors in 3D
+
+A vector in 3D has three components
+
+$$
+\mathbf{v} = \langle a, b, c \rangle
+$$
+
+Its magnitude (length) is
+
+$$
+|\mathbf{v}| = \sqrt{a^2 + b^2 + c^2}
+$$
+
+This is just the Pythagorean theorem extended to three dimensions.
+
+### The Dot Product
+
+The dot product of two vectors gives a scalar (a number, not a vector)
+
+$$
+\mathbf{u} \cdot \mathbf{v} = u_1 v_1 + u_2 v_2 + u_3 v_3
+$$
+
+It's also equal to
+
+$$
+\mathbf{u} \cdot \mathbf{v} = |\mathbf{u}|\,|\mathbf{v}|\cos\theta
+$$
+
+where theta is the angle between the vectors. Two vectors are perpendicular (orthogonal) when their dot product is zero.
+
+### The Cross Product
+
+The cross product of two vectors gives a new vector that is perpendicular to both
+
+$$
+\mathbf{u} \times \mathbf{v} = \langle u_2 v_3 - u_3 v_2,\; u_3 v_1 - u_1 v_3,\; u_1 v_2 - u_2 v_1 \rangle
+$$
+
+The magnitude of the cross product equals the area of the parallelogram formed by the two vectors
+
+$$
+|\mathbf{u} \times \mathbf{v}| = |\mathbf{u}|\,|\mathbf{v}|\sin\theta
+$$
+
+The direction follows the right-hand rule: point your fingers along u, curl them toward v, and your thumb points in the direction of u cross v.
+
+### Lines and Planes
+
+A line through point P₀ in the direction of vector v is
+
+$$
+\mathbf{r}(t) = \mathbf{P}_0 + t\,\mathbf{v}
+$$
+
+A plane with normal vector n = (a, b, c) passing through point (x₀, y₀, z₀) is
+
+$$
+a(x - x_0) + b(y - y_0) + c(z - z_0) = 0
+$$
+
+## Worked Examples
+
+**Example 1: Dot product and angle between vectors**
+
+Let u = (1, 2, 3) and v = (4, -1, 2). Find the angle between them.
+
+$$
+\mathbf{u} \cdot \mathbf{v} = (1)(4) + (2)(-1) + (3)(2) = 4 - 2 + 6 = 8
+$$
+
+$$
+|\mathbf{u}| = \sqrt{1 + 4 + 9} = \sqrt{14}
+$$
+
+$$
+|\mathbf{v}| = \sqrt{16 + 1 + 4} = \sqrt{21}
+$$
+
+$$
+\cos\theta = \frac{8}{\sqrt{14}\cdot\sqrt{21}} = \frac{8}{\sqrt{294}} \approx 0.4666
+$$
+
+$$
+\theta = \arccos(0.4666) \approx 62.2°
+$$
+
+The vectors make an angle of about 62 degrees. Since the dot product is positive, the angle is acute (less than 90 degrees).
+
+**Example 2: Cross product**
+
+Find u x v for u = (1, 2, 3) and v = (4, -1, 2).
+
+$$
+\mathbf{u} \times \mathbf{v} = \langle (2)(2) - (3)(-1),\; (3)(4) - (1)(2),\; (1)(-1) - (2)(4) \rangle
+$$
+
+$$
+= \langle 4 + 3,\; 12 - 2,\; -1 - 8 \rangle = \langle 7, 10, -9 \rangle
+$$
+
+We can verify this is perpendicular to both original vectors by checking the dot products
+
+$$
+\mathbf{u} \cdot (\mathbf{u} \times \mathbf{v}) = (1)(7) + (2)(10) + (3)(-9) = 7 + 20 - 27 = 0 \quad \checkmark
+$$
+
+$$
+\mathbf{v} \cdot (\mathbf{u} \times \mathbf{v}) = (4)(7) + (-1)(10) + (2)(-9) = 28 - 10 - 18 = 0 \quad \checkmark
+$$
+
+Both dot products are zero, confirming the cross product is perpendicular to both vectors.
+
+import CrossProduct3D from "../../../components/CrossProduct3D.astro";
+
+<CrossProduct3D />
+
+The blue arrow is u = (1, 2, 3), the green arrow is v = (4, -1, 2), and the orange arrow is their cross product (7, 10, -9). Notice how the orange vector sticks straight out of the parallelogram formed by u and v. That's the cross product doing its thing.
+
+Here's the same thing flattened into 2D (looking at just the x and y components) so you can see the vectors, the parallelogram, and the angle between them without needing to rotate anything.
+
+import CrossProduct2D from "../../../components/CrossProduct2D.astro";
+
+<CrossProduct2D />
+
+The 3D version above lets you see how the cross product points out of the plane. The 2D version here shows the parallelogram and angle more clearly. Both views together give you the full picture.
+
+**Example 3: Equation of a plane**
+
+Find the equation of the plane containing the points A = (1, 0, 0), B = (0, 1, 0), and C = (0, 0, 1).
+
+First, find two vectors in the plane
+
+$$
+\overrightarrow{AB} = B - A = \langle -1, 1, 0 \rangle
+$$
+
+$$
+\overrightarrow{AC} = C - A = \langle -1, 0, 1 \rangle
+$$
+
+The normal vector is their cross product
+
+$$
+\mathbf{n} = \overrightarrow{AB} \times \overrightarrow{AC} = \langle (1)(1) - (0)(0),\; (0)(-1) - (-1)(1),\; (-1)(0) - (1)(-1) \rangle = \langle 1, 1, 1 \rangle
+$$
+
+Using point A = (1, 0, 0) and normal n = (1, 1, 1)
+
+$$
+1(x - 1) + 1(y - 0) + 1(z - 0) = 0
+$$
+
+$$
+x + y + z = 1
+$$
+
+This makes geometric sense: the plane passes through the three axis intercepts at distance 1 from the origin.
+
+## Real-World Application
+
+3D vectors and geometry are the backbone of:
+
+- Game engines use vectors for position, velocity, forces, camera direction, and lighting calculations
+- The cross product computes surface normals, which determine how light bounces off objects
+- The dot product is used for view frustum culling (checking if objects are in front of the camera)
+- Plane equations define collision boundaries, clipping planes, and portals
+- Robotics uses 3D vectors for joint positions and end-effector orientation
+
+:::note[You've Got This]
+Moving from 2D to 3D just adds one more component. The dot product still measures alignment (how much two vectors point in the same direction), and the cross product gives you a perpendicular vector, which is incredibly useful in 3D. Practice the component-by-component calculations until they feel natural. This lesson is the foundation for everything else in Calculus 3.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="calculus3-vectors-and-geometry-in-3d-space"
+  questions={[
+    {
+      id: "q1",
+      text: "The magnitude of $\\langle 3, 4, 0 \\rangle$ is",
+      options: ["$7$", "$5$", "$25$", "$\\sqrt{7}$"],
+      correctIndex: 1,
+      explanation: "sqrt(9 + 16 + 0) = sqrt(25) = 5.",
+    },
+    {
+      id: "q2",
+      text: "Two vectors are perpendicular when their dot product equals",
+      options: ["$1$", "their magnitudes", "$0$", "$-1$"],
+      correctIndex: 2,
+      explanation:
+        "Zero dot product means cos(90 degrees) = 0, so the vectors are at right angles.",
+    },
+    {
+      id: "q3",
+      text: "The cross product $\\mathbf{u} \\times \\mathbf{v}$ produces",
+      options: [
+        "a scalar",
+        "a vector perpendicular to both $\\mathbf{u}$ and $\\mathbf{v}$",
+        "the sum of the vectors",
+        "the projection of one onto the other",
+      ],
+      correctIndex: 1,
+      explanation:
+        "The cross product always gives a vector orthogonal to both inputs.",
+    },
+    {
+      id: "q4",
+      text: "The equation of a plane with normal $\\langle 1, 1, 1 \\rangle$ through $(1, 0, 0)$ is",
+      options: [
+        "$x + y + z = 0$",
+        "$x - y - z = 1$",
+        "$x + y + z = 1$",
+        "$x + y + z = 3$",
+      ],
+      correctIndex: 2,
+      explanation: "Plug in: 1(1-1) + 1(0) + 1(0) = 0, so x + y + z = 1.",
+    },
+    {
+      id: "q5",
+      text: "In game development, the cross product is commonly used to compute",
+      options: [
+        "player scores",
+        "surface normals for lighting",
+        "frame rates",
+        "audio volume",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Surface normals determine how light reflects off objects, and they come from cross products of edge vectors.",
+    },
+  ]}
+/>

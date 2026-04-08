@@ -7,7 +7,7 @@
 
 <figure class="rev3d" role="img" aria-label="Interactive 3D solid of revolution: x equals y squared rotated around the y-axis">
   <div class="rev3d-canvas" data-yaxis3d></div>
-  <div class="rev3d-hint">Drag to rotate</div>
+  <div class="rev3d-hint">Drag to rotate · Scroll to zoom</div>
 </figure>
 
 <script>
@@ -33,6 +33,9 @@
 
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
+    controls.enableZoom = true;
+    controls.minDistance = 3;
+    controls.maxDistance = 20;
     controls.target.set(0, 1, 0);
     controls.update();
 
@@ -84,6 +87,28 @@
     const d2 = new THREE.DirectionalLight(0xffffff, 0.3);
     d2.position.set(-3, -2, -3);
     scene.add(d2);
+
+    // Axis label
+    function makeLabel(text: string, pos: number[], color: string, size = 0.5) {
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d")!;
+      canvas.width = 128;
+      canvas.height = 64;
+      ctx.font = "bold 36px sans-serif";
+      ctx.fillStyle = color;
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText(text, 64, 32);
+      const tex = new THREE.CanvasTexture(canvas);
+      const mat = new THREE.SpriteMaterial({ map: tex, transparent: true });
+      const sprite = new THREE.Sprite(mat);
+      sprite.position.set(pos[0], pos[1], pos[2]);
+      sprite.scale.set(size * 2, size, 1);
+      scene.add(sprite);
+    }
+
+    const labelColor = isDark ? "#888" : "#666";
+    makeLabel("y", [0, 2.8, 0], labelColor);
 
     function animate() {
       requestAnimationFrame(animate);

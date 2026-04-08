@@ -1,0 +1,201 @@
+---
+title: Vector Functions and Space Curves
+description: Learn how to work with vector-valued functions and parametrize space curves
+sidebar:
+  order: 2
+---
+
+## What You'll Learn
+
+In this lesson you'll learn about vector-valued functions, which describe curves in 3D space. You'll see how to differentiate and integrate them component by component.
+
+## The Concept
+
+A vector-valued function takes a parameter t and outputs a vector
+
+$$
+\mathbf{r}(t) = \langle x(t),\, y(t),\, z(t) \rangle
+$$
+
+As t varies, the tip of the vector traces out a space curve. Each component is just an ordinary function of t.
+
+### Derivatives and Integrals
+
+The derivative is computed component by component
+
+$$
+\mathbf{r}'(t) = \langle x'(t),\, y'(t),\, z'(t) \rangle
+$$
+
+This gives the tangent vector at each point. Its magnitude is the speed
+
+$$
+\text{speed} = |\mathbf{r}'(t)| = \sqrt{[x'(t)]^2 + [y'(t)]^2 + [z'(t)]^2}
+$$
+
+Integration works the same way
+
+$$
+\int \mathbf{r}(t)\,dt = \left\langle \int x(t)\,dt,\; \int y(t)\,dt,\; \int z(t)\,dt \right\rangle + \mathbf{C}
+$$
+
+Everything you know about single-variable derivatives and integrals applies here. You just do it three times, once per component.
+
+## Worked Examples
+
+**Example 1: A helix**
+
+The vector function
+
+$$
+\mathbf{r}(t) = \langle \cos t,\, \sin t,\, t \rangle
+$$
+
+traces a helix. It circles around in x and y while climbing steadily in z.
+
+The derivative (tangent/velocity vector) is
+
+$$
+\mathbf{r}'(t) = \langle -\sin t,\, \cos t,\, 1 \rangle
+$$
+
+The speed is constant
+
+$$
+|\mathbf{r}'(t)| = \sqrt{\sin^2 t + \cos^2 t + 1} = \sqrt{2}
+$$
+
+import Helix3D from "../../../components/Helix3D.astro";
+
+<Helix3D />
+
+The blue curve is the helix spiraling upward. The orange arrow is the tangent vector at one point, showing the direction of motion. The green dot marks the point on the curve. As you rotate the view, you can see how the helix wraps around the vertical axis.
+
+**Example 2: Tangent line at a point**
+
+For the vector function
+
+$$
+\mathbf{r}(t) = \langle t^2,\, t,\, \sqrt{t} \rangle
+$$
+
+find the tangent line at t = 1.
+
+First, the point on the curve
+
+$$
+\mathbf{r}(1) = \langle 1, 1, 1 \rangle
+$$
+
+The derivative
+
+$$
+\mathbf{r}'(t) = \left\langle 2t,\, 1,\, \frac{1}{2\sqrt{t}} \right\rangle
+$$
+
+At t = 1
+
+$$
+\mathbf{r}'(1) = \langle 2, 1, 0.5 \rangle
+$$
+
+The tangent line is
+
+$$
+\mathbf{L}(s) = \langle 1, 1, 1 \rangle + s\langle 2, 1, 0.5 \rangle = \langle 1 + 2s,\, 1 + s,\, 1 + 0.5s \rangle
+$$
+
+import TangentLine3D from "../../../components/TangentLine3D.astro";
+
+<TangentLine3D />
+
+The blue curve is r(t) = (t², t, √t). The green dot marks the point (1, 1, 1) at t = 1. The orange arrow is the tangent vector r'(1) = (2, 1, 0.5), and the red line is the tangent line extending through that point in both directions.
+
+**Example 3: Integrating a vector function**
+
+$$
+\int \langle e^t,\, \sin t,\, t^2 \rangle\,dt = \left\langle e^t,\, -\cos t,\, \frac{t^3}{3} \right\rangle + \mathbf{C}
+$$
+
+Each component is integrated independently. The constant of integration is a constant vector (three constants, one per component).
+
+## Real-World Application
+
+Vector functions describe motion in 3D:
+
+- Game engines use vector functions for character paths, camera rails, and projectile trajectories
+- The derivative gives velocity (direction and speed), the second derivative gives acceleration
+- Bezier curves and splines in animation software are vector functions
+- Physics simulations track position, velocity, and acceleration as vector functions of time
+
+:::note[You've Got This]
+Vector functions are just three ordinary functions bundled together. Differentiate each component, integrate each component. The derivative points in the direction of motion (tangent to the curve), and its length is the speed. If you can do single-variable calculus, you can do this. You're now describing motion through actual 3D space.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="calculus3-vector-functions-and-space-curves"
+  questions={[
+    {
+      id: "q1",
+      text: "The vector function $\\mathbf{r}(t) = \\langle \\cos t, \\sin t, t \\rangle$ traces",
+      options: ["a straight line", "a circle", "a helix", "a parabola"],
+      correctIndex: 2,
+      explanation: "It circles in x and y while climbing in z, making a helix.",
+    },
+    {
+      id: "q2",
+      text: "The derivative $\\mathbf{r}'(t)$ gives",
+      options: [
+        "the position on the curve",
+        "the tangent vector (velocity)",
+        "the arc length",
+        "the curvature",
+      ],
+      correctIndex: 1,
+      explanation:
+        "The derivative points in the direction of motion at each instant.",
+    },
+    {
+      id: "q3",
+      text: "The speed along a curve is",
+      options: [
+        "$\\mathbf{r}(t)$",
+        "$\\mathbf{r}'(t)$",
+        "$|\\mathbf{r}'(t)|$",
+        "$\\mathbf{r}''(t)$",
+      ],
+      correctIndex: 2,
+      explanation: "Speed is the magnitude of the velocity vector.",
+    },
+    {
+      id: "q4",
+      text: "To integrate a vector function, you",
+      options: [
+        "integrate the magnitude",
+        "integrate each component separately",
+        "take the cross product",
+        "find the dot product with dt",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Integration is done component by component, just like differentiation.",
+    },
+    {
+      id: "q5",
+      text: "The tangent line to $\\mathbf{r}(t)$ at $t = a$ is",
+      options: [
+        "$\\mathbf{r}(a) \\times \\mathbf{r}'(a)$",
+        "$\\mathbf{r}(a) + s\\,\\mathbf{r}'(a)$",
+        "$\\mathbf{r}'(a)$ only",
+        "$\\int \\mathbf{r}(t)\\,dt$",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Start at the point r(a) and go in the direction of the tangent r'(a).",
+    },
+  ]}
+/>

@@ -1,0 +1,128 @@
+---
+/**
+ * PartialDerivSlice — shows the idea of a partial derivative:
+ * a 2D surface slice. Left panel: hold y=1 constant, show the curve
+ * f(x,1) = x² + 3x and its tangent (∂f/∂x). Right panel: hold x=1
+ * constant, show f(1,y) = y + 6y and its tangent (∂f/∂y).
+ * Uses f(x,y) = x²y + 3xy² from Example 1.
+ */
+const w = 440;
+const h = 200;
+const pad = 40;
+const pw = (w - 3 * pad) / 2; // panel width
+const ph = h - 2 * pad;
+
+// Panel centers
+const p1x = pad;
+const p2x = pad * 2 + pw;
+const py = pad;
+
+// Left panel: f(x, 1) = x² + 3x, x from -1 to 3
+const leftPts: string[] = [];
+const lxMin = -1; const lxMax = 3;
+for (let i = 0; i <= 50; i++) {
+  const t = lxMin + (i / 50) * (lxMax - lxMin);
+  const val = t * t + 3 * t; // x² + 3x
+  const sx = p1x + ((t - lxMin) / (lxMax - lxMin)) * pw;
+  const sy = py + ph - (val / 12) * ph; // scale: max ~12 at x=3
+  leftPts.push(`${sx},${sy}`);
+}
+
+// Tangent at x=1: f(1,1)=4, f_x(1,1)=2(1)(1)+3(1²)=5
+const ltx = p1x + ((1 - lxMin) / (lxMax - lxMin)) * pw;
+const lty = py + ph - (4 / 12) * ph;
+const ltSlope = -5 * (ph / 12) / (pw / (lxMax - lxMin)); // SVG slope (y inverted)
+const ltLen = 30;
+
+// Right panel: f(1, y) = y + 6y = y + 6y... wait, f(1,y) = 1²·y + 3·1·y² = y + 3y²
+const rightPts: string[] = [];
+const ryMin = -0.5; const ryMax = 2.5;
+for (let i = 0; i <= 50; i++) {
+  const t = ryMin + (i / 50) * (ryMax - ryMin);
+  const val = t + 3 * t * t; // y + 3y²
+  const sx = p2x + ((t - ryMin) / (ryMax - ryMin)) * pw;
+  const sy = py + ph - (val / 22) * ph; // scale: max ~22 at y=2.5
+  rightPts.push(`${sx},${sy}`);
+}
+
+// Tangent at y=1: f(1,1)=4, f_y(1,1)=1²+6(1)(1)=7
+const rtx = p2x + ((1 - ryMin) / (ryMax - ryMin)) * pw;
+const rty = py + ph - (4 / 22) * ph;
+const rtSlope = -7 * (ph / 22) / (pw / (ryMax - ryMin));
+const rtLen = 25;
+---
+
+<figure class="pds" role="img" aria-label="Two panels showing partial derivative slices: left holds y constant, right holds x constant">
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    {/* Left panel: ∂f/∂x at y=1 */}
+    {/* Axes */}
+    <line x1={p1x} y1={py + ph} x2={p1x + pw} y2={py + ph} class="pds-axis" stroke-width="1" />
+    <line x1={p1x} y1={py + ph} x2={p1x} y2={py} class="pds-axis" stroke-width="1" />
+    <text class="pds-axlabel" x={p1x + pw - 4} y={py + ph + 14} font-size="9">x</text>
+    <text class="pds-axlabel" x={p1x - 8} y={py + 8} font-size="9">f</text>
+
+    {/* Curve */}
+    <polyline points={leftPts.join(" ")} fill="none" class="pds-curve" stroke-width="2.5" />
+
+    {/* Tangent line at x=1 */}
+    <line x1={ltx - ltLen} y1={lty - ltSlope * (-ltLen)}
+          x2={ltx + ltLen} y2={lty - ltSlope * ltLen}
+          class="pds-tangent" stroke-width="1.5" stroke-dasharray="4,3" />
+
+    {/* Point */}
+    <circle cx={ltx} cy={lty} r="4" class="pds-dot" />
+
+    {/* Title */}
+    <text class="pds-title" x={p1x + pw / 2} y={py - 8} font-size="10" text-anchor="middle">hold y = 1, vary x</text>
+    <text class="pds-subtitle" x={p1x + pw / 2} y={py + ph + 28} font-size="9" text-anchor="middle">slope = ∂f/∂x = 2xy + 3y² = 5</text>
+
+    {/* Right panel: ∂f/∂y at x=1 */}
+    <line x1={p2x} y1={py + ph} x2={p2x + pw} y2={py + ph} class="pds-axis" stroke-width="1" />
+    <line x1={p2x} y1={py + ph} x2={p2x} y2={py} class="pds-axis" stroke-width="1" />
+    <text class="pds-axlabel" x={p2x + pw - 4} y={py + ph + 14} font-size="9">y</text>
+    <text class="pds-axlabel" x={p2x - 8} y={py + 8} font-size="9">f</text>
+
+    {/* Curve */}
+    <polyline points={rightPts.join(" ")} fill="none" class="pds-curve" stroke-width="2.5" />
+
+    {/* Tangent line at y=1 */}
+    <line x1={rtx - rtLen} y1={rty - rtSlope * (-rtLen)}
+          x2={rtx + rtLen} y2={rty - rtSlope * rtLen}
+          class="pds-tangent" stroke-width="1.5" stroke-dasharray="4,3" />
+
+    {/* Point */}
+    <circle cx={rtx} cy={rty} r="4" class="pds-dot" />
+
+    {/* Title */}
+    <text class="pds-title" x={p2x + pw / 2} y={py - 8} font-size="10" text-anchor="middle">hold x = 1, vary y</text>
+    <text class="pds-subtitle" x={p2x + pw / 2} y={py + ph + 28} font-size="9" text-anchor="middle">slope = ∂f/∂y = x² + 6xy = 7</text>
+  </svg>
+  <div class="pds-caption">
+    Each partial derivative is just the slope of a slice through the surface. Hold one variable constant and you get a regular 2D curve whose slope is the partial derivative.
+  </div>
+</figure>
+
+<style>
+  .pds { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .pds svg { max-width:100%; height:auto; }
+  .pds-axis { stroke:#555; }
+  .pds-axlabel { fill:#888; font-family:'Libre Baskerville',Georgia,serif; }
+  .pds-curve { stroke:#58a6ff; }
+  .pds-tangent { stroke:#f0883e; }
+  .pds-dot { fill:#d2a8ff; }
+  .pds-title { fill:#ccc; font-family:'Libre Baskerville',Georgia,serif; }
+  .pds-subtitle { fill:#f0883e; font-family:'Libre Baskerville',Georgia,serif; }
+  .pds-caption {
+    max-width:400px; text-align:center; margin-top:0.6rem;
+    font-family:'Libre Baskerville',Georgia,serif; font-size:0.82rem;
+    color:#999; line-height:1.5;
+  }
+  :global([data-theme="light"]) .pds-axis { stroke:#bbb; }
+  :global([data-theme="light"]) .pds-axlabel { fill:#666; }
+  :global([data-theme="light"]) .pds-curve { stroke:#0550ae; }
+  :global([data-theme="light"]) .pds-tangent { stroke:#b35900; }
+  :global([data-theme="light"]) .pds-dot { fill:#6639ba; }
+  :global([data-theme="light"]) .pds-title { fill:#444; }
+  :global([data-theme="light"]) .pds-subtitle { fill:#b35900; }
+  :global([data-theme="light"]) .pds-caption { color:#666; }
+</style>

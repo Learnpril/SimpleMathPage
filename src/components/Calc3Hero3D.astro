@@ -1,0 +1,206 @@
+---
+/**
+ * Calc3Hero3D — a rotating 3D saddle surface (z = x² - y²)
+ * as a fun hero visual for the Calculus 3 about page.
+ * Lazy-loads Three.js via IntersectionObserver.
+ */
+---
+
+<figure class="c3h" role="img" aria-label="Interactive 3D saddle surface z equals x squared minus y squared">
+  <div class="c3h-canvas" data-c3hero></div>
+  <div class="c3h-hint">Yee-Haw 🤠 Drag to rotate · Scroll to zoom</div>
+</figure>
+
+<script>
+  import * as THREE from "three";
+  import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+
+  function initScene(container: HTMLElement) {
+    const width = Math.min(container.clientWidth, 520);
+    const height = 360;
+
+    const isDark = document.documentElement.dataset.theme !== "light";
+    const bgColor = isDark ? 0x121212 : 0xf8f9fa;
+    const surfColor = isDark ? 0x58a6ff : 0x0550ae;
+    const wireColor = isDark ? 0x334466 : 0xaabbcc;
+    const axisColor = isDark ? 0x666666 : 0x999999;
+
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(bgColor);
+
+    const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 100);
+    camera.position.set(5, 4, 5);
+    camera.lookAt(0, 0, 0);
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(width, height);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    container.appendChild(renderer.domElement);
+
+    // Saddle surface z = x² - y²
+    const size = 2;
+    const segments = 40;
+    const geometry = new THREE.PlaneGeometry(size * 2, size * 2, segments, segments);
+    const positions = geometry.attributes.position;
+    const colors = new Float32Array(positions.count * 3);
+
+    for (let i = 0; i < positions.count; i++) {
+      const x = positions.getX(i);
+      const y = positions.getY(i);
+      const z = (x * x - y * y) * 0.4;
+      positions.setZ(i, z);
+
+      // Color by height
+      const t = (z + 1.6) / 3.2;
+      if (isDark) {
+        colors[i * 3] = 0.34 + t * 0.3;
+        colors[i * 3 + 1] = 0.45 + t * 0.2;
+        colors[i * 3 + 2] = 1.0 - t * 0.3;
+      } else {
+        colors[i * 3] = 0.02 + t * 0.2;
+        colors[i * 3 + 1] = 0.2 + t * 0.15;
+        colors[i * 3 + 2] = 0.68 - t * 0.2;
+      }
+    }
+    geometry.setAttribute("color", new THREE.BufferAttribute(colors, 3));
+    geometry.computeVertexNormals();
+
+    const material = new THREE.MeshPhongMaterial({
+      vertexColors: true,
+      side: THREE.DoubleSide,
+      shininess: 40,
+      transparent: true,
+      opacity: 0.85,
+    });
+    const mesh = new THREE.Mesh(geometry, material);
+    scene.add(mesh);
+
+    // Wireframe overlay
+    const wireMat = new THREE.MeshBasicMaterial({
+      color: wireColor,
+      wireframe: true,
+      transparent: true,
+      opacity: 0.15,
+    });
+    const wireMesh = new THREE.Mesh(geometry.clone(), wireMat);
+    scene.add(wireMesh);
+
+    // Axes
+    const axMat = new THREE.LineBasicMaterial({ color: axisColor });
+    const axLen = 2.8;
+    for (const dir of [
+      [axLen, 0, 0],
+      [0, axLen, 0],
+      [0, 0, axLen],
+    ]) {
+      const pts = [
+        new THREE.Vector3(-dir[0] * 0.3, -dir[1] * 0.3, -dir[2] * 0.3),
+        new THREE.Vector3(dir[0], dir[1], dir[2]),
+      ];
+      const geo = new THREE.BufferGeometry().setFromPoints(pts);
+      scene.add(new THREE.Line(geo, axMat));
+    }
+
+    // Lighting
+    scene.add(new THREE.AmbientLight(0xffffff, 0.5));
+    const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
+    dirLight.position.set(3, 5, 4);
+    scene.add(dirLight);
+
+    // Controls
+    const controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.08;
+    controls.autoRotate = true;
+    controls.autoRotateSpeed = 1.2;
+    controls.enableZoom = true;
+    controls.minDistance = 3;
+    controls.maxDistance = 20;
+
+    // Axis labels
+    function makeLabel(text: string, pos: number[], color: string, size = 0.5) {
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d")!;
+      canvas.width = 128;
+      canvas.height = 64;
+      ctx.font = "bold 36px sans-serif";
+      ctx.fillStyle = color;
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText(text, 64, 32);
+      const tex = new THREE.CanvasTexture(canvas);
+      const mat = new THREE.SpriteMaterial({ map: tex, transparent: true });
+      const sprite = new THREE.Sprite(mat);
+      sprite.position.set(pos[0], pos[1], pos[2]);
+      sprite.scale.set(size * 2, size, 1);
+      scene.add(sprite);
+    }
+
+    const labelColor = isDark ? "#888" : "#666";
+    makeLabel("x", [2.5, -0.3, 0], labelColor);
+    makeLabel("y", [0, 2.5, 0], labelColor);
+    makeLabel("z", [-0.3, -0.3, 2.5], labelColor);
+
+    let animId: number;
+    function animate() {
+      animId = requestAnimationFrame(animate);
+      controls.update();
+      renderer.render(scene, camera);
+    }
+    animate();
+
+    return () => {
+      cancelAnimationFrame(animId);
+      renderer.dispose();
+      geometry.dispose();
+      material.dispose();
+      wireMat.dispose();
+    };
+  }
+
+  // Lazy-load
+  function setup() {
+    document.querySelectorAll<HTMLElement>("[data-c3hero]").forEach((el) => {
+      if (el.querySelector("canvas")) return; // already initialized
+      const obs = new IntersectionObserver(
+        (entries) => {
+          if (entries[0].isIntersecting) {
+            obs.disconnect();
+            initScene(el);
+          }
+        },
+        { threshold: 0.05 }
+      );
+      obs.observe(el);
+    });
+  }
+
+  // Support both initial load and Starlight view transitions
+  setup();
+  document.addEventListener("astro:page-load", setup);
+</script>
+
+<style>
+  .c3h {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 1.5rem 0;
+  }
+  .c3h-canvas {
+    width: 100%;
+    max-width: 520px;
+    min-height: 360px;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .c3h-canvas canvas {
+    border-radius: 8px;
+  }
+  .c3h-hint {
+    font-family: "Libre Baskerville", Georgia, serif;
+    font-size: 0.8rem;
+    color: #888;
+    margin-top: 0.4rem;
+  }
+</style>

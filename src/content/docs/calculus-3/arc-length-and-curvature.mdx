@@ -1,0 +1,194 @@
+---
+title: Arc Length and Curvature
+description: Learn how to calculate the arc length of a space curve and the curvature at a point
+sidebar:
+  order: 3
+---
+
+## What You'll Learn
+
+In this lesson you'll learn how to compute the arc length of a space curve and the curvature, which measures how sharply a curve bends at each point. A "space curve" is just a curve that lives in 3D rather than being flat on a plane. Think of a helix, a roller coaster track, or a ball's trajectory through the air.
+
+## The Concept
+
+### Arc Length
+
+The arc length of a curve traced by r(t) from t = a to t = b is
+
+$$
+L = \int_a^b |\mathbf{r}'(t)|\,dt
+$$
+
+This is just integrating the speed along the curve. The faster you're moving and the longer you travel, the more distance you cover.
+
+### Curvature
+
+Curvature (kappa) measures how much the curve deviates from a straight line at each point
+
+$$
+\kappa = \frac{|\mathbf{r}'(t) \times \mathbf{r}''(t)|}{|\mathbf{r}'(t)|^3}
+$$
+
+The Greek letter kappa (κ) is the standard symbol for curvature. Think of it as answering the question: "If I'm driving along this curve, how hard am I turning the steering wheel right now?"
+
+- A straight road has kappa = 0 (no turning at all)
+- A gentle highway curve has a small kappa (barely turning)
+- A tight parking lot turn has a large kappa (turning hard)
+
+The reciprocal of kappa is the radius of the osculating circle
+
+$$
+R = \frac{1}{\kappa}
+$$
+
+This is the circle that best fits the curve at that point. A tight turn means a small circle fits snugly against the curve (high kappa, small R). A gentle turn means only a huge circle would match the curve's bend (low kappa, large R).
+
+import CurvatureCompare from "../../../components/CurvatureCompare.astro";
+
+<CurvatureCompare />
+
+The dashed orange circles are the osculating circles. A tight curve has a small osculating circle (high curvature), a gentle curve has a large one (low curvature), and a straight line has an infinitely large osculating circle (zero curvature).
+
+### Unit Tangent and Normal Vectors
+
+The unit tangent vector points in the direction of motion
+
+$$
+\mathbf{T}(t) = \frac{\mathbf{r}'(t)}{|\mathbf{r}'(t)|}
+$$
+
+The unit normal vector points toward the center of the osculating circle (the direction the curve is bending).
+
+import TNVectors from "../../../components/TNVectors.astro";
+
+<TNVectors />
+
+T (blue) points along the curve in the direction of motion. N (green) points perpendicular to T, toward the center of the osculating circle (dashed orange). Together they form a moving frame that rides along the curve.
+
+In this visual the curve is a circular arc, so it matches the osculating circle exactly. For most curves (parabolas, helices, etc.), the osculating circle only touches the curve at that one point and its immediate neighborhood, then the curve peels away.
+
+## Worked Examples
+
+**Example 1: Arc length of a helix**
+
+Find the arc length of one full turn of the helix r(t) = (cos t, sin t, t) from t = 0 to t = 2π.
+
+$$
+\mathbf{r}'(t) = \langle -\sin t,\, \cos t,\, 1 \rangle
+$$
+
+$$
+|\mathbf{r}'(t)| = \sqrt{\sin^2 t + \cos^2 t + 1} = \sqrt{2}
+$$
+
+The speed is constant at sqrt(2), so the arc length is
+
+$$
+L = \int_0^{2\pi} \sqrt{2}\,dt = 2\pi\sqrt{2} \approx 8.886
+$$
+
+One full turn of this helix is about 8.886 units long. The helix climbs 2π units vertically while tracing a circle of circumference 2π horizontally, and the diagonal distance is sqrt(2) times the horizontal distance.
+
+**Example 2: Curvature of a circle**
+
+A circle of radius R can be parametrized as r(t) = (R cos t, R sin t, 0).
+
+$$
+\mathbf{r}'(t) = \langle -R\sin t,\, R\cos t,\, 0 \rangle \qquad |\mathbf{r}'(t)| = R
+$$
+
+$$
+\mathbf{r}''(t) = \langle -R\cos t,\, -R\sin t,\, 0 \rangle
+$$
+
+The cross product (in 3D with z = 0)
+
+$$
+\mathbf{r}' \times \mathbf{r}'' = \langle 0,\, 0,\, R^2\sin^2 t + R^2\cos^2 t \rangle = \langle 0, 0, R^2 \rangle
+$$
+
+$$
+\kappa = \frac{R^2}{R^3} = \frac{1}{R}
+$$
+
+The curvature of a circle is 1/R, constant everywhere. A smaller circle bends more sharply (higher curvature). This makes intuitive sense: turning on a tight roundabout feels sharper than turning on a wide highway curve.
+
+**Example 3: Curvature of a straight line**
+
+For a straight line r(t) = (1 + 2t, 3 - t, 4t)
+
+$$
+\mathbf{r}'(t) = \langle 2, -1, 4 \rangle \qquad \mathbf{r}''(t) = \langle 0, 0, 0 \rangle
+$$
+
+$$
+\mathbf{r}' \times \mathbf{r}'' = \langle 0, 0, 0 \rangle \qquad \kappa = \frac{0}{|\mathbf{r}'|^3} = 0
+$$
+
+A straight line has zero curvature everywhere. No bending, no curvature.
+
+## Real-World Application
+
+Arc length and curvature are used constantly in practice:
+
+- Game engines use arc length parametrization for smooth, constant-speed movement along paths
+- Road and railway design uses curvature to ensure safe turning radii
+- Animation software uses curvature to control how smoothly a camera or character moves through turns
+- Physics simulations need curvature to compute centripetal acceleration on curved paths
+
+:::note[You've Got This]
+Arc length is just integrating speed, the same idea from Calculus 2 but now in 3D. Curvature tells you how "curvy" the path is at each point. The formula with the cross product looks intimidating, but the geometric meaning is clear: it's the reciprocal of the radius of the best-fitting circle. Practice with circles and helices first, then the formula will feel natural.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="calculus3-arc-length-and-curvature"
+  questions={[
+    {
+      id: "q1",
+      text: "The arc length of a curve is found by integrating",
+      options: [
+        "the position vector",
+        "the speed $|\\mathbf{r}'(t)|$",
+        "the curvature",
+        "the acceleration",
+      ],
+      correctIndex: 1,
+      explanation: "Arc length = integral of speed from a to b.",
+    },
+    {
+      id: "q2",
+      text: "The curvature of a circle of radius R is",
+      options: ["$R$", "$R^2$", "$1/R$", "$2\\pi R$"],
+      correctIndex: 2,
+      explanation:
+        "Smaller circles bend more sharply, giving higher curvature 1/R.",
+    },
+    {
+      id: "q3",
+      text: "A straight line has curvature",
+      options: ["$1$", "$\\infty$", "undefined", "$0$"],
+      correctIndex: 3,
+      explanation: "No bending means zero curvature.",
+    },
+    {
+      id: "q4",
+      text: "The speed along the helix $\\langle \\cos t, \\sin t, t \\rangle$ is",
+      options: ["$1$", "$\\sqrt{2}$", "$2$", "$t$"],
+      correctIndex: 1,
+      explanation:
+        "The magnitude of r'(t) = (-sin t, cos t, 1) is sqrt(1 + 1) = sqrt(2).",
+    },
+    {
+      id: "q5",
+      text: "The osculating circle at a point on a curve has radius",
+      options: ["$\\kappa$", "$1/\\kappa$", "$\\kappa^2$", "$2\\kappa$"],
+      correctIndex: 1,
+      explanation:
+        "The radius of curvature is the reciprocal of the curvature.",
+    },
+  ]}
+/>

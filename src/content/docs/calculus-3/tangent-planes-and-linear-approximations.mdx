@@ -1,0 +1,198 @@
+---
+title: Tangent Planes and Linear Approximations
+description: Learn how to find tangent planes to surfaces and use them for linear approximations in multiple variables
+sidebar:
+  order: 5
+---
+
+## What You'll Learn
+
+In this lesson you'll learn how to find the tangent plane to a surface at a point and use it to approximate function values nearby. This is the multivariable version of the tangent line from Calculus 1.
+
+## The Concept
+
+### The Tangent Plane
+
+In Calculus 1, the tangent line to y = f(x) at a point gives the best linear approximation to the curve near that point. In Calculus 3, we have surfaces z = f(x, y), and the tangent line becomes a tangent plane.
+
+For a surface z = f(x, y), the tangent plane at the point (x₀, y₀, z₀) is
+
+$$
+z - z_0 = f_x(x_0, y_0)(x - x_0) + f_y(x_0, y_0)(y - y_0)
+$$
+
+The partial derivatives act as slopes: one in the x-direction, one in the y-direction. Together they define a flat plane that just touches the surface at that point.
+
+### Linear Approximation
+
+The tangent plane gives us a way to estimate f(x, y) near a known point without computing the full function
+
+$$
+f(x, y) \approx f(x_0, y_0) + f_x(x_0, y_0)(x - x_0) + f_y(x_0, y_0)(y - y_0)
+$$
+
+This works well when x and y are close to x₀ and y₀. The further you move from the point, the worse the approximation gets, just like tangent lines in single-variable calculus.
+
+## Worked Examples
+
+**Example 1: Finding the tangent plane**
+
+Find the tangent plane to f(x, y) = x² + y² at the point (1, 2).
+
+First, compute the function value and partial derivatives at (1, 2)
+
+$$
+f(1, 2) = 1 + 4 = 5
+$$
+
+$$
+f_x = 2x \implies f_x(1, 2) = 2
+$$
+
+$$
+f_y = 2y \implies f_y(1, 2) = 4
+$$
+
+Plug into the tangent plane formula
+
+$$
+z - 5 = 2(x - 1) + 4(y - 2)
+$$
+
+Simplify
+
+$$
+z = 2x + 4y - 5
+$$
+
+This plane touches the paraboloid at exactly (1, 2, 5) and has slope 2 in the x-direction and slope 4 in the y-direction.
+
+import TangentPlane3D from "../../../components/TangentPlane3D.astro";
+
+<TangentPlane3D />
+
+The blue surface is the paraboloid z = x² + y². The orange plane is the tangent plane z = 2x + 4y - 5, touching the surface at the purple point (1, 2, 5). Notice how the plane matches the surface closely near the point but drifts away further out.
+
+**Example 2: Linear approximation**
+
+Use the tangent plane from Example 1 to approximate f(1.1, 2.05).
+
+Instead of computing 1.1² + 2.05² directly, use the linear approximation
+
+$$
+f(1.1, 2.05) \approx 5 + 2(1.1 - 1) + 4(2.05 - 2)
+$$
+
+$$
+= 5 + 2(0.1) + 4(0.05)
+$$
+
+$$
+= 5 + 0.2 + 0.2 = 5.4
+$$
+
+The actual value is 1.21 + 4.2025 = 5.4125. The approximation is off by only 0.0125, which is pretty good for such a simple calculation.
+
+import LinearApproxDiagram from "../../../components/LinearApproxDiagram.astro";
+
+<LinearApproxDiagram />
+
+This shows a 1D slice of the idea (holding y = 2 and varying x). The blue curve is the actual function, the dashed orange line is the tangent (linear approximation), and at x = 1.5 the gap between actual (6.25) and approx (6.0) is small. The full tangent plane does the same thing but in both the x and y directions simultaneously.
+
+**Example 3: When the approximation breaks down**
+
+The linear approximation works because the tangent plane matches the surface at the point and has the same slopes. But it's only a flat plane, so it can't capture curvature. If you try to approximate f(3, 5) using the tangent plane at (1, 2), you get
+
+$$
+z \approx 2(3) + 4(5) - 5 = 21
+$$
+
+The actual value is 9 + 25 = 34. That's way off. The approximation only works well when the changes in x and y are small.
+
+## Real-World Application
+
+Tangent planes and linear approximations show up constantly:
+
+- Game engines use linear approximations for quick collision response on curved surfaces, estimating the local surface as a flat plane
+- Machine learning uses linear approximations at every step of gradient descent, treating the loss surface as locally flat to decide which direction to step
+- Engineering uses linearization to analyze how small changes in inputs affect outputs (sensitivity analysis)
+- Physics linearizes nonlinear equations near equilibrium points to make them solvable
+
+:::note[You've Got This]
+The tangent plane is just the 3D version of the tangent line. Instead of one slope, you have two (one for each direction). The linear approximation formula looks longer, but it's doing the same thing: using the slopes at a known point to estimate nearby values. If you could find tangent lines in Calculus 1, you can find tangent planes here. The only new ingredient is that you need both partial derivatives instead of one.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="calculus3-tangent-planes-and-linear-approximations"
+  questions={[
+    {
+      id: "q1",
+      text: "The tangent plane to $z = f(x,y)$ at $(x_0, y_0)$ uses",
+      options: [
+        "only $f_x$",
+        "only $f_y$",
+        "both $f_x$ and $f_y$ as slopes",
+        "the second derivatives",
+      ],
+      correctIndex: 2,
+      explanation:
+        "The tangent plane needs the slope in both the x and y directions.",
+    },
+    {
+      id: "q2",
+      text: "For $f(x,y) = x^2 + y^2$, the tangent plane at $(1, 2, 5)$ is",
+      options: [
+        "$z = x + y$",
+        "$z = 2x + 4y - 5$",
+        "$z = x^2 + y^2$",
+        "$z = 5$",
+      ],
+      correctIndex: 1,
+      explanation:
+        "With $f_x = 2$ and $f_y = 4$ at $(1,2)$, the plane is $z - 5 = 2(x-1) + 4(y-2)$.",
+    },
+    {
+      id: "q3",
+      text: "Linear approximation works best when",
+      options: [
+        "you are far from the known point",
+        "the function is linear everywhere",
+        "the changes in x and y are small",
+        "the surface is flat",
+      ],
+      correctIndex: 2,
+      explanation:
+        "The tangent plane closely matches the surface only near the point of tangency.",
+    },
+    {
+      id: "q4",
+      text: "The tangent plane is the multivariable version of",
+      options: [
+        "the secant line",
+        "the normal line",
+        "the tangent line",
+        "the integral",
+      ],
+      correctIndex: 2,
+      explanation:
+        "Just as the tangent line is the best linear approximation to a curve, the tangent plane is the best linear approximation to a surface.",
+    },
+    {
+      id: "q5",
+      text: "Using the tangent plane at $(1,2,5)$ to approximate $f(3,5)$ gives a poor result because",
+      options: [
+        "the formula is wrong",
+        "the partial derivatives are zero",
+        "$(3,5)$ is too far from $(1,2)$",
+        "the function is not differentiable",
+      ],
+      correctIndex: 2,
+      explanation:
+        "Linear approximation only works well near the point. Large changes mean the flat plane can't capture the surface's curvature.",
+    },
+  ]}
+/>

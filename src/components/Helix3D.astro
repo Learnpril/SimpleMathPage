@@ -1,0 +1,146 @@
+---
+/**
+ * Helix3D — interactive 3D helix r(t) = <cos t, sin t, t>
+ * with a tangent vector arrow at a point, showing the space curve concept.
+ * Axis labels, auto-rotate, zoom enabled.
+ */
+---
+
+<figure class="hlx" role="img" aria-label="Interactive 3D helix space curve with tangent vector">
+  <div class="hlx-canvas" data-helix3d></div>
+  <div class="hlx-hint">Drag to rotate · Scroll to zoom</div>
+</figure>
+
+<script>
+  import * as THREE from "three";
+  import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+
+  function initHelix(container: HTMLElement) {
+    const width = Math.min(container.clientWidth, 520);
+    const height = 380;
+    const isDark = document.documentElement.dataset.theme !== "light";
+    const bg = isDark ? 0x121212 : 0xf8f9fa;
+
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(bg);
+
+    const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 100);
+    camera.position.set(4, 3, 5);
+    camera.lookAt(0, 2, 0);
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(width, height);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    container.appendChild(renderer.domElement);
+
+    // Helix: r(t) = <cos t, t/(2pi), sin t> scaled for nice display
+    // We'll use y as the "up" axis for the helix height
+    const helixPts: THREE.Vector3[] = [];
+    const N = 300;
+    const turns = 3;
+    const maxT = turns * Math.PI * 2;
+    for (let i = 0; i <= N; i++) {
+      const t = (i / N) * maxT;
+      helixPts.push(new THREE.Vector3(Math.cos(t), t / (Math.PI * 2), Math.sin(t)));
+    }
+    const helixGeo = new THREE.BufferGeometry().setFromPoints(helixPts);
+    const helixColor = isDark ? 0x58a6ff : 0x0550ae;
+    scene.add(new THREE.Line(helixGeo, new THREE.LineBasicMaterial({ color: helixColor, linewidth: 2 })));
+
+    // Tangent vector at t = pi (halfway through first turn)
+    const tVal = Math.PI;
+    const pos = new THREE.Vector3(Math.cos(tVal), tVal / (Math.PI * 2), Math.sin(tVal));
+    // r'(t) = <-sin t, 1/(2pi), cos t>
+    const tang = new THREE.Vector3(-Math.sin(tVal), 1 / (Math.PI * 2), Math.cos(tVal));
+    tang.normalize();
+    const tangColor = isDark ? 0xf0883e : 0xb35900;
+    const arrow = new THREE.ArrowHelper(tang, pos, 1.2, tangColor, 0.15, 0.08);
+    scene.add(arrow);
+
+    // Point on curve
+    const dotGeo = new THREE.SphereGeometry(0.06, 16, 16);
+    const dotMat = new THREE.MeshBasicMaterial({ color: isDark ? 0x7ee787 : 0x116329 });
+    const dot = new THREE.Mesh(dotGeo, dotMat);
+    dot.position.copy(pos);
+    scene.add(dot);
+
+    // Axes
+    const axColor = isDark ? 0x444444 : 0xbbbbbb;
+    const axMat = new THREE.LineBasicMaterial({ color: axColor });
+    const axLen = 1.8;
+    for (const d of [[axLen, 0, 0], [0, 3.5, 0], [0, 0, axLen]]) {
+      const pts = [
+        new THREE.Vector3(-d[0] * 0.5, 0, -d[2] * 0.5),
+        new THREE.Vector3(d[0], d[1], d[2]),
+      ];
+      scene.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts), axMat));
+    }
+
+    // Labels
+    function makeLabel(text: string, p: number[], color: string, size = 0.4) {
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d")!;
+      canvas.width = 128; canvas.height = 64;
+      ctx.font = "bold 36px sans-serif";
+      ctx.fillStyle = color; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+      ctx.fillText(text, 64, 32);
+      const tex = new THREE.CanvasTexture(canvas);
+      const mat = new THREE.SpriteMaterial({ map: tex, transparent: true });
+      const sprite = new THREE.Sprite(mat);
+      sprite.position.set(p[0], p[1], p[2]);
+      sprite.scale.set(size * 2, size, 1);
+      scene.add(sprite);
+    }
+
+    const lc = isDark ? "#888" : "#666";
+    makeLabel("x", [2, -0.2, 0], lc);
+    makeLabel("y", [0, 3.8, 0], lc);
+    makeLabel("z", [0, -0.2, 2], lc);
+
+    const tc = isDark ? "#f0883e" : "#b35900";
+    makeLabel("r'(t)", [pos.x + tang.x * 1.4, pos.y + tang.y * 1.4 + 0.2, pos.z + tang.z * 1.4], tc, 0.35);
+
+    // Lighting
+    scene.add(new THREE.AmbientLight(0xffffff, 0.7));
+
+    // Controls
+    const controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.08;
+    controls.autoRotate = true;
+    controls.autoRotateSpeed = 0.6;
+    controls.enableZoom = true;
+    controls.minDistance = 3;
+    controls.maxDistance = 20;
+    controls.target.set(0, 1.5, 0);
+    controls.update();
+
+    let animId: number;
+    function animate() {
+      animId = requestAnimationFrame(animate);
+      controls.update();
+      renderer.render(scene, camera);
+    }
+    animate();
+  }
+
+  function setup() {
+    document.querySelectorAll<HTMLElement>("[data-helix3d]").forEach((el) => {
+      if (el.querySelector("canvas")) return;
+      const obs = new IntersectionObserver(
+        (entries) => { if (entries[0].isIntersecting) { obs.disconnect(); initHelix(el); } },
+        { threshold: 0.05 }
+      );
+      obs.observe(el);
+    });
+  }
+  setup();
+  document.addEventListener("astro:page-load", setup);
+</script>
+
+<style>
+  .hlx { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .hlx-canvas { width:100%; max-width:520px; min-height:380px; border-radius:8px; overflow:hidden; }
+  .hlx-canvas canvas { border-radius:8px; }
+  .hlx-hint { font-family:'Libre Baskerville',Georgia,serif; font-size:0.8rem; color:#888; margin-top:0.4rem; }
+</style>

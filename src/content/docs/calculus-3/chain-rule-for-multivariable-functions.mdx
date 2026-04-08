@@ -1,0 +1,223 @@
+---
+title: Chain Rule for Multivariable Functions
+description: Learn how to apply the Chain Rule when functions depend on several variables
+sidebar:
+  order: 6
+---
+
+## What You'll Learn
+
+In this lesson you'll learn how to differentiate composite functions where the variables themselves depend on other variables. The tree diagram method will become your go-to tool for keeping track of all the dependency paths.
+
+## The Concept
+
+### Why We Need a New Chain Rule
+
+In Calculus 1, the chain rule was straightforward: if y = f(g(x)), then dy/dx = f'(g(x)) g'(x). One function inside another, one path.
+
+In multivariable calculus, a function z = f(x, y) might have x and y that each depend on other variables. Now there are multiple paths from z to the variable you're differentiating with respect to, and you need to account for all of them.
+
+### Case 1: One Parameter
+
+If z = f(x, y) where x = x(t) and y = y(t), then z ultimately depends on just t through two paths
+
+$$
+\frac{dz}{dt} = \frac{\partial z}{\partial x}\frac{dx}{dt} + \frac{\partial z}{\partial y}\frac{dy}{dt}
+$$
+
+Each term represents one path: z changes because x changes with t, and z also changes because y changes with t. Add them up.
+
+### Case 2: Two Parameters
+
+If z = f(x, y) where x = x(s, t) and y = y(s, t), then
+
+$$
+\frac{\partial z}{\partial s} = \frac{\partial z}{\partial x}\frac{\partial x}{\partial s} + \frac{\partial z}{\partial y}\frac{\partial y}{\partial s}
+$$
+
+$$
+\frac{\partial z}{\partial t} = \frac{\partial z}{\partial x}\frac{\partial x}{\partial t} + \frac{\partial z}{\partial y}\frac{\partial y}{\partial t}
+$$
+
+### The Tree Diagram
+
+The tree diagram is the easiest way to never miss a term. Draw the function at the top, its immediate variables below, and the final variables at the bottom. Each edge gets labeled with the appropriate derivative. To find a total derivative, trace every path from top to bottom and multiply along each path, then add all paths.
+
+You don't need the tree diagram to use the chain rule. You can always just write out the formula directly. But when the dependencies get complicated, the tree is a cool trick that makes it almost impossible to forget a term.
+
+import ChainRuleTree from "../../../components/ChainRuleTree.astro";
+
+<ChainRuleTree />
+
+## Worked Examples
+
+**Example 1: Single parameter**
+
+Let z = x² + 3xy + y² where x = t² and y = 3t. Find dz/dt.
+
+First, compute the partial derivatives of z
+
+$$
+\frac{\partial z}{\partial x} = 2x + 3y
+$$
+
+$$
+\frac{\partial z}{\partial y} = 3x + 2y
+$$
+
+Then the derivatives of x and y with respect to t
+
+$$
+\frac{dx}{dt} = 2t \qquad \frac{dy}{dt} = 3
+$$
+
+Apply the chain rule
+
+$$
+\frac{dz}{dt} = (2x + 3y)(2t) + (3x + 2y)(3)
+$$
+
+At t = 1 (so x = 1, y = 3)
+
+$$
+\frac{dz}{dt} = (2 + 9)(2) + (3 + 6)(3) = 22 + 27 = 49
+$$
+
+import ChainRuleEx1Tree from "../../../components/ChainRuleEx1Tree.astro";
+
+<ChainRuleEx1Tree />
+
+**Example 2: Two parameters with exponentials**
+
+Let z = $e^{xy}$ where x = s + t and y = s - t. Find ∂z/∂s and ∂z/∂t.
+
+The partials of z
+
+$$
+\frac{\partial z}{\partial x} = ye^{xy} \qquad \frac{\partial z}{\partial y} = xe^{xy}
+$$
+
+The partials of x and y
+
+$$
+\frac{\partial x}{\partial s} = 1 \qquad \frac{\partial x}{\partial t} = 1 \qquad \frac{\partial y}{\partial s} = 1 \qquad \frac{\partial y}{\partial t} = -1
+$$
+
+Apply the chain rule for each
+
+import ChainRuleEx2Tree from "../../../components/ChainRuleEx2Tree.astro";
+
+<ChainRuleEx2Tree />
+
+The two green circles at the bottom of the tree are s and t, the independent variables we're differentiating with respect to. Two paths reach s (through x and through y), giving ∂z/∂s. Two paths reach t, giving ∂z/∂t. Multiply along each path, then add
+
+$$
+\frac{\partial z}{\partial s} = ye^{xy}(1) + xe^{xy}(1) = (x + y)e^{xy}
+$$
+
+$$
+\frac{\partial z}{\partial t} = ye^{xy}(1) + xe^{xy}(-1) = (y - x)e^{xy}
+$$
+
+Substituting back: since x + y = 2s and y - x = -2t
+
+$$
+\frac{\partial z}{\partial s} = 2se^{(s+t)(s-t)} \qquad \frac{\partial z}{\partial t} = -2te^{(s+t)(s-t)}
+$$
+
+**Example 3: Verifying by direct substitution**
+
+We can check Example 1 by substituting first. With x = t² and y = 3t
+
+$$
+z = (t^2)^2 + 3(t^2)(3t) + (3t)^2 = t^4 + 9t^3 + 9t^2
+$$
+
+$$
+\frac{dz}{dt} = 4t^3 + 27t^2 + 18t
+$$
+
+At t = 1: dz/dt = 4 + 27 + 18 = 49. Same answer as the chain rule gave us. Both methods work, but the chain rule is often faster when you don't want to (or can't) substitute everything first.
+
+## Real-World Application
+
+The multivariable chain rule is everywhere:
+
+- Machine learning uses it as backpropagation: the loss depends on outputs, which depend on weights, which depend on earlier layers. The chain rule traces every path backward through the network.
+- Game engines use it when a character's hand position depends on shoulder angle, elbow angle, and wrist angle, all changing with time. The chain rule computes the hand's velocity.
+- Physics uses it for related rates in 3D: pressure depends on temperature and volume, which both depend on time.
+- Engineering uses it for sensitivity analysis: how does a final measurement change when multiple input parameters shift?
+
+:::note[You've Got This]
+The multivariable chain rule is just the single-variable chain rule applied to every path. Draw the tree, label the edges, multiply along each path, and add. The tree diagram makes it almost mechanical. The most common mistake is forgetting a path, so always draw the tree first. Once you get the hang of it, this becomes one of the most natural tools in your toolkit.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="calculus3-chain-rule-for-multivariable-functions"
+  questions={[
+    {
+      id: "q1",
+      text: "For $z = f(x,y)$ with $x = x(t)$ and $y = y(t)$, $dz/dt$ equals",
+      options: [
+        "$\\frac{\\partial z}{\\partial x}$ only",
+        "$\\frac{\\partial z}{\\partial x}\\frac{dx}{dt} + \\frac{\\partial z}{\\partial y}\\frac{dy}{dt}$",
+        "$\\frac{dx}{dt} + \\frac{dy}{dt}$",
+        "$\\frac{\\partial z}{\\partial t}$",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Sum the contributions from each path: through x and through y.",
+    },
+    {
+      id: "q2",
+      text: "A tree diagram helps you",
+      options: [
+        "graph the function",
+        "find limits",
+        "track all dependency paths so you don't miss terms",
+        "compute second derivatives only",
+      ],
+      correctIndex: 2,
+      explanation:
+        "The tree shows every path from the function to the variable you're differentiating with respect to.",
+    },
+    {
+      id: "q3",
+      text: "If $z = e^{xy}$, $x = s + t$, $y = s - t$, then $\\partial z / \\partial t$ equals",
+      options: ["$(x + y)e^{xy}$", "$(y - x)e^{xy}$", "$xye^{xy}$", "$e^{xy}$"],
+      correctIndex: 1,
+      explanation:
+        "The path through x contributes ye^(xy)(1) and through y contributes xe^(xy)(-1), giving (y - x)e^(xy).",
+    },
+    {
+      id: "q4",
+      text: "In machine learning, backpropagation is an application of",
+      options: [
+        "the multivariable chain rule",
+        "integration by parts",
+        "L'Hopital's rule",
+        "the squeeze theorem",
+      ],
+      correctIndex: 0,
+      explanation:
+        "Backpropagation traces the chain rule backward through every layer of the network.",
+    },
+    {
+      id: "q5",
+      text: "The most common mistake with the multivariable chain rule is",
+      options: [
+        "using the wrong formula entirely",
+        "forgetting to include all dependency paths",
+        "differentiating constants",
+        "mixing up x and y labels",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Missing a path means missing a term. The tree diagram prevents this.",
+    },
+  ]}
+/>

@@ -1,0 +1,76 @@
+---
+/**
+ * CurvatureCompare — 2D SVG showing three curves with different curvatures:
+ * a tight circle (high κ), a gentle curve (low κ), and a straight line (κ=0).
+ * Osculating circles shown to visualize curvature.
+ */
+const w = 440;
+const h = 280;
+const pad = 35;
+
+// Three panels side by side
+const pw = (w - 4 * pad) / 3;
+const cx = (i: number) => pad + i * (pw + pad) + pw / 2;
+const curveY = 110; // vertical center for curves
+const labelY = h - 30; // label position
+
+// Panel 1: tight circle
+const r1 = pw * 0.32;
+
+// Panel 2: gentle curve + larger osculating circle
+const r2osc = pw * 0.55; // osculating circle radius (fits in SVG)
+const gentlePts: string[] = [];
+for (let i = 0; i <= 40; i++) {
+  const t = (i / 40) * Math.PI;
+  const gx = cx(1) + (t - Math.PI / 2) * pw * 0.35;
+  const gy = curveY - 15 - Math.sin(t) * pw * 0.18;
+  gentlePts.push(`${gx},${gy}`);
+}
+---
+
+<figure class="kc" role="img" aria-label="Three curves showing high curvature, low curvature, and zero curvature with osculating circles">
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    {/* Panel 1: Tight circle (high curvature) */}
+    <circle cx={cx(0)} cy={curveY} r={r1} fill="none" class="kc-curve" stroke-width="2.5" />
+    <circle cx={cx(0)} cy={curveY} r={r1} fill="none" class="kc-osc" stroke-width="1" stroke-dasharray="4,3" />
+    <text class="kc-label" x={cx(0)} y={labelY} font-size="10" text-anchor="middle">high curvature</text>
+    <text class="kc-label" x={cx(0)} y={labelY + 14} font-size="9" text-anchor="middle">(small radius)</text>
+
+    {/* Panel 2: Gentle curve (low curvature) */}
+    <polyline points={gentlePts.join(" ")} fill="none" class="kc-curve" stroke-width="2.5" />
+    <circle cx={cx(1)} cy={curveY + r2osc - 15} r={r2osc} fill="none" class="kc-osc" stroke-width="1" stroke-dasharray="4,3" />
+    <text class="kc-label" x={cx(1)} y={labelY} font-size="10" text-anchor="middle">low curvature</text>
+    <text class="kc-label" x={cx(1)} y={labelY + 14} font-size="9" text-anchor="middle">(large radius)</text>
+
+    {/* Panel 3: Straight line (zero curvature) */}
+    <line x1={cx(2) - pw * 0.4} y1={curveY + pw * 0.15} x2={cx(2) + pw * 0.4} y2={curveY - pw * 0.15}
+          class="kc-curve" stroke-width="2.5" />
+    <text class="kc-label" x={cx(2)} y={labelY} font-size="10" text-anchor="middle">zero curvature</text>
+    <text class="kc-label" x={cx(2)} y={labelY + 14} font-size="9" text-anchor="middle">(straight line)</text>
+  </svg>
+  <div class="kc-legend">
+    <span class="kc-leg-item"><span class="kc-swatch kc-sw-curve"></span> curve</span>
+    <span class="kc-leg-item"><span class="kc-swatch kc-sw-osc"></span> osculating circle (radius = 1/κ)</span>
+  </div>
+</figure>
+
+<style>
+  .kc { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .kc svg { max-width:100%; height:auto; }
+  .kc-curve { stroke:#58a6ff; }
+  .kc-osc { stroke:#f0883e; }
+  .kc-label { fill:#999; font-family:'Libre Baskerville',Georgia,serif; }
+  .kc-legend {
+    display:flex; gap:1rem; flex-wrap:wrap; justify-content:center;
+    margin-top:0.5rem; font-family:'Libre Baskerville',Georgia,serif; font-size:0.82rem;
+  }
+  .kc-leg-item { display:flex; align-items:center; gap:0.35rem; }
+  .kc-swatch { display:inline-block; width:18px; height:4px; border-radius:2px; }
+  .kc-sw-curve { background:#58a6ff; }
+  .kc-sw-osc { background:none; border-bottom:2px dashed #f0883e; height:0; margin-top:6px; }
+  :global([data-theme="light"]) .kc-curve { stroke:#0550ae; }
+  :global([data-theme="light"]) .kc-osc { stroke:#b35900; }
+  :global([data-theme="light"]) .kc-label { fill:#555; }
+  :global([data-theme="light"]) .kc-sw-curve { background:#0550ae; }
+  :global([data-theme="light"]) .kc-sw-osc { border-color:#b35900; }
+</style>

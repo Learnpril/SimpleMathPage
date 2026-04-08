@@ -1,0 +1,145 @@
+---
+/**
+ * TNVectors — 2D SVG showing T and N vectors on a circular arc.
+ * Using a circle makes the math exact: T is tangent, N points to center.
+ * The osculating circle IS the curve itself for a circle.
+ */
+const w = 420;
+const h = 340;
+const midX = w / 2;
+const midY = 155;
+
+// Circle (arc) parameters
+const R = 100; // radius
+const arcCx = midX;
+const arcCy = midY + 20; // center of the osculating circle
+
+// Draw an arc from about -120° to +30° (partial circle, not full)
+const arcStart = -2.2; // radians
+const arcEnd = 0.5;
+
+const arcPts: string[] = [];
+for (let i = 0; i <= 60; i++) {
+  const a = arcStart + (i / 60) * (arcEnd - arcStart);
+  const x = arcCx + R * Math.cos(a);
+  const y = arcCy + R * Math.sin(a);
+  arcPts.push(`${x},${y}`);
+}
+
+// Point on the arc at angle = -0.8 radians (nice visible spot)
+const ptAngle = -0.8;
+const px = arcCx + R * Math.cos(ptAngle);
+const py = arcCy + R * Math.sin(ptAngle);
+
+// Tangent: perpendicular to radius, pointing in direction of increasing angle
+// T = (-sin(angle), cos(angle)) in math coords
+// In SVG (y inverted): T = (-sin(angle), -cos(angle))... wait, SVG y goes down
+// Actually for SVG: x = cx + R*cos(a), y = cy + R*sin(a)
+// dx/da = -R*sin(a), dy/da = R*cos(a)
+// So tangent direction in SVG coords is (-sin(a), cos(a))
+const tDx = -Math.sin(ptAngle);
+const tDy = Math.cos(ptAngle);
+const arrowLen = 55;
+
+// Normal: points toward center of circle = from point toward (arcCx, arcCy)
+const nDx = arcCx - px;
+const nDy = arcCy - py;
+const nMag = Math.sqrt(nDx * nDx + nDy * nDy);
+const nUx = nDx / nMag;
+const nUy = nDy / nMag;
+---
+
+<figure class="tn" role="img" aria-label="Curve with unit tangent vector T and unit normal vector N at a point, with osculating circle">
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <marker id="tn-arr-b" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+        <polygon points="0,0 8,3 0,6" class="tn-arr-blue" />
+      </marker>
+      <marker id="tn-arr-g" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+        <polygon points="0,0 8,3 0,6" class="tn-arr-green" />
+      </marker>
+    </defs>
+
+    {/* Osculating circle (full, dashed) */}
+    <circle cx={arcCx} cy={arcCy} r={R} fill="none" class="tn-osc" stroke-width="1" stroke-dasharray="5,4" />
+
+    {/* Small dot at center of circle */}
+    <circle cx={arcCx} cy={arcCy} r="2.5" class="tn-center" />
+
+    {/* Curve (arc, solid, on top of circle) */}
+    <polyline points={arcPts.join(" ")} fill="none" class="tn-curve" stroke-width="3" />
+
+    {/* Radius line from point to center (thin, to show N direction) */}
+    <line x1={px} y1={py} x2={arcCx} y2={arcCy}
+          class="tn-radius" stroke-width="0.8" stroke-dasharray="3,3" />
+
+    {/* Point on curve */}
+    <circle cx={px} cy={py} r="5" class="tn-dot" />
+
+    {/* Unit tangent T */}
+    <line x1={px} y1={py} x2={px + tDx * arrowLen} y2={py + tDy * arrowLen}
+          class="tn-tvec" stroke-width="2.5" marker-end="url(#tn-arr-b)" />
+
+    {/* Unit normal N */}
+    <line x1={px} y1={py} x2={px + nUx * arrowLen} y2={py + nUy * arrowLen}
+          class="tn-nvec" stroke-width="2.5" marker-end="url(#tn-arr-g)" />
+
+    {/* Labels */}
+    <text class="tn-label tn-label-t" x={px + tDx * arrowLen + 8} y={py + tDy * arrowLen - 2} font-size="15" font-weight="bold">T</text>
+    <text class="tn-label tn-label-n" x={px + nUx * arrowLen - 22} y={py + nUy * arrowLen - 14} font-size="15" font-weight="bold">N</text>
+    <text class="tn-label tn-label-c" x={arcCx + 8} y={arcCy + 5} font-size="11">center</text>
+    <text class="tn-label tn-label-r" x={(px + arcCx) / 2 + 10} y={(py + arcCy) / 2 + 14} font-size="11">R = 1/κ</text>
+  </svg>
+  <div class="tn-legend">
+    <span class="tn-leg-item"><span class="tn-swatch tn-sw-curve"></span> curve</span>
+    <span class="tn-leg-item"><span class="tn-swatch tn-sw-t"></span> T (unit tangent)</span>
+    <span class="tn-leg-item"><span class="tn-swatch tn-sw-n"></span> N (unit normal)</span>
+    <span class="tn-leg-item"><span class="tn-swatch tn-sw-osc"></span> osculating circle</span>
+  </div>
+</figure>
+
+<style>
+  .tn { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .tn svg { max-width:100%; height:auto; }
+  .tn-curve { stroke:#888; }
+  .tn-osc { stroke:#f0883e; }
+  .tn-center { fill:#f0883e; }
+  .tn-radius { stroke:#666; }
+  .tn-dot { fill:#d2a8ff; }
+  .tn-tvec { stroke:#58a6ff; }
+  .tn-nvec { stroke:#7ee787; }
+  .tn-arr-blue { fill:#58a6ff; }
+  .tn-arr-green { fill:#7ee787; }
+  .tn-label { font-family:'Libre Baskerville',Georgia,serif; }
+  .tn-label-t { fill:#58a6ff; }
+  .tn-label-n { fill:#7ee787; }
+  .tn-label-c { fill:#f0883e; }
+  .tn-label-r { fill:#999; }
+  .tn-legend {
+    display:flex; gap:0.8rem; flex-wrap:wrap; justify-content:center;
+    margin-top:0.5rem; font-family:'Libre Baskerville',Georgia,serif; font-size:0.82rem;
+  }
+  .tn-leg-item { display:flex; align-items:center; gap:0.35rem; }
+  .tn-swatch { display:inline-block; width:18px; height:4px; border-radius:2px; }
+  .tn-sw-curve { background:#888; }
+  .tn-sw-t { background:#58a6ff; }
+  .tn-sw-n { background:#7ee787; }
+  .tn-sw-osc { background:none; border-bottom:2px dashed #f0883e; height:0; margin-top:6px; }
+  :global([data-theme="light"]) .tn-curve { stroke:#555; }
+  :global([data-theme="light"]) .tn-osc { stroke:#b35900; }
+  :global([data-theme="light"]) .tn-center { fill:#b35900; }
+  :global([data-theme="light"]) .tn-radius { stroke:#999; }
+  :global([data-theme="light"]) .tn-dot { fill:#6639ba; }
+  :global([data-theme="light"]) .tn-tvec { stroke:#0550ae; }
+  :global([data-theme="light"]) .tn-nvec { stroke:#116329; }
+  :global([data-theme="light"]) .tn-arr-blue { fill:#0550ae; }
+  :global([data-theme="light"]) .tn-arr-green { fill:#116329; }
+  :global([data-theme="light"]) .tn-label-t { fill:#0550ae; }
+  :global([data-theme="light"]) .tn-label-n { fill:#116329; }
+  :global([data-theme="light"]) .tn-label-c { fill:#b35900; }
+  :global([data-theme="light"]) .tn-label-r { fill:#666; }
+  :global([data-theme="light"]) .tn-sw-curve { background:#555; }
+  :global([data-theme="light"]) .tn-sw-t { background:#0550ae; }
+  :global([data-theme="light"]) .tn-sw-n { background:#116329; }
+  :global([data-theme="light"]) .tn-sw-osc { border-color:#b35900; }
+</style>

@@ -1,0 +1,241 @@
+---
+/**
+ * TangentPlane3D — Interactive 3D visual of the paraboloid z = x² + y²
+ * with a tangent plane at the point (1, 2, 5).
+ * Tangent plane: z = 2x + 4y - 5
+ * Lazy-loads Three.js via IntersectionObserver.
+ */
+---
+
+<figure class="tp3" role="img" aria-label="Interactive 3D paraboloid z equals x squared plus y squared with tangent plane at point (1, 2, 5)">
+  <div class="tp3-canvas" data-tp3d></div>
+  <div class="tp3-hint">Drag to rotate · Scroll to zoom</div>
+</figure>
+
+<script>
+  import * as THREE from "three";
+  import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+
+  function initScene(container: HTMLElement) {
+    const width = Math.min(container.clientWidth, 520);
+    const height = 380;
+
+    const isDark = document.documentElement.dataset.theme !== "light";
+    const bgColor = isDark ? 0x121212 : 0xf8f9fa;
+
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(bgColor);
+
+    const camera = new THREE.PerspectiveCamera(40, width / height, 0.1, 200);
+    camera.position.set(8, 6, 8);
+    camera.lookAt(0, 1, 0);
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(width, height);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    container.appendChild(renderer.domElement);
+
+    // Paraboloid z = x² + y², mapped as: Three.js y = z (up)
+    const segments = 50;
+    const range = 2.2;
+    const zScale = 0.25; // scale z for visual compactness
+    const surfGeo = new THREE.BufferGeometry();
+    const verts: number[] = [];
+    const indices: number[] = [];
+    const colors: number[] = [];
+
+    for (let i = 0; i <= segments; i++) {
+      for (let j = 0; j <= segments; j++) {
+        const x = -range + (2 * range * i) / segments;
+        const y = -range + (2 * range * j) / segments;
+        const z = x * x + y * y;
+        // Three.js coords: (x, z_up, y)
+        verts.push(x, z * zScale, y);
+
+        const t = z / (2 * range * range);
+        if (isDark) {
+          colors.push(0.34 + t * 0.3, 0.5 + t * 0.15, 1.0 - t * 0.4);
+        } else {
+          colors.push(0.02 + t * 0.25, 0.25 + t * 0.1, 0.68 - t * 0.25);
+        }
+      }
+    }
+
+    for (let i = 0; i < segments; i++) {
+      for (let j = 0; j < segments; j++) {
+        const a = i * (segments + 1) + j;
+        const b = a + 1;
+        const c = a + segments + 1;
+        const d = c + 1;
+        indices.push(a, b, c, b, d, c);
+      }
+    }
+
+    surfGeo.setAttribute("position", new THREE.Float32BufferAttribute(verts, 3));
+    surfGeo.setAttribute("color", new THREE.Float32BufferAttribute(colors, 3));
+    surfGeo.setIndex(indices);
+    surfGeo.computeVertexNormals();
+
+    const surfMat = new THREE.MeshPhongMaterial({
+      vertexColors: true,
+      side: THREE.DoubleSide,
+      shininess: 30,
+      transparent: true,
+      opacity: 0.7,
+    });
+    scene.add(new THREE.Mesh(surfGeo, surfMat));
+
+    // Tangent plane at (1, 2, 5): z - 5 = 2(x-1) + 4(y-2) → z = 2x + 4y - 5
+    const planeSize = 1.2;
+    const planeGeo = new THREE.PlaneGeometry(planeSize * 2, planeSize * 2, 1, 1);
+    const planeVerts = planeGeo.attributes.position;
+    for (let i = 0; i < planeVerts.count; i++) {
+      const lx = planeVerts.getX(i);
+      const ly = planeVerts.getY(i);
+      const wx = 1 + lx;
+      const wy = 2 + ly;
+      const wz = 2 * wx + 4 * wy - 5;
+      planeVerts.setX(i, wx);
+      planeVerts.setY(i, wz * zScale);
+      planeVerts.setZ(i, wy);
+    }
+    planeGeo.computeVertexNormals();
+
+    const planeMat = new THREE.MeshPhongMaterial({
+      color: isDark ? 0xf0883e : 0xb35900,
+      side: THREE.DoubleSide,
+      transparent: true,
+      opacity: 0.45,
+      shininess: 10,
+    });
+    scene.add(new THREE.Mesh(planeGeo, planeMat));
+
+    // Point (1, 2, 5) — Three.js: (1, 5*zScale, 2)
+    const dotGeo = new THREE.SphereGeometry(0.1, 16, 16);
+    const dotMat = new THREE.MeshBasicMaterial({
+      color: isDark ? 0xd2a8ff : 0x6639ba,
+    });
+    const dot = new THREE.Mesh(dotGeo, dotMat);
+    dot.position.set(1, 5 * zScale, 2);
+    scene.add(dot);
+
+    // Axes
+    const axColor = isDark ? 0x666666 : 0x999999;
+    const axMat = new THREE.LineBasicMaterial({ color: axColor });
+    const axLen = 3.5;
+    for (const dir of [
+      [axLen, 0, 0],
+      [0, axLen, 0],
+      [0, 0, axLen],
+    ] as [number, number, number][]) {
+      const pts = [
+        new THREE.Vector3(-dir[0] * 0.2, -dir[1] * 0.1, -dir[2] * 0.2),
+        new THREE.Vector3(dir[0], dir[1], dir[2]),
+      ];
+      scene.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts), axMat));
+    }
+
+    // Axis labels
+    function makeLabel(text: string, pos: [number, number, number], color: string, size = 0.5) {
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d")!;
+      canvas.width = 256;
+      canvas.height = 64;
+      ctx.font = "bold 32px sans-serif";
+      ctx.fillStyle = color;
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText(text, 128, 32);
+      const tex = new THREE.CanvasTexture(canvas);
+      const mat = new THREE.SpriteMaterial({ map: tex, transparent: true });
+      const sprite = new THREE.Sprite(mat);
+      sprite.position.set(...pos);
+      sprite.scale.set(size * 2.5, size * 0.6, 1);
+      scene.add(sprite);
+    }
+
+    const lc = isDark ? "#888" : "#666";
+    makeLabel("x", [3.0, -0.2, 0], lc, 0.4);
+    makeLabel("z", [0, 3.0, 0], lc, 0.4); // Three.js y-up = math z
+    makeLabel("y", [0, -0.2, 3.0], lc, 0.4);
+
+    // Point label — offset away from the surface so it's always readable
+    makeLabel("(1, 2, 5)", [0.6, 5 * zScale + 1.8, 4.0], isDark ? "#d2a8ff" : "#6639ba", 0.7);
+
+    // Leader line from label to dot
+    const leaderMat = new THREE.LineDashedMaterial({
+      color: isDark ? 0xd2a8ff : 0x6639ba,
+      dashSize: 0.1,
+      gapSize: 0.08,
+    });
+    const leaderGeo = new THREE.BufferGeometry().setFromPoints([
+      new THREE.Vector3(1, 5 * zScale, 2),
+      new THREE.Vector3(0.7, 5 * zScale + 1.6, 3.8),
+    ]);
+    const leaderLine = new THREE.Line(leaderGeo, leaderMat);
+    leaderLine.computeLineDistances();
+    scene.add(leaderLine);
+
+    // Lighting
+    scene.add(new THREE.AmbientLight(0xffffff, 0.5));
+    const dl = new THREE.DirectionalLight(0xffffff, 0.8);
+    dl.position.set(3, 6, 4);
+    scene.add(dl);
+
+    // Controls
+    const controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.08;
+    controls.autoRotate = true;
+    controls.autoRotateSpeed = 0.8;
+    controls.enableZoom = true;
+    controls.minDistance = 6;
+    controls.maxDistance = 30;
+    controls.target.set(0.5, 0.8, 0.5);
+
+    let animId: number;
+    function animate() {
+      animId = requestAnimationFrame(animate);
+      controls.update();
+      renderer.render(scene, camera);
+    }
+    animate();
+
+    return () => {
+      cancelAnimationFrame(animId);
+      renderer.dispose();
+    };
+  }
+
+  function setup() {
+    document.querySelectorAll<HTMLElement>("[data-tp3d]").forEach((el) => {
+      if (el.querySelector("canvas")) return;
+      const obs = new IntersectionObserver(
+        (entries) => {
+          if (entries[0].isIntersecting) {
+            obs.disconnect();
+            initScene(el);
+          }
+        },
+        { threshold: 0.05 }
+      );
+      obs.observe(el);
+    });
+  }
+
+  setup();
+  document.addEventListener("astro:page-load", setup);
+</script>
+
+<style>
+  .tp3 { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .tp3-canvas {
+    width:100%; max-width:520px; min-height:380px;
+    border-radius:8px; overflow:hidden;
+  }
+  .tp3-canvas canvas { border-radius:8px; }
+  .tp3-hint {
+    font-family:'Libre Baskerville',Georgia,serif;
+    font-size:0.8rem; color:#888; margin-top:0.4rem;
+  }
+</style>

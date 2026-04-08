@@ -1,0 +1,88 @@
+---
+/**
+ * ChainRuleEx1Tree — Tree diagram for Example 1:
+ * z = x² + 3xy + y², x = t², y = 3t
+ * Shows the two paths from z to t with actual derivative values.
+ * Large text, no overlaps.
+ */
+const w = 420;
+const h = 340;
+const cx = w / 2;
+const nr = 20; // node radius
+
+// Nodes — spread wide and tall
+const zX = cx; const zY = 55;
+const xX = cx - 100; const xY = 165;
+const yX = cx + 100; const yY = 165;
+const tX = cx; const tY = 285;
+---
+
+<figure class="ex1t" role="img" aria-label="Tree diagram for Example 1 showing z depends on x and y, which both depend on t, with derivative values">
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    {/* Edges — connect from circle edge to circle edge */}
+    <line x1={zX} y1={zY + nr} x2={xX} y2={xY - nr} class="ex1t-edge" stroke-width="1.5" />
+    <line x1={zX} y1={zY + nr} x2={yX} y2={yY - nr} class="ex1t-edge" stroke-width="1.5" />
+    <line x1={xX} y1={xY + nr} x2={tX} y2={tY - nr} class="ex1t-edge" stroke-width="1.5" />
+    <line x1={yX} y1={yY + nr} x2={tX} y2={tY - nr} class="ex1t-edge" stroke-width="1.5" />
+
+    {/* Edge labels — well outside each edge */}
+    {/* z→x: far left */}
+    <text class="ex1t-elabel" x={xX - 28} y={zY + 58} font-size="13" text-anchor="end">2x + 3y</text>
+    <text class="ex1t-dname" x={xX - 28} y={zY + 73} font-size="9" text-anchor="end">∂z/∂x</text>
+    {/* z→y: far right */}
+    <text class="ex1t-elabel" x={yX + 28} y={zY + 58} font-size="13" text-anchor="start">3x + 2y</text>
+    <text class="ex1t-dname" x={yX + 28} y={zY + 73} font-size="9" text-anchor="start">∂z/∂y</text>
+    {/* x→t: far left */}
+    <text class="ex1t-elabel" x={xX - 28} y={xY + 62} font-size="13" text-anchor="end">2t</text>
+    <text class="ex1t-dname" x={xX - 28} y={xY + 77} font-size="9" text-anchor="end">dx/dt</text>
+    {/* y→t: far right */}
+    <text class="ex1t-elabel" x={yX + 28} y={yY + 62} font-size="13" text-anchor="start">3</text>
+    <text class="ex1t-dname" x={yX + 28} y={yY + 77} font-size="9" text-anchor="start">dy/dt</text>
+
+    {/* Nodes — circles with single-letter labels inside */}
+    <circle cx={zX} cy={zY} r={nr} class="ex1t-node" />
+    <text class="ex1t-nlabel" x={zX} y={zY + 6} font-size="16" text-anchor="middle">z</text>
+    {/* Label above z circle */}
+    <text class="ex1t-nodeinfo" x={zX} y={zY - nr - 10} font-size="11" text-anchor="middle">= x² + 3xy + y²</text>
+
+    <circle cx={xX} cy={xY} r={nr} class="ex1t-node" />
+    <text class="ex1t-nlabel" x={xX} y={xY + 6} font-size="16" text-anchor="middle">x</text>
+    {/* "= t²" label outside the circle, shifted left */}
+    <text class="ex1t-nodeinfo" x={xX - 14} y={xY + nr + 16} font-size="11" text-anchor="middle">= t²</text>
+
+    <circle cx={yX} cy={yY} r={nr} class="ex1t-node" />
+    <text class="ex1t-nlabel" x={yX} y={yY + 6} font-size="16" text-anchor="middle">y</text>
+    {/* "= 3t" label outside the circle, shifted right */}
+    <text class="ex1t-nodeinfo" x={yX + 14} y={yY + nr + 16} font-size="11" text-anchor="middle">= 3t</text>
+
+    <circle cx={tX} cy={tY} r={nr} class="ex1t-node-end" />
+    <text class="ex1t-nlabel-end" x={tX} y={tY + 6} font-size="16" text-anchor="middle">t</text>
+    {/* Label below t circle */}
+    <text class="ex1t-nodeinfo" x={tX} y={tY + nr + 16} font-size="11" text-anchor="middle">independent variable</text>
+  </svg>
+</figure>
+
+<style>
+  .ex1t { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .ex1t svg { max-width:100%; height:auto; }
+  .ex1t-edge { stroke:#58a6ff; }
+  .ex1t-elabel { fill:#f0883e; font-family:'Libre Baskerville',Georgia,serif; font-weight:bold; }
+  .ex1t-dname { fill:#888; font-family:'Libre Baskerville',Georgia,serif; }
+  .ex1t-node { fill:none; stroke:#58a6ff; stroke-width:2; }
+  .ex1t-node-end { fill:none; stroke:#7ee787; stroke-width:2; }
+  .ex1t-nlabel { fill:#58a6ff; font-family:'Libre Baskerville',Georgia,serif; font-weight:bold; }
+  .ex1t-nlabel-end { fill:#7ee787; font-family:'Libre Baskerville',Georgia,serif; font-weight:bold; }
+  .ex1t-nodeinfo { fill:#999; font-family:'Libre Baskerville',Georgia,serif; }
+  .ex1t-result { fill:#d2a8ff; font-family:'Libre Baskerville',Georgia,serif; }
+  .ex1t-resultnum { fill:#999; font-family:'Libre Baskerville',Georgia,serif; }
+  :global([data-theme="light"]) .ex1t-edge { stroke:#0550ae; }
+  :global([data-theme="light"]) .ex1t-elabel { fill:#b35900; }
+  :global([data-theme="light"]) .ex1t-dname { fill:#999; }
+  :global([data-theme="light"]) .ex1t-node { stroke:#0550ae; }
+  :global([data-theme="light"]) .ex1t-node-end { stroke:#116329; }
+  :global([data-theme="light"]) .ex1t-nlabel { fill:#0550ae; }
+  :global([data-theme="light"]) .ex1t-nlabel-end { fill:#116329; }
+  :global([data-theme="light"]) .ex1t-nodeinfo { fill:#666; }
+  :global([data-theme="light"]) .ex1t-result { fill:#6639ba; }
+  :global([data-theme="light"]) .ex1t-resultnum { fill:#666; }
+</style>

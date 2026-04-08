@@ -1,0 +1,126 @@
+---
+/**
+ * ChainRuleTree — SVG tree diagram showing the dependency paths
+ * for the multivariable chain rule.
+ * Left: z = f(x,y), x = x(t), y = y(t) → dz/dt
+ * Right: z = f(x,y), x = x(s,t), y = y(s,t) → ∂z/∂s, ∂z/∂t
+ * Labels placed OUTSIDE edges, never overlapping lines.
+ */
+const w = 580;
+const h = 310;
+const mid = w / 2;
+
+// Left panel
+const lx = 140;
+const lzX = lx; const lzY = 40;
+const lxX = lx - 70; const lxY = 130;
+const lyX = lx + 70; const lyY = 130;
+const ltX = lx; const ltY = 230;
+
+// Right panel
+const rx = 435;
+const rzX = rx; const rzY = 40;
+const rxX = rx - 80; const rxY = 130;
+const ryX2 = rx + 80; const ryY2 = 130;
+const rsX = rx - 70; const rsY = 230;
+const rtX = rx + 70; const rtY = 230;
+---
+
+<figure class="crt" role="img" aria-label="Tree diagrams for the multivariable chain rule showing dependency paths">
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    {/* Divider */}
+    <line x1={mid} y1={15} x2={mid} y2={h - 30} class="crt-div" stroke-width="0.5" stroke-dasharray="3,3" />
+
+    {/* === Left tree: z → x,y → t === */}
+    <line x1={lzX} y1={lzY + 14} x2={lxX} y2={lxY - 14} class="crt-edge" stroke-width="1.5" />
+    <line x1={lzX} y1={lzY + 14} x2={lyX} y2={lyY - 14} class="crt-edge" stroke-width="1.5" />
+    <line x1={lxX} y1={lxY + 14} x2={ltX} y2={ltY - 14} class="crt-edge" stroke-width="1.5" />
+    <line x1={lyX} y1={lyY + 14} x2={ltX} y2={ltY - 14} class="crt-edge" stroke-width="1.5" />
+
+    {/* Left edge labels — outside each edge */}
+    <text class="crt-elabel" x={lzX - 58} y={lzY + 52} font-size="11" text-anchor="end">∂z/∂x</text>
+    <text class="crt-elabel" x={lzX + 58} y={lzY + 52} font-size="11" text-anchor="start">∂z/∂y</text>
+    <text class="crt-elabel" x={lxX - 16} y={lxY + 52} font-size="11" text-anchor="end">dx/dt</text>
+    <text class="crt-elabel" x={lyX + 16} y={lyY + 52} font-size="11" text-anchor="start">dy/dt</text>
+
+    {/* Left nodes */}
+    <circle cx={lzX} cy={lzY} r="14" class="crt-node" />
+    <text class="crt-nlabel" x={lzX} y={lzY + 5} font-size="14" text-anchor="middle">z</text>
+    <circle cx={lxX} cy={lxY} r="14" class="crt-node" />
+    <text class="crt-nlabel" x={lxX} y={lxY + 5} font-size="14" text-anchor="middle">x</text>
+    <circle cx={lyX} cy={lyY} r="14" class="crt-node" />
+    <text class="crt-nlabel" x={lyX} y={lyY + 5} font-size="14" text-anchor="middle">y</text>
+    <circle cx={ltX} cy={ltY} r="14" class="crt-node-end" />
+    <text class="crt-nlabel-end" x={ltX} y={ltY + 5} font-size="14" text-anchor="middle">t</text>
+
+    <text class="crt-title" x={lx} y={h - 8} font-size="10" text-anchor="middle">dz/dt: two paths from z to t</text>
+
+    {/* === Right tree: z → x,y → s,t === */}
+    <line x1={rzX} y1={rzY + 14} x2={rxX} y2={rxY - 14} class="crt-edge" stroke-width="1.5" />
+    <line x1={rzX} y1={rzY + 14} x2={ryX2} y2={ryY2 - 14} class="crt-edge" stroke-width="1.5" />
+    <line x1={rxX} y1={rxY + 14} x2={rsX} y2={rsY - 14} class="crt-edge" stroke-width="1.5" />
+    <line x1={rxX} y1={rxY + 14} x2={rtX} y2={rtY - 14} class="crt-edge-cross" stroke-width="1.5" stroke-dasharray="5,3" />
+    <line x1={ryX2} y1={ryY2 + 14} x2={rsX} y2={rsY - 14} class="crt-edge-cross" stroke-width="1.5" stroke-dasharray="5,3" />
+    <line x1={ryX2} y1={ryY2 + 14} x2={rtX} y2={rtY - 14} class="crt-edge" stroke-width="1.5" />
+
+    {/* Right edge labels */}
+    {/* z→x: LEFT outside */}
+    <text class="crt-elabel" x={rzX - 62} y={rzY + 52} font-size="11" text-anchor="end">∂z/∂x</text>
+    {/* z→y: RIGHT outside */}
+    <text class="crt-elabel" x={rzX + 62} y={rzY + 52} font-size="11" text-anchor="start">∂z/∂y</text>
+    {/* x→s: LEFT outside */}
+    <text class="crt-elabel" x={rxX - 18} y={rxY + 52} font-size="10" text-anchor="end">∂x/∂s</text>
+    {/* x→t: label near x node, above-right of the cross-edge start */}
+    <text class="crt-elabel" x={rxX + 20} y={rxY + 28} font-size="10" text-anchor="start">∂x/∂t</text>
+    {/* y→s: label near y node, above-left of the cross-edge start */}
+    <text class="crt-elabel" x={ryX2 - 20} y={ryY2 + 28} font-size="10" text-anchor="end">∂y/∂s</text>
+    {/* y→t: RIGHT outside */}
+    <text class="crt-elabel" x={ryX2 + 18} y={ryY2 + 52} font-size="10" text-anchor="start">∂y/∂t</text>
+
+    {/* Right nodes */}
+    <circle cx={rzX} cy={rzY} r="14" class="crt-node" />
+    <text class="crt-nlabel" x={rzX} y={rzY + 5} font-size="14" text-anchor="middle">z</text>
+    <circle cx={rxX} cy={rxY} r="14" class="crt-node" />
+    <text class="crt-nlabel" x={rxX} y={rxY + 5} font-size="14" text-anchor="middle">x</text>
+    <circle cx={ryX2} cy={ryY2} r="14" class="crt-node" />
+    <text class="crt-nlabel" x={ryX2} y={ryY2 + 5} font-size="14" text-anchor="middle">y</text>
+    <circle cx={rsX} cy={rsY} r="14" class="crt-node-end" />
+    <text class="crt-nlabel-end" x={rsX} y={rsY + 5} font-size="14" text-anchor="middle">s</text>
+    <circle cx={rtX} cy={rtY} r="14" class="crt-node-end" />
+    <text class="crt-nlabel-end" x={rtX} y={rtY + 5} font-size="14" text-anchor="middle">t</text>
+
+    <text class="crt-title" x={rx} y={h - 8} font-size="10" text-anchor="middle">∂z/∂s and ∂z/∂t: four paths total</text>
+  </svg>
+  <div class="crt-caption">
+    Multiply along each path from top to bottom, then add all paths that reach the same variable. Left: two paths give dz/dt. Right: two paths to s give ∂z/∂s, two paths to t give ∂z/∂t.
+  </div>
+</figure>
+
+<style>
+  .crt { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .crt svg { max-width:100%; height:auto; }
+  .crt-div { stroke:#444; }
+  .crt-edge { stroke:#58a6ff; }
+  .crt-edge-cross { stroke:#58a6ff; opacity:0.6; }
+  .crt-elabel { fill:#f0883e; font-family:'Libre Baskerville',Georgia,serif; }
+  .crt-node { fill:none; stroke:#58a6ff; stroke-width:1.5; }
+  .crt-node-end { fill:none; stroke:#7ee787; stroke-width:1.5; }
+  .crt-nlabel { fill:#58a6ff; font-family:'Libre Baskerville',Georgia,serif; font-weight:bold; }
+  .crt-nlabel-end { fill:#7ee787; font-family:'Libre Baskerville',Georgia,serif; font-weight:bold; }
+  .crt-title { fill:#999; font-family:'Libre Baskerville',Georgia,serif; }
+  .crt-caption {
+    max-width:480px; text-align:center; margin-top:0.6rem;
+    font-family:'Libre Baskerville',Georgia,serif; font-size:0.85rem;
+    color:#999; line-height:1.5;
+  }
+  :global([data-theme="light"]) .crt-div { stroke:#ccc; }
+  :global([data-theme="light"]) .crt-edge { stroke:#0550ae; }
+  :global([data-theme="light"]) .crt-edge-cross { stroke:#0550ae; opacity:0.6; }
+  :global([data-theme="light"]) .crt-elabel { fill:#b35900; }
+  :global([data-theme="light"]) .crt-node { stroke:#0550ae; }
+  :global([data-theme="light"]) .crt-node-end { stroke:#116329; }
+  :global([data-theme="light"]) .crt-nlabel { fill:#0550ae; }
+  :global([data-theme="light"]) .crt-nlabel-end { fill:#116329; }
+  :global([data-theme="light"]) .crt-title { fill:#666; }
+  :global([data-theme="light"]) .crt-caption { color:#666; }
+</style>

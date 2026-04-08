@@ -1,0 +1,152 @@
+---
+/**
+ * TangentLine3D — 3D curve r(t) = <t², t, sqrt(t)> for t in [0.01, 2.5]
+ * with tangent vector and tangent line at t = 1, point (1,1,1).
+ */
+---
+
+<figure class="tl3" role="img" aria-label="Interactive 3D space curve with tangent line at t equals 1">
+  <div class="tl3-canvas" data-tangentline3d></div>
+  <div class="tl3-hint">Drag to rotate · Scroll to zoom</div>
+</figure>
+
+<script>
+  import * as THREE from "three";
+  import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+
+  function initTL(container: HTMLElement) {
+    const width = Math.min(container.clientWidth, 520);
+    const height = 360;
+    const isDark = document.documentElement.dataset.theme !== "light";
+
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(isDark ? 0x121212 : 0xf8f9fa);
+
+    const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 100);
+    camera.position.set(5, 3, 5);
+    camera.lookAt(2, 1, 0.5);
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(width, height);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    container.appendChild(renderer.domElement);
+
+    // Curve: r(t) = <t², t, sqrt(t)> for t in [0.05, 2.5]
+    const curvePts: THREE.Vector3[] = [];
+    for (let i = 0; i <= 200; i++) {
+      const t = 0.05 + (i / 200) * 2.45;
+      curvePts.push(new THREE.Vector3(t * t, t, Math.sqrt(t)));
+    }
+    const curveColor = isDark ? 0x58a6ff : 0x0550ae;
+    scene.add(new THREE.Line(
+      new THREE.BufferGeometry().setFromPoints(curvePts),
+      new THREE.LineBasicMaterial({ color: curveColor })
+    ));
+
+    // Point at t=1: (1, 1, 1)
+    const pt = new THREE.Vector3(1, 1, 1);
+    const dotGeo = new THREE.SphereGeometry(0.06, 16, 16);
+    const dotMat = new THREE.MeshBasicMaterial({ color: isDark ? 0x7ee787 : 0x116329 });
+    const dot = new THREE.Mesh(dotGeo, dotMat);
+    dot.position.copy(pt);
+    scene.add(dot);
+
+    // Tangent vector r'(1) = <2, 1, 0.5>
+    const tangDir = new THREE.Vector3(2, 1, 0.5).normalize();
+    const tangColor = isDark ? 0xf0883e : 0xb35900;
+    scene.add(new THREE.ArrowHelper(tangDir, pt, 1.5, tangColor, 0.15, 0.08));
+
+    // Tangent line (extend in both directions)
+    const tangFull = new THREE.Vector3(2, 1, 0.5);
+    const lineStart = pt.clone().add(tangFull.clone().multiplyScalar(-0.5));
+    const lineEnd = pt.clone().add(tangFull.clone().multiplyScalar(1.2));
+    const lineColor = isDark ? 0xf47067 : 0xcf222e;
+    scene.add(new THREE.Line(
+      new THREE.BufferGeometry().setFromPoints([lineStart, lineEnd]),
+      new THREE.LineBasicMaterial({ color: lineColor, linewidth: 1 })
+    ));
+
+    // Axes
+    const axColor = isDark ? 0x444444 : 0xbbbbbb;
+    const axMat = new THREE.LineBasicMaterial({ color: axColor });
+    for (const d of [[6.5, 0, 0], [0, 3, 0], [0, 0, 2]]) {
+      scene.add(new THREE.Line(
+        new THREE.BufferGeometry().setFromPoints([
+          new THREE.Vector3(0, 0, 0),
+          new THREE.Vector3(d[0], d[1], d[2]),
+        ]),
+        axMat
+      ));
+    }
+
+    // Labels
+    function makeLabel(text: string, p: number[], color: string, size = 0.4) {
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d")!;
+      canvas.width = 128; canvas.height = 64;
+      ctx.font = "bold 36px sans-serif";
+      ctx.fillStyle = color; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+      ctx.fillText(text, 64, 32);
+      const tex = new THREE.CanvasTexture(canvas);
+      const mat = new THREE.SpriteMaterial({ map: tex, transparent: true });
+      const sprite = new THREE.Sprite(mat);
+      sprite.position.set(p[0], p[1], p[2]);
+      sprite.scale.set(size * 2, size, 1);
+      scene.add(sprite);
+    }
+
+    const lc = isDark ? "#888" : "#666";
+    makeLabel("x", [6.8, -0.2, 0], lc);
+    makeLabel("y", [0, 3.3, 0], lc);
+    makeLabel("z", [0, -0.2, 2.2], lc);
+
+    const tc = isDark ? "#f0883e" : "#b35900";
+    makeLabel("r'(1)", [pt.x + tangDir.x * 1.8, pt.y + tangDir.y * 1.8 + 0.2, pt.z + tangDir.z * 1.8], tc, 0.35);
+
+    const pc = isDark ? "#7ee787" : "#116329";
+    makeLabel("(1,1,1)", [0.6, 1.3, 1.2], pc, 0.3);
+
+    // Lighting
+    scene.add(new THREE.AmbientLight(0xffffff, 0.7));
+
+    // Controls
+    const controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.08;
+    controls.autoRotate = true;
+    controls.autoRotateSpeed = 0.5;
+    controls.enableZoom = true;
+    controls.minDistance = 3;
+    controls.maxDistance = 20;
+    controls.target.set(2, 1, 0.5);
+    controls.update();
+
+    let animId: number;
+    function animate() {
+      animId = requestAnimationFrame(animate);
+      controls.update();
+      renderer.render(scene, camera);
+    }
+    animate();
+  }
+
+  function setup() {
+    document.querySelectorAll<HTMLElement>("[data-tangentline3d]").forEach((el) => {
+      if (el.querySelector("canvas")) return;
+      const obs = new IntersectionObserver(
+        (entries) => { if (entries[0].isIntersecting) { obs.disconnect(); initTL(el); } },
+        { threshold: 0.05 }
+      );
+      obs.observe(el);
+    });
+  }
+  setup();
+  document.addEventListener("astro:page-load", setup);
+</script>
+
+<style>
+  .tl3 { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .tl3-canvas { width:100%; max-width:520px; min-height:360px; border-radius:8px; overflow:hidden; }
+  .tl3-canvas canvas { border-radius:8px; }
+  .tl3-hint { font-family:'Libre Baskerville',Georgia,serif; font-size:0.8rem; color:#888; margin-top:0.4rem; }
+</style>

@@ -1,0 +1,139 @@
+---
+/**
+ * GradientContour — simplified contour plot of f(x,y) = x² + y²
+ * Shows just the level curves, one point (3,4), and its gradient arrow.
+ * Clean and focused so the student can see what the gradient actually does.
+ */
+const w = 440;
+const h = 440;
+const cx = w / 2;
+const cy = h / 2;
+const scale = 28; // pixels per unit
+
+// Level curves at f = 4, 9, 16, 25
+// radii = sqrt(f) = 2, 3, 4, 5
+const levels = [
+  { f: 4, r: 2 },
+  { f: 9, r: 3 },
+  { f: 16, r: 4 },
+  { f: 25, r: 5 },
+];
+
+// Convert math coords to SVG
+const sx = (x: number) => cx + x * scale;
+const sy = (y: number) => cy - y * scale;
+
+// Point (3, 4) — sits on the f=25 circle (3²+4²=25)
+const ptX = sx(3);
+const ptY = sy(4);
+
+// Gradient at (3,4) is ⟨6, 8⟩, normalized for arrow display
+const gx = 6;
+const gy = 8;
+const gMag = Math.sqrt(gx * gx + gy * gy); // 10
+const ux = gx / gMag;
+const uy = gy / gMag;
+const arrowLen = 45;
+
+// Tick marks on axes
+const ticks = [-5, -4, -3, -2, -1, 1, 2, 3, 4, 5];
+---
+
+<figure class="gc" role="img" aria-label="Contour plot of f equals x squared plus y squared showing level curves and the gradient vector at point (3,4)">
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <marker id="gc-arr" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+        <polygon points="0,0 8,3 0,6" class="gc-arr-fill" />
+      </marker>
+    </defs>
+
+    {/* Axes */}
+    <line x1={10} y1={cy} x2={w - 10} y2={cy} class="gc-axis" stroke-width="1" />
+    <line x1={cx} y1={10} x2={cx} y2={h - 10} class="gc-axis" stroke-width="1" />
+    <text class="gc-tick" x={w - 12} y={cy - 8} font-size="11">x</text>
+    <text class="gc-tick" x={cx + 8} y={22} font-size="11">y</text>
+
+    {/* Tick marks */}
+    {ticks.map(t => (
+      <line x1={sx(t)} y1={cy - 3} x2={sx(t)} y2={cy + 3} class="gc-axis" stroke-width="1" />
+    ))}
+    {ticks.map(t => (
+      <line x1={cx - 3} y1={sy(t)} x2={cx + 3} y2={sy(t)} class="gc-axis" stroke-width="1" />
+    ))}
+
+    {/* Level curves */}
+    {levels.map(lv => (
+      <circle cx={cx} cy={cy} r={lv.r * scale} fill="none" class="gc-level" stroke-width="1.5" />
+    ))}
+
+    {/* Level curve labels — placed at bottom-right of each circle */}
+    {levels.map(lv => {
+      const angle = Math.PI / 6; // 30° below x-axis (into Q4)
+      const lx = cx + lv.r * scale * Math.cos(angle) + 6;
+      const ly = cy + lv.r * scale * Math.sin(angle) + 4;
+      return (
+        <text class="gc-level-label" x={lx} y={ly} font-size="10">{`f = ${lv.f}`}</text>
+      );
+    })}
+
+    {/* Dashed line from origin to point (3,4) to show distance = 5 */}
+    <line x1={cx} y1={cy} x2={ptX} y2={ptY}
+          class="gc-radius" stroke-width="1" stroke-dasharray="4,3" />
+
+    {/* Point (3, 4) */}
+    <circle cx={ptX} cy={ptY} r="5" class="gc-dot" />
+
+    {/* Gradient arrow from (3,4) */}
+    <line x1={ptX} y1={ptY}
+          x2={ptX + ux * arrowLen} y2={ptY - uy * arrowLen}
+          class="gc-grad" stroke-width="2.5" marker-end="url(#gc-arr)" />
+
+    {/* Label: point */}
+    <text class="gc-dot-label" x={ptX - 40} y={ptY + 5} font-size="11">(3, 4)</text>
+
+    {/* Label: gradient */}
+    <text class="gc-grad-label" x={ptX + ux * arrowLen + 6} y={ptY - uy * arrowLen - 4} font-size="11">∇f = ⟨6, 8⟩</text>
+
+    {/* Origin label */}
+    <circle cx={cx} cy={cy} r="2.5" class="gc-origin" />
+    <text class="gc-origin-label" x={cx + 6} y={cy + 14} font-size="9">origin</text>
+  </svg>
+  <div class="gc-caption">
+    The point (3, 4) sits on the f = 25 level curve. The gradient ∇f = ⟨6, 8⟩ points straight outward, perpendicular to the circle, in the direction where f increases fastest.
+  </div>
+</figure>
+
+<style>
+  .gc { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .gc svg { max-width:100%; height:auto; }
+  .gc-axis { stroke:#555; }
+  .gc-tick { fill:#888; font-family:'Libre Baskerville',Georgia,serif; }
+  .gc-level { stroke:#58a6ff; opacity:0.5; }
+  .gc-level-label { fill:#58a6ff; opacity:0.7; font-family:'Libre Baskerville',Georgia,serif; }
+  .gc-radius { stroke:#666; }
+  .gc-dot { fill:#d2a8ff; }
+  .gc-dot-label { fill:#d2a8ff; font-family:'Libre Baskerville',Georgia,serif; }
+  .gc-grad { stroke:#f0883e; }
+  .gc-arr-fill { fill:#f0883e; }
+  .gc-grad-label { fill:#f0883e; font-family:'Libre Baskerville',Georgia,serif; }
+  .gc-origin { fill:#7ee787; }
+  .gc-origin-label { fill:#7ee787; font-family:'Libre Baskerville',Georgia,serif; }
+  .gc-caption {
+    max-width:380px; text-align:center; margin-top:0.6rem;
+    font-family:'Libre Baskerville',Georgia,serif; font-size:0.82rem;
+    color:#999; line-height:1.5;
+  }
+  :global([data-theme="light"]) .gc-axis { stroke:#bbb; }
+  :global([data-theme="light"]) .gc-tick { fill:#666; }
+  :global([data-theme="light"]) .gc-level { stroke:#0550ae; }
+  :global([data-theme="light"]) .gc-level-label { fill:#0550ae; }
+  :global([data-theme="light"]) .gc-radius { stroke:#aaa; }
+  :global([data-theme="light"]) .gc-dot { fill:#6639ba; }
+  :global([data-theme="light"]) .gc-dot-label { fill:#6639ba; }
+  :global([data-theme="light"]) .gc-grad { stroke:#b35900; }
+  :global([data-theme="light"]) .gc-arr-fill { fill:#b35900; }
+  :global([data-theme="light"]) .gc-grad-label { fill:#b35900; }
+  :global([data-theme="light"]) .gc-origin { fill:#116329; }
+  :global([data-theme="light"]) .gc-origin-label { fill:#116329; }
+  :global([data-theme="light"]) .gc-caption { color:#666; }
+</style>

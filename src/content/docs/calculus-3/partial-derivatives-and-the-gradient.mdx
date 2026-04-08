@@ -1,0 +1,209 @@
+---
+title: Partial Derivatives and the Gradient
+description: Learn how to compute partial derivatives and understand the gradient vector
+sidebar:
+  order: 4
+---
+
+## What You'll Learn
+
+In this lesson you'll learn how to take derivatives of functions that depend on more than one variable, and how the gradient vector combines those derivatives into a single powerful tool.
+
+Fair warning: from here on out, the math notation starts looking really cool. You've got ∂ (curly d), ∇ (nabla/del), and more on the way. If you catch yourself writing these on a whiteboard and feeling like a genius, that's completely normal. You've earned it.
+
+## The Concept
+
+### Partial Derivatives
+
+For a function z = f(x, y), the partial derivative with respect to x treats y as a constant and differentiates normally
+
+$$
+\frac{\partial f}{\partial x} = \lim_{h \to 0} \frac{f(x + h, y) - f(x, y)}{h}
+$$
+
+The partial derivative with respect to y does the same thing but treats x as constant
+
+$$
+\frac{\partial f}{\partial y} = \lim_{h \to 0} \frac{f(x, y + h) - f(x, y)}{h}
+$$
+
+If you can take a regular derivative, you can take a partial derivative. Just pretend the other variables are numbers.
+
+The symbol ∂ (a curly d, sometimes called "del" or "partial") is used instead of the regular d from single-variable calculus to signal that there are other variables being held constant. When you see ∂f/∂x, it's saying "the derivative of f with respect to x, with everything else frozen." It works exactly like df/dx from Calculus 1, except the curly ∂ reminds you that f depends on more than just x.
+
+### The Gradient Vector
+
+The symbol ∇ (an upside-down triangle) is called "nabla" or "del." It's the vector calculus operator that means "take all the partial derivatives and pack them into a vector." When you see ∇f, read it as "del f" or "the gradient of f." It's not a number or a variable. It's an instruction: compute all the partial derivatives and assemble them.
+
+The gradient bundles all the partial derivatives into one vector
+
+$$
+\nabla f = \left\langle \frac{\partial f}{\partial x},\, \frac{\partial f}{\partial y} \right\rangle
+$$
+
+In 3D, it has three components
+
+$$
+\nabla f = \left\langle \frac{\partial f}{\partial x},\, \frac{\partial f}{\partial y},\, \frac{\partial f}{\partial z} \right\rangle
+$$
+
+The gradient has three key properties:
+
+- It points in the direction of steepest ascent (the direction where f increases fastest)
+- Its magnitude tells you how steep that ascent is
+- It is always perpendicular to the level curves (contour lines) of f
+
+## Worked Examples
+
+**Example 1: Computing partial derivatives**
+
+Let f(x, y) = x²y + 3xy².
+
+To find the partial with respect to x, treat y as a constant
+
+$$
+\frac{\partial f}{\partial x} = 2xy + 3y^2
+$$
+
+To find the partial with respect to y, treat x as a constant
+
+$$
+\frac{\partial f}{\partial y} = x^2 + 6xy
+$$
+
+Each partial derivative tells you the rate of change of f in one coordinate direction while the other stays fixed.
+
+import PartialDerivSlice from "../../../components/PartialDerivSlice.astro";
+
+<PartialDerivSlice />
+
+The left panel holds y = 1 and varies x, giving the curve f(x, 1) = x² + 3x. The slope of that curve at x = 1 is the partial derivative ∂f/∂x = 2xy + 3y² = 5. The right panel holds x = 1 and varies y, giving f(1, y) = y + 3y². The slope at y = 1 is ∂f/∂y = x² + 6xy = 7. Each partial derivative is just the slope of a slice through the surface.
+
+**Example 2: The gradient of f(x, y) = x² + y²**
+
+$$
+\frac{\partial f}{\partial x} = 2x \qquad \frac{\partial f}{\partial y} = 2y
+$$
+
+$$
+\nabla f = \langle 2x, 2y \rangle
+$$
+
+At the point (3, 4)
+
+$$
+\nabla f(3, 4) = \langle 6, 8 \rangle
+$$
+
+The magnitude is
+
+$$
+|\nabla f| = \sqrt{36 + 64} = \sqrt{100} = 10
+$$
+
+This means the function increases fastest in the direction (6, 8) (which points away from the origin), at a rate of 10 units per unit distance.
+
+import GradientContour from "../../../components/GradientContour.astro";
+
+<GradientContour />
+
+The blue circles are level curves. A level curve is what you get when you set f(x, y) equal to some constant and ask "which points (x, y) give me that value?" Think of it like a topographic map: each contour line connects all the points at the same elevation. Here, f(x, y) = x² + y², so setting f = c gives x² + y² = c, which is a circle of radius √c centered at the origin.
+
+The four circles in the visual correspond to f = 4, 9, 16, and 25. Why those numbers? Because their square roots are whole numbers: √4 = 2, √9 = 3, √16 = 4, √25 = 5. That makes the circles land on nice grid coordinates (radii 2, 3, 4, 5) so the picture is easy to read. Every point on the f = 9 circle, for example, satisfies x² + y² = 9. The point (3, 0) is on it. So is (0, 3). So is (−3, 0). They all give f = 9.
+
+The purple dot is our point (3, 4) from Example 2. It sits right on the f = 25 circle because 3² + 4² = 9 + 16 = 25. The dashed line from the origin shows the distance is 5 (which is √25). The orange arrow is the gradient ∇f = ⟨6, 8⟩, pointing straight outward from the origin, perpendicular to the circle. That perpendicularity is always true: the gradient always points across level curves, never along them, in the direction where f increases fastest.
+
+**Example 3: Gradient perpendicular to level curves**
+
+For f(x, y) = x² + y², the level curve f = 9 is the circle x² + y² = 9. At the point (3, 0) on this circle, the gradient is ⟨6, 0⟩, which points straight outward (perpendicular to the circle). At (0, 3), the gradient is ⟨0, 6⟩, again perpendicular. The gradient never points along the level curve. It always points across it, in the direction of increasing f.
+
+import GradientPerp from "../../../components/GradientPerp.astro";
+
+<GradientPerp />
+
+## Real-World Application
+
+Partial derivatives and the gradient are everywhere:
+
+- Machine learning uses gradient descent, which follows the negative gradient to minimize a loss function
+- Game engines use the gradient of a heightmap to determine slope direction for character movement and water flow
+- Physics uses gradients to describe electric fields (gradient of electric potential) and gravitational fields
+- Economics uses partial derivatives for marginal analysis (how does profit change when you adjust one variable?)
+
+:::note[You've Got This]
+Partial derivatives are just regular derivatives where you pretend the other variables are constants. The gradient combines them into a vector that points uphill. If you can differentiate single-variable functions, you can do this. The gradient will become one of your most-used tools, especially when we get to optimization and vector fields.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="calculus3-partial-derivatives-and-the-gradient"
+  questions={[
+    {
+      id: "q1",
+      text: "When computing $\\frac{\\partial f}{\\partial x}$, you treat",
+      options: [
+        "x as a constant",
+        "all other variables as constants",
+        "everything as a variable",
+        "only z as constant",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Differentiate with respect to x while holding y (and any other variables) fixed.",
+    },
+    {
+      id: "q2",
+      text: "The gradient $\\nabla f$ points in the direction of",
+      options: [
+        "steepest descent",
+        "the x-axis",
+        "steepest ascent",
+        "the level curve",
+      ],
+      correctIndex: 2,
+      explanation:
+        "The gradient always points in the direction where f increases fastest.",
+    },
+    {
+      id: "q3",
+      text: "For $f(x,y) = x^2 + y^2$, the gradient at $(3, 4)$ is",
+      options: [
+        "$\\langle 3, 4 \\rangle$",
+        "$\\langle 9, 16 \\rangle$",
+        "$\\langle 6, 8 \\rangle$",
+        "$\\langle 2, 2 \\rangle$",
+      ],
+      correctIndex: 2,
+      explanation: "The partials are 2x = 6 and 2y = 8.",
+    },
+    {
+      id: "q4",
+      text: "The gradient is always perpendicular to",
+      options: [
+        "the x-axis",
+        "the tangent vector",
+        "the level curves of f",
+        "the y-axis",
+      ],
+      correctIndex: 2,
+      explanation:
+        "The gradient crosses level curves at right angles, pointing toward higher values.",
+    },
+    {
+      id: "q5",
+      text: "Gradient descent in machine learning follows",
+      options: [
+        "the gradient direction",
+        "the negative gradient direction",
+        "a random direction",
+        "the level curve",
+      ],
+      correctIndex: 1,
+      explanation:
+        "To minimize a function, you go opposite to the gradient (downhill instead of uphill).",
+    },
+  ]}
+/>
