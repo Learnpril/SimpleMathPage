@@ -641,7 +641,7 @@ p:has(> strong:first-child:last-child) {
 .mobile-subject-fab {
   display: none;
   position: fixed;
-  bottom: 56px;
+  bottom: 48px;
   right: 16px;
   z-index: 1100;
   height: 44px;
@@ -667,11 +667,11 @@ p:has(> strong:first-child:last-child) {
 .mobile-subject-panel {
   display: none;
   position: fixed;
-  bottom: 112px;
+  bottom: 100px;
   right: 16px;
   left: 16px;
   z-index: 1099;
-  max-height: 55vh;
+  max-height: 70vh;
   overflow-y: auto;
   background: var(--sl-color-bg-sidebar, #1e1e1e);
   border: 1px solid rgba(255,255,255,0.1);
@@ -740,7 +740,7 @@ p:has(> strong:first-child:last-child) {
   overflow: hidden;
   transition: max-height 0.25s ease;
 }
-.msw-lessons.open { max-height: 600px; }
+.msw-lessons.open { max-height: 1200px; }
 .msw-lesson-link {
   display: block;
   padding: 7px 12px 7px 24px;

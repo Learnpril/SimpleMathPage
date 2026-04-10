@@ -129,43 +129,6 @@ export default defineConfig({
           tag: "script",
           content: `
             document.addEventListener('DOMContentLoaded', function() {
-              if (window.innerWidth >= 800) return;
-              var path = window.location.pathname;
-              var isHome = (path === '/' || path === '/index.html');
-              var bar = document.createElement('div');
-              bar.className = 'mobile-nav-bar';
-              if (!isHome) {
-                var btn = document.createElement('a');
-                btn.href = '/';
-                btn.className = 'mobile-back-btn';
-                btn.innerHTML = '<svg viewBox="0 0 24 24"><path d="M19 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H19v-2z"/></svg>Back';
-                bar.appendChild(btn);
-              }
-              var menuBtn = document.createElement('button');
-              menuBtn.className = 'mobile-menu-btn';
-              menuBtn.setAttribute('aria-label', 'Menu');
-              menuBtn.innerHTML = '<svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg>';
-              menuBtn.addEventListener('click', function() {
-                var real = document.querySelector('starlight-menu-button button');
-                if (real) real.click();
-              });
-              bar.appendChild(menuBtn);
-              var main = document.querySelector('main') || document.querySelector('.main-pane');
-              var header = document.querySelector('header');
-              if (header && header.nextElementSibling) {
-                header.parentNode.insertBefore(bar, header.nextElementSibling);
-              } else if (main) {
-                main.parentNode.insertBefore(bar, main);
-              } else {
-                document.body.insertBefore(bar, document.body.firstChild);
-              }
-            });
-          `,
-        },
-        {
-          tag: "script",
-          content: `
-            document.addEventListener('DOMContentLoaded', function() {
               var path = window.location.pathname.replace(/^\\//, '').replace(/\\/$/, '');
               var parts = path.split('/');
               if (parts.length < 2) return;
