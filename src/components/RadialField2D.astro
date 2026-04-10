@@ -1,0 +1,65 @@
+---
+/**
+ * RadialField2D — SVG visual of the gradient field F(x,y) = <2x, 2y>
+ * (gradient of f = x² + y²) showing arrows pointing outward from origin,
+ * with length proportional to distance.
+ */
+---
+
+<figure class="diagram-container" role="img" aria-label="2D radial gradient vector field F = 2x comma 2y showing arrows pointing outward from the origin">
+  <svg viewBox="-160 -160 320 320" width="320" height="320" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <marker id="rdf-ah-d" markerWidth="6" markerHeight="4" refX="5" refY="2" orient="auto">
+        <path d="M0,0 L6,2 L0,4 Z" class="rdf-arrow-dark" />
+      </marker>
+    </defs>
+    <!-- Axes -->
+    <line x1="-140" y1="0" x2="140" y2="0" class="rdf-axis" />
+    <line x1="0" y1="-140" x2="0" y2="140" class="rdf-axis" />
+    <text x="148" y="5" class="rdf-axis-label">x</text>
+    <text x="5" y="-145" class="rdf-axis-label">y</text>
+    <!-- Arrows for F = <2x, 2y>, scale: 1 unit = 40px, arrow = 12px per unit of field magnitude -->
+    <!-- Inner ring (distance 1): magnitude 2, arrow length ~12px -->
+    <line x1="40" y1="0" x2="52" y2="0" class="rdf-vec-sm" marker-end="url(#rdf-ah-d)" />
+    <line x1="-40" y1="0" x2="-52" y2="0" class="rdf-vec-sm" marker-end="url(#rdf-ah-d)" />
+    <line x1="0" y1="-40" x2="0" y2="-52" class="rdf-vec-sm" marker-end="url(#rdf-ah-d)" />
+    <line x1="0" y1="40" x2="0" y2="52" class="rdf-vec-sm" marker-end="url(#rdf-ah-d)" />
+    <line x1="28" y1="-28" x2="37" y2="-37" class="rdf-vec-sm" marker-end="url(#rdf-ah-d)" />
+    <line x1="-28" y1="-28" x2="-37" y2="-37" class="rdf-vec-sm" marker-end="url(#rdf-ah-d)" />
+    <line x1="28" y1="28" x2="37" y2="37" class="rdf-vec-sm" marker-end="url(#rdf-ah-d)" />
+    <line x1="-28" y1="28" x2="-37" y2="37" class="rdf-vec-sm" marker-end="url(#rdf-ah-d)" />
+    <!-- Outer ring (distance 2): magnitude 4, arrow length ~24px -->
+    <line x1="80" y1="0" x2="104" y2="0" class="rdf-vec-lg" marker-end="url(#rdf-ah-d)" />
+    <line x1="-80" y1="0" x2="-104" y2="0" class="rdf-vec-lg" marker-end="url(#rdf-ah-d)" />
+    <line x1="0" y1="-80" x2="0" y2="-104" class="rdf-vec-lg" marker-end="url(#rdf-ah-d)" />
+    <line x1="0" y1="80" x2="0" y2="104" class="rdf-vec-lg" marker-end="url(#rdf-ah-d)" />
+    <line x1="57" y1="-57" x2="74" y2="-74" class="rdf-vec-lg" marker-end="url(#rdf-ah-d)" />
+    <line x1="-57" y1="-57" x2="-74" y2="-74" class="rdf-vec-lg" marker-end="url(#rdf-ah-d)" />
+    <line x1="57" y1="57" x2="74" y2="74" class="rdf-vec-lg" marker-end="url(#rdf-ah-d)" />
+    <line x1="-57" y1="57" x2="-74" y2="74" class="rdf-vec-lg" marker-end="url(#rdf-ah-d)" />
+    <!-- Outer ring (distance 3): magnitude 6, arrow length ~30px -->
+    <line x1="120" y1="0" x2="148" y2="0" class="rdf-vec-xl" marker-end="url(#rdf-ah-d)" />
+    <line x1="-120" y1="0" x2="-148" y2="0" class="rdf-vec-xl" marker-end="url(#rdf-ah-d)" />
+    <line x1="0" y1="-120" x2="0" y2="-148" class="rdf-vec-xl" marker-end="url(#rdf-ah-d)" />
+    <line x1="0" y1="120" x2="0" y2="148" class="rdf-vec-xl" marker-end="url(#rdf-ah-d)" />
+    <!-- Origin dot -->
+    <circle cx="0" cy="0" r="3" class="rdf-origin" />
+  </svg>
+</figure>
+
+<style>
+  .rdf-axis { stroke: #666; stroke-width: 1; }
+  .rdf-axis-label { font: bold 14px sans-serif; fill: #888; }
+  .rdf-vec-sm { stroke: #7ee787; stroke-width: 1.5; }
+  .rdf-vec-lg { stroke: #7ee787; stroke-width: 2; }
+  .rdf-vec-xl { stroke: #7ee787; stroke-width: 2.5; }
+  .rdf-arrow-dark { fill: #7ee787; }
+  .rdf-origin { fill: #d2a8ff; }
+  [data-theme="light"] .rdf-axis { stroke: #999; }
+  [data-theme="light"] .rdf-axis-label { fill: #666; }
+  [data-theme="light"] .rdf-vec-sm { stroke: #1a7f37; stroke-width: 1.5; }
+  [data-theme="light"] .rdf-vec-lg { stroke: #1a7f37; stroke-width: 2; }
+  [data-theme="light"] .rdf-vec-xl { stroke: #1a7f37; stroke-width: 2.5; }
+  [data-theme="light"] .rdf-arrow-dark { fill: #1a7f37; }
+  [data-theme="light"] .rdf-origin { fill: #6639ba; }
+</style>

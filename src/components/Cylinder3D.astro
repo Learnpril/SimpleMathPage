@@ -1,0 +1,187 @@
+---
+/**
+ * Cylinder3D — Interactive 3D visual of the cylinder x²+y²≤4, 0≤z≤5
+ * with semi-transparent surface, wireframe rings, and axis labels.
+ * Shows the region for the cylindrical coordinates example.
+ */
+---
+
+<figure class="cy3" role="img" aria-label="Interactive 3D cylinder of radius 2 and height 5 centered on the z-axis">
+  <div class="cy3-canvas" data-cy3d></div>
+  <div class="cy3-hint">Drag to rotate · Scroll to zoom</div>
+</figure>
+
+<script>
+  import * as THREE from "three";
+  import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+
+  function initScene(container: HTMLElement) {
+    const width = Math.min(container.clientWidth, 480);
+    const height = 360;
+    const isDark = document.documentElement.dataset.theme !== "light";
+    const bgColor = isDark ? 0x121212 : 0xf8f9fa;
+
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(bgColor);
+
+    const camera = new THREE.PerspectiveCamera(40, width / height, 0.1, 200);
+    camera.position.set(6, 5, 7);
+    camera.lookAt(0, 2.5, 0);
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(width, height);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    container.appendChild(renderer.domElement);
+
+    const accentColor = isDark ? 0x58a6ff : 0x0550ae;
+    const greenColor = isDark ? 0x7ee787 : 0x1a7f37;
+
+    // Cylinder: radius 2, height 5, Three.js y = math z (up)
+    const cylGeo = new THREE.CylinderGeometry(2, 2, 5, 48, 1, true);
+    const cylMat = new THREE.MeshPhongMaterial({
+      color: accentColor,
+      transparent: true, opacity: 0.12,
+      side: THREE.DoubleSide,
+    });
+    const cyl = new THREE.Mesh(cylGeo, cylMat);
+    cyl.position.set(0, 2.5, 0);
+    scene.add(cyl);
+
+    // Top and bottom caps
+    const capGeo = new THREE.CircleGeometry(2, 48);
+    const capMat = new THREE.MeshPhongMaterial({
+      color: accentColor,
+      transparent: true, opacity: 0.08,
+      side: THREE.DoubleSide,
+    });
+    const topCap = new THREE.Mesh(capGeo, capMat);
+    topCap.rotation.x = -Math.PI / 2;
+    topCap.position.set(0, 5, 0);
+    scene.add(topCap);
+
+    const botCap = new THREE.Mesh(capGeo.clone(), capMat);
+    botCap.rotation.x = -Math.PI / 2;
+    botCap.position.set(0, 0, 0);
+    scene.add(botCap);
+
+    // Wireframe rings at top and bottom
+    const ringGeo = new THREE.RingGeometry(1.98, 2.02, 48);
+    const wireMat = new THREE.MeshBasicMaterial({
+      color: accentColor,
+      transparent: true, opacity: 0.5,
+      side: THREE.DoubleSide,
+    });
+    const topRing = new THREE.Mesh(ringGeo, wireMat);
+    topRing.rotation.x = -Math.PI / 2;
+    topRing.position.set(0, 5, 0);
+    scene.add(topRing);
+
+    const botRing = new THREE.Mesh(ringGeo.clone(), wireMat);
+    botRing.rotation.x = -Math.PI / 2;
+    botRing.position.set(0, 0, 0);
+    scene.add(botRing);
+
+    // Vertical wireframe lines
+    const vertMat = new THREE.LineBasicMaterial({ color: accentColor, transparent: true, opacity: 0.3 });
+    for (let i = 0; i < 12; i++) {
+      const angle = (i / 12) * Math.PI * 2;
+      const x = 2 * Math.cos(angle);
+      const z = 2 * Math.sin(angle);
+      const pts = [new THREE.Vector3(x, 0, z), new THREE.Vector3(x, 5, z)];
+      scene.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts), vertMat));
+    }
+
+    // Radius line on bottom face
+    const radMat = new THREE.LineBasicMaterial({ color: greenColor, transparent: true, opacity: 0.8 });
+    const radPts = [new THREE.Vector3(0, 0, 0), new THREE.Vector3(2, 0, 0)];
+    scene.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(radPts), radMat));
+
+    // Axes
+    const axColor = isDark ? 0x666666 : 0x999999;
+    const axMat = new THREE.LineBasicMaterial({ color: axColor });
+    for (const dir of [[4, 0, 0], [0, 7, 0], [0, 0, 4]] as [number, number, number][]) {
+      const pts = [new THREE.Vector3(0, 0, 0), new THREE.Vector3(...dir)];
+      scene.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts), axMat));
+    }
+
+    // Labels
+    function makeLabel(text: string, pos: [number, number, number], color: string, size = 0.35) {
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d")!;
+      canvas.width = 512; canvas.height = 128;
+      ctx.font = "bold 64px sans-serif";
+      ctx.fillStyle = color;
+      ctx.textAlign = "center"; ctx.textBaseline = "middle";
+      ctx.fillText(text, 256, 64);
+      const tex = new THREE.CanvasTexture(canvas);
+      const mat = new THREE.SpriteMaterial({ map: tex, transparent: true });
+      const sprite = new THREE.Sprite(mat);
+      sprite.position.set(...pos);
+      sprite.scale.set(size * 2.5, size * 0.6, 1);
+      scene.add(sprite);
+    }
+
+    const lc = isDark ? "#888" : "#666";
+    makeLabel("x", [3.7, -0.2, 0], lc, 1.0);
+    makeLabel("z", [0, 6.7, 0], lc, 1.0);
+    makeLabel("y", [0, -0.2, 3.7], lc, 1.0);
+    makeLabel("r = 2", [1.2, -0.5, 0], isDark ? "#7ee787" : "#1a7f37", 0.85);
+    makeLabel("h = 5", [-0.7, 2.5, 0], isDark ? "#f0883e" : "#b35900", 0.85);
+    makeLabel("5", [-0.4, 5, 0], lc, 0.8);
+    makeLabel("2", [2, -0.4, 0], lc, 0.8);
+
+    // Lighting
+    scene.add(new THREE.AmbientLight(0xffffff, 0.6));
+    const dl = new THREE.DirectionalLight(0xffffff, 0.6);
+    dl.position.set(3, 5, 3);
+    scene.add(dl);
+
+    // Controls
+    const controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.08;
+    controls.autoRotate = true;
+    controls.autoRotateSpeed = 0.5;
+    controls.enableZoom = true;
+    controls.minDistance = 4;
+    controls.maxDistance = 20;
+    controls.target.set(0, 2.5, 0);
+
+    let animId: number;
+    function animate() {
+      animId = requestAnimationFrame(animate);
+      controls.update();
+      renderer.render(scene, camera);
+    }
+    animate();
+
+    return () => { cancelAnimationFrame(animId); renderer.dispose(); };
+  }
+
+  function setup() {
+    document.querySelectorAll<HTMLElement>("[data-cy3d]").forEach((el) => {
+      if (el.querySelector("canvas")) return;
+      const obs = new IntersectionObserver(
+        (entries) => { if (entries[0].isIntersecting) { obs.disconnect(); initScene(el); } },
+        { threshold: 0.05 }
+      );
+      obs.observe(el);
+    });
+  }
+
+  setup();
+  document.addEventListener("astro:page-load", setup);
+</script>
+
+<style>
+  .cy3 { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .cy3-canvas {
+    width:100%; max-width:480px; min-height:360px;
+    border-radius:8px; overflow:hidden;
+  }
+  .cy3-canvas canvas { border-radius:8px; }
+  .cy3-hint {
+    font-family:'Libre Baskerville',Georgia,serif;
+    font-size:0.8rem; color:#888; margin-top:0.4rem;
+  }
+</style>

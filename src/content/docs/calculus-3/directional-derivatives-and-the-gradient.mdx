@@ -1,8 +1,178 @@
 ---
-title: "Directional Derivatives and the Gradient"
-description: "Compute rates of change in any direction and understand the gradient vector"
+title: Directional Derivatives and the Gradient
+description: Learn how to compute directional derivatives and understand the meaning of the gradient vector
 sidebar:
   order: 7
 ---
 
-Content coming soon.
+## What You'll Learn
+
+In this lesson you'll learn how to compute the rate of change of a function in any direction you choose, not just along the x or y axes. The directional derivative generalizes partial derivatives, and the gradient vector turns out to be the key to all of it.
+
+## The Concept
+
+### Partial Derivatives Only Go Two Ways
+
+Partial derivatives tell you the rate of change along the x-axis (holding y constant) and along the y-axis (holding x constant). But what if you want to know the rate of change in some other direction, like diagonally?
+
+That's what the directional derivative does.
+
+### The Directional Derivative
+
+The directional derivative of f at a point P in the direction of a unit vector u is
+
+$$
+D_{\mathbf{u}} f = \nabla f \cdot \mathbf{u}
+$$
+
+That's it. Take the gradient, dot it with the direction you care about. The result is a number telling you how fast f changes as you move in that direction.
+
+The unit vector part is important. The direction vector u must have length 1. If someone gives you a direction like ⟨3, 4⟩, you need to normalize it first by dividing by its magnitude: u = ⟨3/5, 4/5⟩.
+
+### What the Gradient Tells You
+
+The gradient ∇f is more than just a collection of partial derivatives. It has deep geometric meaning:
+
+- It points in the direction of steepest ascent (where f increases fastest)
+- Its magnitude is the maximum rate of increase
+- The directional derivative is maximized when u points in the same direction as ∇f
+- The directional derivative is zero when u is perpendicular to ∇f (along a level curve)
+- The directional derivative is most negative when u points opposite to ∇f (steepest descent)
+
+## Worked Examples
+
+**Example 1: Computing a directional derivative**
+
+Let f(x, y) = x² + y² at the point (3, 4). Find the directional derivative in the direction of u = ⟨1, 0⟩ (pure x-direction).
+
+The gradient is
+
+$$
+\nabla f = \langle 2x, 2y \rangle \implies \nabla f(3, 4) = \langle 6, 8 \rangle
+$$
+
+The directional derivative is
+
+$$
+D_{\mathbf{u}} f = \nabla f \cdot \mathbf{u} = \langle 6, 8 \rangle \cdot \langle 1, 0 \rangle = 6
+$$
+
+This makes sense: moving in the pure x-direction, the rate of change is just the partial derivative with respect to x, which is 2x = 6 at x = 3.
+
+**Example 2: Maximum rate of change**
+
+At the same point (3, 4), the maximum rate of increase is the magnitude of the gradient
+
+$$
+|\nabla f| = \sqrt{36 + 64} = \sqrt{100} = 10
+$$
+
+This maximum occurs in the direction of the gradient itself. The unit vector in that direction is
+
+$$
+\hat{\nabla f} = \frac{\langle 6, 8 \rangle}{10} = \langle 0.6, 0.8 \rangle
+$$
+
+So the function increases fastest at a rate of 10 when you move in the direction ⟨0.6, 0.8⟩ (which points away from the origin, as expected for this bowl-shaped function).
+
+import DirectionalDerivDiagram from "../../../components/DirectionalDerivDiagram.astro";
+
+<DirectionalDerivDiagram />
+
+The orange arrow is the gradient ∇f = ⟨6, 8⟩, pointing in the direction of steepest ascent (D = 10). The green arrow is the direction u = ⟨1, 0⟩ from Example 1 (D = 6). The purple arrow is v = ⟨0, 1⟩ (D = 8). The gradient always gives the largest directional derivative.
+
+**Example 3: Zero directional derivative**
+
+What direction gives a directional derivative of zero? Any direction perpendicular to the gradient. At (3, 4), the gradient is ⟨6, 8⟩. A perpendicular vector is ⟨-8, 6⟩ (swap and negate one component). Normalizing: u = ⟨-8/10, 6/10⟩ = ⟨-0.8, 0.6⟩.
+
+$$
+D_{\mathbf{u}} f = \langle 6, 8 \rangle \cdot \langle -0.8, 0.6 \rangle = -4.8 + 4.8 = 0
+$$
+
+Zero. Moving perpendicular to the gradient means moving along the level curve, where f doesn't change. This is why the gradient is always perpendicular to level curves.
+
+## Real-World Application
+
+Directional derivatives and the gradient show up constantly:
+
+- Machine learning uses gradient descent, which follows the negative gradient to minimize a loss function. The gradient tells you the steepest direction, and you step opposite to it.
+- Game engines use the gradient of a heightmap to determine slope direction for character movement, water flow, and AI pathfinding. The directional derivative tells you the slope in any specific direction.
+- Physics uses gradients to describe force fields: the electric field is the negative gradient of electric potential.
+- Weather modeling uses temperature gradients to predict wind direction (air flows from high to low pressure, perpendicular to isobars).
+
+:::note[You've Got This]
+The directional derivative is just a dot product: gradient dot direction. The gradient points uphill fastest, and its length tells you how steep. Moving perpendicular to the gradient means no change (you're on a level curve). Moving opposite to the gradient means steepest descent. These three facts cover most of what you need. If you understood dot products from earlier in the course, this is a natural extension.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="calculus3-directional-derivatives-and-the-gradient"
+  questions={[
+    {
+      id: "q1",
+      text: "The directional derivative $D_{\\mathbf{u}} f$ equals",
+      options: [
+        "$\\nabla f \\times \\mathbf{u}$",
+        "$\\nabla f \\cdot \\mathbf{u}$",
+        "$|\\nabla f|$",
+        "$f(\\mathbf{u})$",
+      ],
+      correctIndex: 1,
+      explanation:
+        "It's the dot product of the gradient with the unit direction vector.",
+    },
+    {
+      id: "q2",
+      text: "The maximum rate of increase of f at a point is",
+      options: [
+        "the magnitude of the gradient",
+        "the partial derivative with respect to x",
+        "always 1",
+        "the directional derivative in the y-direction",
+      ],
+      correctIndex: 0,
+      explanation:
+        "The gradient's magnitude gives the steepest rate of increase.",
+    },
+    {
+      id: "q3",
+      text: "The directional derivative is zero when the direction is",
+      options: [
+        "parallel to the gradient",
+        "opposite to the gradient",
+        "perpendicular to the gradient",
+        "along the x-axis",
+      ],
+      correctIndex: 2,
+      explanation:
+        "Perpendicular to the gradient means along the level curve, where f doesn't change.",
+    },
+    {
+      id: "q4",
+      text: "For $f(x,y) = x^2 + y^2$ at $(3,4)$, the gradient is",
+      options: [
+        "$\\langle 3, 4 \\rangle$",
+        "$\\langle 6, 8 \\rangle$",
+        "$\\langle 9, 16 \\rangle$",
+        "$\\langle 2, 2 \\rangle$",
+      ],
+      correctIndex: 1,
+      explanation: "The partials are 2x = 6 and 2y = 8.",
+    },
+    {
+      id: "q5",
+      text: "Gradient descent in machine learning moves in the direction of",
+      options: [
+        "the gradient",
+        "the negative gradient",
+        "a random unit vector",
+        "the level curve",
+      ],
+      correctIndex: 1,
+      explanation: "To minimize, you go opposite to the gradient (downhill).",
+    },
+  ]}
+/>

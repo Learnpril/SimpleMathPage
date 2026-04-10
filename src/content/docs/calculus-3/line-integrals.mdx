@@ -1,8 +1,217 @@
 ---
-title: "Line Integrals"
-description: "Evaluate line integrals of scalar functions and vector fields along curves"
+title: Line Integrals
+description: Learn how to compute line integrals of scalar and vector fields along a curve
 sidebar:
   order: 14
 ---
 
-Content coming soon.
+## What You'll Learn
+
+In this lesson you'll learn how to integrate along curves instead of over intervals. There are two flavors: scalar line integrals (accumulating a function's value along a path) and vector line integrals (computing the work done by a force field along a path). Both come down to parametrizing the curve and doing a single-variable integral.
+
+## The Concept
+
+### The Big Idea
+
+A regular definite integral adds up values along a straight line (the x-axis). A line integral does the same thing, but along any curve in 2D or 3D space. You chop the curve into tiny pieces, evaluate the function at each piece, multiply by the length of that piece, and add everything up.
+
+### Scalar Line Integrals
+
+A scalar line integral accumulates a scalar function f along a curve C. If C is parametrized by $\mathbf{r}(t)$ for a from a to b, the formula is
+
+$$
+\int_C f \, ds = \int_a^b f(\mathbf{r}(t)) \, \|\mathbf{r}'(t)\| \, dt
+$$
+
+The factor $\|\mathbf{r}'(t)\|$ is the speed of the parametrization. The double bars $\| \;\|$ mean "magnitude" (length) of the vector, so $\|\mathbf{r}'(t)\|$ is the length of the velocity vector at time t. It converts dt (a change in the parameter) into ds (a change in arc length along the curve). This is the same arc length element from Calc 2, just applied to a new purpose.
+
+What does this compute? If f represents density along a wire shaped like C, the scalar line integral gives the total mass. If f = 1, you get the arc length of C.
+
+### Vector Line Integrals (Work)
+
+A vector line integral computes how much a vector field F pushes along a curve C. The formula is
+
+$$
+\int_C \mathbf{F} \cdot d\mathbf{r} = \int_a^b \mathbf{F}(\mathbf{r}(t)) \cdot \mathbf{r}'(t) \, dt
+$$
+
+The dot product $\mathbf{F} \cdot \mathbf{r}'$ measures how much the field aligns with the direction of travel. When F points the same way you're moving, the dot product is positive (the field does positive work). When F points against you, the dot product is negative (the field resists your motion). When F is perpendicular to the path, the dot product is zero (no work done).
+
+This is the physics definition of work: force dot displacement, summed along the entire path.
+
+### The Parametrization Recipe
+
+Both types follow the same steps:
+
+1. Parametrize the curve: write $\mathbf{r}(t) = \langle x(t), y(t) \rangle$ (or with z in 3D) and find the bounds on t
+2. Compute $\mathbf{r}'(t)$ by differentiating each component
+3. For scalar integrals: compute $\|\mathbf{r}'(t)\|$ and plug into the formula
+4. For vector integrals: compute $\mathbf{F}(\mathbf{r}(t)) \cdot \mathbf{r}'(t)$ and integrate
+
+## Worked Examples
+
+**Example 1: Scalar line integral along a straight line**
+
+Evaluate $\int_C (x + y) \, ds$ where C is the line segment from (0, 0) to (1, 1).
+
+import ScalarLineIntegral from "../../../components/ScalarLineIntegral.astro";
+
+<ScalarLineIntegral />
+
+The dashed orange bars show the value of f = x + y at sample points along the path. The function grows as you move along C because both x and y increase together.
+
+Parametrize the line: $\mathbf{r}(t) = \langle t, t \rangle$ for t from 0 to 1
+
+Compute the derivative: $\mathbf{r}'(t) = \langle 1, 1 \rangle$
+
+Compute the speed: $\|\mathbf{r}'(t)\| = \sqrt{1^2 + 1^2} = \sqrt{2}$
+
+Evaluate f along the curve: $f(\mathbf{r}(t)) = t + t = 2t$
+
+Set up and evaluate the integral
+
+$$
+\int_C (x+y) \, ds = \int_0^1 2t \cdot \sqrt{2} \, dt = 2\sqrt{2} \int_0^1 t \, dt
+$$
+
+$$
+= 2\sqrt{2} \cdot \frac{t^2}{2}\bigg|_0^1 = 2\sqrt{2} \cdot \frac{1}{2} = \sqrt{2}
+$$
+
+The scalar line integral equals $\sqrt{2} \approx 1.414$ and represents the total accumulated value of x + y along the diagonal path, weighted by arc length.
+
+**Example 2: Work done by a rotational field along a semicircle**
+
+Compute $\int_C \mathbf{F} \cdot d\mathbf{r}$ where $\mathbf{F}(x,y) = \langle -y, x \rangle$ and C is the upper semicircle from (1, 0) to (-1, 0), traversed counterclockwise.
+
+import WorkIntegralDiagram from "../../../components/WorkIntegralDiagram.astro";
+
+<WorkIntegralDiagram />
+
+The green arrows show the field F at points along the semicircle. Notice that every arrow is tangent to the circle, pointing in the direction of travel. This means the field is doing maximum work at every point.
+
+Parametrize the semicircle: $\mathbf{r}(t) = \langle \cos t, \sin t \rangle$ for t from 0 to pi
+
+Compute the derivative: $\mathbf{r}'(t) = \langle -\sin t, \cos t \rangle$
+
+Evaluate F along the curve: $\mathbf{F}(\mathbf{r}(t)) = \langle -\sin t, \cos t \rangle$
+
+Compute the dot product
+
+$$
+\mathbf{F} \cdot \mathbf{r}' = (-\sin t)(-\sin t) + (\cos t)(\cos t) = \sin^2 t + \cos^2 t = 1
+$$
+
+The dot product is 1 everywhere. The field perfectly aligns with the direction of motion at every point on the semicircle.
+
+$$
+\int_C \mathbf{F} \cdot d\mathbf{r} = \int_0^{\pi} 1 \, dt = \pi
+$$
+
+The work done is exactly pi. This makes geometric sense: the field is always tangent to the circle with magnitude 1, and the semicircle has arc length pi, so work = force times distance = 1 times pi.
+
+**Example 3: When the field is perpendicular to the path**
+
+Compute $\int_C \mathbf{F} \cdot d\mathbf{r}$ where $\mathbf{F}(x,y) = \langle x, y \rangle$ (the radial field from Lesson 13) and C is the upper semicircle from (1, 0) to (-1, 0).
+
+Same parametrization as Example 2: $\mathbf{r}(t) = \langle \cos t, \sin t \rangle$ and $\mathbf{r}'(t) = \langle -\sin t, \cos t \rangle$
+
+import PerpFieldDiagram from "../../../components/PerpFieldDiagram.astro";
+
+<PerpFieldDiagram />
+
+The red arrows show the radial field at points along the semicircle. Every arrow points straight outward from the origin, perpendicular to the curve. Compare this to Example 2 where the green arrows were tangent. Perpendicular means zero dot product, which means zero work.
+
+Evaluate F along the curve: $\mathbf{F}(\mathbf{r}(t)) = \langle \cos t, \sin t \rangle$
+
+Compute the dot product
+
+$$
+\mathbf{F} \cdot \mathbf{r}' = (\cos t)(-\sin t) + (\sin t)(\cos t) = -\sin t \cos t + \sin t \cos t = 0
+$$
+
+The dot product is zero everywhere. The radial field points outward from the origin, which is perpendicular to the circle at every point. A field that's always perpendicular to your path does zero work.
+
+$$
+\int_C \mathbf{F} \cdot d\mathbf{r} = \int_0^{\pi} 0 \, dt = 0
+$$
+
+This is a powerful geometric insight: if the force is always perpendicular to the direction of motion, no work is done. This is why gravity does no work on a satellite in a circular orbit.
+
+## Real-World Application
+
+Line integrals connect math to physical motion:
+
+- Physics uses vector line integrals to compute work done by forces along paths, circulation of fluid flow around curves, and voltage drops along circuits
+- Game engines use line integrals (or discrete approximations of them) to calculate energy costs along character paths, wind effects on projectile trajectories, and force accumulation along movement curves
+- Engineering uses them for computing work in electromagnetic fields, stress along structural members, and heat flow along boundaries
+- Navigation systems approximate line integrals when computing fuel consumption along a route with varying terrain and wind conditions
+
+:::note[You've Got This]
+Line integrals boil down to three steps: parametrize the curve, plug into the formula, and integrate. For scalar integrals, you multiply by the speed. For vector integrals, you take the dot product with the velocity. The geometry is your friend here: if the field aligns with the path, work is maximized. If the field is perpendicular, work is zero. Once you see that pattern, the formulas make intuitive sense.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="calculus3-line-integrals"
+  questions={[
+    {
+      id: "q1",
+      text: "A scalar line integral $\\int_C f \\, ds$ computes",
+      options: [
+        "the work done by a force field",
+        "the accumulated value of f along the curve, weighted by arc length",
+        "the area enclosed by the curve",
+        "the length of the curve only",
+      ],
+      correctIndex: 1,
+      explanation:
+        "The scalar line integral sums f times ds (arc length element) along the path.",
+    },
+    {
+      id: "q2",
+      text: "In the vector line integral formula, the dot product $\\mathbf{F} \\cdot \\mathbf{r}'$ measures",
+      options: [
+        "the magnitude of F",
+        "the speed along the curve",
+        "how much F aligns with the direction of travel",
+        "the curvature of the path",
+      ],
+      correctIndex: 2,
+      explanation:
+        "The dot product picks out the component of F in the direction of motion. Perpendicular components contribute nothing.",
+    },
+    {
+      id: "q3",
+      text: "If a vector field is always perpendicular to a curve, the work integral equals",
+      options: ["the arc length", "the magnitude of F", "infinity", "zero"],
+      correctIndex: 3,
+      explanation:
+        "When F is perpendicular to the path at every point, F dot r' = 0 everywhere, so the integral is zero.",
+    },
+    {
+      id: "q4",
+      text: "The work done by $\\mathbf{F} = \\langle -y, x \\rangle$ along the full unit circle (0 to $2\\pi$) is",
+      options: ["$\\pi$", "$2\\pi$", "$0$", "$4\\pi$"],
+      correctIndex: 1,
+      explanation:
+        "The dot product is 1 everywhere on the unit circle, and the full circle has arc length 2 pi, so the work is 2 pi.",
+    },
+    {
+      id: "q5",
+      text: "The first step in computing any line integral is",
+      options: [
+        "computing the dot product",
+        "finding the arc length",
+        "parametrizing the curve",
+        "evaluating at the endpoints",
+      ],
+      correctIndex: 2,
+      explanation:
+        "You need a parametrization r(t) before you can compute r'(t), plug into the integrand, or set up bounds.",
+    },
+  ]}
+/>

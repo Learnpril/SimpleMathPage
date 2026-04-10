@@ -1,8 +1,458 @@
 ---
-title: "Calculus 3 Review"
-description: "Comprehensive review of all Calculus 3 topics"
+title: Calculus 3 Review
+description: Comprehensive review of vectors, partial derivatives, multiple integrals, line/surface integrals, and the major vector calculus theorems
 sidebar:
   order: 21
 ---
 
-Content coming soon.
+## What You'll Learn
+
+This review covers everything from Calculus 3: vectors in 3D space, vector functions, partial derivatives, multiple integrals, vector fields, line and surface integrals, and the three big theorems (Green's, Stokes', Divergence). Use this as your final checkpoint.
+
+## Key Concepts Summary
+
+### 1. Vectors and Geometry in 3D
+
+The dot product $\mathbf{A} \cdot \mathbf{B} = \|\mathbf{A}\|\|\mathbf{B}\|\cos\theta$ measures how aligned two vectors are. The cross product $\mathbf{A} \times \mathbf{B}$ gives a vector perpendicular to both, with magnitude equal to the area of the parallelogram they form. Lines in 3D are parametrized as $\mathbf{r}(t) = \mathbf{r}_0 + t\mathbf{v}$, and planes are described by $\mathbf{n} \cdot (\mathbf{r} - \mathbf{r}_0) = 0$.
+
+### 2. Vector Functions and Space Curves
+
+A space curve is parametrized by $\mathbf{r}(t) = \langle x(t), y(t), z(t) \rangle$. The tangent vector is $\mathbf{r}'(t)$, the unit tangent is $\mathbf{T} = \mathbf{r}'/\|\mathbf{r}'\|$, and arc length is $L = \int_a^b \|\mathbf{r}'(t)\| \, dt$. Curvature $\kappa$ measures how fast the curve turns.
+
+### 3. Partial Derivatives and the Gradient
+
+For $f(x,y,z)$, partial derivatives $f_x, f_y, f_z$ measure the rate of change in each direction independently. The gradient $\nabla f = \langle f_x, f_y, f_z \rangle$ points in the direction of steepest ascent. The directional derivative in direction $\mathbf{u}$ is $D_\mathbf{u}f = \nabla f \cdot \mathbf{u}$. Tangent planes and linear approximations extend the idea of tangent lines to surfaces.
+
+### 4. Multiple Integrals
+
+Double integrals compute area, volume, and accumulated quantities over 2D regions. Triple integrals extend this to 3D. The key is choosing the right coordinate system:
+
+- Rectangular: $dA = dx\,dy$, $dV = dx\,dy\,dz$
+- Polar: $dA = r\,dr\,d\theta$
+- Cylindrical: $dV = r\,dr\,d\theta\,dz$
+- Spherical: $dV = \rho^2 \sin\varphi\,d\rho\,d\varphi\,d\theta$
+
+The extra factors (r, $\rho^2\sin\varphi$) are Jacobians that account for how the coordinate grid stretches.
+
+### 5. Vector Fields, Line Integrals, and Surface Integrals
+
+A vector field assigns a vector to each point: $\mathbf{F}(x,y,z) = \langle P, Q, R \rangle$. The line integral $\int_C \mathbf{F} \cdot d\mathbf{r}$ computes work done by the field along a path. The surface integral $\iint_S \mathbf{F} \cdot d\mathbf{S}$ computes flux through a surface. Conservative fields have a potential function $f$ where $\mathbf{F} = \nabla f$, and their line integrals are path-independent.
+
+### 6. The Three Big Theorems
+
+These theorems connect integrals across different dimensions. They all say the same thing: what happens on the boundary determines what's happening inside.
+
+Green's Theorem (2D): line integral around a closed curve = double integral over the enclosed region
+
+$$
+\oint_C P\,dx + Q\,dy = \iint_D \left(\frac{\partial Q}{\partial x} - \frac{\partial P}{\partial y}\right) dA
+$$
+
+Stokes' Theorem (3D surfaces): surface integral of curl = line integral around the boundary
+
+$$
+\iint_S (\nabla \times \mathbf{F}) \cdot d\mathbf{S} = \oint_C \mathbf{F} \cdot d\mathbf{r}
+$$
+
+Divergence Theorem (3D volumes): flux through a closed surface = triple integral of divergence inside
+
+$$
+\oiint_S \mathbf{F} \cdot d\mathbf{S} = \iiint_E (\nabla \cdot \mathbf{F})\,dV
+$$
+
+Curl measures rotation. Divergence measures sources and sinks. If curl F = 0 (and the domain is simply connected), F is conservative. If div F = 0, the field is incompressible.
+
+## Worked Review Examples
+
+**Example 1: Divergence Theorem**
+
+Compute the outward flux of $\mathbf{F} = \langle x, y, z \rangle$ through the unit sphere.
+
+import Sphere3D from "../../../components/Sphere3D.astro";
+
+<Sphere3D />
+
+Instead of parametrizing the sphere, use the Divergence Theorem. The divergence is:
+
+$$
+\nabla \cdot \mathbf{F} = 1 + 1 + 1 = 3
+$$
+
+Integrate over the unit ball:
+
+$$
+\oiint_S \mathbf{F} \cdot d\mathbf{S} = \iiint_E 3\,dV = 3 \cdot \frac{4}{3}\pi = 4\pi
+$$
+
+**Example 2: Stokes' Theorem**
+
+Evaluate the circulation of $\mathbf{F} = \langle -y, x, 0 \rangle$ around the unit circle in the xy-plane.
+
+import GreensTheoremDiagram from "../../../components/GreensTheoremDiagram.astro";
+
+<GreensTheoremDiagram />
+
+Compute the curl:
+
+$$
+\nabla \times \mathbf{F} = \langle 0, 0, 2 \rangle
+$$
+
+The flat unit disk has upward normal $\mathbf{n} = \langle 0,0,1 \rangle$, so:
+
+$$
+\iint_D (\nabla \times \mathbf{F}) \cdot d\mathbf{S} = \iint_D 2\,dA = 2\pi
+$$
+
+**Example 3: Volume in Spherical Coordinates**
+
+Find the volume of the unit ball $x^2 + y^2 + z^2 \leq 1$.
+
+In spherical coordinates, $\rho$ (rho) is the distance from the origin, $\varphi$ (phi) is the angle from the positive z-axis, and $\theta$ (theta) is the angle in the xy-plane. The volume element is $dV = \rho^2 \sin\varphi\,d\rho\,d\varphi\,d\theta$.
+
+$$
+V = \int_0^{2\pi} \int_0^{\pi} \int_0^{1} \rho^2 \sin\varphi \, d\rho \, d\varphi \, d\theta
+$$
+
+The innermost integral:
+
+$$
+\int_0^1 \rho^2 \, d\rho = \frac{1}{3}
+$$
+
+The middle integral:
+
+$$
+\int_0^{\pi} \sin\varphi \, d\varphi = 2
+$$
+
+The outer integral:
+
+$$
+\int_0^{2\pi} d\theta = 2\pi
+$$
+
+Multiply them together: $V = \frac{1}{3} \cdot 2 \cdot 2\pi = \frac{4\pi}{3}$.
+
+**Example 4: Line Integral (Work)**
+
+Compute the work done by $\mathbf{F} = \langle -y, x \rangle$ along the unit circle from (1,0) back to (1,0), counterclockwise.
+
+import RotationalField2D from "../../../components/RotationalField2D.astro";
+
+<RotationalField2D />
+
+Parametrize: $\mathbf{r}(t) = \langle \cos t, \sin t \rangle$ for $t$ from 0 to $2\pi$.
+
+$$
+\mathbf{r}'(t) = \langle -\sin t, \cos t \rangle
+$$
+
+$$
+\mathbf{F}(\mathbf{r}(t)) = \langle -\sin t, \cos t \rangle
+$$
+
+$$
+\mathbf{F} \cdot \mathbf{r}' = (-\sin t)(-\sin t) + (\cos t)(\cos t) = \sin^2 t + \cos^2 t = 1
+$$
+
+$$
+W = \int_0^{2\pi} 1\,dt = 2\pi
+$$
+
+**Example 5: Green's Theorem**
+
+Evaluate $\oint_C (x^2 + y)\,dx + (3x - y)\,dy$ where C is the unit circle.
+
+Using Green's Theorem with $P = x^2 + y$ and $Q = 3x - y$:
+
+$$
+\frac{\partial Q}{\partial x} - \frac{\partial P}{\partial y} = 3 - 1 = 2
+$$
+
+$$
+\oint_C P\,dx + Q\,dy = \iint_D 2\,dA = 2 \cdot \pi(1)^2 = 2\pi
+$$
+
+**Example 6: Curl of a Rotational Field**
+
+For $\mathbf{F} = \langle -y, x, 0 \rangle$, compute the curl.
+
+import CurlExample2D from "../../../components/CurlExample2D.astro";
+
+<CurlExample2D />
+
+$$
+\nabla \times \mathbf{F} = \left\langle \frac{\partial 0}{\partial y} - \frac{\partial x}{\partial z},\; \frac{\partial(-y)}{\partial z} - \frac{\partial 0}{\partial x},\; \frac{\partial x}{\partial x} - \frac{\partial(-y)}{\partial y} \right\rangle = \langle 0, 0, 2 \rangle
+$$
+
+The curl is a constant vector pointing straight up, confirming uniform counterclockwise rotation in the xy-plane with strength 2.
+
+## Real-World and Game Development Applications
+
+- Gauss's Law: the Divergence Theorem applied to electric fields. Total electric flux through a closed surface equals the enclosed charge.
+- Faraday's Law: Stokes' Theorem applied to the electric field. The induced voltage around a loop equals the rate of change of magnetic flux.
+- Fluid dynamics: divergence tells you where fluid is being created or destroyed. Curl tells you where it's spinning.
+- Game engines: wind simulation uses vector fields with curl for vortices and divergence for sources/sinks. Particle emitters use divergence to control outflow. Lighting on curved surfaces uses surface integrals. Flow fields guide AI pathfinding.
+
+:::note[You've Got This]
+Calculus 3 adds a third dimension and ties together a lot of new ideas. The payoff is the three big theorems: Green's, Stokes', and Divergence. They all say the same thing in different dimensions: what happens on the boundary tells you what's happening inside. Master the connections between these theorems, get comfortable switching coordinate systems, and you'll have a powerful toolkit for physics, engineering, graphics, and game development. You made it through Calc 3.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="calculus3-review"
+  questions={[
+    {
+      id: "q1",
+      text: "The Divergence Theorem states that the outward flux through a closed surface equals",
+      options: [
+        "the line integral around the boundary curve",
+        "the triple integral of divergence inside the volume",
+        "the surface integral of curl",
+        "the gradient of a potential function",
+      ],
+      correctIndex: 1,
+      explanation:
+        "The Divergence Theorem says flux through S = triple integral of div F over E.",
+    },
+    {
+      id: "q2",
+      text: "Stokes' Theorem relates the surface integral of curl F to",
+      options: [
+        "a double integral in polar coordinates",
+        "the work done by a conservative field",
+        "the line integral around the boundary of the surface",
+        "the triple integral of divergence",
+      ],
+      correctIndex: 2,
+      explanation:
+        "Stokes' Theorem generalizes Green's Theorem to 3D surfaces.",
+    },
+    {
+      id: "q3",
+      text: "Positive divergence at a point in a vector field indicates",
+      options: [
+        "a conservative field",
+        "a region of strong rotation",
+        "zero net flux",
+        "a source where the field is spreading outward",
+      ],
+      correctIndex: 3,
+      explanation:
+        "Positive divergence means the field acts like a fountain or source at that point.",
+    },
+    {
+      id: "q4",
+      text: "In spherical coordinates, the volume element dV is",
+      options: [
+        "r dr d$\\theta$ dz",
+        "dx dy dz",
+        "$\\rho^2 \\sin\\varphi \\, d\\rho \\, d\\varphi \\, d\\theta$",
+        "r dr d$\\theta$",
+      ],
+      correctIndex: 2,
+      explanation:
+        "The rho-squared sin-phi factor is the Jacobian for spherical coordinates.",
+    },
+    {
+      id: "q5",
+      text: "If a vector field F is conservative, then its curl is",
+      options: [
+        "always positive",
+        "zero everywhere",
+        "equal to its divergence",
+        "infinite in magnitude",
+      ],
+      correctIndex: 1,
+      explanation: "Conservative fields have no rotation, so curl F = 0.",
+    },
+    {
+      id: "q6",
+      text: "Green's Theorem converts a line integral around a closed curve into",
+      options: [
+        "the gradient of a scalar potential",
+        "a triple integral inside the volume",
+        "a double integral of ($\\partial Q/\\partial x - \\partial P/\\partial y$) over the enclosed region",
+        "the arc length of the curve",
+      ],
+      correctIndex: 2,
+      explanation: "Green's Theorem is the 2D version of Stokes' Theorem.",
+    },
+    {
+      id: "q7",
+      text: "The cross product A $\\times$ B gives a vector that is",
+      options: [
+        "the projection of A onto B",
+        "parallel to both A and B",
+        "the sum of A and B",
+        "perpendicular to both A and B",
+      ],
+      correctIndex: 3,
+      explanation:
+        "Its magnitude equals the area of the parallelogram formed by A and B.",
+    },
+    {
+      id: "q8",
+      text: "The gradient $\\nabla f$ points in the direction of",
+      options: [
+        "zero change in f",
+        "steepest ascent of f",
+        "the level curves of f",
+        "steepest descent of f",
+      ],
+      correctIndex: 1,
+      explanation: "The gradient is the direction of fastest increase of f.",
+    },
+    {
+      id: "q9",
+      text: "In cylindrical coordinates, the volume element for triple integrals is",
+      options: [
+        "$\\rho^2 \\sin\\varphi \\, d\\rho \\, d\\varphi \\, d\\theta$",
+        "dx dy dz",
+        "r dr d$\\theta$ dz",
+        "r dr d$\\theta$",
+      ],
+      correctIndex: 2,
+      explanation:
+        "The extra r comes from the polar area element, extended by dz.",
+    },
+    {
+      id: "q10",
+      text: "The line integral $\\int_C \\mathbf{F} \\cdot d\\mathbf{r}$ represents",
+      options: [
+        "flux through a surface",
+        "arc length of the curve",
+        "volume under the curve",
+        "work done by the force field along the path",
+      ],
+      correctIndex: 3,
+      explanation: "When C is closed, this is also called the circulation.",
+    },
+    {
+      id: "q11",
+      text: "Curl of a vector field measures",
+      options: [
+        "the magnitude of the field",
+        "net source or sink strength",
+        "rotation or vorticity",
+        "the direction of steepest ascent",
+      ],
+      correctIndex: 2,
+      explanation:
+        "Curl measures how much the field rotates around a point. Its direction follows the right-hand rule.",
+    },
+    {
+      id: "q12",
+      text: "The surface integral $\\iint_S \\mathbf{F} \\cdot d\\mathbf{S}$ computes",
+      options: [
+        "the surface area",
+        "flux of the vector field through the surface",
+        "the arc length",
+        "the scalar accumulation along the surface",
+      ],
+      correctIndex: 1,
+      explanation:
+        "This is the flux integral, measuring how much of the field passes through S.",
+    },
+    {
+      id: "q13",
+      text: "If div F = 0 throughout a region, then by the Divergence Theorem the net flux through any closed surface is",
+      options: [
+        "equal to the volume",
+        "infinite",
+        "zero",
+        "equal to the surface area",
+      ],
+      correctIndex: 2,
+      explanation: "The field is incompressible. No net flow in or out.",
+    },
+    {
+      id: "q14",
+      text: "Which coordinate system is usually best for integrating over a sphere or ball?",
+      options: [
+        "Cartesian coordinates",
+        "polar coordinates",
+        "cylindrical coordinates",
+        "spherical coordinates",
+      ],
+      correctIndex: 3,
+      explanation: "Spherical symmetry makes the limits and Jacobian simple.",
+    },
+    {
+      id: "q15",
+      text: "The normal vector to a parametrized surface is given by",
+      options: [
+        "$\\mathbf{r}_u \\cdot \\mathbf{r}_v$",
+        "$\\|\\mathbf{r}'(t)\\|$",
+        "$\\mathbf{r}_u \\times \\mathbf{r}_v$",
+        "the gradient of the surface function",
+      ],
+      correctIndex: 2,
+      explanation:
+        "The cross product of the partial derivatives gives both direction and magnitude for dS.",
+    },
+    {
+      id: "q16",
+      text: "Green's Theorem is most useful when",
+      options: [
+        "the field is discontinuous",
+        "the region has no boundary",
+        "the double integral is easier than parametrizing the closed curve",
+        "the line integral is very simple",
+      ],
+      correctIndex: 2,
+      explanation:
+        "It often simplifies computation dramatically by switching sides.",
+    },
+    {
+      id: "q17",
+      text: "In game development, the Divergence Theorem helps efficiently compute",
+      options: [
+        "only collision detection",
+        "outflow from volumes (e.g., explosions or particle emitters)",
+        "only sprite rendering",
+        "only scoring mechanics",
+      ],
+      correctIndex: 1,
+      explanation: "It avoids computing complex surface integrals directly.",
+    },
+    {
+      id: "q18",
+      text: "If curl F = 0 and the domain is simply connected, then F is",
+      options: [
+        "incompressible",
+        "always zero",
+        "conservative (has a potential function)",
+        "rotational",
+      ],
+      correctIndex: 2,
+      explanation:
+        "Work is then path-independent and F = grad f for some scalar f.",
+    },
+    {
+      id: "q19",
+      text: "The Jacobian factor in polar coordinates for double integrals is",
+      options: ["$\\rho^2 \\sin\\varphi$", "1", "r $\\sin\\theta$", "r"],
+      correctIndex: 3,
+      explanation:
+        "The factor r accounts for the stretching of area elements in polar coordinates.",
+    },
+    {
+      id: "q20",
+      text: "The three major theorems of vector calculus (Green's, Stokes', Divergence) fundamentally show that",
+      options: [
+        "all vector fields are conservative",
+        "integrals in different dimensions are deeply connected",
+        "line integrals are always zero",
+        "partial derivatives are unnecessary",
+      ],
+      correctIndex: 1,
+      explanation:
+        "They link line, surface, and volume integrals in a powerful chain of connections.",
+    },
+  ]}
+/>

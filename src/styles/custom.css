@@ -437,21 +437,13 @@ starlight-toc {
 }
 
 /* KaTeX inline-rendered block math (single $ on own line) — breathing room */
-/* Only apply block display when katex is the sole content of a paragraph */
-p:has(> .katex:only-child) > .katex {
-  display: block;
-  margin: 2em 0;
-}
-
-p:has(> .katex:only-child) {
-  margin: 2.5em 0 !important;
-}
+/* DISABLED: This rule was causing inline math to float as block elements
+   when the browser wrapped text. Use $$ for display math instead. */
 
 /* ---------- Mobile: legible KaTeX equations ---------- */
 @media (max-width: 600px) {
   /* Let wide tables scroll instead of overflowing the page */
   .sl-markdown-content .katex-display,
-  .sl-markdown-content p:has(> .katex:only-child),
   .sl-markdown-content p > .katex {
     overflow-x: auto;
     overflow-y: hidden;

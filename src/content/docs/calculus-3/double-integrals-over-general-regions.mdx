@@ -1,8 +1,196 @@
 ---
-title: "Double Integrals over General Regions"
-description: "Evaluate double integrals over non-rectangular regions"
+title: Double Integrals over General Regions
+description: Learn how to set up and evaluate double integrals over non-rectangular regions
 sidebar:
   order: 9
 ---
 
-Content coming soon.
+## What You'll Learn
+
+In this lesson you'll learn how to set up double integrals when the region isn't a nice rectangle. The key skill is reading the region's shape and translating it into the correct limits of integration.
+
+## The Concept
+
+### Beyond Rectangles
+
+In the previous lesson, the region was always a rectangle, so the limits were just constants. But most real regions aren't rectangles. A region might be bounded by curves, lines, or a mix of both. The limits of integration now depend on the other variable.
+
+### Type I Regions (dy dx)
+
+A Type I region is described by fixing x and letting y range between two curves
+
+$$
+\int_a^b \int_{g_1(x)}^{g_2(x)} f(x, y) \, dy \, dx
+$$
+
+For each value of x between a and b, y goes from the lower curve g₁(x) to the upper curve g₂(x). Think of it as sweeping vertical slices across the region from left to right.
+
+### Type II Regions (dx dy)
+
+A Type II region is described by fixing y and letting x range between two curves
+
+$$
+\int_c^d \int_{h_1(y)}^{h_2(y)} f(x, y) \, dx \, dy
+$$
+
+For each value of y between c and d, x goes from the left curve h₁(y) to the right curve h₂(y). Think of it as sweeping horizontal slices from bottom to top.
+
+### How to Choose
+
+Always sketch the region first. Then ask: "Is it easier to describe the y-limits as functions of x, or the x-limits as functions of y?" Pick whichever gives simpler expressions. Sometimes one order requires splitting the region into pieces while the other doesn't.
+
+## Worked Examples
+
+**Example 1: Area between two curves**
+
+Find the area of the region bounded by y = x² and y = x + 2.
+
+First, find where the curves intersect: x² = x + 2 gives x² - x - 2 = 0, so (x - 2)(x + 1) = 0. The curves meet at x = -1 and x = 2.
+
+import GeneralRegionDiagram from "../../../components/GeneralRegionDiagram.astro";
+
+<GeneralRegionDiagram />
+
+For each x from -1 to 2, y ranges from x² (bottom, blue curve) to x + 2 (top, green line). Setting up as a Type I integral
+
+$$
+\text{Area} = \int_{-1}^{2} \left[ (x + 2) - x^2 \right] dx
+$$
+
+$$
+= \int_{-1}^{2} (x + 2 - x^2) \, dx = \left[ \frac{x^2}{2} + 2x - \frac{x^3}{3} \right]_{-1}^{2}
+$$
+
+$$
+= \left( 2 + 4 - \frac{8}{3} \right) - \left( \frac{1}{2} - 2 + \frac{1}{3} \right) = \frac{10}{3} - \left( -\frac{7}{6} \right) = \frac{10}{3} + \frac{7}{6} = \frac{27}{6} = \frac{9}{2}
+$$
+
+The area is 9/2 = 4.5 square units.
+
+**Example 2: Switching the order of integration**
+
+Sometimes the integral is easier (or only possible) in one order. Consider
+
+$$
+\int_0^1 \int_x^1 e^{y^2} \, dy \, dx
+$$
+
+The inner integral has no closed-form antiderivative with respect to y. But if we switch the order, the region is the triangle where 0 ≤ x ≤ y and 0 ≤ y ≤ 1. In dx dy order
+
+$$
+\int_0^1 \int_0^y e^{y^2} \, dx \, dy = \int_0^1 ye^{y^2} \, dy = \left[ \frac{1}{2} e^{y^2} \right]_0^1 = \frac{e - 1}{2}
+$$
+
+Switching the order turned an impossible integral into a straightforward one.
+
+**Example 3: Integrating over a triangle**
+
+Evaluate the double integral of f(x, y) = x + 2y over the triangle with vertices (0, 0), (1, 0), and (0, 1).
+
+import TriangleRegionDiagram from "../../../components/TriangleRegionDiagram.astro";
+
+<TriangleRegionDiagram />
+
+The hypotenuse is y = 1 - x. For each x from 0 to 1, y ranges from 0 to 1 - x
+
+$$
+\int_0^1 \int_0^{1-x} (x + 2y) \, dy \, dx
+$$
+
+Inner integral (with respect to y)
+
+$$
+\int_0^{1-x} (x + 2y) \, dy = \left[ xy + y^2 \right]_0^{1-x} = x(1-x) + (1-x)^2
+$$
+
+$$
+= x - x^2 + 1 - 2x + x^2 = 1 - x
+$$
+
+Outer integral
+
+$$
+\int_0^1 (1 - x) \, dx = \left[ x - \frac{x^2}{2} \right]_0^1 = 1 - \frac{1}{2} = \frac{1}{2}
+$$
+
+import TriangleVolume3D from "../../../components/TriangleVolume3D.astro";
+
+<TriangleVolume3D />
+
+The blue surface is z = x + 2y rising over the green triangular base. The volume under this surface over the triangle is 1/2 cubic unit, which is exactly what the double integral computed.
+
+## Real-World Application
+
+Double integrals over general regions show up whenever the domain isn't a rectangle:
+
+- Physics uses them to compute mass and center of mass for irregularly shaped plates with varying density
+- Game engines compute average terrain properties over non-rectangular regions like river basins, forest boundaries, or irregular map zones
+- Engineering calculates stress and heat flow over cross-sections that are circular, triangular, or bounded by curves
+- Environmental science averages rainfall or pollution over watershed boundaries that follow natural terrain
+
+:::note[You've Got This]
+The hardest part of general regions is setting up the limits. Always sketch the region first. Identify which curve is on top (or on the right) and which is on the bottom (or left). Write the limits as functions of the outer variable. If the limits look messy in one order, try the other. Once the limits are set up correctly, the actual integration is the same as before. You've got the integration skills from Calculus 1 and 2. This is just about reading the geometry.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="calculus3-double-integrals-over-general-regions"
+  questions={[
+    {
+      id: "q1",
+      text: "For a Type I region, the inner integral is with respect to",
+      options: [
+        "y, with limits that are functions of x",
+        "x, with constant limits",
+        "y, with constant limits",
+        "neither variable",
+      ],
+      correctIndex: 0,
+      explanation: "In dy dx order, y ranges between curves that depend on x.",
+    },
+    {
+      id: "q2",
+      text: "The first step when setting up a double integral over a general region is",
+      options: [
+        "find the antiderivative",
+        "sketch the region",
+        "switch to polar coordinates",
+        "evaluate the inner integral",
+      ],
+      correctIndex: 1,
+      explanation:
+        "A sketch helps you identify the boundaries and choose the right order.",
+    },
+    {
+      id: "q3",
+      text: "Switching the order of integration is useful when",
+      options: [
+        "the inner integral has no closed-form antiderivative in the original order",
+        "the function is constant",
+        "the region is a rectangle",
+        "you want a different answer",
+      ],
+      correctIndex: 0,
+      explanation:
+        "Sometimes one order makes the integral solvable while the other doesn't.",
+    },
+    {
+      id: "q4",
+      text: "The area between $y = x^2$ and $y = x + 2$ from $x = -1$ to $x = 2$ is",
+      options: ["$\\frac{7}{2}$", "$\\frac{9}{2}$", "$5$", "$3$"],
+      correctIndex: 1,
+      explanation: "Integrating (x + 2 - x²) from -1 to 2 gives 9/2.",
+    },
+    {
+      id: "q5",
+      text: "For the triangle with vertices $(0,0)$, $(1,0)$, $(0,1)$, the upper y-limit in dy dx order is",
+      options: ["$1$", "$x$", "$1 - x$", "$1 + x$"],
+      correctIndex: 2,
+      explanation:
+        "The hypotenuse is y = 1 - x, which is the upper boundary for each fixed x.",
+    },
+  ]}
+/>

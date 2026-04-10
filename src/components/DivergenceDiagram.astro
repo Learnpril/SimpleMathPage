@@ -1,0 +1,71 @@
+---
+/**
+ * DivergenceDiagram — SVG showing two side-by-side panels:
+ * Left: positive divergence (source, arrows pointing outward)
+ * Right: negative divergence (sink, arrows pointing inward)
+ */
+---
+
+<figure class="diagram-container" role="img" aria-label="Divergence diagram showing a source with outward arrows on the left and a sink with inward arrows on the right">
+  <svg viewBox="-10 -10 440 230" width="440" height="230" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <marker id="dv-ah-g" markerWidth="6" markerHeight="4" refX="5" refY="2" orient="auto">
+        <path d="M0,0 L6,2 L0,4 Z" class="dv-arrow-g" />
+      </marker>
+      <marker id="dv-ah-r" markerWidth="6" markerHeight="4" refX="5" refY="2" orient="auto">
+        <path d="M0,0 L6,2 L0,4 Z" class="dv-arrow-r" />
+      </marker>
+    </defs>
+    <!-- LEFT: Source (positive divergence) -->
+    <circle cx="100" cy="90" r="5" class="dv-center-g" />
+    <!-- Outward arrows -->
+    <line x1="100" y1="90" x2="100" y2="50" class="dv-vec-g" marker-end="url(#dv-ah-g)" />
+    <line x1="100" y1="90" x2="100" y2="130" class="dv-vec-g" marker-end="url(#dv-ah-g)" />
+    <line x1="100" y1="90" x2="140" y2="90" class="dv-vec-g" marker-end="url(#dv-ah-g)" />
+    <line x1="100" y1="90" x2="60" y2="90" class="dv-vec-g" marker-end="url(#dv-ah-g)" />
+    <line x1="100" y1="90" x2="128" y2="62" class="dv-vec-g" marker-end="url(#dv-ah-g)" />
+    <line x1="100" y1="90" x2="72" y2="62" class="dv-vec-g" marker-end="url(#dv-ah-g)" />
+    <line x1="100" y1="90" x2="128" y2="118" class="dv-vec-g" marker-end="url(#dv-ah-g)" />
+    <line x1="100" y1="90" x2="72" y2="118" class="dv-vec-g" marker-end="url(#dv-ah-g)" />
+    <text x="100" y="170" text-anchor="middle" class="dv-label-g">Source</text>
+    <text x="100" y="188" text-anchor="middle" class="dv-sublabel">div F > 0</text>
+    <!-- RIGHT: Sink (negative divergence) -->
+    <circle cx="320" cy="90" r="5" class="dv-center-r" />
+    <!-- Inward arrows -->
+    <line x1="320" y1="50" x2="320" y2="80" class="dv-vec-r" marker-end="url(#dv-ah-r)" />
+    <line x1="320" y1="130" x2="320" y2="100" class="dv-vec-r" marker-end="url(#dv-ah-r)" />
+    <line x1="360" y1="90" x2="330" y2="90" class="dv-vec-r" marker-end="url(#dv-ah-r)" />
+    <line x1="280" y1="90" x2="310" y2="90" class="dv-vec-r" marker-end="url(#dv-ah-r)" />
+    <line x1="348" y1="62" x2="326" y2="84" class="dv-vec-r" marker-end="url(#dv-ah-r)" />
+    <line x1="292" y1="62" x2="314" y2="84" class="dv-vec-r" marker-end="url(#dv-ah-r)" />
+    <line x1="348" y1="118" x2="326" y2="96" class="dv-vec-r" marker-end="url(#dv-ah-r)" />
+    <line x1="292" y1="118" x2="314" y2="96" class="dv-vec-r" marker-end="url(#dv-ah-r)" />
+    <text x="320" y="170" text-anchor="middle" class="dv-label-r">Sink</text>
+    <text x="320" y="188" text-anchor="middle" class="dv-sublabel">div F &lt; 0</text>
+    <!-- Divider -->
+    <line x1="210" y1="20" x2="210" y2="200" class="dv-divider" />
+  </svg>
+</figure>
+
+<style>
+  .dv-vec-g { stroke: #7ee787; stroke-width: 2; }
+  .dv-arrow-g { fill: #7ee787; }
+  .dv-center-g { fill: #7ee787; }
+  .dv-label-g { font: bold 14px 'Libre Baskerville', Georgia, serif; fill: #7ee787; }
+  .dv-vec-r { stroke: #f47067; stroke-width: 2; }
+  .dv-arrow-r { fill: #f47067; }
+  .dv-center-r { fill: #f47067; }
+  .dv-label-r { font: bold 14px 'Libre Baskerville', Georgia, serif; fill: #f47067; }
+  .dv-sublabel { font: 12px 'Libre Baskerville', Georgia, serif; fill: #888; }
+  .dv-divider { stroke: #444; stroke-width: 1; stroke-dasharray: 4 3; }
+  [data-theme="light"] .dv-vec-g { stroke: #1a7f37; }
+  [data-theme="light"] .dv-arrow-g { fill: #1a7f37; }
+  [data-theme="light"] .dv-center-g { fill: #1a7f37; }
+  [data-theme="light"] .dv-label-g { fill: #1a7f37; }
+  [data-theme="light"] .dv-vec-r { stroke: #cf222e; }
+  [data-theme="light"] .dv-arrow-r { fill: #cf222e; }
+  [data-theme="light"] .dv-center-r { fill: #cf222e; }
+  [data-theme="light"] .dv-label-r { fill: #cf222e; }
+  [data-theme="light"] .dv-sublabel { fill: #666; }
+  [data-theme="light"] .dv-divider { stroke: #ccc; }
+</style>

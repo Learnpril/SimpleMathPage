@@ -1,0 +1,171 @@
+---
+/**
+ * StokesTriangle3D — Interactive 3D visual of the triangle in the plane
+ * x+y+z=1 with vertices (1,0,0), (0,1,0), (0,0,1), a normal arrow,
+ * edge lines, and axis labels.
+ */
+---
+
+<figure class="st3" role="img" aria-label="Interactive 3D triangle in the plane x plus y plus z equals 1 with vertices at 1 0 0 and 0 1 0 and 0 0 1 and an outward normal vector">
+  <div class="st3-canvas" data-st3d></div>
+  <div class="st3-hint">Drag to rotate · Scroll to zoom</div>
+</figure>
+
+<script>
+  import * as THREE from "three";
+  import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+
+  function initScene(container: HTMLElement) {
+    const width = Math.min(container.clientWidth, 480);
+    const height = 360;
+    const isDark = document.documentElement.dataset.theme !== "light";
+    const bgColor = isDark ? 0x121212 : 0xf8f9fa;
+
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(bgColor);
+
+    const camera = new THREE.PerspectiveCamera(40, width / height, 0.1, 200);
+    camera.position.set(2.2, 1.8, 2.2);
+    camera.lookAt(0.33, 0.33, 0.33);
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(width, height);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    container.appendChild(renderer.domElement);
+
+    const accentColor = isDark ? 0x58a6ff : 0x0550ae;
+    const greenColor = isDark ? 0x7ee787 : 0x1a7f37;
+    const orangeColor = isDark ? 0xf0883e : 0xb35900;
+
+    // Triangle vertices: (1,0,0), (0,0,1), (0,1,0) in Three.js (y=math z)
+    // math (1,0,0) -> Three.js (1,0,0)
+    // math (0,1,0) -> Three.js (0,0,1)
+    // math (0,0,1) -> Three.js (0,1,0)
+    const v1 = new THREE.Vector3(1, 0, 0);
+    const v2 = new THREE.Vector3(0, 0, 1);
+    const v3 = new THREE.Vector3(0, 1, 0);
+
+    // Filled triangle
+    const triGeo = new THREE.BufferGeometry();
+    triGeo.setAttribute("position", new THREE.Float32BufferAttribute([
+      v1.x, v1.y, v1.z, v2.x, v2.y, v2.z, v3.x, v3.y, v3.z
+    ], 3));
+    triGeo.computeVertexNormals();
+    const triMat = new THREE.MeshPhongMaterial({
+      color: accentColor, transparent: true, opacity: 0.15, side: THREE.DoubleSide,
+    });
+    scene.add(new THREE.Mesh(triGeo, triMat));
+
+    // Triangle edges
+    const edgeMat = new THREE.LineBasicMaterial({ color: accentColor });
+    const edgePts = [v1, v2, v3, v1];
+    scene.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(edgePts), edgeMat));
+
+    // Normal arrow from centroid
+    const centroid = new THREE.Vector3(1/3, 1/3, 1/3);
+    const normalDir = new THREE.Vector3(1, 1, 1).normalize();
+    const normalArrow = new THREE.ArrowHelper(normalDir, centroid, 0.5, orangeColor, 0.08, 0.06);
+    scene.add(normalArrow);
+
+    // Vertex dots
+    const dotGeo = new THREE.SphereGeometry(0.03, 8, 6);
+    const dotMat = new THREE.MeshBasicMaterial({ color: isDark ? 0xffffff : 0x333333 });
+    for (const v of [v1, v2, v3]) {
+      const dot = new THREE.Mesh(dotGeo, dotMat);
+      dot.position.copy(v);
+      scene.add(dot);
+    }
+
+    // Axes
+    const axColor = isDark ? 0x666666 : 0x999999;
+    const axMat = new THREE.LineBasicMaterial({ color: axColor });
+    for (const dir of [[1.5, 0, 0], [0, 1.5, 0], [0, 0, 1.5]] as [number, number, number][]) {
+      const pts = [new THREE.Vector3(0, 0, 0), new THREE.Vector3(...dir)];
+      scene.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts), axMat));
+    }
+
+    // Labels
+    function makeLabel(text: string, pos: [number, number, number], color: string, size = 0.35) {
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d")!;
+      canvas.width = 512; canvas.height = 128;
+      ctx.font = "bold 64px sans-serif";
+      ctx.fillStyle = color;
+      ctx.textAlign = "center"; ctx.textBaseline = "middle";
+      ctx.fillText(text, 256, 64);
+      const tex = new THREE.CanvasTexture(canvas);
+      const mat = new THREE.SpriteMaterial({ map: tex, transparent: true });
+      const sprite = new THREE.Sprite(mat);
+      sprite.position.set(...pos);
+      sprite.scale.set(size * 2.5, size * 0.6, 1);
+      scene.add(sprite);
+    }
+
+    const lc = isDark ? "#888" : "#666";
+    makeLabel("x", [1.4, -0.08, 0], lc, 0.6);
+    makeLabel("z", [0, 1.4, 0], lc, 0.6);
+    makeLabel("y", [0, -0.08, 1.4], lc, 0.6);
+
+    const vc = isDark ? "#ccc" : "#444";
+    makeLabel("(1,0,0)", [1.1, -0.12, 0], vc, 0.4);
+    makeLabel("(0,1,0)", [0, -0.12, 1.1], vc, 0.4);
+    makeLabel("(0,0,1)", [-0.15, 1.1, 0], vc, 0.4);
+
+    const nc = isDark ? "#f0883e" : "#b35900";
+    makeLabel("n", [0.55, 0.65, 0.55], nc, 0.5);
+
+    // Lighting
+    scene.add(new THREE.AmbientLight(0xffffff, 0.6));
+    const dl = new THREE.DirectionalLight(0xffffff, 0.6);
+    dl.position.set(2, 3, 2);
+    scene.add(dl);
+
+    // Controls
+    const controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.08;
+    controls.autoRotate = true;
+    controls.autoRotateSpeed = 0.5;
+    controls.enableZoom = true;
+    controls.minDistance = 1.5;
+    controls.maxDistance = 8;
+    controls.target.set(0.33, 0.33, 0.33);
+
+    let animId: number;
+    function animate() {
+      animId = requestAnimationFrame(animate);
+      controls.update();
+      renderer.render(scene, camera);
+    }
+    animate();
+
+    return () => { cancelAnimationFrame(animId); renderer.dispose(); };
+  }
+
+  function setup() {
+    document.querySelectorAll<HTMLElement>("[data-st3d]").forEach((el) => {
+      if (el.querySelector("canvas")) return;
+      const obs = new IntersectionObserver(
+        (entries) => { if (entries[0].isIntersecting) { obs.disconnect(); initScene(el); } },
+        { threshold: 0.05 }
+      );
+      obs.observe(el);
+    });
+  }
+
+  setup();
+  document.addEventListener("astro:page-load", setup);
+</script>
+
+<style>
+  .st3 { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .st3-canvas {
+    width:100%; max-width:480px; min-height:360px;
+    border-radius:8px; overflow:hidden;
+  }
+  .st3-canvas canvas { border-radius:8px; }
+  .st3-hint {
+    font-family:'Libre Baskerville',Georgia,serif;
+    font-size:0.8rem; color:#888; margin-top:0.4rem;
+  }
+</style>

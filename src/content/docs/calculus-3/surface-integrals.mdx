@@ -1,8 +1,215 @@
 ---
-title: "Surface Integrals"
-description: "Evaluate integrals over surfaces in 3D space"
+title: Surface Integrals
+description: Learn how to compute surface integrals of scalar and vector fields over a surface
 sidebar:
   order: 18
 ---
 
-Content coming soon.
+## What You'll Learn
+
+In this lesson you'll learn how to integrate over surfaces in 3D space. There are two types: scalar surface integrals (accumulating a function over a surface, weighted by area) and vector surface integrals (computing the flux of a vector field through a surface). These are the 3D analogs of line integrals.
+
+## The Concept
+
+### From Lines to Surfaces
+
+In Lesson 14, line integrals accumulated values along curves. Surface integrals do the same thing, but over 2D surfaces in 3D space. Instead of parametrizing a curve with one parameter t, you parametrize a surface with two parameters u and v.
+
+### Scalar Surface Integrals
+
+A scalar surface integral accumulates a function f over a surface S. If S is parametrized by $\mathbf{r}(u, v)$ over a parameter domain D, the formula is
+
+$$
+\iint_S f \, dS = \iint_D f(\mathbf{r}(u,v)) \, \|\mathbf{r}_u \times \mathbf{r}_v\| \, du \, dv
+$$
+
+The cross product $\mathbf{r}_u \times \mathbf{r}_v$ gives a vector perpendicular to the surface at each point. Its magnitude $\|\mathbf{r}_u \times \mathbf{r}_v\|$ is the area scaling factor, analogous to the speed $\|\mathbf{r}'(t)\|$ in line integrals. When f = 1, the scalar surface integral gives the surface area of S.
+
+### Vector Surface Integrals (Flux)
+
+A vector surface integral computes the flux of a vector field F through an oriented surface S:
+
+$$
+\iint_S \mathbf{F} \cdot d\mathbf{S} = \iint_D \mathbf{F}(\mathbf{r}(u,v)) \cdot (\mathbf{r}_u \times \mathbf{r}_v) \, du \, dv
+$$
+
+The dot product $\mathbf{F} \cdot (\mathbf{r}_u \times \mathbf{r}_v)$ measures how much of F passes through the surface at each point. Positive flux means the field flows in the direction of the normal. Negative flux means it flows against the normal.
+
+### The Surface Element
+
+For a surface given as z = g(x, y) (a graph), the formulas simplify. The surface element becomes
+
+$$
+dS = \sqrt{1 + \left(\frac{\partial g}{\partial x}\right)^2 + \left(\frac{\partial g}{\partial y}\right)^2} \, dx \, dy
+$$
+
+This is often easier to work with than a full parametrization.
+
+## Worked Examples
+
+**Example 1: Surface area of the unit sphere**
+
+Compute $\iint_S 1 \, dS$ over the unit sphere (f = 1 gives surface area).
+
+import Sphere3D from "../../../components/Sphere3D.astro";
+
+<Sphere3D />
+
+The unit sphere is the surface of all points at distance 1 from the origin. We're integrating f = 1 over this surface, which just adds up all the tiny area elements to get the total surface area.
+
+Parametrize the sphere using spherical coordinates with $\mathbf{r}(\varphi, \theta) = \langle \sin\varphi\cos\theta,\; \sin\varphi\sin\theta,\; \cos\varphi \rangle$ where phi goes from 0 to pi and theta goes from 0 to $2\pi$
+
+The cross product magnitude works out to $\|\mathbf{r}_\varphi \times \mathbf{r}_\theta\| = \sin\varphi$ (this is a standard result for the unit sphere).
+
+$$
+\iint_S 1 \, dS = \int_0^{2\pi} \int_0^{\pi} \sin\varphi \, d\varphi \, d\theta
+$$
+
+$$
+= \int_0^{2\pi} \left[-\cos\varphi\right]_0^{\pi} d\theta = \int_0^{2\pi} 2 \, d\theta = 4\pi
+$$
+
+The surface area of the unit sphere is $4\pi,$ which matches the formula $4\pi r^2$ with r = 1.
+
+**Example 2: Flux through the upper hemisphere**
+
+Compute the flux of $\mathbf{F} = \langle 0,\; 0,\; z \rangle$ through the upper hemisphere of the unit sphere, with outward-pointing normal.
+
+import FluxHemisphere3D from "../../../components/FluxHemisphere3D.astro";
+
+<FluxHemisphere3D />
+
+The orange arrows show the outward normal vectors at sample points on the hemisphere. The field F = $\langle 0, 0, z \rangle$ points straight up, and z is positive on the upper hemisphere, so the field flows outward through the surface everywhere.
+
+Parametrize the upper hemisphere: $\mathbf{r}(\varphi, \theta) = \langle \sin\varphi\cos\theta,\; \sin\varphi\sin\theta,\; \cos\varphi \rangle$ with phi from 0 to pi/2 and theta from 0 to $2\pi$
+
+The outward normal (cross product) for the unit sphere is $\mathbf{r}_\varphi \times \mathbf{r}_\theta = \sin\varphi \cdot \langle \sin\varphi\cos\theta,\; \sin\varphi\sin\theta,\; \cos\varphi \rangle$
+
+Compute $\mathbf{F} \cdot (\mathbf{r}_\varphi \times \mathbf{r}_\theta)$ where F at the surface point is $\langle 0, 0, \cos\varphi \rangle$:
+
+$$
+\mathbf{F} \cdot (\mathbf{r}_\varphi \times \mathbf{r}_\theta) = \cos\varphi \cdot \sin\varphi \cdot \cos\varphi = \sin\varphi\cos^2\varphi
+$$
+
+$$
+\iint_S \mathbf{F} \cdot d\mathbf{S} = \int_0^{2\pi} \int_0^{\pi/2} \sin\varphi\cos^2\varphi \, d\varphi \, d\theta
+$$
+
+The inner integral uses the substitution u = cos(phi):
+
+$$
+\int_0^{\pi/2} \sin\varphi\cos^2\varphi \, d\varphi = \left[-\frac{\cos^3\varphi}{3}\right]_0^{\pi/2} = 0 - \left(-\frac{1}{3}\right) = \frac{1}{3}
+$$
+
+$$
+\text{Flux} = \int_0^{2\pi} \frac{1}{3} \, d\theta = \frac{2\pi}{3}
+$$
+
+The flux is $\frac{2\pi}{3}$. The field F = $\langle 0, 0, z \rangle$ pushes upward, and the hemisphere captures that upward flow.
+
+**Example 3: Surface integral over a graph**
+
+Compute $\iint_S z \, dS$ where S is the surface z = x + y over the unit square $0 \leq x \leq 1,\; 0 \leq y \leq 1$
+
+import GraphSurface3D from "../../../components/GraphSurface3D.astro";
+
+<GraphSurface3D />
+
+The tilted plane z = x + y rises from 0 at the origin to 2 at the corner (1, 1). The green outline shows the unit square domain in the xy-plane below.
+
+For a graph z = g(x, y) = x + y, the partial derivatives are $g_x = 1$ and $g_y = 1,$ so
+
+$$
+dS = \sqrt{1 + 1 + 1} \, dx \, dy = \sqrt{3} \, dx \, dy
+$$
+
+On the surface, z = x + y, so
+
+$$
+\iint_S z \, dS = \int_0^1 \int_0^1 (x + y)\sqrt{3} \, dx \, dy = \sqrt{3} \int_0^1 \int_0^1 (x + y) \, dx \, dy
+$$
+
+$$
+= \sqrt{3} \int_0^1 \left[\frac{x^2}{2} + xy\right]_0^1 dy = \sqrt{3} \int_0^1 \left(\frac{1}{2} + y\right) dy
+$$
+
+$$
+= \sqrt{3} \left[\frac{y}{2} + \frac{y^2}{2}\right]_0^1 = \sqrt{3} \cdot 1 = \sqrt{3}
+$$
+
+## Real-World Application
+
+Surface integrals connect math to physical measurements on surfaces:
+
+- Gauss's Law in electromagnetism says the flux of the electric field through a closed surface equals the enclosed charge divided by a constant. This is a surface integral.
+- Fluid dynamics uses flux integrals to compute how much fluid passes through a membrane or pipe cross-section per unit time.
+- Game engines use surface integrals (or discrete approximations) for lighting calculations: how much light energy hits each polygon of a 3D model.
+- Heat transfer engineering computes the total heat flow through a surface using flux integrals of the temperature gradient.
+
+:::note[You've Got This]
+Surface integrals are double integrals over curved surfaces. The scalar version weights a function by the surface area element dS. The vector version computes flux using the dot product with the normal vector. The hardest part is usually the parametrization and computing the cross product. For surfaces given as z = g(x, y), the formula simplifies nicely. These integrals are the setup for the Divergence Theorem and Stokes' Theorem, which are the grand finale of vector calculus.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="calculus3-surface-integrals"
+  questions={[
+    {
+      id: "q1",
+      text: "When f = 1, the scalar surface integral $\\iint_S dS$ gives",
+      options: [
+        "the volume enclosed by S",
+        "the surface area of S",
+        "the flux through S",
+        "zero",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Integrating 1 over the surface with respect to the area element gives the total surface area.",
+    },
+    {
+      id: "q2",
+      text: "The flux of $\\mathbf{F} = \\langle 0, 0, z \\rangle$ through the upper unit hemisphere is",
+      options: ["$4\\pi$", "$\\pi$", "$2\\pi/3$", "$2\\pi$"],
+      correctIndex: 2,
+      explanation: "The computation gives (2pi)(1/3) = 2pi/3.",
+    },
+    {
+      id: "q3",
+      text: "The surface element dS for a graph z = g(x,y) is",
+      options: [
+        "$dx \\, dy$",
+        "$\\sqrt{1 + g_x^2 + g_y^2} \\, dx \\, dy$",
+        "$g_x \\, g_y \\, dx \\, dy$",
+        "$\\sqrt{g_x^2 + g_y^2} \\, dx \\, dy$",
+      ],
+      correctIndex: 1,
+      explanation:
+        "The 1 under the square root accounts for the flat part, and the partial derivatives account for the tilt.",
+    },
+    {
+      id: "q4",
+      text: "In a vector surface integral, the cross product $\\mathbf{r}_u \\times \\mathbf{r}_v$ gives",
+      options: [
+        "the tangent vector to the surface",
+        "the speed along the surface",
+        "a normal vector to the surface (with area scaling)",
+        "the curvature of the surface",
+      ],
+      correctIndex: 2,
+      explanation:
+        "The cross product of the two tangent vectors is perpendicular to the surface, and its magnitude gives the area element.",
+    },
+    {
+      id: "q5",
+      text: "The surface area of the unit sphere is",
+      options: ["$2\\pi$", "$4\\pi/3$", "$\\pi$", "$4\\pi$"],
+      correctIndex: 3,
+      explanation:
+        "Integrating sin(phi) over phi from 0 to pi and theta from 0 to 2pi gives 4pi.",
+    },
+  ]}
+/>

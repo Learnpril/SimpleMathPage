@@ -1,8 +1,202 @@
 ---
-title: "Double Integrals over Rectangular Regions"
-description: "Evaluate double integrals over rectangles using iterated integrals"
+title: Double Integrals over Rectangular Regions
+description: Learn how to compute double integrals over rectangular regions and interpret them as volume
 sidebar:
   order: 8
 ---
 
-Content coming soon.
+## What You'll Learn
+
+In this lesson you'll learn how to set up and evaluate double integrals over rectangular regions. This is the multivariable version of "area under a curve," except now you're computing volume under a surface.
+
+## The Concept
+
+### From Single to Double
+
+In Calculus 1, you computed the area under a curve y = f(x) from a to b using a single integral. In Calculus 3, you have a surface z = f(x, y) floating above the xy-plane, and you want the volume underneath it over some region.
+
+For a rectangular region R = [a, b] x [c, d], the double integral is
+
+$$
+\iint_R f(x, y) \, dA = \int_a^b \int_c^d f(x, y) \, dy \, dx
+$$
+
+### How Iterated Integrals Work
+
+You evaluate a double integral by doing two single integrals, one at a time. This is called an iterated integral.
+
+1. Start with the inner integral: integrate f(x, y) with respect to y (treating x as a constant), using the y-limits
+2. The result is a function of x only
+3. Then integrate that result with respect to x, using the x-limits
+
+You can also switch the order and do dx first, then dy. For rectangular regions, both orders give the same answer (Fubini's theorem)
+
+$$
+\int_a^b \int_c^d f(x,y) \, dy \, dx = \int_c^d \int_a^b f(x,y) \, dx \, dy
+$$
+
+### What Does a Double Integral Actually Represent?
+
+The short answer: it depends on what f(x, y) means.
+
+When f(x, y) is a height (like a surface z = f(x, y) above the xy-plane), the double integral gives the volume of the solid between the surface and the floor over the region R. This is the geometric interpretation, and it's the most visual way to think about it.
+
+But double integrals are more general than just volume. The double integral accumulates (adds up) the values of f over the entire region R. What that "accumulation" means depends on context:
+
+- If f(x, y) is a height, the double integral is volume
+- If f(x, y) is a density (mass per unit area), the double integral is total mass
+- If f(x, y) = 1 everywhere, the double integral just gives the area of R
+- If f(x, y) is a temperature distribution, the double integral (divided by the area) gives the average temperature
+
+Think of it this way: a single integral adds up values along a line. A double integral adds up values over a flat region. The result is whatever those values represent, accumulated over the whole region.
+
+For this lesson, we'll focus on the volume interpretation because it's the most intuitive and visual. But keep in mind that the same math works for any quantity you want to add up over a 2D region.
+
+## Worked Examples
+
+**Example 1: Evaluating a double integral step by step**
+
+Evaluate the double integral of f(x, y) = x + 2y over the rectangle R = [0, 2] x [1, 3].
+
+Start with the inner integral (integrate with respect to y first, treating x as constant)
+
+$$
+\int_1^3 (x + 2y) \, dy = \left[ xy + y^2 \right]_1^3 = (3x + 9) - (x + 1) = 2x + 8
+$$
+
+Now integrate the result with respect to x
+
+$$
+\int_0^2 (2x + 8) \, dx = \left[ x^2 + 8x \right]_0^2 = (4 + 16) - 0 = 20
+$$
+
+The volume under z = x + 2y over the rectangle [0, 2] x [1, 3] is 20 cubic units.
+
+import DoubleIntegralVolume3D from "../../../components/DoubleIntegralVolume3D.astro";
+
+<DoubleIntegralVolume3D />
+
+The blue surface is z = x + 2y (a tilted plane). The green rectangle on the floor is the region R = [0, 2] x [1, 3]. The volume between the surface and the floor over that rectangle is what the double integral computes: 20 cubic units.
+
+**Example 2: Switching the order of integration**
+
+We can verify by integrating in the opposite order (dx first, then dy)
+
+$$
+\int_1^3 \int_0^2 (x + 2y) \, dx \, dy = \int_1^3 \left[ \frac{x^2}{2} + 2xy \right]_0^2 dy = \int_1^3 (2 + 4y) \, dy
+$$
+
+$$
+= \left[ 2y + 2y^2 \right]_1^3 = (6 + 18) - (2 + 2) = 20
+$$
+
+Same answer. For rectangular regions, the order doesn't matter. Pick whichever makes the inner integral easier.
+
+import IntegrationOrderDiagram from "../../../components/IntegrationOrderDiagram.astro";
+
+<IntegrationOrderDiagram />
+
+**Example 3: A product function**
+
+Evaluate the double integral of f(x, y) = xy over R = [0, 1] x [0, 2].
+
+$$
+\int_0^1 \int_0^2 xy \, dy \, dx = \int_0^1 \left[ \frac{xy^2}{2} \right]_0^2 dx = \int_0^1 2x \, dx = \left[ x^2 \right]_0^1 = 1
+$$
+
+When f(x, y) is a product g(x)h(y), you can actually separate the integrals
+
+$$
+\int_0^1 x \, dx \cdot \int_0^2 y \, dy = \frac{1}{2} \cdot 2 = 1
+$$
+
+This separation trick only works for products over rectangles, but it's a nice shortcut when it applies.
+
+import ProductSurface3D from "../../../components/ProductSurface3D.astro";
+
+<ProductSurface3D />
+
+The surface z = xy starts flat at the origin and twists upward toward the corner (1, 2), where it reaches its maximum value of 2. The volume under this surface over the green rectangle is 1 cubic unit.
+
+## Real-World Application
+
+Double integrals over rectangular regions show up in:
+
+- Physics uses them to compute total mass when density varies over a rectangular plate, or total charge over a rectangular surface
+- Game engines use them to compute average terrain height over rectangular chunks for level-of-detail rendering and AI navigation
+- Engineering uses them for heat distribution calculations over rectangular cross-sections
+- Data science uses them when computing expected values over 2D probability distributions on rectangular domains
+
+:::note[You've Got This]
+Double integrals are just two single integrals done one at a time. Integrate the inner variable first (treating the outer as a constant), then integrate the result. For rectangles, you can pick either order. The hardest part is keeping track of which variable you're integrating and which limits go with which variable. Write it out carefully and you'll be fine. You already know how to do single integrals. This is just doing two of them.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="calculus3-double-integrals-over-rectangular-regions"
+  questions={[
+    {
+      id: "q1",
+      text: "A double integral over a rectangular region computes",
+      options: [
+        "the area of the rectangle",
+        "the volume under the surface over the rectangle",
+        "the derivative of the surface",
+        "the perimeter of the rectangle",
+      ],
+      correctIndex: 1,
+      explanation:
+        "The double integral gives the signed volume between the surface and the xy-plane.",
+    },
+    {
+      id: "q2",
+      text: "When evaluating an iterated integral, you first",
+      options: [
+        "take partial derivatives",
+        "integrate the inner variable, treating the outer as constant",
+        "find the limits of integration",
+        "switch to polar coordinates",
+      ],
+      correctIndex: 1,
+      explanation:
+        "The inner integral is evaluated first, with the outer variable held constant.",
+    },
+    {
+      id: "q3",
+      text: "For rectangular regions, switching the order of integration",
+      options: [
+        "changes the answer",
+        "is not allowed",
+        "gives the same answer (Fubini's theorem)",
+        "only works for constant functions",
+      ],
+      correctIndex: 2,
+      explanation:
+        "Fubini's theorem guarantees both orders give the same result for continuous functions on rectangles.",
+    },
+    {
+      id: "q4",
+      text: "The double integral of $f(x,y) = x + 2y$ over $[0,2] \\times [1,3]$ equals",
+      options: ["10", "15", "20", "25"],
+      correctIndex: 2,
+      explanation:
+        "The inner integral gives 2x + 8, and integrating from 0 to 2 gives 4 + 16 = 20.",
+    },
+    {
+      id: "q5",
+      text: "If $f(x,y) = g(x) \\cdot h(y)$ over a rectangle, the double integral equals",
+      options: [
+        "the product of the two single integrals",
+        "the sum of the two single integrals",
+        "zero",
+        "the average of the two single integrals",
+      ],
+      correctIndex: 0,
+      explanation:
+        "For product functions over rectangles, the double integral separates into a product of single integrals.",
+    },
+  ]}
+/>

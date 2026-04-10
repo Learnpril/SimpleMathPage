@@ -1,0 +1,147 @@
+---
+/**
+ * Box3D — Interactive 3D visual of the rectangular box
+ * [0,2] x [0,3] x [0,4] with semi-transparent faces,
+ * wireframe, and dimension labels.
+ */
+---
+
+<figure class="bx3" role="img" aria-label="Interactive 3D rectangular box from 0 to 2 in x, 0 to 3 in y, 0 to 4 in z">
+  <div class="bx3-canvas" data-bx3d></div>
+  <div class="bx3-hint">Drag to rotate · Scroll to zoom</div>
+</figure>
+
+<script>
+  import * as THREE from "three";
+  import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+
+  function initScene(container: HTMLElement) {
+    const width = Math.min(container.clientWidth, 480);
+    const height = 340;
+    const isDark = document.documentElement.dataset.theme !== "light";
+    const bgColor = isDark ? 0x121212 : 0xf8f9fa;
+
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(bgColor);
+
+    const camera = new THREE.PerspectiveCamera(40, width / height, 0.1, 200);
+    camera.position.set(5, 5, 6);
+    camera.lookAt(1, 2, 1.5);
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(width, height);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    container.appendChild(renderer.domElement);
+
+    // Box 2 x 4(up) x 3 — Three.js y = math z (up)
+    // math: x:0-2, y:0-3, z:0-4
+    // Three.js: x:0-2, y:0-4, z:0-3
+    const bw = 2; const bh = 4; const bd = 3;
+    const cubeGeo = new THREE.BoxGeometry(bw, bh, bd);
+    const cubeMat = new THREE.MeshPhongMaterial({
+      color: isDark ? 0x58a6ff : 0x0550ae,
+      transparent: true, opacity: 0.12,
+      side: THREE.DoubleSide,
+    });
+    const cube = new THREE.Mesh(cubeGeo, cubeMat);
+    cube.position.set(bw / 2, bh / 2, bd / 2);
+    scene.add(cube);
+
+    // Wireframe
+    const wireMat = new THREE.MeshBasicMaterial({
+      color: isDark ? 0x58a6ff : 0x0550ae,
+      wireframe: true, transparent: true, opacity: 0.35,
+    });
+    const wire = new THREE.Mesh(new THREE.BoxGeometry(bw, bh, bd), wireMat);
+    wire.position.set(bw / 2, bh / 2, bd / 2);
+    scene.add(wire);
+
+    // Axes
+    const axColor = isDark ? 0x666666 : 0x999999;
+    const axMat = new THREE.LineBasicMaterial({ color: axColor });
+    for (const dir of [[3.5, 0, 0], [0, 5.5, 0], [0, 0, 4.5]] as [number, number, number][]) {
+      const pts = [new THREE.Vector3(0, 0, 0), new THREE.Vector3(...dir)];
+      scene.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts), axMat));
+    }
+
+    // Labels
+    function makeLabel(text: string, pos: [number, number, number], color: string, size = 0.35) {
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d")!;
+      canvas.width = 256; canvas.height = 64;
+      ctx.font = "bold 32px sans-serif";
+      ctx.fillStyle = color;
+      ctx.textAlign = "center"; ctx.textBaseline = "middle";
+      ctx.fillText(text, 128, 32);
+      const tex = new THREE.CanvasTexture(canvas);
+      const mat = new THREE.SpriteMaterial({ map: tex, transparent: true });
+      const sprite = new THREE.Sprite(mat);
+      sprite.position.set(...pos);
+      sprite.scale.set(size * 2.5, size * 0.6, 1);
+      scene.add(sprite);
+    }
+
+    const lc = isDark ? "#888" : "#666";
+    makeLabel("x", [3.2, -0.2, 0], lc, 0.7);
+    makeLabel("z", [0, 5.2, 0], lc, 0.7);
+    makeLabel("y", [0, -0.2, 4.2], lc, 0.7);
+    makeLabel("2", [2, -0.3, 0], lc, 0.55);
+    makeLabel("4", [-0.3, 4, 0], lc, 0.55);
+    makeLabel("3", [0, -0.3, 3], lc, 0.55);
+    makeLabel("Vol = 24", [1, 5.0, 1.5], isDark ? "#f0883e" : "#b35900", 0.65);
+
+    // Lighting
+    scene.add(new THREE.AmbientLight(0xffffff, 0.6));
+    const dl = new THREE.DirectionalLight(0xffffff, 0.6);
+    dl.position.set(3, 5, 3);
+    scene.add(dl);
+
+    // Controls
+    const controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.08;
+    controls.autoRotate = true;
+    controls.autoRotateSpeed = 0.5;
+    controls.enableZoom = true;
+    controls.minDistance = 3;
+    controls.maxDistance = 18;
+    controls.target.set(1, 2, 1.5);
+
+    let animId: number;
+    function animate() {
+      animId = requestAnimationFrame(animate);
+      controls.update();
+      renderer.render(scene, camera);
+    }
+    animate();
+
+    return () => { cancelAnimationFrame(animId); renderer.dispose(); };
+  }
+
+  function setup() {
+    document.querySelectorAll<HTMLElement>("[data-bx3d]").forEach((el) => {
+      if (el.querySelector("canvas")) return;
+      const obs = new IntersectionObserver(
+        (entries) => { if (entries[0].isIntersecting) { obs.disconnect(); initScene(el); } },
+        { threshold: 0.05 }
+      );
+      obs.observe(el);
+    });
+  }
+
+  setup();
+  document.addEventListener("astro:page-load", setup);
+</script>
+
+<style>
+  .bx3 { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .bx3-canvas {
+    width:100%; max-width:480px; min-height:340px;
+    border-radius:8px; overflow:hidden;
+  }
+  .bx3-canvas canvas { border-radius:8px; }
+  .bx3-hint {
+    font-family:'Libre Baskerville',Georgia,serif;
+    font-size:0.8rem; color:#888; margin-top:0.4rem;
+  }
+</style>

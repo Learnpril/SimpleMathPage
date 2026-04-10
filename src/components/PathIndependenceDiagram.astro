@@ -1,0 +1,71 @@
+---
+/**
+ * PathIndependenceDiagram — SVG showing two different paths from A=(0,0)
+ * to B=(1,1) through a conservative field, both giving the same work.
+ * Path 1: straight diagonal. Path 2: right then up (L-shaped).
+ */
+---
+
+<figure class="diagram-container" role="img" aria-label="Two different paths from point A at the origin to point B at 1 comma 1, both giving the same line integral value of 3 in a conservative field">
+  <svg viewBox="-40 -40 300 315" width="310" height="325" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <marker id="pid-ah" markerWidth="6" markerHeight="4" refX="5" refY="2" orient="auto">
+        <path d="M0,0 L6,2 L0,4 Z" class="pid-ax-arrow" />
+      </marker>
+    </defs>
+    <!-- Axes -->
+    <line x1="0" y1="220" x2="240" y2="220" class="pid-axis" marker-end="url(#pid-ah)" />
+    <line x1="0" y1="220" x2="0" y2="-10" class="pid-axis" marker-end="url(#pid-ah)" />
+    <text x="245" y="225" class="pid-label">x</text>
+    <text x="-5" y="-15" class="pid-label">y</text>
+    <!-- Tick marks -->
+    <line x1="200" y1="217" x2="200" y2="223" class="pid-tick" />
+    <text x="200" y="238" text-anchor="middle" class="pid-num">1</text>
+    <line x1="-3" y1="20" x2="3" y2="20" class="pid-tick" />
+    <text x="-15" y="25" class="pid-num">1</text>
+    <!-- Path 1: straight diagonal (blue) -->
+    <line x1="0" y1="220" x2="200" y2="20" class="pid-path1" stroke-dasharray="6 3" />
+    <!-- Path 2: right then up (green, L-shaped) -->
+    <polyline points="0,220 200,220 200,20" class="pid-path2" fill="none" />
+    <!-- Endpoint dots -->
+    <circle cx="0" cy="220" r="5" class="pid-dot-a" />
+    <circle cx="200" cy="20" r="5" class="pid-dot-b" />
+    <!-- Labels -->
+    <text x="-8" y="240" class="pid-pt-label">A (0, 0)</text>
+    <text x="185" y="10" class="pid-pt-label">B (1, 1)</text>
+    <!-- Path labels -->
+    <text x="75" y="105" class="pid-path1-label">Path 1</text>
+    <text x="130" y="240" class="pid-path2-label">Path 2</text>
+    <!-- Result -->
+    <text x="100" y="260" text-anchor="middle" class="pid-result">Both paths give work = 3</text>
+  </svg>
+</figure>
+
+<style>
+  .pid-axis { stroke: #666; stroke-width: 1.5; fill: none; }
+  .pid-ax-arrow { fill: #666; }
+  .pid-tick { stroke: #666; stroke-width: 1; }
+  .pid-label { font: bold 14px sans-serif; fill: #888; }
+  .pid-num { font: 12px sans-serif; fill: #888; }
+  .pid-pt-label { font: 11px sans-serif; fill: #888; }
+  .pid-path1 { stroke: #58a6ff; stroke-width: 2.5; }
+  .pid-path2 { stroke: #7ee787; stroke-width: 2.5; }
+  .pid-path1-label { font: italic 12px 'Libre Baskerville', Georgia, serif; fill: #58a6ff; }
+  .pid-path2-label { font: italic 12px 'Libre Baskerville', Georgia, serif; fill: #7ee787; }
+  .pid-dot-a { fill: #f0883e; }
+  .pid-dot-b { fill: #d2a8ff; }
+  .pid-result { font: 12px 'Libre Baskerville', Georgia, serif; fill: #888; }
+  [data-theme="light"] .pid-axis { stroke: #999; }
+  [data-theme="light"] .pid-ax-arrow { fill: #999; }
+  [data-theme="light"] .pid-tick { stroke: #999; }
+  [data-theme="light"] .pid-label { fill: #666; }
+  [data-theme="light"] .pid-num { fill: #666; }
+  [data-theme="light"] .pid-pt-label { fill: #666; }
+  [data-theme="light"] .pid-path1 { stroke: #0550ae; }
+  [data-theme="light"] .pid-path2 { stroke: #1a7f37; }
+  [data-theme="light"] .pid-path1-label { fill: #0550ae; }
+  [data-theme="light"] .pid-path2-label { fill: #1a7f37; }
+  [data-theme="light"] .pid-dot-a { fill: #b35900; }
+  [data-theme="light"] .pid-dot-b { fill: #6639ba; }
+  [data-theme="light"] .pid-result { fill: #666; }
+</style>

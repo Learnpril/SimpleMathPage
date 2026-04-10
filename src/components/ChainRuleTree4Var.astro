@@ -1,0 +1,99 @@
+---
+/**
+ * ChainRuleTree4Var — General tree diagram for a 4-variable case:
+ * w = f(x, y, z) where x, y, z each depend on s and t.
+ * Shows 6 paths total. Just for visual reference, no specific values.
+ */
+const w = 480;
+const h = 320;
+const cx = w / 2;
+const nr = 18;
+
+// Nodes
+const wX = cx; const wY = 45;
+const xX = cx - 130; const xY = 140;
+const yX = cx; const yY = 140;
+const zX = cx + 130; const zY = 140;
+const sX = cx - 80; const sY = 260;
+const tX = cx + 80; const tY = 260;
+---
+
+<figure class="t4v" role="img" aria-label="Tree diagram for a 4-variable chain rule example: w depends on x, y, z, which each depend on s and t">
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    {/* Top edges: w → x, y, z */}
+    <line x1={wX} y1={wY + nr} x2={xX} y2={xY - nr} class="t4v-edge" stroke-width="1.5" />
+    <line x1={wX} y1={wY + nr} x2={yX} y2={yY - nr} class="t4v-edge" stroke-width="1.5" />
+    <line x1={wX} y1={wY + nr} x2={zX} y2={zY - nr} class="t4v-edge" stroke-width="1.5" />
+
+    {/* Bottom edges: x,y,z → s,t (6 edges) */}
+    {/* Outer edges (solid) */}
+    <line x1={xX} y1={xY + nr} x2={sX} y2={sY - nr} class="t4v-edge" stroke-width="1.5" />
+    <line x1={zX} y1={zY + nr} x2={tX} y2={tY - nr} class="t4v-edge" stroke-width="1.5" />
+    {/* Middle edges from y (solid) */}
+    <line x1={yX} y1={yY + nr} x2={sX} y2={sY - nr} class="t4v-edge" stroke-width="1.5" />
+    <line x1={yX} y1={yY + nr} x2={tX} y2={tY - nr} class="t4v-edge" stroke-width="1.5" />
+    {/* Cross edges (dashed) */}
+    <line x1={xX} y1={xY + nr} x2={tX} y2={tY - nr} class="t4v-edge-cross" stroke-width="1.5" stroke-dasharray="5,3" />
+    <line x1={zX} y1={zY + nr} x2={sX} y2={sY - nr} class="t4v-edge-cross" stroke-width="1.5" stroke-dasharray="5,3" />
+
+    {/* Top edge labels */}
+    <text class="t4v-elabel" x={xX - 10} y={wY + 52} font-size="10" text-anchor="end">∂w/∂x</text>
+    <text class="t4v-elabel" x={cx - 6} y={wY + 42} font-size="10" text-anchor="end">∂w/∂y</text>
+    <text class="t4v-elabel" x={zX + 10} y={wY + 52} font-size="10" text-anchor="start">∂w/∂z</text>
+
+    {/* Nodes */}
+    <circle cx={wX} cy={wY} r={nr} class="t4v-node" />
+    <text class="t4v-nlabel" x={wX} y={wY + 6} font-size="15" text-anchor="middle">w</text>
+    <text class="t4v-nodeinfo" x={wX} y={wY - nr - 8} font-size="10" text-anchor="middle">= f(x, y, z)</text>
+
+    <circle cx={xX} cy={xY} r={nr} class="t4v-node" />
+    <text class="t4v-nlabel" x={xX} y={xY + 6} font-size="15" text-anchor="middle">x</text>
+
+    <circle cx={yX} cy={yY} r={nr} class="t4v-node" />
+    <text class="t4v-nlabel" x={yX} y={yY + 6} font-size="15" text-anchor="middle">y</text>
+
+    <circle cx={zX} cy={zY} r={nr} class="t4v-node" />
+    <text class="t4v-nlabel" x={zX} y={zY + 6} font-size="15" text-anchor="middle">z</text>
+
+    <circle cx={sX} cy={sY} r={nr} class="t4v-node-end" />
+    <text class="t4v-nlabel-end" x={sX} y={sY + 6} font-size="15" text-anchor="middle">s</text>
+
+    <circle cx={tX} cy={tY} r={nr} class="t4v-node-end" />
+    <text class="t4v-nlabel-end" x={tX} y={tY + 6} font-size="15" text-anchor="middle">t</text>
+
+    {/* Title */}
+    <text class="t4v-title" x={cx} y={h - 6} font-size="10" text-anchor="middle">Bonus: 3 intermediate variables · ∂w/∂s has 3 paths · ∂w/∂t has 3 paths</text>
+  </svg>
+  <div class="t4v-caption">
+    With three intermediate variables, each bottom variable gets three paths. The tree scales the same way no matter how many variables you have: more branches, same rule.
+  </div>
+</figure>
+
+<style>
+  .t4v { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .t4v svg { max-width:100%; height:auto; }
+  .t4v-edge { stroke:#58a6ff; }
+  .t4v-edge-cross { stroke:#58a6ff; opacity:0.5; }
+  .t4v-elabel { fill:#f0883e; font-family:'Libre Baskerville',Georgia,serif; }
+  .t4v-node { fill:none; stroke:#58a6ff; stroke-width:2; }
+  .t4v-node-end { fill:none; stroke:#7ee787; stroke-width:2; }
+  .t4v-nlabel { fill:#58a6ff; font-family:'Libre Baskerville',Georgia,serif; font-weight:bold; }
+  .t4v-nlabel-end { fill:#7ee787; font-family:'Libre Baskerville',Georgia,serif; font-weight:bold; }
+  .t4v-nodeinfo { fill:#999; font-family:'Libre Baskerville',Georgia,serif; }
+  .t4v-title { fill:#999; font-family:'Libre Baskerville',Georgia,serif; }
+  .t4v-caption {
+    max-width:420px; text-align:center; margin-top:0.5rem;
+    font-family:'Libre Baskerville',Georgia,serif; font-size:0.82rem;
+    color:#999; line-height:1.5;
+  }
+  :global([data-theme="light"]) .t4v-edge { stroke:#0550ae; }
+  :global([data-theme="light"]) .t4v-edge-cross { stroke:#0550ae; opacity:0.5; }
+  :global([data-theme="light"]) .t4v-elabel { fill:#b35900; }
+  :global([data-theme="light"]) .t4v-node { stroke:#0550ae; }
+  :global([data-theme="light"]) .t4v-node-end { stroke:#116329; }
+  :global([data-theme="light"]) .t4v-nlabel { fill:#0550ae; }
+  :global([data-theme="light"]) .t4v-nlabel-end { fill:#116329; }
+  :global([data-theme="light"]) .t4v-nodeinfo { fill:#666; }
+  :global([data-theme="light"]) .t4v-title { fill:#666; }
+  :global([data-theme="light"]) .t4v-caption { color:#666; }
+</style>

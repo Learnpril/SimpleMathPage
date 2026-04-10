@@ -1,0 +1,76 @@
+---
+/**
+ * ScalarLineIntegral — SVG showing the line segment from (0,0) to (1,1)
+ * along y=x, with the curve highlighted and a few sample "height" bars
+ * representing f(x,y) = x+y evaluated along the path.
+ */
+---
+
+<figure class="diagram-container" role="img" aria-label="Scalar line integral along the line y equals x from the origin to the point 1 comma 1, with vertical bars showing the function value x plus y at sample points">
+  <svg viewBox="-30 -30 280 285" width="300" height="305" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <marker id="sli-ah" markerWidth="6" markerHeight="4" refX="5" refY="2" orient="auto">
+        <path d="M0,0 L6,2 L0,4 Z" class="sli-ax-arrow" />
+      </marker>
+    </defs>
+    <!-- Axes -->
+    <line x1="0" y1="200" x2="220" y2="200" class="sli-axis" marker-end="url(#sli-ah)" />
+    <line x1="0" y1="200" x2="0" y2="-10" class="sli-axis" marker-end="url(#sli-ah)" />
+    <text x="225" y="205" class="sli-label">x</text>
+    <text x="-5" y="-15" class="sli-label">y</text>
+    <!-- Grid marks -->
+    <line x1="200" y1="197" x2="200" y2="203" class="sli-tick" />
+    <text x="200" y="218" text-anchor="middle" class="sli-num">1</text>
+    <line x1="-3" y1="0" x2="3" y2="0" class="sli-tick" />
+    <text x="-15" y="5" class="sli-num">1</text>
+    <!-- The path y=x from (0,0) to (1,1) -->
+    <line x1="0" y1="200" x2="200" y2="0" class="sli-path" />
+    <!-- Sample height bars: from point on curve down to x-axis (y=200) -->
+    <!-- At t=0.25: point (50,150), bar down to x-axis -->
+    <line x1="50" y1="150" x2="50" y2="200" class="sli-bar" />
+    <circle cx="50" cy="150" r="3" class="sli-dot" />
+    <!-- At t=0.5: point (100,100), bar down to x-axis -->
+    <line x1="100" y1="100" x2="100" y2="200" class="sli-bar" />
+    <circle cx="100" cy="100" r="3" class="sli-dot" />
+    <!-- At t=0.75: point (150,50), bar down to x-axis -->
+    <line x1="150" y1="50" x2="150" y2="200" class="sli-bar" />
+    <circle cx="150" cy="50" r="3" class="sli-dot" />
+    <!-- Endpoint labels -->
+    <text x="8" y="215" class="sli-pt">(0, 0)</text>
+    <text x="185" y="-8" class="sli-pt">(1, 1)</text>
+    <!-- Path label — to the left of the line -->
+    <text x="60" y="130" text-anchor="end" class="sli-path-label">C: y = x</text>
+    <!-- Legend at bottom of SVG -->
+    <text x="100" y="235" text-anchor="middle" class="sli-legend-text">
+      <tspan class="sli-path-label">&#9644;</tspan> Path C
+      <tspan dx="12" class="sli-bar-label">&#9644;</tspan> f(x,y) = x + y along C
+    </text>
+  </svg>
+</figure>
+
+<style>
+  .sli-axis { stroke: #666; stroke-width: 1.5; fill: none; }
+  .sli-ax-arrow { fill: #666; }
+  .sli-tick { stroke: #666; stroke-width: 1; }
+  .sli-label { font: bold 14px sans-serif; fill: #888; }
+  .sli-num { font: 12px sans-serif; fill: #888; }
+  .sli-pt { font: 11px sans-serif; fill: #888; }
+  .sli-path { stroke: #58a6ff; stroke-width: 2.5; }
+  .sli-path-label { font: italic 13px 'Libre Baskerville', Georgia, serif; fill: #58a6ff; }
+  .sli-bar { stroke: #f0883e; stroke-width: 2; stroke-dasharray: 4 2; }
+  .sli-dot { fill: #f0883e; }
+  .sli-legend-text { font: 11px 'Libre Baskerville', Georgia, serif; fill: #888; }
+  .sli-bar-label { fill: #f0883e; }
+  [data-theme="light"] .sli-legend-text { fill: #666; }
+  [data-theme="light"] .sli-bar-label { fill: #b35900; }
+  [data-theme="light"] .sli-axis { stroke: #999; }
+  [data-theme="light"] .sli-ax-arrow { fill: #999; }
+  [data-theme="light"] .sli-tick { stroke: #999; }
+  [data-theme="light"] .sli-label { fill: #666; }
+  [data-theme="light"] .sli-num { fill: #666; }
+  [data-theme="light"] .sli-pt { fill: #666; }
+  [data-theme="light"] .sli-path { stroke: #0550ae; }
+  [data-theme="light"] .sli-path-label { fill: #0550ae; }
+  [data-theme="light"] .sli-bar { stroke: #b35900; }
+  [data-theme="light"] .sli-dot { fill: #b35900; }
+</style>

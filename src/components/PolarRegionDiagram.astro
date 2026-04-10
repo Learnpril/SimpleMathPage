@@ -1,0 +1,114 @@
+---
+/**
+ * PolarRegionDiagram — Shows a polar coordinate region (unit disk)
+ * with r and θ labeled, a radial slice, and the area element r dr dθ.
+ */
+const w = 340;
+const h = 340;
+const cx = w / 2;
+const cy = h / 2;
+const R = 120;
+
+// Radial slice wedge at θ ≈ 40°
+const sliceAngle = 0.7;
+const sliceWidth = 0.12;
+const a1 = sliceAngle - sliceWidth / 2;
+const a2 = sliceAngle + sliceWidth / 2;
+const wx1 = cx + R * Math.cos(a1);
+const wy1 = cy - R * Math.sin(a1);
+const wx2 = cx + R * Math.cos(a2);
+const wy2 = cy - R * Math.sin(a2);
+const wedgePath = `M ${cx},${cy} L ${wx1},${wy1} A ${R},${R} 0 0,0 ${wx2},${wy2} Z`;
+
+// r arrow endpoint
+const rAngle = 0.35;
+const rEndX = cx + R * Math.cos(rAngle);
+const rEndY = cy - R * Math.sin(rAngle);
+// r label — below the green line, to the right of theta
+const rMidX = cx + R * 0.55 * Math.cos(rAngle) + 6;
+const rMidY = cy - R * 0.55 * Math.sin(rAngle) + 16;
+
+// θ arc points
+const thetaArcR = 35;
+const thetaArcPts: string[] = [];
+for (let i = 0; i <= 20; i++) {
+  const a = (i / 20) * 0.7;
+  thetaArcPts.push(`${cx + thetaArcR * Math.cos(a)},${cy - thetaArcR * Math.sin(a)}`);
+}
+
+// dA label — to the right of the wedge, not overlapping
+const daX = cx + R * 0.85 * Math.cos(sliceAngle) + 18;
+const daY = cy - R * 0.85 * Math.sin(sliceAngle) - 10;
+---
+
+<figure class="prd" role="img" aria-label="Polar coordinate region showing the unit disk with r and theta labeled, and a radial slice illustrating the area element">
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    {/* Axes */}
+    <line x1={30} y1={cy} x2={w - 20} y2={cy} class="prd-axis" stroke-width="1" />
+    <line x1={cx} y1={h - 20} x2={cx} y2={20} class="prd-axis" stroke-width="1" />
+    <text class="prd-axlabel" x={w - 16} y={cy - 8} font-size="12">x</text>
+    <text class="prd-axlabel" x={cx + 10} y={28} font-size="12">y</text>
+
+    {/* Shaded disk */}
+    <circle cx={cx} cy={cy} r={R} class="prd-shade" />
+
+    {/* Unit circle */}
+    <circle cx={cx} cy={cy} r={R} fill="none" class="prd-circle" stroke-width="2" />
+
+    {/* Radial slice wedge */}
+    <path d={wedgePath} class="prd-wedge" />
+
+    {/* r arrow */}
+    <line x1={cx} y1={cy} x2={rEndX} y2={rEndY} class="prd-r" stroke-width="2" />
+    <text class="prd-r-label" x={rMidX} y={rMidY} font-size="13">r</text>
+
+    {/* θ arc */}
+    <polyline points={thetaArcPts.join(" ")} fill="none" class="prd-theta" stroke-width="1.5" />
+    <text class="prd-theta-label" x={cx + 48} y={cy - 4} font-size="13">θ</text>
+
+    {/* Labels */}
+    <text class="prd-circle-label" x={cx + R + 8} y={cy + 18} font-size="11">r = 1</text>
+    <text class="prd-da-label" x={daX} y={daY} font-size="10">dA = r dr dθ</text>
+  </svg>
+  <div class="prd-legend">
+    <span class="prd-leg-item"><span class="prd-swatch prd-sw-circle"></span> unit disk (r ≤ 1)</span>
+    <span class="prd-leg-item"><span class="prd-swatch prd-sw-wedge"></span> area element r dr dθ</span>
+  </div>
+</figure>
+
+<style>
+  .prd { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .prd svg { max-width:100%; height:auto; }
+  .prd-axis { stroke:#555; }
+  .prd-axlabel { fill:#888; font-family:'Libre Baskerville',Georgia,serif; }
+  .prd-circle { stroke:#58a6ff; }
+  .prd-shade { fill:#58a6ff; opacity:0.08; }
+  .prd-wedge { fill:#f0883e; opacity:0.35; }
+  .prd-r { stroke:#7ee787; }
+  .prd-r-label { fill:#7ee787; font-family:'Libre Baskerville',Georgia,serif; font-weight:bold; }
+  .prd-theta { stroke:#d2a8ff; }
+  .prd-theta-label { fill:#d2a8ff; font-family:'Libre Baskerville',Georgia,serif; font-weight:bold; }
+  .prd-circle-label { fill:#58a6ff; font-family:'Libre Baskerville',Georgia,serif; }
+  .prd-da-label { fill:#f0883e; font-family:'Libre Baskerville',Georgia,serif; }
+  .prd-legend {
+    display:flex; gap:1rem; flex-wrap:wrap; justify-content:center;
+    margin-top:0.5rem; font-family:'Libre Baskerville',Georgia,serif; font-size:0.82rem;
+  }
+  .prd-leg-item { display:flex; align-items:center; gap:0.35rem; }
+  .prd-swatch { display:inline-block; width:16px; height:4px; border-radius:2px; }
+  .prd-sw-circle { background:#58a6ff; }
+  .prd-sw-wedge { background:#f0883e; }
+  :global([data-theme="light"]) .prd-axis { stroke:#bbb; }
+  :global([data-theme="light"]) .prd-axlabel { fill:#666; }
+  :global([data-theme="light"]) .prd-circle { stroke:#0550ae; }
+  :global([data-theme="light"]) .prd-shade { fill:#0550ae; }
+  :global([data-theme="light"]) .prd-wedge { fill:#b35900; }
+  :global([data-theme="light"]) .prd-r { stroke:#116329; }
+  :global([data-theme="light"]) .prd-r-label { fill:#116329; }
+  :global([data-theme="light"]) .prd-theta { stroke:#6639ba; }
+  :global([data-theme="light"]) .prd-theta-label { fill:#6639ba; }
+  :global([data-theme="light"]) .prd-circle-label { fill:#0550ae; }
+  :global([data-theme="light"]) .prd-da-label { fill:#b35900; }
+  :global([data-theme="light"]) .prd-sw-circle { background:#0550ae; }
+  :global([data-theme="light"]) .prd-sw-wedge { background:#b35900; }
+</style>

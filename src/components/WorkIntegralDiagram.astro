@@ -1,0 +1,88 @@
+---
+/**
+ * WorkIntegralDiagram — SVG showing the upper semicircle path from (1,0)
+ * to (-1,0) with the rotational field F=<-y,x> arrows along the path,
+ * illustrating that F is always tangent to the circle (work = pi).
+ */
+---
+
+<figure class="diagram-container" role="img" aria-label="Work integral along the upper semicircle from 1 comma 0 to negative 1 comma 0 with the rotational field F equals negative y comma x shown as tangent arrows">
+  <svg viewBox="-175 -170 350 240" width="350" height="240" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <marker id="wid-ah" markerWidth="6" markerHeight="4" refX="5" refY="2" orient="auto">
+        <path d="M0,0 L6,2 L0,4 Z" class="wid-arrow" />
+      </marker>
+      <marker id="wid-ah-ax" markerWidth="6" markerHeight="4" refX="5" refY="2" orient="auto">
+        <path d="M0,0 L6,2 L0,4 Z" class="wid-ax-arrow" />
+      </marker>
+    </defs>
+    <!-- Axes -->
+    <line x1="-150" y1="0" x2="150" y2="0" class="wid-axis" marker-end="url(#wid-ah-ax)" />
+    <line x1="0" y1="30" x2="0" y2="-150" class="wid-axis" marker-end="url(#wid-ah-ax)" />
+    <text x="155" y="5" class="wid-label">x</text>
+    <text x="5" y="-153" class="wid-label">y</text>
+    <!-- Unit circle upper half -->
+    <path d="M 120 0 A 120 120 0 0 0 -120 0" class="wid-circle" fill="none" />
+    <!-- Tangent arrows along the semicircle (F is tangent everywhere) -->
+    <!-- At t=0 (1,0): F=<0,1> pointing up -->
+    <line x1="120" y1="0" x2="120" y2="-28" class="wid-vec" marker-end="url(#wid-ah)" />
+    <!-- At t=pi/6 (cos30, sin30): F=<-sin30, cos30> -->
+    <line x1="104" y1="-60" x2="88" y2="-84" class="wid-vec" marker-end="url(#wid-ah)" />
+    <!-- At t=pi/4: F=<-sin45, cos45> -->
+    <line x1="85" y1="-85" x2="65" y2="-105" class="wid-vec" marker-end="url(#wid-ah)" />
+    <!-- At t=pi/3: -->
+    <line x1="60" y1="-104" x2="36" y2="-118" class="wid-vec" marker-end="url(#wid-ah)" />
+    <!-- At t=pi/2 (0,1): F=<-1,0> pointing left -->
+    <line x1="0" y1="-120" x2="-28" y2="-120" class="wid-vec" marker-end="url(#wid-ah)" />
+    <!-- At t=2pi/3: -->
+    <line x1="-60" y1="-104" x2="-36" y2="-118" class="wid-vec" marker-end="url(#wid-ah)" />
+    <!-- At t=3pi/4: -->
+    <line x1="-85" y1="-85" x2="-65" y2="-105" class="wid-vec" marker-end="url(#wid-ah)" />
+    <!-- At t=5pi/6: -->
+    <line x1="-104" y1="-60" x2="-88" y2="-84" class="wid-vec" marker-end="url(#wid-ah)" />
+    <!-- At t=pi (-1,0): F=<0,-1> pointing down -->
+    <line x1="-120" y1="0" x2="-120" y2="28" class="wid-vec" marker-end="url(#wid-ah)" />
+    <!-- Endpoint dots -->
+    <circle cx="120" cy="0" r="4" class="wid-start" />
+    <circle cx="-120" cy="0" r="4" class="wid-end" />
+    <!-- Endpoint labels -->
+    <text x="125" y="18" class="wid-pt">(1, 0)</text>
+    <text x="-160" y="18" class="wid-pt">(-1, 0)</text>
+    <!-- Direction arrow on path -->
+    <text x="5" y="-130" class="wid-dir">C</text>
+    <!-- Legend at bottom -->
+    <text x="0" y="55" text-anchor="middle" class="wid-legend-text">
+      <tspan class="wid-legend-path-t">&#9644;</tspan> Semicircle C
+      <tspan dx="10" class="wid-legend-vec-t">&#9644;</tspan> F tangent to C (work = pi)
+    </text>
+  </svg>
+</figure>
+
+<style>
+  .wid-axis { stroke: #666; stroke-width: 1; fill: none; }
+  .wid-ax-arrow { fill: #666; }
+  .wid-label { font: bold 14px sans-serif; fill: #888; }
+  .wid-pt { font: 11px sans-serif; fill: #888; }
+  .wid-circle { stroke: #58a6ff; stroke-width: 2.5; }
+  .wid-vec { stroke: #7ee787; stroke-width: 2; }
+  .wid-arrow { fill: #7ee787; }
+  .wid-start { fill: #f0883e; }
+  .wid-end { fill: #d2a8ff; }
+  .wid-dir { font: italic 14px 'Libre Baskerville', Georgia, serif; fill: #58a6ff; }
+  .wid-legend-text { font: 11px 'Libre Baskerville', Georgia, serif; fill: #888; }
+  .wid-legend-path-t { fill: #58a6ff; }
+  .wid-legend-vec-t { fill: #7ee787; }
+  [data-theme="light"] .wid-axis { stroke: #999; }
+  [data-theme="light"] .wid-ax-arrow { fill: #999; }
+  [data-theme="light"] .wid-label { fill: #666; }
+  [data-theme="light"] .wid-pt { fill: #666; }
+  [data-theme="light"] .wid-circle { stroke: #0550ae; }
+  [data-theme="light"] .wid-vec { stroke: #1a7f37; }
+  [data-theme="light"] .wid-arrow { fill: #1a7f37; }
+  [data-theme="light"] .wid-start { fill: #b35900; }
+  [data-theme="light"] .wid-end { fill: #6639ba; }
+  [data-theme="light"] .wid-dir { fill: #0550ae; }
+  [data-theme="light"] .wid-legend-text { fill: #666; }
+  [data-theme="light"] .wid-legend-path-t { fill: #0550ae; }
+  [data-theme="light"] .wid-legend-vec-t { fill: #1a7f37; }
+</style>

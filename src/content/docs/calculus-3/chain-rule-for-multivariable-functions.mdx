@@ -139,6 +139,14 @@ $$
 
 At t = 1: dz/dt = 4 + 27 + 18 = 49. Same answer as the chain rule gave us. Both methods work, but the chain rule is often faster when you don't want to (or can't) substitute everything first.
 
+Here's what the tree looks like when you have even more variables. This isn't part of the examples above, just a bonus visual to show how the pattern scales. For w = f(x, y, z) where x, y, and z each depend on s and t, the tree gets wider but the rule stays the same: multiply along each path, add all paths to the same bottom variable.
+
+**Bonus: Tree diagram with three intermediate variables**
+
+import ChainRuleTree4Var from "../../../components/ChainRuleTree4Var.astro";
+
+<ChainRuleTree4Var />
+
 ## Real-World Application
 
 The multivariable chain rule is everywhere:

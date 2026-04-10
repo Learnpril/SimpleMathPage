@@ -1,0 +1,177 @@
+---
+/**
+ * ProductSurface3D — Interactive 3D visual of z = xy over [0,1] x [0,2].
+ * Shows the twisted surface with the base rectangle.
+ * Volume = 1 cubic unit.
+ */
+---
+
+<figure class="ps3" role="img" aria-label="Interactive 3D visualization of the surface z equals xy over the rectangle [0,1] times [0,2]">
+  <div class="ps3-canvas" data-ps3d></div>
+  <div class="ps3-hint">Drag to rotate · Scroll to zoom</div>
+</figure>
+
+<script>
+  import * as THREE from "three";
+  import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+
+  function initScene(container: HTMLElement) {
+    const width = Math.min(container.clientWidth, 520);
+    const height = 360;
+    const isDark = document.documentElement.dataset.theme !== "light";
+    const bgColor = isDark ? 0x121212 : 0xf8f9fa;
+
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(bgColor);
+
+    const camera = new THREE.PerspectiveCamera(40, width / height, 0.1, 200);
+    camera.position.set(4, 3.5, 5);
+    camera.lookAt(0.5, 0.5, 1);
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(width, height);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    container.appendChild(renderer.domElement);
+
+    // Surface z = xy over [0,1] x [0,2]
+    // Three.js: x = math x, z = math y, y = math z (up)
+    const seg = 25;
+    const surfGeo = new THREE.BufferGeometry();
+    const verts: number[] = [];
+    const colors: number[] = [];
+    const indices: number[] = [];
+
+    for (let i = 0; i <= seg; i++) {
+      for (let j = 0; j <= seg; j++) {
+        const x = i / seg;           // 0 to 1
+        const my = (2 * j) / seg;    // 0 to 2
+        const z = x * my;            // z = xy, max = 2
+        verts.push(x, z * 0.8, my);  // scale z for visual
+
+        const t = z / 2;
+        if (isDark) {
+          colors.push(0.34 + t * 0.3, 0.5 + t * 0.2, 1.0 - t * 0.3);
+        } else {
+          colors.push(0.02 + t * 0.2, 0.25 + t * 0.15, 0.68 - t * 0.2);
+        }
+      }
+    }
+
+    for (let i = 0; i < seg; i++) {
+      for (let j = 0; j < seg; j++) {
+        const a = i * (seg + 1) + j;
+        const b = a + 1;
+        const c = a + seg + 1;
+        const d = c + 1;
+        indices.push(a, b, c, b, d, c);
+      }
+    }
+
+    surfGeo.setAttribute("position", new THREE.Float32BufferAttribute(verts, 3));
+    surfGeo.setAttribute("color", new THREE.Float32BufferAttribute(colors, 3));
+    surfGeo.setIndex(indices);
+    surfGeo.computeVertexNormals();
+
+    const surfMat = new THREE.MeshPhongMaterial({
+      vertexColors: true, side: THREE.DoubleSide,
+      shininess: 30, transparent: true, opacity: 0.75,
+    });
+    scene.add(new THREE.Mesh(surfGeo, surfMat));
+
+    // Base rectangle
+    const baseGeo = new THREE.PlaneGeometry(1, 2);
+    baseGeo.rotateX(-Math.PI / 2);
+    baseGeo.translate(0.5, 0, 1);
+    const baseMat = new THREE.MeshBasicMaterial({
+      color: isDark ? 0x7ee787 : 0x116329,
+      transparent: true, opacity: 0.15, side: THREE.DoubleSide,
+    });
+    scene.add(new THREE.Mesh(baseGeo, baseMat));
+
+    // Axes
+    const axColor = isDark ? 0x666666 : 0x999999;
+    const axMat = new THREE.LineBasicMaterial({ color: axColor });
+    for (const dir of [[2, 0, 0], [0, 2.5, 0], [0, 0, 3]] as [number, number, number][]) {
+      const pts = [new THREE.Vector3(0, 0, 0), new THREE.Vector3(...dir)];
+      scene.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts), axMat));
+    }
+
+    // Labels
+    function makeLabel(text: string, pos: [number, number, number], color: string, size = 0.35) {
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d")!;
+      canvas.width = 256; canvas.height = 64;
+      ctx.font = "bold 32px sans-serif";
+      ctx.fillStyle = color;
+      ctx.textAlign = "center"; ctx.textBaseline = "middle";
+      ctx.fillText(text, 128, 32);
+      const tex = new THREE.CanvasTexture(canvas);
+      const mat = new THREE.SpriteMaterial({ map: tex, transparent: true });
+      const sprite = new THREE.Sprite(mat);
+      sprite.position.set(...pos);
+      sprite.scale.set(size * 2.5, size * 0.6, 1);
+      scene.add(sprite);
+    }
+
+    const lc = isDark ? "#888" : "#666";
+    makeLabel("x", [1.8, -0.15, 0], lc);
+    makeLabel("z = xy", [0, 2.3, 0], lc, 0.4);
+    makeLabel("y", [0, -0.15, 2.8], lc);
+    makeLabel("[0,1]×[0,2]", [0.5, -0.3, 1], isDark ? "#7ee787" : "#116329", 0.4);
+    makeLabel("Volume = 1", [0.5, 2.0, 1], isDark ? "#d2a8ff" : "#6639ba", 0.4);
+
+    // Lighting
+    scene.add(new THREE.AmbientLight(0xffffff, 0.5));
+    const dl = new THREE.DirectionalLight(0xffffff, 0.8);
+    dl.position.set(3, 5, 4);
+    scene.add(dl);
+
+    // Controls
+    const controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.08;
+    controls.autoRotate = true;
+    controls.autoRotateSpeed = 0.6;
+    controls.enableZoom = true;
+    controls.minDistance = 3;
+    controls.maxDistance = 20;
+    controls.target.set(0.5, 0.6, 1);
+
+    let animId: number;
+    function animate() {
+      animId = requestAnimationFrame(animate);
+      controls.update();
+      renderer.render(scene, camera);
+    }
+    animate();
+
+    return () => { cancelAnimationFrame(animId); renderer.dispose(); };
+  }
+
+  function setup() {
+    document.querySelectorAll<HTMLElement>("[data-ps3d]").forEach((el) => {
+      if (el.querySelector("canvas")) return;
+      const obs = new IntersectionObserver(
+        (entries) => { if (entries[0].isIntersecting) { obs.disconnect(); initScene(el); } },
+        { threshold: 0.05 }
+      );
+      obs.observe(el);
+    });
+  }
+
+  setup();
+  document.addEventListener("astro:page-load", setup);
+</script>
+
+<style>
+  .ps3 { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .ps3-canvas {
+    width:100%; max-width:520px; min-height:360px;
+    border-radius:8px; overflow:hidden;
+  }
+  .ps3-canvas canvas { border-radius:8px; }
+  .ps3-hint {
+    font-family:'Libre Baskerville',Georgia,serif;
+    font-size:0.8rem; color:#888; margin-top:0.4rem;
+  }
+</style>

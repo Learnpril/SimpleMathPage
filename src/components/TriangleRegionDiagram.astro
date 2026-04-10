@@ -1,0 +1,99 @@
+---
+/**
+ * TriangleRegionDiagram — Shows the triangle with vertices (0,0), (1,0), (0,1)
+ * with a vertical slice showing y from 0 to 1-x.
+ */
+const w = 300;
+const h = 300;
+const pad = 50;
+const gw = w - 2 * pad;
+const gh = h - 2 * pad;
+
+const xMin = -0.2; const xMax = 1.3;
+const yMin = -0.2; const yMax = 1.3;
+
+const sx = (x: number) => pad + ((x - xMin) / (xMax - xMin)) * gw;
+const sy = (y: number) => pad + gh - ((y - yMin) / (yMax - yMin)) * gh;
+
+// Triangle vertices
+const triPts = `${sx(0)},${sy(0)} ${sx(1)},${sy(0)} ${sx(0)},${sy(1)}`;
+
+// Vertical slice at x = 0.35
+const slX = 0.35;
+---
+
+<figure class="trd" role="img" aria-label="Triangle region with vertices at (0,0), (1,0), and (0,1) with a vertical slice">
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    {/* Axes */}
+    <line x1={pad} y1={sy(0)} x2={w - pad} y2={sy(0)} class="trd-axis" stroke-width="1" />
+    <line x1={sx(0)} y1={pad} x2={sx(0)} y2={h - pad} class="trd-axis" stroke-width="1" />
+    <text class="trd-axlabel" x={w - pad + 8} y={sy(0) + 4} font-size="12">x</text>
+    <text class="trd-axlabel" x={sx(0) + 8} y={pad - 4} font-size="12">y</text>
+
+    {/* Shaded triangle */}
+    <polygon points={triPts} class="trd-shade" />
+
+    {/* Triangle edges */}
+    <line x1={sx(0)} y1={sy(0)} x2={sx(1)} y2={sy(0)} class="trd-edge" stroke-width="2" />
+    <line x1={sx(1)} y1={sy(0)} x2={sx(0)} y2={sy(1)} class="trd-edge-hyp" stroke-width="2.5" />
+    <line x1={sx(0)} y1={sy(1)} x2={sx(0)} y2={sy(0)} class="trd-edge" stroke-width="2" />
+
+    {/* Vertical slice */}
+    <line x1={sx(slX)} y1={sy(0)} x2={sx(slX)} y2={sy(1 - slX)}
+          class="trd-slice" stroke-width="3" />
+
+    {/* Vertex labels */}
+    <circle cx={sx(0)} cy={sy(0)} r="3.5" class="trd-dot" />
+    <circle cx={sx(1)} cy={sy(0)} r="3.5" class="trd-dot" />
+    <circle cx={sx(0)} cy={sy(1)} r="3.5" class="trd-dot" />
+    <text class="trd-dot-label" x={sx(0) - 8} y={sy(0) + 16} font-size="10" text-anchor="end">(0, 0)</text>
+    <text class="trd-dot-label" x={sx(1) + 6} y={sy(0) + 16} font-size="10" text-anchor="start">(1, 0)</text>
+    <text class="trd-dot-label" x={sx(0) - 14} y={sy(1) + 4} font-size="10" text-anchor="end">(0, 1)</text>
+
+    {/* Hypotenuse label */}
+    <text class="trd-hyp-label" x={sx(0.6)} y={sy(0.5) - 10} font-size="10">y = 1 - x</text>
+
+    {/* Slice labels */}
+    <text class="trd-slice-label" x={sx(slX) + 8} y={sy((1 - slX) / 2) + 16} font-size="10">0 to 1-x</text>
+
+    {/* Tick marks */}
+    <text class="trd-tick" x={sx(1)} y={sy(0) + 16} font-size="9" text-anchor="middle">1</text>
+    <text class="trd-tick" x={sx(0) - 6} y={sy(1) + 4} font-size="9" text-anchor="end">1</text>
+  </svg>
+  <div class="trd-caption">
+    For each fixed x (from 0 to 1), y ranges from 0 (bottom) to 1 - x (the hypotenuse). The orange slice shows one such vertical strip.
+  </div>
+</figure>
+
+<style>
+  .trd { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .trd svg { max-width:100%; height:auto; }
+  .trd-axis { stroke:#555; }
+  .trd-axlabel { fill:#888; font-family:'Libre Baskerville',Georgia,serif; }
+  .trd-shade { fill:#58a6ff; opacity:0.12; }
+  .trd-edge { stroke:#58a6ff; }
+  .trd-edge-hyp { stroke:#7ee787; }
+  .trd-slice { stroke:#f0883e; opacity:0.7; }
+  .trd-dot { fill:#d2a8ff; }
+  .trd-dot-label { fill:#d2a8ff; font-family:'Libre Baskerville',Georgia,serif; }
+  .trd-hyp-label { fill:#7ee787; font-family:'Libre Baskerville',Georgia,serif; }
+  .trd-slice-label { fill:#f0883e; font-family:'Libre Baskerville',Georgia,serif; }
+  .trd-tick { fill:#888; font-family:'Libre Baskerville',Georgia,serif; }
+  .trd-caption {
+    max-width:300px; text-align:center; margin-top:0.5rem;
+    font-family:'Libre Baskerville',Georgia,serif; font-size:0.82rem;
+    color:#999; line-height:1.5;
+  }
+  :global([data-theme="light"]) .trd-axis { stroke:#bbb; }
+  :global([data-theme="light"]) .trd-axlabel { fill:#666; }
+  :global([data-theme="light"]) .trd-shade { fill:#0550ae; }
+  :global([data-theme="light"]) .trd-edge { stroke:#0550ae; }
+  :global([data-theme="light"]) .trd-edge-hyp { stroke:#116329; }
+  :global([data-theme="light"]) .trd-slice { stroke:#b35900; }
+  :global([data-theme="light"]) .trd-dot { fill:#6639ba; }
+  :global([data-theme="light"]) .trd-dot-label { fill:#6639ba; }
+  :global([data-theme="light"]) .trd-hyp-label { fill:#116329; }
+  :global([data-theme="light"]) .trd-slice-label { fill:#b35900; }
+  :global([data-theme="light"]) .trd-tick { fill:#666; }
+  :global([data-theme="light"]) .trd-caption { color:#666; }
+</style>

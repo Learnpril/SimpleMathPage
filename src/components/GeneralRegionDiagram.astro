@@ -1,0 +1,138 @@
+---
+/**
+ * GeneralRegionDiagram — Shows the region between y = x² and y = x + 2
+ * from x = -1 to x = 2, with a vertical slice illustrating Type I setup.
+ */
+const w = 380;
+const h = 320;
+const pad = 50;
+const gw = w - 2 * pad;
+const gh = h - 2 * pad;
+
+// Math range: x from -1.5 to 2.5, y from -0.5 to 5
+const xMin = -1.5; const xMax = 2.5;
+const yMin = -0.5; const yMax = 5;
+
+const sx = (x: number) => pad + ((x - xMin) / (xMax - xMin)) * gw;
+const sy = (y: number) => pad + gh - ((y - yMin) / (yMax - yMin)) * gh;
+
+// y = x² curve
+const parPts: string[] = [];
+for (let i = 0; i <= 80; i++) {
+  const x = xMin + (i / 80) * (xMax - xMin);
+  const y = x * x;
+  if (y <= yMax + 0.5) parPts.push(`${sx(x)},${sy(y)}`);
+}
+
+// y = x + 2 line
+const linX1 = xMin; const linY1 = xMin + 2;
+const linX2 = xMax; const linY2 = xMax + 2;
+
+// Shaded region: x from -1 to 2, y from x² to x+2
+const shadePts: string[] = [];
+// Top boundary: y = x + 2 from x=-1 to x=2
+for (let i = 0; i <= 40; i++) {
+  const x = -1 + (i / 40) * 3;
+  shadePts.push(`${sx(x)},${sy(x + 2)}`);
+}
+// Bottom boundary: y = x² from x=2 back to x=-1
+for (let i = 40; i >= 0; i--) {
+  const x = -1 + (i / 40) * 3;
+  shadePts.push(`${sx(x)},${sy(x * x)}`);
+}
+
+// Vertical slice at x = 0.8
+const sliceX = 0.8;
+const sliceBot = sliceX * sliceX; // 0.64
+const sliceTop = sliceX + 2; // 2.8
+---
+
+<figure class="grd" role="img" aria-label="Region between y equals x squared and y equals x plus 2, with a vertical slice showing the integration limits">
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    {/* Axes */}
+    <line x1={pad} y1={sy(0)} x2={w - pad} y2={sy(0)} class="grd-axis" stroke-width="1" />
+    <line x1={sx(0)} y1={pad} x2={sx(0)} y2={h - pad} class="grd-axis" stroke-width="1" />
+    <text class="grd-axlabel" x={w - pad + 8} y={sy(0) + 4} font-size="12">x</text>
+    <text class="grd-axlabel" x={sx(0) + 8} y={pad - 4} font-size="12">y</text>
+
+    {/* Shaded region */}
+    <polygon points={shadePts.join(" ")} class="grd-shade" />
+
+    {/* y = x² curve */}
+    <polyline points={parPts.join(" ")} fill="none" class="grd-curve" stroke-width="2.5" />
+
+    {/* y = x + 2 line */}
+    <line x1={sx(linX1)} y1={sy(linY1)} x2={sx(linX2)} y2={sy(linY2)}
+          class="grd-line" stroke-width="2.5" />
+
+    {/* Vertical slice */}
+    <line x1={sx(sliceX)} y1={sy(sliceBot)} x2={sx(sliceX)} y2={sy(sliceTop)}
+          class="grd-slice" stroke-width="3" />
+
+    {/* Intersection points */}
+    <circle cx={sx(-1)} cy={sy(1)} r="4" class="grd-dot" />
+    <circle cx={sx(2)} cy={sy(4)} r="4" class="grd-dot" />
+
+    {/* Labels — in legend below SVG to avoid all overlap */}
+
+    {/* Slice label — to the right, clear of the slice */}
+    <text class="grd-slice-label" x={sx(sliceX) - 4} y={sy((sliceBot + sliceTop) / 2)} font-size="11" text-anchor="end">slice</text>
+
+    {/* Intersection labels — offset well away from curves */}
+    <text class="grd-dot-label" x={sx(-1) - 20} y={sy(1) - 8} font-size="11" text-anchor="end">(-1, 1)</text>
+    <text class="grd-dot-label" x={sx(2) + 14} y={sy(4) + 20} font-size="11" text-anchor="start">(2, 4)</text>
+  </svg>
+  <div class="grd-legend">
+    <span class="grd-leg-item"><span class="grd-swatch grd-sw-curve"></span> y = x²</span>
+    <span class="grd-leg-item"><span class="grd-swatch grd-sw-line"></span> y = x + 2</span>
+    <span class="grd-leg-item"><span class="grd-swatch grd-sw-slice"></span> vertical slice</span>
+  </div>
+  <div class="grd-caption">
+    The shaded region is bounded above by y = x + 2 and below by y = x². For each fixed x, y ranges from x² (bottom) to x + 2 (top). The orange vertical slice shows one such strip.
+  </div>
+</figure>
+
+<style>
+  .grd { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .grd svg { max-width:100%; height:auto; }
+  .grd-axis { stroke:#555; }
+  .grd-axlabel { fill:#888; font-family:'Libre Baskerville',Georgia,serif; }
+  .grd-shade { fill:#58a6ff; opacity:0.12; }
+  .grd-curve { stroke:#58a6ff; }
+  .grd-line { stroke:#7ee787; }
+  .grd-slice { stroke:#f0883e; opacity:0.7; }
+  .grd-dot { fill:#d2a8ff; }
+  .grd-curve-label { fill:#58a6ff; font-family:'Libre Baskerville',Georgia,serif; }
+  .grd-line-label { fill:#7ee787; font-family:'Libre Baskerville',Georgia,serif; }
+  .grd-slice-label { fill:#f0883e; font-family:'Libre Baskerville',Georgia,serif; }
+  .grd-dot-label { fill:#d2a8ff; font-family:'Libre Baskerville',Georgia,serif; }
+  .grd-caption {
+    max-width:380px; text-align:center; margin-top:0.5rem;
+    font-family:'Libre Baskerville',Georgia,serif; font-size:0.82rem;
+    color:#999; line-height:1.5;
+  }
+  .grd-legend {
+    display:flex; gap:1rem; flex-wrap:wrap; justify-content:center;
+    margin-top:0.5rem; font-family:'Libre Baskerville',Georgia,serif; font-size:0.85rem;
+  }
+  .grd-leg-item { display:flex; align-items:center; gap:0.35rem; }
+  .grd-swatch { display:inline-block; width:18px; height:4px; border-radius:2px; }
+  .grd-sw-curve { background:#58a6ff; }
+  .grd-sw-line { background:#7ee787; }
+  .grd-sw-slice { background:#f0883e; }
+  :global([data-theme="light"]) .grd-axis { stroke:#bbb; }
+  :global([data-theme="light"]) .grd-axlabel { fill:#666; }
+  :global([data-theme="light"]) .grd-shade { fill:#0550ae; }
+  :global([data-theme="light"]) .grd-curve { stroke:#0550ae; }
+  :global([data-theme="light"]) .grd-line { stroke:#116329; }
+  :global([data-theme="light"]) .grd-slice { stroke:#b35900; }
+  :global([data-theme="light"]) .grd-dot { fill:#6639ba; }
+  :global([data-theme="light"]) .grd-curve-label { fill:#0550ae; }
+  :global([data-theme="light"]) .grd-line-label { fill:#116329; }
+  :global([data-theme="light"]) .grd-slice-label { fill:#b35900; }
+  :global([data-theme="light"]) .grd-dot-label { fill:#6639ba; }
+  :global([data-theme="light"]) .grd-caption { color:#666; }
+  :global([data-theme="light"]) .grd-sw-curve { background:#0550ae; }
+  :global([data-theme="light"]) .grd-sw-line { background:#116329; }
+  :global([data-theme="light"]) .grd-sw-slice { background:#b35900; }
+</style>

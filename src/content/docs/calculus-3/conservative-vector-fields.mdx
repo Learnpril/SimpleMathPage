@@ -1,8 +1,227 @@
 ---
-title: "Conservative Vector Fields and the Fundamental Theorem for Line Integrals"
-description: "Identify conservative fields and use potential functions to evaluate line integrals"
+title: Conservative Vector Fields
+description: Learn how to identify conservative vector fields and use the Fundamental Theorem for Line Integrals
 sidebar:
   order: 15
 ---
 
-Content coming soon.
+## What You'll Learn
+
+In this lesson you'll learn what makes a vector field conservative, how to test for it, how to find the potential function, and how the Fundamental Theorem for Line Integrals lets you evaluate work integrals without parametrizing anything.
+
+## The Concept
+
+### What Is a Conservative Field?
+
+In the last lesson, computing a line integral required parametrizing the curve, computing derivatives, taking dot products, and integrating. That's a lot of work. Conservative fields give you a shortcut that skips all of it.
+
+A vector field F is conservative if there exists a scalar function phi (called the potential function) such that
+
+$$
+\mathbf{F} = \nabla \varphi
+$$
+
+The symbol phi (written $\varphi$ in math notation) means "the function whose gradient produces F." If you can find such a function, the field is conservative.
+
+### Why "Conservative"?
+
+The name comes from physics. When a force field is conservative, the work it does moving an object from A to B is the same no matter which path you take. You can't cheat the system by picking a clever route to squeeze out extra energy. The total mechanical energy (kinetic plus potential) stays constant throughout the motion. Energy is conserved.
+
+That's the whole idea: a conservative field conserves energy. The work done by the field can be fully stored as potential energy and fully recovered later. No energy is lost to the path itself. Contrast this with friction, which is not conservative. Friction does different amounts of work depending on how far you travel, and the energy it removes turns into heat that you can't get back.
+
+### The Fundamental Theorem for Line Integrals
+
+If F is conservative with potential function phi, and C is any curve from point A to point B, then
+
+$$
+\int_C \mathbf{F} \cdot d\mathbf{r} = \varphi(B) - \varphi(A)
+$$
+
+That's it. No parametrization, no dot products, no integration. Just evaluate the potential function at the two endpoints and subtract. This is the multivariable version of the Fundamental Theorem of Calculus, which says $\int_a^b f'(x)\,dx = f(b) - f(a)$
+
+### Three Equivalent Properties
+
+For a vector field on a simply connected domain (no holes), these three statements are all equivalent:
+
+1. F is conservative (F = grad phi for some phi)
+2. Line integrals of F are path-independent (the integral depends only on the endpoints)
+3. The line integral of F around every closed curve is zero
+
+If any one of these is true, all three are true. If any one fails, all three fail.
+
+### The Cross-Partial Test
+
+For a 2D field $\mathbf{F} = \langle P, Q \rangle,$ there's a quick test. F is conservative if and only if
+
+$$
+\frac{\partial P}{\partial y} = \frac{\partial Q}{\partial x}
+$$
+
+This works on simply connected domains (regions with no holes). If the partials match, the field is conservative and you can find a potential function. If they don't match, the field is not conservative.
+
+## Worked Examples
+
+**Example 1: Testing and finding the potential function**
+
+Is $\mathbf{F} = \langle 2x + y,\; x + 2y \rangle$ conservative? If so, find the potential function.
+
+Apply the cross-partial test with P = 2x + y and Q = x + 2y:
+
+$$
+\frac{\partial P}{\partial y} = 1 \qquad \frac{\partial Q}{\partial x} = 1
+$$
+
+They're equal, so F is conservative. Now find $\varphi$ such that $\nabla\varphi = \mathbf{F}$
+
+Start with $\frac{\partial \varphi}{\partial x} = 2x + y$ and integrate with respect to x:
+
+$$
+\varphi = x^2 + xy + g(y)
+$$
+
+where g(y) is an unknown function of y (the "constant" of integration, but it can depend on y since we only integrated in x).
+
+Now use the other condition $\frac{\partial \varphi}{\partial y} = x + 2y$ to find g:
+
+$$
+\frac{\partial}{\partial y}(x^2 + xy + g(y)) = x + g'(y) = x + 2y
+$$
+
+So $g'(y) = 2y,$ which gives $g(y) = y^2 + C$
+
+The potential function is $\varphi(x, y) = x^2 + xy + y^2$ (dropping the constant C since it cancels in any line integral).
+
+**Example 2: Path independence with the Fundamental Theorem**
+
+Compute the work done by $\mathbf{F} = \langle 2x + y,\; x + 2y \rangle$ along any path from (0, 0) to (1, 1).
+
+import PathIndependenceDiagram from "../../../components/PathIndependenceDiagram.astro";
+
+<PathIndependenceDiagram />
+
+Since F is conservative with $\varphi(x, y) = x^2 + xy + y^2,$ the Fundamental Theorem gives
+
+$$
+\int_C \mathbf{F} \cdot d\mathbf{r} = \varphi(1, 1) - \varphi(0, 0)
+$$
+
+$$
+= (1 + 1 + 1) - (0 + 0 + 0) = 3
+$$
+
+The work is 3 regardless of which path you take. The dashed blue diagonal and the solid green L-shaped path both give the same answer. You could take any crazy winding path from A to B and still get 3.
+
+**Example 3: Closed loops give zero work**
+
+For the same field $\mathbf{F} = \langle 2x + y,\; x + 2y \rangle,$ compute the work around any closed loop.
+
+import ClosedLoopDiagram from "../../../components/ClosedLoopDiagram.astro";
+
+<ClosedLoopDiagram />
+
+A closed loop starts and ends at the same point, so A = B. The Fundamental Theorem gives
+
+$$
+\oint_C \mathbf{F} \cdot d\mathbf{r} = \varphi(A) - \varphi(A) = 0
+$$
+
+The circle on the integral sign means "closed loop." For any conservative field, the work around any closed curve is always zero. This is the mathematical reason why gravity doesn't give you free energy: if you go up and come back down to the same height, the net work is zero.
+
+**Example 4: A non-conservative field**
+
+Is $\mathbf{F} = \langle -y,\; x \rangle$ conservative?
+
+Apply the cross-partial test with P = -y and Q = x:
+
+$$
+\frac{\partial P}{\partial y} = -1 \qquad \frac{\partial Q}{\partial x} = 1
+$$
+
+They're not equal (-1 does not equal 1), so F is not conservative. This is the rotational field from Lessons 13 and 14. We already showed that the work along the upper semicircle is pi, which means the integral depends on the path. No potential function exists for this field.
+
+## Real-World Application
+
+Conservative fields show up whenever energy is conserved:
+
+- Gravity is conservative. The work done by gravity depends only on the height difference, not the path. That's why a ball rolling down a ramp and a ball falling straight down from the same height reach the bottom with the same speed.
+- Electric fields from stationary charges are conservative. The voltage difference between two points is path-independent, which is why circuits work.
+- Game engines model gravity and spring forces as conservative fields. The potential function gives the potential energy at each point, and the work-energy theorem connects force, work, and kinetic energy.
+- Friction is not conservative. The work done by friction depends on the path length, which is why friction generates heat and you can't recover the energy.
+
+:::note[You've Got This]
+Conservative fields are the "nice" vector fields. If you can find a potential function, line integrals become trivial: just evaluate at the endpoints and subtract. The cross-partial test tells you instantly whether a 2D field is conservative. And the closed-loop property gives you a powerful sanity check. This is one of the most satisfying results in vector calculus because it connects the abstract math to real physical intuition about energy and work.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="calculus3-conservative-fields"
+  questions={[
+    {
+      id: "q1",
+      text: "A vector field F is conservative if",
+      options: [
+        "it has constant magnitude everywhere",
+        "it equals the gradient of some scalar function",
+        "it is always perpendicular to curves",
+        "its components are all positive",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Conservative means F = grad(phi) for some potential function phi.",
+    },
+    {
+      id: "q2",
+      text: "For $\\mathbf{F} = \\langle 2x + y, x + 2y \\rangle$, the cross-partial test gives",
+      options: [
+        "$\\partial P/\\partial y = 1$ and $\\partial Q/\\partial x = 2$",
+        "$\\partial P/\\partial y = 2$ and $\\partial Q/\\partial x = 1$",
+        "$\\partial P/\\partial y = 1$ and $\\partial Q/\\partial x = 1$",
+        "$\\partial P/\\partial y = 0$ and $\\partial Q/\\partial x = 0$",
+      ],
+      correctIndex: 2,
+      explanation:
+        "P = 2x + y gives dP/dy = 1, and Q = x + 2y gives dQ/dx = 1. They match, so F is conservative.",
+    },
+    {
+      id: "q3",
+      text: "The Fundamental Theorem for Line Integrals says the work equals",
+      options: [
+        "the arc length of the curve",
+        "the integral of the speed",
+        "the potential function evaluated at B minus at A",
+        "zero for all fields",
+      ],
+      correctIndex: 2,
+      explanation:
+        "For conservative F = grad(phi), the work integral equals phi(B) - phi(A).",
+    },
+    {
+      id: "q4",
+      text: "The line integral of a conservative field around a closed loop equals",
+      options: [
+        "the area enclosed",
+        "the arc length",
+        "the potential at the starting point",
+        "zero",
+      ],
+      correctIndex: 3,
+      explanation: "A closed loop has A = B, so phi(B) - phi(A) = 0.",
+    },
+    {
+      id: "q5",
+      text: "The rotational field $\\mathbf{F} = \\langle -y, x \\rangle$ is",
+      options: [
+        "conservative because it has smooth components",
+        "not conservative because dP/dy = -1 but dQ/dx = 1",
+        "conservative because it is defined everywhere",
+        "not conservative because its magnitude varies",
+      ],
+      correctIndex: 1,
+      explanation:
+        "The cross-partials are -1 and 1, which are not equal, so the field fails the test and is not conservative.",
+    },
+  ]}
+/>

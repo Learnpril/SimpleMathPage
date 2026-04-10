@@ -1,0 +1,53 @@
+---
+/**
+ * ClosedLoopDiagram — SVG showing a closed triangular loop with arrows
+ * indicating direction of travel, illustrating that the line integral
+ * around any closed curve in a conservative field is zero.
+ */
+---
+
+<figure class="diagram-container" role="img" aria-label="A closed triangular loop in a conservative field with the line integral equal to zero">
+  <svg viewBox="-40 -40 300 300" width="310" height="310" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <marker id="cld-ah" markerWidth="7" markerHeight="5" refX="6" refY="2.5" orient="auto">
+        <path d="M0,0 L7,2.5 L0,5 Z" class="cld-arrow" />
+      </marker>
+    </defs>
+    <!-- Axes -->
+    <line x1="0" y1="220" x2="240" y2="220" class="cld-axis" />
+    <line x1="0" y1="220" x2="0" y2="-10" class="cld-axis" />
+    <text x="245" y="225" class="cld-label">x</text>
+    <text x="-5" y="-15" class="cld-label">y</text>
+    <!-- Closed triangular path with direction arrows -->
+    <!-- Leg 1: (20,200) to (200,200) — along bottom -->
+    <line x1="20" y1="200" x2="195" y2="200" class="cld-path" marker-end="url(#cld-ah)" />
+    <!-- Leg 2: (200,200) to (110,40) — up to top -->
+    <line x1="200" y1="200" x2="113" y2="45" class="cld-path" marker-end="url(#cld-ah)" />
+    <!-- Leg 3: (110,40) to (20,200) — back to start -->
+    <line x1="110" y1="40" x2="25" y2="195" class="cld-path" marker-end="url(#cld-ah)" />
+    <!-- Vertices -->
+    <circle cx="20" cy="200" r="4" class="cld-dot" />
+    <circle cx="200" cy="200" r="4" class="cld-dot" />
+    <circle cx="110" cy="40" r="4" class="cld-dot" />
+    <!-- Closed loop symbol and result -->
+    <text x="110" y="150" text-anchor="middle" class="cld-symbol">C</text>
+    <text x="110" y="260" text-anchor="middle" class="cld-result">Closed loop: work = 0</text>
+  </svg>
+</figure>
+
+<style>
+  .cld-axis { stroke: #666; stroke-width: 1; }
+  .cld-label { font: bold 14px sans-serif; fill: #888; }
+  .cld-path { stroke: #f0883e; stroke-width: 2.5; fill: none; }
+  .cld-arrow { fill: #f0883e; }
+  .cld-dot { fill: #f0883e; }
+  .cld-symbol { font: italic 16px 'Libre Baskerville', Georgia, serif; fill: #f0883e; }
+  .cld-result { font: 12px 'Libre Baskerville', Georgia, serif; fill: #888; }
+  [data-theme="light"] .cld-axis { stroke: #999; }
+  [data-theme="light"] .cld-label { fill: #666; }
+  [data-theme="light"] .cld-path { stroke: #b35900; }
+  [data-theme="light"] .cld-arrow { fill: #b35900; }
+  [data-theme="light"] .cld-dot { fill: #b35900; }
+  [data-theme="light"] .cld-symbol { fill: #b35900; }
+  [data-theme="light"] .cld-result { fill: #666; }
+</style>

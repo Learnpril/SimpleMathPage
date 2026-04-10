@@ -1,0 +1,154 @@
+---
+/**
+ * DirectionalDerivDiagram — Shows the gradient ∇f at (3,4) and a
+ * direction vector u, with the directional derivative being the
+ * dot product (projection of ∇f onto u).
+ * f(x,y) = x² + y², ∇f(3,4) = ⟨6,8⟩, u = ⟨3/5, 4/5⟩
+ */
+const w = 380;
+const h = 380;
+const cx = w / 2;
+const cy = h / 2;
+const scale = 22;
+const nr = 4;
+
+// Convert math to SVG
+const sx = (x: number) => cx + x * scale;
+const sy = (y: number) => cy - y * scale;
+
+// Point (3, 4)
+const px = sx(3);
+const py = sy(4);
+
+// Gradient ∇f = ⟨6, 8⟩, normalized: ⟨0.6, 0.8⟩
+const gradLen = 55;
+const gux = 0.6;
+const guy = 0.8;
+
+// Direction u = ⟨3/5, 4/5⟩ = ⟨0.6, 0.8⟩ — same as gradient direction here
+// Let's use a different direction to make it interesting: u = ⟨1, 0⟩ (pure x)
+const uux = 1;
+const uuy = 0;
+const uLen = 45;
+
+// Perpendicular direction: ⟨0, 1⟩
+const perpux = 0;
+const perpuy = 1;
+const perpLen = 45;
+
+// Projection of gradient onto u = ⟨1,0⟩: dot = 6*1 + 8*0 = 6
+// Projection of gradient onto perp = ⟨0,1⟩: dot = 6*0 + 8*1 = 8
+
+// Level curve (circle of radius 5 centered at origin)
+const lvR = 5 * scale;
+---
+
+<figure class="ddd" role="img" aria-label="Diagram showing gradient vector, direction vector, and perpendicular direction at point (3,4) on a level curve">
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <marker id="ddd-arr-o" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+        <polygon points="0,0 8,3 0,6" class="ddd-arr-orange" />
+      </marker>
+      <marker id="ddd-arr-g" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+        <polygon points="0,0 8,3 0,6" class="ddd-arr-green" />
+      </marker>
+      <marker id="ddd-arr-p" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+        <polygon points="0,0 8,3 0,6" class="ddd-arr-purple" />
+      </marker>
+    </defs>
+
+    {/* Level curve */}
+    <circle cx={cx} cy={cy} r={lvR} fill="none" class="ddd-level" stroke-width="1.5" />
+    <text class="ddd-level-label" x={cx + lvR * Math.cos(Math.PI / 6) + 6} y={cy + lvR * Math.sin(Math.PI / 6) + 4} font-size="10">f = 25</text>
+
+    {/* Axes */}
+    <line x1={10} y1={cy} x2={w - 10} y2={cy} class="ddd-axis" stroke-width="0.8" />
+    <line x1={cx} y1={10} x2={cx} y2={h - 10} class="ddd-axis" stroke-width="0.8" />
+
+    {/* Point */}
+    <circle cx={px} cy={py} r="5" class="ddd-dot" />
+    <text class="ddd-dot-label" x={px - 36} y={py + 4} font-size="10">(3, 4)</text>
+
+    {/* Gradient arrow: ∇f = ⟨6, 8⟩ direction */}
+    <line x1={px} y1={py}
+          x2={px + gux * gradLen} y2={py - guy * gradLen}
+          class="ddd-grad" stroke-width="2.5" marker-end="url(#ddd-arr-o)" />
+    <text class="ddd-grad-label" x={px + gux * gradLen + 8} y={py - guy * gradLen - 4} font-size="10">∇f = ⟨6, 8⟩</text>
+    <text class="ddd-grad-val" x={px + gux * gradLen + 8} y={py - guy * gradLen + 10} font-size="9">D = 10 (steepest)</text>
+
+    {/* Direction u = ⟨1, 0⟩ (along x-axis) */}
+    <line x1={px} y1={py}
+          x2={px + uux * uLen} y2={py - uuy * uLen}
+          class="ddd-u" stroke-width="2" marker-end="url(#ddd-arr-g)" />
+    <text class="ddd-u-label" x={px + uux * uLen + 6} y={py + 16} font-size="10">u = ⟨1, 0⟩</text>
+    <text class="ddd-u-val" x={px + uux * uLen + 6} y={py + 30} font-size="9">D_u f = 6</text>
+
+    {/* Perpendicular direction ⟨0, 1⟩ */}
+    <line x1={px} y1={py}
+          x2={px + perpux * perpLen} y2={py - perpuy * perpLen}
+          class="ddd-perp" stroke-width="2" marker-end="url(#ddd-arr-p)" />
+    <text class="ddd-perp-label" x={px + perpux * perpLen - 50} y={py - perpuy * perpLen - 6} font-size="10">v = ⟨0, 1⟩</text>
+    <text class="ddd-perp-val" x={px + perpux * perpLen - 50} y={py - perpuy * perpLen + 8} font-size="9">D_v f = 8</text>
+
+    {/* Origin */}
+    <circle cx={cx} cy={cy} r="2" class="ddd-origin" />
+  </svg>
+  <div class="ddd-legend">
+    <span class="ddd-leg-item"><span class="ddd-swatch ddd-sw-grad"></span> gradient ∇f (steepest, D = 10)</span>
+    <span class="ddd-leg-item"><span class="ddd-swatch ddd-sw-u"></span> direction u (D = 6)</span>
+    <span class="ddd-leg-item"><span class="ddd-swatch ddd-sw-perp"></span> direction v (D = 8)</span>
+  </div>
+</figure>
+
+<style>
+  .ddd { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .ddd svg { max-width:100%; height:auto; }
+  .ddd-axis { stroke:#444; }
+  .ddd-level { stroke:#58a6ff; opacity:0.4; }
+  .ddd-level-label { fill:#58a6ff; opacity:0.6; font-family:'Libre Baskerville',Georgia,serif; }
+  .ddd-dot { fill:#d2a8ff; }
+  .ddd-dot-label { fill:#d2a8ff; font-family:'Libre Baskerville',Georgia,serif; }
+  .ddd-grad { stroke:#f0883e; }
+  .ddd-arr-orange { fill:#f0883e; }
+  .ddd-grad-label { fill:#f0883e; font-family:'Libre Baskerville',Georgia,serif; }
+  .ddd-grad-val { fill:#f0883e; font-family:'Libre Baskerville',Georgia,serif; }
+  .ddd-u { stroke:#7ee787; }
+  .ddd-arr-green { fill:#7ee787; }
+  .ddd-u-label { fill:#7ee787; font-family:'Libre Baskerville',Georgia,serif; }
+  .ddd-u-val { fill:#7ee787; font-family:'Libre Baskerville',Georgia,serif; }
+  .ddd-perp { stroke:#d2a8ff; }
+  .ddd-arr-purple { fill:#d2a8ff; }
+  .ddd-perp-label { fill:#d2a8ff; font-family:'Libre Baskerville',Georgia,serif; }
+  .ddd-perp-val { fill:#d2a8ff; font-family:'Libre Baskerville',Georgia,serif; }
+  .ddd-origin { fill:#666; }
+  .ddd-legend {
+    display:flex; gap:0.8rem; flex-wrap:wrap; justify-content:center;
+    margin-top:0.5rem; font-family:'Libre Baskerville',Georgia,serif; font-size:0.8rem;
+  }
+  .ddd-leg-item { display:flex; align-items:center; gap:0.3rem; }
+  .ddd-swatch { display:inline-block; width:16px; height:4px; border-radius:2px; }
+  .ddd-sw-grad { background:#f0883e; }
+  .ddd-sw-u { background:#7ee787; }
+  .ddd-sw-perp { background:#d2a8ff; }
+  :global([data-theme="light"]) .ddd-axis { stroke:#ccc; }
+  :global([data-theme="light"]) .ddd-level { stroke:#0550ae; }
+  :global([data-theme="light"]) .ddd-level-label { fill:#0550ae; }
+  :global([data-theme="light"]) .ddd-dot { fill:#6639ba; }
+  :global([data-theme="light"]) .ddd-dot-label { fill:#6639ba; }
+  :global([data-theme="light"]) .ddd-grad { stroke:#b35900; }
+  :global([data-theme="light"]) .ddd-arr-orange { fill:#b35900; }
+  :global([data-theme="light"]) .ddd-grad-label { fill:#b35900; }
+  :global([data-theme="light"]) .ddd-grad-val { fill:#b35900; }
+  :global([data-theme="light"]) .ddd-u { stroke:#116329; }
+  :global([data-theme="light"]) .ddd-arr-green { fill:#116329; }
+  :global([data-theme="light"]) .ddd-u-label { fill:#116329; }
+  :global([data-theme="light"]) .ddd-u-val { fill:#116329; }
+  :global([data-theme="light"]) .ddd-perp { stroke:#6639ba; }
+  :global([data-theme="light"]) .ddd-arr-purple { fill:#6639ba; }
+  :global([data-theme="light"]) .ddd-perp-label { fill:#6639ba; }
+  :global([data-theme="light"]) .ddd-perp-val { fill:#6639ba; }
+  :global([data-theme="light"]) .ddd-origin { fill:#aaa; }
+  :global([data-theme="light"]) .ddd-sw-grad { background:#b35900; }
+  :global([data-theme="light"]) .ddd-sw-u { background:#116329; }
+  :global([data-theme="light"]) .ddd-sw-perp { background:#6639ba; }
+</style>

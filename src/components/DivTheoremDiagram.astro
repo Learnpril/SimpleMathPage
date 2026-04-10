@@ -1,0 +1,223 @@
+---
+/**
+ * DivTheoremDiagram — Interactive 3D concept visual for the Divergence Theorem.
+ * Purple blob surface S with orange grid, outward normal arrows with vec-n labels,
+ * green divergence source arrows inside volume E, and labels S and E.
+ * Everything is added to a Group at the scene origin so rotation is centered.
+ */
+---
+
+<figure class="dvt" role="img" aria-label="Interactive 3D closed surface S enclosing volume E with outward normal vectors and divergence sources, illustrating the Divergence Theorem">
+  <div class="dvt-canvas" data-dvt3d></div>
+  <div class="dvt-hint">Drag to rotate · Scroll to zoom</div>
+</figure>
+
+<script>
+  import * as THREE from "three";
+  import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+
+  function blobPoint(nx: number, ny: number, nz: number, sx: number, sy: number, sz: number): THREE.Vector3 {
+    const p = 3.0;
+    const s = 1.0 / Math.pow(
+      Math.pow(Math.abs(nx), p) + Math.pow(Math.abs(ny), p) + Math.pow(Math.abs(nz), p),
+      1.0 / p
+    );
+    return new THREE.Vector3(nx * s * sx, ny * s * sy, nz * s * sz);
+  }
+
+  function initScene(container: HTMLElement) {
+    /* Use the container's actual pixel size */
+    const rect = container.getBoundingClientRect();
+    const width = Math.floor(rect.width);
+    const height = Math.floor(rect.height) || Math.floor(width * 400 / 520);
+    const isDark = document.documentElement.dataset.theme !== "light";
+
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(isDark ? 0x121212 : 0xf8f9fa);
+
+    const camera = new THREE.PerspectiveCamera(36, width / height, 0.1, 100);
+    camera.position.set(0, 2.5, 5.5);
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(width, height);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    container.appendChild(renderer.domElement);
+
+    const purple = isDark ? 0xd2a8ff : 0x9b6dcc;
+    const orange = isDark ? 0xf0883e : 0xb35900;
+    const green  = isDark ? 0x7ee787 : 0x1a7f37;
+    const SX = 1.4, SY = 1.0, SZ = 1.2;
+
+    /* ---- Everything goes into a group at the origin ---- */
+    const group = new THREE.Group();
+    scene.add(group);
+
+    /* Blob surface */
+    const blobGeo = new THREE.SphereGeometry(1, 48, 32);
+    const pos = blobGeo.attributes.position;
+    for (let i = 0; i < pos.count; i++) {
+      const x = pos.getX(i), y = pos.getY(i), z = pos.getZ(i);
+      const r = Math.sqrt(x*x + y*y + z*z);
+      if (r === 0) continue;
+      const v = blobPoint(x/r, y/r, z/r, SX, SY, SZ);
+      pos.setXYZ(i, v.x, v.y, v.z);
+    }
+    blobGeo.computeVertexNormals();
+    group.add(new THREE.Mesh(blobGeo, new THREE.MeshPhongMaterial({
+      color: purple, transparent: true, opacity: 0.2, side: THREE.DoubleSide, shininess: 30,
+    })));
+
+    /* Orange grid lines */
+    const gMat = new THREE.LineBasicMaterial({ color: orange, transparent: true, opacity: 0.55 });
+    const N = 80;
+    for (const yF of [-0.6, -0.2, 0.2, 0.6]) {
+      const pts: THREE.Vector3[] = [];
+      const h = Math.sqrt(Math.max(0, 1 - yF*yF));
+      for (let i = 0; i <= N; i++) {
+        const t = (i/N) * Math.PI * 2;
+        pts.push(blobPoint(h*Math.cos(t), yF, h*Math.sin(t), SX*1.005, SY*1.005, SZ*1.005));
+      }
+      group.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts), gMat));
+    }
+    for (let j = 0; j < 6; j++) {
+      const t = (j/6) * Math.PI;
+      const pts: THREE.Vector3[] = [];
+      for (let i = 0; i <= N; i++) {
+        const phi = (i/N) * Math.PI * 2;
+        const ny = Math.cos(phi), h = Math.sin(phi);
+        pts.push(blobPoint(h*Math.cos(t), ny, h*Math.sin(t), SX*1.005, SY*1.005, SZ*1.005));
+      }
+      group.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts), gMat));
+    }
+
+    /* Orange outward normal arrows */
+    const ac = new THREE.Color(orange);
+    const norms: {p:[number,number,number]; d:[number,number,number]}[] = [
+      {p:[0, SY*1.02, 0], d:[0,1,0]},
+      {p:[0,-SY*1.02, 0], d:[0,-1,0]},
+      {p:[SX*1.02, 0, 0], d:[1,0,0]},
+      {p:[-SX*1.02,0, 0], d:[-1,0,0]},
+      {p:[0, 0, SZ*1.02],  d:[0,0,1]},
+      {p:[0, 0,-SZ*1.02],  d:[0,0,-1]},
+    ];
+    for (const n of norms) {
+      group.add(new THREE.ArrowHelper(
+        new THREE.Vector3(...n.d).normalize(),
+        new THREE.Vector3(...n.p), 0.7, ac, 0.14, 0.09
+      ));
+    }
+
+    /* Green divergence source arrows */
+    const gc = new THREE.Color(green);
+    const srcs: [number,number,number][] = [
+      [0.3,0.2,0.1],[-0.4,-0.1,0.3],[0.1,-0.3,-0.4],
+      [-0.2,0.4,-0.2],[0.5,-0.2,-0.1],[-0.3,-0.3,0],[0,0.1,0.5],
+    ];
+    const dirs: [number,number,number][] = [[1,0,0],[-1,0,0],[0,1,0],[0,-1,0],[0,0,1],[0,0,-1]];
+    for (const sp of srcs) {
+      const o = new THREE.Vector3(...sp);
+      const seed = Math.floor(Math.abs(sp[0]*7 + sp[1]*13 + sp[2]*19)) % 6;
+      for (let k = 0; k < 3; k++) {
+        const d = dirs[(seed + k*2) % 6];
+        group.add(new THREE.ArrowHelper(new THREE.Vector3(...d).normalize(), o, 0.18, gc, 0.06, 0.04));
+      }
+    }
+
+    /* Labels */
+    function mkLabel(text: string, pos:[number,number,number], color: string, fs: number, sz=0.4, top=false) {
+      const c = document.createElement("canvas");
+      const x = c.getContext("2d")!;
+      c.width = 512; c.height = 128;
+      x.font = `bold ${fs}px 'Libre Baskerville',Georgia,serif`;
+      x.fillStyle = color; x.textAlign = "center"; x.textBaseline = "middle";
+      x.fillText(text, 256, 64);
+      const sp = new THREE.Sprite(new THREE.SpriteMaterial({
+        map: new THREE.CanvasTexture(c), transparent: true, depthTest: !top,
+      }));
+      sp.position.set(...pos);
+      sp.scale.set(sz*2.5, sz*0.6, 1);
+      if (top) sp.renderOrder = 999;
+      group.add(sp);
+    }
+    function mkVecN(pos:[number,number,number], color: string) {
+      const c = document.createElement("canvas");
+      const x = c.getContext("2d")!;
+      c.width = 256; c.height = 128;
+      x.fillStyle = color;
+      x.font = "bold 48px sans-serif"; x.textAlign = "center"; x.textBaseline = "bottom";
+      x.fillText("\u2192", 128, 55);
+      x.font = "bold 56px 'Libre Baskerville',Georgia,serif"; x.textBaseline = "top";
+      x.fillText("n", 128, 55);
+      const sp = new THREE.Sprite(new THREE.SpriteMaterial({
+        map: new THREE.CanvasTexture(c), transparent: true, depthTest: false,
+      }));
+      sp.position.set(...pos);
+      sp.scale.set(0.9, 0.45, 1);
+      sp.renderOrder = 999;
+      group.add(sp);
+    }
+
+    const oc = isDark ? "#f0883e" : "#b35900";
+    mkVecN([0, 2.05, 0], oc);
+    mkVecN([2.45, 0, 0], oc);
+    mkLabel("E", [0, 0, 0], isDark ? "#d2a8ff" : "#6639ba", 72, 0.7, true);
+    mkLabel("S", [0.9, 0.85, 0.95], oc, 64, 0.6, true);
+
+    /* Lighting */
+    scene.add(new THREE.AmbientLight(0xffffff, 0.7));
+    const dl = new THREE.DirectionalLight(0xffffff, 0.5);
+    dl.position.set(3, 4, 3); scene.add(dl);
+    const dl2 = new THREE.DirectionalLight(0xffffff, 0.3);
+    dl2.position.set(-2, -1, -2); scene.add(dl2);
+
+    /* Controls — target is (0,0,0), the center of the group */
+    const controls = new OrbitControls(camera, renderer.domElement);
+    controls.target.set(0, 0, 0);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.08;
+    controls.autoRotate = true;
+    controls.autoRotateSpeed = 0.4;
+    controls.enableZoom = true;
+    controls.enablePan = false;
+    controls.minDistance = 4;
+    controls.maxDistance = 14;
+    controls.update();
+
+    camera.lookAt(0, 0, 0);
+
+    let animId: number;
+    (function animate() {
+      animId = requestAnimationFrame(animate);
+      controls.update();
+      renderer.render(scene, camera);
+    })();
+
+    return () => { cancelAnimationFrame(animId); renderer.dispose(); };
+  }
+
+  function setup() {
+    document.querySelectorAll<HTMLElement>("[data-dvt3d]").forEach((el) => {
+      if (el.querySelector("canvas")) return;
+      const obs = new IntersectionObserver(
+        (entries) => { if (entries[0].isIntersecting) { obs.disconnect(); initScene(el); } },
+        { threshold: 0.05 }
+      );
+      obs.observe(el);
+    });
+  }
+  setup();
+  document.addEventListener("astro:page-load", setup);
+</script>
+
+<style>
+  .dvt { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .dvt-canvas {
+    width:100%; max-width:520px; aspect-ratio:13/10;
+    border-radius:8px; overflow:hidden;
+  }
+  .dvt-canvas canvas { display:block; width:100%!important; height:100%!important; border-radius:8px; }
+  .dvt-hint {
+    font-family:'Libre Baskerville',Georgia,serif;
+    font-size:0.8rem; color:#888; margin-top:0.4rem;
+  }
+</style>

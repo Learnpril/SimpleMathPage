@@ -1,8 +1,221 @@
 ---
-title: "The Divergence Theorem"
-description: "Relate surface integrals to triple integrals using the Divergence Theorem"
+title: The Divergence Theorem
+description: Relate surface integrals to triple integrals using the Divergence Theorem
 sidebar:
   order: 20
 ---
 
-Content coming soon.
+## What You'll Learn
+
+In this lesson you'll learn the Divergence Theorem (also called Gauss's Theorem), which says that the total outward flux of a vector field through a closed surface equals the total divergence inside the enclosed volume. This is the final big theorem of vector calculus and the 3D counterpart to the flux form of Green's Theorem.
+
+## The Concept
+
+### The Big Picture
+
+Green's Theorem (Lesson 16) related a line integral around a closed curve to a double integral over the enclosed region. Stokes' Theorem (Lesson 19) related a surface integral of curl to a line integral around the boundary. The Divergence Theorem completes the picture: it relates a surface integral (flux) to a triple integral (divergence) over the enclosed volume.
+
+All three theorems share the same idea: what happens on the boundary tells you what's happening inside.
+
+import DivTheoremDiagram from "../../../components/DivTheoremDiagram.astro";
+
+<DivTheoremDiagram />
+
+The orange arrows show outward flux through the surface S. The green arrows inside represent divergence sources in the volume E, where the field is spreading outward. If there were sinks (negative divergence), the green arrows would point inward instead, and they'd subtract from the total. The theorem says the net outward flux equals the sum of all sources minus all sinks inside.
+
+### The Theorem
+
+If E is a solid region bounded by a closed surface S (oriented outward), and $\mathbf{F}$ has continuous partial derivatives, then
+
+$$
+\oiint_S \mathbf{F} \cdot d\mathbf{S} = \iiint_E (\nabla \cdot \mathbf{F}) \, dV
+$$
+
+The left side is the total outward flux of F through the closed surface S. The right side is the total divergence of F inside the volume E.
+
+The symbol $\oiint$ means "surface integral over a closed surface" (the circle indicates the surface is closed, just like $\oint$ means a line integral over a closed curve).
+
+### What Divergence Means Here
+
+Recall from Lesson 17 that divergence measures how much a vector field "spreads out" at a point:
+
+$$
+\nabla \cdot \mathbf{F} = \frac{\partial F_1}{\partial x} + \frac{\partial F_2}{\partial y} + \frac{\partial F_3}{\partial z}
+$$
+
+If divergence is positive at a point, the field is acting like a source there (fluid flowing outward). If negative, it's a sink (fluid flowing inward). The Divergence Theorem says: add up all the sources and sinks inside, and you get the net outward flow through the boundary.
+
+### Why This Matters
+
+Just like the other big theorems, the power is in choosing the easier side. Sometimes the surface integral is a nightmare (the surface has multiple pieces, weird parametrizations), but the divergence is simple. Other times the triple integral is harder and the surface integral is cleaner. You pick whichever side saves you work.
+
+### Connection to Green's Theorem
+
+When everything is 2D (the "surface" is a closed curve and the "volume" is a flat region), the Divergence Theorem reduces to the flux form of Green's Theorem:
+
+$$
+\oint_C \mathbf{F} \cdot \mathbf{n} \, ds = \iint_D \left(\frac{\partial F_1}{\partial x} + \frac{\partial F_2}{\partial y}\right) dA
+$$
+
+So Green's Theorem, Stokes' Theorem, and the Divergence Theorem are all variations of the same fundamental idea at different dimensions.
+
+## Worked Examples
+
+**Example 1: Flux through a sphere using divergence**
+
+Compute the outward flux of $\mathbf{F} = \langle x,\; y,\; z \rangle$ through the unit sphere $x^2 + y^2 + z^2 = 1$.
+
+import Sphere3D from "../../../components/Sphere3D.astro";
+
+<Sphere3D />
+
+The unit sphere is a closed surface enclosing the unit ball E. Instead of parametrizing the sphere and computing the surface integral directly, we use the Divergence Theorem.
+
+First, compute the divergence:
+
+$$
+\nabla \cdot \mathbf{F} = \frac{\partial x}{\partial x} + \frac{\partial y}{\partial y} + \frac{\partial z}{\partial z} = 1 + 1 + 1 = 3
+$$
+
+The divergence is a constant, 3, everywhere. Now integrate over the unit ball:
+
+$$
+\oiint_S \mathbf{F} \cdot d\mathbf{S} = \iiint_E 3 \, dV = 3 \cdot \text{Vol}(E)
+$$
+
+The volume of the unit ball is $\frac{4}{3}\pi(1)^3 = \frac{4}{3}\pi$, so
+
+$$
+\oiint_S \mathbf{F} \cdot d\mathbf{S} = 3 \cdot \frac{4}{3}\pi = 4\pi
+$$
+
+The total outward flux is $4\pi$. The Divergence Theorem turned a potentially messy surface integral into a one-line volume calculation.
+
+**Example 2: Zero divergence means zero net flux**
+
+Let $\mathbf{F} = \langle -y,\; x,\; 0 \rangle$ (the rotational field from earlier lessons). Compute the outward flux through any closed surface.
+
+The divergence is:
+
+$$
+\nabla \cdot \mathbf{F} = \frac{\partial(-y)}{\partial x} + \frac{\partial x}{\partial y} + \frac{\partial 0}{\partial z} = 0 + 0 + 0 = 0
+$$
+
+Since the divergence is zero everywhere, the Divergence Theorem gives:
+
+$$
+\oiint_S \mathbf{F} \cdot d\mathbf{S} = \iiint_E 0 \, dV = 0
+$$
+
+No matter what closed surface you pick, the net outward flux of this field is zero. This makes physical sense: the rotational field swirls around but doesn't spread out or compress. Whatever flows in through one part of the surface flows out through another part.
+
+This is a general rule: if div F = 0 everywhere, the field is called incompressible (or solenoidal), and the net flux through any closed surface is zero.
+
+**Example 3: Flux through a cube**
+
+Compute the outward flux of $\mathbf{F} = \langle x^2,\; y^2,\; z^2 \rangle$ through the unit cube $[0,1] \times [0,1] \times [0,1]$.
+
+import DivTheoremCube3D from "../../../components/DivTheoremCube3D.astro";
+
+<DivTheoremCube3D />
+
+The cube has six faces. Computing the surface integral directly would mean six separate integrals (one per face), each with its own outward normal. The Divergence Theorem collapses all of that into one triple integral.
+
+Compute the divergence:
+
+$$
+\nabla \cdot \mathbf{F} = \frac{\partial(x^2)}{\partial x} + \frac{\partial(y^2)}{\partial y} + \frac{\partial(z^2)}{\partial z} = 2x + 2y + 2z
+$$
+
+Now integrate over the unit cube:
+
+$$
+\oiint_S \mathbf{F} \cdot d\mathbf{S} = \iiint_E (2x + 2y + 2z) \, dV
+$$
+
+By symmetry, each of the three terms contributes equally. Let's compute one:
+
+$$
+\int_0^1 \int_0^1 \int_0^1 2x \, dx\, dy\, dz = \int_0^1 \int_0^1 \left[x^2\right]_0^1 dy\, dz = \int_0^1 \int_0^1 1 \, dy\, dz = 1
+$$
+
+The integrals of 2y and 2z over the same cube also give 1 each (by symmetry), so
+
+$$
+\oiint_S \mathbf{F} \cdot d\mathbf{S} = 1 + 1 + 1 = 3
+$$
+
+The total outward flux through the cube is 3. One triple integral instead of six surface integrals.
+
+## Real-World Application
+
+The Divergence Theorem shows up everywhere in physics and engineering:
+
+- Gauss's Law in electromagnetism is literally the Divergence Theorem applied to the electric field. The total electric flux through a closed surface equals the total charge enclosed (divided by a constant).
+- Fluid dynamics uses it to relate the flow rate out of a region to the sources and sinks inside. If you pump fluid into a closed tank, the Divergence Theorem tells you how much flows out through the walls.
+- Heat transfer uses it to connect the heat flux through a surface to the heat sources inside a solid.
+- Game engines use divergence-based calculations for particle systems: if particles are being created inside a region (positive divergence), the net particle flow outward through the boundary increases.
+
+:::note[You've Got This]
+The Divergence Theorem says: total outward flux through the boundary = total divergence inside. It's the 3D version of the flux form of Green's Theorem. The recipe is: compute div F, integrate it over the volume, and that gives you the flux through the closed surface. Together with Stokes' Theorem, this completes the grand story of vector calculus: derivatives on the inside equal integrals on the boundary. You've made it through Calc 3.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="calculus3-divergence-theorem"
+  questions={[
+    {
+      id: "q1",
+      text: "The Divergence Theorem relates",
+      options: [
+        "a line integral to a double integral",
+        "the surface integral of curl F to a line integral",
+        "the outward flux through a closed surface to the triple integral of divergence inside",
+        "two surface integrals over different surfaces",
+      ],
+      correctIndex: 2,
+      explanation:
+        "The Divergence Theorem says the total outward flux through S equals the total divergence inside E.",
+    },
+    {
+      id: "q2",
+      text: "For $\\mathbf{F} = \\langle x, y, z \\rangle$, the divergence is",
+      options: ["$1$", "$0$", "$3$", "$x + y + z$"],
+      correctIndex: 2,
+      explanation:
+        "Each partial derivative contributes 1, so div F = 1 + 1 + 1 = 3.",
+    },
+    {
+      id: "q3",
+      text: "If div F = 0 everywhere, the net outward flux through any closed surface is",
+      options: ["positive", "equal to the surface area", "undefined", "zero"],
+      correctIndex: 3,
+      explanation:
+        "The Divergence Theorem gives flux = triple integral of 0 = 0. The field is incompressible.",
+    },
+    {
+      id: "q4",
+      text: "The Divergence Theorem is the 3D generalization of",
+      options: [
+        "the flux form of Green's Theorem",
+        "the Fundamental Theorem of Calculus",
+        "Stokes' Theorem",
+        "the chain rule",
+      ],
+      correctIndex: 0,
+      explanation:
+        "In 2D, the Divergence Theorem reduces to the flux form of Green's Theorem.",
+    },
+    {
+      id: "q5",
+      text: "The outward flux of $\\mathbf{F} = \\langle x^2, y^2, z^2 \\rangle$ through the unit cube is",
+      options: ["$4\\pi$", "$3$", "$6$", "$1$"],
+      correctIndex: 1,
+      explanation:
+        "Divergence is 2x + 2y + 2z. By symmetry each term integrates to 1 over the unit cube, giving 3 total.",
+    },
+  ]}
+/>

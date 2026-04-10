@@ -1,0 +1,206 @@
+---
+/**
+ * Sphere3D — Interactive 3D visual of the unit sphere x²+y²+z²=1
+ * with semi-transparent surface, wireframe, coordinate angle arcs,
+ * and axis labels. Shows the region for the spherical coordinates example.
+ */
+---
+
+<figure class="sp3" role="img" aria-label="Interactive 3D unit sphere showing spherical coordinate angles rho, phi, and theta">
+  <div class="sp3-canvas" data-sp3d></div>
+  <div class="sp3-hint">Drag to rotate · Scroll to zoom</div>
+</figure>
+
+<script>
+  import * as THREE from "three";
+  import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+
+  function initScene(container: HTMLElement) {
+    const width = Math.min(container.clientWidth, 480);
+    const height = 360;
+    const isDark = document.documentElement.dataset.theme !== "light";
+    const bgColor = isDark ? 0x121212 : 0xf8f9fa;
+
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(bgColor);
+
+    const camera = new THREE.PerspectiveCamera(40, width / height, 0.1, 200);
+    camera.position.set(3, 2.2, 3);
+    camera.lookAt(0, 0, 0);
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(width, height);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    container.appendChild(renderer.domElement);
+
+    const accentColor = isDark ? 0x58a6ff : 0x0550ae;
+    const purpleColor = isDark ? 0xd2a8ff : 0x6639ba;
+    const orangeColor = isDark ? 0xf0883e : 0xb35900;
+    const greenColor = isDark ? 0x7ee787 : 0x1a7f37;
+
+    // Unit sphere
+    const sphereGeo = new THREE.SphereGeometry(1, 48, 32);
+    const sphereMat = new THREE.MeshPhongMaterial({
+      color: accentColor,
+      transparent: true, opacity: 0.12,
+      side: THREE.DoubleSide,
+    });
+    const sphere = new THREE.Mesh(sphereGeo, sphereMat);
+    scene.add(sphere);
+
+    // Wireframe sphere
+    const wireGeo = new THREE.SphereGeometry(1, 16, 12);
+    const wireMat = new THREE.MeshBasicMaterial({
+      color: accentColor,
+      wireframe: true, transparent: true, opacity: 0.2,
+    });
+    scene.add(new THREE.Mesh(wireGeo, wireMat));
+
+    // Rho line from origin to a point on the sphere
+    // Point at phi=pi/4, theta=pi/6 => (sin(pi/4)cos(pi/6), cos(pi/4), sin(pi/4)sin(pi/6))
+    const phi0 = Math.PI / 4;
+    const theta0 = Math.PI / 6;
+    const px = Math.sin(phi0) * Math.cos(theta0);
+    const py = Math.cos(phi0); // Three.js y = math z
+    const pz = Math.sin(phi0) * Math.sin(theta0);
+
+    const rhoMat = new THREE.LineBasicMaterial({ color: orangeColor });
+    const rhoPts = [new THREE.Vector3(0, 0, 0), new THREE.Vector3(px, py, pz)];
+    scene.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(rhoPts), rhoMat));
+
+    // Small dot at the point
+    const dotGeo = new THREE.SphereGeometry(0.04, 12, 8);
+    const dotMat = new THREE.MeshBasicMaterial({ color: orangeColor });
+    const dot = new THREE.Mesh(dotGeo, dotMat);
+    dot.position.set(px, py, pz);
+    scene.add(dot);
+
+    // Phi arc (from +y axis down to the rho line) in the plane containing the point
+    const phiArcPts: THREE.Vector3[] = [];
+    const arcR = 0.35;
+    for (let i = 0; i <= 20; i++) {
+      const a = (i / 20) * phi0;
+      phiArcPts.push(new THREE.Vector3(
+        arcR * Math.sin(a) * Math.cos(theta0),
+        arcR * Math.cos(a),
+        arcR * Math.sin(a) * Math.sin(theta0)
+      ));
+    }
+    const phiArcMat = new THREE.LineBasicMaterial({ color: purpleColor });
+    scene.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(phiArcPts), phiArcMat));
+
+    // Theta arc (from +x axis to the projection on xz plane)
+    const thetaArcPts: THREE.Vector3[] = [];
+    const tArcR = 0.5;
+    for (let i = 0; i <= 20; i++) {
+      const a = (i / 20) * theta0;
+      thetaArcPts.push(new THREE.Vector3(tArcR * Math.cos(a), 0, tArcR * Math.sin(a)));
+    }
+    const thetaArcMat = new THREE.LineBasicMaterial({ color: greenColor });
+    scene.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(thetaArcPts), thetaArcMat));
+
+    // Projection line from point down to xz plane
+    const projMat = new THREE.LineDashedMaterial({
+      color: isDark ? 0x666666 : 0x999999,
+      dashSize: 0.05, gapSize: 0.05,
+    });
+    const projPts = [new THREE.Vector3(px, py, pz), new THREE.Vector3(px, 0, pz)];
+    const projLine = new THREE.Line(new THREE.BufferGeometry().setFromPoints(projPts), projMat);
+    projLine.computeLineDistances();
+    scene.add(projLine);
+
+    // Axes
+    const axColor = isDark ? 0x666666 : 0x999999;
+    const axMat = new THREE.LineBasicMaterial({ color: axColor });
+    for (const dir of [[2, 0, 0], [0, 2, 0], [0, 0, 2]] as [number, number, number][]) {
+      const pts = [new THREE.Vector3(0, 0, 0), new THREE.Vector3(...dir)];
+      scene.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts), axMat));
+    }
+
+    // Labels
+    function makeLabel(text: string, pos: [number, number, number], color: string, size = 0.35, alwaysOnTop = false) {
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d")!;
+      canvas.width = 512; canvas.height = 128;
+      ctx.font = "bold 64px sans-serif";
+      ctx.fillStyle = color;
+      ctx.textAlign = "center"; ctx.textBaseline = "middle";
+      ctx.fillText(text, 256, 64);
+      const tex = new THREE.CanvasTexture(canvas);
+      const mat = new THREE.SpriteMaterial({ map: tex, transparent: true, depthTest: !alwaysOnTop });
+      const sprite = new THREE.Sprite(mat);
+      sprite.position.set(...pos);
+      sprite.scale.set(size * 2.5, size * 0.6, 1);
+      if (alwaysOnTop) sprite.renderOrder = 999;
+      scene.add(sprite);
+    }
+
+    const lc = isDark ? "#888" : "#666";
+    makeLabel("x", [1.8, -0.15, 0], lc, 1.0);
+    makeLabel("z", [0, 1.8, 0], lc, 1.0);
+    makeLabel("y", [0, -0.15, 1.8], lc, 1.0);
+    makeLabel("1", [1.1, -0.18, 0], lc, 0.7);
+
+    // Coordinate labels — alwaysOnTop so the sphere never clips them
+    const oc = isDark ? "#f0883e" : "#b35900";
+    const pc = isDark ? "#d2a8ff" : "#6639ba";
+    const gc = isDark ? "#7ee787" : "#1a7f37";
+    makeLabel("\u03C1", [(px / 2) + 0.2, (py / 2) + 0.2, (pz / 2) + 0.08], oc, 0.8, true);
+    makeLabel("\u03C6", [0.12, 0.55, 0.08], pc, 0.7, true);
+    makeLabel("\u03B8", [0.55, -0.18, 0.3], gc, 0.7, true);
+
+    // Lighting
+    scene.add(new THREE.AmbientLight(0xffffff, 0.6));
+    const dl = new THREE.DirectionalLight(0xffffff, 0.6);
+    dl.position.set(3, 4, 3);
+    scene.add(dl);
+
+    // Controls
+    const controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.08;
+    controls.autoRotate = true;
+    controls.autoRotateSpeed = 0.5;
+    controls.enableZoom = true;
+    controls.minDistance = 2;
+    controls.maxDistance = 12;
+    controls.target.set(0, 0, 0);
+
+    let animId: number;
+    function animate() {
+      animId = requestAnimationFrame(animate);
+      controls.update();
+      renderer.render(scene, camera);
+    }
+    animate();
+
+    return () => { cancelAnimationFrame(animId); renderer.dispose(); };
+  }
+
+  function setup() {
+    document.querySelectorAll<HTMLElement>("[data-sp3d]").forEach((el) => {
+      if (el.querySelector("canvas")) return;
+      const obs = new IntersectionObserver(
+        (entries) => { if (entries[0].isIntersecting) { obs.disconnect(); initScene(el); } },
+        { threshold: 0.05 }
+      );
+      obs.observe(el);
+    });
+  }
+
+  setup();
+  document.addEventListener("astro:page-load", setup);
+</script>
+
+<style>
+  .sp3 { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .sp3-canvas {
+    width:100%; max-width:480px; min-height:360px;
+    border-radius:8px; overflow:hidden;
+  }
+  .sp3-canvas canvas { border-radius:8px; }
+  .sp3-hint {
+    font-family:'Libre Baskerville',Georgia,serif;
+    font-size:0.8rem; color:#888; margin-top:0.4rem;
+  }
+</style>

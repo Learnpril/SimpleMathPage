@@ -1,0 +1,57 @@
+---
+/**
+ * GreensTheoremDiagram — SVG showing a closed curve C (unit circle)
+ * enclosing a shaded region D, with a counterclockwise arrow on the
+ * boundary and labels showing the boundary-to-interior relationship.
+ */
+---
+
+<figure class="diagram-container" role="img" aria-label="Green's Theorem diagram showing a closed curve C enclosing a shaded region D with counterclockwise orientation">
+  <svg viewBox="-160 -160 320 350" width="320" height="350" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <marker id="gt-ah" markerWidth="7" markerHeight="5" refX="6" refY="2.5" orient="auto">
+        <path d="M0,0 L7,2.5 L0,5 Z" class="gt-arrow" />
+      </marker>
+    </defs>
+    <!-- Shaded region D -->
+    <circle cx="0" cy="0" r="110" class="gt-region" />
+    <!-- Boundary curve C with direction arrows -->
+    <!-- Upper arc: right to top -->
+    <path d="M 110 0 A 110 110 0 0 0 0 -110" class="gt-curve" fill="none" marker-end="url(#gt-ah)" />
+    <!-- Upper arc: top to left -->
+    <path d="M 0 -110 A 110 110 0 0 0 -110 0" class="gt-curve" fill="none" marker-end="url(#gt-ah)" />
+    <!-- Lower arc: left to bottom -->
+    <path d="M -110 0 A 110 110 0 0 0 0 110" class="gt-curve" fill="none" marker-end="url(#gt-ah)" />
+    <!-- Lower arc: bottom to right -->
+    <path d="M 0 110 A 110 110 0 0 0 110 0" class="gt-curve" fill="none" marker-end="url(#gt-ah)" />
+    <!-- Labels -->
+    <text x="0" y="8" text-anchor="middle" class="gt-label-d">D</text>
+    <text x="90" y="-80" class="gt-label-c">C</text>
+    <!-- Legend at bottom -->
+    <text x="0" y="155" text-anchor="middle" class="gt-legend">
+      <tspan class="gt-legend-curve">&#9644;</tspan> Boundary C (counterclockwise)
+    </text>
+    <text x="0" y="175" text-anchor="middle" class="gt-legend">
+      <tspan class="gt-legend-region">&#9632;</tspan> Region D enclosed by C
+    </text>
+  </svg>
+</figure>
+
+<style>
+  .gt-region { fill: rgba(88, 166, 255, 0.1); stroke: none; }
+  .gt-curve { stroke: #58a6ff; stroke-width: 2.5; }
+  .gt-arrow { fill: #58a6ff; }
+  .gt-label-d { font: bold 22px 'Libre Baskerville', Georgia, serif; fill: #d2a8ff; }
+  .gt-label-c { font: italic 18px 'Libre Baskerville', Georgia, serif; fill: #58a6ff; }
+  .gt-legend { font: 11px 'Libre Baskerville', Georgia, serif; fill: #888; }
+  .gt-legend-curve { fill: #58a6ff; }
+  .gt-legend-region { fill: rgba(88, 166, 255, 0.3); }
+  [data-theme="light"] .gt-region { fill: rgba(5, 80, 174, 0.08); }
+  [data-theme="light"] .gt-curve { stroke: #0550ae; }
+  [data-theme="light"] .gt-arrow { fill: #0550ae; }
+  [data-theme="light"] .gt-label-d { fill: #6639ba; }
+  [data-theme="light"] .gt-label-c { fill: #0550ae; }
+  [data-theme="light"] .gt-legend { fill: #666; }
+  [data-theme="light"] .gt-legend-curve { fill: #0550ae; }
+  [data-theme="light"] .gt-legend-region { fill: rgba(5, 80, 174, 0.15); }
+</style>

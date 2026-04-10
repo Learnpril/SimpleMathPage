@@ -1,0 +1,75 @@
+---
+/**
+ * StokesTriangleDiagram — SVG showing the triangle with vertices
+ * (1,0,0), (0,1,0), (0,0,1) in a 3D perspective view with
+ * counterclockwise arrows on the boundary and a normal vector.
+ */
+---
+
+<figure class="diagram-container" role="img" aria-label="Triangle in 3D with vertices at 1 0 0 and 0 1 0 and 0 0 1 with counterclockwise boundary and upward normal vector">
+  <svg viewBox="-20 -20 320 310" width="320" height="310" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <marker id="stt-ah" markerWidth="7" markerHeight="5" refX="6" refY="2.5" orient="auto">
+        <path d="M0,0 L7,2.5 L0,5 Z" class="stt-arrow" />
+      </marker>
+      <marker id="stt-ah-n" markerWidth="7" markerHeight="5" refX="6" refY="2.5" orient="auto">
+        <path d="M0,0 L7,2.5 L0,5 Z" class="stt-arrow-n" />
+      </marker>
+    </defs>
+    <!-- Axes -->
+    <line x1="40" y1="220" x2="280" y2="220" class="stt-axis" />
+    <line x1="40" y1="220" x2="40" y2="20" class="stt-axis" />
+    <line x1="40" y1="220" x2="0" y2="260" class="stt-axis" />
+    <text x="285" y="225" class="stt-ax-label">x</text>
+    <text x="35" y="15" class="stt-ax-label">z</text>
+    <text x="-5" y="268" class="stt-ax-label">y</text>
+    <!-- Shaded triangle -->
+    <polygon points="240,220 40,220 40,60" class="stt-surface" />
+    <!-- Triangle edges with arrows (counterclockwise when viewed from above-right) -->
+    <line x1="240" y1="220" x2="45" y2="220" class="stt-edge" marker-end="url(#stt-ah)" />
+    <line x1="40" y1="220" x2="40" y2="65" class="stt-edge" marker-end="url(#stt-ah)" />
+    <line x1="40" y1="60" x2="235" y2="218" class="stt-edge" marker-end="url(#stt-ah)" />
+    <!-- Vertex dots -->
+    <circle cx="240" cy="220" r="4" class="stt-dot" />
+    <circle cx="40" cy="220" r="4" class="stt-dot" />
+    <circle cx="40" cy="60" r="4" class="stt-dot" />
+    <!-- Vertex labels -->
+    <text x="248" y="238" class="stt-pt">(1, 0, 0)</text>
+    <text x="10" y="238" class="stt-pt">(0, 1, 0)</text>
+    <text x="48" y="52" class="stt-pt">(0, 0, 1)</text>
+    <!-- Normal vector from centroid -->
+    <line x1="107" y1="167" x2="150" y2="120" class="stt-normal" marker-end="url(#stt-ah-n)" />
+    <text x="155" y="115" class="stt-label-n">n</text>
+    <!-- Surface label -->
+    <text x="120" y="185" class="stt-label-s">S</text>
+    <!-- Result -->
+    <text x="150" y="280" text-anchor="middle" class="stt-result">Circulation = 3/2</text>
+  </svg>
+</figure>
+
+<style>
+  .stt-axis { stroke: #666; stroke-width: 1; }
+  .stt-ax-label { font: bold 14px sans-serif; fill: #888; }
+  .stt-surface { fill: rgba(126, 231, 135, 0.1); stroke: none; }
+  .stt-edge { stroke: #58a6ff; stroke-width: 2.5; }
+  .stt-arrow { fill: #58a6ff; }
+  .stt-normal { stroke: #f0883e; stroke-width: 2.5; }
+  .stt-arrow-n { fill: #f0883e; }
+  .stt-dot { fill: #888; }
+  .stt-pt { font: 10px sans-serif; fill: #888; }
+  .stt-label-n { font: bold 16px 'Libre Baskerville', Georgia, serif; fill: #f0883e; }
+  .stt-label-s { font: bold 20px 'Libre Baskerville', Georgia, serif; fill: #d2a8ff; }
+  .stt-result { font: 12px 'Libre Baskerville', Georgia, serif; fill: #888; }
+  [data-theme="light"] .stt-axis { stroke: #999; }
+  [data-theme="light"] .stt-ax-label { fill: #666; }
+  [data-theme="light"] .stt-surface { fill: rgba(26, 127, 55, 0.08); }
+  [data-theme="light"] .stt-edge { stroke: #0550ae; }
+  [data-theme="light"] .stt-arrow { fill: #0550ae; }
+  [data-theme="light"] .stt-normal { stroke: #b35900; }
+  [data-theme="light"] .stt-arrow-n { fill: #b35900; }
+  [data-theme="light"] .stt-dot { fill: #666; }
+  [data-theme="light"] .stt-pt { fill: #666; }
+  [data-theme="light"] .stt-label-n { fill: #b35900; }
+  [data-theme="light"] .stt-label-s { fill: #6639ba; }
+  [data-theme="light"] .stt-result { fill: #666; }
+</style>

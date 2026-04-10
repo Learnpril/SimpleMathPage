@@ -1,0 +1,93 @@
+---
+/**
+ * GreensSquareDiagram — SVG showing the unit square boundary with
+ * counterclockwise arrows on each edge, shaded interior D, and
+ * labeled corners for the Green's Theorem verification example.
+ */
+---
+
+<figure class="diagram-container" role="img" aria-label="Unit square with counterclockwise boundary arrows and shaded region D for Green's Theorem verification">
+  <svg viewBox="-50 -50 310 340" width="310" height="340" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <marker id="gsq-ah" markerWidth="7" markerHeight="5" refX="6" refY="2.5" orient="auto">
+        <path d="M0,0 L7,2.5 L0,5 Z" class="gsq-arrow" />
+      </marker>
+      <marker id="gsq-ah-ax" markerWidth="6" markerHeight="4" refX="5" refY="2" orient="auto">
+        <path d="M0,0 L6,2 L0,4 Z" class="gsq-ax-arrow" />
+      </marker>
+    </defs>
+    <!-- Axes -->
+    <line x1="-20" y1="210" x2="250" y2="210" class="gsq-axis" marker-end="url(#gsq-ah-ax)" />
+    <line x1="0" y1="230" x2="0" y2="-30" class="gsq-axis" marker-end="url(#gsq-ah-ax)" />
+    <text x="255" y="215" class="gsq-ax-label">x</text>
+    <text x="-5" y="-35" class="gsq-ax-label">y</text>
+    <!-- Tick marks -->
+    <line x1="200" y1="207" x2="200" y2="213" class="gsq-tick" />
+    <text x="200" y="228" text-anchor="middle" class="gsq-num">1</text>
+    <line x1="-3" y1="10" x2="3" y2="10" class="gsq-tick" />
+    <text x="-15" y="15" class="gsq-num">1</text>
+    <!-- Shaded region D -->
+    <rect x="0" y="10" width="200" height="200" class="gsq-region" />
+    <!-- Boundary edges with arrows (counterclockwise) -->
+    <!-- Bottom: (0,0) to (1,0) — right -->
+    <line x1="5" y1="210" x2="190" y2="210" class="gsq-edge" marker-end="url(#gsq-ah)" />
+    <!-- Right: (1,0) to (1,1) — up -->
+    <line x1="200" y1="205" x2="200" y2="20" class="gsq-edge" marker-end="url(#gsq-ah)" />
+    <!-- Top: (1,1) to (0,1) — left -->
+    <line x1="195" y1="10" x2="10" y2="10" class="gsq-edge-top" marker-end="url(#gsq-ah)" />
+    <!-- Left: (0,1) to (0,0) — down -->
+    <line x1="0" y1="15" x2="0" y2="200" class="gsq-edge" marker-end="url(#gsq-ah)" />
+    <!-- Corner dots -->
+    <circle cx="0" cy="210" r="3" class="gsq-dot" />
+    <circle cx="200" cy="210" r="3" class="gsq-dot" />
+    <circle cx="200" cy="10" r="3" class="gsq-dot" />
+    <circle cx="0" cy="10" r="3" class="gsq-dot" />
+    <!-- Corner labels -->
+    <text x="-10" y="228" class="gsq-pt">(0,0)</text>
+    <text x="205" y="228" class="gsq-pt">(1,0)</text>
+    <text x="205" y="5" class="gsq-pt">(1,1)</text>
+    <text x="-10" y="5" text-anchor="end" class="gsq-pt">(0,1)</text>
+    <!-- Region label -->
+    <text x="100" y="115" text-anchor="middle" class="gsq-label-d">D</text>
+    <!-- Edge contribution labels -->
+    <text x="100" y="250" text-anchor="middle" class="gsq-contrib">bottom: 0</text>
+    <text x="230" y="115" class="gsq-contrib">right: 0</text>
+    <text x="100" y="-10" text-anchor="middle" class="gsq-contrib-top">top: -1</text>
+    <text x="-35" y="115" text-anchor="end" class="gsq-contrib">left: 0</text>
+    <!-- Result -->
+    <text x="100" y="280" text-anchor="middle" class="gsq-result">Total = 0 + 0 + (-1) + 0 = -1</text>
+  </svg>
+</figure>
+
+<style>
+  .gsq-axis { stroke: #666; stroke-width: 1; fill: none; }
+  .gsq-ax-arrow { fill: #666; }
+  .gsq-ax-label { font: bold 14px sans-serif; fill: #888; }
+  .gsq-tick { stroke: #666; stroke-width: 1; }
+  .gsq-num { font: 12px sans-serif; fill: #888; }
+  .gsq-region { fill: rgba(126, 231, 135, 0.1); stroke: none; }
+  .gsq-edge { stroke: #7ee787; stroke-width: 2.5; }
+  .gsq-edge-top { stroke: #f0883e; stroke-width: 2.5; }
+  .gsq-arrow { fill: #7ee787; }
+  .gsq-dot { fill: #888; }
+  .gsq-pt { font: 10px sans-serif; fill: #888; }
+  .gsq-label-d { font: bold 22px 'Libre Baskerville', Georgia, serif; fill: #d2a8ff; }
+  .gsq-contrib { font: 11px 'Libre Baskerville', Georgia, serif; fill: #7ee787; }
+  .gsq-contrib-top { font: 11px 'Libre Baskerville', Georgia, serif; fill: #f0883e; }
+  .gsq-result { font: 12px 'Libre Baskerville', Georgia, serif; fill: #888; }
+  [data-theme="light"] .gsq-axis { stroke: #999; }
+  [data-theme="light"] .gsq-ax-arrow { fill: #999; }
+  [data-theme="light"] .gsq-ax-label { fill: #666; }
+  [data-theme="light"] .gsq-tick { stroke: #999; }
+  [data-theme="light"] .gsq-num { fill: #666; }
+  [data-theme="light"] .gsq-region { fill: rgba(26, 127, 55, 0.08); }
+  [data-theme="light"] .gsq-edge { stroke: #1a7f37; }
+  [data-theme="light"] .gsq-edge-top { stroke: #b35900; }
+  [data-theme="light"] .gsq-arrow { fill: #1a7f37; }
+  [data-theme="light"] .gsq-dot { fill: #666; }
+  [data-theme="light"] .gsq-pt { fill: #666; }
+  [data-theme="light"] .gsq-label-d { fill: #6639ba; }
+  [data-theme="light"] .gsq-contrib { fill: #1a7f37; }
+  [data-theme="light"] .gsq-contrib-top { fill: #b35900; }
+  [data-theme="light"] .gsq-result { fill: #666; }
+</style>

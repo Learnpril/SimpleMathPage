@@ -1,0 +1,102 @@
+---
+/**
+ * QuarterDiskDiagram — Shows the quarter-disk in the first quadrant
+ * with radius 2, shaded, with r and θ limits labeled clearly outside.
+ */
+const w = 380;
+const h = 380;
+const pad = 60;
+const R = 150; // radius in pixels
+
+const cx = pad;
+const cy = h - pad;
+
+// Quarter-circle arc points
+const arcPts: string[] = [`${cx},${cy}`];
+for (let i = 0; i <= 40; i++) {
+  const a = (i / 40) * Math.PI / 2;
+  arcPts.push(`${cx + R * Math.cos(a)},${cy - R * Math.sin(a)}`);
+}
+arcPts.push(`${cx},${cy}`);
+
+// θ arc for label
+const thetaR = 40;
+const thetaPts: string[] = [];
+for (let i = 0; i <= 20; i++) {
+  const a = (i / 20) * Math.PI / 2;
+  thetaPts.push(`${cx + thetaR * Math.cos(a)},${cy - thetaR * Math.sin(a)}`);
+}
+---
+
+<figure class="qdd" role="img" aria-label="Quarter-disk in the first quadrant with radius 2, showing r from 0 to 2 and theta from 0 to pi over 2">
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    {/* Axes */}
+    <line x1={pad - 10} y1={cy} x2={w - 20} y2={cy} class="qdd-axis" stroke-width="1" />
+    <line x1={cx} y1={h - pad + 10} x2={cx} y2={15} class="qdd-axis" stroke-width="1" />
+    <text class="qdd-axlabel" x={w - 16} y={cy - 10} font-size="13">x</text>
+    <text class="qdd-axlabel" x={cx + 12} y={24} font-size="13">y</text>
+
+    {/* Shaded quarter-disk */}
+    <polygon points={arcPts.join(" ")} class="qdd-shade" />
+
+    {/* Quarter-circle arc */}
+    <polyline points={arcPts.slice(1, -1).join(" ")} fill="none" class="qdd-arc" stroke-width="2.5" />
+
+    {/* Edges along axes */}
+    <line x1={cx} y1={cy} x2={cx + R} y2={cy} class="qdd-arc" stroke-width="2" />
+    <line x1={cx} y1={cy} x2={cx} y2={cy - R} class="qdd-arc" stroke-width="2" />
+
+    {/* θ arc */}
+    <polyline points={thetaPts.join(" ")} fill="none" class="qdd-theta-arc" stroke-width="1.5" />
+
+    {/* Green radius line from origin to arc at ~35° */}
+    <line x1={cx} y1={cy}
+          x2={cx + R * Math.cos(0.6)} y2={cy - R * Math.sin(0.6)}
+          class="qdd-r-line" stroke-width="2.5" />
+
+    {/* Tick marks */}
+    <text class="qdd-tick" x={cx + R} y={cy + 20} font-size="12" text-anchor="middle">2</text>
+    <text class="qdd-tick" x={cx - 10} y={cy - R + 5} font-size="12" text-anchor="end">2</text>
+
+    {/* Area label — centered in the quarter-disk */}
+    <text class="qdd-area" x={cx + R * 0.25} y={cy - R * 0.5} font-size="14" text-anchor="middle">Area = π</text>
+  </svg>
+  <div class="qdd-legend">
+    <span class="qdd-leg-item"><span class="qdd-swatch qdd-sw-r"></span> r: 0 → 2</span>
+    <span class="qdd-leg-item"><span class="qdd-swatch qdd-sw-theta"></span> θ: 0 → π/2</span>
+    <span class="qdd-leg-item"><span class="qdd-swatch qdd-sw-area"></span> quarter-disk, first quadrant</span>
+  </div>
+</figure>
+
+<style>
+  .qdd { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .qdd svg { max-width:100%; height:auto; }
+  .qdd-axis { stroke:#555; }
+  .qdd-axlabel { fill:#888; font-family:'Libre Baskerville',Georgia,serif; }
+  .qdd-shade { fill:#58a6ff; opacity:0.12; }
+  .qdd-arc { stroke:#58a6ff; }
+  .qdd-theta-arc { stroke:#d2a8ff; }
+  .qdd-r-line { stroke:#7ee787; }
+  .qdd-tick { fill:#888; font-family:'Libre Baskerville',Georgia,serif; }
+  .qdd-area { fill:#f0883e; font-family:'Libre Baskerville',Georgia,serif; font-weight:bold; }
+  .qdd-legend {
+    display:flex; gap:1rem; flex-wrap:wrap; justify-content:center;
+    margin-top:0.5rem; font-family:'Libre Baskerville',Georgia,serif; font-size:0.85rem;
+  }
+  .qdd-leg-item { display:flex; align-items:center; gap:0.35rem; }
+  .qdd-swatch { display:inline-block; width:16px; height:4px; border-radius:2px; }
+  .qdd-sw-r { background:#7ee787; }
+  .qdd-sw-theta { background:#d2a8ff; }
+  .qdd-sw-area { background:#58a6ff; opacity:0.4; }
+  :global([data-theme="light"]) .qdd-axis { stroke:#bbb; }
+  :global([data-theme="light"]) .qdd-axlabel { fill:#666; }
+  :global([data-theme="light"]) .qdd-shade { fill:#0550ae; }
+  :global([data-theme="light"]) .qdd-arc { stroke:#0550ae; }
+  :global([data-theme="light"]) .qdd-theta-arc { stroke:#6639ba; }
+  :global([data-theme="light"]) .qdd-r-line { stroke:#116329; }
+  :global([data-theme="light"]) .qdd-tick { fill:#666; }
+  :global([data-theme="light"]) .qdd-area { fill:#b35900; }
+  :global([data-theme="light"]) .qdd-sw-r { background:#116329; }
+  :global([data-theme="light"]) .qdd-sw-theta { background:#6639ba; }
+  :global([data-theme="light"]) .qdd-sw-area { background:#0550ae; opacity:0.4; }
+</style>

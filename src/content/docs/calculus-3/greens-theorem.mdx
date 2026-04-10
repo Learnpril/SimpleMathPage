@@ -1,8 +1,210 @@
 ---
-title: "Green's Theorem"
-description: "Connect line integrals around closed curves to double integrals over the enclosed region"
+title: Green's Theorem
+description: Learn Green's Theorem and how it relates line integrals around closed curves to double integrals over the enclosed region
 sidebar:
   order: 16
 ---
 
-Content coming soon.
+## What You'll Learn
+
+In this lesson you'll learn Green's Theorem, which connects a line integral around a closed curve to a double integral over the region inside. This is the first of the three big theorems of vector calculus (Green's, Stokes', and the Divergence Theorem), and it's a game-changer for computing integrals.
+
+## The Concept
+
+### The Setup
+
+Imagine a closed curve C in the plane that encloses a region D. You're walking along C counterclockwise (this is called positive orientation). Green's Theorem says that the line integral of a vector field around C equals a double integral over D.
+
+import GreensTheoremDiagram from "../../../components/GreensTheoremDiagram.astro";
+
+<GreensTheoremDiagram />
+
+### The Theorem
+
+If C is a positively oriented (counterclockwise), piecewise smooth, simple closed curve enclosing a region D, and $\mathbf{F} = \langle P, Q \rangle$ has continuous partial derivatives on an open region containing D, then
+
+$$
+\oint_C P \, dx + Q \, dy = \iint_D \left( \frac{\partial Q}{\partial x} - \frac{\partial P}{\partial y} \right) dA
+$$
+
+The left side is a line integral around the boundary. The right side is a double integral over the interior. Green's Theorem says they're equal.
+
+### Why This Matters
+
+The power of Green's Theorem is that it lets you choose whichever side is easier to compute. Often the double integral on the right is much simpler than parametrizing the boundary curve on the left. Sometimes it goes the other way. The theorem gives you options.
+
+### What the Integrand Means
+
+The expression $\frac{\partial Q}{\partial x} - \frac{\partial P}{\partial y}$ is the 2D version of curl. It measures how much the vector field "rotates" at each point. When you integrate this over the entire region D, you get the total circulation around the boundary C. Green's Theorem is saying: the total rotation inside equals the total circulation around the edge.
+
+### Requirements
+
+Green's Theorem needs:
+
+- C must be closed (starts and ends at the same point)
+- C must be positively oriented (counterclockwise)
+- C must be simple (doesn't cross itself)
+- P and Q must have continuous partial derivatives on and inside C
+
+## Worked Examples
+
+**Example 1: Line integral via Green's Theorem**
+
+Evaluate $\oint_C (x^2 + y)\,dx + (3x - y)\,dy$ where C is the unit circle traversed counterclockwise.
+
+Here $P = x^2 + y$ and $Q = 3x - y$
+
+Compute the partial derivatives:
+
+$$
+\frac{\partial Q}{\partial x} = 3 \qquad \frac{\partial P}{\partial y} = 1
+$$
+
+The integrand for Green's Theorem is
+
+$$
+\frac{\partial Q}{\partial x} - \frac{\partial P}{\partial y} = 3 - 1 = 2
+$$
+
+Now the double integral over the unit disk D:
+
+$$
+\iint_D 2 \, dA = 2 \cdot \text{(area of unit disk)} = 2\pi
+$$
+
+That's it. Instead of parametrizing the unit circle and computing a messy line integral, Green's Theorem turned it into multiplying a constant by the area of a circle.
+
+**Example 2: Computing area with Green's Theorem**
+
+Green's Theorem can compute the area of a region. If you choose P = -y and Q = x, then
+
+$$
+\frac{\partial Q}{\partial x} - \frac{\partial P}{\partial y} = 1 - (-1) = 2
+$$
+
+So Green's Theorem gives
+
+$$
+\oint_C -y\,dx + x\,dy = \iint_D 2\,dA = 2 \cdot \text{Area}(D)
+$$
+
+Dividing both sides by 2:
+
+$$
+\text{Area}(D) = \frac{1}{2}\oint_C -y\,dx + x\,dy
+$$
+
+This is the shoelace-style area formula. It computes the area enclosed by any closed curve using only a line integral around the boundary. Surveyors and computer graphics algorithms use this idea to compute areas of irregular polygons.
+
+**Example 3: Verifying Green's Theorem on a square**
+
+Let $\mathbf{F} = \langle y,\; 0 \rangle$ and let C be the boundary of the unit square with corners at (0,0), (1,0), (1,1), (0,1), traversed counterclockwise.
+
+import GreensSquareDiagram from "../../../components/GreensSquareDiagram.astro";
+
+<GreensSquareDiagram />
+
+The green edges contribute zero to the line integral (either y = 0 on the bottom, or dx = 0 on the vertical sides). The orange top edge is the only one that contributes, giving -1. The labels show each edge's contribution.
+
+The double integral side: $P = y$ and $Q = 0,$ so
+
+$$
+\frac{\partial Q}{\partial x} - \frac{\partial P}{\partial y} = 0 - 1 = -1
+$$
+
+$$
+\iint_D (-1)\,dA = -1 \cdot \text{(area of unit square)} = -1
+$$
+
+The line integral side: we need to compute $\oint_C y\,dx + 0\,dy = \oint_C y\,dx$ along the four edges.
+
+- Bottom edge (y = 0, x from 0 to 1): $\int_0^1 0\,dx = 0$
+- Right edge (x = 1, dx = 0): contributes 0
+- Top edge (y = 1, x from 1 to 0): $\int_1^0 1\,dx = -1$
+- Left edge (x = 0, dx = 0): contributes 0
+
+Total line integral = 0 + 0 + (-1) + 0 = -1
+
+Both sides give -1. Green's Theorem checks out.
+
+## Real-World Application
+
+Green's Theorem connects boundaries to interiors, which is useful whenever you can measure one more easily than the other:
+
+- Physics uses it to relate circulation of a fluid around a boundary to the total vorticity (rotation) inside the region
+- Computer graphics uses the area formula from Example 2 to compute areas of arbitrary polygons from their vertex coordinates
+- Engineering uses it to convert difficult boundary measurements into simpler area integrals for stress analysis and heat flow
+- Game development uses it for efficient area calculations of irregular shapes, flow field analysis, and determining whether points are inside closed boundaries
+
+:::note[You've Got This]
+Green's Theorem is the 2D bridge between line integrals and double integrals. The key formula is $\frac{\partial Q}{\partial x} - \frac{\partial P}{\partial y}$ integrated over the region. Remember: counterclockwise orientation, closed curve, and continuous partials. When you see a line integral around a closed curve, always ask yourself whether Green's Theorem makes it easier. Often it does, dramatically. This theorem is the 2D warm-up for Stokes' Theorem and the Divergence Theorem, which do the same thing in 3D.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="calculus3-greens-theorem"
+  questions={[
+    {
+      id: "q1",
+      text: "Green's Theorem relates",
+      options: [
+        "a triple integral to a surface integral",
+        "a line integral around a closed curve to a double integral over the enclosed region",
+        "two line integrals along different paths",
+        "a scalar function to its gradient",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Green's Theorem converts a line integral around the boundary C into a double integral over the interior D.",
+    },
+    {
+      id: "q2",
+      text: "For $P = x^2 + y$ and $Q = 3x - y$, the Green's Theorem integrand $\\partial Q/\\partial x - \\partial P/\\partial y$ equals",
+      options: ["$4$", "$-2$", "$2$", "$0$"],
+      correctIndex: 2,
+      explanation: "dQ/dx = 3 and dP/dy = 1, so the integrand is 3 - 1 = 2.",
+    },
+    {
+      id: "q3",
+      text: "Green's Theorem requires the curve C to be oriented",
+      options: [
+        "clockwise",
+        "in any direction",
+        "counterclockwise (positive orientation)",
+        "along the x-axis only",
+      ],
+      correctIndex: 2,
+      explanation:
+        "Positive orientation means counterclockwise. If you go clockwise, the sign flips.",
+    },
+    {
+      id: "q4",
+      text: "The area of a region D can be computed using Green's Theorem as",
+      options: [
+        "$\\oint_C P\\,dx$",
+        "$\\frac{1}{2}\\oint_C -y\\,dx + x\\,dy$",
+        "$\\iint_D x\\,dA$",
+        "$\\oint_C x^2\\,dy$",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Choosing P = -y and Q = x gives an integrand of 2, so the area is half the line integral.",
+    },
+    {
+      id: "q5",
+      text: "The expression $\\partial Q/\\partial x - \\partial P/\\partial y$ in Green's Theorem represents",
+      options: [
+        "the divergence of F",
+        "the magnitude of F",
+        "the 2D curl (rotation) of the vector field",
+        "the potential function",
+      ],
+      correctIndex: 2,
+      explanation:
+        "This quantity measures local rotation of the field. Integrating it over D gives total circulation around C.",
+    },
+  ]}
+/>

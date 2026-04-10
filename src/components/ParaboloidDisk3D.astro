@@ -1,0 +1,188 @@
+---
+/**
+ * ParaboloidDisk3D — Interactive 3D visual of z = x² + y² (= r²)
+ * over the unit disk. Volume = π/2.
+ * Shows the bowl-shaped paraboloid with the circular base.
+ */
+---
+
+<figure class="pd3" role="img" aria-label="Interactive 3D visualization of z equals x squared plus y squared over the unit disk">
+  <div class="pd3-canvas" data-pd3d></div>
+  <div class="pd3-hint">Drag to rotate · Scroll to zoom</div>
+</figure>
+
+<script>
+  import * as THREE from "three";
+  import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+
+  function initScene(container: HTMLElement) {
+    const width = Math.min(container.clientWidth, 520);
+    const height = 360;
+    const isDark = document.documentElement.dataset.theme !== "light";
+    const bgColor = isDark ? 0x121212 : 0xf8f9fa;
+
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(bgColor);
+
+    const camera = new THREE.PerspectiveCamera(40, width / height, 0.1, 200);
+    camera.position.set(3, 2.5, 3);
+    camera.lookAt(0, 0.3, 0);
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(width, height);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    container.appendChild(renderer.domElement);
+
+    // Paraboloid z = r² over unit disk, using polar grid
+    // Three.js: x = math x, z = math y, y = math z (up)
+    const rSeg = 20;
+    const tSeg = 40;
+    const surfGeo = new THREE.BufferGeometry();
+    const verts: number[] = [];
+    const colors: number[] = [];
+    const indices: number[] = [];
+
+    for (let i = 0; i <= rSeg; i++) {
+      for (let j = 0; j <= tSeg; j++) {
+        const r = i / rSeg;
+        const theta = (j / tSeg) * Math.PI * 2;
+        const x = r * Math.cos(theta);
+        const my = r * Math.sin(theta);
+        const z = r * r; // z = x² + y² = r²
+        verts.push(x, z * 1.2, my); // scale z for visual
+
+        const t = z;
+        if (isDark) {
+          colors.push(0.34 + t * 0.3, 0.5 + t * 0.2, 1.0 - t * 0.3);
+        } else {
+          colors.push(0.02 + t * 0.2, 0.25 + t * 0.15, 0.68 - t * 0.2);
+        }
+      }
+    }
+
+    for (let i = 0; i < rSeg; i++) {
+      for (let j = 0; j < tSeg; j++) {
+        const a = i * (tSeg + 1) + j;
+        const b = a + 1;
+        const c = a + tSeg + 1;
+        const d = c + 1;
+        indices.push(a, b, c, b, d, c);
+      }
+    }
+
+    surfGeo.setAttribute("position", new THREE.Float32BufferAttribute(verts, 3));
+    surfGeo.setAttribute("color", new THREE.Float32BufferAttribute(colors, 3));
+    surfGeo.setIndex(indices);
+    surfGeo.computeVertexNormals();
+
+    const surfMat = new THREE.MeshPhongMaterial({
+      vertexColors: true, side: THREE.DoubleSide,
+      shininess: 30, transparent: true, opacity: 0.75,
+    });
+    scene.add(new THREE.Mesh(surfGeo, surfMat));
+
+    // Base disk on the floor
+    const diskGeo = new THREE.CircleGeometry(1, 48);
+    diskGeo.rotateX(-Math.PI / 2);
+    const diskMat = new THREE.MeshBasicMaterial({
+      color: isDark ? 0x7ee787 : 0x116329,
+      transparent: true, opacity: 0.15, side: THREE.DoubleSide,
+    });
+    scene.add(new THREE.Mesh(diskGeo, diskMat));
+
+    // Circle outline
+    const circPts: THREE.Vector3[] = [];
+    for (let i = 0; i <= 64; i++) {
+      const a = (i / 64) * Math.PI * 2;
+      circPts.push(new THREE.Vector3(Math.cos(a), 0, Math.sin(a)));
+    }
+    scene.add(new THREE.Line(
+      new THREE.BufferGeometry().setFromPoints(circPts),
+      new THREE.LineBasicMaterial({ color: isDark ? 0x7ee787 : 0x116329 })
+    ));
+
+    // Axes
+    const axColor = isDark ? 0x666666 : 0x999999;
+    const axMat = new THREE.LineBasicMaterial({ color: axColor });
+    for (const dir of [[2, 0, 0], [0, 2, 0], [0, 0, 2]] as [number, number, number][]) {
+      const pts = [new THREE.Vector3(0, 0, 0), new THREE.Vector3(...dir)];
+      scene.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts), axMat));
+    }
+
+    // Labels
+    function makeLabel(text: string, pos: [number, number, number], color: string, size = 0.35) {
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d")!;
+      canvas.width = 256; canvas.height = 64;
+      ctx.font = "bold 32px sans-serif";
+      ctx.fillStyle = color;
+      ctx.textAlign = "center"; ctx.textBaseline = "middle";
+      ctx.fillText(text, 128, 32);
+      const tex = new THREE.CanvasTexture(canvas);
+      const mat = new THREE.SpriteMaterial({ map: tex, transparent: true });
+      const sprite = new THREE.Sprite(mat);
+      sprite.position.set(...pos);
+      sprite.scale.set(size * 2.5, size * 0.6, 1);
+      scene.add(sprite);
+    }
+
+    const lc = isDark ? "#888" : "#666";
+    makeLabel("x", [1.8, -0.1, 0], lc);
+    makeLabel("z = r²", [-0.3, 1.8, 0], lc, 0.4);
+    makeLabel("y", [0, -0.1, 1.8], lc);
+
+    // Lighting
+    scene.add(new THREE.AmbientLight(0xffffff, 0.5));
+    const dl = new THREE.DirectionalLight(0xffffff, 0.8);
+    dl.position.set(2, 4, 3);
+    scene.add(dl);
+
+    // Controls
+    const controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.08;
+    controls.autoRotate = true;
+    controls.autoRotateSpeed = 0.6;
+    controls.enableZoom = true;
+    controls.minDistance = 2;
+    controls.maxDistance = 15;
+    controls.target.set(0, 0.4, 0);
+
+    let animId: number;
+    function animate() {
+      animId = requestAnimationFrame(animate);
+      controls.update();
+      renderer.render(scene, camera);
+    }
+    animate();
+
+    return () => { cancelAnimationFrame(animId); renderer.dispose(); };
+  }
+
+  function setup() {
+    document.querySelectorAll<HTMLElement>("[data-pd3d]").forEach((el) => {
+      if (el.querySelector("canvas")) return;
+      const obs = new IntersectionObserver(
+        (entries) => { if (entries[0].isIntersecting) { obs.disconnect(); initScene(el); } },
+        { threshold: 0.05 }
+      );
+      obs.observe(el);
+    });
+  }
+
+  setup();
+  document.addEventListener("astro:page-load", setup);
+</script>
+
+<style>
+  .pd3 { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .pd3-canvas {
+    width:100%; max-width:520px; min-height:360px;
+    border-radius:8px; overflow:hidden;
+  }
+  .pd3-canvas canvas { border-radius:8px; }
+  .pd3-hint {
+    font-family:'Libre Baskerville',Georgia,serif;
+    font-size:0.8rem; color:#888; margin-top:0.4rem;
+  }
+</style>

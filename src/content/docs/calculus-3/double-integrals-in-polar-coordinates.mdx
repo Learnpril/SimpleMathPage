@@ -1,8 +1,177 @@
 ---
-title: "Double Integrals in Polar Coordinates"
-description: "Convert double integrals to polar coordinates for circular and radial regions"
+title: Double Integrals in Polar Coordinates
+description: Learn how to evaluate double integrals using polar coordinates for regions with circular symmetry
 sidebar:
   order: 10
 ---
 
-Content coming soon.
+## What You'll Learn
+
+In this lesson you'll learn how to convert double integrals from Cartesian (x, y) to polar (r, θ) coordinates. This makes many integrals over circular regions dramatically simpler.
+
+## The Concept
+
+### Why Polar?
+
+Some regions are naturally circular: disks, annuli (rings), sectors (pie slices). Describing these in Cartesian coordinates requires square roots and messy limits. In polar coordinates, a disk is just "r from 0 to R, θ from 0 to 2π." Much cleaner.
+
+### The Conversion
+
+In polar coordinates, x = r cos θ and y = r sin θ. The key substitution for the area element is
+
+$$
+dA = r \, dr \, d\theta
+$$
+
+That extra r is critical. It comes from the Jacobian of the coordinate transformation and accounts for the fact that polar "rectangles" (wedge-shaped pieces) get wider as r increases. A double integral becomes
+
+$$
+\iint_R f(x, y) \, dA = \int_{\alpha}^{\beta} \int_{r_1(\theta)}^{r_2(\theta)} f(r\cos\theta, r\sin\theta) \cdot r \, dr \, d\theta
+$$
+
+### The Most Useful Substitution
+
+The single most common reason to switch to polar is when the integrand contains x² + y², because
+
+$$
+x^2 + y^2 = r^2
+$$
+
+This turns complicated expressions into simple powers of r.
+
+import PolarRegionDiagram from "../../../components/PolarRegionDiagram.astro";
+
+<PolarRegionDiagram />
+
+The green line shows r (distance from origin), the purple arc shows θ (angle from the x-axis), and the orange wedge is a tiny area element dA = r dr dθ. Notice how the wedge gets wider at larger r, which is why the extra r factor is needed.
+
+## Worked Examples
+
+**Example 1: Area of the unit disk**
+
+Compute the area of the disk x² + y² ≤ 1 using polar coordinates.
+
+In polar, the disk is 0 ≤ r ≤ 1 and 0 ≤ θ ≤ 2π. The integrand for area is f = 1
+
+$$
+\text{Area} = \int_0^{2\pi} \int_0^1 r \, dr \, d\theta = \int_0^{2\pi} \left[ \frac{r^2}{2} \right]_0^1 d\theta = \int_0^{2\pi} \frac{1}{2} \, d\theta = \pi
+$$
+
+Exactly what we expect: the area of a circle with radius 1 is π.
+
+**Example 2: Integrating x² + y² over the unit disk**
+
+Evaluate the double integral of f(x, y) = x² + y² over the unit disk.
+
+In polar, x² + y² = r², so
+
+$$
+\int_0^{2\pi} \int_0^1 r^2 \cdot r \, dr \, d\theta = \int_0^{2\pi} \int_0^1 r^3 \, dr \, d\theta
+$$
+
+$$
+= \int_0^{2\pi} \left[ \frac{r^4}{4} \right]_0^1 d\theta = \int_0^{2\pi} \frac{1}{4} \, d\theta = \frac{\pi}{2}
+$$
+
+Try setting this up in Cartesian coordinates and you'll see why polar is so much nicer here.
+
+import ParaboloidDisk3D from "../../../components/ParaboloidDisk3D.astro";
+
+<ParaboloidDisk3D />
+
+The bowl-shaped surface is z = x² + y² = r², rising from 0 at the center to 1 at the edge of the green unit disk. The volume under this paraboloid over the disk is π/2, which is what the polar integral computed.
+
+**Example 3: Quarter-circle region**
+
+Evaluate the double integral of f(x, y) = 1 over the quarter-disk in the first quadrant (x ≥ 0, y ≥ 0, x² + y² ≤ 4).
+
+In polar: r from 0 to 2, θ from 0 to π/2
+
+$$
+\int_0^{\pi/2} \int_0^2 r \, dr \, d\theta = \int_0^{\pi/2} \left[ \frac{r^2}{2} \right]_0^2 d\theta = \int_0^{\pi/2} 2 \, d\theta = \pi
+$$
+
+This is the area of a quarter of a circle with radius 2: (1/4)(π)(4) = π. Checks out.
+
+import QuarterDiskDiagram from "../../../components/QuarterDiskDiagram.astro";
+
+<QuarterDiskDiagram />
+
+The shaded region is the quarter-disk in the first quadrant with radius 2. In polar coordinates, r goes from 0 to 2 and θ goes from 0 to π/2. The area is π.
+
+## Real-World Application
+
+Polar double integrals show up whenever the geometry is circular:
+
+- Game engines use them for circular area-of-effect calculations (explosions, healing auras, detection radii)
+- Physics uses them for mass and moment of inertia of circular plates, disks, and cylinders
+- Engineering uses them for stress analysis on circular cross-sections and heat flow through pipes
+- Computer graphics uses them for radial blur effects and circular sampling patterns
+
+:::note[You've Got This]
+The hardest part of polar integrals is remembering the extra r in dA = r dr dθ. Once you have that, the rest is just setting up the r and θ limits based on the region. If the region is a full disk, θ goes from 0 to 2π. A semicircle is 0 to π. A quarter-circle is 0 to π/2. And r goes from 0 (or the inner radius) to the outer radius. The actual integration is usually easier than Cartesian because the limits are constants.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="calculus3-double-integrals-in-polar-coordinates"
+  questions={[
+    {
+      id: "q1",
+      text: "The area element in polar coordinates is",
+      options: [
+        "$dr \\, d\\theta$",
+        "$r \\, dr \\, d\\theta$",
+        "$r^2 \\, dr \\, d\\theta$",
+        "$dx \\, dy$",
+      ],
+      correctIndex: 1,
+      explanation:
+        "The extra r comes from the Jacobian of the polar transformation.",
+    },
+    {
+      id: "q2",
+      text: "Polar coordinates are most useful when",
+      options: [
+        "the region is rectangular",
+        "the region has circular or radial symmetry",
+        "the function is linear",
+        "there are no trigonometric functions",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Circles, disks, sectors, and annuli are natural in polar coordinates.",
+    },
+    {
+      id: "q3",
+      text: "In polar coordinates, $x^2 + y^2$ becomes",
+      options: ["$r$", "$r^2$", "$\\theta^2$", "$r\\theta$"],
+      correctIndex: 1,
+      explanation: "Since x = r cos θ and y = r sin θ, x² + y² = r².",
+    },
+    {
+      id: "q4",
+      text: "The area of the unit disk computed in polar is",
+      options: ["$2\\pi$", "$\\pi$", "$\\pi/2$", "$1$"],
+      correctIndex: 1,
+      explanation:
+        "Integrating r dr dθ over r from 0 to 1 and θ from 0 to 2π gives π.",
+    },
+    {
+      id: "q5",
+      text: "The extra $r$ in $dA = r \\, dr \\, d\\theta$ accounts for",
+      options: [
+        "polar rectangles getting wider at larger r",
+        "the function being larger",
+        "the angle being in radians",
+        "nothing, it's just convention",
+      ],
+      correctIndex: 0,
+      explanation:
+        "At larger r, the same dθ sweeps a wider arc, so the area element is proportional to r.",
+    },
+  ]}
+/>

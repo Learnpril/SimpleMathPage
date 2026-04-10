@@ -1,0 +1,56 @@
+---
+/**
+ * SurfaceChoiceDiagram — SVG showing two surfaces sharing the same
+ * boundary curve C (unit circle): a flat disk and a dome/hemisphere,
+ * illustrating that Stokes' Theorem gives the same answer for both.
+ */
+---
+
+<figure class="diagram-container" role="img" aria-label="Two different surfaces, a flat disk and a hemisphere, sharing the same boundary circle C, both giving the same Stokes integral">
+  <svg viewBox="-10 -10 440 220" width="440" height="220" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <marker id="sc-ah" markerWidth="6" markerHeight="4" refX="5" refY="2" orient="auto">
+        <path d="M0,0 L6,2 L0,4 Z" class="sc-arrow" />
+      </marker>
+    </defs>
+    <!-- LEFT: Flat disk -->
+    <ellipse cx="105" cy="110" rx="90" ry="35" class="sc-surface" />
+    <path d="M 195 110 A 90 35 0 0 0 15 110" class="sc-boundary" fill="none" marker-end="url(#sc-ah)" />
+    <path d="M 15 110 A 90 35 0 0 0 195 110" class="sc-boundary" fill="none" marker-end="url(#sc-ah)" />
+    <text x="105" y="118" text-anchor="middle" class="sc-label-s">flat disk</text>
+    <text x="105" y="165" text-anchor="middle" class="sc-result">= 2pi</text>
+    <!-- RIGHT: Hemisphere -->
+    <ellipse cx="325" cy="130" rx="90" ry="35" class="sc-surface-light" />
+    <path d="M 325 130 A 90 90 0 0 1 235 130" class="sc-dome" fill="none" />
+    <path d="M 325 130 A 90 90 0 0 0 415 130" class="sc-dome" fill="none" />
+    <path d="M 415 130 A 90 35 0 0 0 235 130" class="sc-boundary" fill="none" marker-end="url(#sc-ah)" />
+    <path d="M 235 130 A 90 35 0 0 0 415 130" class="sc-boundary" fill="none" marker-end="url(#sc-ah)" />
+    <text x="325" y="80" text-anchor="middle" class="sc-label-s">hemisphere</text>
+    <text x="325" y="185" text-anchor="middle" class="sc-result">= 2pi</text>
+    <!-- Divider -->
+    <line x1="215" y1="20" x2="215" y2="200" class="sc-divider" />
+    <!-- Same boundary label -->
+    <text x="220" y="15" text-anchor="middle" class="sc-same">Same boundary C, same answer</text>
+  </svg>
+</figure>
+
+<style>
+  .sc-surface { fill: rgba(88, 166, 255, 0.12); stroke: none; }
+  .sc-surface-light { fill: rgba(88, 166, 255, 0.06); stroke: none; }
+  .sc-boundary { stroke: #58a6ff; stroke-width: 2.5; }
+  .sc-arrow { fill: #58a6ff; }
+  .sc-dome { stroke: #7ee787; stroke-width: 2; stroke-dasharray: 5 3; }
+  .sc-label-s { font: 13px 'Libre Baskerville', Georgia, serif; fill: #d2a8ff; }
+  .sc-result { font: bold 14px 'Libre Baskerville', Georgia, serif; fill: #f0883e; }
+  .sc-divider { stroke: #444; stroke-width: 1; stroke-dasharray: 4 3; }
+  .sc-same { font: 11px 'Libre Baskerville', Georgia, serif; fill: #888; }
+  [data-theme="light"] .sc-surface { fill: rgba(5, 80, 174, 0.08); }
+  [data-theme="light"] .sc-surface-light { fill: rgba(5, 80, 174, 0.04); }
+  [data-theme="light"] .sc-boundary { stroke: #0550ae; }
+  [data-theme="light"] .sc-arrow { fill: #0550ae; }
+  [data-theme="light"] .sc-dome { stroke: #1a7f37; }
+  [data-theme="light"] .sc-label-s { fill: #6639ba; }
+  [data-theme="light"] .sc-result { fill: #b35900; }
+  [data-theme="light"] .sc-divider { stroke: #ccc; }
+  [data-theme="light"] .sc-same { fill: #666; }
+</style>

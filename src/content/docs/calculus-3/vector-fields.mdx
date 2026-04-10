@@ -1,8 +1,206 @@
 ---
-title: "Vector Fields"
-description: "Understand vector fields and their visual representation"
+title: Vector Fields
+description: Learn what vector fields are and how to visualize and work with them
 sidebar:
   order: 13
 ---
 
-Content coming soon.
+## What You'll Learn
+
+In this lesson you'll learn what a vector field is, how to visualize one, and how to tell different types apart. Vector fields are the language that the rest of vector calculus speaks, so getting comfortable with them now pays off for everything that follows.
+
+## The Concept
+
+### What Is a Vector Field?
+
+A scalar function like $f(x, y) = x^2 + y^2$ assigns a number to every point. A vector field assigns a vector to every point instead. At each location in space, the field tells you a direction and a magnitude.
+
+In 2D, a vector field looks like
+
+$$
+\mathbf{F}(x, y) = \langle P(x,y),\; Q(x,y) \rangle
+$$
+
+where P and Q are scalar functions that give the x-component and y-component of the vector at each point.
+
+In 3D, it extends to
+
+$$
+\mathbf{F}(x, y, z) = \langle P(x,y,z),\; Q(x,y,z),\; R(x,y,z) \rangle
+$$
+
+The angle brackets $\langle \; \rangle$ denote a vector. Each component is a function of position, so the vector can change from point to point.
+
+### How to Visualize a Vector Field
+
+Pick a bunch of sample points. At each one, draw an arrow whose direction matches the vector and whose length matches the magnitude. The result is a picture full of arrows that shows the "flow" of the field.
+
+A few things to watch for:
+
+- Where arrows are long, the field is strong
+- Where arrows are short, the field is weak
+- Where arrows all point the same way, the field is uniform
+- Where arrows swirl, the field has rotation
+- Where arrows spread outward, the field has divergence
+
+### Common Types
+
+There are three patterns you'll see over and over:
+
+- A radial field points outward from (or inward toward) a central point. Gravity and electric fields are radial.
+- A rotational field swirls around an axis. Think of water circling a drain.
+- A constant field has the same vector everywhere. Uniform gravity near Earth's surface is approximately constant.
+
+### Gradient Fields
+
+If you have a scalar function f and take its gradient, you get a vector field:
+
+$$
+\nabla f = \left\langle \frac{\partial f}{\partial x},\; \frac{\partial f}{\partial y},\; \frac{\partial f}{\partial z} \right\rangle
+$$
+
+This is called a gradient field (or conservative field). The vectors always point in the direction of steepest increase of f, and their magnitude equals the rate of that increase. Gradient fields have a special property: line integrals through them depend only on the endpoints, not the path. More on that in later lessons.
+
+## Worked Examples
+
+**Example 1: A rotational vector field**
+
+Consider the 2D field $\mathbf{F}(x, y) = \langle -y,\; x \rangle$
+
+import RotationalField2D from "../../../components/RotationalField2D.astro";
+
+<RotationalField2D />
+
+The blue arrows show the field at sample points. The orange arrow highlights the vector at the point (1, 0).
+
+Let's evaluate F at a few points to see the pattern:
+
+- At (1, 0): $\mathbf{F} = \langle 0, 1 \rangle$ which points straight up
+- At (0, 1): $\mathbf{F} = \langle -1, 0 \rangle$ which points left
+- At (-1, 0): $\mathbf{F} = \langle 0, -1 \rangle$ which points down
+- At (0, -1): $\mathbf{F} = \langle 1, 0 \rangle$ which points right
+
+The vectors trace out counterclockwise circles. At every point, the vector is perpendicular to the position vector and has the same magnitude as the distance from the origin. Points farther from the origin get longer arrows.
+
+The magnitude at any point is $\sqrt{(-y)^2 + x^2} = \sqrt{x^2 + y^2},$ which is just the distance from the origin.
+
+**Example 2: A gradient (radial) vector field**
+
+Let $f(x, y) = x^2 + y^2$ and compute its gradient:
+
+$$
+\nabla f = \left\langle \frac{\partial}{\partial x}(x^2 + y^2),\; \frac{\partial}{\partial y}(x^2 + y^2) \right\rangle = \langle 2x,\; 2y \rangle
+$$
+
+import RadialField2D from "../../../components/RadialField2D.astro";
+
+<RadialField2D />
+
+Every arrow points directly away from the origin. The arrows get longer as you move outward because the gradient magnitude grows with distance. At the origin itself, the gradient is the zero vector (the function has a minimum there).
+
+Let's check a few values:
+
+- At (1, 0): $\nabla f = \langle 2, 0 \rangle$ with magnitude 2
+- At (2, 0): $\nabla f = \langle 4, 0 \rangle$ with magnitude 4
+- At (1, 1): $\nabla f = \langle 2, 2 \rangle$ with magnitude $2\sqrt{2} \approx 2.83$
+
+The magnitude at any point is $\sqrt{(2x)^2 + (2y)^2} = 2\sqrt{x^2 + y^2},$ which is twice the distance from the origin. Farther out means steeper ascent on the paraboloid $f = x^2 + y^2$
+
+**Example 3: A constant 3D vector field**
+
+The field $\mathbf{F}(x, y, z) = \langle 0,\; 0,\; -9.8 \rangle$ represents uniform gravitational acceleration near Earth's surface. Every point in space gets the exact same vector: 9.8 m/s squared, pointing straight down.
+
+import ConstantField3D from "../../../components/ConstantField3D.astro";
+
+<ConstantField3D />
+
+This is the simplest possible vector field. It doesn't depend on position at all. No matter where you are, the arrow is the same length and points the same direction.
+
+Is this a gradient field? Yes. It's the gradient of $f(x, y, z) = -9.8z,$ since $\nabla(-9.8z) = \langle 0, 0, -9.8 \rangle$
+
+## Real-World Application
+
+Vector fields are everywhere once you start looking:
+
+- Physics models velocity fields in fluids (each point in the water has a flow direction and speed), electric fields around charges, and magnetic fields around currents
+- Game engines use vector fields for wind that affects particles, cloth, and grass. A wind field assigns a force vector to each point in the game world, and objects sample it to figure out how to move
+- Weather models represent wind as a vector field over the surface of the Earth. The arrows on a weather map are literally a vector field visualization
+- Computer graphics uses flow fields for procedural animation, hair simulation, and stylized rendering effects
+
+:::note[You've Got This]
+A vector field is just a vector at every point. That's it. Some fields push outward (radial), some swirl (rotational), some are the same everywhere (constant), and some are the gradient of a scalar function (conservative). The key skill is being able to look at a formula and picture what the arrows do. Try plugging in a few sample points and drawing the vectors by hand. Once you can read a vector field, you're ready for line integrals, which measure how much a field pushes along a curve.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="calculus3-vector-fields"
+  questions={[
+    {
+      id: "q1",
+      text: "A vector field assigns to every point in space",
+      options: [
+        "a single number",
+        "a vector with direction and magnitude",
+        "only a direction",
+        "only a magnitude",
+      ],
+      correctIndex: 1,
+      explanation:
+        "A vector field gives both direction and magnitude at each location, unlike a scalar field which gives just a number.",
+    },
+    {
+      id: "q2",
+      text: "The vector field $\\mathbf{F}(x,y) = \\langle -y, x \\rangle$ at the point (0, 3) equals",
+      options: [
+        "$\\langle -3, 0 \\rangle$",
+        "$\\langle 0, 3 \\rangle$",
+        "$\\langle 3, 0 \\rangle$",
+        "$\\langle 0, -3 \\rangle$",
+      ],
+      correctIndex: 0,
+      explanation: "Plug in x=0, y=3: F = <-3, 0>, which points to the left.",
+    },
+    {
+      id: "q3",
+      text: "The gradient of $f(x,y) = x^2 + y^2$ is",
+      options: [
+        "$\\langle x^2, y^2 \\rangle$",
+        "$\\langle 2x, 2y \\rangle$",
+        "$\\langle 2y, 2x \\rangle$",
+        "$2x + 2y$",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Take partial derivatives: df/dx = 2x and df/dy = 2y, giving the gradient <2x, 2y>.",
+    },
+    {
+      id: "q4",
+      text: "In a radial vector field, the arrows",
+      options: [
+        "all point in the same direction",
+        "form circular patterns",
+        "point outward from or inward toward a central point",
+        "are all the same length",
+      ],
+      correctIndex: 2,
+      explanation:
+        "Radial fields point directly away from (or toward) a center, like gravity or electric fields.",
+    },
+    {
+      id: "q5",
+      text: "A gradient field (conservative field) has the special property that",
+      options: [
+        "all vectors have the same magnitude",
+        "it always rotates counterclockwise",
+        "line integrals through it depend only on the endpoints",
+        "it equals zero everywhere",
+      ],
+      correctIndex: 2,
+      explanation:
+        "Path independence is the defining property of conservative fields: the integral depends only on where you start and end, not the route.",
+    },
+  ]}
+/>

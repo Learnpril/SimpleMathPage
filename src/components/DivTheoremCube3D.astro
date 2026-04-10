@@ -1,0 +1,169 @@
+---
+/**
+ * DivTheoremCube3D — Interactive 3D unit cube [0,1]^3 with outward
+ * normal arrows on each face, illustrating flux through a closed surface
+ * for the Divergence Theorem Example 3.
+ */
+---
+
+<figure class="dtc" role="img" aria-label="Interactive 3D unit cube with outward normal arrows on each face showing flux for the Divergence Theorem">
+  <div class="dtc-canvas" data-dtc3d></div>
+  <div class="dtc-hint">Drag to rotate · Scroll to zoom</div>
+</figure>
+
+<script>
+  import * as THREE from "three";
+  import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+
+  function initScene(container: HTMLElement) {
+    const width = Math.min(container.clientWidth, 480);
+    const height = 360;
+    const isDark = document.documentElement.dataset.theme !== "light";
+    const bgColor = isDark ? 0x121212 : 0xf8f9fa;
+
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(bgColor);
+
+    const camera = new THREE.PerspectiveCamera(40, width / height, 0.1, 200);
+    camera.position.set(3, 2.5, 3);
+    camera.lookAt(0.5, 0.5, 0.5);
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(width, height);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    container.appendChild(renderer.domElement);
+
+    const accentColor = isDark ? 0x58a6ff : 0x0550ae;
+    const orangeColor = isDark ? 0xf0883e : 0xb35900;
+    const greenColor = isDark ? 0x7ee787 : 0x1a7f37;
+
+    // Unit cube centered at (0.5, 0.5, 0.5)
+    const cubeGeo = new THREE.BoxGeometry(1, 1, 1);
+    const cubeMat = new THREE.MeshPhongMaterial({
+      color: accentColor,
+      transparent: true, opacity: 0.1,
+      side: THREE.DoubleSide,
+    });
+    const cube = new THREE.Mesh(cubeGeo, cubeMat);
+    cube.position.set(0.5, 0.5, 0.5);
+    scene.add(cube);
+
+    // Wireframe
+    const edges = new THREE.EdgesGeometry(cubeGeo);
+    const edgeMat = new THREE.LineBasicMaterial({
+      color: accentColor, transparent: true, opacity: 0.6,
+    });
+    const wireframe = new THREE.LineSegments(edges, edgeMat);
+    wireframe.position.set(0.5, 0.5, 0.5);
+    scene.add(wireframe);
+
+    // Outward normal arrows on each face center
+    const arrowColor = new THREE.Color(orangeColor);
+    const faces: { origin: [number, number, number]; dir: [number, number, number] }[] = [
+      { origin: [1, 0.5, 0.5], dir: [1, 0, 0] },    // +x face
+      { origin: [0, 0.5, 0.5], dir: [-1, 0, 0] },   // -x face
+      { origin: [0.5, 1, 0.5], dir: [0, 1, 0] },    // +y (top)
+      { origin: [0.5, 0, 0.5], dir: [0, -1, 0] },   // -y (bottom)
+      { origin: [0.5, 0.5, 1], dir: [0, 0, 1] },    // +z face
+      { origin: [0.5, 0.5, 0], dir: [0, 0, -1] },   // -z face
+    ];
+    for (const f of faces) {
+      const dir = new THREE.Vector3(...f.dir);
+      const origin = new THREE.Vector3(...f.origin);
+      const arrow = new THREE.ArrowHelper(dir, origin, 0.4, arrowColor, 0.1, 0.07);
+      scene.add(arrow);
+    }
+
+    // Axes
+    const axColor = isDark ? 0x666666 : 0x999999;
+    const axMat = new THREE.LineBasicMaterial({ color: axColor });
+    for (const dir of [[2, 0, 0], [0, 2, 0], [0, 0, 2]] as [number, number, number][]) {
+      const pts = [new THREE.Vector3(0, 0, 0), new THREE.Vector3(...dir)];
+      scene.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts), axMat));
+    }
+
+    // Labels
+    function makeLabel(text: string, pos: [number, number, number], color: string, size = 0.35, alwaysOnTop = false) {
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d")!;
+      canvas.width = 512; canvas.height = 128;
+      ctx.font = "bold 64px sans-serif";
+      ctx.fillStyle = color;
+      ctx.textAlign = "center"; ctx.textBaseline = "middle";
+      ctx.fillText(text, 256, 64);
+      const tex = new THREE.CanvasTexture(canvas);
+      const mat = new THREE.SpriteMaterial({ map: tex, transparent: true, depthTest: !alwaysOnTop });
+      const sprite = new THREE.Sprite(mat);
+      sprite.position.set(...pos);
+      sprite.scale.set(size * 2.5, size * 0.6, 1);
+      if (alwaysOnTop) sprite.renderOrder = 999;
+      scene.add(sprite);
+    }
+
+    const lc = isDark ? "#888" : "#666";
+    makeLabel("x", [1.8, -0.12, 0], lc, 0.7);
+    makeLabel("z", [0, 1.8, 0], lc, 0.7);
+    makeLabel("y", [0, -0.12, 1.8], lc, 0.7);
+    makeLabel("1", [1, -0.18, 0], lc, 0.55);
+    makeLabel("1", [-0.18, 1, 0], lc, 0.55);
+    makeLabel("1", [0, -0.18, 1], lc, 0.55);
+
+    // n label
+    const nc = isDark ? "#f0883e" : "#b35900";
+    makeLabel("n", [1.55, 0.5, 0.5], nc, 0.55, true);
+
+    // Lighting
+    scene.add(new THREE.AmbientLight(0xffffff, 0.6));
+    const dl = new THREE.DirectionalLight(0xffffff, 0.6);
+    dl.position.set(3, 4, 3);
+    scene.add(dl);
+
+    // Controls
+    const controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.08;
+    controls.autoRotate = true;
+    controls.autoRotateSpeed = 0.5;
+    controls.enableZoom = true;
+    controls.minDistance = 2;
+    controls.maxDistance = 12;
+    controls.target.set(0.5, 0.5, 0.5);
+
+    let animId: number;
+    function animate() {
+      animId = requestAnimationFrame(animate);
+      controls.update();
+      renderer.render(scene, camera);
+    }
+    animate();
+
+    return () => { cancelAnimationFrame(animId); renderer.dispose(); };
+  }
+
+  function setup() {
+    document.querySelectorAll<HTMLElement>("[data-dtc3d]").forEach((el) => {
+      if (el.querySelector("canvas")) return;
+      const obs = new IntersectionObserver(
+        (entries) => { if (entries[0].isIntersecting) { obs.disconnect(); initScene(el); } },
+        { threshold: 0.05 }
+      );
+      obs.observe(el);
+    });
+  }
+
+  setup();
+  document.addEventListener("astro:page-load", setup);
+</script>
+
+<style>
+  .dtc { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .dtc-canvas {
+    width:100%; max-width:480px; min-height:360px;
+    border-radius:8px; overflow:hidden;
+  }
+  .dtc-canvas canvas { border-radius:8px; }
+  .dtc-hint {
+    font-family:'Libre Baskerville',Georgia,serif;
+    font-size:0.8rem; color:#888; margin-top:0.4rem;
+  }
+</style>

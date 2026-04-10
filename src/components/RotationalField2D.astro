@@ -1,0 +1,73 @@
+---
+/**
+ * RotationalField2D — SVG visual of the 2D vector field F(x,y) = <-y, x>
+ * showing counterclockwise arrows at sample points on a grid.
+ */
+---
+
+<figure class="diagram-container" role="img" aria-label="2D rotational vector field F = negative y comma x showing counterclockwise arrows">
+  <svg viewBox="-160 -160 320 320" width="320" height="320" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <marker id="rvf-ah-d" markerWidth="6" markerHeight="4" refX="5" refY="2" orient="auto">
+        <path d="M0,0 L6,2 L0,4 Z" class="rvf-arrow-dark" />
+      </marker>
+      <marker id="rvf-ah-l" markerWidth="6" markerHeight="4" refX="5" refY="2" orient="auto">
+        <path d="M0,0 L6,2 L0,4 Z" class="rvf-arrow-light" />
+      </marker>
+    </defs>
+    <!-- Axes -->
+    <line x1="-140" y1="0" x2="140" y2="0" class="rvf-axis" />
+    <line x1="0" y1="-140" x2="0" y2="140" class="rvf-axis" />
+    <text x="148" y="5" class="rvf-axis-label">x</text>
+    <text x="5" y="-145" class="rvf-axis-label">y</text>
+    <!-- Grid of arrows for F(x,y) = <-y, x> -->
+    <!-- Scale: 1 unit = 40px, arrow length capped at 30px -->
+    <!-- Row y=2 -->
+    <line x1="-80" y1="-80" x2="-56" y2="-80" class="rvf-vec-dark" marker-end="url(#rvf-ah-d)" />
+    <line x1="0" y1="-80" x2="24" y2="-80" class="rvf-vec-dark" marker-end="url(#rvf-ah-d)" />
+    <line x1="80" y1="-80" x2="56" y2="-80" class="rvf-vec-dark" marker-end="url(#rvf-ah-d)" />
+    <line x1="-80" y1="-80" x2="-80" y2="-56" class="rvf-vec-dark" marker-end="url(#rvf-ah-d)" />
+    <line x1="80" y1="-80" x2="80" y2="-56" class="rvf-vec-dark" marker-end="url(#rvf-ah-d)" />
+    <!-- Row y=1 -->
+    <line x1="-80" y1="-40" x2="-60" y2="-40" class="rvf-vec-dark" marker-end="url(#rvf-ah-d)" />
+    <line x1="-40" y1="-40" x2="-20" y2="-20" class="rvf-vec-dark" marker-end="url(#rvf-ah-d)" />
+    <line x1="0" y1="-40" x2="20" y2="-40" class="rvf-vec-dark" marker-end="url(#rvf-ah-d)" />
+    <line x1="40" y1="-40" x2="20" y2="-20" class="rvf-vec-dark" marker-end="url(#rvf-ah-d)" />
+    <line x1="80" y1="-40" x2="60" y2="-40" class="rvf-vec-dark" marker-end="url(#rvf-ah-d)" />
+    <!-- Row y=0 -->
+    <line x1="-80" y1="0" x2="-80" y2="24" class="rvf-vec-dark" marker-end="url(#rvf-ah-d)" />
+    <line x1="-40" y1="0" x2="-40" y2="24" class="rvf-vec-dark" marker-end="url(#rvf-ah-d)" />
+    <line x1="40" y1="0" x2="40" y2="-24" class="rvf-vec-dark" marker-end="url(#rvf-ah-d)" />
+    <line x1="80" y1="0" x2="80" y2="-24" class="rvf-vec-dark" marker-end="url(#rvf-ah-d)" />
+    <!-- Row y=-1 -->
+    <line x1="-80" y1="40" x2="-60" y2="40" class="rvf-vec-dark" marker-end="url(#rvf-ah-d)" />
+    <line x1="-40" y1="40" x2="-20" y2="20" class="rvf-vec-dark" marker-end="url(#rvf-ah-d)" />
+    <line x1="0" y1="40" x2="-20" y2="40" class="rvf-vec-dark" marker-end="url(#rvf-ah-d)" />
+    <line x1="40" y1="40" x2="20" y2="20" class="rvf-vec-dark" marker-end="url(#rvf-ah-d)" />
+    <line x1="80" y1="40" x2="60" y2="40" class="rvf-vec-dark" marker-end="url(#rvf-ah-d)" />
+    <!-- Row y=-2 -->
+    <line x1="-80" y1="80" x2="-56" y2="80" class="rvf-vec-dark" marker-end="url(#rvf-ah-d)" />
+    <line x1="0" y1="80" x2="-24" y2="80" class="rvf-vec-dark" marker-end="url(#rvf-ah-d)" />
+    <line x1="80" y1="80" x2="56" y2="80" class="rvf-vec-dark" marker-end="url(#rvf-ah-d)" />
+    <line x1="-80" y1="80" x2="-80" y2="56" class="rvf-vec-dark" marker-end="url(#rvf-ah-d)" />
+    <line x1="80" y1="80" x2="80" y2="56" class="rvf-vec-dark" marker-end="url(#rvf-ah-d)" />
+    <!-- Highlight vector at (1,0): F = <0,1> pointing up -->
+    <circle cx="40" cy="0" r="3" class="rvf-dot" />
+    <line x1="40" y1="0" x2="40" y2="-28" class="rvf-highlight-dark" marker-end="url(#rvf-ah-d)" />
+  </svg>
+</figure>
+
+<style>
+  .rvf-axis { stroke: #666; stroke-width: 1; }
+  .rvf-axis-label { font: bold 14px sans-serif; fill: #888; }
+  .rvf-vec-dark { stroke: #58a6ff; stroke-width: 1.5; }
+  .rvf-arrow-dark { fill: #58a6ff; }
+  .rvf-highlight-dark { stroke: #f0883e; stroke-width: 2.5; }
+  .rvf-dot { fill: #f0883e; }
+  [data-theme="light"] .rvf-axis { stroke: #999; }
+  [data-theme="light"] .rvf-axis-label { fill: #666; }
+  [data-theme="light"] .rvf-vec-dark { stroke: #0550ae; }
+  [data-theme="light"] .rvf-arrow-dark { fill: #0550ae; }
+  [data-theme="light"] .rvf-highlight-dark { stroke: #b35900; stroke-width: 2.5; }
+  [data-theme="light"] .rvf-dot { fill: #b35900; }
+</style>

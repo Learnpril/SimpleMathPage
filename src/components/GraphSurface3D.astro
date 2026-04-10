@@ -1,0 +1,180 @@
+---
+/**
+ * GraphSurface3D — Interactive 3D visual of the surface z = x + y
+ * over the unit square [0,1] x [0,1], showing the tilted plane
+ * with wireframe and axis labels.
+ */
+---
+
+<figure class="gs3" role="img" aria-label="Interactive 3D surface z equals x plus y over the unit square from 0 to 1 in x and y">
+  <div class="gs3-canvas" data-gs3d></div>
+  <div class="gs3-hint">Drag to rotate · Scroll to zoom</div>
+</figure>
+
+<script>
+  import * as THREE from "three";
+  import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+
+  function initScene(container: HTMLElement) {
+    const width = Math.min(container.clientWidth, 480);
+    const height = 340;
+    const isDark = document.documentElement.dataset.theme !== "light";
+    const bgColor = isDark ? 0x121212 : 0xf8f9fa;
+
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(bgColor);
+
+    const camera = new THREE.PerspectiveCamera(40, width / height, 0.1, 200);
+    camera.position.set(3, 2.5, 3);
+    camera.lookAt(0.5, 0.5, 0.5);
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(width, height);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    container.appendChild(renderer.domElement);
+
+    const accentColor = isDark ? 0x58a6ff : 0x0550ae;
+    const greenColor = isDark ? 0x7ee787 : 0x1a7f37;
+
+    // Surface z = x + y over [0,1]x[0,1]
+    // In Three.js: x = math x, y = math z (up), z = math y
+    const geo = new THREE.BufferGeometry();
+    const res = 10;
+    const vertices: number[] = [];
+    const indices: number[] = [];
+    for (let i = 0; i <= res; i++) {
+      for (let j = 0; j <= res; j++) {
+        const x = i / res;
+        const y = j / res;
+        const z = x + y; // math z = x + y
+        vertices.push(x, z, y); // Three.js: (x, z_up, y_depth)
+      }
+    }
+    for (let i = 0; i < res; i++) {
+      for (let j = 0; j < res; j++) {
+        const a = i * (res + 1) + j;
+        const b = a + 1;
+        const c = a + (res + 1);
+        const d = c + 1;
+        indices.push(a, b, c);
+        indices.push(b, d, c);
+      }
+    }
+    geo.setAttribute("position", new THREE.Float32BufferAttribute(vertices, 3));
+    geo.setIndex(indices);
+    geo.computeVertexNormals();
+
+    const surfMat = new THREE.MeshPhongMaterial({
+      color: accentColor,
+      transparent: true, opacity: 0.2,
+      side: THREE.DoubleSide,
+    });
+    scene.add(new THREE.Mesh(geo, surfMat));
+
+    // Wireframe
+    const wireMat = new THREE.MeshBasicMaterial({
+      color: accentColor,
+      wireframe: true, transparent: true, opacity: 0.3,
+    });
+    scene.add(new THREE.Mesh(geo.clone(), wireMat));
+
+    // Base square outline on the xz plane (y=0 in Three.js)
+    const baseMat = new THREE.LineBasicMaterial({ color: greenColor, transparent: true, opacity: 0.6 });
+    const basePts = [
+      new THREE.Vector3(0, 0, 0), new THREE.Vector3(1, 0, 0),
+      new THREE.Vector3(1, 0, 1), new THREE.Vector3(0, 0, 1),
+      new THREE.Vector3(0, 0, 0),
+    ];
+    scene.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(basePts), baseMat));
+
+    // Axes
+    const axColor = isDark ? 0x666666 : 0x999999;
+    const axMat = new THREE.LineBasicMaterial({ color: axColor });
+    for (const dir of [[2, 0, 0], [0, 2.5, 0], [0, 0, 2]] as [number, number, number][]) {
+      const pts = [new THREE.Vector3(0, 0, 0), new THREE.Vector3(...dir)];
+      scene.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts), axMat));
+    }
+
+    // Labels
+    function makeLabel(text: string, pos: [number, number, number], color: string, size = 0.35) {
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d")!;
+      canvas.width = 512; canvas.height = 128;
+      ctx.font = "bold 64px sans-serif";
+      ctx.fillStyle = color;
+      ctx.textAlign = "center"; ctx.textBaseline = "middle";
+      ctx.fillText(text, 256, 64);
+      const tex = new THREE.CanvasTexture(canvas);
+      const mat = new THREE.SpriteMaterial({ map: tex, transparent: true });
+      const sprite = new THREE.Sprite(mat);
+      sprite.position.set(...pos);
+      sprite.scale.set(size * 2.5, size * 0.6, 1);
+      scene.add(sprite);
+    }
+
+    const lc = isDark ? "#888" : "#666";
+    makeLabel("x", [1.8, -0.1, 0], lc, 0.7);
+    makeLabel("z", [0, 2.3, 0], lc, 0.7);
+    makeLabel("y", [0, -0.1, 1.8], lc, 0.7);
+    makeLabel("1", [1, -0.15, 0], lc, 0.5);
+    makeLabel("1", [0, -0.15, 1], lc, 0.5);
+    makeLabel("2", [-0.15, 2, 0], lc, 0.5);
+
+    const sc = isDark ? "#58a6ff" : "#0550ae";
+    makeLabel("z = x + y", [0.5, 1.5, 0.5], sc, 0.55);
+
+    // Lighting
+    scene.add(new THREE.AmbientLight(0xffffff, 0.6));
+    const dl = new THREE.DirectionalLight(0xffffff, 0.6);
+    dl.position.set(2, 3, 2);
+    scene.add(dl);
+
+    // Controls
+    const controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.08;
+    controls.autoRotate = true;
+    controls.autoRotateSpeed = 0.5;
+    controls.enableZoom = true;
+    controls.minDistance = 2;
+    controls.maxDistance = 12;
+    controls.target.set(0.5, 0.5, 0.5);
+
+    let animId: number;
+    function animate() {
+      animId = requestAnimationFrame(animate);
+      controls.update();
+      renderer.render(scene, camera);
+    }
+    animate();
+
+    return () => { cancelAnimationFrame(animId); renderer.dispose(); };
+  }
+
+  function setup() {
+    document.querySelectorAll<HTMLElement>("[data-gs3d]").forEach((el) => {
+      if (el.querySelector("canvas")) return;
+      const obs = new IntersectionObserver(
+        (entries) => { if (entries[0].isIntersecting) { obs.disconnect(); initScene(el); } },
+        { threshold: 0.05 }
+      );
+      obs.observe(el);
+    });
+  }
+
+  setup();
+  document.addEventListener("astro:page-load", setup);
+</script>
+
+<style>
+  .gs3 { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .gs3-canvas {
+    width:100%; max-width:480px; min-height:340px;
+    border-radius:8px; overflow:hidden;
+  }
+  .gs3-canvas canvas { border-radius:8px; }
+  .gs3-hint {
+    font-family:'Libre Baskerville',Georgia,serif;
+    font-size:0.8rem; color:#888; margin-top:0.4rem;
+  }
+</style>

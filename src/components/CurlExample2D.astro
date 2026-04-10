@@ -1,0 +1,85 @@
+---
+/**
+ * CurlExample2D — SVG showing F=<-y,x> with swirling arrows at sample
+ * points, plus a labeled curl vector <0,0,2> pointing out of the page
+ * at the center. Distinct from RotationalField2D by including the
+ * curl annotation and using a different layout.
+ */
+---
+
+<figure class="diagram-container" role="img" aria-label="The rotational field F equals negative y comma x with counterclockwise arrows and the curl vector 0 0 2 pointing out of the page at the center">
+  <svg viewBox="-150 -150 300 330" width="300" height="330" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <marker id="ce-ah" markerWidth="6" markerHeight="4" refX="5" refY="2" orient="auto">
+        <path d="M0,0 L6,2 L0,4 Z" class="ce-arrow" />
+      </marker>
+    </defs>
+    <!-- Axes -->
+    <line x1="-130" y1="0" x2="130" y2="0" class="ce-axis" />
+    <line x1="0" y1="130" x2="0" y2="-130" class="ce-axis" />
+    <text x="135" y="5" class="ce-ax-label">x</text>
+    <text x="5" y="-135" class="ce-ax-label">y</text>
+    <!-- Field arrows F=<-y,x> at sample points -->
+    <!-- At (1,0): F=<0,1> up -->
+    <line x1="80" y1="0" x2="80" y2="-25" class="ce-vec" marker-end="url(#ce-ah)" />
+    <!-- At (0,1): F=<-1,0> left -->
+    <line x1="0" y1="-80" x2="-25" y2="-80" class="ce-vec" marker-end="url(#ce-ah)" />
+    <!-- At (-1,0): F=<0,-1> down -->
+    <line x1="-80" y1="0" x2="-80" y2="25" class="ce-vec" marker-end="url(#ce-ah)" />
+    <!-- At (0,-1): F=<1,0> right -->
+    <line x1="0" y1="80" x2="25" y2="80" class="ce-vec" marker-end="url(#ce-ah)" />
+    <!-- Diagonal points -->
+    <!-- At (1,1)/sqrt2 ~ (57,-57): F=<-1,1>/sqrt2 -->
+    <line x1="57" y1="-57" x2="39" y2="-75" class="ce-vec" marker-end="url(#ce-ah)" />
+    <!-- At (-1,1)/sqrt2: F=<-1,-1>/sqrt2 -->
+    <line x1="-57" y1="-57" x2="-75" y2="-39" class="ce-vec" marker-end="url(#ce-ah)" />
+    <!-- At (-1,-1)/sqrt2: F=<1,-1>/sqrt2 -->
+    <line x1="-57" y1="57" x2="-39" y2="75" class="ce-vec" marker-end="url(#ce-ah)" />
+    <!-- At (1,-1)/sqrt2: F=<1,1>/sqrt2 -->
+    <line x1="57" y1="57" x2="75" y2="39" class="ce-vec" marker-end="url(#ce-ah)" />
+    <!-- Outer ring arrows -->
+    <line x1="110" y1="0" x2="110" y2="-25" class="ce-vec-outer" marker-end="url(#ce-ah)" />
+    <line x1="0" y1="-110" x2="-25" y2="-110" class="ce-vec-outer" marker-end="url(#ce-ah)" />
+    <line x1="-110" y1="0" x2="-110" y2="25" class="ce-vec-outer" marker-end="url(#ce-ah)" />
+    <line x1="0" y1="110" x2="25" y2="110" class="ce-vec-outer" marker-end="url(#ce-ah)" />
+    <line x1="78" y1="-78" x2="60" y2="-96" class="ce-vec-outer" marker-end="url(#ce-ah)" />
+    <line x1="-78" y1="-78" x2="-96" y2="-60" class="ce-vec-outer" marker-end="url(#ce-ah)" />
+    <line x1="-78" y1="78" x2="-60" y2="96" class="ce-vec-outer" marker-end="url(#ce-ah)" />
+    <line x1="78" y1="78" x2="96" y2="60" class="ce-vec-outer" marker-end="url(#ce-ah)" />
+    <!-- Curl vector at center: dot-in-circle = out of page -->
+    <circle cx="0" cy="0" r="16" class="ce-curl-ring" fill="none" />
+    <circle cx="0" cy="0" r="4" class="ce-curl-dot" />
+    <!-- Curl label — just below x-axis, right of y-axis -->
+    <text x="22" y="22" class="ce-curl-label">curl F = &lt;0, 0, 2&gt;</text>
+    <!-- Legend -->
+    <text x="0" y="160" text-anchor="middle" class="ce-legend">
+      <tspan class="ce-legend-vec">&#9644;</tspan> F = &lt;-y, x&gt;
+      <tspan dx="12" class="ce-legend-curl">&#9679;</tspan> curl out of page
+    </text>
+  </svg>
+</figure>
+
+<style>
+  .ce-axis { stroke: #666; stroke-width: 1; }
+  .ce-ax-label { font: bold 14px sans-serif; fill: #888; }
+  .ce-vec { stroke: #58a6ff; stroke-width: 2; }
+  .ce-vec-outer { stroke: #58a6ff; stroke-width: 1.5; opacity: 0.5; }
+  .ce-arrow { fill: #58a6ff; }
+  .ce-curl-ring { stroke: #f0883e; stroke-width: 2.5; }
+  .ce-curl-dot { fill: #f0883e; }
+  .ce-curl-label { font: 12px 'Libre Baskerville', Georgia, serif; fill: #f0883e; }
+  .ce-legend { font: 11px 'Libre Baskerville', Georgia, serif; fill: #888; }
+  .ce-legend-vec { fill: #58a6ff; }
+  .ce-legend-curl { fill: #f0883e; font-size: 8px; }
+  [data-theme="light"] .ce-axis { stroke: #999; }
+  [data-theme="light"] .ce-ax-label { fill: #666; }
+  [data-theme="light"] .ce-vec { stroke: #0550ae; }
+  [data-theme="light"] .ce-vec-outer { stroke: #0550ae; }
+  [data-theme="light"] .ce-arrow { fill: #0550ae; }
+  [data-theme="light"] .ce-curl-ring { stroke: #b35900; }
+  [data-theme="light"] .ce-curl-dot { fill: #b35900; }
+  [data-theme="light"] .ce-curl-label { fill: #b35900; }
+  [data-theme="light"] .ce-legend { fill: #666; }
+  [data-theme="light"] .ce-legend-vec { fill: #0550ae; }
+  [data-theme="light"] .ce-legend-curl { fill: #b35900; }
+</style>

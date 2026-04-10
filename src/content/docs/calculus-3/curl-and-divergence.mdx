@@ -1,8 +1,210 @@
 ---
-title: "Curl and Divergence"
-description: "Compute and interpret the curl and divergence of vector fields"
+title: Curl and Divergence
+description: Learn the meaning and computation of curl and divergence of a vector field
 sidebar:
   order: 17
 ---
 
-Content coming soon.
+## What You'll Learn
+
+In this lesson you'll learn two operations that measure what a vector field is doing at each point: divergence (is the field spreading out or converging?) and curl (is the field rotating?). These are the building blocks for the Divergence Theorem and Stokes' Theorem.
+
+## The Concept
+
+### Divergence: Spreading vs Converging
+
+The divergence of a 3D vector field $\mathbf{F} = \langle P, Q, R \rangle$ is a scalar that measures the net outward flow at each point:
+
+$$
+\nabla \cdot \mathbf{F} = \frac{\partial P}{\partial x} + \frac{\partial Q}{\partial y} + \frac{\partial R}{\partial z}
+$$
+
+The symbol $\nabla \cdot \mathbf{F}$ is read "del dot F" or "divergence of F." It's a dot product between the del operator $\nabla = \langle \frac{\partial}{\partial x}, \frac{\partial}{\partial y}, \frac{\partial}{\partial z} \rangle$ and the vector field F.
+
+import DivergenceDiagram from "../../../components/DivergenceDiagram.astro";
+
+<DivergenceDiagram />
+
+- Positive divergence means the field is spreading outward like a fountain. The point is a source.
+- Negative divergence means the field is converging inward like a drain. The point is a sink.
+- Zero divergence means no net flow in or out. The field is incompressible at that point.
+
+### Curl: Rotation
+
+The curl of a 3D vector field $\mathbf{F} = \langle P, Q, R \rangle$ is a vector that measures the rotation at each point:
+
+$$
+\nabla \times \mathbf{F} = \left\langle \frac{\partial R}{\partial y} - \frac{\partial Q}{\partial z},\; \frac{\partial P}{\partial z} - \frac{\partial R}{\partial x},\; \frac{\partial Q}{\partial x} - \frac{\partial P}{\partial y} \right\rangle
+$$
+
+The symbol $\nabla \times \mathbf{F}$ is read "del cross F" or "curl of F." It's a cross product between the del operator and F.
+
+import CurlDiagram from "../../../components/CurlDiagram.astro";
+
+<CurlDiagram />
+
+The curl vector points along the axis of rotation, following the right-hand rule: if you curl the fingers of your right hand in the direction the field swirls, your thumb points in the direction of the curl vector. The magnitude tells you how fast the rotation is.
+
+The orange circle with a dot represents a vector pointing out of the page (toward you). This is the standard notation: a dot in a circle means "coming toward you" and an X in a circle means "going away from you."
+
+### The Connection to Conservative Fields
+
+In Lesson 15, we said a field is conservative if it's the gradient of some potential function. Here's the curl version of that test:
+
+If $\nabla \times \mathbf{F} = \mathbf{0}$ everywhere on a simply connected domain, then F is conservative.
+
+This is the 3D generalization of the cross-partial test from 2D. The z-component of the curl is $\frac{\partial Q}{\partial x} - \frac{\partial P}{\partial y},$ which is exactly the expression from the 2D test.
+
+### Divergence and Curl of Common Fields
+
+- The radial field $\mathbf{F} = \langle x, y, z \rangle$ has divergence 3 and curl zero. It spreads but doesn't rotate.
+- The rotational field $\mathbf{F} = \langle -y, x, 0 \rangle$ has divergence 0 and curl $\langle 0, 0, 2 \rangle$. It rotates but doesn't spread.
+- A constant field like $\mathbf{F} = \langle 1, 0, 0 \rangle$ has both divergence 0 and curl zero. It neither spreads nor rotates.
+
+## Worked Examples
+
+**Example 1: Computing divergence**
+
+Find the divergence of $\mathbf{F} = \langle x^2,\; xy,\; z^2 \rangle$
+
+$$
+\nabla \cdot \mathbf{F} = \frac{\partial}{\partial x}(x^2) + \frac{\partial}{\partial y}(xy) + \frac{\partial}{\partial z}(z^2) = 2x + x + 2z = 3x + 2z
+$$
+
+The divergence varies from point to point. At the origin it's zero (no net flow). At (1, 0, 1) it's 3 + 2 = 5 (strong outward flow). The field acts as a source wherever 3x + 2z is positive and a sink wherever it's negative.
+
+**Example 2: Computing curl**
+
+Find the curl of $\mathbf{F} = \langle -y,\; x,\; 0 \rangle$ (the rotational field from earlier lessons).
+
+import CurlExample2D from "../../../components/CurlExample2D.astro";
+
+<CurlExample2D />
+
+The blue arrows show the field at sample points, swirling counterclockwise. The orange dot-in-circle at the center represents the curl vector pointing out of the page toward you. The label shows the computed result.
+
+$$
+\nabla \times \mathbf{F} = \left\langle \frac{\partial(0)}{\partial y} - \frac{\partial(x)}{\partial z},\; \frac{\partial(-y)}{\partial z} - \frac{\partial(0)}{\partial x},\; \frac{\partial(x)}{\partial x} - \frac{\partial(-y)}{\partial y} \right\rangle
+$$
+
+$$
+= \langle 0 - 0,\; 0 - 0,\; 1 - (-1) \rangle = \langle 0,\; 0,\; 2 \rangle
+$$
+
+The curl is a constant vector pointing in the positive z-direction with magnitude 2. This confirms what we see visually: the field rotates counterclockwise in the xy-plane everywhere, with the same strength at every point.
+
+**Example 3: Checking if a field is conservative using curl**
+
+Is $\mathbf{F} = \langle yz,\; xz,\; xy \rangle$ conservative?
+
+Compute the curl:
+
+$$
+\nabla \times \mathbf{F} = \left\langle \frac{\partial(xy)}{\partial y} - \frac{\partial(xz)}{\partial z},\; \frac{\partial(yz)}{\partial z} - \frac{\partial(xy)}{\partial x},\; \frac{\partial(xz)}{\partial x} - \frac{\partial(yz)}{\partial y} \right\rangle
+$$
+
+$$
+= \langle x - x,\; y - y,\; z - z \rangle = \langle 0,\; 0,\; 0 \rangle
+$$
+
+The curl is zero everywhere, so F is conservative. The potential function is $\varphi(x,y,z) = xyz,$ since $\nabla(xyz) = \langle yz, xz, xy \rangle$
+
+**Example 4: A field with both nonzero divergence and curl**
+
+Find the divergence and curl of $\mathbf{F} = \langle x - y,\; x + y,\; z \rangle$
+
+Divergence:
+
+$$
+\nabla \cdot \mathbf{F} = 1 + 1 + 1 = 3
+$$
+
+Curl:
+
+$$
+\nabla \times \mathbf{F} = \langle 0 - 0,\; 0 - 0,\; 1 - (-1) \rangle = \langle 0,\; 0,\; 2 \rangle
+$$
+
+This field both spreads (divergence = 3) and rotates (curl = $\langle 0, 0, 2 \rangle$). It's not conservative because the curl is nonzero.
+
+## Real-World Application
+
+Divergence and curl are the language of physics and simulation:
+
+- Maxwell's equations for electromagnetism are written entirely in terms of divergence and curl. The divergence of the electric field gives the charge density. The curl of the magnetic field gives the current.
+- Fluid dynamics uses divergence to identify sources and sinks in a flow, and curl to identify vortices (whirlpools, tornadoes).
+- Game engines use divergence for explosion effects (outward blast) and curl for swirling smoke, fire, and water effects. Curl noise is a popular technique for generating turbulent-looking particle motion.
+- Weather models use curl to measure the rotation of wind patterns (cyclones have high curl).
+
+:::note[You've Got This]
+Divergence answers "is the field spreading or converging?" and gives you a number. Curl answers "is the field rotating?" and gives you a vector (the axis and strength of rotation). Conservative fields have zero curl. These two operations show up everywhere in the remaining theorems: the Divergence Theorem relates divergence to flux through a surface, and Stokes' Theorem relates curl to circulation around a boundary. You're building the toolkit for the grand finale of vector calculus.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="calculus3-curl-divergence"
+  questions={[
+    {
+      id: "q1",
+      text: "The divergence of $\\mathbf{F} = \\langle x, y, z \\rangle$ is",
+      options: ["$0$", "$1$", "$3$", "$x + y + z$"],
+      correctIndex: 2,
+      explanation: "dP/dx = 1, dQ/dy = 1, dR/dz = 1, so div F = 1 + 1 + 1 = 3.",
+    },
+    {
+      id: "q2",
+      text: "The curl of $\\mathbf{F} = \\langle -y, x, 0 \\rangle$ is",
+      options: [
+        "$\\langle 0, 0, 2 \\rangle$",
+        "$\\langle 2, 0, 0 \\rangle$",
+        "$\\langle 0, 0, 0 \\rangle$",
+        "$\\langle 0, 2, 0 \\rangle$",
+      ],
+      correctIndex: 0,
+      explanation:
+        "The z-component is dQ/dx - dP/dy = 1 - (-1) = 2. The other components are zero.",
+    },
+    {
+      id: "q3",
+      text: "If the curl of a vector field is zero everywhere, the field is",
+      options: [
+        "always constant",
+        "conservative (on a simply connected domain)",
+        "always zero",
+        "always radial",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Zero curl is the 3D test for conservative fields, provided the domain has no holes.",
+    },
+    {
+      id: "q4",
+      text: "Positive divergence at a point means",
+      options: [
+        "the field is rotating there",
+        "the field is converging inward (sink)",
+        "the field is spreading outward (source)",
+        "the field is zero there",
+      ],
+      correctIndex: 2,
+      explanation:
+        "Positive divergence means net outward flow: the point acts as a source.",
+    },
+    {
+      id: "q5",
+      text: "The curl vector points in the direction of",
+      options: [
+        "the field's maximum magnitude",
+        "the gradient of the field",
+        "the axis of rotation (right-hand rule)",
+        "the divergence",
+      ],
+      correctIndex: 2,
+      explanation:
+        "Curl your right hand's fingers in the swirl direction; your thumb points along the curl vector.",
+    },
+  ]}
+/>

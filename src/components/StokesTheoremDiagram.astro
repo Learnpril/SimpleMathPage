@@ -1,0 +1,57 @@
+---
+/**
+ * StokesTheoremDiagram — SVG showing a tilted surface S in 3D perspective
+ * with its boundary curve C (counterclockwise arrows), a normal vector n,
+ * and labels illustrating the Stokes' Theorem relationship:
+ * flux of curl through S = circulation around C.
+ */
+---
+
+<figure class="diagram-container" role="img" aria-label="Stokes Theorem diagram showing a tilted surface S with boundary curve C and upward normal vector n">
+  <svg viewBox="-20 -20 340 300" width="340" height="300" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <marker id="stk-ah" markerWidth="7" markerHeight="5" refX="6" refY="2.5" orient="auto">
+        <path d="M0,0 L7,2.5 L0,5 Z" class="stk-arrow" />
+      </marker>
+      <marker id="stk-ah-n" markerWidth="7" markerHeight="5" refX="6" refY="2.5" orient="auto">
+        <path d="M0,0 L7,2.5 L0,5 Z" class="stk-arrow-n" />
+      </marker>
+    </defs>
+    <!-- Tilted elliptical surface (perspective view of a disk) -->
+    <ellipse cx="160" cy="120" rx="130" ry="60" class="stk-surface" />
+    <!-- Boundary curve C with direction arrows -->
+    <path d="M 290 120 A 130 60 0 0 0 30 120" class="stk-boundary" fill="none" marker-end="url(#stk-ah)" />
+    <path d="M 30 120 A 130 60 0 0 0 290 120" class="stk-boundary" fill="none" marker-end="url(#stk-ah)" />
+    <!-- Normal vector pointing up from center -->
+    <line x1="160" y1="120" x2="160" y2="30" class="stk-normal" marker-end="url(#stk-ah-n)" />
+    <!-- Labels -->
+    <text x="160" y="145" text-anchor="middle" class="stk-label-s">S</text>
+    <text x="300" y="100" class="stk-label-c">C</text>
+    <text x="168" y="25" class="stk-label-n">n</text>
+    <!-- Equation labels at bottom -->
+    <text x="160" y="210" text-anchor="middle" class="stk-eq">Flux of curl F through S</text>
+    <text x="160" y="230" text-anchor="middle" class="stk-eq">=</text>
+    <text x="160" y="250" text-anchor="middle" class="stk-eq">Circulation of F around C</text>
+  </svg>
+</figure>
+
+<style>
+  .stk-surface { fill: rgba(88, 166, 255, 0.1); stroke: none; }
+  .stk-boundary { stroke: #58a6ff; stroke-width: 2.5; }
+  .stk-arrow { fill: #58a6ff; }
+  .stk-normal { stroke: #f0883e; stroke-width: 2.5; }
+  .stk-arrow-n { fill: #f0883e; }
+  .stk-label-s { font: bold 22px 'Libre Baskerville', Georgia, serif; fill: #d2a8ff; }
+  .stk-label-c { font: italic 18px 'Libre Baskerville', Georgia, serif; fill: #58a6ff; }
+  .stk-label-n { font: bold 16px 'Libre Baskerville', Georgia, serif; fill: #f0883e; }
+  .stk-eq { font: 12px 'Libre Baskerville', Georgia, serif; fill: #888; }
+  [data-theme="light"] .stk-surface { fill: rgba(5, 80, 174, 0.08); }
+  [data-theme="light"] .stk-boundary { stroke: #0550ae; }
+  [data-theme="light"] .stk-arrow { fill: #0550ae; }
+  [data-theme="light"] .stk-normal { stroke: #b35900; }
+  [data-theme="light"] .stk-arrow-n { fill: #b35900; }
+  [data-theme="light"] .stk-label-s { fill: #6639ba; }
+  [data-theme="light"] .stk-label-c { fill: #0550ae; }
+  [data-theme="light"] .stk-label-n { fill: #b35900; }
+  [data-theme="light"] .stk-eq { fill: #666; }
+</style>

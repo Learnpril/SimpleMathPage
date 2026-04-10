@@ -1,8 +1,200 @@
 ---
-title: "Stokes' Theorem"
-description: "Generalize Green's Theorem to surfaces in 3D using Stokes' Theorem"
+title: Stokes' Theorem
+description: Learn Stokes' Theorem, which relates the surface integral of curl to the line integral around the boundary
 sidebar:
   order: 19
 ---
 
-Content coming soon.
+## What You'll Learn
+
+In this lesson you'll learn Stokes' Theorem, which says that the total rotation (curl) inside a surface equals the total circulation around its boundary. This is the 3D generalization of Green's Theorem and one of the most important results in vector calculus.
+
+## The Concept
+
+### The Big Picture
+
+Green's Theorem (Lesson 16) connected a line integral around a flat closed curve to a double integral over the enclosed region. Stokes' Theorem does the same thing, but the surface doesn't have to be flat. It can be any oriented surface in 3D space, as long as it has a boundary curve.
+
+import StokesTheoremDiagram from "../../../components/StokesTheoremDiagram.astro";
+
+<StokesTheoremDiagram />
+
+### The Theorem
+
+If S is an oriented surface with boundary curve C (oriented by the right-hand rule relative to the surface normal), and $\mathbf{F}$ has continuous partial derivatives, then
+
+$$
+\iint_S (\nabla \times \mathbf{F}) \cdot d\mathbf{S} = \oint_C \mathbf{F} \cdot d\mathbf{r}
+$$
+
+The left side is the flux of the curl of F through the surface S. The right side is the circulation of F around the boundary curve C. Stokes' Theorem says they're equal.
+
+### Why This Matters
+
+Just like Green's Theorem, the power is in choosing the easier side. If the line integral around C is hard to compute, you can instead compute the surface integral of the curl. If the surface integral is hard, compute the line integral instead.
+
+### The Right-Hand Rule for Orientation
+
+The boundary curve C must be oriented consistently with the surface normal. If you curl the fingers of your right hand in the direction you walk along C, your thumb should point in the direction of the surface normal n. This is the same right-hand rule from curl.
+
+### Connection to Green's Theorem
+
+When the surface S is flat and lies in the xy-plane, Stokes' Theorem reduces exactly to Green's Theorem. The curl's z-component $\frac{\partial Q}{\partial x} - \frac{\partial P}{\partial y}$ is the integrand from Green's Theorem, and the surface integral becomes a double integral over the flat region.
+
+## Worked Examples
+
+**Example 1: Using Stokes' to avoid a line integral**
+
+Evaluate $\oint_C \mathbf{F} \cdot d\mathbf{r}$ where $\mathbf{F} = \langle -y,\; x,\; 0 \rangle$ and C is the unit circle in the xy-plane, traversed counterclockwise.
+
+import GreensTheoremDiagram from "../../../components/GreensTheoremDiagram.astro";
+
+<GreensTheoremDiagram />
+
+The setup is the same as Green's Theorem: a flat disk D with boundary C. The curl of F points straight up through the disk. Stokes' Theorem lets us integrate the curl over the disk instead of parametrizing the circle.
+
+We already know from Lesson 14 that this line integral equals $2\pi$ (the rotational field does work = $2\pi$ around the full circle). Let's verify using Stokes' Theorem.
+
+First, compute the curl:
+
+$$
+\nabla \times \mathbf{F} = \langle 0,\; 0,\; 2 \rangle
+$$
+
+(We computed this in Lesson 17.) The curl is a constant vector pointing straight up.
+
+Choose S to be the flat unit disk in the xy-plane (the simplest surface with boundary C). The upward normal to this flat disk is $\mathbf{n} = \langle 0, 0, 1 \rangle,$ so $d\mathbf{S} = \langle 0, 0, 1 \rangle \, dA$
+
+$$
+\iint_S (\nabla \times \mathbf{F}) \cdot d\mathbf{S} = \iint_D \langle 0, 0, 2 \rangle \cdot \langle 0, 0, 1 \rangle \, dA = \iint_D 2 \, dA = 2 \cdot \pi(1)^2 = 2\pi
+$$
+
+Both sides give $2\pi$. Stokes' Theorem confirms what we computed directly.
+
+**Example 2: Choosing a different surface**
+
+Here's the key insight: Stokes' Theorem works for any surface with the same boundary. For the same boundary curve C (unit circle in the xy-plane), we could use the upper hemisphere as S instead of the flat disk. The answer would still be $2\pi$ because the theorem only cares about the boundary, not which surface you pick.
+
+import SurfaceChoiceDiagram from "../../../components/SurfaceChoiceDiagram.astro";
+
+<SurfaceChoiceDiagram />
+
+Both surfaces share the same boundary C, so Stokes' Theorem gives the same answer for both. You always get to choose the easiest surface.
+
+This means you always get to choose the easiest surface. For a flat boundary curve, the flat disk is usually simplest. But for a boundary curve in 3D, you might pick a surface that makes the curl computation cleaner.
+
+**Example 3: Stokes' Theorem with a tilted surface**
+
+Let $\mathbf{F} = \langle z,\; x,\; y \rangle$ and let C be the triangle with vertices (1, 0, 0), (0, 1, 0), (0, 0, 1), traversed counterclockwise when viewed from above.
+
+import StokesTriangleDiagram from "../../../components/StokesTriangleDiagram.astro";
+import StokesTriangle3D from "../../../components/StokesTriangle3D.astro";
+
+<StokesTriangle3D />
+
+The triangle lies in the plane x + y + z = 1. The orange arrow shows the outward normal. You can rotate to see how the three vertices sit on the coordinate axes. Instead of parametrizing three line segments, we integrate the curl over the triangular surface.
+
+Computing the line integral directly would require parametrizing three line segments. Instead, use Stokes' Theorem.
+
+Compute the curl:
+
+$$
+\nabla \times \mathbf{F} = \left\langle \frac{\partial y}{\partial y} - \frac{\partial x}{\partial z},\; \frac{\partial z}{\partial z} - \frac{\partial y}{\partial x},\; \frac{\partial x}{\partial x} - \frac{\partial z}{\partial y} \right\rangle = \langle 1, 1, 1 \rangle
+$$
+
+The surface S is the triangular region in the plane x + y + z = 1. The outward normal to this plane (pointing upward) is $\mathbf{n} = \frac{1}{\sqrt{3}}\langle 1, 1, 1 \rangle$ and the surface element is $d\mathbf{S} = \langle 1, 1, 1 \rangle \, dA$ (where dA is the area element projected onto the xy-plane).
+
+$$
+(\nabla \times \mathbf{F}) \cdot \langle 1, 1, 1 \rangle = \langle 1, 1, 1 \rangle \cdot \langle 1, 1, 1 \rangle = 3
+$$
+
+The projection of the triangle onto the xy-plane is the region where $x \geq 0,\; y \geq 0,\; x + y \leq 1,$ which has area 1/2.
+
+$$
+\oint_C \mathbf{F} \cdot d\mathbf{r} = \iint_S (\nabla \times \mathbf{F}) \cdot d\mathbf{S} = \iint_D 3 \, dA = 3 \cdot \frac{1}{2} = \frac{3}{2}
+$$
+
+The circulation around the triangle is 3/2. Stokes' Theorem turned three separate line integrals into one simple area calculation.
+
+## Real-World Application
+
+Stokes' Theorem connects rotation inside a region to circulation around its boundary:
+
+- Faraday's Law in electromagnetism is literally Stokes' Theorem applied to the electric field. The induced voltage around a loop equals the rate of change of magnetic flux through the loop.
+- Fluid dynamics uses it to relate the vorticity (curl of velocity) inside a region to the circulation of the fluid around the boundary.
+- Game engines use the principle behind Stokes' Theorem when computing vortex effects: the swirl you see around the edge of a whirlpool is determined by the rotation inside it.
+- Aerodynamics uses it to compute lift on an airfoil via the Kutta-Joukowski theorem, which relates circulation to lift force.
+
+:::note[You've Got This]
+Stokes' Theorem says: total rotation inside = total circulation around the edge. It's Green's Theorem upgraded to 3D. The recipe is: compute curl F, dot it with the surface normal, and integrate over the surface. Or go the other way and compute the line integral around the boundary. Pick whichever side is easier. This theorem, together with the Divergence Theorem, completes the story of how integrals in vector calculus are all connected.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="calculus3-stokes-theorem"
+  questions={[
+    {
+      id: "q1",
+      text: "Stokes' Theorem relates",
+      options: [
+        "a triple integral to a surface integral",
+        "the surface integral of curl F to the line integral around the boundary",
+        "two line integrals along different paths",
+        "the divergence to the gradient",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Stokes' Theorem says the flux of curl F through S equals the circulation of F around the boundary C.",
+    },
+    {
+      id: "q2",
+      text: "For $\\mathbf{F} = \\langle -y, x, 0 \\rangle$, the circulation around the unit circle via Stokes' Theorem is",
+      options: ["$\\pi$", "$4\\pi$", "$2\\pi$", "$0$"],
+      correctIndex: 2,
+      explanation:
+        "Curl F = <0,0,2>, dotted with the upward normal gives 2, integrated over the unit disk gives 2pi.",
+    },
+    {
+      id: "q3",
+      text: "Stokes' Theorem is the 3D generalization of",
+      options: [
+        "the Divergence Theorem",
+        "the Fundamental Theorem of Calculus",
+        "Green's Theorem",
+        "the Mean Value Theorem",
+      ],
+      correctIndex: 2,
+      explanation:
+        "When the surface is flat in the xy-plane, Stokes' Theorem reduces to Green's Theorem.",
+    },
+    {
+      id: "q4",
+      text: "In Stokes' Theorem, you can choose any surface S as long as",
+      options: [
+        "S is a sphere",
+        "S is flat",
+        "S has the correct boundary curve C",
+        "S has zero area",
+      ],
+      correctIndex: 2,
+      explanation:
+        "The theorem works for any oriented surface whose boundary is C. Pick the easiest one.",
+    },
+    {
+      id: "q5",
+      text: "If F is conservative, Stokes' Theorem gives",
+      options: [
+        "the surface area",
+        "the volume enclosed",
+        "a nonzero value depending on the surface",
+        "zero on both sides",
+      ],
+      correctIndex: 3,
+      explanation:
+        "Conservative fields have curl = 0, so the surface integral is 0, and the circulation is also 0.",
+    },
+  ]}
+/>
