@@ -104,8 +104,8 @@ import Quiz from "../../../components/Quiz.astro";
     {
       id: "q1",
       text: "Factor: $6x^2 + 9x$",
-      options: ["$3x(2x + 3)$", "$3(2x^2 + 3x)$", "$6x(x + 9)$", "$x(6x + 9)$"],
-      correctIndex: 0,
+      options: ["$3(2x^2 + 3x)$", "$3x(2x + 3)$", "$6x(x + 9)$", "$x(6x + 9)$"],
+      correctIndex: 1,
       explanation:
         "GCF $= 3x$. Factor out: $3x(2x + 3)$. Check: $3x \\cdot 2x + 3x \\cdot 3 = 6x^2 + 9x$ ✓",
     },
@@ -113,12 +113,12 @@ import Quiz from "../../../components/Quiz.astro";
       id: "q2",
       text: "Factor: $x^2 + 9x + 20$",
       options: [
-        "$(x + 4)(x + 5)$",
         "$(x + 2)(x + 10)$",
         "$(x + 1)(x + 20)$",
         "$(x + 9)(x + 20)$",
+        "$(x + 4)(x + 5)$",
       ],
-      correctIndex: 0,
+      correctIndex: 3,
       explanation:
         "Find two numbers that multiply to 20 and add to 9: 4 and 5. So $x^2 + 9x + 20 = (x + 4)(x + 5)$.",
     },
@@ -139,12 +139,12 @@ import Quiz from "../../../components/Quiz.astro";
       id: "q4",
       text: "Factor completely: $2x^2 + 10x + 12$",
       options: [
-        "$2(x + 2)(x + 3)$",
         "$(2x + 4)(x + 3)$",
         "$(x + 2)(2x + 6)$",
+        "2(x + 2)(x + 3)$",
         "$2(x^2 + 5x + 6)$",
       ],
-      correctIndex: 0,
+      correctIndex: 2,
       explanation:
         "GCF $= 2$: $2(x^2 + 5x + 6)$. Factor the trinomial: 2 and 3 multiply to 6 and add to 5. So $2(x + 2)(x + 3)$.",
     },
@@ -152,12 +152,12 @@ import Quiz from "../../../components/Quiz.astro";
       id: "q5",
       text: "Factor: $x^2 - 16$",
       options: [
-        "$(x - 4)(x + 4)$",
         "$(x - 8)(x + 2)$",
+        "$(x - 4)(x + 4)$",
         "$(x - 4)^2$",
         "$(x + 4)^2$",
       ],
-      correctIndex: 0,
+      correctIndex: 1,
       explanation:
         "This is a difference of squares: $x^2 - 16 = (x - 4)(x + 4)$.",
     },

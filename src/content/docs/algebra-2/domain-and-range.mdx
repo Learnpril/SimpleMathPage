@@ -147,7 +147,7 @@ import Quiz from "../../../components/Quiz.astro";
         "All real numbers",
         "All real numbers except $x = 5$",
         "$x \\geq 5$",
-        "$x \\leq 5$"
+        "$x \\leq 5$",
       ],
       correctIndex: 1,
       explanation: "Denominator cannot be zero, so $x \\neq 5$.",
@@ -155,7 +155,12 @@ import Quiz from "../../../components/Quiz.astro";
     {
       id: "q2",
       text: "What is the domain of $g(x) = \\sqrt{x + 3}$?",
-      options: ["$x \\leq -3$", "$x > -3$", "All real numbers", "$x \\geq -3$"],
+      options: [
+        "$x \\leq -3$",
+        "$x \\gt -3$",
+        "All real numbers",
+        "$x \\geq -3$",
+      ],
       correctIndex: 3,
       explanation:
         "The expression inside the square root must be $\\geq 0$: $x + 3 \\geq 0 \\rightarrow x \\geq -3$.",
@@ -176,7 +181,12 @@ import Quiz from "../../../components/Quiz.astro";
     {
       id: "q4",
       text: "A delivery service charges 8 dollars plus 2 dollars per mile. What is a reasonable domain for miles driven?",
-      options: ["miles > 0", "All real numbers", "miles ≥ 0", "miles ≤ 100"],
+      options: [
+        "miles $\\gt$ 0",
+        "All real numbers",
+        "miles $\\geq$ 0",
+        "miles $\\leq$ 100",
+      ],
       correctIndex: 2,
       explanation: "You cannot drive a negative number of miles.",
     },
@@ -187,7 +197,7 @@ import Quiz from "../../../components/Quiz.astro";
         "$y \\geq 6$",
         "$y \\leq 6$",
         "All real numbers",
-        "$y \\leq 0$"
+        "$y \\leq 0$",
       ],
       correctIndex: 1,
       explanation:

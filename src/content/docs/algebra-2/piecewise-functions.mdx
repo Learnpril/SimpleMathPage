@@ -106,7 +106,7 @@ import Quiz from "../../../components/Quiz.astro";
   questions={[
     {
       id: "q1",
-      text: "Using the function above: $f(x) = 2x - 1$ when $x < 3$, and $f(x) = x + 4$ when $x \\geq 3$. What is $f(3)$?",
+      text: "Using the function above: $f(x) = 2x - 1$ when $x \\lt 3$, and $f(x) = x + 4$ when $x \\geq 3$. What is $f(3)$?",
       options: ["$5$", "$7$", "$6$", "$3$"],
       correctIndex: 1,
       explanation:
@@ -114,7 +114,7 @@ import Quiz from "../../../components/Quiz.astro";
     },
     {
       id: "q2",
-      text: "Same function: $f(x) = 2x - 1$ when $x < 3$, and $f(x) = x + 4$ when $x \\geq 3$. What is $f(0)$?",
+      text: "Same function: $f(x) = 2x - 1$ when $x \\lt 3$, and $f(x) = x + 4$ when $x \\geq 3$. What is $f(0)$?",
       options: ["$1$", "$4$", "$0$", "$-1$"],
       correctIndex: 3,
       explanation:
@@ -143,10 +143,10 @@ import Quiz from "../../../components/Quiz.astro";
     },
     {
       id: "q5",
-      text: "Evaluate $f(x) = \\begin{cases} x^2 & \\text{if } x < 0 \\\\ 3x + 1 & \\text{if } x \\geq 0 \\end{cases}$ at $x = -3$.",
+      text: "Evaluate $f(x) = \\begin{cases} x^2 & \\text{if } x \\lt 0 \\\\ 3x + 1 & \\text{if } x \\geq 0 \\end{cases}$ at $x = -3$.",
       options: ["$-8$", "$9$", "$-9$", "$10$"],
       correctIndex: 1,
-      explanation: "Since $-3 < 0$, use the first piece: $(-3)^2 = 9$.",
+      explanation: "Since $-3 \\lt 0$, use the first piece: $(-3)^2 = 9$.",
     },
   ]}
 />

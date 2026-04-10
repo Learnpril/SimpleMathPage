@@ -16,7 +16,6 @@ export default defineConfig({
         src: "./src/assets/logo.png",
       },
       sidebar: [
-        { label: "Welcome", slug: "" },
         {
           label: "Arithmetic",
           autogenerate: { directory: "arithmetic" },
@@ -87,7 +86,8 @@ export default defineConfig({
       head: [
         {
           tag: "script",
-          content: `if (!localStorage.getItem('starlight-theme')) { document.documentElement.dataset.theme = 'dark'; }`,
+          attrs: { is: "inline" },
+          content: `if (!localStorage.getItem('starlight-theme')) { localStorage.setItem('starlight-theme', '"dark"'); document.documentElement.dataset.theme = 'dark'; }`,
         },
         {
           tag: "script",
@@ -211,6 +211,153 @@ export default defineConfig({
                 secSpan.textContent = linkSection;
                 linkTitle.parentNode.insertBefore(secSpan, linkTitle);
               });
+            });
+          `,
+        },
+        {
+          tag: "script",
+          content: `
+            document.addEventListener('DOMContentLoaded', function() {
+              if (window.innerWidth >= 800) return;
+              var subjects = [
+                {slug:'arithmetic', label:'Arithmetic', about:'about-arithmetic'},
+                {slug:'pre-algebra', label:'Pre-Algebra', about:'about-pre-algebra'},
+                {slug:'algebra-basics', label:'Algebra Basics', about:'about-algebra-basics'},
+                {slug:'geometry', label:'Geometry', about:'about-geometry'},
+                {slug:'algebra-2', label:'Algebra 2', about:'about-algebra-2'},
+                {slug:'trigonometry', label:'Trigonometry', about:'about-trigonometry'},
+                {slug:'pre-calculus', label:'Pre-Calculus', about:'about-pre-calculus'},
+                {slug:'calculus-1', label:'Calculus 1', about:'about-calculus-1'},
+                {slug:'calculus-2', label:'Calculus 2', about:'about-calculus-2'},
+                {slug:'calculus-3', label:'Calculus 3', about:'about-calculus-3'}
+              ];
+              var path = window.location.pathname.replace(/^\\//, '').replace(/\\/$/, '');
+              var currentSection = path.split('/')[0] || '';
+
+              /* Scrape lessons from Starlight's sidebar nav */
+              function getLessons(slug) {
+                var items = [];
+                var groups = document.querySelectorAll('nav.sidebar-content details, nav[aria-label="Main"] details');
+                groups.forEach(function(det) {
+                  var summary = det.querySelector('summary');
+                  if (!summary) return;
+                  var links = det.querySelectorAll('a[href*="/' + slug + '/"]');
+                  links.forEach(function(a) {
+                    var href = a.getAttribute('href');
+                    var text = a.textContent.trim();
+                    if (text && href) items.push({href: href, text: text});
+                  });
+                });
+                /* fallback: scan all sidebar links */
+                if (items.length === 0) {
+                  document.querySelectorAll('nav a[href*="/' + slug + '/"]').forEach(function(a) {
+                    var href = a.getAttribute('href');
+                    var text = a.textContent.trim();
+                    if (text && href) items.push({href: href, text: text});
+                  });
+                }
+                return items;
+              }
+
+              var overlay = document.createElement('div');
+              overlay.className = 'mobile-subject-overlay';
+              document.body.appendChild(overlay);
+
+              var panel = document.createElement('div');
+              panel.className = 'mobile-subject-panel';
+              var title = document.createElement('div');
+              title.className = 'mobile-subject-panel-title';
+              title.textContent = 'Jump to Subject';
+              panel.appendChild(title);
+
+              var expandedSlug = null;
+
+              subjects.forEach(function(s) {
+                var row = document.createElement('div');
+                row.className = 'msw-subject-row';
+
+                var btn = document.createElement('button');
+                btn.className = 'msw-subject-btn' + (s.slug === currentSection ? ' active' : '');
+                btn.innerHTML = '<span>' + s.label + '</span><svg class="msw-chevron" viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6z"/></svg>';
+
+                var lessonList = document.createElement('div');
+                lessonList.className = 'msw-lessons';
+
+                btn.addEventListener('click', function(e) {
+                  e.preventDefault();
+                  if (expandedSlug === s.slug) {
+                    lessonList.classList.remove('open');
+                    btn.classList.remove('expanded');
+                    expandedSlug = null;
+                    return;
+                  }
+                  /* collapse any other open */
+                  panel.querySelectorAll('.msw-lessons.open').forEach(function(el) { el.classList.remove('open'); });
+                  panel.querySelectorAll('.msw-subject-btn.expanded').forEach(function(el) { el.classList.remove('expanded'); });
+
+                  /* populate lessons on first expand */
+                  if (!lessonList.dataset.loaded) {
+                    var lessons = getLessons(s.slug);
+                    if (lessons.length === 0) {
+                      var li = document.createElement('a');
+                      li.href = '/' + s.slug + '/' + s.about + '/';
+                      li.className = 'msw-lesson-link';
+                      li.textContent = 'Go to ' + s.label;
+                      lessonList.appendChild(li);
+                    } else {
+                      lessons.forEach(function(l) {
+                        var li = document.createElement('a');
+                        li.href = l.href;
+                        li.className = 'msw-lesson-link';
+                        if (path === l.href.replace(/^\\//, '').replace(/\\/$/, '')) li.classList.add('current');
+                        li.textContent = l.text;
+                        li.addEventListener('click', function() { close(); });
+                        lessonList.appendChild(li);
+                      });
+                    }
+                    lessonList.dataset.loaded = '1';
+                  }
+
+                  lessonList.classList.add('open');
+                  btn.classList.add('expanded');
+                  expandedSlug = s.slug;
+
+                  /* scroll the expanded section into view */
+                  setTimeout(function() { btn.scrollIntoView({behavior:'smooth', block:'nearest'}); }, 50);
+                });
+
+                row.appendChild(btn);
+                row.appendChild(lessonList);
+                panel.appendChild(row);
+              });
+              document.body.appendChild(panel);
+
+              var fab = document.createElement('button');
+              fab.className = 'mobile-subject-fab';
+              fab.setAttribute('aria-label', 'Switch subject');
+              var menuIcon = '<svg viewBox="0 0 24 24"><path d="M4 6h16v2H4zm0 5h16v2H4zm0 5h16v2H4z"/></svg>';
+              var closeIcon = '<svg viewBox="0 0 24 24"><path d="M18.3 5.71a1 1 0 0 0-1.41 0L12 10.59 7.11 5.7A1 1 0 0 0 5.7 7.11L10.59 12 5.7 16.89a1 1 0 1 0 1.41 1.41L12 13.41l4.89 4.89a1 1 0 0 0 1.41-1.41L13.41 12l4.89-4.89a1 1 0 0 0 0-1.4z"/></svg>';
+              fab.innerHTML = menuIcon + '<span class="fab-label">Subjects</span>';
+              document.body.appendChild(fab);
+
+              var isOpen = false;
+              function toggle() {
+                isOpen = !isOpen;
+                panel.classList.toggle('open', isOpen);
+                overlay.classList.toggle('open', isOpen);
+                fab.innerHTML = isOpen
+                  ? closeIcon + '<span class="fab-label">Close</span>'
+                  : menuIcon + '<span class="fab-label">Subjects</span>';
+              }
+              function close() {
+                if (!isOpen) return;
+                isOpen = false;
+                panel.classList.remove('open');
+                overlay.classList.remove('open');
+                fab.innerHTML = menuIcon + '<span class="fab-label">Subjects</span>';
+              }
+              fab.addEventListener('click', toggle);
+              overlay.addEventListener('click', close);
             });
           `,
         },

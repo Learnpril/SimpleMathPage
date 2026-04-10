@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en" dir="ltr" data-theme="dark" data-has-hero class="astro-bguv2lll"> <head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><title>404 | Mom's Basement University</title><script>if (!localStorage.getItem('starlight-theme')) { document.documentElement.dataset.theme = 'dark'; }</script><script>
+<!DOCTYPE html><html lang="en" dir="ltr" data-theme="dark" data-has-hero class="astro-bguv2lll"> <head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><title>404 | Mom's Basement University</title><script is="inline">if (!localStorage.getItem('starlight-theme')) { localStorage.setItem('starlight-theme', '"dark"'); document.documentElement.dataset.theme = 'dark'; }</script><script>
             document.addEventListener('DOMContentLoaded', function() {
               if (window.innerWidth >= 800) return;
               var sunSvg = '<svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm0-3a1 1 0 0 0 1-1V1a1 1 0 0 0-2 0v2a1 1 0 0 0 1 1zm0 18a1 1 0 0 0-1 1v2a1 1 0 0 0 2 0v-2a1 1 0 0 0-1-1zM5.64 7.05 4.22 5.64a1 1 0 0 1 1.42-1.42l1.41 1.42a1 1 0 1 1-1.41 1.41zm12.73 9.9a1 1 0 1 0-1.42 1.42l1.42 1.41a1 1 0 0 0 1.41-1.41l-1.41-1.42zM4 12a1 1 0 0 0-1-1H1a1 1 0 0 0 0 2h2a1 1 0 0 0 1-1zm18-1h-2a1 1 0 0 0 0 2h2a1 1 0 0 0 0-2zM5.64 16.95a1 1 0 1 0-1.41 1.42l1.41 1.41a1 1 0 0 0 1.42-1.41l-1.42-1.42zm12.73-9.9a1 1 0 1 0 1.41-1.41l-1.41-1.42a1 1 0 0 0-1.42 1.42l1.42 1.41z"/></svg>';
@@ -113,6 +113,149 @@
             });
           </script><script>
             document.addEventListener('DOMContentLoaded', function() {
+              if (window.innerWidth >= 800) return;
+              var subjects = [
+                {slug:'arithmetic', label:'Arithmetic', about:'about-arithmetic'},
+                {slug:'pre-algebra', label:'Pre-Algebra', about:'about-pre-algebra'},
+                {slug:'algebra-basics', label:'Algebra Basics', about:'about-algebra-basics'},
+                {slug:'geometry', label:'Geometry', about:'about-geometry'},
+                {slug:'algebra-2', label:'Algebra 2', about:'about-algebra-2'},
+                {slug:'trigonometry', label:'Trigonometry', about:'about-trigonometry'},
+                {slug:'pre-calculus', label:'Pre-Calculus', about:'about-pre-calculus'},
+                {slug:'calculus-1', label:'Calculus 1', about:'about-calculus-1'},
+                {slug:'calculus-2', label:'Calculus 2', about:'about-calculus-2'},
+                {slug:'calculus-3', label:'Calculus 3', about:'about-calculus-3'}
+              ];
+              var path = window.location.pathname.replace(/^\//, '').replace(/\/$/, '');
+              var currentSection = path.split('/')[0] || '';
+
+              /* Scrape lessons from Starlight's sidebar nav */
+              function getLessons(slug) {
+                var items = [];
+                var groups = document.querySelectorAll('nav.sidebar-content details, nav[aria-label="Main"] details');
+                groups.forEach(function(det) {
+                  var summary = det.querySelector('summary');
+                  if (!summary) return;
+                  var links = det.querySelectorAll('a[href*="/' + slug + '/"]');
+                  links.forEach(function(a) {
+                    var href = a.getAttribute('href');
+                    var text = a.textContent.trim();
+                    if (text && href) items.push({href: href, text: text});
+                  });
+                });
+                /* fallback: scan all sidebar links */
+                if (items.length === 0) {
+                  document.querySelectorAll('nav a[href*="/' + slug + '/"]').forEach(function(a) {
+                    var href = a.getAttribute('href');
+                    var text = a.textContent.trim();
+                    if (text && href) items.push({href: href, text: text});
+                  });
+                }
+                return items;
+              }
+
+              var overlay = document.createElement('div');
+              overlay.className = 'mobile-subject-overlay';
+              document.body.appendChild(overlay);
+
+              var panel = document.createElement('div');
+              panel.className = 'mobile-subject-panel';
+              var title = document.createElement('div');
+              title.className = 'mobile-subject-panel-title';
+              title.textContent = 'Jump to Subject';
+              panel.appendChild(title);
+
+              var expandedSlug = null;
+
+              subjects.forEach(function(s) {
+                var row = document.createElement('div');
+                row.className = 'msw-subject-row';
+
+                var btn = document.createElement('button');
+                btn.className = 'msw-subject-btn' + (s.slug === currentSection ? ' active' : '');
+                btn.innerHTML = '<span>' + s.label + '</span><svg class="msw-chevron" viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6z"/></svg>';
+
+                var lessonList = document.createElement('div');
+                lessonList.className = 'msw-lessons';
+
+                btn.addEventListener('click', function(e) {
+                  e.preventDefault();
+                  if (expandedSlug === s.slug) {
+                    lessonList.classList.remove('open');
+                    btn.classList.remove('expanded');
+                    expandedSlug = null;
+                    return;
+                  }
+                  /* collapse any other open */
+                  panel.querySelectorAll('.msw-lessons.open').forEach(function(el) { el.classList.remove('open'); });
+                  panel.querySelectorAll('.msw-subject-btn.expanded').forEach(function(el) { el.classList.remove('expanded'); });
+
+                  /* populate lessons on first expand */
+                  if (!lessonList.dataset.loaded) {
+                    var lessons = getLessons(s.slug);
+                    if (lessons.length === 0) {
+                      var li = document.createElement('a');
+                      li.href = '/' + s.slug + '/' + s.about + '/';
+                      li.className = 'msw-lesson-link';
+                      li.textContent = 'Go to ' + s.label;
+                      lessonList.appendChild(li);
+                    } else {
+                      lessons.forEach(function(l) {
+                        var li = document.createElement('a');
+                        li.href = l.href;
+                        li.className = 'msw-lesson-link';
+                        if (path === l.href.replace(/^\//, '').replace(/\/$/, '')) li.classList.add('current');
+                        li.textContent = l.text;
+                        li.addEventListener('click', function() { close(); });
+                        lessonList.appendChild(li);
+                      });
+                    }
+                    lessonList.dataset.loaded = '1';
+                  }
+
+                  lessonList.classList.add('open');
+                  btn.classList.add('expanded');
+                  expandedSlug = s.slug;
+
+                  /* scroll the expanded section into view */
+                  setTimeout(function() { btn.scrollIntoView({behavior:'smooth', block:'nearest'}); }, 50);
+                });
+
+                row.appendChild(btn);
+                row.appendChild(lessonList);
+                panel.appendChild(row);
+              });
+              document.body.appendChild(panel);
+
+              var fab = document.createElement('button');
+              fab.className = 'mobile-subject-fab';
+              fab.setAttribute('aria-label', 'Switch subject');
+              var menuIcon = '<svg viewBox="0 0 24 24"><path d="M4 6h16v2H4zm0 5h16v2H4zm0 5h16v2H4z"/></svg>';
+              var closeIcon = '<svg viewBox="0 0 24 24"><path d="M18.3 5.71a1 1 0 0 0-1.41 0L12 10.59 7.11 5.7A1 1 0 0 0 5.7 7.11L10.59 12 5.7 16.89a1 1 0 1 0 1.41 1.41L12 13.41l4.89 4.89a1 1 0 0 0 1.41-1.41L13.41 12l4.89-4.89a1 1 0 0 0 0-1.4z"/></svg>';
+              fab.innerHTML = menuIcon + '<span class="fab-label">Subjects</span>';
+              document.body.appendChild(fab);
+
+              var isOpen = false;
+              function toggle() {
+                isOpen = !isOpen;
+                panel.classList.toggle('open', isOpen);
+                overlay.classList.toggle('open', isOpen);
+                fab.innerHTML = isOpen
+                  ? closeIcon + '<span class="fab-label">Close</span>'
+                  : menuIcon + '<span class="fab-label">Subjects</span>';
+              }
+              function close() {
+                if (!isOpen) return;
+                isOpen = false;
+                panel.classList.remove('open');
+                overlay.classList.remove('open');
+                fab.innerHTML = menuIcon + '<span class="fab-label">Subjects</span>';
+              }
+              fab.addEventListener('click', toggle);
+              overlay.addEventListener('click', close);
+            });
+          </script><script>
+            document.addEventListener('DOMContentLoaded', function() {
               var footer = document.createElement('div');
               footer.className = 'scratch-paper-footer';
               footer.innerHTML = '\u270F\uFE0F Grab some scratch paper and work the problems out by hand — it makes a huge difference.';
@@ -144,7 +287,7 @@
 			},
 		};
 	})();
-</script><template id="theme-icons"><svg aria-hidden="true" class="light astro-c6vsoqas" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M5 12a1 1 0 0 0-1-1H3a1 1 0 0 0 0 2h1a1 1 0 0 0 1-1Zm.64 5-.71.71a1 1 0 0 0 0 1.41 1 1 0 0 0 1.41 0l.71-.71A1 1 0 0 0 5.64 17ZM12 5a1 1 0 0 0 1-1V3a1 1 0 0 0-2 0v1a1 1 0 0 0 1 1Zm5.66 2.34a1 1 0 0 0 .7-.29l.71-.71a1 1 0 1 0-1.41-1.41l-.66.71a1 1 0 0 0 0 1.41 1 1 0 0 0 .66.29Zm-12-.29a1 1 0 0 0 1.41 0 1 1 0 0 0 0-1.41l-.71-.71a1.004 1.004 0 1 0-1.43 1.41l.73.71ZM21 11h-1a1 1 0 0 0 0 2h1a1 1 0 0 0 0-2Zm-2.64 6A1 1 0 0 0 17 18.36l.71.71a1 1 0 0 0 1.41 0 1 1 0 0 0 0-1.41l-.76-.66ZM12 6.5a5.5 5.5 0 1 0 5.5 5.5A5.51 5.51 0 0 0 12 6.5Zm0 9a3.5 3.5 0 1 1 0-7 3.5 3.5 0 0 1 0 7Zm0 3.5a1 1 0 0 0-1 1v1a1 1 0 0 0 2 0v-1a1 1 0 0 0-1-1Z"/></svg><svg aria-hidden="true" class="dark astro-c6vsoqas" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M21.64 13a1 1 0 0 0-1.05-.14 8.049 8.049 0 0 1-3.37.73 8.15 8.15 0 0 1-8.14-8.1 8.59 8.59 0 0 1 .25-2A1 1 0 0 0 8 2.36a10.14 10.14 0 1 0 14 11.69 1 1 0 0 0-.36-1.05Zm-9.5 6.69A8.14 8.14 0 0 1 7.08 5.22v.27a10.15 10.15 0 0 0 10.14 10.14 9.784 9.784 0 0 0 2.1-.22 8.11 8.11 0 0 1-7.18 4.32v-.04Z"/></svg><svg aria-hidden="true" class="auto astro-c6vsoqas" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M21 14h-1V7a3 3 0 0 0-3-3H7a3 3 0 0 0-3 3v7H3a1 1 0 0 0-1 1v2a3 3 0 0 0 3 3h14a3 3 0 0 0 3-3v-2a1 1 0 0 0-1-1ZM6 7a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v7H6V7Zm14 10a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-1h16v1Z"/></svg></template><link rel="stylesheet" href="/_astro/print.DNXP8c50.css" media="print"><link rel="stylesheet" href="/_astro/index.666VZxqd.css"><script type="module" src="/_astro/page.B1D-nYk3.js"></script></head> <body class="astro-bguv2lll"> <a href="#_top" class="astro-7q3lir66">Skip to content</a>  <div class="page sl-flex astro-vrdttmbt"> <header class="header astro-vrdttmbt"><div class="header astro-kmkmnagf"> <div class="title-wrapper sl-flex astro-kmkmnagf"> <a href="/" class="site-title sl-flex astro-m46x6ez3">  <img class="astro-m46x6ez3" alt src="/_astro/logo.DN9V27gF.png" width="256" height="256">  <span class="astro-m46x6ez3" translate="no"> Mom&#39;s Basement University </span> </a>  </div> <div class="sl-flex print:hidden astro-kmkmnagf"> <site-search class="astro-kmkmnagf astro-v37mnknz" data-translations="{&#34;placeholder&#34;:&#34;Search&#34;}"> <button data-open-modal disabled aria-label="Search" aria-keyshortcuts="Control+K" class="astro-v37mnknz"> <svg aria-hidden="true" class="astro-v37mnknz astro-c6vsoqas" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M21.71 20.29 18 16.61A9 9 0 1 0 16.61 18l3.68 3.68a.999.999 0 0 0 1.42 0 1 1 0 0 0 0-1.39ZM11 18a7 7 0 1 1 0-14 7 7 0 0 1 0 14Z"/></svg> <span class="sl-hidden md:sl-block astro-v37mnknz" aria-hidden="true">Search</span> <kbd class="sl-hidden md:sl-flex astro-v37mnknz" style="display: none;"> <kbd class="astro-v37mnknz">Ctrl</kbd><kbd class="astro-v37mnknz">K</kbd> </kbd> </button> <dialog style="padding:0" aria-label="Search" class="astro-v37mnknz"> <div class="dialog-frame sl-flex astro-v37mnknz">  <button data-close-modal class="sl-flex md:sl-hidden astro-v37mnknz"> Cancel </button> <div class="search-container astro-v37mnknz"> <div id="starlight__search" class="astro-v37mnknz"></div> </div> </div> </dialog> </site-search>  <script>
+</script><template id="theme-icons"><svg aria-hidden="true" class="light astro-c6vsoqas" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M5 12a1 1 0 0 0-1-1H3a1 1 0 0 0 0 2h1a1 1 0 0 0 1-1Zm.64 5-.71.71a1 1 0 0 0 0 1.41 1 1 0 0 0 1.41 0l.71-.71A1 1 0 0 0 5.64 17ZM12 5a1 1 0 0 0 1-1V3a1 1 0 0 0-2 0v1a1 1 0 0 0 1 1Zm5.66 2.34a1 1 0 0 0 .7-.29l.71-.71a1 1 0 1 0-1.41-1.41l-.66.71a1 1 0 0 0 0 1.41 1 1 0 0 0 .66.29Zm-12-.29a1 1 0 0 0 1.41 0 1 1 0 0 0 0-1.41l-.71-.71a1.004 1.004 0 1 0-1.43 1.41l.73.71ZM21 11h-1a1 1 0 0 0 0 2h1a1 1 0 0 0 0-2Zm-2.64 6A1 1 0 0 0 17 18.36l.71.71a1 1 0 0 0 1.41 0 1 1 0 0 0 0-1.41l-.76-.66ZM12 6.5a5.5 5.5 0 1 0 5.5 5.5A5.51 5.51 0 0 0 12 6.5Zm0 9a3.5 3.5 0 1 1 0-7 3.5 3.5 0 0 1 0 7Zm0 3.5a1 1 0 0 0-1 1v1a1 1 0 0 0 2 0v-1a1 1 0 0 0-1-1Z"/></svg><svg aria-hidden="true" class="dark astro-c6vsoqas" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M21.64 13a1 1 0 0 0-1.05-.14 8.049 8.049 0 0 1-3.37.73 8.15 8.15 0 0 1-8.14-8.1 8.59 8.59 0 0 1 .25-2A1 1 0 0 0 8 2.36a10.14 10.14 0 1 0 14 11.69 1 1 0 0 0-.36-1.05Zm-9.5 6.69A8.14 8.14 0 0 1 7.08 5.22v.27a10.15 10.15 0 0 0 10.14 10.14 9.784 9.784 0 0 0 2.1-.22 8.11 8.11 0 0 1-7.18 4.32v-.04Z"/></svg><svg aria-hidden="true" class="auto astro-c6vsoqas" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M21 14h-1V7a3 3 0 0 0-3-3H7a3 3 0 0 0-3 3v7H3a1 1 0 0 0-1 1v2a3 3 0 0 0 3 3h14a3 3 0 0 0 3-3v-2a1 1 0 0 0-1-1ZM6 7a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v7H6V7Zm14 10a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-1h16v1Z"/></svg></template><link rel="stylesheet" href="/_astro/print.DNXP8c50.css" media="print"><link rel="stylesheet" href="/_astro/index.DlYDBirB.css"><script type="module" src="/_astro/page.B1D-nYk3.js"></script></head> <body class="astro-bguv2lll"> <a href="#_top" class="astro-7q3lir66">Skip to content</a>  <div class="page sl-flex astro-vrdttmbt"> <header class="header astro-vrdttmbt"><div class="header astro-kmkmnagf"> <div class="title-wrapper sl-flex astro-kmkmnagf"> <a href="/" class="site-title sl-flex astro-m46x6ez3">  <img class="astro-m46x6ez3" alt src="/_astro/logo.DN9V27gF.png" width="256" height="256">  <span class="astro-m46x6ez3" translate="no"> Mom&#39;s Basement University </span> </a>  </div> <div class="sl-flex print:hidden astro-kmkmnagf"> <site-search class="astro-kmkmnagf astro-v37mnknz" data-translations="{&#34;placeholder&#34;:&#34;Search&#34;}"> <button data-open-modal disabled aria-label="Search" aria-keyshortcuts="Control+K" class="astro-v37mnknz"> <svg aria-hidden="true" class="astro-v37mnknz astro-c6vsoqas" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M21.71 20.29 18 16.61A9 9 0 1 0 16.61 18l3.68 3.68a.999.999 0 0 0 1.42 0 1 1 0 0 0 0-1.39ZM11 18a7 7 0 1 1 0-14 7 7 0 0 1 0 14Z"/></svg> <span class="sl-hidden md:sl-block astro-v37mnknz" aria-hidden="true">Search</span> <kbd class="sl-hidden md:sl-flex astro-v37mnknz" style="display: none;"> <kbd class="astro-v37mnknz">Ctrl</kbd><kbd class="astro-v37mnknz">K</kbd> </kbd> </button> <dialog style="padding:0" aria-label="Search" class="astro-v37mnknz"> <div class="dialog-frame sl-flex astro-v37mnknz">  <button data-close-modal class="sl-flex md:sl-hidden astro-v37mnknz"> Cancel </button> <div class="search-container astro-v37mnknz"> <div id="starlight__search" class="astro-v37mnknz"></div> </div> </div> </dialog> </site-search>  <script>
 	(() => {
 		const openBtn = document.querySelector('button[data-open-modal]');
 		const shortcut = openBtn?.querySelector('kbd');

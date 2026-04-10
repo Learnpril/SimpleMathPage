@@ -162,23 +162,23 @@ import Quiz from "../../../components/Quiz.astro";
     {
       id: "q1",
       text: "Solve for r in d = rt.",
-      options: ["r = d / t", "r = t / d", "r = d t", "r = d + t"],
-      correctIndex: 0,
+      options: ["r = t / d", "r = d / t", "r = d t", "r = d + t"],
+      correctIndex: 1,
       explanation: "Divide both sides by t: r = d / t.",
     },
     {
       id: "q2",
       text: "Solve for h in A = (1/2)bh.",
-      options: ["h = 2A / b", "h = A / (2b)", "h = 2A b", "h = A b / 2"],
-      correctIndex: 0,
+      options: ["h = A / (2b)", "h = 2A b", "h = 2A / b", "h = A b / 2"],
+      correctIndex: 2,
       explanation:
         "Multiply both sides by 2: 2A = bh. Divide by b: h = 2A / b.",
     },
     {
       id: "q3",
       text: "Solve for P in I = Prt (simple interest).",
-      options: ["P = I / (rt)", "P = I rt", "P = I + rt", "P = rt / I"],
-      correctIndex: 0,
+      options: ["P = I rt", "P = I + rt", "P = rt / I", "P = I / (rt)"],
+      correctIndex: 3,
       explanation: "Divide both sides by rt: P = I / (rt).",
     },
     {
@@ -197,12 +197,12 @@ import Quiz from "../../../components/Quiz.astro";
       id: "q5",
       text: "Solve for $b$ in $A = \\frac{1}{2}(a + b)h$.",
       options: [
-        "$b = \\frac{2A}{h} - a$",
         "$b = 2Ah - a$",
+        "$b = \\frac{2A}{h} - a$",
         "$b = \\frac{A - a}{2h}$",
         "$b = \\frac{2A + a}{h}$",
       ],
-      correctIndex: 0,
+      correctIndex: 1,
       explanation:
         "Multiply by 2: $2A = (a + b)h$. Divide by $h$: $\\frac{2A}{h} = a + b$. Subtract $a$: $b = \\frac{2A}{h} - a$.",
     },

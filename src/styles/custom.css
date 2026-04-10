@@ -58,6 +58,53 @@
   color: #ffffff !important;
 }
 
+/* ---------- Sidebar: differentiate lesson links from subject headings ---------- */
+/* Subject group headings (summaries) stay bold and full color */
+nav.sidebar-content summary,
+.sidebar-content summary,
+starlight-menu-button + nav summary {
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+
+/* Lesson links under subjects: softer color, smaller font, left border hint */
+nav.sidebar-content ul a,
+.sidebar-content ul a,
+starlight-menu-button + nav ul a {
+  font-size: 0.88rem;
+  color: #999;
+  border-left: 2px solid transparent;
+  padding-left: 0.75rem;
+  margin-left: 0.25rem;
+  transition: color 0.15s, border-color 0.15s;
+}
+nav.sidebar-content ul a:hover,
+.sidebar-content ul a:hover,
+starlight-menu-button + nav ul a:hover {
+  color: var(--sl-color-text-accent);
+  border-left-color: var(--sl-color-accent);
+}
+/* Active lesson link */
+nav.sidebar-content ul a[aria-current="page"],
+.sidebar-content ul a[aria-current="page"],
+starlight-menu-button + nav ul a[aria-current="page"] {
+  color: var(--sl-color-text-accent) !important;
+  border-left-color: var(--sl-color-accent) !important;
+  font-weight: 600;
+}
+
+/* Light mode: lesson links need darker muted color */
+:root[data-theme="light"] nav.sidebar-content ul a,
+:root[data-theme="light"] .sidebar-content ul a,
+:root[data-theme="light"] starlight-menu-button + nav ul a {
+  color: #666;
+}
+:root[data-theme="light"] nav.sidebar-content ul a:hover,
+:root[data-theme="light"] .sidebar-content ul a:hover,
+:root[data-theme="light"] starlight-menu-button + nav ul a:hover {
+  color: var(--sl-color-text-accent);
+}
+
 /* ===========================
    Quiz Component Styles
    =========================== */
@@ -238,6 +285,36 @@ starlight-toc {
   transition: border-color 0.15s, background-color 0.15s;
   cursor: pointer;
 }
+
+/* Subject card SVG icons */
+.subject-icon {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 80px;
+  margin-bottom: 0.75rem;
+  padding: 8px 12px;
+}
+:root[data-theme="light"] .subject-icon {
+}
+.si-num { font: bold 28px 'Libre Baskerville',Georgia,serif; fill: #aaa; }
+.si-op { font: 20px sans-serif; fill: #666; }
+.si-accent { font: bold 28px 'Libre Baskerville',Georgia,serif; fill: var(--sl-color-text-accent, #58a6ff); }
+.si-small { font: 13px 'Libre Baskerville',Georgia,serif; fill: #777; }
+.si-line { stroke: #555; stroke-width: 1.5; }
+.si-axis { stroke: #444; stroke-width: 1; }
+.si-graph { stroke: var(--sl-color-text-accent, #58a6ff); stroke-width: 2; }
+.si-shape { stroke: var(--sl-color-text-accent, #58a6ff); stroke-width: 1.8; }
+.si-dot { fill: var(--sl-color-text-accent, #58a6ff); }
+.si-accent-line { stroke: #f0883e; stroke-width: 2; }
+.si-arrow { fill: #f0883e; }
+.si-fill { fill: var(--sl-color-text-accent, #58a6ff); opacity: 0.15; }
+
+:root[data-theme="light"] .si-num { fill: #555; }
+:root[data-theme="light"] .si-op { fill: #888; }
+:root[data-theme="light"] .si-small { fill: #666; }
+:root[data-theme="light"] .si-line { stroke: #aaa; }
+:root[data-theme="light"] .si-axis { stroke: #bbb; }
 
 .subject-card:hover {
   border-color: var(--sl-color-accent);
@@ -559,3 +636,182 @@ p:has(> strong:first-child:last-child) {
 .math-light { display: none; }
 [data-theme="light"] .math-dark { display: none; }
 [data-theme="light"] .math-light { display: block; }
+
+/* ---------- Mobile Subject Switcher ---------- */
+.mobile-subject-fab {
+  display: none;
+  position: fixed;
+  bottom: 56px;
+  right: 16px;
+  z-index: 1100;
+  height: 44px;
+  padding: 0 16px 0 12px;
+  border-radius: 22px;
+  border: none;
+  background: var(--sl-color-accent, hsl(174, 80%, 35%));
+  color: #fff;
+  font-family: var(--sl-font);
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.35);
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: transform 0.15s, background 0.15s;
+}
+.mobile-subject-fab:active { transform: scale(0.94); }
+.mobile-subject-fab svg { width: 20px; height: 20px; fill: currentColor; flex-shrink: 0; }
+.fab-label { white-space: nowrap; }
+
+.mobile-subject-panel {
+  display: none;
+  position: fixed;
+  bottom: 112px;
+  right: 16px;
+  left: 16px;
+  z-index: 1099;
+  max-height: 55vh;
+  overflow-y: auto;
+  background: var(--sl-color-bg-sidebar, #1e1e1e);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 12px;
+  padding: 12px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.4);
+  -webkit-overflow-scrolling: touch;
+}
+.mobile-subject-panel.open { display: block; }
+.mobile-subject-panel-title {
+  font-family: var(--sl-font);
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--sl-color-text-accent, #58a6ff);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 8px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.mobile-subject-panel a {
+  display: block;
+  padding: 10px 12px;
+  margin-bottom: 2px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-family: var(--sl-font);
+  font-size: 0.95rem;
+  color: var(--sl-color-white, #e0e0e0);
+  transition: background 0.15s;
+}
+.mobile-subject-panel a:hover,
+.mobile-subject-panel a:focus {
+  background: rgba(255,255,255,0.06);
+}
+.mobile-subject-panel a.active {
+  background: rgba(88,166,255,0.12);
+  color: var(--sl-color-text-accent, #58a6ff);
+}
+
+/* Accordion subject buttons */
+.msw-subject-row { margin-bottom: 2px; }
+.msw-subject-btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 10px 12px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--sl-color-white, #e0e0e0);
+  font-family: var(--sl-font);
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+  text-align: left;
+}
+.msw-subject-btn:hover { background: rgba(255,255,255,0.06); }
+.msw-subject-btn.active { color: var(--sl-color-text-accent, #58a6ff); }
+.msw-chevron { transition: transform 0.2s; flex-shrink: 0; margin-left: 8px; }
+.msw-subject-btn.expanded .msw-chevron { transform: rotate(180deg); }
+.msw-lessons {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.25s ease;
+}
+.msw-lessons.open { max-height: 600px; }
+.msw-lesson-link {
+  display: block;
+  padding: 7px 12px 7px 24px;
+  text-decoration: none;
+  font-family: var(--sl-font);
+  font-size: 0.82rem;
+  color: #999;
+  border-left: 2px solid transparent;
+  margin-left: 12px;
+  border-radius: 0;
+  transition: color 0.12s, border-color 0.12s, background 0.12s;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.msw-lesson-link:hover {
+  color: var(--sl-color-text-accent, #58a6ff);
+  border-left-color: var(--sl-color-accent);
+  background: rgba(255,255,255,0.03);
+}
+.msw-lesson-link.current {
+  color: var(--sl-color-text-accent, #58a6ff);
+  border-left-color: var(--sl-color-accent);
+  font-weight: 600;
+  background: rgba(88,166,255,0.08);
+}
+:root[data-theme="light"] .msw-subject-btn { color: #333; }
+:root[data-theme="light"] .msw-subject-btn:hover { background: rgba(0,0,0,0.04); }
+:root[data-theme="light"] .msw-subject-btn.active { color: var(--sl-color-text-accent); }
+:root[data-theme="light"] .msw-lesson-link { color: #666; }
+:root[data-theme="light"] .msw-lesson-link:hover {
+  color: var(--sl-color-text-accent);
+  background: rgba(0,0,0,0.02);
+}
+:root[data-theme="light"] .msw-lesson-link.current {
+  color: var(--sl-color-text-accent);
+  background: rgba(0,128,128,0.06);
+}
+
+:root[data-theme="light"] .mobile-subject-panel {
+  background: #f1f3f5;
+  border-color: rgba(0,0,0,0.1);
+  box-shadow: 0 4px 24px rgba(0,0,0,0.15);
+}
+:root[data-theme="light"] .mobile-subject-panel-title {
+  border-bottom-color: rgba(0,0,0,0.08);
+}
+:root[data-theme="light"] .mobile-subject-panel a {
+  color: #333;
+}
+:root[data-theme="light"] .mobile-subject-panel a:hover {
+  background: rgba(0,0,0,0.04);
+}
+:root[data-theme="light"] .mobile-subject-panel a.active {
+  background: rgba(0,128,128,0.1);
+  color: var(--sl-color-text-accent);
+}
+.mobile-subject-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 1098;
+  background: transparent;
+}
+.mobile-subject-overlay.open { display: block; }
+
+@media (min-width: 800px) {
+  .mobile-subject-fab,
+  .mobile-subject-panel,
+  .mobile-subject-overlay { display: none !important; }
+}
+@media (max-width: 799px) {
+  .mobile-subject-fab { display: flex; }
+}
