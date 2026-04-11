@@ -1,0 +1,23 @@
+---
+import type { Props } from '@astrojs/starlight/props';
+import Default from '@astrojs/starlight/components/Head.astro';
+---
+<Default {...Astro.props}><slot /></Default>
+<script>
+  import { initAuthButton } from "../lib/auth-modal";
+
+  function init() {
+    try {
+      initAuthButton();
+    } catch {
+      /* Supabase not configured */
+    }
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", init);
+  } else {
+    init();
+  }
+  document.addEventListener("astro:page-load", init);
+</script>

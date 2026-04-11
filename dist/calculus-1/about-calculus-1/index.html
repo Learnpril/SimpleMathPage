@@ -265,50 +265,6 @@
               overlay.addEventListener('click', close);
             });
           </script><script>
-            /* Auth button in header (desktop) */
-            document.addEventListener('DOMContentLoaded', function() {
-              var header = document.querySelector('header');
-              if (!header || document.getElementById('auth-header-btn')) return;
-              if (window.innerWidth < 800) return; /* mobile has its own icon */
-
-              var btn = document.createElement('button');
-              btn.id = 'auth-header-btn';
-              btn.className = 'auth-header-btn';
-              btn.textContent = 'Log In';
-
-              btn.addEventListener('click', function() {
-                import('/src/lib/auth-modal.ts').then(function(mod) {
-                  if (btn.getAttribute('data-logged-in')) {
-                    if (mod.handleMobileAuthClick) mod.handleMobileAuthClick(btn);
-                  } else {
-                    if (mod.showAuthModal) mod.showAuthModal();
-                  }
-                }).catch(function(e) { console.warn('Auth module load failed:', e); });
-              });
-
-              var target = header.querySelector('.right-group') || header.querySelector('[class*="right"]');
-              if (!target) {
-                var flexes = header.querySelectorAll('.sl-flex');
-                target = flexes[flexes.length - 1] || header;
-              }
-              target.appendChild(btn);
-
-              /* Check login state */
-              try {
-                import('/src/lib/supabase/client.ts').then(function(c) {
-                  var sb = c.createSupabaseClient();
-                  sb.auth.getUser().then(function(r) {
-                    var u = r.data && r.data.user;
-                    if (u) {
-                      var name = (u.user_metadata && u.user_metadata.display_name) || (u.email && u.email.split('@')[0]) || 'User';
-                      btn.textContent = 'Hi, ' + name + '!';
-                      btn.setAttribute('data-logged-in', 'true');
-                    }
-                  }).catch(function(){});
-                }).catch(function(){});
-              } catch(e) {}
-            });
-          </script><script>
             /* Sidebar checkmarks: inject completion indicators from Supabase */
             document.addEventListener('DOMContentLoaded', async function() {
               try {
@@ -364,7 +320,7 @@
               footer.innerHTML = '\u270F\uFE0F Grab some scratch paper and work the problems out by hand — it makes a huge difference.';
               document.body.appendChild(footer);
             });
-          </script><link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="true"/><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Libre+Baskerville:400,400italic,700&display=swap"/><link rel="shortcut icon" href="/favicon.png" type="image/png"/><meta name="generator" content="Astro v5.18.1"/><meta name="generator" content="Starlight v0.37.7"/><meta property="og:title" content="About Calculus 1"/><meta property="og:type" content="article"/><meta property="og:locale" content="en"/><meta property="og:description" content="Welcome to Calculus, the mathematics of change, motion, and accumulation"/><meta property="og:site_name" content="Mom's Basement University"/><meta name="twitter:card" content="summary_large_image"/><meta name="description" content="Welcome to Calculus, the mathematics of change, motion, and accumulation"/><script>
+          </script><link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="true"/><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Libre+Baskerville:400,400italic,700&display=swap"/><link rel="shortcut icon" href="/favicon.png" type="image/png"/><meta name="generator" content="Astro v5.18.1"/><meta name="generator" content="Starlight v0.37.7"/><meta property="og:title" content="About Calculus 1"/><meta property="og:type" content="article"/><meta property="og:locale" content="en"/><meta property="og:description" content="Welcome to Calculus, the mathematics of change, motion, and accumulation"/><meta property="og:site_name" content="Mom's Basement University"/><meta name="twitter:card" content="summary_large_image"/><meta name="description" content="Welcome to Calculus, the mathematics of change, motion, and accumulation"/> <script type="module" src="/_astro/Head.astro_astro_type_script_index_0_lang.iT16b-Lb.js"></script><script>
 	window.StarlightThemeProvider = (() => {
 		const storedTheme =
 			typeof localStorage !== 'undefined' && localStorage.getItem('starlight-theme');

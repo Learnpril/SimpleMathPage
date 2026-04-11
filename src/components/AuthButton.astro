@@ -1,0 +1,21 @@
+---
+/* This component injects the auth button via a Vite-bundled script */
+---
+<script>
+  import { initAuthButton } from "../lib/auth-modal";
+
+  function init() {
+    try {
+      initAuthButton();
+    } catch {
+      /* Supabase not configured */
+    }
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", init);
+  } else {
+    init();
+  }
+  document.addEventListener("astro:page-load", init);
+</script>

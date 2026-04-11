@@ -15,6 +15,9 @@ export default defineConfig({
       logo: {
         src: "./src/assets/logo.png",
       },
+      components: {
+        Head: "./src/components/Head.astro",
+      },
       sidebar: [
         {
           label: "Arithmetic",
@@ -364,54 +367,6 @@ export default defineConfig({
               }
               fab.addEventListener('click', toggle);
               overlay.addEventListener('click', close);
-            });
-          `,
-        },
-        {
-          tag: "script",
-          content: `
-            /* Auth button in header (desktop) */
-            document.addEventListener('DOMContentLoaded', function() {
-              var header = document.querySelector('header');
-              if (!header || document.getElementById('auth-header-btn')) return;
-              if (window.innerWidth < 800) return; /* mobile has its own icon */
-
-              var btn = document.createElement('button');
-              btn.id = 'auth-header-btn';
-              btn.className = 'auth-header-btn';
-              btn.textContent = 'Log In';
-
-              btn.addEventListener('click', function() {
-                import('/src/lib/auth-modal.ts').then(function(mod) {
-                  if (btn.getAttribute('data-logged-in')) {
-                    if (mod.handleMobileAuthClick) mod.handleMobileAuthClick(btn);
-                  } else {
-                    if (mod.showAuthModal) mod.showAuthModal();
-                  }
-                }).catch(function(e) { console.warn('Auth module load failed:', e); });
-              });
-
-              var target = header.querySelector('.right-group') || header.querySelector('[class*="right"]');
-              if (!target) {
-                var flexes = header.querySelectorAll('.sl-flex');
-                target = flexes[flexes.length - 1] || header;
-              }
-              target.appendChild(btn);
-
-              /* Check login state */
-              try {
-                import('/src/lib/supabase/client.ts').then(function(c) {
-                  var sb = c.createSupabaseClient();
-                  sb.auth.getUser().then(function(r) {
-                    var u = r.data && r.data.user;
-                    if (u) {
-                      var name = (u.user_metadata && u.user_metadata.display_name) || (u.email && u.email.split('@')[0]) || 'User';
-                      btn.textContent = 'Hi, ' + name + '!';
-                      btn.setAttribute('data-logged-in', 'true');
-                    }
-                  }).catch(function(){});
-                }).catch(function(){});
-              } catch(e) {}
             });
           `,
         },
