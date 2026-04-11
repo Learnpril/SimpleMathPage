@@ -177,24 +177,24 @@ import Quiz from "../../../components/Quiz.astro";
     },
     {
       id: "q2",
-      text: "Using LIATE, which function should be u in the integral of x times e to the x?",
-      options: ["e to the x", "x dx", "x", "x times e to the x"],
+      text: "Using LIATE, which function should be $u$ in $\\int x\\,e^x\\,dx$?",
+      options: ["$e^x$", "$x\\,dx$", "$x$", "$x \\cdot e^x$"],
       correctIndex: 2,
       explanation:
-        "Algebraic (x) comes before Exponential (e to the x) in LIATE, so u = x.",
+        "Algebraic ($x$) comes before Exponential ($e^x$) in LIATE, so $u = x$.",
     },
     {
       id: "q3",
-      text: "The integral of x times cos(x) dx equals:",
+      text: "The integral of $x \\cos(x)\\,dx$ equals:",
       options: [
-        "x sin(x) + cos(x) + C",
-        "-x sin(x) + cos(x) + C",
-        "x sin(x) - cos(x) + C",
-        "-x cos(x) + sin(x) + C",
+        "$x\\sin(x) + \\cos(x) + C$",
+        "$-x\\sin(x) + \\cos(x) + C$",
+        "$x\\sin(x) - \\cos(x) + C$",
+        "$-x\\cos(x) + \\sin(x) + C$",
       ],
       correctIndex: 0,
       explanation:
-        "With u = x and dv = cos(x) dx: v = sin(x), so x sin(x) - integral of sin(x) dx = x sin(x) + cos(x) + C.",
+        "With $u = x$ and $dv = \\cos(x)\\,dx$: $v = \\sin(x)$, so $x\\sin(x) - \\int \\sin(x)\\,dx = x\\sin(x) + \\cos(x) + C$.",
     },
     {
       id: "q4",
@@ -211,7 +211,7 @@ import Quiz from "../../../components/Quiz.astro";
     },
     {
       id: "q5",
-      text: "How many times must you apply integration by parts to evaluate the integral of x² times e to the x dx?",
+      text: "How many times must you apply integration by parts to evaluate $\\int x^2 e^x\\,dx$?",
       options: [
         "Once",
         "Three times",
@@ -220,7 +220,7 @@ import Quiz from "../../../components/Quiz.astro";
       ],
       correctIndex: 2,
       explanation:
-        "x² needs two differentiations to reach 0, so you apply the formula twice (or use the tabular method).",
+        "$x^2$ needs two differentiations to reach 0, so you apply the formula twice (or use the tabular method).",
     },
   ]}
 />

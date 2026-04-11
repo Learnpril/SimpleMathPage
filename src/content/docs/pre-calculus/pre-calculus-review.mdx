@@ -232,10 +232,15 @@ import Quiz from "../../../components/Quiz.astro";
   questions={[
     {
       id: "q1",
-      text: "(f composed with g)(x) means:",
-      options: ["g(f(x))", "f(g(x))", "f(x) + g(x)", "f(x) times g(x)"],
+      text: "$(f \\circ g)(x)$ means:",
+      options: [
+        "$g(f(x))$",
+        "$f(g(x))$",
+        "$f(x) + g(x)$",
+        "$f(x) \\cdot g(x)$",
+      ],
       correctIndex: 1,
-      explanation: "Composition applies g first, then f.",
+      explanation: "Composition applies $g$ first, then $f$.",
     },
     {
       id: "q2",
@@ -260,7 +265,7 @@ import Quiz from "../../../components/Quiz.astro";
         "Conjugate pairs",
       ],
       correctIndex: 3,
-      explanation: "If a + bi is a zero, a - bi is also a zero.",
+      explanation: "If $a + bi$ is a zero, $a - bi$ is also a zero.",
     },
     {
       id: "q4",
@@ -276,10 +281,10 @@ import Quiz from "../../../components/Quiz.astro";
     },
     {
       id: "q5",
-      text: "A function is continuous at x = a if:",
+      text: "A function is continuous at $x = a$ if:",
       options: [
-        "The function is undefined at a",
-        "The limit exists and equals f(a)",
+        "The function is undefined at $a$",
+        "The limit exists and equals $f(a)$",
         "There is a vertical asymptote",
         "The left and right limits differ",
       ],
@@ -348,7 +353,7 @@ import Quiz from "../../../components/Quiz.astro";
     },
     {
       id: "q11",
-      text: "The polar equation r = a(1 + cos θ) produces a:",
+      text: "The polar equation $r = a(1 + \\cos\\theta)$ produces a:",
       options: ["Rose curve", "Spiral", "Lemniscate", "Cardioid"],
       correctIndex: 3,
       explanation: "This is the standard cardioid shape.",
@@ -405,9 +410,9 @@ import Quiz from "../../../components/Quiz.astro";
       id: "q16",
       text: "The inductive step assumes the statement is true for:",
       options: [
-        "Some k and proves it for k + 1",
-        "All n at once",
-        "Only n = 1",
+        "Some $k$ and proves it for $k + 1$",
+        "All $n$ at once",
+        "Only $n = 1$",
         "Only even numbers",
       ],
       correctIndex: 0,
@@ -439,10 +444,10 @@ import Quiz from "../../../components/Quiz.astro";
     },
     {
       id: "q19",
-      text: "The natural logarithm ln(x) uses base:",
-      options: ["10", "2", "pi", "e"],
+      text: "The natural logarithm $\\ln(x)$ uses base:",
+      options: ["$10$", "$2$", "$\\pi$", "$e$"],
       correctIndex: 3,
-      explanation: "ln is log base e, where e is approximately 2.718.",
+      explanation: "$\\ln$ is log base $e$, where $e \\approx 2.718$.",
     },
     {
       id: "q20",

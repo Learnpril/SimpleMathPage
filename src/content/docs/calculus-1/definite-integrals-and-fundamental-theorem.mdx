@@ -158,17 +158,22 @@ import Quiz from "../../../components/Quiz.astro";
     {
       id: "q2",
       text: "The FTC Part 1 says the definite integral equals:",
-      options: ["F(a) - F(b)", "F'(b) - F'(a)", "F(b) - F(a)", "F(x) + C"],
+      options: [
+        "$F(a) - F(b)$",
+        "$F'(b) - F'(a)$",
+        "$F(b) - F(a)$",
+        "$F(x) + C$",
+      ],
       correctIndex: 2,
       explanation:
         "Evaluate the antiderivative at the upper bound minus the lower bound.",
     },
     {
       id: "q3",
-      text: "The integral of sin(x) from 0 to pi/2 equals:",
+      text: "The integral of $\\sin(x)$ from $0$ to $\\pi/2$ equals:",
       options: ["0", "2", "-1", "1"],
       correctIndex: 3,
-      explanation: "-cos(pi/2) - (-cos(0)) = 0 + 1 = 1.",
+      explanation: "$-\\cos(\\pi/2) - (-\\cos(0)) = 0 + 1 = 1$.",
     },
     {
       id: "q4",
@@ -181,7 +186,7 @@ import Quiz from "../../../components/Quiz.astro";
       ],
       correctIndex: 1,
       explanation:
-        "Differentiation undoes integration: d/dx[integral from a to x of f(t) dt] = f(x).",
+        "Differentiation undoes integration: $\\frac{d}{dx}\\int_a^x f(t)\\,dt = f(x)$.",
     },
     {
       id: "q5",

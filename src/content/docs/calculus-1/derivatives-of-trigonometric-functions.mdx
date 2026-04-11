@@ -103,23 +103,28 @@ import Quiz from "../../../components/Quiz.astro";
   questions={[
     {
       id: "q1",
-      text: "The derivative of cos(x) is:",
-      options: ["sin x", "-sin x", "cos x", "-cos x"],
+      text: "The derivative of $\\cos(x)$ is:",
+      options: ["$\\sin x$", "$-\\sin x$", "$\\cos x$", "$-\\cos x$"],
       correctIndex: 1,
       explanation:
-        "The derivative of cos x is -sin x. Don't forget the negative.",
+        "The derivative of $\\cos x$ is $-\\sin x$. Don't forget the negative.",
     },
     {
       id: "q2",
-      text: "The derivative of sin(3x) is:",
-      options: ["cos(3x)", "-3sin(3x)", "3cos(3x)", "3sin(3x)"],
+      text: "The derivative of $\\sin(3x)$ is:",
+      options: ["$\\cos(3x)$", "$-3\\sin(3x)$", "$3\\cos(3x)$", "$3\\sin(3x)$"],
       correctIndex: 2,
-      explanation: "Chain rule: cos(3x) times 3 = 3cos(3x).",
+      explanation: "Chain rule: $\\cos(3x) \\cdot 3 = 3\\cos(3x)$.",
     },
     {
       id: "q3",
-      text: "The derivative of tan(x) is:",
-      options: ["sec x tan x", "-csc² x", "cos² x", "sec² x"],
+      text: "The derivative of $\\tan(x)$ is:",
+      options: [
+        "$\\sec x \\tan x$",
+        "$-\\csc^2 x$",
+        "$\\cos^2 x$",
+        "$\\sec^2 x$",
+      ],
       correctIndex: 3,
       explanation: "One of the standard trig derivatives to memorize.",
     },
@@ -138,10 +143,15 @@ import Quiz from "../../../components/Quiz.astro";
     },
     {
       id: "q5",
-      text: "The derivative of sec(x) is:",
-      options: ["sec² x", "-csc x cot x", "sec x tan x", "tan² x"],
+      text: "The derivative of $\\sec(x)$ is:",
+      options: [
+        "$\\sec^2 x$",
+        "$-\\csc x \\cot x$",
+        "$\\sec x \\tan x$",
+        "$\\tan^2 x$",
+      ],
       correctIndex: 2,
-      explanation: "d/dx[sec x] = sec x tan x.",
+      explanation: "$\\frac{d}{dx}[\\sec x] = \\sec x \\tan x$.",
     },
   ]}
 />

@@ -101,7 +101,7 @@ import Quiz from "../../../components/Quiz.astro";
   questions={[
     {
       id: "q1",
-      text: "The work done by a variable force F(x) from a to b is",
+      text: "The work done by a variable force $F(x)$ from $a$ to $b$ is",
       options: [
         "$F \\cdot d$",
         "$\\int_a^b F(x)\\,dx$",
@@ -110,7 +110,7 @@ import Quiz from "../../../components/Quiz.astro";
       ],
       correctIndex: 1,
       explanation:
-        "When force varies, you integrate F(x) over the interval to get total work.",
+        "When force varies, you integrate $F(x)$ over the interval to get total work.",
     },
     {
       id: "q2",
@@ -130,18 +130,17 @@ import Quiz from "../../../components/Quiz.astro";
     },
     {
       id: "q4",
-      text: "The average value of f(x) = 6x on [0, 4] is",
-      options: ["48", "24", "6", "12"],
+      text: "The average value of $f(x) = 6x$ on $[0, 4]$ is",
+      options: ["$48$", "$24$", "$6$", "$12$"],
       correctIndex: 3,
-      explanation:
-        "The integral of 6x from 0 to 4 is 3(16) = 48. Average = 48/4 = 12.",
+      explanation: "$\\int_0^4 6x\\,dx = 3(16) = 48$. Average $= 48/4 = 12$.",
     },
     {
       id: "q5",
       text: "If the work to stretch a spring 0.5 m is 12.5 J, the spring constant k is",
       options: ["25 N/m", "50 N/m", "100 N/m", "200 N/m"],
       correctIndex: 2,
-      explanation: "W = k(0.5)²/2 = 0.125k = 12.5, so k = 100 N/m.",
+      explanation: "$W = k(0.5)^2/2 = 0.125k = 12.5$, so $k = 100$ N/m.",
     },
   ]}
 />

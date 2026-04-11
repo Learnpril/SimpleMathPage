@@ -126,32 +126,42 @@ import Quiz from "../../../components/Quiz.astro";
     },
     {
       id: "q2",
-      text: "The antiderivative of x⁴ is:",
-      options: ["4x³ + C", "(1/5)x⁵ + C", "x⁵ + C", "5x⁴ + C"],
+      text: "The antiderivative of $x^4$ is:",
+      options: [
+        "$4x^3 + C$",
+        "$\\frac{1}{5}x^5 + C$",
+        "$x^5 + C$",
+        "$5x^4 + C$",
+      ],
       correctIndex: 1,
       explanation:
         "Add 1 to the exponent (5), divide by the new exponent (1/5).",
     },
     {
       id: "q3",
-      text: "The integral of e to the x is:",
+      text: "The integral of $e^x$ is:",
       options: [
-        "ln(x) + C",
-        "x times e to the x + C",
-        "e to the x + C",
-        "e to the (x+1) + C",
+        "$\\ln(x) + C$",
+        "$x \\cdot e^x + C$",
+        "$e^x + C$",
+        "$e^{x+1} + C$",
       ],
       correctIndex: 2,
       explanation:
-        "e to the x is its own antiderivative, just like it's its own derivative.",
+        "$e^x$ is its own antiderivative, just like it's its own derivative.",
     },
     {
       id: "q4",
-      text: "The integral of sin(x) is:",
-      options: ["cos(x) + C", "sin(x) + C", "-sin(x) + C", "-cos(x) + C"],
+      text: "The integral of $\\sin(x)$ is:",
+      options: [
+        "$\\cos(x) + C$",
+        "$\\sin(x) + C$",
+        "$-\\sin(x) + C$",
+        "$-\\cos(x) + C$",
+      ],
       correctIndex: 3,
       explanation:
-        "The derivative of -cos(x) is sin(x), so -cos(x) is the antiderivative.",
+        "The derivative of $-\\cos(x)$ is $\\sin(x)$, so $-\\cos(x)$ is the antiderivative.",
     },
     {
       id: "q5",

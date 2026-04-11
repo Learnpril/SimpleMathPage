@@ -112,22 +112,22 @@ import Quiz from "../../../components/Quiz.astro";
   questions={[
     {
       id: "q1",
-      text: "The area between f(x) and g(x) where f(x) is above g(x) on [a, b] is",
+      text: "The area between $f(x)$ and $g(x)$ where $f(x)$ is above $g(x)$ on $[a, b]$ is",
       options: [
-        "The integral of f(x) plus g(x)",
-        "The integral of f(x) minus g(x) from a to b",
-        "The integral of g(x) minus f(x) from a to b",
-        "f(b) minus g(a)",
+        "The integral of $f(x) + g(x)$",
+        "$\\int_a^b [f(x) - g(x)]\\,dx$",
+        "$\\int_a^b [g(x) - f(x)]\\,dx$",
+        "$f(b) - g(a)$",
       ],
       correctIndex: 1,
       explanation: "Upper minus lower, integrated over the interval.",
     },
     {
       id: "q2",
-      text: "The area between y = x and y = x² from 0 to 1 equals",
-      options: ["1/2", "1/3", "1/6", "1/4"],
+      text: "The area between $y = x$ and $y = x^2$ from $0$ to $1$ equals",
+      options: ["$1/2$", "$1/3$", "$1/6$", "$1/4$"],
       correctIndex: 2,
-      explanation: "Integral of (x - x²) from 0 to 1 = 1/2 - 1/3 = 1/6.",
+      explanation: "$\\int_0^1 (x - x^2)\\,dx = 1/2 - 1/3 = 1/6$.",
     },
     {
       id: "q3",

@@ -116,16 +116,21 @@ import Quiz from "../../../components/Quiz.astro";
     },
     {
       id: "q2",
-      text: "If y = (x³ + 2)⁵, then dy/dx =",
-      options: ["15x²", "5(x³ + 2)⁵", "5(x³ + 2)⁴ times 3x²", "3x²(x³ + 2)⁴"],
+      text: "If $y = (x^3 + 2)^5$, then $dy/dx =$",
+      options: [
+        "$15x^2$",
+        "$5(x^3 + 2)^5$",
+        "$5(x^3 + 2)^4 \\cdot 3x^2$",
+        "$3x^2(x^3 + 2)^4$",
+      ],
       correctIndex: 2,
       explanation:
-        "Derivative of outside (5u⁴) times derivative of inside (3x²).",
+        "Derivative of outside ($5u^4$) times derivative of inside ($3x^2$).",
     },
     {
       id: "q3",
-      text: "The derivative of sin(4x) is:",
-      options: ["cos(4x)", "4sin(4x)", "4cos(4x)", "-cos(4x)"],
+      text: "The derivative of $\\sin(4x)$ is:",
+      options: ["$\\cos(4x)$", "$4\\sin(4x)$", "$4\\cos(4x)$", "$-\\cos(4x)$"],
       correctIndex: 2,
       explanation:
         "Derivative of sin is cos, then multiply by derivative of inside (4).",
@@ -146,7 +151,7 @@ import Quiz from "../../../components/Quiz.astro";
     {
       id: "q5",
       text: "Which function requires the chain rule to differentiate?",
-      options: ["x⁴ + 3x", "5x - 7", "cos(x² + 1)", "3x²"],
+      options: ["$x^4 + 3x$", "$5x - 7$", "$\\cos(x^2 + 1)$", "$3x^2$"],
       correctIndex: 2,
       explanation:
         "cos of (something) is a composition, so the chain rule applies.",

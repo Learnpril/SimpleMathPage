@@ -112,46 +112,41 @@ import Quiz from "../../../components/Quiz.astro";
   questions={[
     {
       id: "q1",
-      text: "The derivative of e to the x is:",
-      options: ["x times e to the (x-1)", "ln(x)", "e to the x", "1/x"],
+      text: "The derivative of $e^x$ is:",
+      options: ["$x \\cdot e^{x-1}$", "$\\ln(x)$", "$e^x$", "$1/x$"],
       correctIndex: 2,
       explanation: "The natural exponential is its own derivative.",
     },
     {
       id: "q2",
-      text: "The derivative of ln(x) is:",
-      options: ["x", "1/x", "e to the x", "ln(x)/x"],
+      text: "The derivative of $\\ln(x)$ is:",
+      options: ["$x$", "$1/x$", "$e^x$", "$\\ln(x)/x$"],
       correctIndex: 1,
       explanation: "One of the most important derivatives to know.",
     },
     {
       id: "q3",
-      text: "The derivative of e to the 5x is:",
+      text: "The derivative of $e^{5x}$ is:",
       options: [
-        "e to the 5x",
-        "5x times e to the 4x",
-        "ln(5) times e to the 5x",
-        "5 times e to the 5x",
+        "$e^{5x}$",
+        "$5x \\cdot e^{4x}$",
+        "$\\ln(5) \\cdot e^{5x}$",
+        "$5e^{5x}$",
       ],
       correctIndex: 3,
       explanation:
-        "Chain rule: derivative of e to the u is e to the u, times derivative of inside (5).",
+        "Chain rule: derivative of $e^u$ is $e^u$ times derivative of inside ($5$).",
     },
     {
       id: "q4",
-      text: "The derivative of 2 to the x is:",
-      options: [
-        "x times 2 to the (x-1)",
-        "2 to the x",
-        "2 to the x times ln(2)",
-        "ln(2)/x",
-      ],
+      text: "The derivative of $2^x$ is:",
+      options: ["$x \\cdot 2^{x-1}$", "$2^x$", "$2^x \\ln(2)$", "$\\ln(2)/x$"],
       correctIndex: 2,
-      explanation: "For base a, the derivative is a to the x times ln(a).",
+      explanation: "For base $a$, the derivative is $a^x \\ln(a)$.",
     },
     {
       id: "q5",
-      text: "Why is e special in calculus?",
+      text: "Why is $e$ special in calculus?",
       options: [
         "It only works with integers",
         "It makes logarithms unnecessary",
@@ -160,7 +155,7 @@ import Quiz from "../../../components/Quiz.astro";
       ],
       correctIndex: 2,
       explanation:
-        "e to the x is the only function equal to its own derivative (up to scaling).",
+        "$e^x$ is the only function equal to its own derivative (up to scaling).",
     },
   ]}
 />

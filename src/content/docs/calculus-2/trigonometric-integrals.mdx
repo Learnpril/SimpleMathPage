@@ -151,22 +151,22 @@ import Quiz from "../../../components/Quiz.astro";
   questions={[
     {
       id: "q1",
-      text: "When integrating sin³(x), the best first step is to:",
+      text: "When integrating $\\sin^3(x)$, the best first step is to:",
       options: [
         "Use the half-angle identity",
         "Apply integration by parts",
-        "Save one sin(x) for du and write sin²(x) as 1 - cos²(x)",
-        "Substitute u = sin(x) directly",
+        "Save one $\\sin(x)$ for $du$ and write $\\sin^2(x)$ as $1 - \\cos^2(x)$",
+        "Substitute $u = \\sin(x)$ directly",
       ],
       correctIndex: 2,
       explanation:
-        "Odd power of sine: peel off one sin(x) for du, convert the rest using the Pythagorean identity.",
+        "Odd power of sine: peel off one $\\sin(x)$ for $du$, convert the rest using the Pythagorean identity.",
     },
     {
       id: "q2",
       text: "For integrals with even powers of both sine and cosine, you should use:",
       options: [
-        "U-substitution with u = sin(x)",
+        "U-substitution with $u = \\sin(x)$",
         "Power-reducing (half-angle) identities",
         "Integration by parts",
         "The Pythagorean identity directly",
@@ -177,33 +177,38 @@ import Quiz from "../../../components/Quiz.astro";
     },
     {
       id: "q3",
-      text: "The integral of sin²(x) cos²(x) dx simplifies to:",
+      text: "The integral of $\\sin^2(x)\\cos^2(x)\\,dx$ simplifies to:",
       options: [
-        "(1/4)sin²(2x) + C",
-        "x/8 + sin(4x)/32 + C",
-        "x/8 - sin(4x)/32 + C",
-        "(1/2)x - (1/4)sin(2x) + C",
+        "$\\frac{1}{4}\\sin^2(2x) + C$",
+        "$\\frac{x}{8} + \\frac{\\sin(4x)}{32} + C$",
+        "$\\frac{x}{8} - \\frac{\\sin(4x)}{32} + C$",
+        "$\\frac{1}{2}x - \\frac{1}{4}\\sin(2x) + C$",
       ],
       correctIndex: 2,
       explanation:
-        "After applying half-angle identities twice, you get (1 - cos 4x)/8, which integrates to x/8 - sin(4x)/32 + C.",
+        "After applying half-angle identities twice, you get $(1 - \\cos 4x)/8$, which integrates to $x/8 - \\sin(4x)/32 + C$.",
     },
     {
       id: "q4",
-      text: "For the integral of tan³(x) sec²(x) dx, the best substitution is:",
-      options: ["u = sec(x)", "u = sin(x)", "u = cos(x)", "u = tan(x)"],
+      text: "For the integral of $\\tan^3(x)\\sec^2(x)\\,dx$, the best substitution is:",
+      options: [
+        "$u = \\sec(x)$",
+        "$u = \\sin(x)$",
+        "$u = \\cos(x)$",
+        "$u = \\tan(x)$",
+      ],
       correctIndex: 3,
       explanation:
-        "Since du = sec²(x) dx appears in the integrand, u = tan(x) turns this into a simple power integral.",
+        "Since $du = \\sec^2(x)\\,dx$ appears in the integrand, $u = \\tan(x)$ turns this into a simple power integral.",
     },
     {
       id: "q5",
       text: "Which identity is most useful for converting between tangent and secant?",
       options: [
-        "sin²(x) + cos²(x) = 1",
-        "sin(2x) = 2 sin(x) cos(x)",
-        "tan²(x) = sec²(x) - 1",
-        "cos(2x) = 1 - 2sin²(x)",
+        "$\\sin^2(x) + \\cos^2(x) = 1$",
+        "$\\sin(2x) = 2\\sin(x)\\cos(x)$",
+        "$\\tan^2(x) = \\sec^2(x) - 1$",
+        "$\\cos(2x) = 1 - 2\\sin^2(x)$",
       ],
       correctIndex: 2,
       explanation:

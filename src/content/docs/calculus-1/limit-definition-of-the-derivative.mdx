@@ -126,12 +126,12 @@ import Quiz from "../../../components/Quiz.astro";
   questions={[
     {
       id: "q1",
-      text: "The formal definition of the derivative at x = a is:",
+      text: "The formal definition of the derivative at $x = a$ is:",
       options: [
         "The slope of the secant line",
-        "lim (h\\to 0) [f(a+h) - f(a)] / h",
-        "f(a+h) - f(a)",
-        "lim (x\\to a) f(x)",
+        "$\\lim_{h \\to 0} \\frac{f(a+h) - f(a)}{h}$",
+        "$f(a+h) - f(a)$",
+        "$\\lim_{x \\to a} f(x)$",
       ],
       correctIndex: 1,
       explanation:
@@ -139,18 +139,18 @@ import Quiz from "../../../components/Quiz.astro";
     },
     {
       id: "q2",
-      text: "Using the limit definition, the derivative of f(x) = x² is:",
-      options: ["x", "2", "x²", "2x"],
+      text: "Using the limit definition, the derivative of $f(x) = x^2$ is:",
+      options: ["$x$", "$2$", "$x^2$", "$2x$"],
       correctIndex: 3,
       explanation:
-        "Expanding (x+h)², subtracting x², dividing by h, and taking the limit gives 2x.",
+        "Expanding $(x+h)^2$, subtracting $x^2$, dividing by $h$, and taking the limit gives $2x$.",
     },
     {
       id: "q3",
-      text: "As h approaches 0, the secant line becomes:",
+      text: "As $h$ approaches 0, the secant line becomes:",
       options: [
         "A vertical line",
-        "The x-axis",
+        "The $x$-axis",
         "The tangent line",
         "A horizontal line",
       ],
@@ -160,8 +160,8 @@ import Quiz from "../../../components/Quiz.astro";
     },
     {
       id: "q4",
-      text: "For f(x) = 5x + 1, the derivative using the limit definition is:",
-      options: ["5", "1", "5x", "5x + 1"],
+      text: "For $f(x) = 5x + 1$, the derivative using the limit definition is:",
+      options: ["$5$", "$1$", "$5x$", "$5x + 1$"],
       correctIndex: 0,
       explanation:
         "Linear functions have constant derivatives equal to their slope.",

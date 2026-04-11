@@ -119,35 +119,35 @@ import Quiz from "../../../components/Quiz.astro";
   questions={[
     {
       id: "q1",
-      text: "When differentiating y² with respect to x, you get:",
-      options: ["2y", "y²", "2y dy/dx", "2x"],
+      text: "When differentiating $y^2$ with respect to $x$, you get:",
+      options: ["$2y$", "$y^2$", "$2y\\,dy/dx$", "$2x$"],
       correctIndex: 2,
       explanation:
-        "The chain rule requires multiplying by dy/dx since y depends on x.",
+        "The chain rule requires multiplying by $dy/dx$ since $y$ depends on $x$.",
     },
     {
       id: "q2",
-      text: "For x² + y² = 25, dy/dx equals:",
-      options: ["-y/x", "-x/y", "x/y", "2x + 2y"],
+      text: "For $x^2 + y^2 = 25$, $dy/dx$ equals:",
+      options: ["$-y/x$", "$-x/y$", "$x/y$", "$2x + 2y$"],
       correctIndex: 1,
-      explanation: "Differentiate both sides, then solve for dy/dx.",
+      explanation: "Differentiate both sides, then solve for $dy/dx$.",
     },
     {
       id: "q3",
       text: "Implicit differentiation is needed when:",
       options: [
-        "y is already isolated",
-        "The function is a polynomial in x only",
+        "$y$ is already isolated",
+        "The function is a polynomial in $x$ only",
         "The equation is linear",
-        "y is not solved for explicitly",
+        "$y$ is not solved for explicitly",
       ],
       correctIndex: 3,
       explanation:
-        "When y is tangled up with x in the equation, implicit differentiation is the way.",
+        "When $y$ is tangled up with $x$ in the equation, implicit differentiation is the way.",
     },
     {
       id: "q4",
-      text: "When differentiating xy with respect to x, you use:",
+      text: "When differentiating $xy$ with respect to $x$, you use:",
       options: [
         "The power rule",
         "The product rule",
@@ -156,15 +156,15 @@ import Quiz from "../../../components/Quiz.astro";
       ],
       correctIndex: 1,
       explanation:
-        "x and y are both functions of x, so the product rule applies.",
+        "$x$ and $y$ are both functions of $x$, so the product rule applies.",
     },
     {
       id: "q5",
-      text: "At the point (0, 5) on x² + y² = 25, the tangent line is:",
-      options: ["Vertical", "Has slope 5", "Horizontal", "Has slope -5"],
+      text: "At the point $(0, 5)$ on $x^2 + y^2 = 25$, the tangent line is:",
+      options: ["Vertical", "Has slope $5$", "Horizontal", "Has slope $-5$"],
       correctIndex: 2,
       explanation:
-        "dy/dx = -0/5 = 0, so the tangent is horizontal at the top of the circle.",
+        "$dy/dx = -0/5 = 0$, so the tangent is horizontal at the top of the circle.",
     },
   ]}
 />

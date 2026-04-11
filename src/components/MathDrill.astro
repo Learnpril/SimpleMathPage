@@ -1,0 +1,184 @@
+---
+interface Props {
+  mode: "add" | "subtract" | "multiply" | "divide";
+}
+const { mode } = Astro.props;
+const labels: Record<string, string> = {
+  add: "Addition",
+  subtract: "Subtraction",
+  multiply: "Multiplication",
+  divide: "Division",
+};
+const symbols: Record<string, string> = {
+  add: "+",
+  subtract: "−",
+  multiply: "×",
+  divide: "÷",
+};
+---
+
+<div class="drill-wrap" data-drill-mode={mode}>
+  <h3 class="drill-title">⚡ {labels[mode]} Drill</h3>
+  <p class="drill-sub">Random problems, instant feedback. Type your answer and press Enter.</p>
+  <div class="drill-problem">
+    <span class="drill-a">?</span>
+    <span class="drill-op">{symbols[mode]}</span>
+    <span class="drill-b">?</span>
+    <span class="drill-eq">=</span>
+    <input class="drill-input" type="number" inputmode="numeric" autocomplete="off" aria-label="Your answer" />
+  </div>
+  <div class="drill-feedback" aria-live="polite"></div>
+  <div class="drill-stats">
+    <span class="drill-streak">🔥 Streak: 0</span>
+    <span class="drill-best">🏆 Top Streak: 0</span>
+  </div>
+</div>
+
+<script>
+  function initDrill(wrap: HTMLElement) {
+    const mode = wrap.dataset.drillMode as string;
+    const aEl = wrap.querySelector(".drill-a") as HTMLElement;
+    const bEl = wrap.querySelector(".drill-b") as HTMLElement;
+    const input = wrap.querySelector(".drill-input") as HTMLInputElement;
+    const fb = wrap.querySelector(".drill-feedback") as HTMLElement;
+    const streakEl = wrap.querySelector(".drill-streak") as HTMLElement;
+    const bestEl = wrap.querySelector(".drill-best") as HTMLElement;
+
+    let streak = 0, bestStreak = 0, answer = 0;
+
+    function rand(min: number, max: number) {
+      return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+    function next() {
+      let a: number, b: number;
+      if (mode === "add") {
+        a = rand(1, 9); b = rand(1, 9);
+        answer = a + b;
+      } else if (mode === "subtract") {
+        a = rand(2, 18); b = rand(1, 9);
+        if (b > a) [a, b] = [b, a];
+        answer = a - b;
+      } else if (mode === "multiply") {
+        a = rand(2, 9); b = rand(2, 9);
+        answer = a * b;
+      } else {
+        // division: pick factors so it divides evenly
+        b = rand(2, 9);
+        const q = rand(1, 9);
+        a = b * q;
+        answer = q;
+      }
+      aEl.textContent = String(a);
+      bEl.textContent = String(b);
+      input.value = "";
+      fb.textContent = "";
+      fb.className = "drill-feedback";
+      input.focus();
+    }
+
+    function check() {
+      const val = parseInt(input.value, 10);
+      if (isNaN(val)) return;
+      if (val === answer) {
+        streak++;
+        if (streak > bestStreak) bestStreak = streak;
+        fb.textContent = "✓ Correct!";
+        fb.className = "drill-feedback drill-correct";
+      } else {
+        streak = 0;
+        fb.textContent = `✗ The answer was ${answer}.`;
+        fb.className = "drill-feedback drill-wrong";
+      }
+      streakEl.textContent = `🔥 Streak: ${streak}`;
+      bestEl.textContent = `🏆 Top Streak: ${bestStreak}`;
+      setTimeout(next, 800);
+    }
+
+    input.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") { e.preventDefault(); check(); }
+    });
+
+    next();
+  }
+
+  function initAll() {
+    document.querySelectorAll<HTMLElement>(".drill-wrap").forEach((el) => {
+      if (!el.dataset.drillInit) {
+        el.dataset.drillInit = "1";
+        initDrill(el);
+      }
+    });
+  }
+  document.addEventListener("astro:page-load", initAll);
+  initAll();
+</script>
+
+<style>
+  .drill-wrap {
+    border: 1px solid var(--sl-color-gray-5, #dee2e6);
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    margin: 2rem 0;
+    text-align: center;
+    background: var(--sl-color-bg-sidebar);
+  }
+  .drill-title {
+    font-family: var(--sl-font);
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin: 0 0 0.25rem;
+    color: var(--sl-color-text-accent);
+  }
+  .drill-sub {
+    font-size: 0.85rem;
+    color: #888;
+    margin: 0 0 1.25rem;
+  }
+  .drill-problem {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    font-size: 2rem;
+    font-family: 'Courier New', monospace;
+    font-weight: 700;
+    margin-bottom: 1rem;
+  }
+  .drill-op { color: var(--sl-color-text-accent); }
+  .drill-eq { color: #888; }
+  .drill-input {
+    width: 4rem;
+    font-size: 1.8rem;
+    font-family: 'Courier New', monospace;
+    font-weight: 700;
+    text-align: center;
+    padding: 0.3rem;
+    border: 2px solid var(--sl-color-gray-5, #444);
+    border-radius: 0.5rem;
+    background: var(--sl-color-bg);
+    color: inherit;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  .drill-input:focus { border-color: var(--sl-color-accent); }
+  /* Hide number input spinners */
+  .drill-input::-webkit-outer-spin-button,
+  .drill-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+  .drill-input[type=number] { -moz-appearance: textfield; }
+  .drill-feedback {
+    font-size: 1rem;
+    font-weight: 600;
+    min-height: 1.5em;
+    margin-bottom: 0.75rem;
+  }
+  .drill-correct { color: var(--quiz-correct, #20c997); }
+  .drill-wrong { color: var(--quiz-incorrect, #f06595); }
+  .drill-stats {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    font-size: 0.9rem;
+    color: #999;
+  }
+</style>

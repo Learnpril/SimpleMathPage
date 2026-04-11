@@ -105,12 +105,12 @@ import Quiz from "../../../components/Quiz.astro";
   questions={[
     {
       id: "q1",
-      text: "The shell method formula for rotation around the y-axis is",
+      text: "The shell method formula for rotation around the $y$-axis is",
       options: [
-        "pi times the integral of R squared dx",
-        "2 pi times the integral of x times h(x) dx",
-        "pi times the integral of (outer squared minus inner squared) dx",
-        "The integral of f(x) dx",
+        "$\\pi \\int R^2\\,dx$",
+        "$2\\pi \\int x\\,h(x)\\,dx$",
+        "$\\pi \\int (R_{\\text{out}}^2 - R_{\\text{in}}^2)\\,dx$",
+        "$\\int f(x)\\,dx$",
       ],
       correctIndex: 1,
       explanation:
@@ -118,11 +118,11 @@ import Quiz from "../../../components/Quiz.astro";
     },
     {
       id: "q2",
-      text: "The volume from rotating the region between y = x and y = x² (from 0 to 1) around the y-axis using shells is",
-      options: ["pi/3", "2 pi/15", "pi/6", "pi/4"],
+      text: "The volume from rotating the region between $y = x$ and $y = x^2$ (from $0$ to $1$) around the $y$-axis using shells is",
+      options: ["$\\pi/3$", "$2\\pi/15$", "$\\pi/6$", "$\\pi/4$"],
       correctIndex: 2,
       explanation:
-        "2 pi times the integral of x(x - x²) from 0 to 1 = 2 pi times 1/12 = pi/6.",
+        "$2\\pi \\int_0^1 x(x - x^2)\\,dx = 2\\pi \\cdot \\frac{1}{12} = \\frac{\\pi}{6}$.",
     },
     {
       id: "q3",
@@ -139,12 +139,12 @@ import Quiz from "../../../components/Quiz.astro";
     },
     {
       id: "q4",
-      text: "In the shell method, the 'radius' of each shell when rotating around the y-axis is",
+      text: "In the shell method, the 'radius' of each shell when rotating around the $y$-axis is",
       options: [
-        "The y-value",
+        "The $y$-value",
         "The height of the function",
-        "The x-value (distance from the y-axis)",
-        "Always 1",
+        "The $x$-value (distance from the $y$-axis)",
+        "Always $1$",
       ],
       correctIndex: 2,
       explanation:

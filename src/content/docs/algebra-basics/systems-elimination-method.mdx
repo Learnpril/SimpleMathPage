@@ -115,18 +115,24 @@ import Quiz from "../../../components/Quiz.astro";
   questions={[
     {
       id: "q1",
-      text: "Solve using elimination: 2x + y = 10 and 3x − y = 5.",
-      options: ["x = 5, y = 0", "x = 2, y = 6", "x = 3, y = 4", "x = 4, y = 2"],
+      text: "Solve using elimination: $2x + y = 10$ and $3x - y = 5$.",
+      options: [
+        "$x = 5, y = 0$",
+        "$x = 2, y = 6$",
+        "$x = 3, y = 4$",
+        "$x = 4, y = 2$",
+      ],
       correctIndex: 2,
       explanation:
         "Add equations: 5x = 15 → x = 3. Substitute: 2(3) + y = 10 → y = 4.",
     },
     {
       id: "q2",
-      text: "In 4x + 5y = 22 and 2x − 5y = 2, what happens when you add them?",
-      options: ["2x = 20", "6x = 20", "6x = 24", "4x = 24"],
+      text: "In $4x + 5y = 22$ and $2x - 5y = 2$, what happens when you add them?",
+      options: ["$2x = 20$", "$6x = 20$", "$6x = 24$", "$4x = 24$"],
       correctIndex: 2,
-      explanation: "4x + 2x = 6x, 5y − 5y = 0, 22 + 2 = 24 → 6x = 24.",
+      explanation:
+        "$4x + 2x = 6x$, $5y - 5y = 0$, $22 + 2 = 24 \\rightarrow 6x = 24$.",
     },
     {
       id: "q3",
@@ -138,11 +144,12 @@ import Quiz from "../../../components/Quiz.astro";
         "m = 30 months",
       ],
       correctIndex: 1,
-      explanation: "60 + 8m = 90 + 5m → 3m = 30 → m = 10.",
+      explanation:
+        "$60 + 8m = 90 + 5m \\rightarrow 3m = 30 \\rightarrow m = 10$.",
     },
     {
       id: "q4",
-      text: "Solve 3x + 2y = 19 and 3x − 2y = 5 using elimination.",
+      text: "Solve $3x + 2y = 19$ and $3x - 2y = 5$ using elimination.",
       options: [
         "x = 4, y = 3.5",
         "x = 8, y = −2.5",

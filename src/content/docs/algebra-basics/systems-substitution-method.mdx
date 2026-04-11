@@ -109,16 +109,26 @@ import Quiz from "../../../components/Quiz.astro";
   questions={[
     {
       id: "q1",
-      text: "Solve using substitution: y = 2x + 1 and 3x + y = 11.",
-      options: ["x = 3, y = 7", "x = 1, y = 3", "x = 2, y = 5", "x = 4, y = 9"],
+      text: "Solve using substitution: $y = 2x + 1$ and $3x + y = 11$.",
+      options: [
+        "$x = 3, y = 7$",
+        "$x = 1, y = 3$",
+        "$x = 2, y = 5$",
+        "$x = 4, y = 9$",
+      ],
       correctIndex: 2,
       explanation:
         "Substitute y: 3x + (2x + 1) = 11 → 5x + 1 = 11 → 5x = 10 → x = 2 → y = 2(2) + 1 = 5.",
     },
     {
       id: "q2",
-      text: "Solve: x + y = 10 and y = 3x − 2.",
-      options: ["x = 2, y = 8", "x = 4, y = 6", "x = 3, y = 7", "x = 1, y = 9"],
+      text: "Solve: $x + y = 10$ and $y = 3x - 2$.",
+      options: [
+        "$x = 2, y = 8$",
+        "$x = 4, y = 6$",
+        "$x = 3, y = 7$",
+        "$x = 1, y = 9$",
+      ],
       correctIndex: 2,
       explanation:
         "Substitute y: x + (3x − 2) = 10 → 4x − 2 = 10 → 4x = 12 → x = 3 → y = 3(3) − 2 = 7.",
@@ -133,12 +143,18 @@ import Quiz from "../../../components/Quiz.astro";
         "t = 500 texts",
       ],
       correctIndex: 1,
-      explanation: "40 + 0.05t = 25 + 0.10t → 15 = 0.05t → t = 300.",
+      explanation:
+        "$40 + 0.05t = 25 + 0.10t \\rightarrow 15 = 0.05t \\rightarrow t = 300$.",
     },
     {
       id: "q4",
-      text: "Solve: 2x + y = 10 and x = y − 1.",
-      options: ["x = 2, y = 6", "x = 4, y = 2", "x = 5, y = 0", "x = 3, y = 4"],
+      text: "Solve: $2x + y = 10$ and $x = y - 1$.",
+      options: [
+        "$x = 2, y = 6$",
+        "$x = 4, y = 2$",
+        "$x = 5, y = 0$",
+        "$x = 3, y = 4$",
+      ],
       correctIndex: 3,
       explanation:
         "Substitute x: 2(y − 1) + y = 10 → 2y − 2 + y = 10 → 3y = 12 → y = 4 → x = 4 − 1 = 3.",

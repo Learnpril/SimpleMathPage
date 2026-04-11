@@ -120,7 +120,7 @@ import Quiz from "../../../components/Quiz.astro";
     {
       id: "q1",
       text: "In a related rates problem, you differentiate with respect to:",
-      options: ["x", "y", "t (time)", "The radius"],
+      options: ["$x$", "$y$", "$t$ (time)", "The radius"],
       correctIndex: 2,
       explanation:
         "Everything is changing over time, so t is the independent variable.",
@@ -140,7 +140,7 @@ import Quiz from "../../../components/Quiz.astro";
     },
     {
       id: "q3",
-      text: "In the ladder problem, a negative dy/dt means:",
+      text: "In the ladder problem, a negative $dy/dt$ means:",
       options: [
         "The ladder is getting longer",
         "There is no solution",
@@ -148,7 +148,8 @@ import Quiz from "../../../components/Quiz.astro";
         "The top is sliding down",
       ],
       correctIndex: 3,
-      explanation: "Negative rate means y is decreasing (the top is falling).",
+      explanation:
+        "Negative rate means $y$ is decreasing (the top is falling).",
     },
     {
       id: "q4",
@@ -164,12 +165,12 @@ import Quiz from "../../../components/Quiz.astro";
     },
     {
       id: "q5",
-      text: "For a sphere with volume V = (4/3) pi r³, dV/dt equals:",
+      text: "For a sphere with volume $V = \\frac{4}{3}\\pi r^3$, $dV/dt$ equals:",
       options: [
-        "(4/3) pi r²",
-        "4 pi r³ dr/dt",
-        "4 pi r² dr/dt",
-        "2 pi r dr/dt",
+        "$\\frac{4}{3}\\pi r^2$",
+        "$4\\pi r^3\\,dr/dt$",
+        "$4\\pi r^2\\,dr/dt$",
+        "$2\\pi r\\,dr/dt$",
       ],
       correctIndex: 2,
       explanation: "Differentiate V with respect to t using the chain rule.",

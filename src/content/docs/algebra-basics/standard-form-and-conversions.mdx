@@ -83,22 +83,33 @@ import Quiz from "../../../components/Quiz.astro";
   questions={[
     {
       id: "q1",
-      text: "Convert y = 5x − 8 to standard form.",
-      options: ["−5x + y = −8", "5x + y = 8", "5x − y = 8", "−5x − y = −8"],
+      text: "Convert $y = 5x - 8$ to standard form.",
+      options: [
+        "$-5x + y = -8$",
+        "$5x + y = 8$",
+        "$5x - y = 8$",
+        "$-5x - y = -8$",
+      ],
       correctIndex: 2,
-      explanation: "y − 5x = −8 → −5x + y = −8 → multiply by −1: 5x − y = 8.",
+      explanation:
+        "$y - 5x = -8 \\rightarrow -5x + y = -8 \\rightarrow$ multiply by $-1$: $5x - y = 8$.",
     },
     {
       id: "q2",
-      text: "What is the standard form of y − 3 = 2(x + 4)?",
-      options: ["2x + y = 11", "2x − y = 11", "2x − y = −11", "−2x + y = −11"],
+      text: "What is the standard form of $y - 3 = 2(x + 4)$?",
+      options: [
+        "$2x + y = 11$",
+        "$2x - y = 11$",
+        "$2x - y = -11$",
+        "$-2x + y = -11$",
+      ],
       correctIndex: 2,
       explanation:
         "y − 3 = 2x + 8 → y − 2x = 11 → −2x + y = 11 → 2x − y = −11.",
     },
     {
       id: "q3",
-      text: "Convert 3x + 4y = 12 to slope-intercept form.",
+      text: "Convert $3x + 4y = 12$ to slope-intercept form.",
       options: [
         "y = (3/4)x + 3",
         "y = −3x + 12",
@@ -106,7 +117,7 @@ import Quiz from "../../../components/Quiz.astro";
         "y = 3x + 4",
       ],
       correctIndex: 2,
-      explanation: "4y = −3x + 12 → y = −(3/4)x + 3.",
+      explanation: "$4y = -3x + 12 \\rightarrow y = -\\frac{3}{4}x + 3$.",
     },
     {
       id: "q4",
