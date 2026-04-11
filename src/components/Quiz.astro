@@ -33,6 +33,7 @@ const validation = validateQuizData({ quizId, questions });
     <div class="quiz-score" aria-live="polite" data-quiz-score hidden></div>
     <div style="text-align:center;margin-top:1rem;">
       <button class="quiz-btn" data-quiz-retry hidden>Retry Quiz</button>
+      <p class="quiz-retry-warning" data-quiz-retry-warning hidden style="font-size:0.8rem;color:#f0883e;opacity:0.85;margin-top:0.5rem;">Retrying will remove your ✅ checkmark until you pass again.</p>
     </div>
   </div>
 ) : (
@@ -156,11 +157,7 @@ const validation = validateQuizData({ quizId, questions });
     function showScore() {
       const state = currentState();
       const scoreEl = container.querySelector("[data-quiz-score]") as HTMLElement;
-      scoreEl.textContent = `You scored ${state.score} out of ${state.total}`;
-      scoreEl.hidden = false;
       const retryBtn = container.querySelector("[data-quiz-retry]") as HTMLElement;
-      retryBtn.hidden = false;
-      persist();
 
       // Save progress to Supabase (fire and forget, graceful if not logged in)
       const path = window.location.pathname.replace(/^\//, '').replace(/\/$/, '');
@@ -168,22 +165,40 @@ const validation = validateQuizData({ quizId, questions });
       const sectionSlug = parts[0] || '';
       const lessonSlug = parts[parts.length - 1] || '';
       const pct = state.total > 0 ? Math.round((state.score / state.total) * 100) : 0;
+      const isReview = lessonSlug.includes('review');
+
+      // Passing threshold: 15/20 for reviews, 4/5 for regular quizzes
+      const passThreshold = isReview ? Math.ceil(state.total * 0.75) : Math.ceil(state.total * 0.8);
+      const passed = state.score >= passThreshold;
+
+      if (passed) {
+        scoreEl.textContent = `You scored ${state.score} out of ${state.total}`;
+      } else {
+        const needed = isReview ? '15' : '4';
+        const outOf = isReview ? '20' : '5';
+        scoreEl.innerHTML = `You scored ${state.score} out of ${state.total}<br><span style="font-size:0.85rem;font-weight:400;opacity:0.8;">Score at least ${needed}/${outOf} to earn your ✅ checkmark! Hit Retry to try again.</span>`;
+      }
+      scoreEl.hidden = false;
+      retryBtn.hidden = false;
+
+      // Show retry warning always when quiz is complete
+      const warnEl = container.querySelector("[data-quiz-retry-warning]") as HTMLElement;
+      if (warnEl) warnEl.hidden = false;
+
+      persist();
 
       trySaveProgress(lessonSlug, sectionSlug, pct);
 
-      // Check if this is a perfect score — celebrate on any quiz!
-      if (state.score === state.total) {
-        // Save perfect score to localStorage for sidebar checkmarks
+      if (passed) {
+        // Save to localStorage for sidebar checkmarks
         const perfKey = 'mbu-perfect-' + lessonSlug;
         localStorage.setItem(perfKey, '1');
 
         // Only play celebration on fresh completion, not on restore
         if (!restoringState) {
-          // Mark that we already celebrated this quiz so retry can reset it
           const celebKey = 'mbu-celebrated-' + quizId;
           if (!sessionStorage.getItem(celebKey)) {
             sessionStorage.setItem(celebKey, '1');
-            // Map section slugs to display names
             const sectionNames: Record<string, string> = {
               'arithmetic': 'Arithmetic',
               'pre-algebra': 'Pre-Algebra',
@@ -197,7 +212,6 @@ const validation = validateQuizData({ quizId, questions });
               'calculus-3': 'Calculus 3',
             };
             const name = sectionNames[sectionSlug] || sectionSlug;
-            const isReview = lessonSlug.includes('review');
             setTimeout(() => tryCelebration(name, isReview), 600);
           }
         }
@@ -207,8 +221,24 @@ const validation = validateQuizData({ quizId, questions });
     function retry() {
       clearQuizState(quizId);
       answered.clear();
-      // Allow celebration to play again on next perfect score
+      // Allow celebration to play again on next passing score
       sessionStorage.removeItem('mbu-celebrated-' + quizId);
+
+      // Remove checkmark until they finish again
+      const rPath = window.location.pathname.replace(/^\//, '').replace(/\/$/, '');
+      const rSlug = rPath.split('/').pop() || '';
+      if (rSlug) {
+        localStorage.removeItem('mbu-perfect-' + rSlug);
+        // Remove checkmark from sidebar if visible
+        document.querySelectorAll('nav a[href]').forEach((link) => {
+          const href = link.getAttribute('href') || '';
+          const slug = href.replace(/^\//, '').replace(/\/$/, '').split('/').pop();
+          if (slug === rSlug) {
+            const check = link.querySelector('.sidebar-check');
+            if (check) check.remove();
+          }
+        });
+      }
 
       // reset all options
       container.querySelectorAll(".quiz-option").forEach((o, i) => {
@@ -234,6 +264,8 @@ const validation = validateQuizData({ quizId, questions });
       // hide score & retry
       (container.querySelector("[data-quiz-score]") as HTMLElement).hidden = true;
       (container.querySelector("[data-quiz-retry]") as HTMLElement).hidden = true;
+      const warnRetry = container.querySelector("[data-quiz-retry-warning]") as HTMLElement;
+      if (warnRetry) warnRetry.hidden = true;
     }
 
     // --- event listeners ---
@@ -293,11 +325,13 @@ const validation = validateQuizData({ quizId, questions });
       }
       restoringState = false;
 
-      // Backfill mbu-perfect key for past perfect scores
-      if (saved.completed && saved.score === saved.total && saved.score > 0) {
+      // Backfill mbu-perfect key for past passing scores
+      if (saved.completed && saved.score > 0) {
         const p = window.location.pathname.replace(/^\//, '').replace(/\/$/, '');
         const ls = p.split('/').pop() || '';
-        if (ls) localStorage.setItem('mbu-perfect-' + ls, '1');
+        const isRev = ls.includes('review');
+        const thresh = isRev ? Math.ceil(saved.total * 0.75) : Math.ceil(saved.total * 0.8);
+        if (ls && saved.score >= thresh) localStorage.setItem('mbu-perfect-' + ls, '1');
       }
     }
   }

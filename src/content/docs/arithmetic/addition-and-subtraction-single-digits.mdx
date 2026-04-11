@@ -1,0 +1,140 @@
+---
+title: Addition & Subtraction of Single Digits
+description: Build a solid foundation with single-digit addition and subtraction
+sidebar:
+  order: 1.5
+---
+
+import Quiz from "../../../components/Quiz.astro";
+
+## What You'll Learn
+
+Before tackling bigger numbers, let's make sure single-digit addition and subtraction feel automatic. This is the foundation everything else builds on.
+
+## Addition: Putting Things Together
+
+Addition means combining two groups into one. The `+` sign tells you to combine.
+
+$$
+3 + 5 = 8
+$$
+
+Think of it as: you have 3 things, someone gives you 5 more, now you have 8.
+
+Here are the key ideas:
+
+- **Order doesn't matter**: $3 + 5 = 5 + 3 = 8$ (this is called the commutative property)
+- **Adding zero changes nothing**: $7 + 0 = 7$
+- **Adding 1 just means the next number**: $6 + 1 = 7$
+
+### Useful Patterns
+
+Doubles are worth memorizing because they come up a lot:
+
+- $1 + 1 = 2$
+- $2 + 2 = 4$
+- $3 + 3 = 6$
+- $4 + 4 = 8$
+- $5 + 5 = 10$
+
+Once you know doubles, "doubles plus one" is easy:
+
+- $3 + 4 = 3 + 3 + 1 = 7$
+- $5 + 6 = 5 + 5 + 1 = 11$
+
+### Making 10
+
+Pairs that add to 10 are super useful later on:
+
+- $1 + 9 = 10$
+- $2 + 8 = 10$
+- $3 + 7 = 10$
+- $4 + 6 = 10$
+- $5 + 5 = 10$
+
+## Subtraction: Taking Away
+
+Subtraction means removing one amount from another. The $-$ sign tells you to take away.
+
+$$
+9 - 4 = 5
+$$
+
+You had 9 things, took away 4, and 5 are left.
+
+Key ideas:
+
+- **Subtracting zero changes nothing**: $8 - 0 = 8$
+- **A number minus itself is zero**: $6 - 6 = 0$
+- **Order matters**: $9 - 4 = 5$ but $4 - 9$ gives a negative number (we'll cover that later)
+
+### Thinking of Subtraction as "What's Missing?"
+
+Instead of "take away," you can think: what do I add to get there?
+
+$8 - 3 = ?$ is the same as asking $3 + ? = 8$. The answer is 5.
+
+This "missing addend" way of thinking is really helpful when the subtraction feels tricky.
+
+## Worked Examples
+
+**$7 + 6$**
+
+Think: $7 + 3 = 10$, then $10 + 3 = 13$. So $7 + 6 = 13$.
+
+Or use doubles: $6 + 6 = 12$, plus 1 more = 13.
+
+**$9 - 7$**
+
+Think: $7 + ? = 9$. The answer is 2. So $9 - 7 = 2$.
+
+**$8 + 5$**
+
+Think: $8 + 2 = 10$, then $10 + 3 = 13$. So $8 + 5 = 13$.
+
+:::tip[Practice Makes Permanent]
+The goal is to know these by heart so you don't have to think about them. Flash cards, timed drills, or just doing lots of problems all work. Once single digits are automatic, multi-digit math becomes way easier.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="arithmetic-add-sub-single-digits"
+  questions={[
+    {
+      id: "q1",
+      text: "What is 7 + 5?",
+      options: ["11", "12", "13", "10"],
+      correctIndex: 1,
+      explanation: "7 + 5 = 12. Think: 7 + 3 = 10, then 10 + 2 = 12.",
+    },
+    {
+      id: "q2",
+      text: "What is 9 - 6?",
+      options: ["4", "2", "3", "5"],
+      correctIndex: 2,
+      explanation: "9 - 6 = 3. Think: 6 + 3 = 9.",
+    },
+    {
+      id: "q3",
+      text: "What is 8 + 4?",
+      options: ["11", "13", "14", "12"],
+      correctIndex: 3,
+      explanation: "8 + 4 = 12. Think: 8 + 2 = 10, then 10 + 2 = 12.",
+    },
+    {
+      id: "q4",
+      text: "What is 6 + 6?",
+      options: ["10", "11", "12", "13"],
+      correctIndex: 2,
+      explanation: "6 + 6 = 12. This is one of the doubles worth memorizing.",
+    },
+    {
+      id: "q5",
+      text: "What is 8 - 5?",
+      options: ["4", "2", "3", "5"],
+      correctIndex: 2,
+      explanation: "8 - 5 = 3. Think: 5 + 3 = 8.",
+    },
+  ]}
+/>

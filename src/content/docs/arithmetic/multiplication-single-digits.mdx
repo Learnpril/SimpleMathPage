@@ -1,0 +1,160 @@
+---
+title: Multiplication of Single Digits
+description: Learn the times tables and build a foundation for all multiplication
+sidebar:
+  order: 2.5
+---
+
+import Quiz from "../../../components/Quiz.astro";
+
+## What You'll Learn
+
+Multiplication is just repeated addition, and once you get comfortable with single-digit multiplication (the times tables), everything from multi-digit multiplication to algebra gets easier.
+
+## What Multiplication Means
+
+$3 \times 4$ means "3 groups of 4" or equivalently "add 4 three times":
+
+$$
+3 \times 4 = 4 + 4 + 4 = 12
+$$
+
+The $\times$ sign means "groups of." You can also read it as "times."
+
+Key ideas:
+
+- **Order doesn't matter**: $3 \times 4 = 4 \times 3 = 12$
+- **Multiplying by 1 changes nothing**: $7 \times 1 = 7$
+- **Multiplying by 0 always gives 0**: $5 \times 0 = 0$
+
+## Patterns That Help
+
+### The Full Times Table (1-12)
+
+Here's the complete table. The green diagonal shows the perfect squares (a number times itself). Use this as a reference until the facts become second nature.
+
+import MultTable from "../../../components/MultTable.astro";
+
+<MultTable />
+
+Notice the table is symmetric across the diagonal: $3 \times 7$ and $7 \times 3$ are both 21. That cuts the number of facts you need to memorize roughly in half.
+
+### The 2s: Just Double It
+
+$2 \times$ anything is the same as adding the number to itself:
+
+- $2 \times 3 = 6$ (double 3)
+- $2 \times 7 = 14$ (double 7)
+- $2 \times 9 = 18$ (double 9)
+
+### The 5s: Count by Fives
+
+Results always end in 0 or 5:
+
+- $5 \times 1 = 5$
+- $5 \times 2 = 10$
+- $5 \times 3 = 15$
+- $5 \times 4 = 20$
+
+### The 9s Trick
+
+The digits of any 9s product always add up to 9:
+
+- $9 \times 2 = 18$ (1 + 8 = 9)
+- $9 \times 3 = 27$ (2 + 7 = 9)
+- $9 \times 4 = 36$ (3 + 6 = 9)
+- $9 \times 7 = 63$ (6 + 3 = 9)
+
+Also: the tens digit is always one less than what you're multiplying by. $9 \times 7$: tens digit is 6, ones digit is 3 (since 6 + 3 = 9). Answer: 63.
+
+### The 10s: Just Add a Zero
+
+- $10 \times 3 = 30$
+- $10 \times 7 = 70$
+
+### Squares (A Number Times Itself)
+
+These come up constantly:
+
+- $1 \times 1 = 1$
+- $2 \times 2 = 4$
+- $3 \times 3 = 9$
+- $4 \times 4 = 16$
+- $5 \times 5 = 25$
+- $6 \times 6 = 36$
+- $7 \times 7 = 49$
+- $8 \times 8 = 64$
+- $9 \times 9 = 81$
+
+## The Tough Ones
+
+Most people find these the hardest to memorize:
+
+- $6 \times 7 = 42$
+- $6 \times 8 = 48$
+- $7 \times 8 = 56$
+- $8 \times 9 = 72$
+
+A trick for $7 \times 8$: "5, 6, 7, 8" → $56 = 7 \times 8$.
+
+## Worked Examples
+
+**$6 \times 9$**
+
+Use the 9s trick: tens digit = 5 (one less than 6), ones digit = 4 (since 5 + 4 = 9). Answer: 54.
+
+**$8 \times 7$**
+
+If you know $7 \times 7 = 49$, then $8 \times 7 = 49 + 7 = 56$.
+
+**$4 \times 8$**
+
+Double 8 twice: $2 \times 8 = 16$, then $2 \times 16 = 32$. So $4 \times 8 = 32$.
+
+:::tip[Memorize the Times Tables]
+There's no shortcut around it. Knowing your times tables cold makes everything from fractions to algebra dramatically easier. Drill them until they're instant.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="arithmetic-mult-single-digits"
+  questions={[
+    {
+      id: "q1",
+      text: "What is 7 × 8?",
+      options: ["54", "56", "48", "63"],
+      correctIndex: 1,
+      explanation: "7 × 8 = 56. Remember: 5, 6, 7, 8.",
+    },
+    {
+      id: "q2",
+      text: "What is 9 × 6?",
+      options: ["56", "45", "63", "54"],
+      correctIndex: 3,
+      explanation:
+        "9 × 6 = 54. The 9s trick: tens digit is 5, ones digit is 4 (5 + 4 = 9).",
+    },
+    {
+      id: "q3",
+      text: "What is 4 × 7?",
+      options: ["21", "24", "28", "32"],
+      correctIndex: 2,
+      explanation: "4 × 7 = 28. Think: double 7 is 14, double again is 28.",
+    },
+    {
+      id: "q4",
+      text: "What is 8 × 8?",
+      options: ["56", "72", "64", "81"],
+      correctIndex: 2,
+      explanation: "8 × 8 = 64. This is one of the squares worth memorizing.",
+    },
+    {
+      id: "q5",
+      text: "What is 6 × 5?",
+      options: ["25", "35", "30", "36"],
+      correctIndex: 2,
+      explanation: "6 × 5 = 30. The 5s always end in 0 or 5.",
+    },
+  ]}
+/>

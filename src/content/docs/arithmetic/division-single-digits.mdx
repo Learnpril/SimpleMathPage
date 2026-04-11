@@ -1,0 +1,137 @@
+---
+title: Division of Single Digits
+description: Understand what division means and master basic division facts
+sidebar:
+  order: 3.5
+---
+
+import Quiz from "../../../components/Quiz.astro";
+
+## What You'll Learn
+
+Division is the reverse of multiplication. If you know your times tables, you already know your division facts. This lesson makes that connection clear.
+
+## What Division Means
+
+$12 \div 3$ asks: "How many groups of 3 fit into 12?" or equivalently, "3 times what equals 12?"
+
+$$
+12 \div 3 = 4 \quad \text{because} \quad 3 \times 4 = 12
+$$
+
+The $\div$ sign means "divided by." You can also write it as a fraction: $\frac{12}{3} = 4$.
+
+Key ideas:
+
+- **Division is the opposite of multiplication**: if $a \times b = c$, then $c \div a = b$
+- **Dividing by 1 changes nothing**: $8 \div 1 = 8$
+- **A number divided by itself is 1**: $6 \div 6 = 1$
+- **Zero divided by anything is 0**: $0 \div 5 = 0$
+- **You cannot divide by zero**: $7 \div 0$ is undefined (it doesn't work)
+
+## Using Multiplication to Divide
+
+The fastest way to divide is to think of the related multiplication fact:
+
+- $18 \div 3 = ?$ → Think: $3 \times ? = 18$ → Answer: 6
+- $42 \div 7 = ?$ → Think: $7 \times ? = 42$ → Answer: 6
+- $56 \div 8 = ?$ → Think: $8 \times ? = 56$ → Answer: 7
+
+This is why knowing your times tables makes division almost free.
+
+## Common Division Facts
+
+### Dividing by 2 (Halving)
+
+- $8 \div 2 = 4$
+- $14 \div 2 = 7$
+- $18 \div 2 = 9$
+
+### Dividing by 5
+
+Results come from the 5s times table:
+
+- $25 \div 5 = 5$
+- $35 \div 5 = 7$
+- $45 \div 5 = 9$
+
+### Dividing by 9
+
+Use the 9s times table backward:
+
+- $27 \div 9 = 3$
+- $54 \div 9 = 6$
+- $81 \div 9 = 9$
+
+## What About Remainders?
+
+Sometimes a number doesn't divide evenly. For example:
+
+$14 \div 3 = ?$
+
+$3 \times 4 = 12$ (fits), $3 \times 5 = 15$ (too big). So $14 \div 3 = 4$ remainder $2$.
+
+We write this as $14 \div 3 = 4 \text{ R } 2$.
+
+The remainder is what's left over: $14 - 12 = 2$.
+
+## Worked Examples
+
+**$48 \div 6$**
+
+Think: $6 \times ? = 48$. Since $6 \times 8 = 48$, the answer is 8.
+
+**$35 \div 7$**
+
+Think: $7 \times ? = 35$. Since $7 \times 5 = 35$, the answer is 5.
+
+**$20 \div 3$**
+
+$3 \times 6 = 18$ (fits), $3 \times 7 = 21$ (too big). So $20 \div 3 = 6 \text{ R } 2$.
+
+:::tip[Division = Multiplication Backward]
+If division feels hard, go back and strengthen your times tables. Every division problem is just a multiplication problem in disguise.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="arithmetic-div-single-digits"
+  questions={[
+    {
+      id: "q1",
+      text: "What is 36 ÷ 9?",
+      options: ["3", "4", "5", "6"],
+      correctIndex: 1,
+      explanation: "36 ÷ 9 = 4 because 9 × 4 = 36.",
+    },
+    {
+      id: "q2",
+      text: "What is 56 ÷ 7?",
+      options: ["6", "9", "7", "8"],
+      correctIndex: 3,
+      explanation: "56 ÷ 7 = 8 because 7 × 8 = 56.",
+    },
+    {
+      id: "q3",
+      text: "What is 45 ÷ 5?",
+      options: ["8", "7", "9", "10"],
+      correctIndex: 2,
+      explanation: "45 ÷ 5 = 9 because 5 × 9 = 45.",
+    },
+    {
+      id: "q4",
+      text: "What is 23 ÷ 4?",
+      options: ["5 R 2", "6 R 1", "5 R 3", "4 R 3"],
+      correctIndex: 2,
+      explanation: "4 × 5 = 20, and 23 - 20 = 3 left over. So 23 ÷ 4 = 5 R 3.",
+    },
+    {
+      id: "q5",
+      text: "What is 72 ÷ 8?",
+      options: ["8", "7", "9", "6"],
+      correctIndex: 2,
+      explanation: "72 ÷ 8 = 9 because 8 × 9 = 72.",
+    },
+  ]}
+/>

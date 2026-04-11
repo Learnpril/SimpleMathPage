@@ -23,24 +23,25 @@ export function showCelebration(sectionName: string, isReview = false) {
   const modal = document.createElement("div");
   modal.className = "celeb-modal";
 
-  // Dancing mascot
-  const mascot = document.createElement("div");
+  // Celebration gif mascot
+  const mascot = document.createElement("img");
   mascot.className = "celeb-mascot";
-  mascot.textContent = "🍗";
+  mascot.src = isReview ? "/celebrationsection.gif" : "/celebration.gif";
+  mascot.alt = "Celebration!";
   modal.appendChild(mascot);
 
   // Title
   const title = document.createElement("h2");
   title.className = "celeb-title";
-  title.textContent = isReview ? "Section Complete!" : "Perfect Score!";
+  title.textContent = isReview ? "Section Complete!" : "Nice Work!";
   modal.appendChild(title);
 
   // Message
   const msg = document.createElement("p");
   msg.className = "celeb-msg";
   msg.textContent = isReview
-    ? `You aced the ${sectionName} review with a perfect score! Time to move on to the next adventure.`
-    : `You nailed every single question! Keep that momentum going.`;
+    ? `You crushed the ${sectionName} review! Time to move on to the next adventure.`
+    : `You passed with flying colors! Keep that momentum going.`;
   modal.appendChild(msg);
 
   // Close button

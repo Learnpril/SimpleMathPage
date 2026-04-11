@@ -868,13 +868,12 @@ p:has(> strong:first-child:last-child) {
   100% { transform: scale(1); opacity: 1; }
 }
 .celeb-mascot {
-  font-size: 4rem;
-  animation: celeb-dance 0.6s ease-in-out infinite alternate;
-  margin-bottom: 0.5rem;
-}
-@keyframes celeb-dance {
-  0% { transform: rotate(-12deg) translateY(0); }
-  100% { transform: rotate(12deg) translateY(-8px); }
+  width: 180px;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 12px;
+  margin: 0 auto 0.5rem;
+  display: block;
 }
 .celeb-title {
   font-family: var(--sl-font);
