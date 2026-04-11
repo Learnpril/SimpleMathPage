@@ -96,15 +96,29 @@ export default defineConfig({
               if (window.innerWidth >= 800) return;
               var sunSvg = '<svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm0-3a1 1 0 0 0 1-1V1a1 1 0 0 0-2 0v2a1 1 0 0 0 1 1zm0 18a1 1 0 0 0-1 1v2a1 1 0 0 0 2 0v-2a1 1 0 0 0-1-1zM5.64 7.05 4.22 5.64a1 1 0 0 1 1.42-1.42l1.41 1.42a1 1 0 1 1-1.41 1.41zm12.73 9.9a1 1 0 1 0-1.42 1.42l1.42 1.41a1 1 0 0 0 1.41-1.41l-1.41-1.42zM4 12a1 1 0 0 0-1-1H1a1 1 0 0 0 0 2h2a1 1 0 0 0 1-1zm18-1h-2a1 1 0 0 0 0 2h2a1 1 0 0 0 0-2zM5.64 16.95a1 1 0 1 0-1.41 1.42l1.41 1.41a1 1 0 0 0 1.42-1.41l-1.42-1.42zm12.73-9.9a1 1 0 1 0 1.41-1.41l-1.41-1.42a1 1 0 0 0-1.42 1.42l1.42 1.41z"/></svg>';
               var moonSvg = '<svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M21.64 13a1 1 0 0 0-1.05-.14 8.05 8.05 0 0 1-3.37.73A8.15 8.15 0 0 1 9.08 5.49a8.59 8.59 0 0 1 .25-2 1 1 0 0 0-.37-1 1 1 0 0 0-1-.17 10 10 0 1 0 13.69 11.65 1 1 0 0 0 0-.96z"/></svg>';
-              var header = document.querySelector('header');
+              var searchSvg = '<svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M15.5 14h-.79l-.28-.27A6.47 6.47 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>';
+              var header = document.querySelector('header .header') || document.querySelector('header');
               if (!header) return;
+
+              /* Shorten site title to "MBU" on mobile */
+              var titleSpan = header.querySelector('.site-title span');
+              if (titleSpan) titleSpan.textContent = 'MBU';
 
               var group = document.createElement('div');
               group.className = 'mobile-header-icons';
 
-              var search = header.querySelector('starlight-search');
-              if (search) group.appendChild(search);
+              /* Search button - triggers Starlight's search modal */
+              var searchBtn = document.createElement('button');
+              searchBtn.className = 'mobile-header-icon';
+              searchBtn.setAttribute('aria-label', 'Search');
+              searchBtn.innerHTML = searchSvg;
+              searchBtn.addEventListener('click', function() {
+                var openModal = document.querySelector('button[data-open-modal]');
+                if (openModal) openModal.click();
+              });
+              group.appendChild(searchBtn);
 
+              /* Theme toggle */
               var themeBtn = document.createElement('button');
               themeBtn.className = 'mobile-header-icon';
               themeBtn.setAttribute('aria-label', 'Toggle theme');
@@ -120,6 +134,20 @@ export default defineConfig({
                 }
               });
               group.appendChild(themeBtn);
+
+              /* Auth button (person icon) */
+              var authBtn = document.createElement('button');
+              authBtn.className = 'mobile-header-icon mobile-auth-icon';
+              authBtn.id = 'mobile-auth-btn';
+              authBtn.setAttribute('aria-label', 'Account');
+              authBtn.innerHTML = '<svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>';
+              authBtn.addEventListener('click', function() {
+                import('/src/lib/auth-modal.ts').then(function(mod) {
+                  if (mod && mod.handleMobileAuthClick) mod.handleMobileAuthClick(authBtn);
+                  else if (mod && mod.showAuthModal) mod.showAuthModal();
+                }).catch(function() {});
+              });
+              group.appendChild(authBtn);
 
               header.appendChild(group);
             });
@@ -265,7 +293,10 @@ export default defineConfig({
                       var li = document.createElement('a');
                       li.href = '/' + s.slug + '/' + s.about + '/';
                       li.className = 'msw-lesson-link';
-                      li.textContent = 'Go to ' + s.label;
+                      var ts = document.createElement('span');
+                      ts.className = 'msw-link-text';
+                      ts.textContent = 'Go to ' + s.label;
+                      li.appendChild(ts);
                       lessonList.appendChild(li);
                     } else {
                       lessons.forEach(function(l) {
@@ -273,7 +304,19 @@ export default defineConfig({
                         li.href = l.href;
                         li.className = 'msw-lesson-link';
                         if (path === l.href.replace(/^\\//, '').replace(/\\/$/, '')) li.classList.add('current');
-                        li.textContent = l.text;
+                        var textSpan = document.createElement('span');
+                        textSpan.className = 'msw-link-text';
+                        textSpan.textContent = l.text;
+                        li.appendChild(textSpan);
+                        /* Add checkmark if perfect score in localStorage */
+                        var lSlug = l.href.replace(/^\\//, '').replace(/\\/$/, '').split('/').pop();
+                        if (lSlug && localStorage.getItem('mbu-perfect-' + lSlug)) {
+                          var ck = document.createElement('span');
+                          ck.className = 'sidebar-check';
+                          ck.textContent = '\u2705';
+                          ck.title = 'Perfect score!';
+                          li.appendChild(ck);
+                        }
                         li.addEventListener('click', function() { close(); });
                         lessonList.appendChild(li);
                       });
@@ -321,6 +364,75 @@ export default defineConfig({
               }
               fab.addEventListener('click', toggle);
               overlay.addEventListener('click', close);
+            });
+          `,
+        },
+        {
+          tag: "script",
+          content: `
+            /* Auth button in header */
+            document.addEventListener('DOMContentLoaded', async function() {
+              try {
+                var mod = await import('/src/lib/auth-modal.ts');
+                if (mod && mod.initAuthButton) mod.initAuthButton();
+              } catch(e) { /* Supabase not configured yet */ }
+            });
+          `,
+        },
+        {
+          tag: "script",
+          content: `
+            /* Sidebar checkmarks: inject completion indicators from Supabase */
+            document.addEventListener('DOMContentLoaded', async function() {
+              try {
+                var mod = await import('/src/lib/supabase/client.ts');
+                if (!mod || !mod.createSupabaseClient) return;
+                var supabase = mod.createSupabaseClient();
+                var session = await supabase.auth.getSession();
+                if (!session.data.session) return;
+
+                var resp = await supabase.from('user_progress').select('lesson_slug, is_perfect, completed');
+                if (!resp.data) return;
+
+                var progressMap = {};
+                resp.data.forEach(function(r) {
+                  progressMap[r.lesson_slug] = r;
+                });
+
+                document.querySelectorAll('nav a[href]').forEach(function(link) {
+                  var href = link.getAttribute('href') || '';
+                  var slug = href.replace(/^\\//, '').replace(/\\/$/, '').split('/').pop();
+                  if (!slug || !progressMap[slug]) return;
+                  var p = progressMap[slug];
+                  if (!p.completed) return;
+                  var badge = document.createElement('span');
+                  badge.className = 'sidebar-check';
+                  badge.textContent = p.is_perfect ? '\\uD83D\\uDFE2' : '\\u2705';
+                  badge.title = p.is_perfect ? 'Perfect score!' : 'Completed';
+                  link.appendChild(badge);
+                });
+              } catch(e) { /* silently fail if not logged in or Supabase unavailable */ }
+            });
+          `,
+        },
+        {
+          tag: "script",
+          content: `
+            /* Sidebar checkmarks from localStorage (works without login) */
+            document.addEventListener('DOMContentLoaded', function() {
+              document.querySelectorAll('nav a[href]').forEach(function(link) {
+                var href = link.getAttribute('href') || '';
+                var slug = href.replace(/^\\//, '').replace(/\\/$/, '').split('/').pop();
+                if (!slug) return;
+                if (localStorage.getItem('mbu-perfect-' + slug)) {
+                  if (link.querySelector('.sidebar-check')) return;
+                  var badge = document.createElement('span');
+                  badge.className = 'sidebar-check';
+                  badge.textContent = '\\u2705';
+                  badge.title = 'Perfect score!';
+                  link.appendChild(badge);
+                }
+              });
             });
           `,
         },

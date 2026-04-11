@@ -51,6 +51,22 @@ const validation = validateQuizData({ quizId, questions });
   import type { QuizQuestion, QuizState } from "../lib/quiz-types";
   import katex from "katex";
 
+  /** Lazy-load Supabase progress saving (non-blocking) */
+  async function trySaveProgress(lessonSlug: string, sectionSlug: string, pct: number) {
+    try {
+      const { saveQuizProgress } = await import("../lib/supabase/progress");
+      await saveQuizProgress(lessonSlug, sectionSlug, pct);
+    } catch (_e) { /* Supabase not configured or user not logged in */ }
+  }
+
+  /** Lazy-load celebration (non-blocking) */
+  async function tryCelebration(sectionName: string, isReview = false) {
+    try {
+      const { showCelebration } = await import("../lib/celebration");
+      showCelebration(sectionName, isReview);
+    } catch (_e) { /* celebration module not available */ }
+  }
+
   /** Replace $...$ in a string with rendered KaTeX HTML */
   function renderMathInString(text: string): string {
     return text.replace(/\$([^$]+)\$/g, (_, expr) => {
@@ -74,6 +90,7 @@ const validation = validateQuizData({ quizId, questions });
     const quizId = container.dataset.quizId!;
     const questions: QuizQuestion[] = JSON.parse(container.dataset.questions!);
     const answered = new Set<string>();
+    let restoringState = false;
 
     // --- helpers ---
     function currentState(): QuizState {
@@ -144,11 +161,54 @@ const validation = validateQuizData({ quizId, questions });
       const retryBtn = container.querySelector("[data-quiz-retry]") as HTMLElement;
       retryBtn.hidden = false;
       persist();
+
+      // Save progress to Supabase (fire and forget, graceful if not logged in)
+      const path = window.location.pathname.replace(/^\//, '').replace(/\/$/, '');
+      const parts = path.split('/');
+      const sectionSlug = parts[0] || '';
+      const lessonSlug = parts[parts.length - 1] || '';
+      const pct = state.total > 0 ? Math.round((state.score / state.total) * 100) : 0;
+
+      trySaveProgress(lessonSlug, sectionSlug, pct);
+
+      // Check if this is a perfect score — celebrate on any quiz!
+      if (state.score === state.total) {
+        // Save perfect score to localStorage for sidebar checkmarks
+        const perfKey = 'mbu-perfect-' + lessonSlug;
+        localStorage.setItem(perfKey, '1');
+
+        // Only play celebration on fresh completion, not on restore
+        if (!restoringState) {
+          // Mark that we already celebrated this quiz so retry can reset it
+          const celebKey = 'mbu-celebrated-' + quizId;
+          if (!sessionStorage.getItem(celebKey)) {
+            sessionStorage.setItem(celebKey, '1');
+            // Map section slugs to display names
+            const sectionNames: Record<string, string> = {
+              'arithmetic': 'Arithmetic',
+              'pre-algebra': 'Pre-Algebra',
+              'algebra-basics': 'Algebra Basics',
+              'geometry': 'Geometry',
+              'algebra-2': 'Algebra 2',
+              'trigonometry': 'Trigonometry',
+              'pre-calculus': 'Pre-Calculus',
+              'calculus-1': 'Calculus 1',
+              'calculus-2': 'Calculus 2',
+              'calculus-3': 'Calculus 3',
+            };
+            const name = sectionNames[sectionSlug] || sectionSlug;
+            const isReview = lessonSlug.includes('review');
+            setTimeout(() => tryCelebration(name, isReview), 600);
+          }
+        }
+      }
     }
 
     function retry() {
       clearQuizState(quizId);
       answered.clear();
+      // Allow celebration to play again on next perfect score
+      sessionStorage.removeItem('mbu-celebrated-' + quizId);
 
       // reset all options
       container.querySelectorAll(".quiz-option").forEach((o, i) => {
@@ -227,8 +287,17 @@ const validation = validateQuizData({ quizId, questions });
 
     const saved = loadQuizState(quizId);
     if (saved && saved.answers) {
+      restoringState = true;
       for (const [qId, optIdx] of Object.entries(saved.answers)) {
         selectOption(qId, optIdx);
+      }
+      restoringState = false;
+
+      // Backfill mbu-perfect key for past perfect scores
+      if (saved.completed && saved.score === saved.total && saved.score > 0) {
+        const p = window.location.pathname.replace(/^\//, '').replace(/\/$/, '');
+        const ls = p.split('/').pop() || '';
+        if (ls) localStorage.setItem('mbu-perfect-' + ls, '1');
       }
     }
   }

@@ -3,15 +3,29 @@
               if (window.innerWidth >= 800) return;
               var sunSvg = '<svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm0-3a1 1 0 0 0 1-1V1a1 1 0 0 0-2 0v2a1 1 0 0 0 1 1zm0 18a1 1 0 0 0-1 1v2a1 1 0 0 0 2 0v-2a1 1 0 0 0-1-1zM5.64 7.05 4.22 5.64a1 1 0 0 1 1.42-1.42l1.41 1.42a1 1 0 1 1-1.41 1.41zm12.73 9.9a1 1 0 1 0-1.42 1.42l1.42 1.41a1 1 0 0 0 1.41-1.41l-1.41-1.42zM4 12a1 1 0 0 0-1-1H1a1 1 0 0 0 0 2h2a1 1 0 0 0 1-1zm18-1h-2a1 1 0 0 0 0 2h2a1 1 0 0 0 0-2zM5.64 16.95a1 1 0 1 0-1.41 1.42l1.41 1.41a1 1 0 0 0 1.42-1.41l-1.42-1.42zm12.73-9.9a1 1 0 1 0 1.41-1.41l-1.41-1.42a1 1 0 0 0-1.42 1.42l1.42 1.41z"/></svg>';
               var moonSvg = '<svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M21.64 13a1 1 0 0 0-1.05-.14 8.05 8.05 0 0 1-3.37.73A8.15 8.15 0 0 1 9.08 5.49a8.59 8.59 0 0 1 .25-2 1 1 0 0 0-.37-1 1 1 0 0 0-1-.17 10 10 0 1 0 13.69 11.65 1 1 0 0 0 0-.96z"/></svg>';
-              var header = document.querySelector('header');
+              var searchSvg = '<svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M15.5 14h-.79l-.28-.27A6.47 6.47 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>';
+              var header = document.querySelector('header .header') || document.querySelector('header');
               if (!header) return;
+
+              /* Shorten site title to "MBU" on mobile */
+              var titleSpan = header.querySelector('.site-title span');
+              if (titleSpan) titleSpan.textContent = 'MBU';
 
               var group = document.createElement('div');
               group.className = 'mobile-header-icons';
 
-              var search = header.querySelector('starlight-search');
-              if (search) group.appendChild(search);
+              /* Search button - triggers Starlight's search modal */
+              var searchBtn = document.createElement('button');
+              searchBtn.className = 'mobile-header-icon';
+              searchBtn.setAttribute('aria-label', 'Search');
+              searchBtn.innerHTML = searchSvg;
+              searchBtn.addEventListener('click', function() {
+                var openModal = document.querySelector('button[data-open-modal]');
+                if (openModal) openModal.click();
+              });
+              group.appendChild(searchBtn);
 
+              /* Theme toggle */
               var themeBtn = document.createElement('button');
               themeBtn.className = 'mobile-header-icon';
               themeBtn.setAttribute('aria-label', 'Toggle theme');
@@ -27,6 +41,20 @@
                 }
               });
               group.appendChild(themeBtn);
+
+              /* Auth button (person icon) */
+              var authBtn = document.createElement('button');
+              authBtn.className = 'mobile-header-icon mobile-auth-icon';
+              authBtn.id = 'mobile-auth-btn';
+              authBtn.setAttribute('aria-label', 'Account');
+              authBtn.innerHTML = '<svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>';
+              authBtn.addEventListener('click', function() {
+                import('/src/lib/auth-modal.ts').then(function(mod) {
+                  if (mod && mod.handleMobileAuthClick) mod.handleMobileAuthClick(authBtn);
+                  else if (mod && mod.showAuthModal) mod.showAuthModal();
+                }).catch(function() {});
+              });
+              group.appendChild(authBtn);
 
               header.appendChild(group);
             });
@@ -164,7 +192,10 @@
                       var li = document.createElement('a');
                       li.href = '/' + s.slug + '/' + s.about + '/';
                       li.className = 'msw-lesson-link';
-                      li.textContent = 'Go to ' + s.label;
+                      var ts = document.createElement('span');
+                      ts.className = 'msw-link-text';
+                      ts.textContent = 'Go to ' + s.label;
+                      li.appendChild(ts);
                       lessonList.appendChild(li);
                     } else {
                       lessons.forEach(function(l) {
@@ -172,7 +203,19 @@
                         li.href = l.href;
                         li.className = 'msw-lesson-link';
                         if (path === l.href.replace(/^\//, '').replace(/\/$/, '')) li.classList.add('current');
-                        li.textContent = l.text;
+                        var textSpan = document.createElement('span');
+                        textSpan.className = 'msw-link-text';
+                        textSpan.textContent = l.text;
+                        li.appendChild(textSpan);
+                        /* Add checkmark if perfect score in localStorage */
+                        var lSlug = l.href.replace(/^\//, '').replace(/\/$/, '').split('/').pop();
+                        if (lSlug && localStorage.getItem('mbu-perfect-' + lSlug)) {
+                          var ck = document.createElement('span');
+                          ck.className = 'sidebar-check';
+                          ck.textContent = '✅';
+                          ck.title = 'Perfect score!';
+                          li.appendChild(ck);
+                        }
                         li.addEventListener('click', function() { close(); });
                         lessonList.appendChild(li);
                       });
@@ -222,6 +265,63 @@
               overlay.addEventListener('click', close);
             });
           </script><script>
+            /* Auth button in header */
+            document.addEventListener('DOMContentLoaded', async function() {
+              try {
+                var mod = await import('/src/lib/auth-modal.ts');
+                if (mod && mod.initAuthButton) mod.initAuthButton();
+              } catch(e) { /* Supabase not configured yet */ }
+            });
+          </script><script>
+            /* Sidebar checkmarks: inject completion indicators from Supabase */
+            document.addEventListener('DOMContentLoaded', async function() {
+              try {
+                var mod = await import('/src/lib/supabase/client.ts');
+                if (!mod || !mod.createSupabaseClient) return;
+                var supabase = mod.createSupabaseClient();
+                var session = await supabase.auth.getSession();
+                if (!session.data.session) return;
+
+                var resp = await supabase.from('user_progress').select('lesson_slug, is_perfect, completed');
+                if (!resp.data) return;
+
+                var progressMap = {};
+                resp.data.forEach(function(r) {
+                  progressMap[r.lesson_slug] = r;
+                });
+
+                document.querySelectorAll('nav a[href]').forEach(function(link) {
+                  var href = link.getAttribute('href') || '';
+                  var slug = href.replace(/^\//, '').replace(/\/$/, '').split('/').pop();
+                  if (!slug || !progressMap[slug]) return;
+                  var p = progressMap[slug];
+                  if (!p.completed) return;
+                  var badge = document.createElement('span');
+                  badge.className = 'sidebar-check';
+                  badge.textContent = p.is_perfect ? '\uD83D\uDFE2' : '\u2705';
+                  badge.title = p.is_perfect ? 'Perfect score!' : 'Completed';
+                  link.appendChild(badge);
+                });
+              } catch(e) { /* silently fail if not logged in or Supabase unavailable */ }
+            });
+          </script><script>
+            /* Sidebar checkmarks from localStorage (works without login) */
+            document.addEventListener('DOMContentLoaded', function() {
+              document.querySelectorAll('nav a[href]').forEach(function(link) {
+                var href = link.getAttribute('href') || '';
+                var slug = href.replace(/^\//, '').replace(/\/$/, '').split('/').pop();
+                if (!slug) return;
+                if (localStorage.getItem('mbu-perfect-' + slug)) {
+                  if (link.querySelector('.sidebar-check')) return;
+                  var badge = document.createElement('span');
+                  badge.className = 'sidebar-check';
+                  badge.textContent = '\u2705';
+                  badge.title = 'Perfect score!';
+                  link.appendChild(badge);
+                }
+              });
+            });
+          </script><script>
             document.addEventListener('DOMContentLoaded', function() {
               var footer = document.createElement('div');
               footer.className = 'scratch-paper-footer';
@@ -254,7 +354,7 @@
 			},
 		};
 	})();
-</script><template id="theme-icons"><svg aria-hidden="true" class="light astro-c6vsoqas" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M5 12a1 1 0 0 0-1-1H3a1 1 0 0 0 0 2h1a1 1 0 0 0 1-1Zm.64 5-.71.71a1 1 0 0 0 0 1.41 1 1 0 0 0 1.41 0l.71-.71A1 1 0 0 0 5.64 17ZM12 5a1 1 0 0 0 1-1V3a1 1 0 0 0-2 0v1a1 1 0 0 0 1 1Zm5.66 2.34a1 1 0 0 0 .7-.29l.71-.71a1 1 0 1 0-1.41-1.41l-.66.71a1 1 0 0 0 0 1.41 1 1 0 0 0 .66.29Zm-12-.29a1 1 0 0 0 1.41 0 1 1 0 0 0 0-1.41l-.71-.71a1.004 1.004 0 1 0-1.43 1.41l.73.71ZM21 11h-1a1 1 0 0 0 0 2h1a1 1 0 0 0 0-2Zm-2.64 6A1 1 0 0 0 17 18.36l.71.71a1 1 0 0 0 1.41 0 1 1 0 0 0 0-1.41l-.76-.66ZM12 6.5a5.5 5.5 0 1 0 5.5 5.5A5.51 5.51 0 0 0 12 6.5Zm0 9a3.5 3.5 0 1 1 0-7 3.5 3.5 0 0 1 0 7Zm0 3.5a1 1 0 0 0-1 1v1a1 1 0 0 0 2 0v-1a1 1 0 0 0-1-1Z"/></svg><svg aria-hidden="true" class="dark astro-c6vsoqas" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M21.64 13a1 1 0 0 0-1.05-.14 8.049 8.049 0 0 1-3.37.73 8.15 8.15 0 0 1-8.14-8.1 8.59 8.59 0 0 1 .25-2A1 1 0 0 0 8 2.36a10.14 10.14 0 1 0 14 11.69 1 1 0 0 0-.36-1.05Zm-9.5 6.69A8.14 8.14 0 0 1 7.08 5.22v.27a10.15 10.15 0 0 0 10.14 10.14 9.784 9.784 0 0 0 2.1-.22 8.11 8.11 0 0 1-7.18 4.32v-.04Z"/></svg><svg aria-hidden="true" class="auto astro-c6vsoqas" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M21 14h-1V7a3 3 0 0 0-3-3H7a3 3 0 0 0-3 3v7H3a1 1 0 0 0-1 1v2a3 3 0 0 0 3 3h14a3 3 0 0 0 3-3v-2a1 1 0 0 0-1-1ZM6 7a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v7H6V7Zm14 10a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-1h16v1Z"/></svg></template><link rel="stylesheet" href="/_astro/print.DNXP8c50.css" media="print"><link rel="stylesheet" href="/_astro/index.C1TSglk3.css"><script type="module" src="/_astro/page.B1D-nYk3.js"></script><style>.a2tm:where(.astro-xnqq3fok){display:flex;flex-direction:column;align-items:center;margin:1.5rem 0}.a2tm:where(.astro-xnqq3fok) svg:where(.astro-xnqq3fok){max-width:100%;height:auto}.a2tm-card:where(.astro-xnqq3fok){fill:#1c2128;stroke:#444;stroke-width:1}.a2tm-lbl:where(.astro-xnqq3fok){fill:#ccc;font-family:Libre Baskerville,Georgia,serif}.a2tm-sym:where(.astro-xnqq3fok){font-family:Libre Baskerville,Georgia,serif}[data-theme=light] .a2tm-card:where(.astro-xnqq3fok){fill:#f0f0f0;stroke:#ccc}[data-theme=light] .a2tm-lbl:where(.astro-xnqq3fok){fill:#333}
+</script><template id="theme-icons"><svg aria-hidden="true" class="light astro-c6vsoqas" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M5 12a1 1 0 0 0-1-1H3a1 1 0 0 0 0 2h1a1 1 0 0 0 1-1Zm.64 5-.71.71a1 1 0 0 0 0 1.41 1 1 0 0 0 1.41 0l.71-.71A1 1 0 0 0 5.64 17ZM12 5a1 1 0 0 0 1-1V3a1 1 0 0 0-2 0v1a1 1 0 0 0 1 1Zm5.66 2.34a1 1 0 0 0 .7-.29l.71-.71a1 1 0 1 0-1.41-1.41l-.66.71a1 1 0 0 0 0 1.41 1 1 0 0 0 .66.29Zm-12-.29a1 1 0 0 0 1.41 0 1 1 0 0 0 0-1.41l-.71-.71a1.004 1.004 0 1 0-1.43 1.41l.73.71ZM21 11h-1a1 1 0 0 0 0 2h1a1 1 0 0 0 0-2Zm-2.64 6A1 1 0 0 0 17 18.36l.71.71a1 1 0 0 0 1.41 0 1 1 0 0 0 0-1.41l-.76-.66ZM12 6.5a5.5 5.5 0 1 0 5.5 5.5A5.51 5.51 0 0 0 12 6.5Zm0 9a3.5 3.5 0 1 1 0-7 3.5 3.5 0 0 1 0 7Zm0 3.5a1 1 0 0 0-1 1v1a1 1 0 0 0 2 0v-1a1 1 0 0 0-1-1Z"/></svg><svg aria-hidden="true" class="dark astro-c6vsoqas" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M21.64 13a1 1 0 0 0-1.05-.14 8.049 8.049 0 0 1-3.37.73 8.15 8.15 0 0 1-8.14-8.1 8.59 8.59 0 0 1 .25-2A1 1 0 0 0 8 2.36a10.14 10.14 0 1 0 14 11.69 1 1 0 0 0-.36-1.05Zm-9.5 6.69A8.14 8.14 0 0 1 7.08 5.22v.27a10.15 10.15 0 0 0 10.14 10.14 9.784 9.784 0 0 0 2.1-.22 8.11 8.11 0 0 1-7.18 4.32v-.04Z"/></svg><svg aria-hidden="true" class="auto astro-c6vsoqas" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M21 14h-1V7a3 3 0 0 0-3-3H7a3 3 0 0 0-3 3v7H3a1 1 0 0 0-1 1v2a3 3 0 0 0 3 3h14a3 3 0 0 0 3-3v-2a1 1 0 0 0-1-1ZM6 7a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v7H6V7Zm14 10a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-1h16v1Z"/></svg></template><link rel="stylesheet" href="/_astro/print.DNXP8c50.css" media="print"><link rel="stylesheet" href="/_astro/index.DFfPAxQH.css"><script type="module" src="/_astro/page.B1D-nYk3.js"></script><style>.a2tm:where(.astro-xnqq3fok){display:flex;flex-direction:column;align-items:center;margin:1.5rem 0}.a2tm:where(.astro-xnqq3fok) svg:where(.astro-xnqq3fok){max-width:100%;height:auto}.a2tm-card:where(.astro-xnqq3fok){fill:#1c2128;stroke:#444;stroke-width:1}.a2tm-lbl:where(.astro-xnqq3fok){fill:#ccc;font-family:Libre Baskerville,Georgia,serif}.a2tm-sym:where(.astro-xnqq3fok){font-family:Libre Baskerville,Georgia,serif}[data-theme=light] .a2tm-card:where(.astro-xnqq3fok){fill:#f0f0f0;stroke:#ccc}[data-theme=light] .a2tm-lbl:where(.astro-xnqq3fok){fill:#333}
 </style></head> <body class="astro-bguv2lll"> <a href="#_top" class="astro-7q3lir66">Skip to content</a>  <div class="page sl-flex astro-vrdttmbt"> <header class="header astro-vrdttmbt"><div class="header astro-kmkmnagf"> <div class="title-wrapper sl-flex astro-kmkmnagf"> <a href="/" class="site-title sl-flex astro-m46x6ez3">  <img class="astro-m46x6ez3" alt src="/_astro/logo.DN9V27gF.png" width="256" height="256">  <span class="astro-m46x6ez3" translate="no"> Mom&#39;s Basement University </span> </a>  </div> <div class="sl-flex print:hidden astro-kmkmnagf"> <site-search class="astro-kmkmnagf astro-v37mnknz" data-translations="{&#34;placeholder&#34;:&#34;Search&#34;}"> <button data-open-modal disabled aria-label="Search" aria-keyshortcuts="Control+K" class="astro-v37mnknz"> <svg aria-hidden="true" class="astro-v37mnknz astro-c6vsoqas" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M21.71 20.29 18 16.61A9 9 0 1 0 16.61 18l3.68 3.68a.999.999 0 0 0 1.42 0 1 1 0 0 0 0-1.39ZM11 18a7 7 0 1 1 0-14 7 7 0 0 1 0 14Z"/></svg> <span class="sl-hidden md:sl-block astro-v37mnknz" aria-hidden="true">Search</span> <kbd class="sl-hidden md:sl-flex astro-v37mnknz" style="display: none;"> <kbd class="astro-v37mnknz">Ctrl</kbd><kbd class="astro-v37mnknz">K</kbd> </kbd> </button> <dialog style="padding:0" aria-label="Search" class="astro-v37mnknz"> <div class="dialog-frame sl-flex astro-v37mnknz">  <button data-close-modal class="sl-flex md:sl-hidden astro-v37mnknz"> Cancel </button> <div class="search-container astro-v37mnknz"> <div id="starlight__search" class="astro-v37mnknz"></div> </div> </div> </dialog> </site-search>  <script>
 	(() => {
 		const openBtn = document.querySelector('button[data-open-modal]');
@@ -267,7 +367,7 @@
 		}
 		shortcut.style.display = '';
 	})();
-</script> <script type="module" src="/_astro/Search.astro_astro_type_script_index_0_lang.cjYDvRdi.js"></script>   </div> <div class="sl-hidden md:sl-flex print:hidden right-group astro-kmkmnagf"> <div class="sl-flex social-icons astro-kmkmnagf">  </div> <starlight-theme-select>  <label style="--sl-select-width: 6.25em" class="astro-4yphtoen"> <span class="sr-only astro-4yphtoen">Select theme</span> <svg aria-hidden="true" class="icon label-icon astro-4yphtoen astro-c6vsoqas" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M21 14h-1V7a3 3 0 0 0-3-3H7a3 3 0 0 0-3 3v7H3a1 1 0 0 0-1 1v2a3 3 0 0 0 3 3h14a3 3 0 0 0 3-3v-2a1 1 0 0 0-1-1ZM6 7a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v7H6V7Zm14 10a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-1h16v1Z"/></svg> <select autocomplete="off" class="astro-4yphtoen"> <option value="dark" class="astro-4yphtoen">Dark</option><option value="light" class="astro-4yphtoen">Light</option><option value="auto" selected class="astro-4yphtoen">Auto</option> </select> <svg aria-hidden="true" class="icon caret astro-4yphtoen astro-c6vsoqas" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M17 9.17a1 1 0 0 0-1.41 0L12 12.71 8.46 9.17a1 1 0 1 0-1.41 1.42l4.24 4.24a1.002 1.002 0 0 0 1.42 0L17 10.59a1.002 1.002 0 0 0 0-1.42Z"/></svg> </label>  </starlight-theme-select>  <script>
+</script> <script type="module" src="/_astro/Search.astro_astro_type_script_index_0_lang.ZeYNpLV4.js"></script>   </div> <div class="sl-hidden md:sl-flex print:hidden right-group astro-kmkmnagf"> <div class="sl-flex social-icons astro-kmkmnagf">  </div> <starlight-theme-select>  <label style="--sl-select-width: 6.25em" class="astro-4yphtoen"> <span class="sr-only astro-4yphtoen">Select theme</span> <svg aria-hidden="true" class="icon label-icon astro-4yphtoen astro-c6vsoqas" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M21 14h-1V7a3 3 0 0 0-3-3H7a3 3 0 0 0-3 3v7H3a1 1 0 0 0-1 1v2a3 3 0 0 0 3 3h14a3 3 0 0 0 3-3v-2a1 1 0 0 0-1-1ZM6 7a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v7H6V7Zm14 10a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-1h16v1Z"/></svg> <select autocomplete="off" class="astro-4yphtoen"> <option value="dark" class="astro-4yphtoen">Dark</option><option value="light" class="astro-4yphtoen">Light</option><option value="auto" selected class="astro-4yphtoen">Auto</option> </select> <svg aria-hidden="true" class="icon caret astro-4yphtoen astro-c6vsoqas" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M17 9.17a1 1 0 0 0-1.41 0L12 12.71 8.46 9.17a1 1 0 1 0-1.41 1.42l4.24 4.24a1.002 1.002 0 0 0 1.42 0L17 10.59a1.002 1.002 0 0 0 0-1.42Z"/></svg> </label>  </starlight-theme-select>  <script>
 	StarlightThemeProvider.updatePickers();
 </script> <script type="module">const r="starlight-theme",o=e=>e==="auto"||e==="dark"||e==="light"?e:"auto",c=()=>o(typeof localStorage<"u"&&localStorage.getItem(r));function n(e){typeof localStorage<"u"&&localStorage.setItem(r,e==="light"||e==="dark"?e:"")}const l=()=>matchMedia("(prefers-color-scheme: light)").matches?"light":"dark";function t(e){StarlightThemeProvider.updatePickers(e),document.documentElement.dataset.theme=e==="auto"?l():e,n(e)}matchMedia("(prefers-color-scheme: light)").addEventListener("change",()=>{c()==="auto"&&t("auto")});class s extends HTMLElement{constructor(){super(),t(c()),this.querySelector("select")?.addEventListener("change",a=>{a.currentTarget instanceof HTMLSelectElement&&t(o(a.currentTarget.value))})}}customElements.define("starlight-theme-select",s);</script> <script type="module">class s extends HTMLElement{constructor(){super();const e=this.querySelector("select");e&&(e.addEventListener("change",t=>{t.currentTarget instanceof HTMLSelectElement&&(window.location.pathname=t.currentTarget.value)}),window.addEventListener("pageshow",t=>{if(!t.persisted)return;const n=e.querySelector("option[selected]")?.index;n!==e.selectedIndex&&(e.selectedIndex=n??0)}))}}customElements.define("starlight-lang-select",s);</script> </div> </div> </header> <nav class="sidebar print:hidden astro-vrdttmbt" aria-label="Main"> <starlight-menu-button class="print:hidden astro-jif73yzw"> <button aria-expanded="false" aria-label="Menu" aria-controls="starlight__sidebar" class="sl-flex md:sl-hidden astro-jif73yzw"> <svg aria-hidden="true" class="open-menu astro-jif73yzw astro-c6vsoqas" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M3 8h18a1 1 0 1 0 0-2H3a1 1 0 0 0 0 2Zm18 8H3a1 1 0 0 0 0 2h18a1 1 0 0 0 0-2Zm0-5H3a1 1 0 0 0 0 2h18a1 1 0 0 0 0-2Z"/></svg> <svg aria-hidden="true" class="close-menu astro-jif73yzw astro-c6vsoqas" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="m13.41 12 6.3-6.29a1.004 1.004 0 1 0-1.42-1.42L12 10.59l-6.29-6.3a1.004 1.004 0 0 0-1.42 1.42l6.3 6.29-6.3 6.29a1 1 0 0 0 0 1.42.998.998 0 0 0 1.42 0l6.29-6.3 6.29 6.3a.999.999 0 0 0 1.42 0 1 1 0 0 0 0-1.42L13.41 12Z"/></svg> </button> </starlight-menu-button> <script type="module">class s extends HTMLElement{constructor(){super(),this.btn=this.querySelector("button"),this.btn.addEventListener("click",()=>this.toggleExpanded());const t=this.closest("nav");t&&t.addEventListener("keyup",e=>this.closeOnEscape(e))}setExpanded(t){this.setAttribute("aria-expanded",String(t)),document.body.toggleAttribute("data-mobile-menu-expanded",t)}toggleExpanded(){this.setExpanded(this.getAttribute("aria-expanded")!=="true")}closeOnEscape(t){t.code==="Escape"&&(this.setExpanded(!1),this.btn.focus())}}customElements.define("starlight-menu-button",s);</script>   <div id="starlight__sidebar" class="sidebar-pane astro-vrdttmbt"> <div class="sidebar-content sl-flex astro-vrdttmbt"> <sl-sidebar-state-persist data-hash="0zgdxrv" class="astro-kku4brbg"> <script aria-hidden="true">
 		(() => {
