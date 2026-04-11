@@ -265,12 +265,48 @@
               overlay.addEventListener('click', close);
             });
           </script><script>
-            /* Auth button in header */
-            document.addEventListener('DOMContentLoaded', async function() {
+            /* Auth button in header (desktop) */
+            document.addEventListener('DOMContentLoaded', function() {
+              var header = document.querySelector('header');
+              if (!header || document.getElementById('auth-header-btn')) return;
+              if (window.innerWidth < 800) return; /* mobile has its own icon */
+
+              var btn = document.createElement('button');
+              btn.id = 'auth-header-btn';
+              btn.className = 'auth-header-btn';
+              btn.textContent = 'Log In';
+
+              btn.addEventListener('click', function() {
+                import('/src/lib/auth-modal.ts').then(function(mod) {
+                  if (btn.getAttribute('data-logged-in')) {
+                    if (mod.handleMobileAuthClick) mod.handleMobileAuthClick(btn);
+                  } else {
+                    if (mod.showAuthModal) mod.showAuthModal();
+                  }
+                }).catch(function(e) { console.warn('Auth module load failed:', e); });
+              });
+
+              var target = header.querySelector('.right-group') || header.querySelector('[class*="right"]');
+              if (!target) {
+                var flexes = header.querySelectorAll('.sl-flex');
+                target = flexes[flexes.length - 1] || header;
+              }
+              target.appendChild(btn);
+
+              /* Check login state */
               try {
-                var mod = await import('/src/lib/auth-modal.ts');
-                if (mod && mod.initAuthButton) mod.initAuthButton();
-              } catch(e) { /* Supabase not configured yet */ }
+                import('/src/lib/supabase/client.ts').then(function(c) {
+                  var sb = c.createSupabaseClient();
+                  sb.auth.getUser().then(function(r) {
+                    var u = r.data && r.data.user;
+                    if (u) {
+                      var name = (u.user_metadata && u.user_metadata.display_name) || (u.email && u.email.split('@')[0]) || 'User';
+                      btn.textContent = 'Hi, ' + name + '!';
+                      btn.setAttribute('data-logged-in', 'true');
+                    }
+                  }).catch(function(){});
+                }).catch(function(){});
+              } catch(e) {}
             });
           </script><script>
             /* Sidebar checkmarks: inject completion indicators from Supabase */
@@ -427,7 +463,7 @@
 <span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi>z</mi><mo>=</mo><mn>2</mn><mi>x</mi><mo>+</mo><mn>4</mn><mi>y</mi><mo>−</mo><mn>5</mn></mrow><annotation encoding="application/x-tex">z = 2x + 4y - 5</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal" style="margin-right:0.04398em;">z</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.7278em;vertical-align:-0.0833em;"></span><span class="mord">2</span><span class="mord mathnormal">x</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.8389em;vertical-align:-0.1944em;"></span><span class="mord">4</span><span class="mord mathnormal" style="margin-right:0.03588em;">y</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">5</span></span></span></span></span>
 <p>This plane touches the paraboloid at exactly (1, 2, 5) and has slope 2 in the x-direction and slope 4 in the y-direction.</p>
 
-<figure class="tp3 astro-mccdlbmf" role="img" aria-label="Interactive 3D paraboloid z equals x squared plus y squared with tangent plane at point (1, 2, 5)"> <div class="tp3-canvas astro-mccdlbmf" data-tp3d></div> <div class="tp3-hint astro-mccdlbmf">Drag to rotate · Scroll/Pinch to zoom</div> </figure> <script type="module" src="/_astro/TangentPlane3D.astro_astro_type_script_index_0_lang.z_8EIgSy.js"></script> 
+<figure class="tp3 astro-mccdlbmf" role="img" aria-label="Interactive 3D paraboloid z equals x squared plus y squared with tangent plane at point (1, 2, 5)"> <div class="tp3-canvas astro-mccdlbmf" data-tp3d></div> <div class="tp3-hint astro-mccdlbmf">Drag to rotate · Scroll/Pinch to zoom</div> </figure> <script type="module" src="/_astro/TangentPlane3D.astro_astro_type_script_index_0_lang.CpEDB5sR.js"></script> 
 <p>The blue surface is the paraboloid z = x² + y². The orange plane is the tangent plane z = 2x + 4y - 5, touching the surface at the purple point (1, 2, 5). Notice how the plane matches the surface closely near the point but drifts away further out.</p>
 <p><strong>Example 2: Linear approximation</strong></p>
 <p>Use the tangent plane from Example 1 to approximate f(1.1, 2.05).</p>

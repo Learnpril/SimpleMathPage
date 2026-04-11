@@ -265,12 +265,48 @@
               overlay.addEventListener('click', close);
             });
           </script><script>
-            /* Auth button in header */
-            document.addEventListener('DOMContentLoaded', async function() {
+            /* Auth button in header (desktop) */
+            document.addEventListener('DOMContentLoaded', function() {
+              var header = document.querySelector('header');
+              if (!header || document.getElementById('auth-header-btn')) return;
+              if (window.innerWidth < 800) return; /* mobile has its own icon */
+
+              var btn = document.createElement('button');
+              btn.id = 'auth-header-btn';
+              btn.className = 'auth-header-btn';
+              btn.textContent = 'Log In';
+
+              btn.addEventListener('click', function() {
+                import('/src/lib/auth-modal.ts').then(function(mod) {
+                  if (btn.getAttribute('data-logged-in')) {
+                    if (mod.handleMobileAuthClick) mod.handleMobileAuthClick(btn);
+                  } else {
+                    if (mod.showAuthModal) mod.showAuthModal();
+                  }
+                }).catch(function(e) { console.warn('Auth module load failed:', e); });
+              });
+
+              var target = header.querySelector('.right-group') || header.querySelector('[class*="right"]');
+              if (!target) {
+                var flexes = header.querySelectorAll('.sl-flex');
+                target = flexes[flexes.length - 1] || header;
+              }
+              target.appendChild(btn);
+
+              /* Check login state */
               try {
-                var mod = await import('/src/lib/auth-modal.ts');
-                if (mod && mod.initAuthButton) mod.initAuthButton();
-              } catch(e) { /* Supabase not configured yet */ }
+                import('/src/lib/supabase/client.ts').then(function(c) {
+                  var sb = c.createSupabaseClient();
+                  sb.auth.getUser().then(function(r) {
+                    var u = r.data && r.data.user;
+                    if (u) {
+                      var name = (u.user_metadata && u.user_metadata.display_name) || (u.email && u.email.split('@')[0]) || 'User';
+                      btn.textContent = 'Hi, ' + name + '!';
+                      btn.setAttribute('data-logged-in', 'true');
+                    }
+                  }).catch(function(){});
+                }).catch(function(){});
+              } catch(e) {}
             });
           </script><script>
             /* Sidebar checkmarks: inject completion indicators from Supabase */
@@ -537,12 +573,12 @@ s-225.272,467,-225.272,467s-235,486,-235,486c-2.7,4.7,-9,7,-19,7
 c-6,0,-10,-1,-12,-3s-194,-422,-194,-422s-65,47,-65,47z
 M834 80h400000v40h-400000z"></path></svg></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.0839em;"><span></span></span></span></span></span></span></span></span></span>
 
-<figure class="rev3d astro-i3xv2gfz" role="img" aria-label="Interactive 3D cone surface: y equals x rotated around the x-axis from 0 to 1"> <div class="rev3d-canvas astro-i3xv2gfz" data-cone3d></div> <div class="rev3d-hint astro-i3xv2gfz">Drag to rotate · Scroll/Pinch to zoom</div> </figure> <script type="module" src="/_astro/ConeSurface3D.astro_astro_type_script_index_0_lang.CO2pgOOA.js"></script> 
+<figure class="rev3d astro-i3xv2gfz" role="img" aria-label="Interactive 3D cone surface: y equals x rotated around the x-axis from 0 to 1"> <div class="rev3d-canvas astro-i3xv2gfz" data-cone3d></div> <div class="rev3d-hint astro-i3xv2gfz">Drag to rotate · Scroll/Pinch to zoom</div> </figure> <script type="module" src="/_astro/ConeSurface3D.astro_astro_type_script_index_0_lang.BDcK8XEt.js"></script> 
 <p>The cone surface is what you get when the line y = x spins around the x-axis. The green profile curve shows the generating line.</p>
 <p><strong>Example 3: Surface area of y = sqrt(x) rotated around the x-axis</strong></p>
 <p>Find the surface area when y = sqrt(x) from x = 0 to x = 1 is rotated around the x-axis.</p>
 
-<figure class="rev3d astro-2kbvfuiv" role="img" aria-label="Interactive 3D solid of revolution: y equals square root of x rotated around the x-axis"> <div class="rev3d-canvas astro-2kbvfuiv" data-rev3d></div> <div class="rev3d-hint astro-2kbvfuiv">Drag to rotate · Scroll/Pinch to zoom</div> </figure> <script type="module" src="/_astro/SolidOfRevolution3D.astro_astro_type_script_index_0_lang.DW7qmMoz.js"></script> 
+<figure class="rev3d astro-2kbvfuiv" role="img" aria-label="Interactive 3D solid of revolution: y equals square root of x rotated around the x-axis"> <div class="rev3d-canvas astro-2kbvfuiv" data-rev3d></div> <div class="rev3d-hint astro-2kbvfuiv">Drag to rotate · Scroll/Pinch to zoom</div> </figure> <script type="module" src="/_astro/SolidOfRevolution3D.astro_astro_type_script_index_0_lang.yNkEM8XT.js"></script> 
 <p>This is the same trumpet shape from the volumes lesson. Here we’re calculating the surface area of the skin, not the volume inside. The green profile curve shows y = sqrt(x).</p>
 <p>f’(x) = 1/(2 sqrt(x)), so [f’(x)]² = 1/(4x).</p>
 <span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi>S</mi><mo>=</mo><mn>2</mn><mi>π</mi><msubsup><mo>∫</mo><mn>0</mn><mn>1</mn></msubsup><msqrt><mi>x</mi></msqrt><mtext> </mtext><msqrt><mrow><mn>1</mn><mo>+</mo><mfrac><mn>1</mn><mrow><mn>4</mn><mi>x</mi></mrow></mfrac></mrow></msqrt><mtext> </mtext><mi>d</mi><mi>x</mi><mo>=</mo><mn>2</mn><mi>π</mi><msubsup><mo>∫</mo><mn>0</mn><mn>1</mn></msubsup><msqrt><mrow><mi>x</mi><mo>+</mo><mfrac><mn>1</mn><mn>4</mn></mfrac></mrow></msqrt><mtext> </mtext><mi>d</mi><mi>x</mi></mrow><annotation encoding="application/x-tex">S = 2\pi \int_0^1 \sqrt{x}\,\sqrt{1 + \frac{1}{4x}}\,dx = 2\pi \int_0^1 \sqrt{x + \frac{1}{4}}\,dx</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.05764em;">S</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:2.5635em;vertical-align:-0.9119em;"></span><span class="mord">2</span><span class="mord mathnormal" style="margin-right:0.03588em;">π</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mop"><span class="mop op-symbol large-op" style="margin-right:0.44445em;position:relative;top:-0.0011em;">∫</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.564em;"><span style="top:-1.7881em;margin-left:-0.4445em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">0</span></span></span><span style="top:-3.8129em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.9119em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord sqrt"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8492em;"><span class="svg-align" style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord" style="padding-left:0.833em;"><span class="mord mathnormal">x</span></span></span><span style="top:-2.8092em;"><span class="pstrut" style="height:3em;"></span><span class="hide-tail" style="min-width:0.853em;height:1.08em;"><svg xmlns="http://www.w3.org/2000/svg" width="400em" height="1.08em" viewBox="0 0 400000 1080" preserveAspectRatio="xMinYMin slice"><path d="M95,702

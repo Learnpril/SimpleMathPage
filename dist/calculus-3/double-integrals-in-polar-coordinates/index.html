@@ -265,12 +265,48 @@
               overlay.addEventListener('click', close);
             });
           </script><script>
-            /* Auth button in header */
-            document.addEventListener('DOMContentLoaded', async function() {
+            /* Auth button in header (desktop) */
+            document.addEventListener('DOMContentLoaded', function() {
+              var header = document.querySelector('header');
+              if (!header || document.getElementById('auth-header-btn')) return;
+              if (window.innerWidth < 800) return; /* mobile has its own icon */
+
+              var btn = document.createElement('button');
+              btn.id = 'auth-header-btn';
+              btn.className = 'auth-header-btn';
+              btn.textContent = 'Log In';
+
+              btn.addEventListener('click', function() {
+                import('/src/lib/auth-modal.ts').then(function(mod) {
+                  if (btn.getAttribute('data-logged-in')) {
+                    if (mod.handleMobileAuthClick) mod.handleMobileAuthClick(btn);
+                  } else {
+                    if (mod.showAuthModal) mod.showAuthModal();
+                  }
+                }).catch(function(e) { console.warn('Auth module load failed:', e); });
+              });
+
+              var target = header.querySelector('.right-group') || header.querySelector('[class*="right"]');
+              if (!target) {
+                var flexes = header.querySelectorAll('.sl-flex');
+                target = flexes[flexes.length - 1] || header;
+              }
+              target.appendChild(btn);
+
+              /* Check login state */
               try {
-                var mod = await import('/src/lib/auth-modal.ts');
-                if (mod && mod.initAuthButton) mod.initAuthButton();
-              } catch(e) { /* Supabase not configured yet */ }
+                import('/src/lib/supabase/client.ts').then(function(c) {
+                  var sb = c.createSupabaseClient();
+                  sb.auth.getUser().then(function(r) {
+                    var u = r.data && r.data.user;
+                    if (u) {
+                      var name = (u.user_metadata && u.user_metadata.display_name) || (u.email && u.email.split('@')[0]) || 'User';
+                      btn.textContent = 'Hi, ' + name + '!';
+                      btn.setAttribute('data-logged-in', 'true');
+                    }
+                  }).catch(function(){});
+                }).catch(function(){});
+              } catch(e) {}
             });
           </script><script>
             /* Sidebar checkmarks: inject completion indicators from Supabase */
@@ -433,7 +469,7 @@
 <span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mo>=</mo><msubsup><mo>∫</mo><mn>0</mn><mrow><mn>2</mn><mi>π</mi></mrow></msubsup><msubsup><mrow><mo fence="true">[</mo><mfrac><msup><mi>r</mi><mn>4</mn></msup><mn>4</mn></mfrac><mo fence="true">]</mo></mrow><mn>0</mn><mn>1</mn></msubsup><mi>d</mi><mi>θ</mi><mo>=</mo><msubsup><mo>∫</mo><mn>0</mn><mrow><mn>2</mn><mi>π</mi></mrow></msubsup><mfrac><mn>1</mn><mn>4</mn></mfrac><mtext> </mtext><mi>d</mi><mi>θ</mi><mo>=</mo><mfrac><mi>π</mi><mn>2</mn></mfrac></mrow><annotation encoding="application/x-tex">= \int_0^{2\pi} \left[ \frac{r^4}{4} \right]_0^1 d\theta = \int_0^{2\pi} \frac{1}{4} \, d\theta = \frac{\pi}{2}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.3669em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:2.6948em;vertical-align:-0.9997em;"></span><span class="mop"><span class="mop op-symbol large-op" style="margin-right:0.44445em;position:relative;top:-0.0011em;">∫</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.564em;"><span style="top:-1.7881em;margin-left:-0.4445em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">0</span></span></span><span style="top:-3.8129em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">2</span><span class="mord mathnormal mtight" style="margin-right:0.03588em;">π</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.9119em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="minner"><span class="minner"><span class="mopen delimcenter" style="top:0em;"><span class="delimsizing size3">[</span></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.4911em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">4</span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"><span class="mord mathnormal" style="margin-right:0.02778em;">r</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">4</span></span></span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.686em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span><span class="mclose delimcenter" style="top:0em;"><span class="delimsizing size3">]</span></span></span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.6951em;"><span style="top:-1.7003em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">0</span></span></span><span style="top:-3.944em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.9997em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal">d</span><span class="mord mathnormal" style="margin-right:0.02778em;">θ</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:2.476em;vertical-align:-0.9119em;"></span><span class="mop"><span class="mop op-symbol large-op" style="margin-right:0.44445em;position:relative;top:-0.0011em;">∫</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.564em;"><span style="top:-1.7881em;margin-left:-0.4445em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">0</span></span></span><span style="top:-3.8129em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">2</span><span class="mord mathnormal mtight" style="margin-right:0.03588em;">π</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.9119em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.3214em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">4</span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.686em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal">d</span><span class="mord mathnormal" style="margin-right:0.02778em;">θ</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.7936em;vertical-align:-0.686em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.1076em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">2</span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">π</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.686em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span></span></span></span></span>
 <p>Try setting this up in Cartesian coordinates and you’ll see why polar is so much nicer here.</p>
 
-<figure class="pd3 astro-spuv2e6x" role="img" aria-label="Interactive 3D visualization of z equals x squared plus y squared over the unit disk"> <div class="pd3-canvas astro-spuv2e6x" data-pd3d></div> <div class="pd3-hint astro-spuv2e6x">Drag to rotate · Scroll/Pinch to zoom</div> </figure> <script type="module" src="/_astro/ParaboloidDisk3D.astro_astro_type_script_index_0_lang.hSL5A-NN.js"></script> 
+<figure class="pd3 astro-spuv2e6x" role="img" aria-label="Interactive 3D visualization of z equals x squared plus y squared over the unit disk"> <div class="pd3-canvas astro-spuv2e6x" data-pd3d></div> <div class="pd3-hint astro-spuv2e6x">Drag to rotate · Scroll/Pinch to zoom</div> </figure> <script type="module" src="/_astro/ParaboloidDisk3D.astro_astro_type_script_index_0_lang.BJM_GRpN.js"></script> 
 <p>The bowl-shaped surface is z = x² + y² = r², rising from 0 at the center to 1 at the edge of the green unit disk. The volume under this paraboloid over the disk is π/2, which is what the polar integral computed.</p>
 <p><strong>Example 3: Quarter-circle region</strong></p>
 <p>Evaluate the double integral of f(x, y) = 1 over the quarter-disk in the first quadrant (x ≥ 0, y ≥ 0, x² + y² ≤ 4).</p>

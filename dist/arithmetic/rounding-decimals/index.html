@@ -265,12 +265,48 @@
               overlay.addEventListener('click', close);
             });
           </script><script>
-            /* Auth button in header */
-            document.addEventListener('DOMContentLoaded', async function() {
+            /* Auth button in header (desktop) */
+            document.addEventListener('DOMContentLoaded', function() {
+              var header = document.querySelector('header');
+              if (!header || document.getElementById('auth-header-btn')) return;
+              if (window.innerWidth < 800) return; /* mobile has its own icon */
+
+              var btn = document.createElement('button');
+              btn.id = 'auth-header-btn';
+              btn.className = 'auth-header-btn';
+              btn.textContent = 'Log In';
+
+              btn.addEventListener('click', function() {
+                import('/src/lib/auth-modal.ts').then(function(mod) {
+                  if (btn.getAttribute('data-logged-in')) {
+                    if (mod.handleMobileAuthClick) mod.handleMobileAuthClick(btn);
+                  } else {
+                    if (mod.showAuthModal) mod.showAuthModal();
+                  }
+                }).catch(function(e) { console.warn('Auth module load failed:', e); });
+              });
+
+              var target = header.querySelector('.right-group') || header.querySelector('[class*="right"]');
+              if (!target) {
+                var flexes = header.querySelectorAll('.sl-flex');
+                target = flexes[flexes.length - 1] || header;
+              }
+              target.appendChild(btn);
+
+              /* Check login state */
               try {
-                var mod = await import('/src/lib/auth-modal.ts');
-                if (mod && mod.initAuthButton) mod.initAuthButton();
-              } catch(e) { /* Supabase not configured yet */ }
+                import('/src/lib/supabase/client.ts').then(function(c) {
+                  var sb = c.createSupabaseClient();
+                  sb.auth.getUser().then(function(r) {
+                    var u = r.data && r.data.user;
+                    if (u) {
+                      var name = (u.user_metadata && u.user_metadata.display_name) || (u.email && u.email.split('@')[0]) || 'User';
+                      btn.textContent = 'Hi, ' + name + '!';
+                      btn.setAttribute('data-logged-in', 'true');
+                    }
+                  }).catch(function(){});
+                }).catch(function(){});
+              } catch(e) {}
             });
           </script><script>
             /* Sidebar checkmarks: inject completion indicators from Supabase */
