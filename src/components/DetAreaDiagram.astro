@@ -1,0 +1,76 @@
+---
+/**
+ * DetAreaDiagram — shows determinant as area scaling
+ * Unit square (blue) → parallelogram (green) via matrix A
+ * Area of parallelogram = |det(A)| = 3
+ */
+---
+<div class="diagram-container">
+<svg viewBox="-10 -10 380 275" width="100%" style="max-width:420px" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Determinant as area scaling: unit square transforms to parallelogram">
+
+  {/* Title */}
+  <text x="185" y="10" fill="#888" font-size="15" font-family="serif" text-anchor="middle" font-weight="bold">Applying matrix A</text>
+
+  {/* Grid */}
+  <g stroke="#333" stroke-width="0.5" opacity="0.15">
+    {[0,50,100,150,200,250,300,350].map(x => <line x1={x} y1="20" x2={x} y2="200" />)}
+    {[20,70,120,170,200].map(y => <line x1="0" y1={y} x2="360" y2={y} />)}
+  </g>
+
+  {/* Axes */}
+  <line x1="0" y1="200" x2="365" y2="200" stroke="#666" stroke-width="1" class="da-axis" />
+  <line x1="0" y1="205" x2="0" y2="18" stroke="#666" stroke-width="1" class="da-axis" />
+
+  {/* Unit square (blue): 50px scale, origin at (0,200) */}
+  {/* (0,0)→(0,200), (1,0)→(50,200), (1,1)→(50,150), (0,1)→(0,150) */}
+  <polygon points="0,200 50,200 50,150 0,150" fill="#58a6ff" fill-opacity="0.2" stroke="#58a6ff" stroke-width="2.5" class="da-blue-shape" />
+  <text x="25" y="222" fill="#58a6ff" font-size="13" font-family="serif" text-anchor="middle" class="da-blue-text">area = 1</text>
+
+  {/* Arrow from square to parallelogram */}
+  <line x1="60" y1="175" x2="90" y2="175" stroke="#f0883e" stroke-width="2" class="da-orange-stroke" />
+  <polygon points="95,175 87,170 87,180" fill="#f0883e" class="da-orange-fill" />
+  <text x="78" y="165" fill="#f0883e" font-size="13" font-family="serif" text-anchor="middle" class="da-orange-text">A</text>
+
+  {/* Parallelogram (green): A=[[2,1],[0,1.5]] at 50px scale */}
+  {/* (0,0)→(0,200), (2,0)→(100,200), (3,1.5)→(150,125), (1,1.5)→(50,125) */}
+  <polygon points="105,200 205,200 255,125 155,125" fill="#7ee787" fill-opacity="0.2" stroke="#7ee787" stroke-width="2.5" class="da-green-shape" />
+  <text x="180" y="170" fill="#7ee787" font-size="14" font-family="serif" text-anchor="middle" font-weight="bold" class="da-green-text">area = 3</text>
+
+  {/* det label — above the parallelogram, clear of lines */}
+  <text x="205" y="112" fill="#888" font-size="14" font-family="serif" text-anchor="middle">|det(A)| = 3</text>
+
+  {/* Legend */}
+  <g transform="translate(60, 238)">
+    <rect x="0" y="0" width="14" height="14" rx="3" fill="#58a6ff" class="da-blue-fill" />
+    <text x="20" y="12" fill="#888" font-size="12" font-family="serif">Unit square (area 1)</text>
+    <rect x="170" y="0" width="14" height="14" rx="3" fill="#7ee787" class="da-green-fill" />
+    <text x="190" y="12" fill="#888" font-size="12" font-family="serif">Transformed (area 3)</text>
+  </g>
+</svg>
+</div>
+
+<style>
+  .da-blue-shape { fill: #58a6ff; stroke: #58a6ff; }
+  .da-green-shape { fill: #7ee787; stroke: #7ee787; }
+  .da-blue-text { fill: #58a6ff; }
+  .da-green-text { fill: #7ee787; }
+  .da-orange-text { fill: #f0883e; }
+  .da-orange-stroke { stroke: #f0883e; }
+  .da-orange-fill { fill: #f0883e; }
+  .da-blue-fill { fill: #58a6ff; }
+  .da-green-fill { fill: #7ee787; }
+  .da-axis { stroke: #666; }
+
+  :global([data-theme="light"]) .da-blue-shape { fill: #0550ae; stroke: #0550ae; }
+  :global([data-theme="light"]) .da-green-shape { fill: #1a7f2e; stroke: #1a7f2e; }
+  :global([data-theme="light"]) .da-blue-text { fill: #0550ae; }
+  :global([data-theme="light"]) .da-green-text { fill: #1a7f2e; }
+  :global([data-theme="light"]) .da-orange-text { fill: #c05010; }
+  :global([data-theme="light"]) .da-orange-stroke { stroke: #c05010; }
+  :global([data-theme="light"]) .da-orange-fill { fill: #c05010; }
+  :global([data-theme="light"]) .da-blue-fill { fill: #0550ae; }
+  :global([data-theme="light"]) .da-green-fill { fill: #1a7f2e; }
+  :global([data-theme="light"]) .da-axis { stroke: #999; }
+  :global([data-theme="light"]) svg text[fill="#888"] { fill: #555; }
+  :global([data-theme="light"]) svg g[opacity="0.15"] line { stroke: #ccc; }
+</style>

@@ -1,0 +1,79 @@
+---
+/**
+ * WallSlideDiagram — shows wall sliding via vector projection
+ * Velocity v=(3,4), wall normal n=(1,0), projection removes x-component
+ * Result: slide velocity = (0,4)
+ * Scale: 40px/unit, origin at (60, 200)
+ */
+---
+<div class="diagram-container">
+<svg viewBox="-10 -10 360 270" width="100%" style="max-width:380px" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Wall sliding: velocity projected to remove wall-normal component">
+
+  {/* Title */}
+  <text x="175" y="14" fill="#888" font-size="14" font-family="serif" text-anchor="middle" font-weight="bold">Wall Sliding (Projection)</text>
+
+  {/* Grid */}
+  <g stroke="#333" stroke-width="0.5" opacity="0.12">
+    {[60,100,140,180,220,260].map(x => <line x1={x} y1="25" x2={x} y2="210" />)}
+    {[40,80,120,160,200].map(y => <line x1="50" y1={y} x2="270" y2={y} />)}
+  </g>
+
+  {/* Wall (vertical line on the right) */}
+  <line x1="180" y1="25" x2="180" y2="210" stroke="#f47067" stroke-width="3" opacity="0.4" class="ws-red-line" />
+  <text x="192" y="55" fill="#f47067" font-size="12" font-family="serif" class="ws-red-text">wall</text>
+
+  {/* Origin at (60, 200) */}
+  <circle cx="60" cy="200" r="3.5" fill="#999" />
+
+  {/* Velocity v=(3,4): blue arrow → (180, 40) */}
+  {/* dir=(120,-160), unit=(0.6,-0.8), perp=(0.8,0.6) */}
+  <line x1="60" y1="200" x2="174" y2="48" stroke="#58a6ff" stroke-width="2.5" class="ws-blue-line" />
+  <polygon points="180,40 178,51 170,45" fill="#58a6ff" class="ws-blue-fill" />
+  <text x="115" y="160" fill="#58a6ff" font-size="13" font-family="serif" class="ws-blue-text">v = (3, 4)</text>
+
+  {/* Wall-normal component (into wall): proj = (3,0) → dashed red */}
+  <line x1="60" y1="200" x2="172" y2="200" stroke="#f47067" stroke-width="2" stroke-dasharray="5,3" opacity="0.5" class="ws-red-line" />
+  <polygon points="180,200 170,196 170,204" fill="#f47067" opacity="0.5" class="ws-red-fill" />
+  <text x="120" y="220" fill="#f47067" font-size="11" font-family="serif" text-anchor="middle" class="ws-red-text">into wall (removed)</text>
+
+  {/* Slide velocity (along wall): (0,4) → green arrow going up */}
+  <line x1="60" y1="200" x2="60" y2="48" stroke="#7ee787" stroke-width="3" class="ws-green-line" />
+  <polygon points="60,40 55,52 65,52" fill="#7ee787" class="ws-green-fill" />
+  <text x="38" y="115" fill="#7ee787" font-size="13" font-family="serif" text-anchor="end" class="ws-green-text">slide</text>
+  <text x="38" y="130" fill="#7ee787" font-size="13" font-family="serif" text-anchor="end" class="ws-green-text">(0, 4)</text>
+
+  {/* Legend */}
+  <g transform="translate(30, 240)">
+    <line x1="0" y1="0" x2="18" y2="0" stroke="#58a6ff" stroke-width="2.5" class="ws-blue-line" />
+    <text x="24" y="4" fill="#888" font-size="11" font-family="serif">velocity</text>
+    <line x1="90" y1="0" x2="108" y2="0" stroke="#f47067" stroke-width="2" stroke-dasharray="5,3" class="ws-red-line" />
+    <text x="114" y="4" fill="#888" font-size="11" font-family="serif">wall component</text>
+    <line x1="225" y1="0" x2="243" y2="0" stroke="#7ee787" stroke-width="3" class="ws-green-line" />
+    <text x="249" y="4" fill="#888" font-size="11" font-family="serif">slide result</text>
+  </g>
+</svg>
+</div>
+
+<style>
+  .ws-blue-line { stroke: #58a6ff; }
+  .ws-blue-fill { fill: #58a6ff; }
+  .ws-blue-text { fill: #58a6ff; }
+  .ws-green-line { stroke: #7ee787; }
+  .ws-green-fill { fill: #7ee787; }
+  .ws-green-text { fill: #7ee787; }
+  .ws-red-line { stroke: #f47067; }
+  .ws-red-fill { fill: #f47067; }
+  .ws-red-text { fill: #f47067; }
+
+  :global([data-theme="light"]) .ws-blue-line { stroke: #0550ae; }
+  :global([data-theme="light"]) .ws-blue-fill { fill: #0550ae; }
+  :global([data-theme="light"]) .ws-blue-text { fill: #0550ae; }
+  :global([data-theme="light"]) .ws-green-line { stroke: #1a7f2e; }
+  :global([data-theme="light"]) .ws-green-fill { fill: #1a7f2e; }
+  :global([data-theme="light"]) .ws-green-text { fill: #1a7f2e; }
+  :global([data-theme="light"]) .ws-red-line { stroke: #c4432b; }
+  :global([data-theme="light"]) .ws-red-fill { fill: #c4432b; }
+  :global([data-theme="light"]) .ws-red-text { fill: #c4432b; }
+  :global([data-theme="light"]) svg text[fill="#888"] { fill: #555; }
+  :global([data-theme="light"]) svg g[opacity="0.12"] line { stroke: #ccc; }
+</style>

@@ -1,0 +1,147 @@
+---
+title: Systems of Linear Equations
+description: Learn how to solve systems of linear equations using substitution, elimination, and matrix methods
+sidebar:
+  order: 6
+---
+
+import Quiz from "../../../components/Quiz.astro";
+import SystemGeomDiagram from "../../../components/SystemGeomDiagram.astro";
+
+## What You'll Learn
+
+A system of linear equations is a set of equations you want to solve simultaneously. In this lesson you'll learn how to solve them using substitution, elimination, and matrix form, and understand what their solutions look like geometrically.
+
+## The Concept
+
+A system of two equations in two unknowns:
+
+$$
+\begin{cases} 2x + 3y = 8 \\ 4x - y = 7 \end{cases}
+$$
+
+We want to find values of $x$ and $y$ that satisfy all equations at the same time.
+
+### Three Main Methods
+
+1. Substitution: Solve one equation for one variable and substitute into the other.
+2. Elimination: Add or subtract equations to eliminate one variable.
+3. Matrix Method: Write the system as $A\mathbf{x} = \mathbf{b}$ and solve using matrices (covered more in later lessons).
+
+### Types of Solutions
+
+Geometrically, each equation in 2D is a line. Two lines can:
+1. Intersect at exactly one point (unique solution)
+2. Be parallel and never meet (no solution, inconsistent)
+3. Be the same line (infinitely many solutions, dependent)
+
+<SystemGeomDiagram />
+
+In the diagram: the left panel shows two lines crossing at a single point $(2, 1)$, the unique solution. The middle panel shows two parallel lines with no intersection. The right panel shows two overlapping lines with infinitely many solutions.
+
+### The Augmented Matrix
+
+We often write the system as an augmented matrix, combining $A$ and $\mathbf{b}$:
+
+$$
+\left[\begin{array}{cc|c} 2 & 3 & 8 \\ 4 & -1 & 7 \end{array}\right]
+$$
+
+This compact form is what we'll use for row reduction in the next lesson.
+
+## Worked Examples
+
+**Example 1: Substitution Method**
+
+$$
+\begin{cases} x + 2y = 5 \\ 3x - y = 8 \end{cases}
+$$
+
+From the first equation: $x = 5 - 2y$
+
+Plug into the second: $3(5 - 2y) - y = 8$
+
+$15 - 6y - y = 8$
+
+$15 - 7y = 8$
+
+$y = 1$
+
+Then $x = 5 - 2(1) = 3$. Solution: $(3, 1)$.
+
+**Example 2: Elimination Method**
+
+$$
+\begin{cases} 2x + 3y = 12 \\ 4x - 3y = 6 \end{cases}
+$$
+
+Add the equations: $6x = 18$, so $x = 3$.
+
+Plug back in: $2(3) + 3y = 12$, so $3y = 6$, $y = 2$.
+
+Solution: $(3, 2)$.
+
+**Example 3: No Solution (Inconsistent)**
+
+$$
+\begin{cases} x + y = 5 \\ x + y = 7 \end{cases}
+$$
+
+Both equations say $x + y$ equals something, but 5 and 7 are different. The lines are parallel. No solution exists.
+
+## Real-World Application
+
+Systems of equations show up everywhere:
+- Game physics: solving for collision points between objects
+- Pathfinding: balancing constraints across routes
+- Circuit analysis: finding currents through components
+- Economics: supply and demand equilibrium
+
+Example: In a 3D game, you might solve a system to find where a projectile will hit a moving target, or to determine the exact position where two objects collide. The engine does this many times per frame.
+
+:::note[You've Got This]
+If you've solved two equations with two unknowns before, you already know the basics. The elimination method is often the most efficient by hand. Writing it in matrix form is just a cleaner way to organize the same information. The geometric picture (lines crossing, parallel, or overlapping) gives you great intuition for what's happening. Next up: a systematic method (Gaussian elimination) for solving any system, no matter how big.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="linear-algebra-systems-of-linear-equations"
+  questions={[
+    {
+      id: "q1",
+      text: "A system of linear equations has a unique solution when the lines:",
+      options: ["Are parallel", "Are the same line", "Intersect at exactly one point", "Never touch"],
+      correctIndex: 2,
+      explanation: "One intersection point means one unique solution.",
+    },
+    {
+      id: "q2",
+      text: "The elimination method works by:",
+      options: ["Graphing the lines", "Using matrices only", "Adding or subtracting equations to remove a variable", "Substituting one variable into another equation"],
+      correctIndex: 2,
+      explanation: "You eliminate one variable by combining equations, then solve for the other.",
+    },
+    {
+      id: "q3",
+      text: "If a system has no solution, it is called:",
+      options: ["Dependent", "Independent", "Inconsistent", "Overdetermined"],
+      correctIndex: 2,
+      explanation: "The equations contradict each other, so no values satisfy both.",
+    },
+    {
+      id: "q4",
+      text: "The system $x + y = 5$ and $x + y = 5$ has:",
+      options: ["No solution", "Exactly one solution", "Two solutions", "Infinitely many solutions"],
+      correctIndex: 3,
+      explanation: "Both equations represent the same line, so every point on it is a solution.",
+    },
+    {
+      id: "q5",
+      text: "In game development, systems of equations are often solved to find:",
+      options: ["Only texture coordinates", "Only player scores", "Intersection points and collision locations", "Only sound volumes"],
+      correctIndex: 2,
+      explanation: "They help calculate where objects meet or interact.",
+    },
+  ]}
+/>

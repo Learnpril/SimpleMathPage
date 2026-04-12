@@ -1,0 +1,142 @@
+---
+title: Cross Product and Vector Projections
+description: Learn the cross product, its geometric meaning, and how to project one vector onto another
+sidebar:
+  order: 3
+---
+
+import Quiz from "../../../components/Quiz.astro";
+import VecProjectionDiagram from "../../../components/VecProjectionDiagram.astro";
+import CrossProduct3D from "../../../components/CrossProduct3D.astro";
+
+## What You'll Learn
+
+In this lesson you'll learn the cross product (a key 3D operation) and vector projection, which tells you how much of one vector lies in the direction of another.
+
+## The Concept
+
+### 1. Cross Product
+
+The cross product $\mathbf{u} \times \mathbf{v}$ of two vectors in 3D produces a new vector that is perpendicular to both $\mathbf{u}$ and $\mathbf{v}$.
+
+Formula (using the determinant):
+
+$$
+\mathbf{u} \times \mathbf{v} = \langle u_2 v_3 - u_3 v_2,\; u_3 v_1 - u_1 v_3,\; u_1 v_2 - u_2 v_1 \rangle
+$$
+
+Key properties:
+- The result is perpendicular to both input vectors (right-hand rule)
+- Magnitude: $\lVert \mathbf{u} \times \mathbf{v} \rVert = \lVert \mathbf{u} \rVert \lVert \mathbf{v} \rVert \sin \theta$ (equals the area of the parallelogram formed by $\mathbf{u}$ and $\mathbf{v}$)
+- Anti-commutative: $\mathbf{u} \times \mathbf{v} = -(\mathbf{v} \times \mathbf{u})$
+
+### 2. Vector Projection
+
+The projection of vector $\mathbf{u}$ onto vector $\mathbf{v}$ tells you "how much of $\mathbf{u}$ points in the direction of $\mathbf{v}$."
+
+$$
+\text{proj}_{\mathbf{v}} \mathbf{u} = \left( \frac{\mathbf{u} \cdot \mathbf{v}}{\lVert \mathbf{v} \rVert^2} \right) \mathbf{v}
+$$
+
+Think of it as the "shadow" of $\mathbf{u}$ cast onto $\mathbf{v}$. The dashed line drops straight down (perpendicular) from the tip of $\mathbf{u}$ to the line of $\mathbf{v}$:
+
+<VecProjectionDiagram />
+
+In the diagram: $\mathbf{u} = \langle 3, 4 \rangle$ (blue) is projected onto the x-axis direction $\mathbf{v} = \langle 5, 0 \rangle$. The orange arrow is the projection $\text{proj}_{\mathbf{v}} \mathbf{u} = \langle 3, 0 \rangle$. The dashed purple line shows the perpendicular drop from the tip of $\mathbf{u}$ down to the projection. The y-component is stripped away, leaving only the part of $\mathbf{u}$ that lies along $\mathbf{v}$.
+
+## Worked Examples
+
+**Example 1: Cross Product**
+
+$\mathbf{u} = \langle 1, 2, 3 \rangle$, $\mathbf{v} = \langle 4, 5, 6 \rangle$
+
+$$
+\mathbf{u} \times \mathbf{v} = \langle (2)(6) - (3)(5),\; (3)(4) - (1)(6),\; (1)(5) - (2)(4) \rangle = \langle -3, 6, -3 \rangle
+$$
+
+Step by step:
+- First component: $2 \times 6 - 3 \times 5 = 12 - 15 = -3$
+- Second component: $3 \times 4 - 1 \times 6 = 12 - 6 = 6$
+- Third component: $1 \times 5 - 2 \times 4 = 5 - 8 = -3$
+
+<CrossProduct3D />
+
+In the 3D scene above: $\mathbf{u} = \langle 1, 2, 3 \rangle$ (blue) and $\mathbf{v} = \langle 4, 5, 6 \rangle$ (green) lie in a plane shown by the shaded purple parallelogram. The cross product $\mathbf{u} \times \mathbf{v} = \langle -3, 6, -3 \rangle$ (orange) sticks straight out of that plane, perpendicular to both input vectors. Drag to rotate and see how the orange arrow is always at a right angle to the purple surface.
+
+**Example 2: Magnitude of Cross Product**
+
+Using the same vectors:
+
+$\lVert \mathbf{u} \times \mathbf{v} \rVert = \sqrt{(-3)^2 + 6^2 + (-3)^2} = \sqrt{9 + 36 + 9} = \sqrt{54} = 3\sqrt{6}$
+
+This equals $\lVert \mathbf{u} \rVert \lVert \mathbf{v} \rVert \sin \theta$ and represents the area of the parallelogram formed by $\mathbf{u}$ and $\mathbf{v}$.
+
+**Example 3: Vector Projection**
+
+Project $\mathbf{u} = \langle 3, 4 \rangle$ onto $\mathbf{v} = \langle 5, 0 \rangle$ (along the x-axis).
+
+Step 1: $\mathbf{u} \cdot \mathbf{v} = (3)(5) + (4)(0) = 15$
+
+Step 2: $\lVert \mathbf{v} \rVert^2 = 5^2 + 0^2 = 25$
+
+Step 3: $\text{proj}_{\mathbf{v}} \mathbf{u} = \frac{15}{25} \langle 5, 0 \rangle = \frac{3}{5} \langle 5, 0 \rangle = \langle 3, 0 \rangle$
+
+The y-component is removed. The projection lies entirely on the x-axis.
+
+## Real-World Application
+
+- Cross Product: Used to calculate surface normals (for lighting), torque in physics, and angular momentum
+- Projection is used in games for:
+  - Finding how much force applies in a certain direction
+  - Calculating the closest point on a line or plane
+  - Implementing "sliding" collision response
+  - AI sight cones and threat detection
+
+Example: When a character runs into a wall at an angle, projection helps calculate the sliding direction along the wall instead of stopping completely.
+
+:::note[You've Got This]
+The cross product gives you a perpendicular vector, which is very powerful in 3D. The right-hand rule takes a bit of practice, but it's worth it. Vector projection is one of the most practical tools in linear algebra. It lets you "strip away" the part of a vector that's not useful and keep only the useful component. These operations are used constantly in game engines. Keep practicing the calculations and visualizing them.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="linear-algebra-cross-product-and-projections"
+  questions={[
+    {
+      id: "q1",
+      text: "The cross product $\\mathbf{u} \\times \\mathbf{v}$ produces a vector that is:",
+      options: ["Perpendicular to both $\\mathbf{u}$ and $\\mathbf{v}$", "Parallel to both", "The sum of $\\mathbf{u}$ and $\\mathbf{v}$", "The difference of $\\mathbf{u}$ and $\\mathbf{v}$"],
+      correctIndex: 0,
+      explanation: "The cross product is always perpendicular to the plane formed by the two input vectors.",
+    },
+    {
+      id: "q2",
+      text: "The magnitude $\\lVert \\mathbf{u} \\times \\mathbf{v} \\rVert$ equals:",
+      options: ["The dot product of $\\mathbf{u}$ and $\\mathbf{v}$", "The area of the parallelogram formed by $\\mathbf{u}$ and $\\mathbf{v}$", "The sum of their magnitudes", "Always 1"],
+      correctIndex: 1,
+      explanation: "$\\lVert \\mathbf{u} \\times \\mathbf{v} \\rVert = \\lVert \\mathbf{u} \\rVert \\lVert \\mathbf{v} \\rVert \\sin \\theta$, which is the parallelogram area.",
+    },
+    {
+      id: "q3",
+      text: "Vector projection of $\\mathbf{u}$ onto $\\mathbf{v}$ tells you:",
+      options: ["The perpendicular component only", "The cross product", "How much of $\\mathbf{u}$ lies in the direction of $\\mathbf{v}$", "The magnitude only"],
+      correctIndex: 2,
+      explanation: "It's the shadow of $\\mathbf{u}$ cast onto $\\mathbf{v}$.",
+    },
+    {
+      id: "q4",
+      text: "If $\\mathbf{u}$ and $\\mathbf{v}$ are parallel, their cross product is:",
+      options: ["The zero vector", "A unit vector", "Very large", "Equal to their dot product"],
+      correctIndex: 0,
+      explanation: "$\\sin \\theta = 0$ when vectors are parallel, so the cross product is zero.",
+    },
+    {
+      id: "q5",
+      text: "In game development, projection is commonly used for:",
+      options: ["Only drawing sprites", "Only calculating scores", "Only camera rotation", "Collision response and sliding along surfaces"],
+      correctIndex: 3,
+      explanation: "Projection helps calculate realistic movement when hitting walls at angles.",
+    },
+  ]}
+/>

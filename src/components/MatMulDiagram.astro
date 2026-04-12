@@ -1,0 +1,110 @@
+---
+/**
+ * MatMulDiagram — shows how 2x2 matrix multiplication works
+ * Row-from-A × Column-from-B = entry in result
+ * Color-coded to show which row/col produce each entry.
+ * Dot product annotations below the legend for readability.
+ */
+---
+<div class="diagram-container">
+<svg viewBox="-10 -10 400 280" width="100%" style="max-width:450px" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Matrix multiplication: row times column equals entry">
+
+  {/* Labels */}
+  <text x="55" y="14" fill="#888" font-size="13" font-family="serif" text-anchor="middle">A</text>
+  <text x="175" y="14" fill="#888" font-size="13" font-family="serif" text-anchor="middle">B</text>
+  <text x="300" y="14" fill="#888" font-size="13" font-family="serif" text-anchor="middle">AB</text>
+
+  {/* Matrix A */}
+  <rect x="10" y="24" width="90" height="80" rx="5" fill="none" stroke="#888" stroke-width="1.5" />
+  {/* Highlight row 1 */}
+  <rect x="14" y="30" width="82" height="30" rx="3" fill="#58a6ff" opacity="0.1" class="mm-blue-bg" />
+  {/* Highlight row 2 */}
+  <rect x="14" y="66" width="82" height="30" rx="3" fill="#7ee787" opacity="0.1" class="mm-green-bg" />
+  <text x="30" y="52" fill="#58a6ff" font-size="20" font-family="serif" font-weight="bold" class="mm-blue">1</text>
+  <text x="72" y="52" fill="#58a6ff" font-size="20" font-family="serif" font-weight="bold" class="mm-blue">2</text>
+  <text x="30" y="88" fill="#7ee787" font-size="20" font-family="serif" font-weight="bold" class="mm-green">3</text>
+  <text x="72" y="88" fill="#7ee787" font-size="20" font-family="serif" font-weight="bold" class="mm-green">4</text>
+
+  {/* Times symbol */}
+  <text x="118" y="72" fill="#888" font-size="20" font-family="serif">×</text>
+
+  {/* Matrix B */}
+  <rect x="135" y="24" width="90" height="80" rx="5" fill="none" stroke="#888" stroke-width="1.5" />
+  {/* Highlight col 1 */}
+  <rect x="139" y="30" width="36" height="68" rx="3" fill="#f0883e" opacity="0.1" class="mm-orange-bg" />
+  {/* Highlight col 2 */}
+  <rect x="181" y="30" width="36" height="68" rx="3" fill="#d2a8ff" opacity="0.1" class="mm-purple-bg" />
+  <text x="155" y="52" fill="#f0883e" font-size="20" font-family="serif" font-weight="bold" class="mm-orange">5</text>
+  <text x="197" y="52" fill="#d2a8ff" font-size="20" font-family="serif" font-weight="bold" class="mm-purple">6</text>
+  <text x="155" y="88" fill="#f0883e" font-size="20" font-family="serif" font-weight="bold" class="mm-orange">7</text>
+  <text x="197" y="88" fill="#d2a8ff" font-size="20" font-family="serif" font-weight="bold" class="mm-purple">8</text>
+
+  {/* Equals */}
+  <text x="240" y="72" fill="#888" font-size="20" font-family="serif">=</text>
+
+  {/* Result matrix */}
+  <rect x="258" y="24" width="90" height="80" rx="5" fill="none" stroke="#888" stroke-width="1.5" />
+  <text x="278" y="52" fill="#888" font-size="18" font-family="serif" font-weight="bold">19</text>
+  <text x="318" y="52" fill="#888" font-size="18" font-family="serif" font-weight="bold">22</text>
+  <text x="278" y="88" fill="#888" font-size="18" font-family="serif" font-weight="bold">43</text>
+  <text x="318" y="88" fill="#888" font-size="18" font-family="serif" font-weight="bold">50</text>
+
+  {/* Legend */}
+  <g transform="translate(10, 120)">
+    <rect x="0" y="0" width="14" height="14" rx="3" fill="#58a6ff" class="mm-blue-fill" />
+    <text x="19" y="11" fill="#888" font-size="11" font-family="serif">Row 1 of A</text>
+    <rect x="100" y="0" width="14" height="14" rx="3" fill="#7ee787" class="mm-green-fill" />
+    <text x="119" y="11" fill="#888" font-size="11" font-family="serif">Row 2 of A</text>
+    <rect x="200" y="0" width="14" height="14" rx="3" fill="#f0883e" class="mm-orange-fill" />
+    <text x="219" y="11" fill="#888" font-size="11" font-family="serif">Col 1 of B</text>
+    <rect x="290" y="0" width="14" height="14" rx="3" fill="#d2a8ff" class="mm-purple-fill" />
+    <text x="309" y="11" fill="#888" font-size="11" font-family="serif">Col 2 of B</text>
+  </g>
+
+  {/* Dot product annotations — below legend, centered, large text */}
+  <g transform="translate(190, 160)" text-anchor="middle">
+    <text x="0" y="0" fill="#888" font-size="14" font-family="serif">
+      <tspan fill="#58a6ff" class="mm-blue">row 1</tspan> · <tspan fill="#f0883e" class="mm-orange">col 1</tspan> = 1·5 + 2·7 = 19
+    </text>
+    <text x="0" y="22" fill="#888" font-size="14" font-family="serif">
+      <tspan fill="#58a6ff" class="mm-blue">row 1</tspan> · <tspan fill="#d2a8ff" class="mm-purple">col 2</tspan> = 1·6 + 2·8 = 22
+    </text>
+    <text x="0" y="44" fill="#888" font-size="14" font-family="serif">
+      <tspan fill="#7ee787" class="mm-green">row 2</tspan> · <tspan fill="#f0883e" class="mm-orange">col 1</tspan> = 3·5 + 4·7 = 43
+    </text>
+    <text x="0" y="66" fill="#888" font-size="14" font-family="serif">
+      <tspan fill="#7ee787" class="mm-green">row 2</tspan> · <tspan fill="#d2a8ff" class="mm-purple">col 2</tspan> = 3·6 + 4·8 = 50
+    </text>
+  </g>
+</svg>
+</div>
+
+<style>
+  .mm-blue { fill: #58a6ff; }
+  .mm-green { fill: #7ee787; }
+  .mm-orange { fill: #f0883e; }
+  .mm-purple { fill: #d2a8ff; }
+  .mm-blue-fill { fill: #58a6ff; }
+  .mm-green-fill { fill: #7ee787; }
+  .mm-orange-fill { fill: #f0883e; }
+  .mm-purple-fill { fill: #d2a8ff; }
+  .mm-blue-bg { fill: #58a6ff; }
+  .mm-green-bg { fill: #7ee787; }
+  .mm-orange-bg { fill: #f0883e; }
+  .mm-purple-bg { fill: #d2a8ff; }
+
+  :global([data-theme="light"]) .mm-blue { fill: #0550ae; }
+  :global([data-theme="light"]) .mm-green { fill: #1a7f2e; }
+  :global([data-theme="light"]) .mm-orange { fill: #c05010; }
+  :global([data-theme="light"]) .mm-purple { fill: #6b3fa0; }
+  :global([data-theme="light"]) .mm-blue-fill { fill: #0550ae; }
+  :global([data-theme="light"]) .mm-green-fill { fill: #1a7f2e; }
+  :global([data-theme="light"]) .mm-orange-fill { fill: #c05010; }
+  :global([data-theme="light"]) .mm-purple-fill { fill: #6b3fa0; }
+  :global([data-theme="light"]) .mm-blue-bg { fill: #0550ae; }
+  :global([data-theme="light"]) .mm-green-bg { fill: #1a7f2e; }
+  :global([data-theme="light"]) .mm-orange-bg { fill: #c05010; }
+  :global([data-theme="light"]) .mm-purple-bg { fill: #6b3fa0; }
+  :global([data-theme="light"]) svg text[fill="#888"] { fill: #555; }
+  :global([data-theme="light"]) svg rect[stroke="#888"] { stroke: #999; }
+</style>

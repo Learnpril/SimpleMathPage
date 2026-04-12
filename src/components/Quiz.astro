@@ -72,7 +72,8 @@ const validation = validateQuizData({ quizId, questions });
   function renderMathInString(text: string): string {
     return text.replace(/\$([^$]+)\$/g, (_, expr) => {
       try {
-        return katex.renderToString(expr, { throwOnError: false });
+        const decoded = expr.replace(/&amp;/g, "&");
+        return katex.renderToString(decoded, { throwOnError: false });
       } catch {
         return expr;
       }

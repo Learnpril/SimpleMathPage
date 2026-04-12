@@ -1,0 +1,82 @@
+---
+/**
+ * DependentVecDiagram — shows two linearly dependent vectors
+ * v1=(2,4) blue, v2=(1,2) orange — same direction, v1=2*v2
+ * Scale: 30px/unit, origin at (40, 220)
+ */
+---
+<div class="diagram-container">
+<svg viewBox="-10 -10 340 290" width="100%" style="max-width:380px" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Linearly dependent vectors: v1 and v2 point in the same direction">
+
+  {/* Title */}
+  <text x="165" y="12" fill="#888" font-size="16" font-family="serif" text-anchor="middle" font-weight="bold">Linearly Dependent</text>
+
+  {/* Grid */}
+  <g stroke="#333" stroke-width="0.5" opacity="0.15">
+    {[0,40,80,120,160,200,240,280,320].map(x => <line x1={x} y1="20" x2={x} y2="230" />)}
+    {[40,80,120,160,200,220].map(y => <line x1="0" y1={y} x2="325" y2={y} />)}
+  </g>
+
+  {/* Axes: origin at (40, 220) */}
+  <line x1="0" y1="220" x2="325" y2="220" stroke="#666" stroke-width="1" class="dv-axis" />
+  <line x1="40" y1="235" x2="40" y2="25" stroke="#666" stroke-width="1" class="dv-axis" />
+
+  {/* Dashed line showing they share the same direction */}
+  <line x1="20" y1="260" x2="160" y2="-20" stroke="#f47067" stroke-width="1.2" stroke-dasharray="5,4" opacity="0.35" class="dv-red-line" />
+
+  {/* v1 = (2,4): blue arrow → tip at (100, 100) */}
+  {/* Direction: (60,-120) normalized = (0.447,-0.894) */}
+  <line x1="40" y1="220" x2="95" y2="110" stroke="#58a6ff" stroke-width="3" class="dv-blue-line" />
+  <polygon points="100,100 88,112 96,116" fill="#58a6ff" class="dv-blue-fill" />
+
+  {/* v2 = (1,2): orange arrow → tip at (70, 160) */}
+  {/* Direction: (30,-60) normalized = (0.447,-0.894) */}
+  <line x1="40" y1="220" x2="66" y2="168" stroke="#f0883e" stroke-width="3" class="dv-orange-line" />
+  <polygon points="70,160 58,172 66,176" fill="#f0883e" class="dv-orange-fill" />
+
+  {/* Labels — positioned to the right, clear of arrows */}
+  <text x="108" y="100" fill="#58a6ff" font-size="14" font-family="serif" class="dv-blue-text">v&#x2081; = &#x27E8;2, 4&#x27E9;</text>
+  <text x="78" y="158" fill="#f0883e" font-size="14" font-family="serif" class="dv-orange-text">v&#x2082; = &#x27E8;1, 2&#x27E9;</text>
+
+  {/* Explanation labels — far right, clear of everything */}
+  <text x="185" y="130" fill="#f47067" font-size="14" font-family="serif" class="dv-red-text">same direction!</text>
+  <text x="185" y="150" fill="#888" font-size="13" font-family="serif">v&#x2081; = 2 v&#x2082;</text>
+
+  {/* Origin dot */}
+  <circle cx="40" cy="220" r="3.5" fill="#999" />
+
+  {/* Legend */}
+  <g transform="translate(20, 252)">
+    <line x1="0" y1="0" x2="18" y2="0" stroke="#58a6ff" stroke-width="3" class="dv-blue-line" />
+    <text x="24" y="4" fill="#888" font-size="12" font-family="serif">v&#x2081;</text>
+    <line x1="60" y1="0" x2="78" y2="0" stroke="#f0883e" stroke-width="3" class="dv-orange-line" />
+    <text x="84" y="4" fill="#888" font-size="12" font-family="serif">v&#x2082;</text>
+    <line x1="120" y1="0" x2="138" y2="0" stroke="#f47067" stroke-width="1.2" stroke-dasharray="5,4" class="dv-red-line" />
+    <text x="144" y="4" fill="#888" font-size="12" font-family="serif">shared line (dependent)</text>
+  </g>
+</svg>
+</div>
+
+<style>
+  .dv-blue-line { stroke: #58a6ff; }
+  .dv-blue-fill { fill: #58a6ff; }
+  .dv-blue-text { fill: #58a6ff; }
+  .dv-orange-line { stroke: #f0883e; }
+  .dv-orange-fill { fill: #f0883e; }
+  .dv-orange-text { fill: #f0883e; }
+  .dv-red-line { stroke: #f47067; }
+  .dv-red-text { fill: #f47067; }
+  .dv-axis { stroke: #666; }
+
+  :global([data-theme="light"]) .dv-blue-line { stroke: #0550ae; }
+  :global([data-theme="light"]) .dv-blue-fill { fill: #0550ae; }
+  :global([data-theme="light"]) .dv-blue-text { fill: #0550ae; }
+  :global([data-theme="light"]) .dv-orange-line { stroke: #c05010; }
+  :global([data-theme="light"]) .dv-orange-fill { fill: #c05010; }
+  :global([data-theme="light"]) .dv-orange-text { fill: #c05010; }
+  :global([data-theme="light"]) .dv-red-line { stroke: #c4432b; }
+  :global([data-theme="light"]) .dv-red-text { fill: #c4432b; }
+  :global([data-theme="light"]) .dv-axis { stroke: #999; }
+  :global([data-theme="light"]) svg text[fill="#888"] { fill: #555; }
+  :global([data-theme="light"]) svg g[opacity="0.15"] line { stroke: #ccc; }
+</style>

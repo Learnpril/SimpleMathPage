@@ -60,10 +60,10 @@ export default defineConfig({
           label: "Calculus 3",
           autogenerate: { directory: "calculus-3" },
         },
-        // {
-        //   label: "Linear Algebra",
-        //   autogenerate: { directory: "linear-algebra" },
-        // },
+        {
+          label: "Linear Algebra",
+          autogenerate: { directory: "linear-algebra" },
+        },
         // {
         //   label: "Discrete Mathematics",
         //   autogenerate: { directory: "discrete-mathematics" },
@@ -223,7 +223,8 @@ export default defineConfig({
                 {slug:'pre-calculus', label:'Pre-Calculus', about:'about-pre-calculus'},
                 {slug:'calculus-1', label:'Calculus 1', about:'about-calculus-1'},
                 {slug:'calculus-2', label:'Calculus 2', about:'about-calculus-2'},
-                {slug:'calculus-3', label:'Calculus 3', about:'about-calculus-3'}
+                {slug:'calculus-3', label:'Calculus 3', about:'about-calculus-3'},
+                {slug:'linear-algebra', label:'Linear Algebra', about:'about-linear-algebra'}
               ];
               var path = window.location.pathname.replace(/^\\//, '').replace(/\\/$/, '');
               var currentSection = path.split('/')[0] || '';

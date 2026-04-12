@@ -1,0 +1,81 @@
+---
+/**
+ * DiagDecompDiagram — shows A = P D P⁻¹ decomposition visually
+ * Flow: A → P (eigenvectors) × D (eigenvalues) × P⁻¹
+ * Also shows A^n = P D^n P⁻¹ below
+ */
+---
+<div class="diagram-container">
+<svg viewBox="-10 -10 420 200" width="100%" style="max-width:440px" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Diagonalization: A equals P times D times P inverse">
+
+  {/* Title */}
+  <text x="200" y="14" fill="#888" font-size="15" font-family="serif" text-anchor="middle" font-weight="bold">A = P D P⁻¹</text>
+
+  {/* A box */}
+  <rect x="10" y="35" width="60" height="50" rx="6" fill="#58a6ff" fill-opacity="0.12" stroke="#58a6ff" stroke-width="2" class="dd-blue-box" />
+  <text x="40" y="65" fill="#58a6ff" font-size="20" font-family="serif" text-anchor="middle" font-weight="bold" class="dd-blue-text">A</text>
+
+  {/* Equals */}
+  <text x="88" y="65" fill="#888" font-size="20" font-family="serif" text-anchor="middle">=</text>
+
+  {/* P box */}
+  <rect x="105" y="35" width="60" height="50" rx="6" fill="#7ee787" fill-opacity="0.12" stroke="#7ee787" stroke-width="2" class="dd-green-box" />
+  <text x="135" y="65" fill="#7ee787" font-size="20" font-family="serif" text-anchor="middle" font-weight="bold" class="dd-green-text">P</text>
+
+  {/* Times */}
+  <text x="180" y="65" fill="#888" font-size="16" font-family="serif" text-anchor="middle">×</text>
+
+  {/* D box */}
+  <rect x="195" y="35" width="60" height="50" rx="6" fill="#f0883e" fill-opacity="0.12" stroke="#f0883e" stroke-width="2" class="dd-orange-box" />
+  <text x="225" y="65" fill="#f0883e" font-size="20" font-family="serif" text-anchor="middle" font-weight="bold" class="dd-orange-text">D</text>
+
+  {/* Times */}
+  <text x="270" y="65" fill="#888" font-size="16" font-family="serif" text-anchor="middle">×</text>
+
+  {/* P⁻¹ box */}
+  <rect x="285" y="35" width="70" height="50" rx="6" fill="#d2a8ff" fill-opacity="0.12" stroke="#d2a8ff" stroke-width="2" class="dd-purple-box" />
+  <text x="320" y="65" fill="#d2a8ff" font-size="18" font-family="serif" text-anchor="middle" font-weight="bold" class="dd-purple-text">P⁻¹</text>
+
+  {/* Labels below boxes */}
+  <text x="40" y="100" fill="#58a6ff" font-size="10" font-family="serif" text-anchor="middle" class="dd-blue-text">original</text>
+  <text x="135" y="100" fill="#7ee787" font-size="10" font-family="serif" text-anchor="middle" class="dd-green-text">eigenvectors</text>
+  <text x="225" y="100" fill="#f0883e" font-size="10" font-family="serif" text-anchor="middle" class="dd-orange-text">eigenvalues</text>
+  <text x="320" y="100" fill="#d2a8ff" font-size="10" font-family="serif" text-anchor="middle" class="dd-purple-text">change back</text>
+
+  {/* Power formula below */}
+  <text x="200" y="130" fill="#888" font-size="14" font-family="serif" text-anchor="middle" font-weight="bold">Computing powers:</text>
+
+  {/* A^n = P D^n P⁻¹ */}
+  <text x="40" y="160" fill="#58a6ff" font-size="18" font-family="serif" text-anchor="middle" class="dd-blue-text">A&#x207F;</text>
+  <text x="88" y="160" fill="#888" font-size="18" font-family="serif" text-anchor="middle">=</text>
+  <text x="135" y="160" fill="#7ee787" font-size="18" font-family="serif" text-anchor="middle" class="dd-green-text">P</text>
+  <text x="170" y="160" fill="#888" font-size="14" font-family="serif" text-anchor="middle">×</text>
+  <text x="210" y="160" fill="#f0883e" font-size="18" font-family="serif" text-anchor="middle" class="dd-orange-text">D&#x207F;</text>
+  <text x="250" y="160" fill="#888" font-size="14" font-family="serif" text-anchor="middle">×</text>
+  <text x="300" y="160" fill="#d2a8ff" font-size="18" font-family="serif" text-anchor="middle" class="dd-purple-text">P⁻¹</text>
+
+  {/* Annotation */}
+  <text x="210" y="182" fill="#f0883e" font-size="11" font-family="serif" text-anchor="middle" class="dd-orange-text">(just raise each eigenvalue to nth power)</text>
+</svg>
+</div>
+
+<style>
+  .dd-blue-box { stroke: #58a6ff; }
+  .dd-blue-text { fill: #58a6ff; }
+  .dd-green-box { stroke: #7ee787; }
+  .dd-green-text { fill: #7ee787; }
+  .dd-orange-box { stroke: #f0883e; }
+  .dd-orange-text { fill: #f0883e; }
+  .dd-purple-box { stroke: #d2a8ff; }
+  .dd-purple-text { fill: #d2a8ff; }
+
+  :global([data-theme="light"]) .dd-blue-box { stroke: #0550ae; }
+  :global([data-theme="light"]) .dd-blue-text { fill: #0550ae; }
+  :global([data-theme="light"]) .dd-green-box { stroke: #1a7f2e; }
+  :global([data-theme="light"]) .dd-green-text { fill: #1a7f2e; }
+  :global([data-theme="light"]) .dd-orange-box { stroke: #c05010; }
+  :global([data-theme="light"]) .dd-orange-text { fill: #c05010; }
+  :global([data-theme="light"]) .dd-purple-box { stroke: #6b3fa0; }
+  :global([data-theme="light"]) .dd-purple-text { fill: #6b3fa0; }
+  :global([data-theme="light"]) svg text[fill="#888"] { fill: #555; }
+</style>

@@ -1,0 +1,70 @@
+---
+/**
+ * LightingDotDiagram — shows dot product lighting
+ * Surface normal n=(0,1,0) pointing up, light L=(0,0.707,0.707) at 45°
+ * Brightness = n·L = 0.707 (71%)
+ * Shows the angle between them and a brightness bar
+ */
+---
+<div class="diagram-container">
+<svg viewBox="-10 -10 380 240" width="100%" style="max-width:400px" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Dot product lighting: surface normal and light direction at 45 degrees">
+
+  {/* Title */}
+  <text x="190" y="14" fill="#888" font-size="14" font-family="serif" text-anchor="middle" font-weight="bold">Dot Product Lighting</text>
+
+  {/* Surface (horizontal line) */}
+  <line x1="40" y1="170" x2="260" y2="170" stroke="#666" stroke-width="2" class="ld-axis" />
+  <rect x="40" y="170" width="220" height="15" fill="#555" fill-opacity="0.15" rx="2" />
+  <text x="150" y="198" fill="#888" font-size="11" font-family="serif" text-anchor="middle">surface</text>
+
+  {/* Normal vector n (green, pointing up) */}
+  <line x1="150" y1="170" x2="150" y2="78" stroke="#7ee787" stroke-width="3" class="ld-green-line" />
+  <polygon points="150,70 145,82 155,82" fill="#7ee787" class="ld-green-fill" />
+  <text x="165" y="72" fill="#7ee787" font-size="13" font-family="serif" class="ld-green-text">n</text>
+
+  {/* Light direction L (orange, coming from upper-right at 45°) */}
+  {/* dir=(-70,70), unit=(-0.707,0.707), perp=(0.707,0.707) */}
+  <line x1="220" y1="100" x2="157" y2="163" stroke="#f0883e" stroke-width="3" class="ld-orange-line" />
+  <polygon points="150,170 160.6,166.4 153.6,159.4" fill="#f0883e" class="ld-orange-fill" />
+  <text x="228" y="96" fill="#f0883e" font-size="13" font-family="serif" class="ld-orange-text">L (light)</text>
+
+  {/* Angle arc between n and L */}
+  <path d="M 150,140 A 30,30 0 0,1 171,149" fill="none" stroke="#d2a8ff" stroke-width="1.5" class="ld-purple-line" />
+  <text x="140" y="128" fill="#d2a8ff" font-size="12" font-family="serif" text-anchor="end" class="ld-purple-text">45°</text>
+
+  {/* Brightness bar */}
+  <text x="310" y="75" fill="#888" font-size="11" font-family="serif" text-anchor="middle">brightness</text>
+  <rect x="295" y="82" width="30" height="90" fill="none" stroke="#666" stroke-width="1" rx="3" />
+  {/* Fill to 71% */}
+  <rect x="297" y="108" width="26" height="62" fill="#f0883e" fill-opacity="0.4" rx="2" class="ld-orange-bar" />
+  <text x="310" y="145" fill="#f0883e" font-size="12" font-family="serif" text-anchor="middle" font-weight="bold" class="ld-orange-text">71%</text>
+
+  {/* Formula */}
+  <text x="190" y="228" fill="#888" font-size="12" font-family="serif" text-anchor="middle">n · L = cos(45°) = 0.707</text>
+</svg>
+</div>
+
+<style>
+  .ld-green-line { stroke: #7ee787; }
+  .ld-green-fill { fill: #7ee787; }
+  .ld-green-text { fill: #7ee787; }
+  .ld-orange-line { stroke: #f0883e; }
+  .ld-orange-fill { fill: #f0883e; }
+  .ld-orange-text { fill: #f0883e; }
+  .ld-orange-bar { fill: #f0883e; }
+  .ld-purple-line { stroke: #d2a8ff; }
+  .ld-purple-text { fill: #d2a8ff; }
+  .ld-axis { stroke: #666; }
+
+  :global([data-theme="light"]) .ld-green-line { stroke: #1a7f2e; }
+  :global([data-theme="light"]) .ld-green-fill { fill: #1a7f2e; }
+  :global([data-theme="light"]) .ld-green-text { fill: #1a7f2e; }
+  :global([data-theme="light"]) .ld-orange-line { stroke: #c05010; }
+  :global([data-theme="light"]) .ld-orange-fill { fill: #c05010; }
+  :global([data-theme="light"]) .ld-orange-text { fill: #c05010; }
+  :global([data-theme="light"]) .ld-orange-bar { fill: #c05010; }
+  :global([data-theme="light"]) .ld-purple-line { stroke: #6b3fa0; }
+  :global([data-theme="light"]) .ld-purple-text { fill: #6b3fa0; }
+  :global([data-theme="light"]) .ld-axis { stroke: #999; }
+  :global([data-theme="light"]) svg text[fill="#888"] { fill: #555; }
+</style>

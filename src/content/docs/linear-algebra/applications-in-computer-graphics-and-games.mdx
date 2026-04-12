@@ -1,0 +1,152 @@
+---
+title: Applications in Computer Graphics and Games
+description: See how linear algebra powers 3D graphics, transformations, cameras, and game physics
+sidebar:
+  order: 14
+---
+
+import Quiz from "../../../components/Quiz.astro";
+import MVPPipelineDiagram from "../../../components/MVPPipelineDiagram.astro";
+import LightingDotDiagram from "../../../components/LightingDotDiagram.astro";
+import WallSlideDiagram from "../../../components/WallSlideDiagram.astro";
+
+## What You'll Learn
+
+This is where everything connects. Every concept from this section (vectors, matrices, transformations, eigenvalues) is used in real game engines and graphics pipelines. In this lesson you'll see exactly how.
+
+## The Concept
+
+### The MVP Pipeline
+
+Every vertex in a 3D game goes through three matrix multiplications to get from its position in the model to a pixel on your screen:
+
+$$
+\text{Screen Position} = \text{Projection} \times \text{View} \times \text{Model} \times \text{Vertex}
+$$
+
+<MVPPipelineDiagram />
+
+This interactive scene demonstrates the MVP pipeline in action. The blue cube is the model, auto-rotating (Model matrix). You're viewing it through a perspective camera (View matrix) that you can drag to orbit. The 3D scene is projected onto your 2D screen (Projection matrix). The orange arrow shows the light direction, and the cube's shading changes based on the dot product between each face's normal and the light. Every concept from this section is working together right here.
+
+- Model matrix: positions, rotates, and scales the object in the world (uses rotation matrices, scaling matrices, translation via homogeneous coordinates)
+- View matrix: represents where the camera is and what it's looking at (inverse of the camera's transformation)
+- Projection matrix: converts 3D to 2D (perspective makes far things smaller, orthographic keeps sizes constant)
+
+### Lighting with Dot Products
+
+The brightness of a surface depends on the angle between the surface normal $\mathbf{n}$ and the light direction $\mathbf{L}$:
+
+$$
+\text{brightness} = \max(\mathbf{n} \cdot \mathbf{L}, \; 0)
+$$
+
+When the surface faces the light directly ($\mathbf{n}$ and $\mathbf{L}$ point the same way), the dot product is 1 (full brightness). When perpendicular, it's 0 (no light). The $\max$ prevents negative values when the surface faces away.
+
+### Physics and Collision
+
+- Vector addition combines forces and velocities
+- Projection (from lesson 3) calculates sliding along walls when a character hits at an angle
+- Systems of equations (lesson 6) find collision points between moving objects
+- Cross products compute surface normals for physics responses
+
+### Camera Systems
+
+The "look-at" function builds a View matrix from three inputs: camera position, target point, and an up direction. It uses cross products to build an orthonormal basis (three perpendicular unit vectors), which becomes the rows of the View matrix.
+
+## Worked Examples
+
+**Example 1: Lighting Calculation**
+
+Surface normal: $\mathbf{n} = \langle 0, 1, 0 \rangle$ (pointing straight up)
+
+Light direction: $\mathbf{L} = \langle 0, 0.707, 0.707 \rangle$ (coming from 45 degrees above)
+
+$\text{brightness} = \mathbf{n} \cdot \mathbf{L} = (0)(0) + (1)(0.707) + (0)(0.707) = 0.707$
+
+The surface gets about 71% brightness. Makes sense: the light is hitting at a 45 degree angle, not straight on.
+
+<LightingDotDiagram />
+
+The diagram shows the surface normal (green, pointing up) and the incoming light (orange, at 45°). The angle between them determines brightness via the dot product. The bar on the right shows the resulting 71% brightness.
+
+**Example 2: Wall Sliding**
+
+A character moves with velocity $\mathbf{v} = \langle 3, 4 \rangle$ and hits a wall with normal $\mathbf{n} = \langle 1, 0 \rangle$ (vertical wall on the right).
+
+The component into the wall: $\text{proj}_{\mathbf{n}} \mathbf{v} = \frac{\mathbf{v} \cdot \mathbf{n}}{\lVert \mathbf{n} \rVert^2} \mathbf{n} = \frac{3}{1} \langle 1, 0 \rangle = \langle 3, 0 \rangle$
+
+Sliding velocity (remove the wall component): $\mathbf{v} - \text{proj}_{\mathbf{n}} \mathbf{v} = \langle 3, 4 \rangle - \langle 3, 0 \rangle = \langle 0, 4 \rangle$
+
+The character slides upward along the wall instead of stopping.
+
+<WallSlideDiagram />
+
+The blue arrow is the character's velocity hitting the wall. The dashed red component goes into the wall (removed). The green arrow is what's left: the sliding direction along the wall.
+
+**Example 3: Combining Transformations**
+
+To rotate an object 45 degrees and then scale it by 2x, multiply the matrices:
+
+$$
+\text{Combined} = \text{Scale} \times \text{Rotation}
+$$
+
+Order matters. Rotating then scaling gives a different result than scaling then rotating. The engine applies transformations right-to-left: the rightmost matrix acts first.
+
+## Real-World Application
+
+Every frame in a modern game:
+- The GPU multiplies millions of vertices by MVP matrices
+- Lighting shaders compute dot products for every visible surface
+- Physics engines solve systems of equations for collision constraints
+- Animation systems blend transformations using matrix interpolation
+- Particle systems use vector addition for velocity and acceleration
+
+All of this happens 60+ times per second. Linear algebra is the engine behind the engine.
+
+:::note[You've Got This]
+This lesson is where everything clicks. All the abstract concepts from this section suddenly have a clear purpose: they make 3D worlds possible. Vectors, matrices, dot products, cross products, transformations, eigenvalues. Games are one of the best real-world demonstrations of linear algebra in action. You've now learned the mathematics that professional game developers use every day.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="linear-algebra-applications-in-graphics-and-games"
+  questions={[
+    {
+      id: "q1",
+      text: "The MVP pipeline transforms vertices using:",
+      options: ["Only the model matrix", "Only the projection matrix", "Projection $\\times$ View $\\times$ Model matrices", "Vectors only"],
+      correctIndex: 2,
+      explanation: "Each matrix handles one step: placing in world, viewing from camera, projecting to 2D.",
+    },
+    {
+      id: "q2",
+      text: "Surface brightness in games is commonly computed using:",
+      options: ["Matrix determinants", "The cross product only", "The dot product between normal and light direction", "Only texture colors"],
+      correctIndex: 2,
+      explanation: "The dot product measures how directly the surface faces the light.",
+    },
+    {
+      id: "q3",
+      text: "When a character hits a wall at an angle, the sliding direction is found using:",
+      options: ["Vector projection", "Matrix inverse", "Eigenvalues", "The determinant"],
+      correctIndex: 0,
+      explanation: "You project the velocity onto the wall direction and subtract the wall-normal component.",
+    },
+    {
+      id: "q4",
+      text: "When the camera moves, the engine primarily updates:",
+      options: ["The model matrix", "The projection matrix", "The identity matrix", "The view matrix"],
+      correctIndex: 3,
+      explanation: "The view matrix represents the camera's position and orientation in the world.",
+    },
+    {
+      id: "q5",
+      text: "Games use matrices for transformations because:",
+      options: ["Matrices are easier to draw", "They require no computation", "They only work in 2D", "Matrix multiplication is fast and composable"],
+      correctIndex: 3,
+      explanation: "You can chain many transformations into a single matrix multiplication.",
+    },
+  ]}
+/>

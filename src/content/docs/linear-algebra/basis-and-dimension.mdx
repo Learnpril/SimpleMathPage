@@ -1,0 +1,120 @@
+---
+title: Basis and Dimension
+description: Learn what a basis is, how to find the dimension of a vector space, and why these concepts matter
+sidebar:
+  order: 10
+---
+
+import Quiz from "../../../components/Quiz.astro";
+import BasisSpanDiagram from "../../../components/BasisSpanDiagram.astro";
+
+## What You'll Learn
+
+A basis is a minimal set of "building blocks" that can construct every vector in a space. The dimension tells you how many building blocks you need. These two ideas are central to everything that follows in linear algebra.
+
+## The Concept
+
+### Basis
+
+A basis for a vector space $V$ is a set of vectors that is:
+1. Linearly independent (no redundancy)
+2. Spans the entire space $V$ (every vector in $V$ can be written as a linear combination of the basis vectors)
+
+The standard basis in 2D is $\{\langle 1, 0 \rangle, \langle 0, 1 \rangle\}$, often written as $\{\mathbf{i}, \mathbf{j}\}$. In 3D it's $\{\mathbf{i}, \mathbf{j}, \mathbf{k}\}$.
+
+### Dimension
+
+The dimension of a vector space is the number of vectors in any basis for that space.
+
+- $\dim(\mathbb{R}^2) = 2$
+- $\dim(\mathbb{R}^3) = 3$
+- The space of all $2 \times 2$ matrices has dimension 4
+
+Key fact: all bases for the same vector space have the same number of vectors.
+
+### Span
+
+The span of a set of vectors is all possible linear combinations of those vectors. If a set of vectors spans the space and is linearly independent, it's a basis.
+
+<BasisSpanDiagram />
+
+In the diagram: the basis vectors $\mathbf{e}_1 = \langle 1, 0 \rangle$ (blue) and $\mathbf{e}_2 = \langle 0, 1 \rangle$ (green) are used to build the vector $\langle 3, 2 \rangle$ (purple). You scale $\mathbf{e}_1$ by 3 and $\mathbf{e}_2$ by 2, then add them. Any point in the plane can be reached this way, which is why these two vectors form a basis for $\mathbb{R}^2$.
+
+## Worked Examples
+
+**Example 1: Standard Basis**
+
+The set $\{\langle 1, 0 \rangle, \langle 0, 1 \rangle\}$ is a basis for $\mathbb{R}^2$ because:
+- They are linearly independent
+- Any vector $\langle x, y \rangle = x\langle 1, 0 \rangle + y\langle 0, 1 \rangle$ (they span $\mathbb{R}^2$)
+
+**Example 2: Non-Standard Basis**
+
+Is $\{\langle 2, 0 \rangle, \langle 0, 3 \rangle\}$ a basis for $\mathbb{R}^2$?
+
+Yes. They're independent (neither is a scalar multiple of the other) and they span the space (you can reach any $\langle x, y \rangle$ as $\frac{x}{2}\langle 2, 0 \rangle + \frac{y}{3}\langle 0, 3 \rangle$).
+
+**Example 3: Not a Basis**
+
+The set $\{\langle 1, 1 \rangle, \langle 2, 2 \rangle\}$ is not a basis because the vectors are linearly dependent (the second is 2 times the first). They only span a single line, not all of $\mathbb{R}^2$.
+
+**Example 4: Dimension of a Plane in 3D**
+
+Any plane through the origin in $\mathbb{R}^3$ has dimension 2. You need exactly two linearly independent vectors to form a basis for that plane, even though the plane lives inside 3D space.
+
+## Real-World Application
+
+Basis and dimension show up everywhere:
+- Game development: choosing efficient coordinate systems, compressing animation data, working with tangent spaces for normal mapping
+- Computer graphics: changing between coordinate systems (world space, object space, camera space) is a change of basis
+- Machine learning: PCA (Principal Component Analysis) finds the most important "directions" (basis) that explain the data
+- Data compression: reducing dimension means storing less data while keeping the important information
+
+Example: When a game stores character animations, it often uses a reduced basis (fewer independent directions) to save memory while still reconstructing realistic movement. This is dimension reduction in action.
+
+:::note[You've Got This]
+A basis is like a minimal set of building blocks that can construct every vector in the space. The dimension tells you how many building blocks you need. The standard basis is the simplest choice, but there are infinitely many valid bases for any space. Practice identifying whether a small set of vectors forms a basis. You'll quickly develop intuition for it.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="linear-algebra-basis-and-dimension"
+  questions={[
+    {
+      id: "q1",
+      text: "A basis for a vector space must be:",
+      options: ["Only linearly independent", "Only span the space", "Linearly independent and span the space", "Orthogonal"],
+      correctIndex: 2,
+      explanation: "Both conditions are required: independence (no redundancy) and spanning (full coverage).",
+    },
+    {
+      id: "q2",
+      text: "The dimension of $\\mathbb{R}^3$ is:",
+      options: ["2", "Infinite", "3", "1"],
+      correctIndex: 2,
+      explanation: "The standard basis has three vectors: $\\mathbf{i}$, $\\mathbf{j}$, $\\mathbf{k}$.",
+    },
+    {
+      id: "q3",
+      text: "All bases for the same vector space have:",
+      options: ["Different numbers of vectors", "The same number of vectors", "Exactly one vector", "No vectors in common"],
+      correctIndex: 1,
+      explanation: "This is a fundamental theorem: the number of basis vectors is always the same (the dimension).",
+    },
+    {
+      id: "q4",
+      text: "If a set of vectors spans the space but is not linearly independent, it:",
+      options: ["Is still a valid basis", "Has dimension zero", "Is orthogonal", "Is not a basis"],
+      correctIndex: 3,
+      explanation: "Linear independence is required. You'd need to remove the redundant vectors.",
+    },
+    {
+      id: "q5",
+      text: "In game development, choosing a good basis helps with:",
+      options: ["Only drawing sprites", "Only collision detection", "Only scoring", "Efficient data representation and coordinate transformations"],
+      correctIndex: 3,
+      explanation: "A good basis simplifies calculations and reduces memory usage.",
+    },
+  ]}
+/>

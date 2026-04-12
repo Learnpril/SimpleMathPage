@@ -1,0 +1,113 @@
+---
+/**
+ * EigenDiagram — shows eigenvectors being scaled by matrix A = [[2,0],[0,0.5]]
+ * Focused on first quadrant. Dashed = before, solid = after.
+ * x-eigenvector scaled by λ=2, y-eigenvector scaled by λ=0.5
+ * Non-eigenvector (1,1) → (2,0.5) shows direction change.
+ * Scale: 80px/unit, origin at (30, 260)
+ */
+---
+<div class="diagram-container">
+<svg viewBox="-10 -10 380 330" width="100%" style="max-width:420px" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Eigenvectors: x scaled by 2, y scaled by 0.5, non-eigenvector direction changes">
+
+  {/* Title */}
+  <text x="185" y="14" fill="#888" font-size="15" font-family="serif" text-anchor="middle" font-weight="bold">Eigenvectors of A (scaling 2x, 0.5y)</text>
+
+  {/* Grid — first quadrant focus */}
+  <g stroke="#333" stroke-width="0.5" opacity="0.15">
+    {[30,110,190,270,350].map(x => <line x1={x} y1="20" x2={x} y2="265" />)}
+    {[260,180,100,20].map(y => <line x1="25" y1={y} x2="355" y2={y} />)}
+  </g>
+
+  {/* Axes — origin at (30, 260) */}
+  <line x1="25" y1="260" x2="365" y2="260" stroke="#666" stroke-width="1" class="eg-axis" />
+  <line x1="30" y1="270" x2="30" y2="18" stroke="#666" stroke-width="1" class="eg-axis" />
+
+  {/* Tick labels */}
+  <text x="110" y="275" fill="#888" font-size="10" font-family="serif" text-anchor="middle">1</text>
+  <text x="190" y="275" fill="#888" font-size="10" font-family="serif" text-anchor="middle">2</text>
+  <text x="270" y="275" fill="#888" font-size="10" font-family="serif" text-anchor="middle">3</text>
+  <text x="20" y="184" fill="#888" font-size="10" font-family="serif" text-anchor="end">1</text>
+  <text x="20" y="104" fill="#888" font-size="10" font-family="serif" text-anchor="end">2</text>
+
+  {/* === X-eigenvector (blue): λ=2 === */}
+  {/* Before: (1,0) → (110, 260) */}
+  <line x1="30" y1="260" x2="102" y2="260" stroke="#58a6ff" stroke-width="2.5" stroke-dasharray="6,4" opacity="0.5" class="eg-blue-line" />
+  <polygon points="110,260 100,255 100,265" fill="#58a6ff" opacity="0.5" class="eg-blue-fill" />
+
+  {/* After: (2,0) → (190, 260) */}
+  <line x1="30" y1="260" x2="182" y2="260" stroke="#58a6ff" stroke-width="3" class="eg-blue-line" />
+  <polygon points="190,260 180,255 180,265" fill="#58a6ff" class="eg-blue-fill" />
+
+  {/* Label — below the axis, clear of arrows */}
+  <text x="150" y="290" fill="#58a6ff" font-size="14" font-family="serif" text-anchor="middle" class="eg-blue-text">x-eigen: &#x03BB; = 2</text>
+
+  {/* === Y-eigenvector (green): λ=0.5 === */}
+  {/* Before: (0,1) → (30, 180) */}
+  <line x1="30" y1="260" x2="30" y2="188" stroke="#7ee787" stroke-width="2.5" stroke-dasharray="6,4" opacity="0.5" class="eg-green-line" />
+  <polygon points="30,180 25,190 35,190" fill="#7ee787" opacity="0.5" class="eg-green-fill" />
+
+  {/* After: (0,0.5) → (30, 220) */}
+  <line x1="30" y1="260" x2="30" y2="226" stroke="#7ee787" stroke-width="3" class="eg-green-line" />
+  <polygon points="30,220 25,230 35,230" fill="#7ee787" class="eg-green-fill" />
+
+  {/* Label — to the left of the axis */}
+  <text x="55" y="148" fill="#7ee787" font-size="14" font-family="serif" class="eg-green-text">y-eigen: &#x03BB; = 0.5</text>
+
+  {/* === Non-eigenvector (orange): (1,1) → (2,0.5) === */}
+  {/* Before: (1,1) dashed → (110, 180) */}
+  {/* dir=(80,-80), unit=(0.707,-0.707), perp=(0.707,0.707) */}
+  <line x1="30" y1="260" x2="103" y2="187" stroke="#f0883e" stroke-width="2" stroke-dasharray="5,4" opacity="0.4" class="eg-orange-line" />
+  <polygon points="110,180 106.4,190.6 99.4,183.6" fill="#f0883e" opacity="0.4" class="eg-orange-fill" />
+
+  {/* After: (2,0.5) → (190, 220) — direction changed! */}
+  {/* dir from (30,260) to (190,220): dx=160, dy=-40, unit=(0.97,-0.24), perp=(0.24,0.97) */}
+  <line x1="30" y1="260" x2="183" y2="222" stroke="#f0883e" stroke-width="2.5" class="eg-orange-line" />
+  <polygon points="190,220 179,220 181,228" fill="#f0883e" class="eg-orange-fill" />
+
+  {/* Labels — positioned well clear of vectors */}
+  <text x="130" y="175" fill="#f0883e" font-size="13" font-family="serif" class="eg-orange-text">before: (1, 1)</text>
+  <text x="200" y="215" fill="#f0883e" font-size="13" font-family="serif" class="eg-orange-text">after: (2, 0.5)</text>
+  <text x="260" y="235" fill="#888" font-size="12" font-family="serif">direction changed</text>
+  <text x="260" y="250" fill="#888" font-size="12" font-family="serif">(not an eigenvector)</text>
+
+  {/* Origin dot */}
+  <circle cx="30" cy="260" r="3.5" fill="#999" />
+
+  {/* Legend */}
+  <g transform="translate(30, 305)">
+    <line x1="0" y1="0" x2="18" y2="0" stroke="#58a6ff" stroke-width="2.5" stroke-dasharray="6,4" class="eg-blue-line" />
+    <text x="24" y="4" fill="#888" font-size="12" font-family="serif">before A</text>
+    <line x1="105" y1="0" x2="123" y2="0" stroke="#58a6ff" stroke-width="3" class="eg-blue-line" />
+    <text x="129" y="4" fill="#888" font-size="12" font-family="serif">after A (eigen)</text>
+    <line x1="255" y1="0" x2="273" y2="0" stroke="#f0883e" stroke-width="2.5" class="eg-orange-line" />
+    <text x="279" y="4" fill="#888" font-size="12" font-family="serif">not eigen</text>
+  </g>
+</svg>
+</div>
+
+<style>
+  .eg-blue-line { stroke: #58a6ff; }
+  .eg-blue-fill { fill: #58a6ff; }
+  .eg-blue-text { fill: #58a6ff; }
+  .eg-green-line { stroke: #7ee787; }
+  .eg-green-fill { fill: #7ee787; }
+  .eg-green-text { fill: #7ee787; }
+  .eg-orange-line { stroke: #f0883e; }
+  .eg-orange-fill { fill: #f0883e; }
+  .eg-orange-text { fill: #f0883e; }
+  .eg-axis { stroke: #666; }
+
+  :global([data-theme="light"]) .eg-blue-line { stroke: #0550ae; }
+  :global([data-theme="light"]) .eg-blue-fill { fill: #0550ae; }
+  :global([data-theme="light"]) .eg-blue-text { fill: #0550ae; }
+  :global([data-theme="light"]) .eg-green-line { stroke: #1a7f2e; }
+  :global([data-theme="light"]) .eg-green-fill { fill: #1a7f2e; }
+  :global([data-theme="light"]) .eg-green-text { fill: #1a7f2e; }
+  :global([data-theme="light"]) .eg-orange-line { stroke: #c05010; }
+  :global([data-theme="light"]) .eg-orange-fill { fill: #c05010; }
+  :global([data-theme="light"]) .eg-orange-text { fill: #c05010; }
+  :global([data-theme="light"]) .eg-axis { stroke: #999; }
+  :global([data-theme="light"]) svg text[fill="#888"] { fill: #555; }
+  :global([data-theme="light"]) svg g[opacity="0.15"] line { stroke: #ccc; }
+</style>

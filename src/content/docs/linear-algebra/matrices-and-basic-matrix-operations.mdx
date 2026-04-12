@@ -1,0 +1,141 @@
+---
+title: Matrices and Basic Matrix Operations
+description: Learn what matrices are, how to represent them, and basic operations like addition, subtraction, and scalar multiplication
+sidebar:
+  order: 4
+---
+
+import Quiz from "../../../components/Quiz.astro";
+import MatrixAddDiagram from "../../../components/MatrixAddDiagram.astro";
+import ScalarMulDiagram from "../../../components/ScalarMulDiagram.astro";
+import TransposeDiagram from "../../../components/TransposeDiagram.astro";
+
+## What You'll Learn
+
+In this lesson you'll learn what matrices are and how to perform basic operations on them (addition, subtraction, and scalar multiplication). Matrices are one of the most important tools in linear algebra and are used everywhere in graphics and games.
+
+## The Concept
+
+A matrix is a rectangular array of numbers arranged in rows and columns.
+
+Example of a $2 \times 3$ matrix:
+
+$$
+A = \begin{bmatrix} 1 & 2 & 3 \\ 4 & 5 & 6 \end{bmatrix}
+$$
+
+- The size is written as rows $\times$ columns (this one is $2 \times 3$).
+- Individual entries are called elements and are denoted $a_{ij}$ (row $i$, column $j$).
+
+### Basic Matrix Operations
+
+1. Addition and Subtraction: Matrices can be added or subtracted only if they have the same dimensions. Add/subtract corresponding elements.
+
+<MatrixAddDiagram />
+
+In the diagram: two $2 \times 2$ matrices are added element-by-element. Matching colors show how each position in $A$ and $B$ maps to the same position in the result.
+
+2. Scalar Multiplication: Multiply every element of the matrix by a number (scalar).
+
+<ScalarMulDiagram />
+
+Every entry gets multiplied by the scalar (3 in this case). The annotations on the right show each individual multiplication.
+
+3. Transpose: The transpose $A^T$ flips rows and columns.
+
+$$
+A = \begin{bmatrix} 1 & 2 \\ 3 & 4 \\ 5 & 6 \end{bmatrix} \quad \Rightarrow \quad A^T = \begin{bmatrix} 1 & 3 & 5 \\ 2 & 4 & 6 \end{bmatrix}
+$$
+
+<TransposeDiagram />
+
+Row 1 of the original becomes Column 1 of the transpose, and Row 2 becomes Column 2. The color-coded highlights make it easy to track where each entry ends up.
+
+## Worked Examples
+
+**Example 1: Matrix Addition**
+
+Let $A = \begin{bmatrix} 1 & 2 \\ 3 & 4 \end{bmatrix}$, $B = \begin{bmatrix} 5 & 6 \\ 7 & 8 \end{bmatrix}$
+
+$$
+A + B = \begin{bmatrix} 1+5 & 2+6 \\ 3+7 & 4+8 \end{bmatrix} = \begin{bmatrix} 6 & 8 \\ 10 & 12 \end{bmatrix}
+$$
+
+Each entry is the sum of the entries in the same position.
+
+**Example 2: Scalar Multiplication**
+
+$$
+3A = 3 \begin{bmatrix} 1 & 2 \\ 3 & 4 \end{bmatrix} = \begin{bmatrix} 3 & 6 \\ 9 & 12 \end{bmatrix}
+$$
+
+Every element gets multiplied by 3.
+
+**Example 3: Transpose**
+
+Let $C = \begin{bmatrix} 1 & 2 & 3 \\ 4 & 5 & 6 \end{bmatrix}$
+
+$$
+C^T = \begin{bmatrix} 1 & 4 \\ 2 & 5 \\ 3 & 6 \end{bmatrix}
+$$
+
+Rows become columns and columns become rows.
+
+## Real-World Application
+
+Matrices are the backbone of 3D graphics and game engines:
+- Transformation matrices are used to move, rotate, and scale objects
+- Model matrix = position/rotation/scale of an object
+- View matrix = camera position and orientation
+- Projection matrix = converts 3D world to 2D screen
+
+Every frame, the graphics card multiplies many matrices together to figure out where every vertex should appear on your screen.
+
+Example: When you rotate your character in a game, the engine applies a rotation matrix to every vertex of the model.
+
+:::note[You've Got This]
+Matrices look intimidating at first because they're grids of numbers, but most operations are very straightforward. Think of a matrix as a compact way to store and manipulate many numbers at once. Mastering basic matrix operations now will make matrix multiplication (the next big topic) much easier. You're building the tools that power 3D games and graphics.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="linear-algebra-matrices-and-basic-operations"
+  questions={[
+    {
+      id: "q1",
+      text: "Two matrices can be added only if they have:",
+      options: ["The same number of rows", "The same dimensions", "The same number of columns", "At least one matching dimension"],
+      correctIndex: 1,
+      explanation: "Addition requires both matrices to have identical row and column counts.",
+    },
+    {
+      id: "q2",
+      text: "Scalar multiplication means:",
+      options: ["Multiplying two matrices together", "Taking the transpose", "Multiplying every element by the same number", "Finding the determinant"],
+      correctIndex: 2,
+      explanation: "A scalar is just a single number that multiplies every entry.",
+    },
+    {
+      id: "q3",
+      text: "The transpose of a $2 \\times 3$ matrix is:",
+      options: ["A $2 \\times 3$ matrix", "A $3 \\times 3$ matrix", "A $2 \\times 2$ matrix", "A $3 \\times 2$ matrix"],
+      correctIndex: 3,
+      explanation: "Transposing swaps rows and columns, so $2 \\times 3$ becomes $3 \\times 2$.",
+    },
+    {
+      id: "q4",
+      text: "In game development, matrices are primarily used for:",
+      options: ["Only storing scores", "Only collision detection", "Only texture mapping", "Transformations (move, rotate, scale)"],
+      correctIndex: 3,
+      explanation: "Transformation matrices handle position, rotation, and scaling of objects.",
+    },
+    {
+      id: "q5",
+      text: "If $A$ is $2 \\times 3$ and $B$ is $2 \\times 3$, then $A + B$ is:",
+      options: ["A $2 \\times 3$ matrix", "A $3 \\times 2$ matrix", "A $6 \\times 6$ matrix", "Not possible"],
+      correctIndex: 0,
+      explanation: "Same dimensions in, same dimensions out.",
+    },
+  ]}
+/>

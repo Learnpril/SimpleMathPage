@@ -1,0 +1,166 @@
+---
+title: Matrix Multiplication and Transformations
+description: Learn how to multiply matrices and understand how they represent linear transformations like rotation, scaling, and translation
+sidebar:
+  order: 5
+---
+
+import Quiz from "../../../components/Quiz.astro";
+import MatMulDiagram from "../../../components/MatMulDiagram.astro";
+import Transform2DDiagram from "../../../components/Transform2DDiagram.astro";
+
+## What You'll Learn
+
+Matrix multiplication is the most important operation in linear algebra. In this lesson you'll learn how it works and see how matrices represent transformations like rotation, scaling, and shearing in 2D and 3D.
+
+## The Concept
+
+### Matrix Multiplication
+
+To multiply $A$ (size $m \times n$) by $B$ (size $n \times p$), the number of columns in $A$ must equal the number of rows in $B$. The result is an $m \times p$ matrix.
+
+Each entry in the result is a dot product: row $i$ of $A$ dotted with column $j$ of $B$.
+
+$$
+(AB)_{ij} = \sum_{k=1}^{n} a_{ik} \, b_{kj}
+$$
+
+<MatMulDiagram />
+
+In the diagram: each entry of the result matrix is computed by taking a row from the left matrix and a column from the right matrix, multiplying corresponding entries, and summing. The color-coded highlights show which row and column produce each result entry.
+
+Key properties:
+- Matrix multiplication is NOT commutative: $AB \neq BA$ in general
+- It IS associative: $(AB)C = A(BC)$
+- The identity matrix $I$ satisfies $AI = IA = A$
+
+### Linear Transformations
+
+Matrices represent linear transformations, operations that take vectors as input and produce new vectors as output.
+
+Common transformations:
+
+Rotation by angle $\theta$ (2D):
+
+$$
+R = \begin{bmatrix} \cos\theta & -\sin\theta \\ \sin\theta & \cos\theta \end{bmatrix}
+$$
+
+Scaling by $s_x$ and $s_y$:
+
+$$
+S = \begin{bmatrix} s_x & 0 \\ 0 & s_y \end{bmatrix}
+$$
+
+Reflection across the x-axis:
+
+$$
+\begin{bmatrix} 1 & 0 \\ 0 & -1 \end{bmatrix}
+$$
+
+<Transform2DDiagram />
+
+In the diagram: a unit square (blue) is transformed by a 45° rotation matrix. The green shape shows the result after applying the transformation. Each vertex gets multiplied by the matrix to produce its new position.
+
+In games, these are combined into a single model matrix that transforms every vertex of a 3D model.
+
+## Worked Examples
+
+**Example 1: 2x2 Matrix Multiplication**
+
+$$
+\begin{bmatrix} 1 & 2 \\ 3 & 4 \end{bmatrix} \begin{bmatrix} 5 & 6 \\ 7 & 8 \end{bmatrix}
+$$
+
+Top-left: $(1)(5) + (2)(7) = 5 + 14 = 19$
+
+Top-right: $(1)(6) + (2)(8) = 6 + 16 = 22$
+
+Bottom-left: $(3)(5) + (4)(7) = 15 + 28 = 43$
+
+Bottom-right: $(3)(6) + (4)(8) = 18 + 32 = 50$
+
+$$
+= \begin{bmatrix} 19 & 22 \\ 43 & 50 \end{bmatrix}
+$$
+
+**Example 2: Rotation (90° counterclockwise)**
+
+The 90° rotation matrix is:
+
+$$
+R = \begin{bmatrix} 0 & -1 \\ 1 & 0 \end{bmatrix}
+$$
+
+Apply it to the point $(1, 0)$:
+
+$$
+\begin{bmatrix} 0 & -1 \\ 1 & 0 \end{bmatrix} \begin{bmatrix} 1 \\ 0 \end{bmatrix} = \begin{bmatrix} 0 \\ 1 \end{bmatrix}
+$$
+
+The point moves from $(1, 0)$ to $(0, 1)$, a quarter turn counterclockwise.
+
+**Example 3: Dimension Check**
+
+$A$ is $2 \times 3$, $B$ is $3 \times 4$. Can we multiply?
+
+Inner dimensions match ($3 = 3$), so yes. Result is $2 \times 4$.
+
+Can we compute $BA$? $B$ is $3 \times 4$, $A$ is $2 \times 3$. Inner dimensions are $4 \neq 2$, so no. Order matters.
+
+## Real-World Application
+
+Matrix multiplication powers almost everything you see on screen in modern games:
+- Every frame, the engine multiplies the model matrix $\times$ view matrix $\times$ projection matrix to transform vertices from 3D world space to 2D screen space
+- Character animations use skeletal animation with bone matrices multiplied together
+- Camera movement is handled by updating the view matrix
+- GPUs are literally designed to do matrix multiplication as fast as possible
+
+Example: When you rotate your camera in a first-person game, the engine updates the view matrix and multiplies it with every object's model matrix. This happens for every vertex, every frame, thousands of times per second.
+
+:::note[You've Got This]
+Matrix multiplication looks complicated at first, but it's just a systematic way of taking dot products of rows and columns. The real power comes when you realize that multiplying a matrix by a vector applies a transformation to that vector. The fact that order matters ($AB \neq BA$) trips people up, but it makes sense: rotating then scaling is different from scaling then rotating. Practice a few multiplications by hand and you'll quickly get the rhythm.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="linear-algebra-matrix-multiplication-and-transformations"
+  questions={[
+    {
+      id: "q1",
+      text: "To multiply matrix $A$ ($2 \\times 3$) by matrix $B$ ($3 \\times 5$), the result has size:",
+      options: ["$3 \\times 3$", "$2 \\times 5$", "$5 \\times 2$", "$2 \\times 3$"],
+      correctIndex: 1,
+      explanation: "Outer dimensions give the result size: $2 \\times 5$.",
+    },
+    {
+      id: "q2",
+      text: "A rotation matrix is an example of:",
+      options: ["A scalar", "A vector", "A linear transformation", "A determinant"],
+      correctIndex: 2,
+      explanation: "Matrices represent linear transformations like rotation and scaling.",
+    },
+    {
+      id: "q3",
+      text: "In game engines, the final vertex position on screen is usually calculated by multiplying:",
+      options: ["Only the model matrix", "Only the projection matrix", "Model $\\times$ View $\\times$ Projection matrices", "The cross product of position vectors"],
+      correctIndex: 2,
+      explanation: "This is the standard MVP transformation pipeline.",
+    },
+    {
+      id: "q4",
+      text: "Matrix multiplication is:",
+      options: ["Always commutative", "Only possible with square matrices", "The same as vector addition", "Not commutative ($AB \\neq BA$ in general)"],
+      correctIndex: 3,
+      explanation: "Order matters. $AB$ is usually not equal to $BA$.",
+    },
+    {
+      id: "q5",
+      text: "Rotating the point $(1, 0)$ by $90°$ counterclockwise gives:",
+      options: ["$(1, 1)$", "$(-1, 0)$", "$(0, 1)$", "$(0, -1)$"],
+      correctIndex: 2,
+      explanation: "$\\cos 90° = 0$, $\\sin 90° = 1$, so the point moves to $(0, 1)$.",
+    },
+  ]}
+/>

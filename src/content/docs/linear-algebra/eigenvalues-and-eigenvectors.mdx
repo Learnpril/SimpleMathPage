@@ -1,0 +1,143 @@
+---
+title: Eigenvalues and Eigenvectors
+description: Learn what eigenvalues and eigenvectors are and why they are incredibly useful in linear algebra
+sidebar:
+  order: 12
+---
+
+import Quiz from "../../../components/Quiz.astro";
+import EigenDiagram from "../../../components/EigenDiagram.astro";
+import EigenCasesDiagram from "../../../components/EigenCasesDiagram.astro";
+
+## What You'll Learn
+
+Eigenvalues and eigenvectors reveal the "hidden structure" of a linear transformation. They describe the special directions where the transformation simply scales, without rotating or distorting.
+
+## The Concept
+
+Let $A$ be a square matrix. A non-zero vector $\mathbf{v}$ is an eigenvector of $A$ if:
+
+$$
+A\mathbf{v} = \lambda \mathbf{v}
+$$
+
+where $\lambda$ (lambda) is a scalar called the eigenvalue.
+
+In plain terms: when you apply $A$ to an eigenvector, the result is just a scaled version of that same vector. The direction stays the same (or flips if $\lambda$ is negative). Only the length changes.
+
+### Finding Eigenvalues
+
+Solve the characteristic equation:
+
+$$
+\det(A - \lambda I) = 0
+$$
+
+This gives you the possible $\lambda$ values. Then for each $\lambda$, solve $(A - \lambda I)\mathbf{v} = \mathbf{0}$ to find the eigenvectors.
+
+### What Eigenvalues Tell You
+- $\lambda = 1$: the vector is unchanged
+- $\lambda = 2$: the vector is stretched to double length
+- $\lambda = -1$: the vector is flipped (reversed direction)
+- $\lambda = 0$: the vector is squashed to zero (the transformation collapses that direction)
+
+<EigenDiagram />
+
+In the diagram: the matrix $A$ scales the x-direction by 2 (blue eigenvector doubles in length) and the y-direction by 0.5 (green eigenvector shrinks to half). The dashed arrows show the original vectors, the solid arrows show the result after applying $A$. Every other vector would get rotated and distorted, but eigenvectors just scale cleanly.
+
+## Worked Examples
+
+**Example 1: Diagonal Matrix**
+
+$$
+A = \begin{bmatrix} 2 & 0 \\ 0 & 3 \end{bmatrix}
+$$
+
+For $\mathbf{v} = \langle 1, 0 \rangle$: $A\mathbf{v} = \langle 2, 0 \rangle = 2\langle 1, 0 \rangle$, so $\lambda = 2$.
+
+For $\mathbf{w} = \langle 0, 1 \rangle$: $A\mathbf{w} = \langle 0, 3 \rangle = 3\langle 0, 1 \rangle$, so $\lambda = 3$.
+
+Diagonal matrices make eigenvalues obvious: they're just the diagonal entries.
+
+**Example 2: Finding Eigenvalues of a 2x2**
+
+$$
+A = \begin{bmatrix} 4 & 1 \\ 2 & 3 \end{bmatrix}
+$$
+
+Characteristic equation: $\det(A - \lambda I) = (4 - \lambda)(3 - \lambda) - (1)(2) = 0$
+
+$\lambda^2 - 7\lambda + 10 = 0$
+
+$(\lambda - 5)(\lambda - 2) = 0$
+
+Eigenvalues: $\lambda_1 = 5$, $\lambda_2 = 2$.
+
+**Example 3: Geometric Meaning**
+
+If $\lambda \gt 1$: the eigenvector direction gets stretched.
+
+If $0 \lt \lambda \lt 1$: it gets compressed.
+
+If $\lambda \lt 0$: it gets flipped and scaled.
+
+<EigenCasesDiagram />
+
+The three panels show what different eigenvalues do to a vector: $\lambda = 2$ doubles its length, $\lambda = 0.5$ halves it, and $\lambda = -1$ flips it to point the opposite direction.
+
+## Real-World Application
+
+Eigenvalues and eigenvectors are used everywhere:
+- Machine learning: PCA (Principal Component Analysis) finds the eigenvectors of the covariance matrix to identify the most important directions in data
+- Google's PageRank: the dominant eigenvector of the web's link matrix determines page importance
+- Game development: stability analysis in physics simulations, animation compression, vibration modes
+- Quantum mechanics: observable quantities are eigenvalues of operators
+
+Example: In character animation, eigen-decomposition compresses large motion capture datasets while preserving the most important movements. The eigenvectors with the largest eigenvalues capture the dominant motion patterns.
+
+:::note[You've Got This]
+Eigenvalues and eigenvectors reveal the hidden structure of a transformation. Instead of seeing a complicated matrix, you can break it down into simple scaling along special directions. This concept takes time to fully appreciate, but it's one of the most rewarding ideas in all of mathematics. Many students say this is the moment linear algebra "clicks" for them.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="linear-algebra-eigenvalues-and-eigenvectors"
+  questions={[
+    {
+      id: "q1",
+      text: "An eigenvector $\\mathbf{v}$ of matrix $A$ satisfies:",
+      options: ["$A\\mathbf{v} = \\mathbf{0}$", "$\\mathbf{v}$ is always the zero vector", "$A\\mathbf{v} = \\lambda \\mathbf{v}$ for some scalar $\\lambda$", "$A\\mathbf{v} = \\mathbf{v}$ for all $\\mathbf{v}$"],
+      correctIndex: 2,
+      explanation: "The transformation only scales the eigenvector by $\\lambda$.",
+    },
+    {
+      id: "q2",
+      text: "If $\\lambda = -1$ for an eigenvector, applying the transformation:",
+      options: ["Leaves it unchanged", "Stretches it by 2", "Flips the vector (reverses direction)", "Squashes it to zero"],
+      correctIndex: 2,
+      explanation: "A negative eigenvalue means the direction is reversed.",
+    },
+    {
+      id: "q3",
+      text: "For a diagonal matrix, the eigenvalues are:",
+      options: ["Always zero", "The off-diagonal entries", "The diagonal entries", "The determinant"],
+      correctIndex: 2,
+      explanation: "Diagonal matrices make eigenvalues obvious: they sit right on the diagonal.",
+    },
+    {
+      id: "q4",
+      text: "Google's PageRank algorithm is based on:",
+      options: ["Matrix addition", "The determinant of the web matrix", "Random number generation", "The dominant eigenvector of the link matrix"],
+      correctIndex: 3,
+      explanation: "The eigenvector with the largest eigenvalue determines page importance.",
+    },
+    {
+      id: "q5",
+      text: "If $\\lambda = 0$ is an eigenvalue, the transformation:",
+      options: ["Doubles the eigenvector", "Leaves it unchanged", "Collapses that direction to zero", "Rotates it 90 degrees"],
+      correctIndex: 2,
+      explanation: "$A\\mathbf{v} = 0 \\cdot \\mathbf{v} = \\mathbf{0}$. That direction gets squashed.",
+    },
+  ]}
+/>

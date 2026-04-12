@@ -1,0 +1,81 @@
+---
+/**
+ * TransposeDiagram — shows transpose of a 2×3 matrix into a 3×2
+ * Color-coded entries show how rows become columns.
+ * C = [[1,2,3],[4,5,6]] → C^T = [[1,4],[2,5],[3,6]]
+ */
+---
+<div class="diagram-container">
+<svg viewBox="-10 -10 440 210" width="100%" style="max-width:460px" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Matrix transpose: rows become columns">
+
+  {/* Original 2×3 matrix */}
+  <text x="85" y="14" fill="#888" font-size="13" font-family="serif" text-anchor="middle">C (2 × 3)</text>
+  <rect x="15" y="24" width="140" height="80" rx="5" fill="none" stroke="#58a6ff" stroke-width="1.8" class="tp-blue-stroke" />
+
+  {/* Row 1 highlight */}
+  <rect x="19" y="32" width="132" height="30" rx="3" fill="#58a6ff" fill-opacity="0.06" />
+  {/* Row 2 highlight */}
+  <rect x="19" y="66" width="132" height="30" rx="3" fill="#f0883e" fill-opacity="0.06" />
+
+  <text x="42" y="54" fill="#58a6ff" font-size="20" font-family="serif" font-weight="bold" class="tp-blue">1</text>
+  <text x="85" y="54" fill="#7ee787" font-size="20" font-family="serif" font-weight="bold" class="tp-green">2</text>
+  <text x="128" y="54" fill="#d2a8ff" font-size="20" font-family="serif" font-weight="bold" class="tp-purple">3</text>
+  <text x="42" y="88" fill="#f0883e" font-size="20" font-family="serif" font-weight="bold" class="tp-orange">4</text>
+  <text x="85" y="88" fill="#f47067" font-size="20" font-family="serif" font-weight="bold" class="tp-red">5</text>
+  <text x="128" y="88" fill="#888" font-size="20" font-family="serif" font-weight="bold">6</text>
+
+  {/* Row labels */}
+  <text x="5" y="54" fill="#58a6ff" font-size="10" font-family="serif" class="tp-blue">R1</text>
+  <text x="5" y="88" fill="#f0883e" font-size="10" font-family="serif" class="tp-orange">R2</text>
+
+  {/* Arrow */}
+  <line x1="170" y1="64" x2="210" y2="64" stroke="#888" stroke-width="1.5" />
+  <polygon points="215,64 207,59 207,69" fill="#888" />
+  <text x="182" y="56" fill="#888" font-size="12" font-family="serif" font-style="italic">T</text>
+
+  {/* Transposed 3×2 matrix */}
+  <text x="300" y="14" fill="#888" font-size="13" font-family="serif" text-anchor="middle">C&#x1D40; (3 × 2)</text>
+  <rect x="235" y="24" width="100" height="115" rx="5" fill="none" stroke="#888" stroke-width="1.8" />
+
+  {/* Col 1 highlight */}
+  <rect x="239" y="28" width="42" height="107" rx="3" fill="#58a6ff" fill-opacity="0.06" />
+  {/* Col 2 highlight */}
+  <rect x="285" y="28" width="42" height="107" rx="3" fill="#f0883e" fill-opacity="0.06" />
+
+  <text x="258" y="56" fill="#58a6ff" font-size="20" font-family="serif" font-weight="bold" class="tp-blue">1</text>
+  <text x="304" y="56" fill="#f0883e" font-size="20" font-family="serif" font-weight="bold" class="tp-orange">4</text>
+  <text x="258" y="90" fill="#7ee787" font-size="20" font-family="serif" font-weight="bold" class="tp-green">2</text>
+  <text x="304" y="90" fill="#f47067" font-size="20" font-family="serif" font-weight="bold" class="tp-red">5</text>
+  <text x="258" y="124" fill="#d2a8ff" font-size="20" font-family="serif" font-weight="bold" class="tp-purple">3</text>
+  <text x="304" y="124" fill="#888" font-size="20" font-family="serif" font-weight="bold">6</text>
+
+  {/* Column labels */}
+  <text x="253" y="152" fill="#58a6ff" font-size="10" font-family="serif" class="tp-blue">C1</text>
+  <text x="299" y="152" fill="#f0883e" font-size="10" font-family="serif" class="tp-orange">C2</text>
+
+  {/* Legend */}
+  <g transform="translate(15, 178)">
+    <text x="0" y="0" fill="#888" font-size="11" font-family="serif">Row 1 of C becomes Column 1 of C&#x1D40;, Row 2 becomes Column 2</text>
+  </g>
+</svg>
+</div>
+
+<style>
+  .tp-blue { fill: #58a6ff; }
+  .tp-green { fill: #7ee787; }
+  .tp-purple { fill: #d2a8ff; }
+  .tp-orange { fill: #f0883e; }
+  .tp-red { fill: #f47067; }
+  .tp-blue-stroke { stroke: #58a6ff; }
+
+  :global([data-theme="light"]) .tp-blue { fill: #0550ae; }
+  :global([data-theme="light"]) .tp-green { fill: #1a7f2e; }
+  :global([data-theme="light"]) .tp-purple { fill: #6b3fa0; }
+  :global([data-theme="light"]) .tp-orange { fill: #c05010; }
+  :global([data-theme="light"]) .tp-red { fill: #c4432b; }
+  :global([data-theme="light"]) .tp-blue-stroke { stroke: #0550ae; }
+  :global([data-theme="light"]) svg text[fill="#888"] { fill: #555; }
+  :global([data-theme="light"]) svg rect[stroke="#888"] { stroke: #999; }
+  :global([data-theme="light"]) svg line[stroke="#888"] { stroke: #999; }
+  :global([data-theme="light"]) svg polygon[fill="#888"] { fill: #999; }
+</style>

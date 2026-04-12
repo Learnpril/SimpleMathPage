@@ -1,0 +1,160 @@
+---
+title: Vector Operations
+description: Learn how to add, subtract, and scale vectors, plus an introduction to the dot product
+sidebar:
+  order: 2
+---
+
+import Quiz from "../../../components/Quiz.astro";
+import VecAddSubDiagram from "../../../components/VecAddSubDiagram.astro";
+import ScalarMultDiagram from "../../../components/ScalarMultDiagram.astro";
+import DotProductDiagram from "../../../components/DotProductDiagram.astro";
+
+## What You'll Learn
+
+In this lesson you'll learn the basic operations you can perform on vectors: addition, subtraction, scalar multiplication, and the dot product.
+
+## The Concept
+
+### 1. Vector Addition and Subtraction
+
+Vectors are added component-wise:
+
+$$
+\mathbf{u} + \mathbf{v} = \langle u_1 + v_1,\; u_2 + v_2,\; u_3 + v_3 \rangle
+$$
+
+Subtraction works the same way:
+
+$$
+\mathbf{u} - \mathbf{v} = \langle u_1 - v_1,\; u_2 - v_2,\; u_3 - v_3 \rangle
+$$
+
+Geometrically, vector addition follows the triangle rule (or parallelogram rule). Place the tail of $\mathbf{v}$ at the tip of $\mathbf{u}$, and the result $\mathbf{u} + \mathbf{v}$ goes from the origin to the tip of $\mathbf{v}$:
+
+<VecAddSubDiagram />
+
+In the diagram above: the blue arrow is $\mathbf{u} = \langle 2, 3 \rangle$ starting from the origin. The green arrow is $\mathbf{v} = \langle 5, -1 \rangle$ placed at the tip of $\mathbf{u}$. The dashed orange arrow shows the result $\mathbf{u} + \mathbf{v} = \langle 2+5,\; 3+(-1) \rangle = \langle 7, 2 \rangle$, going directly from the origin to where $\mathbf{v}$ ends. This is the triangle rule in action.
+
+### 2. Scalar Multiplication
+
+Multiplying a vector by a number (scalar) scales its length:
+
+$$
+c \cdot \mathbf{v} = \langle c\, v_1,\; c\, v_2,\; c\, v_3 \rangle
+$$
+
+- If $\lvert c \rvert \gt 1$, the vector gets longer
+- If $0 \lt \lvert c \rvert \lt 1$, the vector gets shorter
+- If $c$ is negative, the vector reverses direction
+
+<ScalarMultDiagram />
+
+The diagram shows three versions of the same direction. The blue arrow is $\mathbf{v} = \langle 2, 1 \rangle$. The green arrow is $2\mathbf{v} = \langle 4, 2 \rangle$, which points the same way but is twice as long. The orange arrow is $-\mathbf{v} = \langle -2, -1 \rangle$, which has the same length as $\mathbf{v}$ but points in the opposite direction. Multiplying by a positive scalar stretches; multiplying by a negative scalar flips.
+
+### 3. Dot Product
+
+The dot product (also called scalar product) of two vectors returns a single number:
+
+$$
+\mathbf{u} \cdot \mathbf{v} = u_1 v_1 + u_2 v_2 + u_3 v_3
+$$
+
+It can also be written as:
+
+$$
+\mathbf{u} \cdot \mathbf{v} = \lVert \mathbf{u} \rVert \, \lVert \mathbf{v} \rVert \cos \theta
+$$
+
+where $\theta$ is the angle between them.
+
+Important properties:
+- If $\mathbf{u} \cdot \mathbf{v} = 0$, the vectors are orthogonal (perpendicular).
+- The dot product tells you how much one vector points in the direction of another.
+
+<DotProductDiagram />
+
+Here $\mathbf{u} = \langle 3, 4 \rangle$ (blue) and $\mathbf{v} = \langle -2, 5 \rangle$ (green) meet at the origin with a 59-degree angle between them (purple arc). The dot product $\mathbf{u} \cdot \mathbf{v} = (3)(-2) + (4)(5) = 14$. Since the result is positive, the vectors point in roughly the same general direction (the angle is less than 90 degrees). If the dot product were zero, they'd be perpendicular; if negative, they'd point away from each other.
+
+## Worked Examples
+
+**Example 1: Addition and Subtraction**
+
+Let $\mathbf{u} = \langle 2, 3 \rangle$ and $\mathbf{v} = \langle 5, -1 \rangle$
+
+$\mathbf{u} + \mathbf{v} = \langle 7, 2 \rangle$
+
+$\mathbf{u} - \mathbf{v} = \langle -3, 4 \rangle$
+
+**Example 2: Scalar Multiplication**
+
+Let $\mathbf{w} = \langle 1, 2, 3 \rangle$
+
+$3\mathbf{w} = \langle 3, 6, 9 \rangle$
+
+$-2\mathbf{w} = \langle -2, -4, -6 \rangle$ (reverses direction and doubles length)
+
+**Example 3: Dot Product**
+
+$\mathbf{u} = \langle 3, 4 \rangle$, $\mathbf{v} = \langle -2, 5 \rangle$
+
+$\mathbf{u} \cdot \mathbf{v} = (3)(-2) + (4)(5) = -6 + 20 = 14$
+
+Angle check: $\cos \theta = \frac{14}{5 \times \sqrt{29}} \approx 0.52$, so $\theta \approx 59°$
+
+## Real-World Application
+
+Vector operations are fundamental in game development:
+- Movement: Add velocity vector to position vector each frame
+- Forces: Add multiple force vectors (gravity, thrust, friction) to get net force
+- Lighting: Dot product between surface normal and light direction determines brightness (Lambertian shading)
+- AI: Dot product helps determine if an enemy is facing toward or away from the player
+
+Example: When your character jumps, you add a gravity vector (pointing down) to the current velocity vector every frame.
+
+:::note[You've Got This]
+Vector operations are straightforward once you get used to working component-wise. Addition and subtraction combine directions, scalar multiplication changes size and direction, and the dot product tells you about alignment. These operations are the daily tools of anyone working in 3D graphics or physics. Practice a few calculations by hand and you'll quickly see how intuitive they become.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="linear-algebra-vector-operations"
+  questions={[
+    {
+      id: "q1",
+      text: "To add two vectors, you:",
+      options: ["Add their corresponding components", "Multiply their magnitudes", "Add their magnitudes only", "Take their cross product"],
+      correctIndex: 0,
+      explanation: "Vector addition is component-wise.",
+    },
+    {
+      id: "q2",
+      text: "If you multiply a vector by $-2$, what happens?",
+      options: ["It reverses direction and doubles in length", "It doubles in length in the same direction", "It becomes a scalar", "Nothing changes"],
+      correctIndex: 0,
+      explanation: "A negative scalar reverses direction, and the magnitude scales by $\\lvert c \\rvert$.",
+    },
+    {
+      id: "q3",
+      text: "The dot product of two vectors is:",
+      options: ["A scalar (single number)", "Another vector", "A matrix", "Always positive"],
+      correctIndex: 0,
+      explanation: "The dot product returns a number, not a vector.",
+    },
+    {
+      id: "q4",
+      text: "If $\\mathbf{u} \\cdot \\mathbf{v} = 0$, the vectors are:",
+      options: ["Perpendicular (orthogonal)", "Parallel", "The same vector", "Opposite directions"],
+      correctIndex: 0,
+      explanation: "Zero dot product means a 90-degree angle between them.",
+    },
+    {
+      id: "q5",
+      text: "In game lighting, the dot product is commonly used to calculate:",
+      options: ["How much light hits a surface", "The position of the camera", "The speed of the player", "The color of the sky"],
+      correctIndex: 0,
+      explanation: "It compares the surface normal with the light direction.",
+    },
+  ]}
+/>

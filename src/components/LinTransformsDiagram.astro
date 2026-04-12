@@ -1,0 +1,115 @@
+---
+/**
+ * LinTransformsDiagram — shows three linear transformations on an L-shape
+ * Left: 90° rotation, Center: scaling (2x, 0.5y), Right: projection onto x-axis
+ * Each panel shows original (blue dashed) and transformed (colored solid)
+ * Scale: 30px/unit
+ */
+---
+<div class="diagram-container" style="overflow-x:auto">
+<svg viewBox="-10 -10 540 230" width="100%" style="max-width:560px" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Three linear transformations: rotation, scaling, and projection">
+
+  {/* === Panel 1: Rotation 90° === */}
+  <g transform="translate(0,0)">
+    <text x="80" y="10" fill="#888" font-size="13" font-family="serif" text-anchor="middle" font-weight="bold">Rotation (90°)</text>
+
+    {/* Axes: origin at (60, 150) */}
+    <line x1="0" y1="150" x2="160" y2="150" stroke="#666" stroke-width="0.8" class="lt-axis" />
+    <line x1="60" y1="170" x2="60" y2="15" stroke="#666" stroke-width="0.8" class="lt-axis" />
+
+    {/* Original L-shape (blue dashed): (0,0),(2,0),(2,1),(1,1),(1,2),(0,2) */}
+    {/* At 30px scale, origin (60,150): */}
+    <polygon points="60,150 120,150 120,120 90,120 90,90 60,90"
+      fill="#58a6ff" fill-opacity="0.08" stroke="#58a6ff" stroke-width="1.5" stroke-dasharray="4,3" class="lt-blue-shape" />
+
+    {/* Rotated 90° CCW: (x,y)→(-y,x). L becomes (0,0),(0,2),(-1,2),(-1,1),(-2,1),(-2,0) */}
+    <polygon points="60,150 60,90 30,90 30,120 0,120 0,150"
+      fill="#7ee787" fill-opacity="0.15" stroke="#7ee787" stroke-width="2" class="lt-green-shape" />
+
+    <text x="90" y="80" fill="#58a6ff" font-size="10" font-family="serif" text-anchor="middle" class="lt-blue-text">original</text>
+    <text x="15" y="80" fill="#7ee787" font-size="10" font-family="serif" class="lt-green-text">rotated</text>
+  </g>
+
+  {/* === Panel 2: Scaling (2x, 0.5y) === */}
+  <g transform="translate(185,0)">
+    <text x="80" y="10" fill="#888" font-size="13" font-family="serif" text-anchor="middle" font-weight="bold">Scaling (2x, 0.5y)</text>
+
+    {/* Axes: origin at (20, 150) */}
+    <line x1="0" y1="150" x2="165" y2="150" stroke="#666" stroke-width="0.8" class="lt-axis" />
+    <line x1="20" y1="170" x2="20" y2="15" stroke="#666" stroke-width="0.8" class="lt-axis" />
+
+    {/* Original L-shape (blue dashed) */}
+    <polygon points="20,150 80,150 80,120 50,120 50,90 20,90"
+      fill="#58a6ff" fill-opacity="0.08" stroke="#58a6ff" stroke-width="1.5" stroke-dasharray="4,3" class="lt-blue-shape" />
+
+    {/* Scaled: x*2, y*0.5. (0,0)→(0,0), (2,0)→(4,0), (2,1)→(4,0.5), (1,1)→(2,0.5), (1,2)→(2,1), (0,2)→(0,1) */}
+    <polygon points="20,150 140,150 140,135 80,135 80,120 20,120"
+      fill="#f0883e" fill-opacity="0.15" stroke="#f0883e" stroke-width="2" class="lt-orange-shape" />
+
+    <text x="50" y="82" fill="#58a6ff" font-size="10" font-family="serif" text-anchor="middle" class="lt-blue-text">original</text>
+    <text x="100" y="168" fill="#f0883e" font-size="10" font-family="serif" class="lt-orange-text">scaled</text>
+  </g>
+
+  {/* === Panel 3: Projection onto x-axis === */}
+  <g transform="translate(370,0)">
+    <text x="80" y="10" fill="#888" font-size="13" font-family="serif" text-anchor="middle" font-weight="bold">Projection (x-axis)</text>
+
+    {/* Axes: origin at (30, 150) */}
+    <line x1="0" y1="150" x2="160" y2="150" stroke="#666" stroke-width="0.8" class="lt-axis" />
+    <line x1="30" y1="170" x2="30" y2="15" stroke="#666" stroke-width="0.8" class="lt-axis" />
+
+    {/* Original L-shape (blue dashed) */}
+    <polygon points="30,150 90,150 90,120 60,120 60,90 30,90"
+      fill="#58a6ff" fill-opacity="0.08" stroke="#58a6ff" stroke-width="1.5" stroke-dasharray="4,3" class="lt-blue-shape" />
+
+    {/* Projected: y→0. All points collapse to x-axis. Shape becomes line from x=0 to x=2 */}
+    <line x1="30" y1="150" x2="90" y2="150" stroke="#d2a8ff" stroke-width="4" class="lt-purple-line" />
+
+    <text x="60" y="82" fill="#58a6ff" font-size="10" font-family="serif" text-anchor="middle" class="lt-blue-text">original</text>
+    <text x="60" y="168" fill="#d2a8ff" font-size="10" font-family="serif" text-anchor="middle" class="lt-purple-text">projected</text>
+  </g>
+
+  {/* Legend */}
+  <g transform="translate(80, 195)">
+    <line x1="0" y1="0" x2="15" y2="0" stroke="#58a6ff" stroke-width="1.5" stroke-dasharray="4,3" class="lt-blue-line" />
+    <text x="20" y="4" fill="#888" font-size="11" font-family="serif">Original</text>
+    <rect x="90" y="-6" width="12" height="12" rx="2" fill="#7ee787" class="lt-green-fill" />
+    <text x="107" y="4" fill="#888" font-size="11" font-family="serif">Rotated</text>
+    <rect x="175" y="-6" width="12" height="12" rx="2" fill="#f0883e" class="lt-orange-fill" />
+    <text x="192" y="4" fill="#888" font-size="11" font-family="serif">Scaled</text>
+    <rect x="250" y="-6" width="12" height="12" rx="2" fill="#d2a8ff" class="lt-purple-fill" />
+    <text x="267" y="4" fill="#888" font-size="11" font-family="serif">Projected</text>
+  </g>
+</svg>
+</div>
+
+<style>
+  .lt-blue-shape { fill: #58a6ff; stroke: #58a6ff; }
+  .lt-blue-line { stroke: #58a6ff; }
+  .lt-blue-text { fill: #58a6ff; }
+  .lt-green-shape { fill: #7ee787; stroke: #7ee787; }
+  .lt-green-fill { fill: #7ee787; }
+  .lt-green-text { fill: #7ee787; }
+  .lt-orange-shape { fill: #f0883e; stroke: #f0883e; }
+  .lt-orange-fill { fill: #f0883e; }
+  .lt-orange-text { fill: #f0883e; }
+  .lt-purple-line { stroke: #d2a8ff; }
+  .lt-purple-fill { fill: #d2a8ff; }
+  .lt-purple-text { fill: #d2a8ff; }
+  .lt-axis { stroke: #666; }
+
+  :global([data-theme="light"]) .lt-blue-shape { fill: #0550ae; stroke: #0550ae; }
+  :global([data-theme="light"]) .lt-blue-line { stroke: #0550ae; }
+  :global([data-theme="light"]) .lt-blue-text { fill: #0550ae; }
+  :global([data-theme="light"]) .lt-green-shape { fill: #1a7f2e; stroke: #1a7f2e; }
+  :global([data-theme="light"]) .lt-green-fill { fill: #1a7f2e; }
+  :global([data-theme="light"]) .lt-green-text { fill: #1a7f2e; }
+  :global([data-theme="light"]) .lt-orange-shape { fill: #c05010; stroke: #c05010; }
+  :global([data-theme="light"]) .lt-orange-fill { fill: #c05010; }
+  :global([data-theme="light"]) .lt-orange-text { fill: #c05010; }
+  :global([data-theme="light"]) .lt-purple-line { stroke: #6b3fa0; }
+  :global([data-theme="light"]) .lt-purple-fill { fill: #6b3fa0; }
+  :global([data-theme="light"]) .lt-purple-text { fill: #6b3fa0; }
+  :global([data-theme="light"]) .lt-axis { stroke: #999; }
+  :global([data-theme="light"]) svg text[fill="#888"] { fill: #555; }
+</style>

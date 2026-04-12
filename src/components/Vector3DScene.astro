@@ -1,0 +1,168 @@
+---
+/**
+ * Vector3DScene — Interactive Three.js visualization of vector w = <1, 2, 2>
+ * Matches the exact pattern from Calc3Hero3D which works.
+ */
+---
+
+<figure class="v3d" role="img" aria-label="Interactive 3D vector w equals 1 2 2">
+  <div class="v3d-canvas" data-vector3d></div>
+  <div class="v3d-hint">Drag to rotate · Scroll/Pinch to zoom</div>
+</figure>
+
+<script>
+  import * as THREE from "three";
+  import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+
+  function initScene(container: HTMLElement) {
+    const width = container.clientWidth || 480;
+    const height = 360;
+
+    const isDark = document.documentElement.dataset.theme !== "light";
+
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(isDark ? 0x121212 : 0xf8f9fa);
+
+    const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 100);
+    camera.position.set(5, 4, 5);
+    camera.lookAt(0, 0, 0);
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(width, height);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    container.appendChild(renderer.domElement);
+
+    // Grid
+    const gridColor = isDark ? 0x333333 : 0xcccccc;
+    const grid = new THREE.GridHelper(6, 6, gridColor, gridColor);
+    scene.add(grid);
+
+    // Axes as lines
+    const axColor = isDark ? 0x666666 : 0x999999;
+    const axMat = new THREE.LineBasicMaterial({ color: axColor });
+    const dirs = [[4,0,0],[0,4,0],[0,0,4]];
+    for (let i = 0; i < dirs.length; i++) {
+      const d = dirs[i];
+      const g = new THREE.BufferGeometry().setFromPoints([
+        new THREE.Vector3(0,0,0),
+        new THREE.Vector3(d[0],d[1],d[2])
+      ]);
+      scene.add(new THREE.Line(g, axMat));
+    }
+
+    // Main vector w = <1, 2, 2> as ArrowHelper
+    const vecDir = new THREE.Vector3(1, 2, 2);
+    const vecLen = vecDir.length();
+    const arrow = new THREE.ArrowHelper(
+      vecDir.clone().normalize(),
+      new THREE.Vector3(0, 0, 0),
+      vecLen,
+      isDark ? 0x7ee787 : 0x1a7f2e,
+      0.25,
+      0.15
+    );
+    scene.add(arrow);
+
+    // Dashed component lines
+    const dashPairs: [number[], number[], number][] = [
+      [[0,0,0], [1,0,0], isDark ? 0xf0883e : 0xc05010],
+      [[1,0,0], [1,0,2], isDark ? 0xd2a8ff : 0x6b3fa0],
+      [[1,0,2], [1,2,2], isDark ? 0x58a6ff : 0x0550ae],
+    ];
+    for (let i = 0; i < dashPairs.length; i++) {
+      const [a, b, col] = dashPairs[i];
+      const mat = new THREE.LineDashedMaterial({
+        color: col, dashSize: 0.15, gapSize: 0.1,
+        transparent: true, opacity: 0.6
+      });
+      const g = new THREE.BufferGeometry().setFromPoints([
+        new THREE.Vector3(a[0],a[1],a[2]),
+        new THREE.Vector3(b[0],b[1],b[2])
+      ]);
+      const line = new THREE.Line(g, mat);
+      line.computeLineDistances();
+      scene.add(line);
+    }
+
+    // Sprite labels
+    function makeLabel(text: string, pos: number[], color: string, size = 0.5) {
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d")!;
+      canvas.width = 512;
+      canvas.height = 128;
+      ctx.font = "bold 48px sans-serif";
+      ctx.fillStyle = color;
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText(text, 256, 64);
+      const tex = new THREE.CanvasTexture(canvas);
+      const mat = new THREE.SpriteMaterial({ map: tex, transparent: true, depthTest: false });
+      const sprite = new THREE.Sprite(mat);
+      sprite.position.set(pos[0], pos[1], pos[2]);
+      sprite.scale.set(size * 4, size, 1);
+      scene.add(sprite);
+    }
+
+    const lc = isDark ? "#888" : "#555";
+    makeLabel("x", [4.2, -0.2, 0], lc, 0.5);
+    makeLabel("y", [0, 4.2, 0], lc, 0.5);
+    makeLabel("z", [0, -0.2, 4.2], lc, 0.5);
+    makeLabel("w = (1, 2, 2)", [1.5, 2.8, 1.5], isDark ? "#7ee787" : "#1a7f2e", 0.55);
+    makeLabel("||w|| = 3", [2.5, 1.8, 0.3], isDark ? "#aaa" : "#555", 0.45);
+    makeLabel("x = 1", [0.5, -0.5, 0], isDark ? "#f0883e" : "#c05010", 0.4);
+    makeLabel("z = 2", [1, -0.5, 1], isDark ? "#d2a8ff" : "#6b3fa0", 0.4);
+    makeLabel("y = 2", [1.5, 1, 2.3], isDark ? "#58a6ff" : "#0550ae", 0.4);
+
+    // Light
+    scene.add(new THREE.AmbientLight(0xffffff, 0.7));
+
+    // Controls
+    const controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.08;
+    controls.autoRotate = true;
+    controls.autoRotateSpeed = 0.8;
+    controls.enablePan = false;
+    controls.minDistance = 3;
+    controls.maxDistance = 20;
+
+    let animId: number;
+    function animate() {
+      animId = requestAnimationFrame(animate);
+      controls.update();
+      renderer.render(scene, camera);
+    }
+    animate();
+
+    return () => {
+      cancelAnimationFrame(animId);
+      renderer.dispose();
+    };
+  }
+
+  function setup() {
+    document.querySelectorAll<HTMLElement>("[data-vector3d]").forEach((el) => {
+      if (el.querySelector("canvas")) return;
+      const obs = new IntersectionObserver(
+        (entries) => {
+          if (entries[0].isIntersecting) {
+            obs.disconnect();
+            initScene(el);
+          }
+        },
+        { threshold: 0.05 }
+      );
+      obs.observe(el);
+    });
+  }
+
+  setup();
+  document.addEventListener("astro:page-load", setup);
+</script>
+
+<style>
+  .v3d { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .v3d-canvas { width:100%; max-width:480px; min-height:360px; border-radius:8px; overflow:hidden; }
+  .v3d-canvas canvas { border-radius:8px; }
+  .v3d-hint { font-family:"Libre Baskerville",Georgia,serif; font-size:0.8rem; color:#888; margin-top:0.4rem; }
+</style>

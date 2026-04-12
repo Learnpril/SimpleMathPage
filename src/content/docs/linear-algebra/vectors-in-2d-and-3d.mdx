@@ -1,0 +1,143 @@
+---
+title: Vectors in 2D and 3D
+description: Learn what vectors are, how to represent them, and how they work in 2D and 3D space
+sidebar:
+  order: 1
+---
+
+import Quiz from "../../../components/Quiz.astro";
+
+## What You'll Learn
+
+In this lesson you'll learn the fundamentals of vectors, the building blocks of linear algebra. You'll see how vectors represent direction and magnitude, and how they behave in both 2D and 3D space.
+
+## The Concept
+
+A vector is a quantity that has both magnitude (length) and direction.
+
+### Representing Vectors
+- In 2D: $\mathbf{v} = \langle a, b \rangle$ or $\mathbf{v} = a\mathbf{i} + b\mathbf{j}$
+- In 3D: $\mathbf{v} = \langle a, b, c \rangle$ or $\mathbf{v} = a\mathbf{i} + b\mathbf{j} + c\mathbf{k}$
+
+Here, $a$, $b$, and $c$ are called the components of the vector.
+
+### Notation You'll See
+
+Different textbooks and fields use different notation for vectors. Here's a quick guide so you're never caught off guard:
+
+- Bold lowercase letters like $\mathbf{v}$ or $\mathbf{u}$ are vectors (common in textbooks and on this site)
+- An arrow on top like $\vec{v}$ or $\vec{u}$ also means vector (common in handwriting and physics)
+- Both mean the same thing: $\mathbf{v} = \vec{v}$
+- Bold uppercase letters like $\mathbf{A}$ or $\mathbf{M}$ usually represent matrices (grids of numbers), which we'll cover soon
+- Plain italic letters like $a$, $b$, $k$ are scalars (regular numbers)
+
+On this site we'll mostly use the bold notation ($\mathbf{v}$), but if you see $\vec{v}$ in another resource, it's the same idea.
+
+### Visualizing Vectors
+- Vectors are usually drawn as arrows.
+- The tail is at the starting point, and the head points in the direction of the vector.
+- The length of the arrow represents the magnitude.
+
+import Vector2DDiagram from "../../../components/Vector2DDiagram.astro";
+
+<Vector2DDiagram />
+
+### Magnitude (Length) of a Vector
+
+The magnitude (or norm) of a vector $\mathbf{v} = \langle a, b \rangle$ is:
+
+$$
+\lVert \mathbf{v} \rVert = \sqrt{a^2 + b^2}
+$$
+
+In 3D:
+
+$$
+\lVert \mathbf{v} \rVert = \sqrt{a^2 + b^2 + c^2}
+$$
+
+## Worked Examples
+
+**Example 1: Basic Vector**
+
+Draw the vector $\mathbf{v} = \langle 3, 4 \rangle$ in 2D.
+
+Magnitude: $\lVert \mathbf{v} \rVert = \sqrt{3^2 + 4^2} = \sqrt{9 + 16} = \sqrt{25} = 5$
+
+import VectorEx1Diagram from "../../../components/VectorEx1Diagram.astro";
+
+<VectorEx1Diagram />
+
+**Example 2: 3D Vector**
+
+Let $\mathbf{w} = \langle 1, 2, 2 \rangle$.
+
+Magnitude: $\lVert \mathbf{w} \rVert = \sqrt{1 + 4 + 4} = \sqrt{9} = 3$
+
+import Vector3DScene from "../../../components/Vector3DScene.astro";
+
+<Vector3DScene />
+
+**Example 3: Unit Vector**
+
+A unit vector has magnitude 1. To make $\mathbf{v} = \langle 3, 4 \rangle$ a unit vector, divide by its magnitude:
+
+$$
+\hat{\mathbf{v}} = \left\langle \frac{3}{5}, \frac{4}{5} \right\rangle
+$$
+
+## Real-World Application
+
+Vectors are everywhere in game development:
+- Position vectors tell you where an object is.
+- Velocity vectors tell you how fast and in what direction it's moving.
+- Force vectors (gravity, thrust, wind) are added together to determine movement.
+
+Example: In a 3D game, the direction from your character to an enemy is a vector. The speed at which you're moving is another vector. Adding them together helps the physics engine calculate realistic motion.
+
+:::note[You've Got This]
+Vectors are simply arrows with length and direction. Don't let the notation intimidate you. $\langle a, b, c \rangle$ is just a compact way of writing the components. Understanding vectors is the foundation for everything else in linear algebra, including matrices and transformations. Practice drawing them and calculating magnitudes. Once you get comfortable here, the rest of linear algebra will feel much more intuitive.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="linear-algebra-vectors-in-2d-and-3d"
+  questions={[
+    {
+      id: "q1",
+      text: "A vector has both:",
+      options: ["Magnitude and direction", "Only magnitude", "Only direction", "Neither"],
+      correctIndex: 0,
+      explanation: "That's what makes a vector different from a scalar.",
+    },
+    {
+      id: "q2",
+      text: "The magnitude of the vector $\\langle 3, 4 \\rangle$ is:",
+      options: ["$5$", "$7$", "$12$", "$1$"],
+      correctIndex: 0,
+      explanation: "$\\sqrt{9 + 16} = \\sqrt{25} = 5$.",
+    },
+    {
+      id: "q3",
+      text: "In game development, velocity is represented as:",
+      options: ["A vector", "A scalar", "A matrix", "A point"],
+      correctIndex: 0,
+      explanation: "It has both speed (magnitude) and direction.",
+    },
+    {
+      id: "q4",
+      text: "A unit vector has magnitude:",
+      options: ["$1$", "$0$", "The same as the original vector", "Infinite"],
+      correctIndex: 0,
+      explanation: "Unit vectors are often used to represent pure direction.",
+    },
+    {
+      id: "q5",
+      text: "The vector $\\langle 0, 0, 5 \\rangle$ points:",
+      options: ["Straight up the $z$-axis", "Along the $x$-axis", "In the $xy$-plane", "Nowhere"],
+      correctIndex: 0,
+      explanation: "Only the $z$-component is non-zero.",
+    },
+  ]}
+/>

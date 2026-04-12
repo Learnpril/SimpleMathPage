@@ -1,0 +1,184 @@
+---
+title: Gaussian Elimination
+description: Learn how to solve systems of linear equations using Gaussian elimination and row reduction
+sidebar:
+  order: 7
+---
+
+import Quiz from "../../../components/Quiz.astro";
+import RowReductionDiagram from "../../../components/RowReductionDiagram.astro";
+
+## What You'll Learn
+
+Gaussian elimination is the systematic method for solving any system of linear equations. You'll learn the three row operations, how to reduce a matrix to echelon form, and how to read off the solution.
+
+## The Concept
+
+Gaussian elimination turns a system of equations into an augmented matrix and then uses row operations to simplify it into row echelon form (or reduced row echelon form).
+
+### Row Operations
+
+These are the only moves you're allowed to make on an augmented matrix (they don't change the solution):
+1. Swap two rows
+2. Multiply a row by a nonzero scalar
+3. Add a multiple of one row to another row
+
+### Goal
+
+Transform the augmented matrix into this staircase pattern:
+
+$$
+\begin{bmatrix} 1 & * & * & \vert & * \\ 0 & 1 & * & \vert & * \\ 0 & 0 & 1 & \vert & * \end{bmatrix}
+$$
+
+From here, you can read off the solution by back-substitution. Going further to reduced row echelon form (RREF) means each pivot is 1 and all entries above and below each pivot are zero, so the solution reads directly off the matrix.
+
+### Types of Results
+- Unique solution: one value for each variable
+- No solution: a row like $[0 \; 0 \; 0 \; \vert \; 5]$ (means $0 = 5$, impossible)
+- Infinitely many solutions: a row of zeros with free variables
+
+<RowReductionDiagram />
+
+In the diagram: the augmented matrix is reduced step by step. Each arrow shows which row operation was applied. The final RREF form gives the solution directly: $x = 2$, $y = 1$.
+
+## Worked Examples
+
+**Example 1: Full Row Reduction**
+
+Solve:
+
+$$
+\begin{cases} 2x + 4y = 8 \\ 3x + 5y = 11 \end{cases}
+$$
+
+Start with the augmented matrix:
+
+$$
+\left[\begin{array}{cc|c} 2 & 4 & 8 \\ 3 & 5 & 11 \end{array}\right]
+$$
+
+Step 1: Divide $R_1$ by 2:
+
+$$
+\left[\begin{array}{cc|c} 1 & 2 & 4 \\ 3 & 5 & 11 \end{array}\right]
+$$
+
+Step 2: $R_2 \leftarrow R_2 - 3R_1$:
+
+$$
+\left[\begin{array}{cc|c} 1 & 2 & 4 \\ 0 & -1 & -1 \end{array}\right]
+$$
+
+Step 3: $R_2 \leftarrow -R_2$:
+
+$$
+\left[\begin{array}{cc|c} 1 & 2 & 4 \\ 0 & 1 & 1 \end{array}\right]
+$$
+
+Step 4: $R_1 \leftarrow R_1 - 2R_2$:
+
+$$
+\left[\begin{array}{cc|c} 1 & 0 & 2 \\ 0 & 1 & 1 \end{array}\right]
+$$
+
+Solution: $x = 2$, $y = 1$.
+
+**Example 2: No Solution**
+
+$$
+\left[\begin{array}{cc|c} 1 & 1 & 3 \\ 1 & 1 & 5 \end{array}\right]
+$$
+
+$R_2 \leftarrow R_2 - R_1$:
+
+$$
+\left[\begin{array}{cc|c} 1 & 1 & 3 \\ 0 & 0 & 2 \end{array}\right]
+$$
+
+The bottom row says $0 = 2$, which is impossible. No solution.
+
+**Example 3: A 3x3 System**
+
+$$
+\begin{cases} x + y + z = 6 \\ 2x + 3y + z = 14 \\ x - y + 2z = 2 \end{cases}
+$$
+
+Augmented matrix:
+
+$$
+\left[\begin{array}{ccc|c} 1 & 1 & 1 & 6 \\ 2 & 3 & 1 & 14 \\ 1 & -1 & 2 & 2 \end{array}\right]
+$$
+
+$R_2 \leftarrow R_2 - 2R_1$, $R_3 \leftarrow R_3 - R_1$:
+
+$$
+\left[\begin{array}{ccc|c} 1 & 1 & 1 & 6 \\ 0 & 1 & -1 & 2 \\ 0 & -2 & 1 & -4 \end{array}\right]
+$$
+
+$R_3 \leftarrow R_3 + 2R_2$:
+
+$$
+\left[\begin{array}{ccc|c} 1 & 1 & 1 & 6 \\ 0 & 1 & -1 & 2 \\ 0 & 0 & -1 & 0 \end{array}\right]
+$$
+
+Back-substitute: $-z = 0$ so $z = 0$. Then $y - 0 = 2$ so $y = 2$. Then $x + 2 + 0 = 6$ so $x = 4$.
+
+Solution: $x = 4$, $y = 2$, $z = 0$.
+
+## Real-World Application
+
+Gaussian elimination (and its computer-optimized versions) is used constantly in:
+- Game engines: solving for bone positions in inverse kinematics, balancing physics constraints, lighting calculations
+- Computer graphics: solving large systems for realistic rendering
+- Machine learning: least squares regression
+- Engineering: circuit analysis, structural engineering
+
+Example: When a game character grabs an object, inverse kinematics uses Gaussian elimination to figure out the exact joint angles needed to reach the target position. The engine sets up a system of equations and row-reduces it every frame.
+
+:::note[You've Got This]
+Gaussian elimination is mechanical. Once you know the three row operations, it's just a recipe: make zeros below each pivot, then clean up above. The key insight is recognizing what the final form tells you: a clean diagonal means a unique solution, a row of zeros with a nonzero constant means no solution, and extra free variables mean infinitely many solutions. Many students find this lesson satisfying once they see how cleanly it solves systems that look messy at first.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="linear-algebra-gaussian-elimination"
+  questions={[
+    {
+      id: "q1",
+      text: "Which is NOT a valid row operation?",
+      options: ["Swap two rows", "Multiply a row by zero", "Add a multiple of one row to another", "Multiply a row by a nonzero scalar"],
+      correctIndex: 1,
+      explanation: "Multiplying by zero would destroy information. The scalar must be nonzero.",
+    },
+    {
+      id: "q2",
+      text: "In row echelon form, entries below each pivot are:",
+      options: ["All ones", "All zero", "All negative", "Anything"],
+      correctIndex: 1,
+      explanation: "The whole point of elimination is to create zeros below each pivot.",
+    },
+    {
+      id: "q3",
+      text: "If row reduction produces a row $[0 \\; 0 \\; \\vert \\; 5]$, the system has:",
+      options: ["A unique solution", "Infinitely many solutions", "No solution", "Exactly two solutions"],
+      correctIndex: 2,
+      explanation: "That row says $0 = 5$, which is a contradiction.",
+    },
+    {
+      id: "q4",
+      text: "In game development, Gaussian elimination is often used for:",
+      options: ["Only drawing sprites", "Only texture loading", "Only scoring", "Inverse kinematics and physics constraints"],
+      correctIndex: 3,
+      explanation: "It helps solve for joint angles and physical balances.",
+    },
+    {
+      id: "q5",
+      text: "RREF differs from REF in that RREF also requires:",
+      options: ["All pivots are 1 and all entries above pivots are 0", "All entries are positive", "The matrix is square", "No zero rows"],
+      correctIndex: 0,
+      explanation: "RREF cleans up above the pivots too, making the solution immediately readable.",
+    },
+  ]}
+/>

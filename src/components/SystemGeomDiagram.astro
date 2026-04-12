@@ -1,0 +1,93 @@
+---
+/**
+ * SystemGeomDiagram — three panels showing the three outcomes
+ * of a 2-equation system: unique solution, no solution, infinite solutions.
+ */
+---
+<div class="diagram-container" style="overflow-x:auto">
+<svg viewBox="-10 -10 560 210" width="100%" style="max-width:580px" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Three outcomes of a system of linear equations">
+
+  {/* === Panel 1: Unique Solution === */}
+  <g transform="translate(0,0)">
+    <text x="75" y="5" fill="#888" font-size="13" font-family="serif" text-anchor="middle" font-weight="bold">One Solution</text>
+
+    {/* Axes */}
+    <line x1="10" y1="140" x2="150" y2="140" stroke="#666" stroke-width="0.8" class="sg-axis" />
+    <line x1="30" y1="160" x2="30" y2="15" stroke="#666" stroke-width="0.8" class="sg-axis" />
+
+    {/* Line 1: 2x + y = 5 */}
+    <line x1="20" y1="10" x2="115" y2="150" stroke="#58a6ff" stroke-width="2" class="sg-blue-line" />
+
+    {/* Line 2: x - y = 1 */}
+    <line x1="20" y1="170" x2="145" y2="45" stroke="#7ee787" stroke-width="2" class="sg-green-line" />
+
+    {/* Intersection at actual crossing point */}
+    <circle cx="85" cy="105" r="4" fill="#f0883e" class="sg-orange-dot" />
+    <text x="100" y="108" fill="#f0883e" font-size="12" font-family="serif" class="sg-orange-text">(2, 1)</text>
+  </g>
+
+  {/* === Panel 2: No Solution === */}
+  <g transform="translate(190,0)">
+    <text x="110" y="5" fill="#888" font-size="13" font-family="serif" text-anchor="middle" font-weight="bold">No Solution</text>
+
+    {/* Axes */}
+    <line x1="10" y1="140" x2="150" y2="140" stroke="#666" stroke-width="0.8" class="sg-axis" />
+    <line x1="30" y1="160" x2="30" y2="15" stroke="#666" stroke-width="0.8" class="sg-axis" />
+
+    {/* Two parallel lines: x + y = 3 and x + y = 5 */}
+    {/* Blue: y = 3-x */}
+    <line x1="20" y1="40" x2="130" y2="150" stroke="#58a6ff" stroke-width="2" class="sg-blue-line" />
+
+    {/* Green: y = 5-x */}
+    <line x1="20" y1="-20" x2="150" y2="110" stroke="#7ee787" stroke-width="2" class="sg-green-line" />
+
+    {/* Parallel indicator — positioned between the two lines */}
+    <text x="75" y="68" fill="#f47067" font-size="12" font-family="serif" text-anchor="middle" class="sg-red-text">parallel</text>
+  </g>
+
+  {/* === Panel 3: Infinite Solutions === */}
+  <g transform="translate(380,0)">
+    <text x="75" y="5" fill="#888" font-size="13" font-family="serif" text-anchor="middle" font-weight="bold">Infinite Solutions</text>
+
+    {/* Axes */}
+    <line x1="10" y1="140" x2="150" y2="140" stroke="#666" stroke-width="0.8" class="sg-axis" />
+    <line x1="30" y1="160" x2="30" y2="15" stroke="#666" stroke-width="0.8" class="sg-axis" />
+
+    {/* Same line drawn twice (overlapping) */}
+    <line x1="15" y1="100" x2="135" y2="150" stroke="#7ee787" stroke-width="4" opacity="0.4" class="sg-green-line" />
+    <line x1="15" y1="100" x2="135" y2="150" stroke="#58a6ff" stroke-width="2" class="sg-blue-line" />
+
+    {/* Overlap indicator */}
+    <text x="75" y="100" fill="#d2a8ff" font-size="12" font-family="serif" text-anchor="middle" class="sg-purple-text">same line</text>
+  </g>
+
+  {/* Legend — centered */}
+  <g transform="translate(270, 175)" text-anchor="middle">
+    <line x1="-195" y1="0" x2="-180" y2="0" stroke="#58a6ff" stroke-width="2" class="sg-blue-line" />
+    <text x="-140" y="4" fill="#888" font-size="11" font-family="serif">Equation 1</text>
+    <line x1="-65" y1="0" x2="-50" y2="0" stroke="#7ee787" stroke-width="2" class="sg-green-line" />
+    <text x="-10" y="4" fill="#888" font-size="11" font-family="serif">Equation 2</text>
+    <circle cx="65" cy="0" r="3" fill="#f0883e" class="sg-orange-dot" />
+    <text x="115" y="4" fill="#888" font-size="11" font-family="serif">Solution point</text>
+  </g>
+</svg>
+</div>
+
+<style>
+  .sg-blue-line { stroke: #58a6ff; }
+  .sg-green-line { stroke: #7ee787; }
+  .sg-orange-dot { fill: #f0883e; }
+  .sg-orange-text { fill: #f0883e; }
+  .sg-red-text { fill: #f47067; }
+  .sg-purple-text { fill: #d2a8ff; }
+  .sg-axis { stroke: #666; }
+
+  :global([data-theme="light"]) .sg-blue-line { stroke: #0550ae; }
+  :global([data-theme="light"]) .sg-green-line { stroke: #1a7f2e; }
+  :global([data-theme="light"]) .sg-orange-dot { fill: #c05010; }
+  :global([data-theme="light"]) .sg-orange-text { fill: #c05010; }
+  :global([data-theme="light"]) .sg-red-text { fill: #c4432b; }
+  :global([data-theme="light"]) .sg-purple-text { fill: #6b3fa0; }
+  :global([data-theme="light"]) .sg-axis { stroke: #999; }
+  :global([data-theme="light"]) svg text[fill="#888"] { fill: #555; }
+</style>

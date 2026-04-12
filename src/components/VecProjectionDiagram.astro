@@ -1,0 +1,98 @@
+---
+/**
+ * VecProjectionDiagram — shows projection of u onto v
+ * u = <3, 4>, v = <5, 0> (x-axis), proj = <3, 0>
+ * With dashed drop line showing the "shadow".
+ */
+---
+<div class="diagram-container">
+<svg viewBox="-20 -30 340 210" width="100%" style="max-width:420px" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Vector projection of u onto v">
+
+  <!-- Grid -->
+  <g stroke="#333" stroke-width="0.5" opacity="0.2">
+    <line x1="0" y1="0" x2="240" y2="0" /><line x1="0" y1="40" x2="240" y2="40" />
+    <line x1="0" y1="80" x2="240" y2="80" /><line x1="0" y1="120" x2="240" y2="120" />
+    <line x1="0" y1="0" x2="0" y2="130" /><line x1="40" y1="0" x2="40" y2="130" />
+    <line x1="80" y1="0" x2="80" y2="130" /><line x1="120" y1="0" x2="120" y2="130" />
+    <line x1="160" y1="0" x2="160" y2="130" /><line x1="200" y1="0" x2="200" y2="130" />
+    <line x1="240" y1="0" x2="240" y2="130" />
+  </g>
+
+  <!-- Axes: origin at (0, 120), scale 40px/unit -->
+  <line x1="-10" y1="120" x2="255" y2="120" stroke="#888" stroke-width="1.2" />
+  <line x1="0" y1="130" x2="0" y2="-20" stroke="#888" stroke-width="1.2" />
+
+  <!-- v = (5,0): along x-axis, endpoint (200, 120) -->
+  <line x1="0" y1="120" x2="190.4" y2="120" stroke="#7ee787" stroke-width="2.5" />
+  <polygon points="200,120 188,115 188,125" class="vp-green-arrow" fill="#7ee787" />
+
+  <!-- u = (3,4): endpoint (120, -40) but clamp to viewBox, use (120, -40+120)=(120, -40) -->
+  <!-- Actually origin is (0,120), so u endpoint = (0+3*40, 120-4*40) = (120, -40) -->
+  <!-- That's outside viewBox top. Let's scale down: use 30px/unit -->
+  <!-- u = (3,4): endpoint (90, 120-120) = (90, 0) -->
+  <!-- v = (5,0): endpoint (150, 120) -->
+  <!-- proj = (3,0): endpoint (90, 120) -->
+
+  <!-- Recalculate with 30px/unit, origin (0,120) -->
+  <!-- u = (3,4): (90, 0) -->
+  <!-- v = (5,0): (150, 120) -->
+  <!-- proj = (3,0): (90, 120) -->
+
+  <!-- Dashed drop line from u tip to projection point -->
+  <line x1="90" y1="0" x2="90" y2="120" stroke="#d2a8ff" stroke-width="1.5" stroke-dasharray="5 3" opacity="0.6" />
+
+  <!-- Right angle marker at projection point — draw before orange so it's behind -->
+  <polyline points="80,120 80,110 90,110" fill="none" stroke="#999" stroke-width="1" />
+
+  <!-- v vector (green): origin to (150, 120) — draw first so proj is on top -->
+  <line x1="0" y1="120" x2="140.4" y2="120" stroke="#7ee787" stroke-width="2" opacity="0.5" />
+  <polygon points="150,120 138,116 138,124" class="vp-green-arrow2" fill="#7ee787" opacity="0.5" />
+
+  <!-- Projection vector (orange): origin to (90, 120) — on top of everything -->
+  <line x1="0" y1="120" x2="80" y2="120" stroke="#f0883e" stroke-width="3" />
+  <polygon points="90,120 78,115 78,125" class="vp-orange-arrow" fill="#f0883e" />
+
+  <!-- u vector (blue): origin to (90, 0) -->
+  <line x1="0" y1="120" x2="83.1" y2="9.2" stroke="#58a6ff" stroke-width="2.5" />
+  <polygon points="90,0 86.4,12.0 79.8,7.2" class="vp-blue-arrow" fill="#58a6ff" />
+
+  <!-- Labels -->
+  <text x="95" y="-5" fill="#58a6ff" font-size="12" font-weight="bold" font-family="serif">u</text>
+  <text x="155" y="115" fill="#7ee787" font-size="12" font-weight="bold" font-family="serif">v</text>
+  <text x="35" y="140" fill="#f0883e" font-size="12" font-weight="bold" font-family="serif">proj</text>
+  <text x="95" y="65" fill="#d2a8ff" font-size="10" font-family="serif" opacity="0.7">drop</text>
+
+  <!-- Origin dot -->
+  <circle cx="0" cy="120" r="3" fill="#999" />
+
+  <!-- Legend -->
+  <g transform="translate(-10, 150)">
+    <line x1="5" y1="0" x2="20" y2="0" stroke="#58a6ff" stroke-width="2.5" />
+    <text x="25" y="4" fill="#58a6ff" font-size="9" font-family="serif">u = &#x27E8;3, 4&#x27E9;</text>
+    <line x1="90" y1="0" x2="105" y2="0" stroke="#f0883e" stroke-width="2.5" />
+    <text x="110" y="4" fill="#f0883e" font-size="9" font-family="serif">proj = &#x27E8;3, 0&#x27E9;</text>
+    <line x1="190" y1="0" x2="205" y2="0" stroke="#d2a8ff" stroke-width="1.5" stroke-dasharray="4 2" />
+    <text x="210" y="4" fill="#d2a8ff" font-size="9" font-family="serif">perpendicular drop</text>
+  </g>
+</svg>
+</div>
+
+<style>
+  .vp-blue-arrow { fill: #58a6ff; }
+  .vp-green-arrow, .vp-green-arrow2 { fill: #7ee787; }
+  .vp-orange-arrow { fill: #f0883e; }
+  :global([data-theme="light"]) .vp-blue-arrow { fill: #0550ae; }
+  :global([data-theme="light"]) .vp-green-arrow, :global([data-theme="light"]) .vp-green-arrow2 { fill: #1a7f2e; }
+  :global([data-theme="light"]) .vp-orange-arrow { fill: #c05010; }
+  :global([data-theme="light"]) svg text[fill="#58a6ff"] { fill: #0550ae; }
+  :global([data-theme="light"]) svg text[fill="#7ee787"] { fill: #1a7f2e; }
+  :global([data-theme="light"]) svg text[fill="#f0883e"] { fill: #c05010; }
+  :global([data-theme="light"]) svg text[fill="#d2a8ff"] { fill: #6b3fa0; }
+  :global([data-theme="light"]) svg line[stroke="#58a6ff"] { stroke: #0550ae; }
+  :global([data-theme="light"]) svg line[stroke="#7ee787"] { stroke: #1a7f2e; }
+  :global([data-theme="light"]) svg line[stroke="#f0883e"] { stroke: #c05010; }
+  :global([data-theme="light"]) svg line[stroke="#d2a8ff"] { stroke: #6b3fa0; }
+  :global([data-theme="light"]) svg line[stroke="#888"] { stroke: #bbb; }
+  :global([data-theme="light"]) svg g[opacity="0.2"] line { stroke: #ccc; }
+  :global([data-theme="light"]) svg circle[fill="#999"] { fill: #777; }
+</style>

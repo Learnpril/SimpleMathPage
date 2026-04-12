@@ -1,0 +1,112 @@
+---
+/**
+ * Vector2DDiagram — shows two vectors on a 2D coordinate grid
+ * with labeled components, magnitude, and unit vector.
+ * All labels positioned to avoid overlapping lines.
+ */
+---
+<div class="diagram-container">
+<svg viewBox="-30 -30 370 350" width="100%" style="max-width:520px" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="2D vectors on a coordinate grid">
+
+  <!-- Grid lines -->
+  <g stroke="#333" stroke-width="0.5" opacity="0.3">
+    <line x1="0" y1="0" x2="0" y2="240" />
+    <line x1="50" y1="0" x2="50" y2="240" />
+    <line x1="100" y1="0" x2="100" y2="240" />
+    <line x1="150" y1="0" x2="150" y2="240" />
+    <line x1="200" y1="0" x2="200" y2="240" />
+    <line x1="250" y1="0" x2="250" y2="240" />
+    <line x1="300" y1="0" x2="300" y2="240" />
+    <line x1="0" y1="0" x2="300" y2="0" />
+    <line x1="0" y1="50" x2="300" y2="50" />
+    <line x1="0" y1="100" x2="300" y2="100" />
+    <line x1="0" y1="150" x2="300" y2="150" />
+    <line x1="0" y1="200" x2="300" y2="200" />
+  </g>
+
+  <!-- Axes -->
+  <line x1="0" y1="240" x2="320" y2="240" stroke="#888" stroke-width="1.5" />
+  <line x1="0" y1="240" x2="0" y2="-15" stroke="#888" stroke-width="1.5" />
+  <text x="325" y="244" fill="#888" font-size="13" font-family="serif">x</text>
+  <text x="-5" y="-18" fill="#888" font-size="13" font-family="serif" text-anchor="middle">y</text>
+
+  <!-- Axis tick labels -->
+  <text x="50" y="256" fill="#666" font-size="10" text-anchor="middle">1</text>
+  <text x="100" y="256" fill="#666" font-size="10" text-anchor="middle">2</text>
+  <text x="150" y="256" fill="#666" font-size="10" text-anchor="middle">3</text>
+  <text x="200" y="256" fill="#666" font-size="10" text-anchor="middle">4</text>
+  <text x="250" y="256" fill="#666" font-size="10" text-anchor="middle">5</text>
+  <text x="-10" y="194" fill="#666" font-size="10" text-anchor="end">1</text>
+  <text x="-10" y="144" fill="#666" font-size="10" text-anchor="end">2</text>
+  <text x="-10" y="94" fill="#666" font-size="10" text-anchor="end">3</text>
+  <text x="-10" y="44" fill="#666" font-size="10" text-anchor="end">4</text>
+
+  <!-- Component lines for v (dashed) — draw first so vectors are on top -->
+  <line x1="0" y1="240" x2="150" y2="240" stroke="#58a6ff" stroke-width="1" stroke-dasharray="4 3" opacity="0.4" />
+  <line x1="150" y1="240" x2="150" y2="40" stroke="#58a6ff" stroke-width="1" stroke-dasharray="4 3" opacity="0.4" />
+
+  <!-- Vector v = <3, 4> (blue): line shortened, explicit arrowhead -->
+  <line x1="0" y1="240" x2="142.8" y2="49.6" stroke="#58a6ff" stroke-width="2.5" />
+  <polygon points="150,40 146.8,52.6 138.8,46.6" class="v-blue-arrow" fill="#58a6ff" />
+
+  <!-- Vector w = <5, 2> (green): line shortened, explicit arrowhead -->
+  <line x1="0" y1="240" x2="238.9" y2="144.5" stroke="#7ee787" stroke-width="2.5" />
+  <polygon points="250,140 240.8,149.1 237.0,139.9" class="v-green-arrow" fill="#7ee787" />
+
+  <!-- Unit vector of v (orange): line shortened, explicit arrowhead -->
+  <line x1="0" y1="240" x2="22.8" y2="209.6" stroke="#f0883e" stroke-width="2.5" />
+  <polygon points="30,200 26.8,212.6 18.8,206.6" class="v-orange-arrow" fill="#f0883e" />
+
+  <!-- Labels — all positioned away from lines -->
+  <!-- v label: to the LEFT of the blue vector -->
+  <text x="30" y="115" fill="#58a6ff" font-size="13" font-weight="bold" font-family="serif">v = &#x27E8;3, 4&#x27E9;</text>
+
+  <!-- w label: BELOW the green vector -->
+  <text x="155" y="215" fill="#7ee787" font-size="13" font-weight="bold" font-family="serif">w = &#x27E8;5, 2&#x27E9;</text>
+
+  <!-- Unit vector label: to the right of the orange arrow -->
+  <text x="45" y="195" fill="#f0883e" font-size="12" font-weight="bold" font-family="serif">v&#x0302; (unit)</text>
+
+  <!-- Component "3" label: below the horizontal dashed line -->
+  <text x="75" y="254" fill="#58a6ff" font-size="10" text-anchor="middle" opacity="0.6">3</text>
+
+  <!-- Component "4" label: to the right of the vertical dashed line -->
+  <text x="165" y="145" fill="#58a6ff" font-size="10" opacity="0.6">4</text>
+
+  <!-- Magnitude label: above and right of the arrowhead -->
+  <text x="160" y="28" fill="#999" font-size="11" font-style="italic" font-family="serif">||v|| = 5</text>
+
+  <!-- Legend -->
+  <g transform="translate(0, 270)">
+    <line x1="10" y1="0" x2="30" y2="0" stroke="#58a6ff" stroke-width="2.5" />
+    <text x="35" y="4" fill="#58a6ff" font-size="10" font-family="serif">v = &#x27E8;3, 4&#x27E9; &#x2014; a vector with magnitude 5</text>
+
+    <line x1="10" y1="16" x2="30" y2="16" stroke="#7ee787" stroke-width="2.5" />
+    <text x="35" y="20" fill="#7ee787" font-size="10" font-family="serif">w = &#x27E8;5, 2&#x27E9; &#x2014; a second vector for comparison</text>
+
+    <line x1="10" y1="32" x2="30" y2="32" stroke="#f0883e" stroke-width="2.5" />
+    <text x="35" y="36" fill="#f0883e" font-size="10" font-family="serif">v&#x0302; &#x2014; the unit vector of v (same direction, length 1)</text>
+  </g>
+</svg>
+</div>
+
+<style>
+  .v-blue-arrow { fill: #58a6ff; }
+  .v-green-arrow { fill: #7ee787; }
+  .v-orange-arrow { fill: #f0883e; }
+  :global([data-theme="light"]) .v-blue-arrow { fill: #0550ae; }
+  :global([data-theme="light"]) .v-green-arrow { fill: #1a7f2e; }
+  :global([data-theme="light"]) .v-orange-arrow { fill: #c05010; }
+  :global([data-theme="light"]) svg text[fill="#666"] { fill: #999; }
+  :global([data-theme="light"]) svg text[fill="#888"] { fill: #777; }
+  :global([data-theme="light"]) svg text[fill="#999"] { fill: #555; }
+  :global([data-theme="light"]) svg text[fill="#58a6ff"] { fill: #0550ae; }
+  :global([data-theme="light"]) svg text[fill="#7ee787"] { fill: #1a7f2e; }
+  :global([data-theme="light"]) svg text[fill="#f0883e"] { fill: #c05010; }
+  :global([data-theme="light"]) svg line[stroke="#58a6ff"] { stroke: #0550ae; }
+  :global([data-theme="light"]) svg line[stroke="#7ee787"] { stroke: #1a7f2e; }
+  :global([data-theme="light"]) svg line[stroke="#f0883e"] { stroke: #c05010; }
+  :global([data-theme="light"]) svg g[opacity="0.3"] line { stroke: #ccc; }
+  :global([data-theme="light"]) svg line[stroke="#888"] { stroke: #bbb; }
+  :global([data-theme="light"]) svg circle[fill="#58a6ff"] { fill: #0550ae; }
+</style>

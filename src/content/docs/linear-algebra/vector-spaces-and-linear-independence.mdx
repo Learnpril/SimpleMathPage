@@ -1,0 +1,125 @@
+---
+title: Vector Spaces and Linear Independence
+description: Learn what vector spaces are and how to determine if a set of vectors is linearly independent
+sidebar:
+  order: 9
+---
+
+import Quiz from "../../../components/Quiz.astro";
+import IndependentVecDiagram from "../../../components/IndependentVecDiagram.astro";
+import DependentVecDiagram from "../../../components/DependentVecDiagram.astro";
+
+## What You'll Learn
+
+Vector spaces and linear independence are foundational ideas in linear algebra. In this lesson you'll learn what makes a set of vectors "independent" (pointing in genuinely different directions) versus "dependent" (redundant).
+
+## The Concept
+
+### Vector Space
+
+A vector space is a set of objects (called vectors) that you can add together and multiply by scalars, while obeying certain rules (closure, associativity, distributivity, etc.).
+
+Examples of vector spaces:
+- All 2D vectors ($\mathbb{R}^2$)
+- All 3D vectors ($\mathbb{R}^3$)
+- All $m \times n$ matrices of a fixed size
+- All polynomials of degree $\leq n$
+
+### Linear Independence
+
+A set of vectors $\{\mathbf{v}_1, \mathbf{v}_2, \ldots, \mathbf{v}_k\}$ is linearly independent if the only way to get the zero vector as a linear combination is with all coefficients equal to zero:
+
+$$
+c_1 \mathbf{v}_1 + c_2 \mathbf{v}_2 + \cdots + c_k \mathbf{v}_k = \mathbf{0} \quad \text{only when} \quad c_1 = c_2 = \cdots = c_k = 0
+$$
+
+If there's a non-trivial combination (some $c_i \neq 0$) that gives zero, the vectors are linearly dependent.
+
+Think of it this way: linearly independent vectors point in "genuinely different directions." None of them can be written as a combination of the others.
+
+<IndependentVecDiagram />
+
+$\mathbf{v}_1 = \langle 1, 0 \rangle$ (blue) and $\mathbf{v}_2 = \langle 0, 1 \rangle$ (green) point in completely different directions. They're independent, and together they can reach any point in 2D (their span is all of $\mathbb{R}^2$).
+
+<DependentVecDiagram />
+
+$\mathbf{v}_1 = \langle 2, 4 \rangle$ (blue) and $\mathbf{v}_2 = \langle 1, 2 \rangle$ (orange) point in the same direction ($\mathbf{v}_1 = 2\mathbf{v}_2$). They're dependent because one is just a scaled copy of the other. No matter how you combine them, you can only reach points along that single line.
+
+## Worked Examples
+
+**Example 1: Independent Vectors (2D)**
+
+Are $\mathbf{v}_1 = \langle 1, 0 \rangle$ and $\mathbf{v}_2 = \langle 0, 1 \rangle$ linearly independent?
+
+Suppose $c_1 \langle 1, 0 \rangle + c_2 \langle 0, 1 \rangle = \langle 0, 0 \rangle$
+
+This gives $c_1 = 0$ and $c_2 = 0$. The only solution is the trivial one, so yes, they're independent. (These are the standard basis vectors.)
+
+**Example 2: Dependent Vectors**
+
+$\mathbf{v}_1 = \langle 2, 4 \rangle$, $\mathbf{v}_2 = \langle 1, 2 \rangle$
+
+Notice $\mathbf{v}_1 = 2\mathbf{v}_2$, or equivalently $1 \cdot \mathbf{v}_1 + (-2) \cdot \mathbf{v}_2 = \mathbf{0}$.
+
+We found a non-trivial combination ($c_1 = 1$, $c_2 = -2$), so they're dependent. One is just a scaled version of the other.
+
+**Example 3: Three Vectors in 2D**
+
+Any set of three or more vectors in $\mathbb{R}^2$ is always linearly dependent. You can't have more independent vectors than the dimension of the space. In 2D, the maximum number of independent vectors is 2.
+
+## Real-World Application
+
+Linear independence shows up everywhere:
+- Game development: choosing efficient basis vectors for animations, lighting, and data compression
+- Computer graphics: selecting independent directions for tangent space (normal mapping)
+- Machine learning: feature selection removes redundant (dependent) features to improve models
+- Physics: choosing independent directions for forces or constraints
+
+Example: When designing a character skeleton, you want the bone transformation axes to be independent. If two axes point in the same direction, you lose a degree of freedom and get weird deformations.
+
+:::note[You've Got This]
+Vector spaces give us a clean way to talk about "all possible linear combinations." Linear independence tells us whether a set of vectors adds new information or is redundant. Think of it as: can each vector reach somewhere the others can't? If yes, they're independent. This concept might feel abstract at first, but it becomes very intuitive once you start thinking in terms of "directions that can't be expressed using the others."
+:::
+
+## Quiz
+
+<Quiz
+  quizId="linear-algebra-vector-spaces-and-linear-independence"
+  questions={[
+    {
+      id: "q1",
+      text: "A set of vectors is linearly independent if:",
+      options: ["One vector can be written as a combination of the others", "They all point in the same direction", "The only way to get the zero vector is with all coefficients zero", "They form a square matrix"],
+      correctIndex: 2,
+      explanation: "That's the definition of linear independence.",
+    },
+    {
+      id: "q2",
+      text: "In $\\mathbb{R}^2$, any three vectors must be:",
+      options: ["Linearly independent", "Orthogonal", "Linearly dependent", "Unit vectors"],
+      correctIndex: 2,
+      explanation: "You can't have more than two independent directions in 2D.",
+    },
+    {
+      id: "q3",
+      text: "If $\\mathbf{v}_1 = 3\\mathbf{v}_2$, the two vectors are:",
+      options: ["Orthogonal", "Linearly independent", "Linearly dependent", "Unit vectors"],
+      correctIndex: 2,
+      explanation: "One is just a scaled version of the other, so they're dependent.",
+    },
+    {
+      id: "q4",
+      text: "The standard basis vectors $\\langle 1, 0 \\rangle$ and $\\langle 0, 1 \\rangle$ are:",
+      options: ["Linearly dependent", "Parallel", "The zero vector", "Linearly independent"],
+      correctIndex: 3,
+      explanation: "They point in completely different directions and neither is a scalar multiple of the other.",
+    },
+    {
+      id: "q5",
+      text: "Linear independence is important in game development for:",
+      options: ["Only drawing sprites", "Only collision detection", "Efficient representations and avoiding redundancy", "Only scoring systems"],
+      correctIndex: 2,
+      explanation: "It helps with clean animations, data compression, and choosing good basis vectors.",
+    },
+  ]}
+/>

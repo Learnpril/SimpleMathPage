@@ -1,0 +1,77 @@
+---
+/**
+ * IndependentVecDiagram — shows two linearly independent vectors
+ * v1=(1,0) blue, v2=(0,1) green — perpendicular, span all of R²
+ * Scale: 60px/unit, origin at (60, 220)
+ */
+---
+<div class="diagram-container">
+<svg viewBox="-10 -10 340 290" width="100%" style="max-width:380px" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Linearly independent vectors: v1 and v2 point in different directions">
+
+  {/* Title */}
+  <text x="165" y="12" fill="#888" font-size="16" font-family="serif" text-anchor="middle" font-weight="bold">Linearly Independent</text>
+
+  {/* Grid */}
+  <g stroke="#333" stroke-width="0.5" opacity="0.15">
+    {[0,60,120,180,240,300].map(x => <line x1={x} y1="20" x2={x} y2="230" />)}
+    {[40,100,160,220].map(y => <line x1="0" y1={y} x2="310" y2={y} />)}
+  </g>
+
+  {/* Axes: origin at (60, 220) */}
+  <line x1="0" y1="220" x2="315" y2="220" stroke="#666" stroke-width="1" class="iv-axis" />
+  <line x1="60" y1="235" x2="60" y2="25" stroke="#666" stroke-width="1" class="iv-axis" />
+
+  {/* Shaded span region */}
+  <rect x="60" y="160" width="60" height="60" fill="#d2a8ff" fill-opacity="0.08" stroke="#d2a8ff" stroke-width="1.2" stroke-dasharray="4,3" rx="3" class="iv-purple-shape" />
+
+  {/* v1 = (1,0): blue arrow → (120, 220) */}
+  <line x1="60" y1="220" x2="112" y2="220" stroke="#58a6ff" stroke-width="3" class="iv-blue-line" />
+  <polygon points="120,220 108,214 108,226" fill="#58a6ff" class="iv-blue-fill" />
+
+  {/* v2 = (0,1): green arrow → (60, 160) */}
+  <line x1="60" y1="220" x2="60" y2="168" stroke="#7ee787" stroke-width="3" class="iv-green-line" />
+  <polygon points="60,160 54,172 66,172" fill="#7ee787" class="iv-green-fill" />
+
+  {/* Labels — positioned clear of arrows */}
+  <text x="128" y="210" fill="#58a6ff" font-size="14" font-family="serif" class="iv-blue-text">v&#x2081; = &#x27E8;1, 0&#x27E9;</text>
+  <text x="70" y="152" fill="#7ee787" font-size="14" font-family="serif" class="iv-green-text">v&#x2082; = &#x27E8;0, 1&#x27E9;</text>
+
+  {/* Span label — inside the shaded region */}
+  <text x="145" y="175" fill="#d2a8ff" font-size="12" font-family="serif" class="iv-purple-text">span = all of R&#xB2;</text>
+
+  {/* Origin dot */}
+  <circle cx="60" cy="220" r="3.5" fill="#999" />
+
+  {/* Legend */}
+  <g transform="translate(30, 252)">
+    <line x1="0" y1="0" x2="18" y2="0" stroke="#58a6ff" stroke-width="3" class="iv-blue-line" />
+    <text x="24" y="4" fill="#888" font-size="12" font-family="serif">v&#x2081; (along x)</text>
+    <line x1="140" y1="0" x2="158" y2="0" stroke="#7ee787" stroke-width="3" class="iv-green-line" />
+    <text x="164" y="4" fill="#888" font-size="12" font-family="serif">v&#x2082; (along y)</text>
+  </g>
+</svg>
+</div>
+
+<style>
+  .iv-blue-line { stroke: #58a6ff; }
+  .iv-blue-fill { fill: #58a6ff; }
+  .iv-blue-text { fill: #58a6ff; }
+  .iv-green-line { stroke: #7ee787; }
+  .iv-green-fill { fill: #7ee787; }
+  .iv-green-text { fill: #7ee787; }
+  .iv-purple-shape { fill: #d2a8ff; stroke: #d2a8ff; }
+  .iv-purple-text { fill: #d2a8ff; }
+  .iv-axis { stroke: #666; }
+
+  :global([data-theme="light"]) .iv-blue-line { stroke: #0550ae; }
+  :global([data-theme="light"]) .iv-blue-fill { fill: #0550ae; }
+  :global([data-theme="light"]) .iv-blue-text { fill: #0550ae; }
+  :global([data-theme="light"]) .iv-green-line { stroke: #1a7f2e; }
+  :global([data-theme="light"]) .iv-green-fill { fill: #1a7f2e; }
+  :global([data-theme="light"]) .iv-green-text { fill: #1a7f2e; }
+  :global([data-theme="light"]) .iv-purple-shape { fill: #6b3fa0; stroke: #6b3fa0; }
+  :global([data-theme="light"]) .iv-purple-text { fill: #6b3fa0; }
+  :global([data-theme="light"]) .iv-axis { stroke: #999; }
+  :global([data-theme="light"]) svg text[fill="#888"] { fill: #555; }
+  :global([data-theme="light"]) svg g[opacity="0.15"] line { stroke: #ccc; }
+</style>

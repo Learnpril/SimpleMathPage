@@ -1,75 +1,78 @@
 ---
 /**
- * RowReductionDiagram — shows the steps of row reduction
- * from augmented matrix to row echelon form.
+ * RowReductionDiagram — step-by-step Gaussian elimination
+ * System: 2x + 4y = 8, 3x + 5y = 11
+ * Shows augmented matrix → REF → RREF with row operations labeled.
  */
-const w = 320;
-const h = 150;
 ---
+<div class="diagram-container">
+<svg viewBox="0 0 310 460" width="100%" style="max-width:340px" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Gaussian elimination: step-by-step row reduction to RREF">
 
-<figure class="rrd" role="img" aria-label="Row reduction: augmented matrix to row echelon form">
-  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
-    {/* Original augmented matrix */}
-    <text class="rrd-step" x="5" y="14" font-size="9">Start:</text>
-    <path d="M 10,22 L 5,22 L 5,72 L 10,72" fill="none" class="rrd-bracket" stroke-width="1.5" />
-    <path d="M 110,22 L 115,22 L 115,72 L 110,72" fill="none" class="rrd-bracket" stroke-width="1.5" />
-    <text class="rrd-coeff" x="15" y="40" font-size="12">2   1  |  5</text>
-    <text class="rrd-coeff" x="15" y="62" font-size="12">4   3  | 13</text>
-    <line x1="80" y1="24" x2="80" y2="70" class="rrd-divider" stroke-width="1" stroke-dasharray="3,2" />
+  {/* Step 1: Original */}
+  <text x="10" y="16" fill="#888" font-size="13" font-family="serif" font-weight="bold" class="rrd-label">Start</text>
+  <rect x="10" y="24" width="148" height="56" rx="5" fill="#58a6ff" fill-opacity="0.06" stroke="#555" stroke-width="1" class="rrd-box" />
+  <text x="22" y="50" fill="#ccc" font-size="18" font-family="monospace" class="rrd-r1">2  4  |  8</text>
+  <text x="22" y="72" fill="#f0883e" font-size="18" font-family="monospace" class="rrd-r2">3  5  | 11</text>
 
-    {/* Arrow */}
-    <text class="rrd-op" x="125" y="50" font-size="9">R2 - 2R1</text>
-    <line x1="125" y1="55" x2="165" y2="55" class="rrd-arrow" stroke-width="1" marker-end="url(#rrd-ah)" />
-    <defs>
-      <marker id="rrd-ah" markerWidth="6" markerHeight="4" refX="6" refY="2" orient="auto">
-        <polygon points="0 0, 6 2, 0 4" class="rrd-arrow-head" />
-      </marker>
-    </defs>
+  {/* Arrow 1 */}
+  <line x1="84" y1="84" x2="84" y2="112" stroke="#d2a8ff" stroke-width="1.5" class="rrd-arrow" />
+  <polygon points="79,108 84,118 89,108" fill="#d2a8ff" class="rrd-arrow-head" />
+  <text x="98" y="105" fill="#d2a8ff" font-size="12" font-family="serif" class="rrd-op">R1 ÷ 2</text>
 
-    {/* Reduced matrix */}
-    <text class="rrd-step" x="175" y="14" font-size="9">Result:</text>
-    <path d="M 175,22 L 170,22 L 170,72 L 175,72" fill="none" class="rrd-bracket" stroke-width="1.5" />
-    <path d="M 280,22 L 285,22 L 285,72 L 280,72" fill="none" class="rrd-bracket" stroke-width="1.5" />
-    <text class="rrd-coeff" x="180" y="40" font-size="12">2   1  |  5</text>
-    <text class="rrd-result" x="180" y="62" font-size="12">0   1  |  3</text>
-    <line x1="245" y1="24" x2="245" y2="70" class="rrd-divider" stroke-width="1" stroke-dasharray="3,2" />
+  {/* Step 2: After R1 ÷ 2 */}
+  <text x="10" y="132" fill="#888" font-size="13" font-family="serif" font-weight="bold" class="rrd-label">Scale R1</text>
+  <rect x="10" y="140" width="148" height="56" rx="5" fill="#58a6ff" fill-opacity="0.06" stroke="#555" stroke-width="1" class="rrd-box" />
+  <text x="22" y="166" fill="#ccc" font-size="18" font-family="monospace" class="rrd-r1">1  2  |  4</text>
+  <text x="22" y="188" fill="#f0883e" font-size="18" font-family="monospace" class="rrd-r2">3  5  | 11</text>
 
-    {/* Highlight the pivot */}
-    <rect x="178" y="48" width="14" height="18" rx="2" class="rrd-pivot-hl" fill-opacity="0.2" />
-    <rect x="210" y="48" width="14" height="18" rx="2" class="rrd-pivot-hl2" fill-opacity="0.2" />
+  {/* Arrow 2 */}
+  <line x1="84" y1="200" x2="84" y2="228" stroke="#d2a8ff" stroke-width="1.5" class="rrd-arrow" />
+  <polygon points="79,224 84,234 89,224" fill="#d2a8ff" class="rrd-arrow-head" />
+  <text x="98" y="221" fill="#d2a8ff" font-size="12" font-family="serif" class="rrd-op">R2 - 3·R1</text>
 
-    {/* Back-substitution note */}
-    <text class="rrd-note" x="160" y="100" font-size="9" text-anchor="middle">Row 2 gives y = 3, then back-substitute into Row 1:</text>
-    <text class="rrd-note" x="160" y="116" font-size="9" text-anchor="middle">2x + 3 = 5, so x = 1</text>
-    <text class="rrd-solution" x="160" y="138" font-size="11" text-anchor="middle">Solution: (1, 3)</text>
-  </svg>
-</figure>
+  {/* Step 3: After elimination */}
+  <text x="10" y="248" fill="#888" font-size="13" font-family="serif" font-weight="bold" class="rrd-label">Eliminate</text>
+  <rect x="10" y="256" width="160" height="56" rx="5" fill="#58a6ff" fill-opacity="0.06" stroke="#555" stroke-width="1" class="rrd-box" />
+  <text x="22" y="282" fill="#ccc" font-size="18" font-family="monospace" class="rrd-r1">1  2  |  4</text>
+  <text x="22" y="304" fill="#7ee787" font-size="18" font-family="monospace" class="rrd-r3">0 -1  | -1</text>
+  {/* Zero highlight */}
+  <rect x="18" y="290" width="16" height="18" rx="3" fill="#7ee787" fill-opacity="0.15" />
+
+  {/* Arrow 3 */}
+  <line x1="84" y1="316" x2="84" y2="344" stroke="#d2a8ff" stroke-width="1.5" class="rrd-arrow" />
+  <polygon points="79,340 84,350 89,340" fill="#d2a8ff" class="rrd-arrow-head" />
+  <text x="98" y="337" fill="#d2a8ff" font-size="12" font-family="serif" class="rrd-op">-R2, then R1 - 2·R2</text>
+
+  {/* Step 4: RREF */}
+  <text x="10" y="364" fill="#888" font-size="13" font-family="serif" font-weight="bold" class="rrd-label">RREF</text>
+  <rect x="10" y="372" width="148" height="56" rx="5" fill="#7ee787" fill-opacity="0.08" stroke="#555" stroke-width="1" class="rrd-box" />
+  <text x="22" y="398" fill="#7ee787" font-size="18" font-family="monospace" class="rrd-r3">1  0  |  2</text>
+  <text x="22" y="420" fill="#7ee787" font-size="18" font-family="monospace" class="rrd-r3">0  1  |  1</text>
+
+  {/* Solution readout */}
+  <text x="175" y="398" fill="#58a6ff" font-size="15" font-family="serif" font-weight="bold" class="rrd-sol">x = 2</text>
+  <text x="175" y="420" fill="#58a6ff" font-size="15" font-family="serif" font-weight="bold" class="rrd-sol">y = 1</text>
+</svg>
+</div>
 
 <style>
-  .rrd { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
-  .rrd svg { max-width:100%; height:auto; }
-  .rrd-bracket { stroke:#888; }
-  .rrd-coeff { fill:#888; font-family:'Courier New',monospace; }
-  .rrd-result { fill:#7ee787; font-family:'Courier New',monospace; font-weight:bold; }
-  .rrd-divider { stroke:#666; }
-  .rrd-step { fill:#aaa; font-family:'Libre Baskerville',Georgia,serif; }
-  .rrd-op { fill:#d2a8ff; font-family:'Libre Baskerville',Georgia,serif; }
-  .rrd-arrow { stroke:#d2a8ff; }
-  .rrd-arrow-head { fill:#d2a8ff; }
-  .rrd-note { fill:#aaa; font-family:'Libre Baskerville',Georgia,serif; }
-  .rrd-solution { fill:#58a6ff; font-family:'Libre Baskerville',Georgia,serif; font-weight:bold; }
-  .rrd-pivot-hl { fill:#f0883e; }
-  .rrd-pivot-hl2 { fill:#7ee787; }
-  :global([data-theme="light"]) .rrd-bracket { stroke:#666; }
-  :global([data-theme="light"]) .rrd-coeff { fill:#666; }
-  :global([data-theme="light"]) .rrd-result { fill:#116329; }
-  :global([data-theme="light"]) .rrd-divider { stroke:#999; }
-  :global([data-theme="light"]) .rrd-step { fill:#666; }
-  :global([data-theme="light"]) .rrd-op { fill:#6639ba; }
-  :global([data-theme="light"]) .rrd-arrow { stroke:#6639ba; }
-  :global([data-theme="light"]) .rrd-arrow-head { fill:#6639ba; }
-  :global([data-theme="light"]) .rrd-note { fill:#666; }
-  :global([data-theme="light"]) .rrd-solution { fill:#0550ae; }
-  :global([data-theme="light"]) .rrd-pivot-hl { fill:#b35900; }
-  :global([data-theme="light"]) .rrd-pivot-hl2 { fill:#116329; }
+  .rrd-label { fill: #888; }
+  .rrd-box { stroke: #555; }
+  .rrd-r1 { fill: #ccc; }
+  .rrd-r2 { fill: #f0883e; }
+  .rrd-r3 { fill: #7ee787; }
+  .rrd-arrow { stroke: #d2a8ff; }
+  .rrd-arrow-head { fill: #d2a8ff; }
+  .rrd-op { fill: #d2a8ff; }
+  .rrd-sol { fill: #58a6ff; }
+
+  :global([data-theme="light"]) .rrd-label { fill: #555; }
+  :global([data-theme="light"]) .rrd-box { stroke: #ccc; }
+  :global([data-theme="light"]) .rrd-r1 { fill: #444; }
+  :global([data-theme="light"]) .rrd-r2 { fill: #c05010; }
+  :global([data-theme="light"]) .rrd-r3 { fill: #1a7f2e; }
+  :global([data-theme="light"]) .rrd-arrow { stroke: #6b3fa0; }
+  :global([data-theme="light"]) .rrd-arrow-head { fill: #6b3fa0; }
+  :global([data-theme="light"]) .rrd-op { fill: #6b3fa0; }
+  :global([data-theme="light"]) .rrd-sol { fill: #0550ae; }
 </style>

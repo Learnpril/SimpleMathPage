@@ -1,0 +1,157 @@
+---
+title: Diagonalization
+description: Learn what it means to diagonalize a matrix and why diagonalization is extremely powerful
+sidebar:
+  order: 13
+---
+
+import Quiz from "../../../components/Quiz.astro";
+import DiagDecompDiagram from "../../../components/DiagDecompDiagram.astro";
+
+## What You'll Learn
+
+Diagonalization lets you simplify a complicated matrix into a much easier form. Once diagonalized, hard problems like computing $A^{100}$ become trivial.
+
+## The Concept
+
+Imagine you have a complicated matrix $A$ that mixes up all the components of a vector when you multiply. Diagonalization rewrites $A$ in a form where the transformation becomes simple: just scaling along independent directions.
+
+### What It Means
+
+A square matrix $A$ is diagonalizable if it can be written as:
+
+$$
+A = P D P^{-1}
+$$
+
+where:
+- $P$ is a matrix whose columns are the eigenvectors of $A$
+- $D$ is a diagonal matrix with the eigenvalues on the diagonal
+- $P^{-1}$ is the inverse of $P$
+
+Think of it as a three-step process for applying $A$ to any vector:
+1. $P^{-1}$: convert the vector into the eigenvector coordinate system
+2. $D$: scale each eigenvector direction independently (this is the easy part)
+3. $P$: convert back to the original coordinate system
+
+### How to Diagonalize a Matrix
+
+1. Find the eigenvalues by solving $\det(A - \lambda I) = 0$
+2. For each eigenvalue, find the corresponding eigenvector
+3. Check that you have enough linearly independent eigenvectors (one per eigenvalue)
+4. Form $P$ by placing the eigenvectors as columns
+5. Form $D$ by placing the eigenvalues on the diagonal (in the same order as the eigenvectors in $P$)
+6. Verify: $A = PDP^{-1}$
+
+### Why This Is Powerful
+
+If $A = PDP^{-1}$, then raising $A$ to a power becomes:
+
+$$
+A^n = P D^n P^{-1}
+$$
+
+Since $D$ is diagonal, $D^n$ is trivial: just raise each diagonal entry to the $n$th power. No repeated matrix multiplication needed. Computing $A^{100}$ takes the same effort as computing $A^2$.
+
+<DiagDecompDiagram />
+
+The diagram shows the decomposition: the original matrix $A$ breaks into three pieces. $P$ (eigenvector columns) converts to the eigenvector basis, $D$ (eigenvalues on diagonal) does simple scaling, and $P^{-1}$ converts back. Computing $A^n$ becomes easy because $D^n$ just raises each eigenvalue to the $n$th power.
+
+## Worked Examples
+
+**Example 1: Diagonalizing a 2x2 Matrix**
+
+$$
+A = \begin{bmatrix} 3 & 1 \\ 0 & 2 \end{bmatrix}
+$$
+
+Eigenvalues: $\lambda_1 = 3$, $\lambda_2 = 2$
+
+Eigenvectors: $\mathbf{v}_1 = \langle 1, 0 \rangle$ (for $\lambda = 3$), $\mathbf{v}_2 = \langle 1, -1 \rangle$ (for $\lambda = 2$)
+
+Form $P$ with eigenvectors as columns:
+
+$$
+P = \begin{bmatrix} 1 & 1 \\ 0 & -1 \end{bmatrix}, \quad D = \begin{bmatrix} 3 & 0 \\ 0 & 2 \end{bmatrix}
+$$
+
+Then $A = PDP^{-1}$.
+
+Here $P^{-1}$ converts a vector from the standard basis into the eigenvector basis (so $D$ can do its simple scaling), and $P$ converts back. For this example:
+
+$$
+P^{-1} = \begin{bmatrix} 1 & 1 \\ 0 & -1 \end{bmatrix}^{-1} = \begin{bmatrix} 1 & 1 \\ 0 & -1 \end{bmatrix}
+$$
+
+The process is: $P^{-1}$ translates into eigenvector coordinates, $D$ scales each eigenvector direction independently, then $P$ translates back to standard coordinates.
+
+**Example 2: Computing $A^5$**
+
+Instead of multiplying $A$ five times:
+
+$$
+D^5 = \begin{bmatrix} 3^5 & 0 \\ 0 & 2^5 \end{bmatrix} = \begin{bmatrix} 243 & 0 \\ 0 & 32 \end{bmatrix}
+$$
+
+Then $A^5 = P D^5 P^{-1}$. Two matrix multiplications instead of five.
+
+**Example 3: When Diagonalization Fails**
+
+If a matrix doesn't have enough linearly independent eigenvectors, it can't be diagonalized. For example, $\begin{bmatrix} 1 & 1 \\ 0 & 1 \end{bmatrix}$ has $\lambda = 1$ (repeated) but only one independent eigenvector. This is called a defective matrix.
+
+## Real-World Application
+
+Diagonalization shows up in:
+- Game development: efficiently computing repeated transformations (exponential decay, smooth rotation interpolation)
+- Physics: solving systems of differential equations (coupled oscillators, vibration modes)
+- Machine learning: PCA and SVD are closely related to diagonalization
+- Engineering: stability analysis, signal processing
+
+Example: In a game, if a character's velocity decays exponentially each frame, the engine can use diagonalization to compute the velocity after 1000 frames in one step instead of iterating 1000 times.
+
+:::note[You've Got This]
+Diagonalization is like finding the "natural coordinates" of a transformation. Once you express the matrix in its eigenvector basis, many difficult problems become trivial. Not every matrix can be diagonalized, but when it can, it's an incredibly powerful simplification. This lesson ties together eigenvalues, eigenvectors, and matrix multiplication. You're seeing how all these ideas work together.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="linear-algebra-diagonalization"
+  questions={[
+    {
+      id: "q1",
+      text: "A diagonalizable matrix $A$ can be written as:",
+      options: ["$A = P + D$", "$A = D^2$", "$A = PDP^{-1}$ where $D$ is diagonal", "$A = P^{-1}$"],
+      correctIndex: 2,
+      explanation: "This is the definition of diagonalization.",
+    },
+    {
+      id: "q2",
+      text: "The columns of $P$ in $A = PDP^{-1}$ are:",
+      options: ["The eigenvalues of $A$", "The rows of $A$", "The eigenvectors of $A$", "The identity matrix"],
+      correctIndex: 2,
+      explanation: "$P$ is formed from the eigenvectors as columns.",
+    },
+    {
+      id: "q3",
+      text: "If $A$ is diagonalizable, computing $A^{10}$ is easiest by:",
+      options: ["Multiplying $A$ by itself 10 times", "Computing $PD^{10}P^{-1}$", "Taking the determinant", "Using only the trace"],
+      correctIndex: 1,
+      explanation: "$D^{10}$ is trivial because you just raise each diagonal entry to the 10th power.",
+    },
+    {
+      id: "q4",
+      text: "A matrix that cannot be diagonalized is called:",
+      options: ["Invertible", "Orthogonal", "Symmetric", "Defective"],
+      correctIndex: 3,
+      explanation: "It doesn't have enough linearly independent eigenvectors.",
+    },
+    {
+      id: "q5",
+      text: "In game development, diagonalization helps with:",
+      options: ["Only drawing sprites", "Only texture loading", "Efficiently computing repeated transformations", "Only scoring"],
+      correctIndex: 2,
+      explanation: "It simplifies calculations involving matrix powers, like exponential decay over many frames.",
+    },
+  ]}
+/>

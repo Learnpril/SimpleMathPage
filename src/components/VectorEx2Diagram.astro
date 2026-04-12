@@ -1,0 +1,60 @@
+---
+/**
+ * VectorEx2Diagram — Example 2: 3D vector w = <1, 2, 2> with isometric axes
+ */
+---
+<div class="diagram-container">
+<svg viewBox="-20 -20 280 240" width="100%" style="max-width:380px" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="3D vector w = (1,2,2) on isometric axes">
+  <defs>
+    <marker id="ex2-ah" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6" fill="#7ee787" />
+    </marker>
+    <marker id="ex2-ax" markerWidth="6" markerHeight="5" refX="6" refY="2.5" orient="auto">
+      <path d="M0,0 L6,2.5 L0,5" fill="#888" />
+    </marker>
+  </defs>
+
+  <!-- Isometric axes from origin at (120, 160) -->
+  <!-- x-axis: goes right and slightly down -->
+  <line x1="120" y1="160" x2="240" y2="195" stroke="#888" stroke-width="1.2" marker-end="url(#ex2-ax)" />
+  <text x="245" y="200" fill="#888" font-size="11" font-family="serif">x</text>
+
+  <!-- y-axis: goes left and slightly down -->
+  <line x1="120" y1="160" x2="10" y2="195" stroke="#888" stroke-width="1.2" marker-end="url(#ex2-ax)" />
+  <text x="0" y="200" fill="#888" font-size="11" font-family="serif">y</text>
+
+  <!-- z-axis: goes straight up -->
+  <line x1="120" y1="160" x2="120" y2="10" stroke="#888" stroke-width="1.2" marker-end="url(#ex2-ax)" />
+  <text x="125" y="5" fill="#888" font-size="11" font-family="serif">z</text>
+
+  <!-- Component projections (dashed) -->
+  <!-- x component: 1 unit right -->
+  <line x1="120" y1="160" x2="150" y2="169" stroke="#f0883e" stroke-width="1" stroke-dasharray="4 3" opacity="0.5" />
+  <!-- y component: 2 units left -->
+  <line x1="120" y1="160" x2="76" y2="174" stroke="#d2a8ff" stroke-width="1" stroke-dasharray="4 3" opacity="0.5" />
+  <!-- z component: 2 units up -->
+  <line x1="120" y1="160" x2="120" y2="85" stroke="#58a6ff" stroke-width="1" stroke-dasharray="4 3" opacity="0.5" />
+
+  <!-- The actual 3D vector: combine x=1, y=2, z=2 in isometric -->
+  <!-- endpoint: origin + 1*x_dir + 2*y_dir + 2*z_dir -->
+  <!-- x_dir = (30, 9), y_dir = (-22, 7), z_dir = (0, -37.5) -->
+  <!-- endpoint = (120+30-44, 160+9+14-75) = (106, 108) -->
+  <line x1="120" y1="160" x2="106" y2="33" stroke="#7ee787" stroke-width="2.5" marker-end="url(#ex2-ah)" />
+
+  <!-- Labels -->
+  <text x="80" y="28" fill="#7ee787" font-size="12" font-weight="bold" font-family="serif">w = &#x27E8;1, 2, 2&#x27E9;</text>
+  <text x="140" y="100" fill="#999" font-size="11" font-style="italic" font-family="serif">||w|| = 3</text>
+
+  <!-- Component labels -->
+  <text x="140" y="162" fill="#f0883e" font-size="9" font-family="serif">x = 1</text>
+  <text x="60" y="180" fill="#d2a8ff" font-size="9" font-family="serif">y = 2</text>
+  <text x="125" y="120" fill="#58a6ff" font-size="9" font-family="serif">z = 2</text>
+
+  <!-- Origin dot -->
+  <circle cx="120" cy="160" r="3" fill="#7ee787" />
+</svg>
+</div>
+
+<style>
+  :global([data-theme="light"]) svg line[stroke="#888"] { stroke: #bbb; }
+</style>

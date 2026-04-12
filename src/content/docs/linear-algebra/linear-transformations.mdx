@@ -1,0 +1,157 @@
+---
+title: Linear Transformations
+description: Learn what linear transformations are, how they are represented by matrices, and their key properties
+sidebar:
+  order: 11
+---
+
+import Quiz from "../../../components/Quiz.astro";
+import LinTransformsDiagram from "../../../components/LinTransformsDiagram.astro";
+
+## What You'll Learn
+
+A linear transformation is a function that maps vectors to vectors while preserving the structure of the space. In this lesson you'll see how matrices naturally represent these transformations and why that connection is so powerful.
+
+## The Concept
+
+A linear transformation $T$ takes vectors as input and produces vectors as output, while satisfying two properties:
+
+$$
+T(\mathbf{u} + \mathbf{v}) = T(\mathbf{u}) + T(\mathbf{v})
+$$
+
+$$
+T(c\mathbf{u}) = c \, T(\mathbf{u})
+$$
+
+These rules mean the transformation "plays nicely" with addition and scaling.
+
+### Matrix Representation
+
+Every linear transformation from $\mathbb{R}^n$ to $\mathbb{R}^m$ can be represented by an $m \times n$ matrix $A$:
+
+$$
+T(\mathbf{x}) = A\mathbf{x}
+$$
+
+Common linear transformations:
+
+Rotation by $\theta$:
+
+$$
+\begin{bmatrix} \cos\theta & -\sin\theta \\ \sin\theta & \cos\theta \end{bmatrix}
+$$
+
+Scaling by $s_x$ and $s_y$:
+
+$$
+\begin{bmatrix} s_x & 0 \\ 0 & s_y \end{bmatrix}
+$$
+
+Projection onto x-axis:
+
+$$
+\begin{bmatrix} 1 & 0 \\ 0 & 0 \end{bmatrix}
+$$
+
+Reflection across x-axis:
+
+$$
+\begin{bmatrix} 1 & 0 \\ 0 & -1 \end{bmatrix}
+$$
+
+Not all transformations are linear. Translation (shifting by a constant vector) is not linear because $T(\mathbf{0}) \neq \mathbf{0}$.
+
+<LinTransformsDiagram />
+
+The diagram shows three transformations applied to the same L-shape: rotation turns it, scaling stretches it, and projection onto the x-axis flattens it down to a line. Each is defined by a single matrix.
+
+## Worked Examples
+
+**Example 1: Rotation by 90°**
+
+$$
+R = \begin{bmatrix} 0 & -1 \\ 1 & 0 \end{bmatrix}
+$$
+
+Apply to $\langle 3, 1 \rangle$:
+
+$$
+\begin{bmatrix} 0 & -1 \\ 1 & 0 \end{bmatrix} \begin{bmatrix} 3 \\ 1 \end{bmatrix} = \begin{bmatrix} -1 \\ 3 \end{bmatrix}
+$$
+
+The point $(3, 1)$ moves to $(-1, 3)$, a quarter turn counterclockwise.
+
+**Example 2: Scaling**
+
+$$
+S = \begin{bmatrix} 2 & 0 \\ 0 & 0.5 \end{bmatrix}
+$$
+
+Apply to $\langle 3, 4 \rangle$: result is $\langle 6, 2 \rangle$. The x-component doubles, the y-component halves.
+
+**Example 3: Projection onto x-axis**
+
+$$
+P = \begin{bmatrix} 1 & 0 \\ 0 & 0 \end{bmatrix}
+$$
+
+Apply to $\langle 3, 4 \rangle$: result is $\langle 3, 0 \rangle$. The y-component is completely removed.
+
+## Real-World Application
+
+Linear transformations are everywhere in games and graphics:
+- Every time you rotate, scale, or reflect a 3D model, you're applying a linear transformation via a matrix
+- Camera systems use view matrices (linear transformations)
+- Animation blending involves linear combinations of transformations
+- Lighting calculations transform normal vectors
+- Physics engines transform force vectors between coordinate systems
+
+Example: When your character turns left, the game engine applies a rotation matrix to every vertex of the character model. When the camera zooms in, it applies a scaling transformation. These happen every frame, thousands of times per second.
+
+:::note[You've Got This]
+The beauty of linear algebra is that once you understand matrices represent linear transformations, everything connects. Rotation, scaling, projection, reflection: they're all just matrix multiplications. This idea bridges the abstract math with the visual world of 3D graphics. Practice identifying whether a transformation is linear and what matrix would represent it.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="linear-algebra-linear-transformations"
+  questions={[
+    {
+      id: "q1",
+      text: "A linear transformation must satisfy:",
+      options: ["Only the addition property", "$T(\\mathbf{0}) = \\mathbf{1}$", "$T(\\mathbf{u} + \\mathbf{v}) = T(\\mathbf{u}) + T(\\mathbf{v})$ and $T(c\\mathbf{u}) = cT(\\mathbf{u})$", "Only the scalar property"],
+      correctIndex: 2,
+      explanation: "Both properties together define linearity.",
+    },
+    {
+      id: "q2",
+      text: "Every linear transformation from $\\mathbb{R}^n$ to $\\mathbb{R}^m$ can be represented by:",
+      options: ["A single vector", "A scalar", "A determinant", "An $m \\times n$ matrix"],
+      correctIndex: 3,
+      explanation: "Matrix multiplication gives the transformation: $T(\\mathbf{x}) = A\\mathbf{x}$.",
+    },
+    {
+      id: "q3",
+      text: "Which of the following is NOT a linear transformation?",
+      options: ["Rotation", "Scaling", "Translation (shifting by a constant)", "Projection onto a line"],
+      correctIndex: 2,
+      explanation: "Translation doesn't satisfy $T(\\mathbf{0}) = \\mathbf{0}$.",
+    },
+    {
+      id: "q4",
+      text: "If $P = \\begin{bmatrix} 1 & 0 \\\\ 0 & 0 \\end{bmatrix}$, what is $P \\langle 5, 3 \\rangle$?",
+      options: ["$\\langle 5, 3 \\rangle$", "$\\langle 0, 3 \\rangle$", "$\\langle 5, 0 \\rangle$", "$\\langle 0, 0 \\rangle$"],
+      correctIndex: 2,
+      explanation: "The projection onto the x-axis keeps the x-component (5) and removes the y-component, giving $\\langle 5, 0 \\rangle$.",
+    },
+    {
+      id: "q5",
+      text: "Matrix representation of transformations is useful because:",
+      options: ["It only works for 2D", "It requires no computation", "Matrix multiplication is efficient and composable", "It makes everything nonlinear"],
+      correctIndex: 2,
+      explanation: "You can chain many transformations by multiplying matrices together.",
+    },
+  ]}
+/>

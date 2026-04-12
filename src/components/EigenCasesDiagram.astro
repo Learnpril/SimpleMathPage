@@ -1,0 +1,112 @@
+---
+/**
+ * EigenCasesDiagram — shows three eigenvalue cases side by side
+ * Left: λ>1 (stretch), Center: 0<λ<1 (compress), Right: λ<0 (flip)
+ * Each panel shows before (dashed) and after (solid) on a number line
+ */
+---
+<div class="diagram-container" style="overflow-x:auto">
+<svg viewBox="-10 -10 520 200" width="100%" style="max-width:540px" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Three eigenvalue cases: stretch, compress, and flip">
+
+  {/* === Panel 1: λ > 1 (stretch) === */}
+  <g transform="translate(0,0)">
+    <text x="80" y="14" fill="#888" font-size="14" font-family="serif" text-anchor="middle" font-weight="bold">&#x03BB; = 2 (stretch)</text>
+
+    {/* Axis */}
+    <line x1="10" y1="70" x2="160" y2="70" stroke="#666" stroke-width="1" class="ec-axis" />
+    <circle cx="30" cy="70" r="2.5" fill="#999" />
+
+    {/* Before: length 1 unit = 50px */}
+    <line x1="30" y1="70" x2="74" y2="70" stroke="#58a6ff" stroke-width="2.5" stroke-dasharray="5,3" opacity="0.5" class="ec-blue-line" />
+    <polygon points="80,70 72,66 72,74" fill="#58a6ff" opacity="0.5" class="ec-blue-fill" />
+    <text x="55" y="60" fill="#58a6ff" font-size="11" font-family="serif" text-anchor="middle" class="ec-blue-text">before</text>
+
+    {/* After: length 2 units = 100px */}
+    <line x1="30" y1="90" x2="124" y2="90" stroke="#7ee787" stroke-width="3" class="ec-green-line" />
+    <polygon points="130,90 122,86 122,94" fill="#7ee787" class="ec-green-fill" />
+    <text x="80" y="110" fill="#7ee787" font-size="11" font-family="serif" text-anchor="middle" class="ec-green-text">after (2x longer)</text>
+  </g>
+
+  {/* === Panel 2: 0 < λ < 1 (compress) === */}
+  <g transform="translate(175,0)">
+    <text x="80" y="14" fill="#888" font-size="14" font-family="serif" text-anchor="middle" font-weight="bold">&#x03BB; = 0.5 (compress)</text>
+
+    {/* Axis */}
+    <line x1="10" y1="70" x2="160" y2="70" stroke="#666" stroke-width="1" class="ec-axis" />
+    <circle cx="30" cy="70" r="2.5" fill="#999" />
+
+    {/* Before: length 1 unit = 50px */}
+    <line x1="30" y1="70" x2="74" y2="70" stroke="#58a6ff" stroke-width="2.5" stroke-dasharray="5,3" opacity="0.5" class="ec-blue-line" />
+    <polygon points="80,70 72,66 72,74" fill="#58a6ff" opacity="0.5" class="ec-blue-fill" />
+    <text x="55" y="60" fill="#58a6ff" font-size="11" font-family="serif" text-anchor="middle" class="ec-blue-text">before</text>
+
+    {/* After: length 0.5 units = 25px */}
+    <line x1="30" y1="90" x2="49" y2="90" stroke="#f0883e" stroke-width="3" class="ec-orange-line" />
+    <polygon points="55,90 47,86 47,94" fill="#f0883e" class="ec-orange-fill" />
+    <text x="55" y="110" fill="#f0883e" font-size="11" font-family="serif" text-anchor="middle" class="ec-orange-text">after (half length)</text>
+  </g>
+
+  {/* === Panel 3: λ < 0 (flip) === */}
+  <g transform="translate(350,0)">
+    <text x="80" y="14" fill="#888" font-size="14" font-family="serif" text-anchor="middle" font-weight="bold">&#x03BB; = -1 (flip)</text>
+
+    {/* Axis — centered so we can show negative direction */}
+    <line x1="10" y1="70" x2="160" y2="70" stroke="#666" stroke-width="1" class="ec-axis" />
+    <circle cx="80" cy="70" r="2.5" fill="#999" />
+    <text x="80" y="85" fill="#888" font-size="9" font-family="serif" text-anchor="middle">0</text>
+
+    {/* Before: pointing right, length 50px */}
+    <line x1="80" y1="55" x2="124" y2="55" stroke="#58a6ff" stroke-width="2.5" stroke-dasharray="5,3" opacity="0.5" class="ec-blue-line" />
+    <polygon points="130,55 122,51 122,59" fill="#58a6ff" opacity="0.5" class="ec-blue-fill" />
+    <text x="105" y="47" fill="#58a6ff" font-size="11" font-family="serif" text-anchor="middle" class="ec-blue-text">before</text>
+
+    {/* After: pointing left (flipped), same length */}
+    <line x1="80" y1="95" x2="36" y2="95" stroke="#d2a8ff" stroke-width="3" class="ec-purple-line" />
+    <polygon points="30,95 38,91 38,99" fill="#d2a8ff" class="ec-purple-fill" />
+    <text x="55" y="115" fill="#d2a8ff" font-size="11" font-family="serif" text-anchor="middle" class="ec-purple-text">after (flipped)</text>
+  </g>
+
+  {/* Legend */}
+  <g transform="translate(60, 145)">
+    <line x1="0" y1="0" x2="18" y2="0" stroke="#58a6ff" stroke-width="2.5" stroke-dasharray="5,3" class="ec-blue-line" />
+    <text x="24" y="4" fill="#888" font-size="12" font-family="serif">before</text>
+    <line x1="90" y1="0" x2="108" y2="0" stroke="#7ee787" stroke-width="3" class="ec-green-line" />
+    <text x="114" y="4" fill="#888" font-size="12" font-family="serif">stretched</text>
+    <line x1="195" y1="0" x2="213" y2="0" stroke="#f0883e" stroke-width="3" class="ec-orange-line" />
+    <text x="219" y="4" fill="#888" font-size="12" font-family="serif">compressed</text>
+    <line x1="315" y1="0" x2="333" y2="0" stroke="#d2a8ff" stroke-width="3" class="ec-purple-line" />
+    <text x="339" y="4" fill="#888" font-size="12" font-family="serif">flipped</text>
+  </g>
+</svg>
+</div>
+
+<style>
+  .ec-blue-line { stroke: #58a6ff; }
+  .ec-blue-fill { fill: #58a6ff; }
+  .ec-blue-text { fill: #58a6ff; }
+  .ec-green-line { stroke: #7ee787; }
+  .ec-green-fill { fill: #7ee787; }
+  .ec-green-text { fill: #7ee787; }
+  .ec-orange-line { stroke: #f0883e; }
+  .ec-orange-fill { fill: #f0883e; }
+  .ec-orange-text { fill: #f0883e; }
+  .ec-purple-line { stroke: #d2a8ff; }
+  .ec-purple-fill { fill: #d2a8ff; }
+  .ec-purple-text { fill: #d2a8ff; }
+  .ec-axis { stroke: #666; }
+
+  :global([data-theme="light"]) .ec-blue-line { stroke: #0550ae; }
+  :global([data-theme="light"]) .ec-blue-fill { fill: #0550ae; }
+  :global([data-theme="light"]) .ec-blue-text { fill: #0550ae; }
+  :global([data-theme="light"]) .ec-green-line { stroke: #1a7f2e; }
+  :global([data-theme="light"]) .ec-green-fill { fill: #1a7f2e; }
+  :global([data-theme="light"]) .ec-green-text { fill: #1a7f2e; }
+  :global([data-theme="light"]) .ec-orange-line { stroke: #c05010; }
+  :global([data-theme="light"]) .ec-orange-fill { fill: #c05010; }
+  :global([data-theme="light"]) .ec-orange-text { fill: #c05010; }
+  :global([data-theme="light"]) .ec-purple-line { stroke: #6b3fa0; }
+  :global([data-theme="light"]) .ec-purple-fill { fill: #6b3fa0; }
+  :global([data-theme="light"]) .ec-purple-text { fill: #6b3fa0; }
+  :global([data-theme="light"]) .ec-axis { stroke: #999; }
+  :global([data-theme="light"]) svg text[fill="#888"] { fill: #555; }
+</style>

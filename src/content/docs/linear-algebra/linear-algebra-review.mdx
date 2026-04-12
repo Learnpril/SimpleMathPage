@@ -1,0 +1,257 @@
+---
+title: Linear Algebra Review
+description: Comprehensive review of all major topics in Linear Algebra with mixed practice problems
+sidebar:
+  order: 15
+---
+
+import Quiz from "../../../components/Quiz.astro";
+
+## What You'll Learn
+
+This review covers everything from the Linear Algebra section. Use it to test yourself across all topics before moving on.
+
+## Key Concepts Summary
+
+### Vectors and Operations
+- Vectors: $\langle a, b, c \rangle$ with magnitude $\lVert \mathbf{v} \rVert = \sqrt{a^2 + b^2 + c^2}$
+- Dot product: $\mathbf{u} \cdot \mathbf{v} = u_1v_1 + u_2v_2 + u_3v_3$ (measures alignment, used for projection and lighting)
+- Cross product: $\mathbf{u} \times \mathbf{v}$ gives a perpendicular vector (used for normals and area)
+
+### Matrices
+- Addition/subtraction require matching dimensions
+- Multiplication: row-by-column dot products, result is $m \times p$ from $(m \times n)(n \times p)$
+- Not commutative: $AB \neq BA$ in general
+- Determinant: $ad - bc$ for 2x2, tells you invertibility and area scaling
+- Inverse: $A^{-1}$ exists only when $\det(A) \neq 0$
+
+### Systems and Gaussian Elimination
+- Write as augmented matrix, apply row operations
+- REF: staircase of zeros below pivots
+- RREF: pivots are 1, zeros above and below
+- Three outcomes: unique solution, no solution, infinitely many
+
+### Vector Spaces and Independence
+- Linearly independent: no vector is a combination of the others
+- Basis: independent set that spans the space
+- Dimension: number of vectors in any basis
+
+### Eigenvalues, Eigenvectors, and Diagonalization
+- $A\mathbf{v} = \lambda\mathbf{v}$: eigenvectors are scaled, not rotated
+- Find eigenvalues via $\det(A - \lambda I) = 0$
+- Diagonalization: $A = PDP^{-1}$ makes $A^n = PD^nP^{-1}$ trivial
+
+### Applications
+- MVP pipeline: Projection $\times$ View $\times$ Model $\times$ vertex
+- Lighting: brightness $= \mathbf{n} \cdot \mathbf{L}$
+- Collision: projection removes wall-normal component for sliding
+
+## Worked Review Examples
+
+**Example 1: Vector Projection**
+
+Project $\mathbf{u} = \langle 5, 12 \rangle$ onto $\mathbf{v} = \langle 3, 4 \rangle$.
+
+$\mathbf{u} \cdot \mathbf{v} = (5)(3) + (12)(4) = 15 + 48 = 63$
+
+$\lVert \mathbf{v} \rVert^2 = 9 + 16 = 25$
+
+$$
+\text{proj}_{\mathbf{v}} \mathbf{u} = \frac{63}{25} \langle 3, 4 \rangle = \langle 7.56, 10.08 \rangle
+$$
+
+**Example 2: Matrix Multiplication**
+
+$$
+\begin{bmatrix} 2 & 0 \\ 0 & 3 \end{bmatrix} \begin{bmatrix} 0 & -1 \\ 1 & 0 \end{bmatrix} = \begin{bmatrix} 0 & -2 \\ 3 & 0 \end{bmatrix}
+$$
+
+This scales by (2, 3) then rotates 90°. Order matters: rotating first then scaling gives a different result.
+
+**Example 3: 3x3 Gaussian Elimination**
+
+$$
+\begin{cases} x + y + z = 6 \\ 2x + 3y + z = 14 \\ x - y + 2z = 2 \end{cases}
+$$
+
+After row reduction: $x = 4$, $y = 2$, $z = 0$.
+
+**Example 4: Eigenvalues**
+
+$$
+A = \begin{bmatrix} 4 & 1 \\ 2 & 3 \end{bmatrix}
+$$
+
+$\det(A - \lambda I) = (4-\lambda)(3-\lambda) - 2 = \lambda^2 - 7\lambda + 10 = (\lambda - 5)(\lambda - 2) = 0$
+
+Eigenvalues: $\lambda_1 = 5$, $\lambda_2 = 2$.
+
+**Example 5: Determinant and Invertibility**
+
+$$
+A = \begin{bmatrix} 6 & 3 \\ 4 & 2 \end{bmatrix}
+$$
+
+$\det(A) = (6)(2) - (3)(4) = 12 - 12 = 0$
+
+$A$ is singular. No inverse exists. The rows are linearly dependent (row 1 = 1.5 $\times$ row 2).
+
+## Study Tips
+
+- Practice matrix multiplication and Gaussian elimination until they feel automatic
+- Visualize vectors and transformations whenever possible
+- The key insight: matrices represent linear transformations
+- Connect concepts: dot product leads to projection leads to lighting; eigenvalues lead to diagonalization leads to efficient computation
+- When stuck on a problem, ask: "What does this look like geometrically?"
+
+:::note[You've Got This]
+You've completed a full Linear Algebra course, from basic vectors all the way to diagonalization and real 3D graphics applications. This material powers modern games, machine learning, physics engines, and computer graphics. Many professional developers use these exact tools every day. Take pride in how far you've come.
+:::
+
+## Quiz (20 Questions)
+
+<Quiz
+  quizId="linear-algebra-review"
+  questions={[
+    {
+      id: "q1",
+      text: "The dot product $\\mathbf{u} \\cdot \\mathbf{v}$ equals zero when the vectors are:",
+      options: ["Parallel", "Perpendicular", "The same length", "In opposite directions"],
+      correctIndex: 1,
+      explanation: "$\\cos 90° = 0$, so perpendicular vectors have zero dot product.",
+    },
+    {
+      id: "q2",
+      text: "Matrix multiplication is:",
+      options: ["Always commutative", "Only possible with 2x2 matrices", "Not commutative in general ($AB \\neq BA$)", "The same as vector addition"],
+      correctIndex: 2,
+      explanation: "Order matters. Rotating then scaling differs from scaling then rotating.",
+    },
+    {
+      id: "q3",
+      text: "Gaussian elimination is used to:",
+      options: ["Compute determinants only", "Find eigenvalues", "Solve systems of linear equations", "Rotate vectors"],
+      correctIndex: 2,
+      explanation: "It systematically reduces augmented matrices to find solutions.",
+    },
+    {
+      id: "q4",
+      text: "A set of vectors is a basis if it is linearly independent and:",
+      options: ["Has exactly two vectors", "Is orthogonal", "Has zero determinant", "Spans the entire space"],
+      correctIndex: 3,
+      explanation: "Both independence and spanning are required.",
+    },
+    {
+      id: "q5",
+      text: "The MVP pipeline transforms vertices using:",
+      options: ["Model $\\times$ Projection $\\times$ View", "Only the model matrix", "Projection $\\times$ View $\\times$ Model", "Only the projection matrix"],
+      correctIndex: 2,
+      explanation: "This is the standard order for transforming vertices to screen space.",
+    },
+    {
+      id: "q6",
+      text: "If $\\det(A) = 0$, then matrix $A$:",
+      options: ["Is invertible", "Is the identity matrix", "Is singular and has no inverse", "Has infinite eigenvalues"],
+      correctIndex: 2,
+      explanation: "Singular matrices collapse a dimension and cannot be inverted.",
+    },
+    {
+      id: "q7",
+      text: "An eigenvector $\\mathbf{v}$ of matrix $A$ satisfies:",
+      options: ["$A\\mathbf{v} = \\mathbf{v}$", "$\\mathbf{v} = \\mathbf{0}$", "$A\\mathbf{v} = \\lambda I$", "$A\\mathbf{v} = \\lambda \\mathbf{v}$"],
+      correctIndex: 3,
+      explanation: "The transformation only scales the eigenvector by $\\lambda$.",
+    },
+    {
+      id: "q8",
+      text: "The cross product $\\mathbf{u} \\times \\mathbf{v}$ produces:",
+      options: ["A scalar", "A vector parallel to both inputs", "A vector perpendicular to both inputs", "The dot product"],
+      correctIndex: 2,
+      explanation: "It's used for surface normals and computing areas.",
+    },
+    {
+      id: "q9",
+      text: "In game lighting, surface brightness is determined by:",
+      options: ["Object position", "Camera angle", "The dot product between normal and light direction", "Texture color alone"],
+      correctIndex: 2,
+      explanation: "This is the core of Lambertian (diffuse) shading.",
+    },
+    {
+      id: "q10",
+      text: "Diagonalization $A = PDP^{-1}$ is useful because:",
+      options: ["It makes the matrix larger", "It only works for 2x2 matrices", "It eliminates all eigenvalues", "$A^n = PD^nP^{-1}$ makes powers easy"],
+      correctIndex: 3,
+      explanation: "$D^n$ is trivial since you just raise each diagonal entry to the $n$th power.",
+    },
+    {
+      id: "q11",
+      text: "Linear independence means:",
+      options: ["All vectors point the same way", "The set has exactly 3 vectors", "No vector is a linear combination of the others", "The determinant is 1"],
+      correctIndex: 2,
+      explanation: "Each vector adds a genuinely new direction.",
+    },
+    {
+      id: "q12",
+      text: "The dimension of $\\mathbb{R}^3$ is:",
+      options: ["2", "Infinite", "1", "3"],
+      correctIndex: 3,
+      explanation: "It requires 3 linearly independent vectors as a basis.",
+    },
+    {
+      id: "q13",
+      text: "Translation is not a linear transformation unless we use:",
+      options: ["Only 2D vectors", "Only rotation matrices", "Homogeneous coordinates", "Scalar multiplication"],
+      correctIndex: 2,
+      explanation: "Homogeneous coordinates add an extra dimension to encode translation in a matrix.",
+    },
+    {
+      id: "q14",
+      text: "The view matrix represents:",
+      options: ["The object's position", "The screen projection", "Lighting information", "The camera's position and orientation"],
+      correctIndex: 3,
+      explanation: "It transforms world space into camera space.",
+    },
+    {
+      id: "q15",
+      text: "If two vectors are linearly dependent, one can be written as:",
+      options: ["Their cross product", "Their sum", "A scalar multiple of the other", "Their difference"],
+      correctIndex: 2,
+      explanation: "They point in the same or opposite direction.",
+    },
+    {
+      id: "q16",
+      text: "The projection matrix is responsible for:",
+      options: ["Moving objects", "Rotating the camera", "Converting 3D to 2D screen space", "Applying textures"],
+      correctIndex: 2,
+      explanation: "It handles perspective or orthographic projection.",
+    },
+    {
+      id: "q17",
+      text: "Eigenvalues tell us:",
+      options: ["The position of the object", "The color of the surface", "How much a transformation scales along eigenvector directions", "The frame rate"],
+      correctIndex: 2,
+      explanation: "They are the scaling factors along the special directions.",
+    },
+    {
+      id: "q18",
+      text: "For a 2x2 matrix, the determinant $ad - bc$ tells you:",
+      options: ["Only the trace", "Whether the matrix is invertible and the area scaling factor", "The eigenvalues directly", "The number of rows"],
+      correctIndex: 1,
+      explanation: "If it's zero, no inverse exists. Its absolute value is the area scaling factor.",
+    },
+    {
+      id: "q19",
+      text: "A major advantage of using matrices in games is:",
+      options: ["They require no computation", "They only work in 2D", "They can be efficiently multiplied on the GPU", "They make physics impossible"],
+      correctIndex: 2,
+      explanation: "Modern GPUs are literally designed for fast matrix multiplication.",
+    },
+    {
+      id: "q20",
+      text: "The most important big idea in linear algebra for graphics is:",
+      options: ["Vectors are only for positions", "Determinants are rarely needed", "Eigenvalues are only theoretical", "Matrices represent linear transformations"],
+      correctIndex: 3,
+      explanation: "This connects abstract math directly to 3D rendering and game mechanics.",
+    },
+  ]}
+/>

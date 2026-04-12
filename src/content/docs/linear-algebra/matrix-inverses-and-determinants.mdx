@@ -1,0 +1,160 @@
+---
+title: Matrix Inverses and Determinants
+description: Learn how to find the inverse of a matrix and what the determinant tells us about a matrix
+sidebar:
+  order: 8
+---
+
+import Quiz from "../../../components/Quiz.astro";
+import DetAreaDiagram from "../../../components/DetAreaDiagram.astro";
+import InverseUndoDiagram from "../../../components/InverseUndoDiagram.astro";
+
+## What You'll Learn
+
+The inverse lets you "undo" a matrix transformation, and the determinant tells you whether that's even possible. In this lesson you'll learn how to compute both for $2 \times 2$ matrices and understand what they mean geometrically.
+
+## The Concept
+
+### Matrix Inverse
+
+The inverse of a matrix $A$ (written $A^{-1}$) satisfies:
+
+$$
+A \cdot A^{-1} = A^{-1} \cdot A = I
+$$
+
+where $I$ is the identity matrix (1s on the diagonal, 0s elsewhere). Only square matrices can have inverses, and not all of them do.
+
+### Determinant
+
+The determinant of a $2 \times 2$ matrix $\begin{bmatrix} a & b \\ c & d \end{bmatrix}$ is:
+
+$$
+\det(A) = ad - bc
+$$
+
+What it tells you:
+- $\det(A) \neq 0$: $A$ is invertible
+- $\det(A) = 0$: $A$ is singular (no inverse exists)
+- The absolute value $\lvert \det(A) \rvert$ is the area scaling factor of the transformation
+- A negative determinant means the transformation flips orientation
+
+### 2x2 Inverse Formula
+
+If $\det(A) \neq 0$:
+
+$$
+A^{-1} = \frac{1}{ad - bc} \begin{bmatrix} d & -b \\ -c & a \end{bmatrix}
+$$
+
+Swap $a$ and $d$, negate $b$ and $c$, divide by the determinant.
+
+<DetAreaDiagram />
+
+The matrix used in the diagram is:
+
+$$
+A = \begin{bmatrix} 2 & 1 \\ 0 & 1.5 \end{bmatrix}
+$$
+
+Its determinant: $\det(A) = (2)(1.5) - (1)(0) = 3$
+
+The blue unit square has area 1. After applying $A$, the green parallelogram has area $= \lvert \det(A) \rvert = 3$. The determinant is literally the area scaling factor of the transformation: whatever shape goes in, its area gets multiplied by $\lvert \det(A) \rvert$.
+
+<InverseUndoDiagram />
+
+Here, $A^{-1}$ maps the green parallelogram back to the original blue unit square. The inverse "undoes" the transformation completely.
+
+Using the 2x2 inverse formula on $A = \begin{bmatrix} 2 & 1 \\ 0 & 1.5 \end{bmatrix}$:
+
+$$
+A^{-1} = \frac{1}{3} \begin{bmatrix} 1.5 & -1 \\ 0 & 2 \end{bmatrix} = \begin{bmatrix} 0.5 & -\frac{1}{3} \\ 0 & \frac{2}{3} \end{bmatrix}
+$$
+
+Multiplying any point on the green parallelogram by $A^{-1}$ sends it back to the corresponding point on the original unit square. That's the power of the inverse: it reverses the transformation exactly.
+
+## Worked Examples
+
+**Example 1: Computing the Inverse**
+
+$A = \begin{bmatrix} 4 & 3 \\ 2 & 1 \end{bmatrix}$
+
+$\det(A) = (4)(1) - (3)(2) = 4 - 6 = -2$
+
+Since $\det(A) \neq 0$, $A$ is invertible:
+
+$$
+A^{-1} = \frac{1}{-2} \begin{bmatrix} 1 & -3 \\ -2 & 4 \end{bmatrix} = \begin{bmatrix} -0.5 & 1.5 \\ 1 & -2 \end{bmatrix}
+$$
+
+Verify: $A \cdot A^{-1} = \begin{bmatrix} 4(-0.5)+3(1) & 4(1.5)+3(-2) \\ 2(-0.5)+1(1) & 2(1.5)+1(-2) \end{bmatrix} = \begin{bmatrix} 1 & 0 \\ 0 & 1 \end{bmatrix}$ ✓
+
+**Example 2: Determinant as Area Scaling**
+
+If $\det(A) = 5$, applying $A$ stretches areas by a factor of 5.
+
+If $\det(A) = -3$, it stretches areas by 3 and flips orientation (mirrors the space).
+
+**Example 3: Singular Matrix**
+
+$A = \begin{bmatrix} 2 & 4 \\ 1 & 2 \end{bmatrix}$
+
+$\det(A) = (2)(2) - (4)(1) = 0$
+
+No inverse exists. The rows are linearly dependent (row 1 = 2 $\times$ row 2), so $A$ squashes 2D space down to a line.
+
+## Real-World Application
+
+- Graphics and games: the inverse of a transformation matrix converts from world space back to object space (essential for collision detection and mouse picking)
+- Physics: inverses solve for unknown forces when working with mass matrices
+- Machine learning: least squares and normal equations rely on matrix inverses
+- Cryptography: some encryption schemes use matrix inverses over finite fields
+
+Example: When you click on a 3D object in a game, the engine uses the inverse of the model-view-projection matrix to trace a ray from your mouse position back into the 3D scene and figure out which object you hit.
+
+:::note[You've Got This]
+The 2x2 inverse formula is worth memorizing: swap the diagonal, negate the off-diagonal, divide by the determinant. The determinant is your quick check for whether a matrix is invertible. If it's zero, stop. As matrices get larger, computers handle the computation, but understanding what the inverse and determinant mean geometrically is what matters most.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="linear-algebra-matrix-inverses-and-determinants"
+  questions={[
+    {
+      id: "q1",
+      text: "A matrix has an inverse only if its determinant is:",
+      options: ["Zero", "Not zero", "Positive", "Negative"],
+      correctIndex: 1,
+      explanation: "$\\det(A) \\neq 0$ means the matrix is invertible.",
+    },
+    {
+      id: "q2",
+      text: "The inverse of matrix $A$ satisfies:",
+      options: ["$A + A^{-1} = I$", "$A - A^{-1} = I$", "$A \\cdot A^{-1} = I$", "$A \\cdot A^{-1} = 0$"],
+      correctIndex: 2,
+      explanation: "Multiplying a matrix by its inverse gives the identity matrix.",
+    },
+    {
+      id: "q3",
+      text: "For $\\begin{bmatrix} 3 & 1 \\\\ 2 & 4 \\end{bmatrix}$, the determinant is:",
+      options: ["5", "14", "10", "11"],
+      correctIndex: 2,
+      explanation: "$\\det = (3)(4) - (1)(2) = 12 - 2 = 10$.",
+    },
+    {
+      id: "q4",
+      text: "If $\\det(A) = 0$, the matrix is called:",
+      options: ["Orthogonal", "Symmetric", "Invertible", "Singular"],
+      correctIndex: 3,
+      explanation: "Singular matrices have no inverse because they collapse a dimension.",
+    },
+    {
+      id: "q5",
+      text: "In game development, the inverse of a transformation matrix is used for:",
+      options: ["Only texture loading", "Only calculating scores", "Converting from world space back to object space", "Only drawing sprites"],
+      correctIndex: 2,
+      explanation: "It's essential for ray casting, collision detection, and mouse picking.",
+    },
+  ]}
+/>
