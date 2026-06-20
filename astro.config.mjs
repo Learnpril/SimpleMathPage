@@ -64,6 +64,10 @@ export default defineConfig({
           label: "Linear Algebra",
           autogenerate: { directory: "linear-algebra" },
         },
+        {
+          label: "Differential Equations",
+          autogenerate: { directory: "differential-equations" },
+        },
         // {
         //   label: "Discrete Mathematics",
         //   autogenerate: { directory: "discrete-mathematics" },
@@ -71,10 +75,6 @@ export default defineConfig({
         // {
         //   label: "Statistics",
         //   autogenerate: { directory: "statistics" },
-        // },
-        // {
-        //   label: "Differential Equations",
-        //   autogenerate: { directory: "differential-equations" },
         // },
         // {
         //   label: "Abstract Algebra",
@@ -176,8 +176,6 @@ export default defineConfig({
                 'calculus-2': 'Calculus 2',
                 'calculus-3': 'Calculus 3',
                 'linear-algebra': 'Linear Algebra',
-                'discrete-mathematics': 'Discrete Mathematics',
-                'statistics': 'Statistics',
                 'differential-equations': 'Differential Equations'
               };
               var label = map[section];
@@ -224,7 +222,8 @@ export default defineConfig({
                 {slug:'calculus-1', label:'Calculus 1', about:'about-calculus-1'},
                 {slug:'calculus-2', label:'Calculus 2', about:'about-calculus-2'},
                 {slug:'calculus-3', label:'Calculus 3', about:'about-calculus-3'},
-                {slug:'linear-algebra', label:'Linear Algebra', about:'about-linear-algebra'}
+                {slug:'linear-algebra', label:'Linear Algebra', about:'about-linear-algebra'},
+                {slug:'differential-equations', label:'Differential Equations', about:'about-differential-equations'}
               ];
               var path = window.location.pathname.replace(/^\\//, '').replace(/\\/$/, '');
               var currentSection = path.split('/')[0] || '';
