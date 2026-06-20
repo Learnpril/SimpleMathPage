@@ -1,0 +1,169 @@
+---
+/**
+ * DiffEqHero — SVG direction field with solution curves
+ * Shows slope field for dy/dx = x - y with a few solution curves traced through it.
+ * Demonstrates the core visual concept of differential equations.
+ */
+---
+
+<figure class="diffeq-hero" role="img" aria-label="Direction field with solution curves for dy/dx = x minus y">
+  <svg viewBox="-20 -20 440 340" xmlns="http://www.w3.org/2000/svg" class="diffeq-hero-svg">
+    {/* Grid */}
+    <g class="diffeq-grid">
+      {Array.from({ length: 9 }, (_, i) => {
+        const x = i * 50;
+        return <line x1={x} y1="0" x2={x} y2="300" />;
+      })}
+      {Array.from({ length: 7 }, (_, i) => {
+        const y = i * 50;
+        return <line x1="0" y1={y} x2="400" y2={y} />;
+      })}
+    </g>
+
+    {/* Axes */}
+    <line x1="0" y1="150" x2="400" y2="150" class="diffeq-axis" />
+    <line x1="200" y1="0" x2="200" y2="300" class="diffeq-axis" />
+
+    {/* Axis labels */}
+    <text x="410" y="155" class="diffeq-label axis-lbl">x</text>
+    <text x="205" y="-5" class="diffeq-label axis-lbl">y</text>
+
+    {/* Direction field (slope segments for dy/dx = x - y, scaled) */}
+    {[
+      [-1.5,-1.5],[-1.5,-1],[-1.5,-0.5],[-1.5,0],[-1.5,0.5],[-1.5,1],[-1.5,1.5],
+      [-1,-1.5],[-1,-1],[-1,-0.5],[-1,0],[-1,0.5],[-1,1],[-1,1.5],
+      [-0.5,-1.5],[-0.5,-1],[-0.5,-0.5],[-0.5,0],[-0.5,0.5],[-0.5,1],[-0.5,1.5],
+      [0,-1.5],[0,-1],[0,-0.5],[0,0],[0,0.5],[0,1],[0,1.5],
+      [0.5,-1.5],[0.5,-1],[0.5,-0.5],[0.5,0],[0.5,0.5],[0.5,1],[0.5,1.5],
+      [1,-1.5],[1,-1],[1,-0.5],[1,0],[1,0.5],[1,1],[1,1.5],
+      [1.5,-1.5],[1.5,-1],[1.5,-0.5],[1.5,0],[1.5,0.5],[1.5,1],[1.5,1.5],
+      [2,-1.5],[2,-1],[2,-0.5],[2,0],[2,0.5],[2,1],[2,1.5],
+      [2.5,-1.5],[2.5,-1],[2.5,-0.5],[2.5,0],[2.5,0.5],[2.5,1],[2.5,1.5],
+    ].map(([xi, yi]) => {
+      const slope = xi - yi;
+      const angle = Math.atan(slope);
+      const segLen = 10;
+      const dx = segLen * Math.cos(angle);
+      const dy = segLen * Math.sin(angle);
+      const cx = 200 + xi * 50;
+      const cy = 150 - yi * 50;
+      return <line x1={cx - dx} y1={cy + dy} x2={cx + dx} y2={cy - dy} class="diffeq-slope" />;
+    })}
+
+    {/* Solution curve 1: starts at (-1.5, -2), flows toward y = x - 1 */}
+    <path
+      d="M 125,250 C 145,235 165,215 185,195 C 205,175 225,160 250,148 C 275,138 300,130 330,123"
+      class="diffeq-curve curve-1"
+      fill="none"
+    />
+
+    {/* Solution curve 2: starts at (-1.5, 1), decays toward y = x - 1 */}
+    <path
+      d="M 125,100 C 150,108 175,118 200,128 C 225,138 250,145 280,148 C 310,151 340,150 370,148"
+      class="diffeq-curve curve-2"
+      fill="none"
+    />
+
+    {/* Solution curve 3: starts at (-1, 0), the middle path */}
+    <path
+      d="M 150,150 C 170,148 190,145 210,140 C 235,133 260,128 290,125 C 320,122 350,121 380,120"
+      class="diffeq-curve curve-3"
+      fill="none"
+    />
+
+    {/* Arrowheads on curves */}
+    <polygon points="330,123 322,118 320,127" class="diffeq-arrow arrow-1" />
+    <polygon points="370,148 362,143 361,152" class="diffeq-arrow arrow-2" />
+    <polygon points="380,120 372,115 371,124" class="diffeq-arrow arrow-3" />
+
+    {/* Labels */}
+    <text x="335" y="115" class="diffeq-label curve-label-1">y(0) = -2</text>
+    <text x="340" y="165" class="diffeq-label curve-label-2">y(0) = 1</text>
+    <text x="310" y="108" class="diffeq-label curve-label-3">y(0) = 0</text>
+
+    {/* Equation label */}
+    <text x="20" y="25" class="diffeq-label eq-label">dy/dx = x - y</text>
+  </svg>
+</figure>
+
+<style>
+  .diffeq-hero {
+    display: flex;
+    justify-content: center;
+    margin: 1.5rem 0;
+  }
+
+  .diffeq-hero-svg {
+    width: 100%;
+    max-width: 520px;
+    height: auto;
+  }
+
+  .diffeq-grid line {
+    stroke: #2a2a2a;
+    stroke-width: 0.5;
+  }
+
+  .diffeq-axis {
+    stroke: #555;
+    stroke-width: 1.2;
+  }
+
+  .diffeq-slope {
+    stroke: #555;
+    stroke-width: 1;
+    stroke-linecap: round;
+  }
+
+  .diffeq-curve {
+    stroke-width: 2.5;
+    stroke-linecap: round;
+  }
+
+  .curve-1 { stroke: #58a6ff; }
+  .curve-2 { stroke: #7ee787; }
+  .curve-3 { stroke: #d2a8ff; }
+
+  .diffeq-arrow.arrow-1 { fill: #58a6ff; }
+  .diffeq-arrow.arrow-2 { fill: #7ee787; }
+  .diffeq-arrow.arrow-3 { fill: #d2a8ff; }
+
+  .diffeq-label {
+    font-family: "Libre Baskerville", Georgia, serif;
+    font-size: 12px;
+    fill: #aaa;
+  }
+
+  .axis-lbl {
+    font-size: 14px;
+    font-weight: bold;
+    fill: #888;
+  }
+
+  .eq-label {
+    font-size: 14px;
+    font-style: italic;
+    fill: #f0883e;
+  }
+
+  .curve-label-1 { fill: #58a6ff; font-size: 11px; }
+  .curve-label-2 { fill: #7ee787; font-size: 11px; }
+  .curve-label-3 { fill: #d2a8ff; font-size: 11px; }
+
+  /* Light mode */
+  :root[data-theme="light"] .diffeq-grid line { stroke: #e0e0e0; }
+  :root[data-theme="light"] .diffeq-axis { stroke: #999; }
+  :root[data-theme="light"] .diffeq-slope { stroke: #aaa; }
+  :root[data-theme="light"] .curve-1 { stroke: #0550ae; }
+  :root[data-theme="light"] .curve-2 { stroke: #1a7f2e; }
+  :root[data-theme="light"] .curve-3 { stroke: #6b3fa0; }
+  :root[data-theme="light"] .diffeq-arrow.arrow-1 { fill: #0550ae; }
+  :root[data-theme="light"] .diffeq-arrow.arrow-2 { fill: #1a7f2e; }
+  :root[data-theme="light"] .diffeq-arrow.arrow-3 { fill: #6b3fa0; }
+  :root[data-theme="light"] .diffeq-label { fill: #555; }
+  :root[data-theme="light"] .axis-lbl { fill: #666; }
+  :root[data-theme="light"] .eq-label { fill: #c05010; }
+  :root[data-theme="light"] .curve-label-1 { fill: #0550ae; }
+  :root[data-theme="light"] .curve-label-2 { fill: #1a7f2e; }
+  :root[data-theme="light"] .curve-label-3 { fill: #6b3fa0; }
+</style>

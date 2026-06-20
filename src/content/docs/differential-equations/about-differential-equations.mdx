@@ -1,52 +1,84 @@
 ---
 title: About Differential Equations
-description: Master the math that describes change, motion, and growth in the real world.
+description: Master the mathematics of change, the language used to describe motion, growth, decay, and systems in the real world.
 sidebar:
   order: 0
 ---
 
-## What is Differential Equations?
+import DiffEqHero from "../../../components/DiffEqHero.astro";
 
-Differential equations are equations that relate a function to its own rate of change. In plain terms, they let us mathematically describe how things evolve over time, whether it's population growth, the swinging of a bridge, the spread of heat, or the motion of planets.
+## What You'll Learn
 
-Instead of asking "what is the value right now?", we ask "how is the value changing, and what will it become?"
+Differential equations are the natural extension of everything you've learned in calculus. While derivatives tell you how fast something is changing at a single moment, differential equations let you predict how that thing will behave over time. In this subject you'll learn how to solve them, visualize their behavior, and apply them to real phenomena.
 
-## Where It Came From
+## What is a Differential Equation?
 
-People have been wrestling with rates of change since Newton and Leibniz invented calculus. Differential equations exploded in importance during the 1700s and 1800s when scientists needed tools to model the physical world. Today they're the backbone of modern engineering, physics, biology, economics, and even machine learning.
+A **differential equation** is an equation that relates a function to one or more of its derivatives. In other words, it describes how a quantity changes in relation to itself or other quantities.
 
-## Why It Matters
+The simplest example is:
 
-Almost everything that changes can be modeled with differential equations. Engineers use them to design stable bridges and safe airplanes. Biologists model predator-prey relationships. Climate scientists simulate global temperatures. Game developers use them for realistic physics. If you want to understand how the real world actually works, this is the language.
+$$
+\frac{dy}{dx} = ky
+$$
 
-## What You'll Cover
+This says "the rate of change of $y$ is proportional to $y$ itself." Solutions to this equation are exponential functions, the foundation of population growth, radioactive decay, and compound interest.
 
-In this course we'll go from the absolute basics up to systems and numerical methods. Here's the journey:
+Differential equations come in many flavors: first-order, second-order, linear, nonlinear, ordinary, and partial. We'll focus primarily on **ordinary differential equations (ODEs)** in this course.
 
-- Direction fields and solution curves
-- Separable, linear, and exact equations
-- Classic applications (growth/decay, mixing, cooling)
-- Second-order equations and oscillation
-- Laplace transforms for solving initial value problems
-- Systems of equations and phase plane analysis
-- Numerical methods when exact solutions are impossible
+<DiffEqHero />
+
+*The visual above shows solution curves flowing through a direction field, one of the most powerful ways to understand differential equations before you even solve them.*
+
+## A Brief History
+
+Differential equations emerged alongside calculus itself in the late 1600s. Isaac Newton used them to describe planetary motion, while Leibniz developed much of the notation we still use today.
+
+In the 1700s and 1800s, mathematicians like Euler, Bernoulli, Lagrange, and Laplace turned differential equations into a systematic field. The Laplace transform (which you'll learn later) was revolutionary for solving complex problems in engineering and physics. By the 20th century, differential equations became essential for modeling everything from electrical circuits to quantum mechanics and climate systems.
+
+## Why We're Learning It
+
+You've already built strong foundations in Calculus 1-3 and Linear Algebra. Differential equations are where those tools truly come alive. Derivatives and integrals stop being abstract operations and start describing **real behavior over time**. Linear algebra gives you the tools to handle systems of equations. This subject ties everything together and opens the door to advanced work in physics, engineering, computer graphics, biology, economics, and machine learning.
+
+## Why It Matters in Real Life
+
+- **Engineering**: Modeling vibrations in bridges, circuit behavior, and control systems
+- **Physics**: Describing motion of springs, pendulums, orbiting bodies, and heat flow
+- **Biology and Medicine**: Population dynamics, spread of diseases, drug concentration in the bloodstream
+- **Economics and Finance**: Growth models, interest rates, and market behavior
+- **Computer Graphics and Games**: Realistic physics for cloth, water, particles, and character movement
+- **Machine Learning**: Training neural networks (gradient descent is essentially solving a differential equation)
+
+## What You'll Cover in This Section
+
+**Foundations**
+Direction fields, separable equations, first-order linear, and exact equations.
+
+**Classic Applications**
+Exponential growth/decay, Newton's Law of Cooling, mixing problems.
+
+**Second-Order Equations**
+Homogeneous and nonhomogeneous equations, undetermined coefficients, variation of parameters, and harmonic motion.
+
+**Advanced Tools**
+Laplace transforms for solving initial value problems with ease.
+
+**Systems and Numerical Methods**
+Systems of differential equations, phase plane analysis, and Euler's method when exact solutions aren't possible.
 
 ## Prerequisites
 
 You should be comfortable with:
 
 - Derivatives and basic integration (Calculus 1)
-- Integration techniques (Calculus 2)
-- Matrices and eigenvalues (Linear Algebra)
+- Integration techniques including integration by parts and partial fractions (Calculus 2)
+- Vectors, matrices, and eigenvalues (Linear Algebra)
 
-If you've finished Calculus 3 and Linear Algebra here at Mom's Basement University, you're in great shape.
+If you've completed up through **Calculus 3** and **Linear Algebra** here at Mom's Basement University, you're well prepared.
 
 ## How to Approach This Course
 
-Do the worked examples by hand. Sketch direction fields and solution curves yourself, it builds real intuition. Don't just memorize solution formulas; understand where they come from. Play with the interactive visuals. When you get stuck, that's normal. Differential equations reward persistence.
+Sketch direction fields by hand. It builds intuition faster than any formula. Work through every example step-by-step before looking at the solution. When you get stuck on a harder problem, go back to the direction field or try reducing it to a simpler case. Play with the interactive visuals. And most importantly: connect every technique back to a real-world situation. That's where the real understanding happens.
 
 :::note[You've Got This]
-Differential equations can feel tricky at first, but once things click you'll start seeing them everywhere in the real world. You've already survived Calculus 3 and Linear Algebra. This is the next level, and you've got everything you need. Let's go.
+You've already made it through Calculus 3 and Linear Algebra. Those were big milestones. Differential equations is the subject where all that hard work starts paying off in beautiful and practical ways. Take your time, draw lots of pictures, and enjoy watching math describe the changing world around you. You've got this.
 :::
-
-{/* Hero visual will go here: DiffEqTopicMap or Three.js solution surface */}

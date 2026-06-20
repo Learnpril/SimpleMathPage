@@ -276,14 +276,69 @@ starlight-toc {
 }
 
 .subject-card {
-  display: block;
+  display: flex;
+  flex-direction: column;
   padding: 1.25rem;
   border: 1px solid var(--sl-color-gray-5, #dee2e6);
   border-radius: 0.5rem;
+  border-top: 4px solid var(--card-accent, #58a6ff);
   text-decoration: none;
   color: inherit;
   transition: border-color 0.15s, background-color 0.15s;
   cursor: pointer;
+}
+
+/* Accent bar colors by level */
+.subject-card[data-level="foundations"] { --card-accent: #7ee787; }
+.subject-card[data-level="intermediate"] { --card-accent: #d2a8ff; }
+.subject-card[data-level="advanced"] { --card-accent: #58a6ff; }
+.subject-card[data-level="expert"] { --card-accent: #f0883e; }
+
+:root[data-theme="light"] .subject-card[data-level="foundations"] { --card-accent: #1a7f2e; }
+:root[data-theme="light"] .subject-card[data-level="intermediate"] { --card-accent: #6b3fa0; }
+:root[data-theme="light"] .subject-card[data-level="advanced"] { --card-accent: #0550ae; }
+:root[data-theme="light"] .subject-card[data-level="expert"] { --card-accent: #c05010; }
+
+/* Card footer with lesson count */
+.subject-footer {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: auto;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--sl-color-gray-6, #343a40);
+  font-size: 0.8rem;
+  color: var(--sl-color-gray-3);
+}
+
+:root[data-theme="light"] .subject-footer {
+  border-top-color: var(--sl-color-gray-5, #dee2e6);
+}
+
+.subject-lessons-badge {
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* Progress bar (shown when logged in via JS) */
+.subject-progress {
+  flex: 1;
+  height: 4px;
+  background: var(--sl-color-gray-6, #343a40);
+  border-radius: 2px;
+  overflow: hidden;
+  display: none;
+}
+
+.subject-progress-fill {
+  height: 100%;
+  background: var(--card-accent, #58a6ff);
+  border-radius: 2px;
+  transition: width 0.3s ease;
+}
+
+:root[data-theme="light"] .subject-progress {
+  background: var(--sl-color-gray-5, #dee2e6);
 }
 
 /* Subject card SVG icons */
@@ -318,6 +373,7 @@ starlight-toc {
 
 .subject-card:hover {
   border-color: var(--sl-color-accent);
+  border-top-color: var(--card-accent, #58a6ff);
   background-color: var(--sl-color-accent-low);
 }
 
