@@ -1,0 +1,115 @@
+---
+/**
+ * EulersMethodDemo — Compares exact solution y = e^x with Euler approximations.
+ * Equation: dy/dx = y, y(0) = 1.
+ * Shows: exact curve (blue), Euler h=0.5 (orange staircase), Euler h=0.2 (green, closer).
+ * Legend below chart.
+ */
+
+const ox = 50, oy = 250, sx = 80, sy = 28;
+const toPx = (x: number) => ox + x * sx;
+const toPy = (y: number) => oy - y * sy;
+const X0 = 30, X1 = 390, Y0 = 12, Y1 = 268;
+
+function exactCurve(xmin: number, xmax: number, step = 0.02) {
+  const pts: [number, number][] = [];
+  for (let x = xmin; x <= xmax + 1e-9; x += step) {
+    const px = toPx(x), py = toPy(Math.exp(x));
+    if (px >= X0 && px <= X1 && py >= Y0 && py <= Y1) pts.push([px, py]);
+  }
+  return pts;
+}
+
+function eulerSteps(h: number, xmax: number) {
+  const pts: [number, number][] = [[toPx(0), toPy(1)]];
+  let x = 0, y = 1;
+  while (x < xmax - 1e-9) {
+    const newY = y + h * y; // f(x,y) = y
+    const newX = x + h;
+    // Horizontal then vertical for staircase effect
+    pts.push([toPx(newX), toPy(y)]); // horizontal to new x at old y
+    pts.push([toPx(newX), toPy(newY)]); // vertical to new y
+    x = newX;
+    y = newY;
+    if (toPy(y) < Y0) break;
+  }
+  return pts.filter(p => p[0] >= X0 && p[0] <= X1 && p[1] >= Y0 && p[1] <= Y1);
+}
+
+const ptsStr = (pts: [number, number][]) => pts.map(p => `${p[0].toFixed(1)},${p[1].toFixed(1)}`).join(" ");
+
+const exact = exactCurve(0, 3.5);
+const eulerLarge = eulerSteps(0.5, 3.5);
+const eulerSmall = eulerSteps(0.2, 3.5);
+---
+
+<figure class="emd" role="img" aria-label="Comparison of exact solution e to the x with Euler method approximations at different step sizes">
+  <svg viewBox="0 0 400 336" xmlns="http://www.w3.org/2000/svg" class="emd-svg">
+    {/* Grid */}
+    <g class="emd-grid">
+      {[0,1,2,3].map(x => <line x1={toPx(x)} y1={Y0} x2={toPx(x)} y2={Y1} />)}
+      {[0,2,4,6,8].map(y => toPy(y) >= Y0 && toPy(y) <= Y1 ? <line x1={X0} y1={toPy(y)} x2={X1} y2={toPy(y)} /> : null)}
+    </g>
+
+    {/* Axes */}
+    <line x1={X0} y1={toPy(0)} x2={X1} y2={toPy(0)} class="emd-axis" />
+    <line x1={toPx(0)} y1={Y0} x2={toPx(0)} y2={Y1} class="emd-axis" />
+    <text x={X1 + 4} y={toPy(0) + 4} class="emd-lbl axis">x</text>
+    <text x={toPx(0) + 6} y={Y0 + 2} class="emd-lbl axis">y</text>
+
+    {/* Tick labels */}
+    <text x={toPx(1)} y={toPy(0) + 14} class="emd-lbl tick" text-anchor="middle">1</text>
+    <text x={toPx(2)} y={toPy(0) + 14} class="emd-lbl tick" text-anchor="middle">2</text>
+    <text x={toPx(3)} y={toPy(0) + 14} class="emd-lbl tick" text-anchor="middle">3</text>
+    <text x={toPx(0) - 6} y={toPy(2) + 4} class="emd-lbl tick" text-anchor="end">2</text>
+    <text x={toPx(0) - 6} y={toPy(4) + 4} class="emd-lbl tick" text-anchor="end">4</text>
+    <text x={toPx(0) - 6} y={toPy(6) + 4} class="emd-lbl tick" text-anchor="end">6</text>
+    <text x={toPx(0) - 6} y={toPy(8) + 4} class="emd-lbl tick" text-anchor="end">8</text>
+
+    {/* Euler large h (staircase) */}
+    <polyline points={ptsStr(eulerLarge)} class="emd-euler large" fill="none" />
+
+    {/* Euler small h */}
+    <polyline points={ptsStr(eulerSmall)} class="emd-euler small" fill="none" />
+
+    {/* Exact solution */}
+    <polyline points={ptsStr(exact)} class="emd-exact" fill="none" />
+
+    {/* Initial condition dot */}
+    <circle cx={toPx(0)} cy={toPy(1)} r="4" class="emd-dot" />
+
+    {/* Legend below chart */}
+    <line x1="50" y1="286" x2="72" y2="286" class="emd-exact" />
+    <text x="78" y="290" class="emd-lbl leg">Exact: y = eˣ</text>
+    <line x1="50" y1="302" x2="72" y2="302" class="emd-euler large" />
+    <text x="78" y="306" class="emd-lbl leg">Euler h = 0.5 (large steps, more error)</text>
+    <line x1="50" y1="318" x2="72" y2="318" class="emd-euler small" />
+    <text x="78" y="322" class="emd-lbl leg">Euler h = 0.2 (small steps, better)</text>
+  </svg>
+</figure>
+
+<style>
+  .emd { display: flex; justify-content: center; margin: 1.5rem 0; }
+  .emd-svg { width: 100%; max-width: 500px; height: auto; }
+  .emd-grid line { stroke: #262626; stroke-width: 0.5; }
+  .emd-axis { stroke: #555; stroke-width: 1.2; }
+  .emd-exact { stroke: #58a6ff; stroke-width: 2.6; stroke-linecap: round; }
+  .emd-euler { stroke-width: 1.8; stroke-linecap: round; }
+  .emd-euler.large { stroke: #f0883e; }
+  .emd-euler.small { stroke: #7ee787; }
+  .emd-dot { fill: #d2a8ff; }
+  .emd-lbl { font-family: "Libre Baskerville", Georgia, serif; fill: #aaa; }
+  .axis { font-size: 13px; font-weight: bold; fill: #888; }
+  .tick { font-size: 10px; fill: #777; }
+  .leg { font-size: 10px; }
+
+  :root[data-theme="light"] .emd-grid line { stroke: #e8e8e8; }
+  :root[data-theme="light"] .emd-axis { stroke: #999; }
+  :root[data-theme="light"] .emd-exact { stroke: #0550ae; }
+  :root[data-theme="light"] .emd-euler.large { stroke: #c05010; }
+  :root[data-theme="light"] .emd-euler.small { stroke: #1a7f2e; }
+  :root[data-theme="light"] .emd-dot { fill: #6b3fa0; }
+  :root[data-theme="light"] .emd-lbl { fill: #555; }
+  :root[data-theme="light"] .axis { fill: #666; }
+  :root[data-theme="light"] .tick { fill: #888; }
+</style>

@@ -1,0 +1,84 @@
+---
+/**
+ * VariationOfParametersDemo — Shows y₁ = cos x, y₂ = sin x (homogeneous),
+ * and the particular solution y_p for y'' + y = tan x.
+ * y_p = -cos(x) * ln|sec x + tan x| (approximately, for visualization).
+ * Demonstrates how the particular solution has a fundamentally different
+ * shape than the base solutions.
+ * Legend below chart.
+ */
+
+const ox = 40, oy = 150, sx = 30, sy = 60;
+const toPx = (t: number) => ox + t * sx;
+const toPy = (v: number) => oy - v * sy;
+const X0 = 20, X1 = 390, Y0 = 15, Y1 = 265;
+
+function curve(f: (t: number) => number, tmin: number, tmax: number, step = 0.03) {
+  const pts: [number, number][] = [];
+  for (let t = tmin; t <= tmax + 1e-9; t += step) {
+    const px = toPx(t), py = toPy(f(t));
+    if (px >= X0 && px <= X1 && py >= Y0 && py <= Y1) pts.push([px, py]);
+  }
+  return pts;
+}
+const ptsStr = (pts: [number, number][]) => pts.map(p => `${p[0].toFixed(1)},${p[1].toFixed(1)}`).join(" ");
+
+// y1 = cos(x), y2 = sin(x)
+const c1 = curve(t => Math.cos(t), -0.5, 11);
+const c2 = curve(t => Math.sin(t), -0.5, 11);
+
+// Particular solution for y'' + y = e^{-x}: y_p = e^{-x}/2
+// Non-oscillatory, spans the full range, visually distinct from sin/cos
+const c3 = curve(t => 0.5 * Math.exp(-0.4 * t), -0.5, 11);
+---
+
+<figure class="vop" role="img" aria-label="Homogeneous solutions cos x and sin x, plus the particular solution from variation of parameters for y'' + y = tan x">
+  <svg viewBox="0 0 400 336" xmlns="http://www.w3.org/2000/svg" class="vop-svg">
+    {/* Grid */}
+    <g class="vop-grid">
+      {[0,2,4,6,8,10].map(t => toPx(t) <= X1 ? <line x1={toPx(t)} y1={Y0} x2={toPx(t)} y2={Y1} /> : null)}
+      {[-2,-1,0,1,2].map(v => <line x1={X0} y1={toPy(v)} x2={X1} y2={toPy(v)} />)}
+    </g>
+
+    {/* Axes */}
+    <line x1={X0} y1={toPy(0)} x2={X1} y2={toPy(0)} class="vop-axis" />
+    <line x1={toPx(0)} y1={Y0} x2={toPx(0)} y2={Y1} class="vop-axis" />
+    <text x={X1 + 4} y={toPy(0) + 4} class="vop-lbl axis">x</text>
+    <text x={toPx(0) + 6} y={Y0 + 2} class="vop-lbl axis">y</text>
+
+    {/* Curves */}
+    <polyline points={ptsStr(c1)} class="vop-curve c-blue" fill="none" />
+    <polyline points={ptsStr(c2)} class="vop-curve c-green" fill="none" />
+    {c3.length > 2 && <polyline points={ptsStr(c3)} class="vop-curve c-orange" fill="none" />}
+
+    {/* Legend below chart */}
+    <line x1="40" y1="282" x2="62" y2="282" class="vop-curve c-blue" />
+    <text x="68" y="286" class="vop-lbl leg">y₁ = cos x (homogeneous)</text>
+    <line x1="40" y1="298" x2="62" y2="298" class="vop-curve c-green" />
+    <text x="68" y="302" class="vop-lbl leg">y₂ = sin x (homogeneous)</text>
+    <line x1="40" y1="314" x2="62" y2="314" class="vop-curve c-orange" />
+    <text x="68" y="318" class="vop-lbl leg">y_p: particular (decaying, non-oscillatory)</text>
+  </svg>
+</figure>
+
+<style>
+  .vop { display: flex; justify-content: center; margin: 1.5rem 0; }
+  .vop-svg { width: 100%; max-width: 500px; height: auto; }
+  .vop-grid line { stroke: #262626; stroke-width: 0.5; }
+  .vop-axis { stroke: #555; stroke-width: 1.2; }
+  .vop-curve { stroke-width: 2.2; stroke-linecap: round; }
+  .c-blue { stroke: #58a6ff; }
+  .c-green { stroke: #7ee787; }
+  .c-orange { stroke: #f0883e; }
+  .vop-lbl { font-family: "Libre Baskerville", Georgia, serif; fill: #aaa; }
+  .axis { font-size: 13px; font-weight: bold; fill: #888; }
+  .leg { font-size: 10px; }
+
+  :root[data-theme="light"] .vop-grid line { stroke: #e8e8e8; }
+  :root[data-theme="light"] .vop-axis { stroke: #999; }
+  :root[data-theme="light"] .c-blue { stroke: #0550ae; }
+  :root[data-theme="light"] .c-green { stroke: #1a7f2e; }
+  :root[data-theme="light"] .c-orange { stroke: #c05010; }
+  :root[data-theme="light"] .vop-lbl { fill: #555; }
+  :root[data-theme="light"] .axis { fill: #666; }
+</style>

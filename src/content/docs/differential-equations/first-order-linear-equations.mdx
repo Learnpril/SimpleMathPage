@@ -1,0 +1,172 @@
+---
+title: First-Order Linear Equations
+description: Master the integrating factor method for solving first-order linear differential equations.
+sidebar:
+  order: 4
+---
+
+import IntegratingFactorDemo from "../../../components/IntegratingFactorDemo.astro";
+
+## What You'll Learn
+
+You will learn how to recognize first-order linear equations, use the integrating factor method to solve them, and apply the technique to both general and initial value problems.
+
+## The Concept
+
+A first-order **linear** differential equation can be written in the standard form:
+
+$$
+\frac{dy}{dx} + P(x)y = Q(x)
+$$
+
+The left side is almost the derivative of a product. The trick is to multiply both sides by a special function called the **integrating factor**:
+
+$$
+\mu(x) = e^{\int P(x) \, dx}
+$$
+
+When you multiply through by $\mu(x)$, the left side becomes a perfect derivative:
+
+$$
+\frac{d}{dx} \left[ \mu(x) \cdot y \right] = \mu(x) \cdot Q(x)
+$$
+
+Now you can integrate both sides directly and solve for $y$.
+
+<IntegratingFactorDemo />
+
+*The diagram shows the integrating factor workflow: identify $P(x)$, compute $\mu(x) = e^{\int P\,dx}$, multiply through, recognize the perfect derivative, and integrate.*
+
+## Worked Examples
+
+**Example 1: Basic Integrating Factor**
+
+Solve $\frac{dy}{dx} + 3y = 6$.
+
+**Solution**:
+Here $P(x) = 3$, so:
+
+$$
+\mu(x) = e^{\int 3 \, dx} = e^{3x}
+$$
+
+Multiply through:
+
+$$
+e^{3x} \frac{dy}{dx} + 3e^{3x} y = 6e^{3x}
+$$
+
+$$
+\frac{d}{dx} \left( y \cdot e^{3x} \right) = 6e^{3x}
+$$
+
+Integrate:
+
+$$
+y \cdot e^{3x} = 2e^{3x} + C
+$$
+
+$$
+y = 2 + Ce^{-3x}
+$$
+
+**Example 2: With Initial Condition**
+
+Solve $\frac{dy}{dx} - 2y = 4$ with $y(0) = 5$.
+
+**Solution**:
+$P(x) = -2$, so $\mu(x) = e^{-2x}$.
+
+$$
+\frac{d}{dx}(ye^{-2x}) = 4e^{-2x}
+$$
+
+$$
+ye^{-2x} = -2e^{-2x} + C
+$$
+
+$$
+y = -2 + Ce^{2x}
+$$
+
+Apply $y(0) = 5$: $5 = -2 + C \implies C = 7$
+
+Final: $y = -2 + 7e^{2x}$
+
+**Example 3: Variable Coefficients**
+
+Solve $\frac{dy}{dx} + \frac{1}{x}y = x$ for $x \gt 0$.
+
+**Solution**:
+$P(x) = \frac{1}{x}$, so $\mu(x) = e^{\int \frac{1}{x}\,dx} = e^{\ln x} = x$.
+
+Multiply through:
+
+$$
+x\frac{dy}{dx} + y = x^2
+$$
+
+$$
+\frac{d}{dx}(xy) = x^2
+$$
+
+$$
+xy = \frac{x^3}{3} + C
+$$
+
+$$
+y = \frac{x^2}{3} + \frac{C}{x}
+$$
+
+## Real-World Application
+
+First-order linear equations appear everywhere in science and engineering. In electronics, they model RC circuits (how voltage across a capacitor changes when charging or discharging). In environmental science, they describe how the concentration of a pollutant in a lake changes when there is continuous inflow and outflow. Pharmacokinetics uses them to predict how drug levels in the blood rise and fall after taking medication. These are all situations where the rate of change depends linearly on the current value.
+
+:::note[You've Got This]
+The integrating factor method is one of the cleanest tools in differential equations. Once you get comfortable spotting $P(x)$ and computing the integrating factor, a huge class of equations becomes solvable. You've now added another powerful technique to your toolbox.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="diffeq-first-order-linear"
+  questions={[
+    {
+      id: "q1",
+      text: "The standard form of a first-order linear ODE is:",
+      options: ["$\\frac{dy}{dx} = P(x)y + Q(x)$", "$\\frac{d^2y}{dx^2} + P(x)y = 0$", "$y' = f(x,y)$", "$\\frac{dy}{dx} + P(x)y = Q(x)$"],
+      correctIndex: 3,
+      explanation: "This is the form needed for the integrating factor method."
+    },
+    {
+      id: "q2",
+      text: "The integrating factor for $\\frac{dy}{dx} + P(x)y = Q(x)$ is:",
+      options: ["$e^{P(x)}$", "$\\int P(x)\\,dx$", "$\\frac{1}{P(x)}$", "$e^{\\int P(x)\\,dx}$"],
+      correctIndex: 3,
+      explanation: "$\\mu(x) = e^{\\int P(x)\\,dx}$ makes the left side into a perfect derivative."
+    },
+    {
+      id: "q3",
+      text: "Multiplying by the integrating factor makes the left side:",
+      options: ["Equal to zero", "Nonlinear", "A perfect derivative $\\frac{d}{dx}[\\mu y]$", "Simpler but not exact"],
+      correctIndex: 2,
+      explanation: "This is the whole point of the method: it creates a product rule in reverse."
+    },
+    {
+      id: "q4",
+      text: "For $\\frac{dy}{dx} + 2y = 4$, the integrating factor is:",
+      options: ["$e^{-2x}$", "$2x$", "$e^{4x}$", "$e^{2x}$"],
+      correctIndex: 3,
+      explanation: "$P(x) = 2$, so $\\mu = e^{\\int 2\\,dx} = e^{2x}$."
+    },
+    {
+      id: "q5",
+      text: "First-order linear equations commonly model:",
+      options: ["Simple harmonic motion", "Wave propagation", "RC circuits and drug concentration in blood", "Chaotic systems"],
+      correctIndex: 2,
+      explanation: "They naturally describe processes where the rate of change is proportional to the current value plus a forcing term."
+    }
+  ]}
+/>

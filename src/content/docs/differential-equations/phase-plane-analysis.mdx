@@ -1,0 +1,126 @@
+---
+title: Phase Plane Analysis
+description: Learn to analyze systems of differential equations using phase portraits and equilibrium points.
+sidebar:
+  order: 16
+---
+
+import PhasePlaneAnalysis from "../../../components/PhasePlaneAnalysis.astro";
+
+## What You'll Learn
+
+You will learn how to sketch and interpret phase portraits, classify equilibrium points, and understand the long-term behavior of solutions to systems of differential equations.
+
+## The Concept
+
+For a system of two first-order equations
+
+$$
+x' = f(x, y)
+$$
+
+$$
+y' = g(x, y)
+$$
+
+a **phase portrait** is a plot in the $xy$-plane (called the phase plane) showing many solution trajectories. Each point $(x, y)$ has a direction vector $(f(x,y), g(x,y))$ drawn as a short arrow.
+
+Key features we look for:
+
+- **Equilibrium points**: Where $f(x,y) = 0$ and $g(x,y) = 0$
+- **Trajectories**: Curves that follow the direction field
+- **Stability**: Whether nearby solutions move toward or away from equilibria
+
+<PhasePlaneAnalysis />
+
+*The visual shows a saddle point phase portrait. Trajectories approach the origin along one eigenvector direction (stable manifold) and flee along the other (unstable manifold).*
+
+## Types of Equilibrium Points
+
+- **Stable Node**: All nearby solutions approach the point (both eigenvalues negative)
+- **Unstable Node**: Solutions move away (both eigenvalues positive)
+- **Saddle Point**: Solutions approach along one direction and leave along another (eigenvalues of opposite sign)
+- **Center**: Closed orbits around the point (purely imaginary eigenvalues)
+- **Stable Spiral**: Solutions spiral inward (complex eigenvalues with negative real part)
+- **Unstable Spiral**: Solutions spiral outward (complex eigenvalues with positive real part)
+
+## Worked Examples
+
+**Example 1: Classifying Equilibria**
+
+Analyze the system $x' = x - 2y$, $y' = 3x - 4y$.
+
+**Solution**:
+The coefficient matrix is $A = \begin{bmatrix} 1 & -2 \\ 3 & -4 \end{bmatrix}$.
+
+Characteristic equation: $\lambda^2 + 3\lambda + 2 = 0 \implies \lambda = -1, -2$
+
+Both eigenvalues negative → **Stable Node**.
+
+**Example 2: Saddle Point**
+
+Analyze $x' = 2x - y$, $y' = 3x - 2y$.
+
+**Solution**:
+$A = \begin{bmatrix} 2 & -1 \\ 3 & -2 \end{bmatrix}$. Eigenvalues: $\lambda^2 - 1 = 0 \implies \lambda = 1, -1$
+
+Opposite signs → **Saddle Point**. Solutions approach along the eigenvector for $\lambda = -1$ and diverge along the eigenvector for $\lambda = 1$.
+
+**Example 3: Spiral**
+
+For the system with $A = \begin{bmatrix} -1 & 2 \\ -2 & -1 \end{bmatrix}$, eigenvalues are $-1 \pm 2i$.
+
+Complex with negative real part → **Stable Spiral**. Solutions spiral inward toward the origin.
+
+## Real-World Application
+
+Phase plane analysis is used extensively in biology (predator-prey cycles), chemistry (reaction dynamics), economics (market stability), and engineering (stability of control systems). Ecologists use it to predict whether two competing species will coexist or if one will drive the other to extinction. Engineers use it to ensure that mechanical or electrical systems remain stable.
+
+:::note[You've Got This]
+Phase plane analysis gives you a powerful visual way to understand the long-term behavior of entire systems at a glance. You're now thinking like a mathematician who can see the big picture instead of just solving one equation at a time. This is advanced stuff. You're doing great.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="diffeq-phase-plane"
+  questions={[
+    {
+      id: "q1",
+      text: "A phase portrait shows:",
+      options: ["Exact algebraic solutions", "Only equilibrium points", "Trajectories of solutions in the phase plane", "Time evolution of a single variable"],
+      correctIndex: 2,
+      explanation: "It visualizes how solutions move through the state space over time."
+    },
+    {
+      id: "q2",
+      text: "An equilibrium point is stable if:",
+      options: ["Solutions move away from it", "It is a saddle", "Trajectories circle around it forever", "Nearby solutions approach it as time increases"],
+      correctIndex: 3,
+      explanation: "Stability means nearby trajectories converge to the equilibrium."
+    },
+    {
+      id: "q3",
+      text: "A saddle point has eigenvalues that are:",
+      options: ["Both positive", "Both negative", "Purely imaginary", "Of opposite signs"],
+      correctIndex: 3,
+      explanation: "One positive and one negative eigenvalue creates attraction in one direction and repulsion in the other."
+    },
+    {
+      id: "q4",
+      text: "Closed orbits in the phase plane typically indicate:",
+      options: ["Exponential growth", "Decay to equilibrium", "A center (undamped oscillation)", "A saddle point"],
+      correctIndex: 2,
+      explanation: "Purely imaginary eigenvalues produce periodic orbits with no damping."
+    },
+    {
+      id: "q5",
+      text: "Complex eigenvalues with negative real part produce:",
+      options: ["A saddle point", "An unstable node", "A stable spiral (inward)", "Closed circular orbits"],
+      correctIndex: 2,
+      explanation: "The negative real part causes decay while the imaginary part causes rotation, creating an inward spiral."
+    }
+  ]}
+/>

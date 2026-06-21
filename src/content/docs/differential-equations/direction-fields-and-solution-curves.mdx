@@ -1,0 +1,104 @@
+---
+title: Direction Fields and Solution Curves
+description: Learn to visualize differential equations using direction fields and sketch solution curves by hand.
+sidebar:
+  order: 2
+---
+
+import DirectionFieldExample from "../../../components/DirectionFieldExample.astro";
+
+## What You'll Learn
+
+You will learn how to read and create direction fields, understand what they tell you about solution behavior, and sketch approximate solution curves. This skill gives you powerful intuition before you even learn formal solution methods.
+
+## The Concept
+
+Most differential equations are impossible to solve with a nice closed-form formula. **Direction fields** (also called slope fields) solve this problem by letting us visualize the behavior of all possible solutions at once.
+
+For a first-order equation $\frac{dy}{dx} = f(x, y)$, we pick a grid of points $(x, y)$ and draw a short line segment at each point with slope equal to $f(x, y)$. Any actual solution curve must be tangent to these little segments everywhere it passes.
+
+<DirectionFieldExample />
+
+*The visual above shows the direction field for the equation $\frac{dy}{dx} = x + y$. The colored curves are approximate solution curves sketched by following the field. Notice how they all flow consistently with the slopes.*
+
+Direction fields are especially useful because they immediately reveal:
+
+- Equilibrium solutions (where slopes are zero)
+- Long-term behavior (do solutions grow, decay, or oscillate?)
+- Whether solutions blow up in finite time
+
+## Worked Examples
+
+**Example 1: Reading a Direction Field**
+
+The direction field for $\frac{dy}{dx} = -y$ shows all slopes pointing toward the x-axis. What does this tell us about the solutions?
+
+**Solution**:
+The slopes get steeper farther from the x-axis and become zero on the x-axis itself. This means all solutions approach $y = 0$ as $x$ increases. The x-axis is a stable equilibrium.
+
+**Example 2: Sketching a Solution Curve**
+
+Given the direction field for $\frac{dy}{dx} = y(2 - y)$, sketch the solution curve passing through the point $(0, 1)$.
+
+**Solution**:
+Start at $(0, 1)$. Follow the slopes: they are positive and increase until $y = 2$, then become zero. The curve rises toward the horizontal line $y = 2$ as $x$ increases.
+
+**Example 3: Identifying Equilibrium Solutions**
+
+For the equation $\frac{dy}{dx} = y(y - 3)$, find the equilibrium solutions from the direction field behavior.
+
+**Solution**:
+Equilibrium solutions occur where $\frac{dy}{dx} = 0$, so $y = 0$ and $y = 3$. These appear as horizontal lines in the direction field where all nearby slopes are zero or point toward/away from them.
+
+## Real-World Application
+
+Direction fields are used heavily in population modeling and epidemiology. For example, the logistic growth model $\frac{dP}{dt} = rP\left(1 - \frac{P}{K}\right)$ has a direction field that clearly shows populations approaching the carrying capacity $K$. Epidemiologists use similar fields when modeling disease spread. They can quickly see whether an outbreak will die out or explode without solving the full system analytically. Game developers also use them to create natural-looking AI movement and flocking behavior.
+
+:::note[You've Got This]
+You just learned one of the most practical skills in differential equations. Being able to sketch direction fields and solution curves gives you intuition that formulas alone can't provide. This is going to make the next lessons much easier. Great work.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="diffeq-direction-fields"
+  questions={[
+    {
+      id: "q1",
+      text: "A direction field shows:",
+      options: ["The slope of solution curves at many points", "Exact algebraic solutions", "Only equilibrium points", "The final value of every solution"],
+      correctIndex: 0,
+      explanation: "It displays the slope that any solution must follow at many points in the plane."
+    },
+    {
+      id: "q2",
+      text: "For the equation $\\frac{dy}{dx} = -y$, solution curves generally:",
+      options: ["Oscillate forever", "Go to infinity", "Approach the line $y = 0$", "Grow exponentially"],
+      correctIndex: 2,
+      explanation: "The slopes point toward the x-axis, so solutions decay toward $y = 0$."
+    },
+    {
+      id: "q3",
+      text: "Equilibrium solutions appear in a direction field as:",
+      options: ["Vertical lines", "Curved paths", "Diagonal lines with constant slope", "Horizontal lines where slopes are zero"],
+      correctIndex: 3,
+      explanation: "Where $\\frac{dy}{dx} = 0$, the slope segments are horizontal, forming equilibrium lines."
+    },
+    {
+      id: "q4",
+      text: "Direction fields are most useful when:",
+      options: ["The equation is already solved", "We only care about one specific solution", "We cannot solve the equation analytically", "The equation has no derivatives"],
+      correctIndex: 2,
+      explanation: "They let us understand behavior even when a closed-form solution is difficult or impossible to find."
+    },
+    {
+      id: "q5",
+      text: "The direction field for $\\frac{dy}{dx} = y(2 - y)$ shows solutions starting below $y = 2$ approaching:",
+      options: ["$y = -2$", "$y = 2$ as a stable equilibrium", "$y = 0$ from both sides", "Infinity"],
+      correctIndex: 1,
+      explanation: "$y = 2$ is a stable equilibrium (carrying capacity) in the logistic model."
+    }
+  ]}
+/>

@@ -1,0 +1,149 @@
+---
+/**
+ * SpringMassAnimation — Interactive Three.js spring-mass system.
+ * Shows a coil spring attached to a ceiling with a mass bobbing.
+ * Motion: x(t) = 0.8 * e^{-0.3t} * cos(3t) (underdamped).
+ * Auto-restarts every ~12 seconds. Drag to rotate, scroll to zoom.
+ */
+---
+
+<figure class="sma" role="img" aria-label="Interactive 3D spring-mass system with damped oscillation">
+  <div class="sma-canvas" data-springmass></div>
+  <div class="sma-hint">Drag to rotate · Scroll to zoom</div>
+</figure>
+
+<script>
+  import * as THREE from "three";
+  import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+
+  function initScene(container: HTMLElement) {
+    const width = container.clientWidth || 420;
+    const height = 360;
+    const isDark = document.documentElement.dataset.theme !== "light";
+
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(isDark ? 0x121212 : 0xf8f9fa);
+
+    const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 100);
+    camera.position.set(3, 0, 5);
+    camera.lookAt(0, -1, 0);
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(width, height);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    container.appendChild(renderer.domElement);
+
+    // Lighting
+    scene.add(new THREE.AmbientLight(isDark ? 0x404040 : 0x606060, 1.2));
+    const dirLight = new THREE.DirectionalLight(0xffffff, 1.0);
+    dirLight.position.set(3, 5, 4);
+    scene.add(dirLight);
+
+    // Ceiling (fixed support)
+    const ceilGeo = new THREE.BoxGeometry(2.5, 0.15, 1.2);
+    const ceilMat = new THREE.MeshPhongMaterial({ color: isDark ? 0x444444 : 0x999999 });
+    const ceiling = new THREE.Mesh(ceilGeo, ceilMat);
+    ceiling.position.set(0, 2, 0);
+    scene.add(ceiling);
+
+    // Mass (box)
+    const massGeo = new THREE.BoxGeometry(0.8, 0.8, 0.8);
+    const massMat = new THREE.MeshPhongMaterial({
+      color: isDark ? 0x58a6ff : 0x0550ae,
+      shininess: 60,
+    });
+    const mass = new THREE.Mesh(massGeo, massMat);
+    scene.add(mass);
+
+    // Spring (helix made of line segments)
+    const springMat = new THREE.LineBasicMaterial({
+      color: isDark ? 0x7ee787 : 0x1a7f2e,
+      linewidth: 2,
+    });
+    const springLine = new THREE.Line(new THREE.BufferGeometry(), springMat);
+    scene.add(springLine);
+
+    function updateSpring(massY: number) {
+      const topY = 1.9;
+      const coils = 8;
+      const radius = 0.25;
+      const pts: THREE.Vector3[] = [];
+      const springLen = topY - (massY + 0.4);
+      for (let i = 0; i <= coils * 20; i++) {
+        const t = i / (coils * 20);
+        const angle = t * coils * Math.PI * 2;
+        const y = topY - t * springLen;
+        pts.push(new THREE.Vector3(radius * Math.cos(angle), y, radius * Math.sin(angle)));
+      }
+      springLine.geometry.dispose();
+      springLine.geometry = new THREE.BufferGeometry().setFromPoints(pts);
+    }
+
+    // Label
+    function makeLabel(text: string, pos: [number, number, number], color: string) {
+      const c = document.createElement("canvas");
+      c.width = 256; c.height = 64;
+      const ctx = c.getContext("2d")!;
+      ctx.font = "bold 32px sans-serif";
+      ctx.fillStyle = color;
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText(text, 128, 32);
+      const t = new THREE.CanvasTexture(c);
+      const m = new THREE.SpriteMaterial({ map: t, transparent: true, depthTest: false });
+      const sp = new THREE.Sprite(m);
+      sp.position.set(pos[0], pos[1], pos[2]);
+      sp.scale.set(1.8, 0.45, 1);
+      scene.add(sp);
+    }
+    makeLabel("m", [1.2, -1, 0], isDark ? "#58a6ff" : "#0550ae");
+
+    // Controls
+    const ctrl = new OrbitControls(camera, renderer.domElement);
+    ctrl.enableDamping = true;
+    ctrl.dampingFactor = 0.08;
+    ctrl.enablePan = false;
+    ctrl.minDistance = 3;
+    ctrl.maxDistance = 12;
+
+    // Animation: x(t) = 0.8 * e^{-0.3t} * cos(3t)
+    let startTime = performance.now();
+    let animId: number;
+
+    function animate() {
+      animId = requestAnimationFrame(animate);
+      const elapsed = (performance.now() - startTime) / 1000;
+      const t = elapsed % 12; // restart every 12s
+
+      const displacement = 0.8 * Math.exp(-0.3 * t) * Math.cos(3 * t);
+      const massY = -1 + displacement;
+      mass.position.set(0, massY, 0);
+      updateSpring(massY);
+
+      ctrl.update();
+      renderer.render(scene, camera);
+    }
+    animate();
+
+    return () => { cancelAnimationFrame(animId); renderer.dispose(); };
+  }
+
+  function setup() {
+    document.querySelectorAll<HTMLElement>("[data-springmass]").forEach(el => {
+      if (el.querySelector("canvas")) return;
+      const obs = new IntersectionObserver(entries => {
+        if (entries[0].isIntersecting) { obs.disconnect(); initScene(el); }
+      }, { threshold: 0.05 });
+      obs.observe(el);
+    });
+  }
+  setup();
+  document.addEventListener("astro:page-load", setup);
+</script>
+
+<style>
+  .sma { display: flex; flex-direction: column; align-items: center; margin: 1.5rem 0; }
+  .sma-canvas { width: 100%; max-width: 420px; min-height: 360px; height: 360px; border-radius: 8px; overflow: hidden; background: var(--sl-color-bg, #121212); }
+  .sma-canvas canvas { border-radius: 8px; }
+  .sma-hint { font-family: "Libre Baskerville", Georgia, serif; font-size: 0.8rem; color: #888; margin-top: 0.4rem; }
+</style>

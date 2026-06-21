@@ -1,0 +1,74 @@
+---
+/**
+ * MixingTankDemo — Schematic diagram of a mixing tank with inflow/outflow pipes.
+ * Shows the tank, stirrer, labeled inflow (top-left) and outflow (bottom-right),
+ * with clear text labels positioned away from all drawn elements.
+ */
+---
+
+<figure class="mtd" role="img" aria-label="Schematic of a mixing tank with inflow pipe at top and outflow pipe at bottom">
+  <svg viewBox="0 0 400 320" xmlns="http://www.w3.org/2000/svg" class="mtd-svg">
+    {/* Tank body */}
+    <rect x="120" y="80" width="160" height="160" rx="8" class="mtd-tank" />
+
+    {/* Liquid fill (partial) */}
+    <rect x="122" y="120" width="156" height="118" rx="6" class="mtd-liquid" />
+
+    {/* Stirrer */}
+    <line x1="200" y1="85" x2="200" y2="200" class="mtd-stirrer" />
+    <ellipse cx="200" cy="200" rx="30" ry="6" class="mtd-paddle" />
+
+    {/* Inflow pipe (top-left) */}
+    <line x1="40" y1="50" x2="140" y2="50" class="mtd-pipe" />
+    <line x1="140" y1="50" x2="140" y2="82" class="mtd-pipe" />
+    {/* Inflow arrow */}
+    <polygon points="100,44 100,56 112,50" class="mtd-arrow inflow" />
+
+    {/* Outflow pipe (bottom-right) */}
+    <line x1="260" y1="240" x2="260" y2="270" class="mtd-pipe" />
+    <line x1="260" y1="270" x2="360" y2="270" class="mtd-pipe" />
+    {/* Outflow arrow */}
+    <polygon points="330,264 330,276 342,270" class="mtd-arrow outflow" />
+
+    {/* Labels - all positioned in clear space away from elements */}
+    <text x="42" y="38" class="mtd-lbl inflow-lbl">Inflow: r · c_in</text>
+    <text x="362" y="262" class="mtd-lbl outflow-lbl">Outflow: r · Q/V</text>
+    <text x="200" y="300" class="mtd-lbl tank-lbl" text-anchor="middle">Tank: volume V, amount Q(t)</text>
+    <text x="310" y="70" class="mtd-lbl eq-lbl" text-anchor="middle">dQ/dt = rate in − rate out</text>
+
+    {/* "well-mixed" indicator */}
+    <text x="200" y="218" class="mtd-lbl mix-lbl" text-anchor="middle">well-mixed</text>
+  </svg>
+</figure>
+
+<style>
+  .mtd { display: flex; justify-content: center; margin: 1.5rem 0; }
+  .mtd-svg { width: 100%; max-width: 460px; height: auto; }
+  .mtd-tank { fill: none; stroke: #888; stroke-width: 2.5; }
+  .mtd-liquid { fill: #58a6ff; opacity: 0.15; }
+  .mtd-stirrer { stroke: #888; stroke-width: 2; }
+  .mtd-paddle { fill: none; stroke: #888; stroke-width: 2; }
+  .mtd-pipe { stroke: #7ee787; stroke-width: 3; stroke-linecap: round; }
+  .mtd-arrow.inflow { fill: #7ee787; }
+  .mtd-arrow.outflow { fill: #f0883e; }
+  .mtd-lbl { font-family: "Libre Baskerville", Georgia, serif; fill: #aaa; }
+  .inflow-lbl { font-size: 12px; fill: #7ee787; }
+  .outflow-lbl { font-size: 12px; fill: #f0883e; }
+  .tank-lbl { font-size: 12px; fill: #aaa; }
+  .eq-lbl { font-size: 13px; fill: #f0883e; font-style: italic; }
+  .mix-lbl { font-size: 10px; fill: #888; font-style: italic; }
+
+  :root[data-theme="light"] .mtd-tank { stroke: #555; }
+  :root[data-theme="light"] .mtd-liquid { fill: #0550ae; opacity: 0.1; }
+  :root[data-theme="light"] .mtd-stirrer { stroke: #555; }
+  :root[data-theme="light"] .mtd-paddle { stroke: #555; }
+  :root[data-theme="light"] .mtd-pipe { stroke: #1a7f2e; }
+  :root[data-theme="light"] .mtd-arrow.inflow { fill: #1a7f2e; }
+  :root[data-theme="light"] .mtd-arrow.outflow { fill: #c05010; }
+  :root[data-theme="light"] .mtd-lbl { fill: #555; }
+  :root[data-theme="light"] .inflow-lbl { fill: #1a7f2e; }
+  :root[data-theme="light"] .outflow-lbl { fill: #c05010; }
+  :root[data-theme="light"] .tank-lbl { fill: #555; }
+  :root[data-theme="light"] .eq-lbl { fill: #c05010; }
+  :root[data-theme="light"] .mix-lbl { fill: #777; }
+</style>

@@ -1,0 +1,103 @@
+---
+/**
+ * DirectionFieldSimple — SVG direction field with accurate solution curves.
+ * Equation: dy/dx = x + y.  Exact solutions: y = -x - 1 + C e^{x}.
+ * The line y = -x - 1 (C = 0) is itself an exact solution (shown dashed).
+ */
+
+const ox = 196, oy = 150, s = 52;
+const toPx = (x: number) => ox + x * s;
+const toPy = (y: number) => oy - y * s;
+const X0 = 38, X1 = 384, Y0 = 16, Y1 = 284;
+
+function curve(f: (x: number) => number, xmin: number, xmax: number, step = 0.04) {
+  const pts: [number, number][] = [];
+  for (let x = xmin; x <= xmax + 1e-9; x += step) {
+    const px = toPx(x), py = toPy(f(x));
+    if (px >= X0 && px <= X1 && py >= Y0 && py <= Y1) pts.push([px, py]);
+    else if (pts.length) break;
+  }
+  return pts;
+}
+const ptsStr = (pts: [number, number][]) => pts.map(p => `${p[0].toFixed(1)},${p[1].toFixed(1)}`).join(" ");
+function arrowPts(pts: [number, number][], size = 8) {
+  if (pts.length < 2) return "";
+  const [x2, y2] = pts[pts.length - 1];
+  const [x1, y1] = pts[pts.length - 2];
+  const a = Math.atan2(y2 - y1, x2 - x1);
+  const a1 = a + Math.PI * 0.82, a2 = a - Math.PI * 0.82;
+  return `${x2.toFixed(1)},${y2.toFixed(1)} ${(x2 + size * Math.cos(a1)).toFixed(1)},${(y2 + size * Math.sin(a1)).toFixed(1)} ${(x2 + size * Math.cos(a2)).toFixed(1)},${(y2 + size * Math.sin(a2)).toFixed(1)}`;
+}
+
+const lineSol = curve(x => -x - 1, -2.9, 1.5);
+const cAbove = curve(x => -x - 1 + 0.7 * Math.exp(x), -2.9, 2.3);
+const cBelow = curve(x => -x - 1 - 0.7 * Math.exp(x), -2.9, 0.6);
+
+const field: { x1: number; y1: number; x2: number; y2: number }[] = [];
+for (let xi = -3; xi <= 3.001; xi += 0.6) {
+  for (let yi = -2.2; yi <= 2.2001; yi += 0.55) {
+    const ang = Math.atan(xi + yi);
+    const L = 9;
+    field.push({
+      x1: toPx(xi) - L * Math.cos(ang), y1: toPy(yi) + L * Math.sin(ang),
+      x2: toPx(xi) + L * Math.cos(ang), y2: toPy(yi) - L * Math.sin(ang),
+    });
+  }
+}
+---
+
+<figure class="dfs" role="img" aria-label="Direction field for dy/dx = x plus y with the straight-line solution y = minus x minus 1">
+  <svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg" class="dfs-svg">
+    <g class="dfs-grid">
+      {[-3,-2,-1,0,1,2,3].map(x => <line x1={toPx(x)} y1={Y0} x2={toPx(x)} y2={Y1} />)}
+      {[-2,-1,0,1,2].map(y => <line x1={X0} y1={toPy(y)} x2={X1} y2={toPy(y)} />)}
+    </g>
+
+    <line x1={X0} y1={toPy(0)} x2={X1} y2={toPy(0)} class="dfs-axis" />
+    <line x1={toPx(0)} y1={Y0} x2={toPx(0)} y2={Y1} class="dfs-axis" />
+    <text x={X1 + 4} y={toPy(0) + 4} class="dfs-lbl axis">x</text>
+    <text x={toPx(0) + 6} y={Y0 + 4} class="dfs-lbl axis">y</text>
+
+    {field.map(f => <line x1={f.x1} y1={f.y1} x2={f.x2} y2={f.y2} class="dfs-slope" />)}
+
+    <polyline points={ptsStr(lineSol)} class="dfs-line" fill="none" />
+    <polyline points={ptsStr(cAbove)} class="dfs-curve c-blue" fill="none" />
+    <polygon points={arrowPts(cAbove)} class="dfs-arrow a-blue" />
+    <polyline points={ptsStr(cBelow)} class="dfs-curve c-purple" fill="none" />
+    <polygon points={arrowPts(cBelow)} class="dfs-arrow a-purple" />
+
+    <text x={X0 + 4} y={Y0 + 16} class="dfs-lbl eq">dy/dx = x + y</text>
+    <text x={toPx(2.2)} y={toPy(0.4)} class="dfs-lbl line-lbl" text-anchor="start">y = −x − 1</text>
+  </svg>
+</figure>
+
+<style>
+  .dfs { display: flex; justify-content: center; margin: 1.5rem 0; }
+  .dfs-svg { width: 100%; max-width: 500px; height: auto; }
+  .dfs-grid line { stroke: #262626; stroke-width: 0.5; }
+  .dfs-axis { stroke: #555; stroke-width: 1.2; }
+  .dfs-slope { stroke: #5a5a5a; stroke-width: 1; stroke-linecap: round; }
+  .dfs-line { stroke: #f0883e; stroke-width: 1.8; stroke-dasharray: 6 4; }
+  .dfs-curve { stroke-width: 2.6; stroke-linecap: round; }
+  .c-blue { stroke: #58a6ff; }
+  .c-purple { stroke: #d2a8ff; }
+  .a-blue { fill: #58a6ff; }
+  .a-purple { fill: #d2a8ff; }
+  .dfs-lbl { font-family: "Libre Baskerville", Georgia, serif; fill: #aaa; }
+  .axis { font-size: 14px; font-weight: bold; fill: #888; }
+  .eq { font-size: 14px; font-style: italic; fill: #f0883e; }
+  .line-lbl { font-size: 12px; fill: #f0883e; font-style: italic; }
+
+  :root[data-theme="light"] .dfs-grid line { stroke: #e8e8e8; }
+  :root[data-theme="light"] .dfs-axis { stroke: #999; }
+  :root[data-theme="light"] .dfs-slope { stroke: #bbb; }
+  :root[data-theme="light"] .dfs-line { stroke: #c05010; }
+  :root[data-theme="light"] .c-blue { stroke: #0550ae; }
+  :root[data-theme="light"] .c-purple { stroke: #6b3fa0; }
+  :root[data-theme="light"] .a-blue { fill: #0550ae; }
+  :root[data-theme="light"] .a-purple { fill: #6b3fa0; }
+  :root[data-theme="light"] .dfs-lbl { fill: #555; }
+  :root[data-theme="light"] .axis { fill: #666; }
+  :root[data-theme="light"] .eq { fill: #c05010; }
+  :root[data-theme="light"] .line-lbl { fill: #c05010; }
+</style>

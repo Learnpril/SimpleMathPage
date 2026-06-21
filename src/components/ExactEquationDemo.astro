@@ -1,0 +1,97 @@
+---
+/**
+ * ExactEquationDemo — Level curves of φ(x,y) = x² + xy + (3/2)y²
+ * These elliptical contours are the solution curves of the exact equation
+ * (2x + y)dx + (x + 3y)dy = 0. Labels placed ~18px from nearest curve.
+ */
+
+const ox = 200, oy = 150, s = 70;
+const toPx = (x: number) => ox + x * s;
+const toPy = (y: number) => oy - y * s;
+const X0 = 20, X1 = 380, Y0 = 10, Y1 = 290;
+
+// Compute level curves by sampling φ(x,y) = x² + xy + 1.5y²
+// For each C value, trace the contour
+function contour(C: number, step = 0.02) {
+  const pts: [number, number][] = [];
+  // Parametric: solve for y given x using quadratic formula
+  // 1.5y² + xy + (x² - C) = 0  →  y = (-x ± sqrt(x² - 6(x² - C))) / 3
+  // discriminant: x² - 6x² + 6C = 6C - 5x²
+  const xMax = Math.sqrt(6 * C / 5);
+  // Upper half
+  for (let x = -xMax; x <= xMax; x += step) {
+    const disc = 6 * C - 5 * x * x;
+    if (disc < 0) continue;
+    const y = (-x + Math.sqrt(disc)) / 3;
+    const px = toPx(x), py = toPy(y);
+    if (px >= X0 && px <= X1 && py >= Y0 && py <= Y1) pts.push([px, py]);
+  }
+  // Lower half (reversed for closed path)
+  for (let x = xMax; x >= -xMax; x -= step) {
+    const disc = 6 * C - 5 * x * x;
+    if (disc < 0) continue;
+    const y = (-x - Math.sqrt(disc)) / 3;
+    const px = toPx(x), py = toPy(y);
+    if (px >= X0 && px <= X1 && py >= Y0 && py <= Y1) pts.push([px, py]);
+  }
+  return pts;
+}
+
+const ptsStr = (pts: [number, number][]) => pts.map(p => `${p[0].toFixed(1)},${p[1].toFixed(1)}`).join(" ");
+
+const cValues = [0.3, 0.8, 1.5, 2.5, 3.8];
+const colors = ["#d2a8ff", "#58a6ff", "#7ee787", "#58a6ff", "#d2a8ff"];
+const contours = cValues.map(c => contour(c));
+---
+
+<figure class="exeq" role="img" aria-label="Level curves of phi equals x squared plus xy plus three-halves y squared, showing elliptical solution curves">
+  <svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg" class="exeq-svg">
+    {/* Grid */}
+    <g class="exeq-grid">
+      {[-2,-1,0,1,2].map(x => <line x1={toPx(x)} y1={Y0} x2={toPx(x)} y2={Y1} />)}
+      {[-1,0,1].map(y => <line x1={X0} y1={toPy(y)} x2={X1} y2={toPy(y)} />)}
+    </g>
+
+    {/* Axes */}
+    <line x1={X0} y1={toPy(0)} x2={X1} y2={toPy(0)} class="exeq-axis" />
+    <line x1={toPx(0)} y1={Y0} x2={toPx(0)} y2={Y1} class="exeq-axis" />
+    <text x={X1 + 4} y={toPy(0) + 4} class="exeq-lbl axis">x</text>
+    <text x={toPx(0) + 6} y={Y0 + 2} class="exeq-lbl axis">y</text>
+
+    {/* Level curves */}
+    {contours.map((pts, i) => pts.length > 2 ? <polygon points={ptsStr(pts)} style={`stroke:${colors[i]}`} class="exeq-contour" fill="none" /> : null)}
+
+    {/* C-value labels - top right corner legend */}
+    <text x={X1 - 6} y={Y0 + 18} class="exeq-lbl c-lbl" text-anchor="end">C = 1.5</text>
+    <text x={X1 - 6} y={Y0 + 32} class="exeq-lbl c-lbl" text-anchor="end">C = 0.8</text>
+    <text x={X1 - 6} y={Y0 + 46} class="exeq-lbl c-lbl" text-anchor="end">C = 0.3</text>
+
+    {/* Equation label - top left, clear of curves */}
+    <text x={X0 + 6} y={Y0 + 14} class="exeq-lbl eq">φ(x,y) = x² + xy + ³⁄₂y²</text>
+
+    {/* Solution note - bottom right */}
+    <text x={X1 - 6} y={Y1 - 4} class="exeq-lbl note" text-anchor="end">Each ellipse: φ = C</text>
+  </svg>
+</figure>
+
+<style>
+  .exeq { display: flex; justify-content: center; margin: 1.5rem 0; }
+  .exeq-svg { width: 100%; max-width: 500px; height: auto; }
+  .exeq-grid line { stroke: #262626; stroke-width: 0.5; }
+  .exeq-axis { stroke: #555; stroke-width: 1.2; }
+  .exeq-contour { stroke-width: 2.2; stroke-linecap: round; }
+  .exeq-lbl { font-family: "Libre Baskerville", Georgia, serif; fill: #aaa; }
+  .axis { font-size: 14px; font-weight: bold; fill: #888; }
+  .eq { font-size: 13px; font-style: italic; fill: #f0883e; }
+  .c-lbl { font-size: 10px; fill: #888; }
+  .note { font-size: 11px; fill: #777; font-style: italic; }
+
+  :root[data-theme="light"] .exeq-grid line { stroke: #e8e8e8; }
+  :root[data-theme="light"] .exeq-axis { stroke: #999; }
+  :root[data-theme="light"] .exeq-contour { opacity: 0.8; }
+  :root[data-theme="light"] .exeq-lbl { fill: #555; }
+  :root[data-theme="light"] .axis { fill: #666; }
+  :root[data-theme="light"] .eq { fill: #c05010; }
+  :root[data-theme="light"] .c-lbl { fill: #666; }
+  :root[data-theme="light"] .note { fill: #666; }
+</style>

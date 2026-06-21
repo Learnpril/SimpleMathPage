@@ -1,0 +1,128 @@
+---
+title: Applications - Growth and Decay
+description: Apply separable equations to model exponential growth, decay, and logistic population growth.
+sidebar:
+  order: 6
+---
+
+import ExponentialGrowthDemo from "../../../components/ExponentialGrowthDemo.astro";
+
+## What You'll Learn
+
+You will learn how to model and solve real-world growth and decay problems using separable differential equations, including unlimited exponential growth, exponential decay, and limited logistic growth.
+
+## The Concept
+
+Many natural processes involve a rate of change that is proportional to the current amount. These lead to the differential equation:
+
+$$
+\frac{dA}{dt} = kA
+$$
+
+This is the classic **exponential growth/decay** model. Its solution is:
+
+$$
+A(t) = A_0 e^{kt}
+$$
+
+When resources are limited, growth slows down near a carrying capacity. This is modeled by the **logistic equation**:
+
+$$
+\frac{dP}{dt} = rP\left(1 - \frac{P}{K}\right)
+$$
+
+where $K$ is the carrying capacity. This is still separable but requires partial fractions to solve.
+
+<ExponentialGrowthDemo />
+
+*The visual above compares pure exponential growth (red) with logistic growth (blue) approaching a carrying capacity. Notice how the logistic curve flattens out while the exponential keeps climbing.*
+
+## Worked Examples
+
+**Example 1: Exponential Decay**
+
+The half-life of Carbon-14 is 5730 years. How much of a 100-gram sample remains after 10,000 years?
+
+**Solution**:
+The decay constant is $k = \frac{\ln(0.5)}{5730} \approx -0.000121$.
+
+$$
+A(t) = 100 e^{-0.000121 \cdot 10000} \approx 29.8 \text{ grams}
+$$
+
+**Example 2: Unlimited Growth**
+
+A bacteria culture grows at a rate proportional to its size. It doubles every 3 hours. How long until it reaches 10 times the original amount?
+
+**Solution**:
+$k = \frac{\ln 2}{3}$. Set $A(t) = 10A_0$:
+
+$$
+10 = e^{kt} \implies t = \frac{\ln 10}{k} = \frac{3\ln 10}{\ln 2} \approx 9.97 \text{ hours}
+$$
+
+**Example 3: Logistic Growth**
+
+A population satisfies $\frac{dP}{dt} = 0.4P\left(1 - \frac{P}{1000}\right)$ with $P(0) = 100$. Find the population after 10 units of time.
+
+**Solution**:
+The solution is:
+
+$$
+P(t) = \frac{1000}{1 + 9e^{-0.4t}}
+$$
+
+At $t = 10$: $P(10) \approx 731$.
+
+## Real-World Application
+
+These models are used everywhere. Radiocarbon dating relies on exponential decay of Carbon-14. Banks use continuous compounding (exponential growth) for interest. Biologists model fish populations in lakes with logistic growth to set sustainable fishing limits. Epidemiologists used logistic-style models during the COVID-19 pandemic to predict infection curves and the effect of interventions. Even your phone's battery percentage decreasing over time follows a rough exponential decay pattern.
+
+:::note[You've Got This]
+You're now using differential equations to describe real things in the world, from radioactive decay to populations approaching limits. This is where the math starts feeling truly useful. Great progress.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="diffeq-growth-decay"
+  questions={[
+    {
+      id: "q1",
+      text: "The differential equation for exponential growth or decay is:",
+      options: ["$\\frac{dA}{dt} = kA$", "$\\frac{dA}{dt} = k$", "$\\frac{dA}{dt} = kA^2$", "$\\frac{d^2A}{dt^2} = kA$"],
+      correctIndex: 0,
+      explanation: "The rate of change is proportional to the current amount."
+    },
+    {
+      id: "q2",
+      text: "The general solution to $\\frac{dA}{dt} = kA$ is:",
+      options: ["$A = A_0 + kt$", "$A = \\frac{A_0}{kt}$", "$A = A_0 e^{kt}$", "$A = A_0 \\ln(kt)$"],
+      correctIndex: 2,
+      explanation: "Separating and integrating gives the exponential solution $A = A_0 e^{kt}$."
+    },
+    {
+      id: "q3",
+      text: "In the logistic model $\\frac{dP}{dt} = rP(1 - P/K)$, $K$ represents:",
+      options: ["The growth rate", "The initial population", "The carrying capacity", "The time to double"],
+      correctIndex: 2,
+      explanation: "$K$ is the maximum sustainable population that the environment can support."
+    },
+    {
+      id: "q4",
+      text: "Exponential decay is characterized by:",
+      options: ["A positive $k$", "A carrying capacity", "Oscillating behavior", "A negative $k$"],
+      correctIndex: 3,
+      explanation: "Negative $k$ causes the quantity to decrease exponentially over time."
+    },
+    {
+      id: "q5",
+      text: "Logistic growth differs from pure exponential growth because:",
+      options: ["It grows forever without bound", "It is not separable", "It decays to zero", "The growth rate slows as the population approaches the carrying capacity"],
+      correctIndex: 3,
+      explanation: "The factor $(1 - P/K)$ reduces the effective growth rate as $P$ approaches $K$."
+    }
+  ]}
+/>

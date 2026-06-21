@@ -1,0 +1,78 @@
+---
+/**
+ * IntegratingFactorDemo — Vertical flowchart showing the integrating factor method.
+ * Step 1: Identify P(x) from standard form
+ * Step 2: Compute μ(x) = e^{∫P dx}
+ * Step 3: Multiply → perfect derivative
+ * Step 4: Integrate both sides → solve for y
+ */
+---
+
+<figure class="ifd" role="img" aria-label="Flowchart showing the four steps of the integrating factor method">
+  <svg viewBox="0 0 360 300" xmlns="http://www.w3.org/2000/svg" class="ifd-svg">
+    {/* Step 1 */}
+    <rect x="80" y="10" width="200" height="48" rx="6" class="ifd-box b1" />
+    <text x="180" y="30" class="ifd-txt title" text-anchor="middle">Step 1: Standard Form</text>
+    <text x="180" y="46" class="ifd-txt eq" text-anchor="middle">y' + P(x)y = Q(x)</text>
+
+    {/* Arrow */}
+    <line x1="180" y1="58" x2="180" y2="76" class="ifd-arrow" />
+    <polygon points="176,76 180,84 184,76" class="ifd-arrowhead" />
+
+    {/* Step 2 */}
+    <rect x="80" y="86" width="200" height="48" rx="6" class="ifd-box b2" />
+    <text x="180" y="106" class="ifd-txt title" text-anchor="middle">Step 2: Integrating Factor</text>
+    <text x="180" y="122" class="ifd-txt eq" text-anchor="middle">μ(x) = e^(∫P dx)</text>
+
+    {/* Arrow */}
+    <line x1="180" y1="134" x2="180" y2="152" class="ifd-arrow" />
+    <polygon points="176,152 180,160 184,152" class="ifd-arrowhead" />
+
+    {/* Step 3 */}
+    <rect x="80" y="162" width="200" height="48" rx="6" class="ifd-box b3" />
+    <text x="180" y="182" class="ifd-txt title" text-anchor="middle">Step 3: Multiply Through</text>
+    <text x="180" y="198" class="ifd-txt eq" text-anchor="middle">d/dx [μ·y] = μ·Q(x)</text>
+
+    {/* Arrow */}
+    <line x1="180" y1="210" x2="180" y2="228" class="ifd-arrow" />
+    <polygon points="176,228 180,236 184,228" class="ifd-arrowhead" />
+
+    {/* Step 4 */}
+    <rect x="80" y="238" width="200" height="48" rx="6" class="ifd-box b4" />
+    <text x="180" y="258" class="ifd-txt title" text-anchor="middle">Step 4: Integrate & Solve</text>
+    <text x="180" y="274" class="ifd-txt eq" text-anchor="middle">y = (1/μ) ∫μ·Q dx + C/μ</text>
+
+    {/* Side annotation */}
+    <text x="14" y="130" class="ifd-txt note">The key</text>
+    <text x="14" y="144" class="ifd-txt note">insight:</text>
+    <text x="14" y="158" class="ifd-txt note">product</text>
+    <text x="14" y="172" class="ifd-txt note">rule in</text>
+    <text x="14" y="186" class="ifd-txt note">reverse!</text>
+  </svg>
+</figure>
+
+<style>
+  .ifd { display: flex; justify-content: center; margin: 1.5rem 0; }
+  .ifd-svg { width: 100%; max-width: 440px; height: auto; }
+  .ifd-box { fill: none; stroke-width: 1.8; }
+  .b1 { stroke: #58a6ff; }
+  .b2 { stroke: #7ee787; }
+  .b3 { stroke: #d2a8ff; }
+  .b4 { stroke: #f0883e; }
+  .ifd-arrow { stroke: #888; stroke-width: 1.5; }
+  .ifd-arrowhead { fill: #888; }
+  .ifd-txt { font-family: "Libre Baskerville", Georgia, serif; }
+  .title { font-size: 11px; font-weight: bold; fill: #ccc; }
+  .eq { font-size: 10px; fill: #aaa; font-style: italic; }
+  .note { font-size: 9.5px; fill: #f0883e; font-style: italic; }
+
+  :root[data-theme="light"] .b1 { stroke: #0550ae; }
+  :root[data-theme="light"] .b2 { stroke: #1a7f2e; }
+  :root[data-theme="light"] .b3 { stroke: #6b3fa0; }
+  :root[data-theme="light"] .b4 { stroke: #c05010; }
+  :root[data-theme="light"] .ifd-arrow { stroke: #999; }
+  :root[data-theme="light"] .ifd-arrowhead { fill: #999; }
+  :root[data-theme="light"] .title { fill: #333; }
+  :root[data-theme="light"] .eq { fill: #555; }
+  :root[data-theme="light"] .note { fill: #c05010; }
+</style>

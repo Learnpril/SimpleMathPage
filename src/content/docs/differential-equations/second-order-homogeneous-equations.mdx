@@ -1,0 +1,124 @@
+---
+title: Second-Order Homogeneous Equations
+description: Learn to solve second-order linear homogeneous differential equations with constant coefficients.
+sidebar:
+  order: 9
+---
+
+import SecondOrderHomogeneousDemo from "../../../components/SecondOrderHomogeneousDemo.astro";
+
+## What You'll Learn
+
+You will learn how to solve second-order linear homogeneous differential equations with constant coefficients by using the characteristic equation, and understand the three possible cases for the roots.
+
+## The Concept
+
+A second-order linear homogeneous differential equation with constant coefficients has the form:
+
+$$
+a y'' + b y' + c y = 0
+$$
+
+We assume a solution of the form $y = e^{rx}$. Substituting this in gives the **characteristic equation**:
+
+$$
+a r^2 + b r + c = 0
+$$
+
+The form of the general solution depends on the roots of this quadratic:
+
+- **Distinct real roots** $r_1 \neq r_2$: $y = C_1 e^{r_1 x} + C_2 e^{r_2 x}$
+- **Repeated real root** $r$: $y = (C_1 + C_2 x) e^{rx}$
+- **Complex roots** $\alpha \pm \beta i$: $y = e^{\alpha x} (C_1 \cos \beta x + C_2 \sin \beta x)$
+
+<SecondOrderHomogeneousDemo />
+
+*The three panels show one solution curve from each case: exponential growth/decay (distinct real), modulated decay (repeated), and damped oscillation (complex).*
+
+## Worked Examples
+
+**Example 1: Distinct Real Roots**
+
+Solve $y'' - 5y' + 6y = 0$.
+
+**Solution**:
+Characteristic equation: $r^2 - 5r + 6 = 0 \implies (r-2)(r-3) = 0$
+
+Roots: $r = 2$, $r = 3$
+
+General solution: $y = C_1 e^{2x} + C_2 e^{3x}$
+
+**Example 2: Repeated Root**
+
+Solve $y'' + 4y' + 4y = 0$.
+
+**Solution**:
+Characteristic equation: $r^2 + 4r + 4 = (r+2)^2 = 0$
+
+Repeated root $r = -2$
+
+General solution: $y = (C_1 + C_2 x) e^{-2x}$
+
+**Example 3: Complex Roots**
+
+Solve $y'' + 2y' + 5y = 0$ with $y(0) = 1$, $y'(0) = 0$.
+
+**Solution**:
+Characteristic equation: $r^2 + 2r + 5 = 0 \implies r = -1 \pm 2i$
+
+General solution: $y = e^{-x} (C_1 \cos 2x + C_2 \sin 2x)$
+
+Apply initial conditions to get $C_1 = 1$, $C_2 = \frac{1}{2}$.
+
+## Real-World Application
+
+Second-order homogeneous equations are the foundation for modeling oscillatory systems. They describe the motion of springs and masses (harmonic oscillators), the swing of a pendulum (for small angles), electrical circuits containing inductors and capacitors (LC circuits), and vibrations in mechanical structures. Understanding these helps engineers design stable bridges, car suspensions, and audio speakers.
+
+:::note[You've Got This]
+You've now moved from first-order to second-order equations. This is a big jump in capability. The characteristic equation method is clean and powerful. You're building the foundation for understanding oscillation and resonance, some of the coolest applications in differential equations.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="diffeq-second-order-homogeneous"
+  questions={[
+    {
+      id: "q1",
+      text: "The characteristic equation for $ay'' + by' + cy = 0$ is:",
+      options: ["$ar^2 + br + c = 0$", "$a + b + c = 0$", "$r^2 + y = 0$", "$ay + by' + cy'' = 0$"],
+      correctIndex: 0,
+      explanation: "Substituting $y = e^{rx}$ into the ODE yields the quadratic $ar^2 + br + c = 0$."
+    },
+    {
+      id: "q2",
+      text: "If the characteristic equation has two distinct real roots, the general solution is:",
+      options: ["$(C_1 + C_2 x)e^{rx}$", "$e^{\\alpha x}(C_1 \\cos \\beta x + C_2 \\sin \\beta x)$", "$C_1 e^{r_1 x} + C_2 e^{r_2 x}$", "$C_1 \\cos rx + C_2 \\sin rx$"],
+      correctIndex: 2,
+      explanation: "Each distinct real root contributes one exponential term to the general solution."
+    },
+    {
+      id: "q3",
+      text: "A repeated root in the characteristic equation produces a solution containing:",
+      options: ["Only a pure exponential", "Sine and cosine terms", "A factor of $x$ multiplied by the exponential", "A logarithmic term"],
+      correctIndex: 2,
+      explanation: "The repeated root case gives $(C_1 + C_2 x)e^{rx}$ to maintain two linearly independent solutions."
+    },
+    {
+      id: "q4",
+      text: "Complex roots $\\alpha \\pm \\beta i$ produce solutions involving:",
+      options: ["Pure exponentials only", "Only polynomials", "Hyperbolic functions", "$e^{\\alpha x}$ times sine and cosine"],
+      correctIndex: 3,
+      explanation: "Euler's formula converts complex exponentials into real oscillatory terms."
+    },
+    {
+      id: "q5",
+      text: "Second-order homogeneous equations are most commonly used to model:",
+      options: ["Population growth", "Mixing tanks", "Radioactive decay", "Spring-mass systems and electrical circuits"],
+      correctIndex: 3,
+      explanation: "They naturally describe oscillatory and damped motion in mechanical and electrical systems."
+    }
+  ]}
+/>

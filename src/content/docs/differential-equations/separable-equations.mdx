@@ -1,0 +1,160 @@
+---
+title: Separable Equations
+description: Learn to solve first-order differential equations by separating variables and integrating.
+sidebar:
+  order: 3
+---
+
+import SeparableEquationsDemo from "../../../components/SeparableEquationsDemo.astro";
+
+## What You'll Learn
+
+You will master the technique of solving separable differential equations by separating variables, integrating both sides, and solving for the function. This is one of the most useful and widely applicable solution methods for first-order equations.
+
+## The Concept
+
+Many first-order differential equations can be written in the form:
+
+$$
+\frac{dy}{dx} = f(x) \cdot g(y)
+$$
+
+When an equation can be arranged like this, we say it is **separable**. The strategy is simple but powerful: move all the $y$ terms to one side and all the $x$ terms to the other, then integrate both sides.
+
+Starting from:
+
+$$
+\frac{dy}{dx} = f(x) \cdot g(y)
+$$
+
+We rewrite it as:
+
+$$
+\frac{1}{g(y)} \, dy = f(x) \, dx
+$$
+
+Then integrate both sides:
+
+$$
+\int \frac{1}{g(y)} \, dy = \int f(x) \, dx + C
+$$
+
+This gives us an implicit solution that we can often solve explicitly for $y$.
+
+<SeparableEquationsDemo />
+
+*The visual above shows the family of solution curves for $\frac{dy}{dx} = xy$. Each curve corresponds to a different value of $C$ in the general solution $y = Ce^{x^2/2}$.*
+
+## Worked Examples
+
+**Example 1: Basic Separation**
+
+Solve $\frac{dy}{dx} = \frac{x}{y}$.
+
+**Solution**:
+
+$$
+y \, dy = x \, dx
+$$
+
+Integrate both sides:
+
+$$
+\int y \, dy = \int x \, dx
+$$
+
+$$
+\frac{y^2}{2} = \frac{x^2}{2} + C
+$$
+
+Multiply through by 2:
+
+$$
+y^2 = x^2 + K \quad \text{where } K = 2C
+$$
+
+**Example 2: With Initial Condition**
+
+Solve $\frac{dy}{dx} = 2xy$ with $y(0) = 3$.
+
+**Solution**:
+
+$$
+\frac{dy}{y} = 2x \, dx
+$$
+
+$$
+\ln |y| = x^2 + C
+$$
+
+$$
+y = Ae^{x^2} \quad \text{(where } A = \pm e^C\text{)}
+$$
+
+Apply $y(0) = 3$: $3 = A \cdot e^0 \implies A = 3$
+
+Final solution: $y = 3e^{x^2}$
+
+**Example 3: Logistic Growth**
+
+Solve the logistic equation $\frac{dP}{dt} = 0.2P\left(1 - \frac{P}{100}\right)$ with $P(0) = 20$.
+
+**Solution**:
+Separate variables and use partial fractions (details in later lessons), leading to:
+
+$$
+P(t) = \frac{100}{1 + 4e^{-0.2t}}
+$$
+
+## Real-World Application
+
+Separable equations are used constantly in biology and chemistry. The logistic growth model you saw above predicts how populations grow when resources are limited. Pharmacologists use separable equations to model how drug concentration in the bloodstream decreases over time (exponential decay). Environmental scientists use them to track pollutant levels in lakes or the spread of invasive species. Even your phone's battery drain over time can be modeled with a simple separable equation.
+
+:::note[You've Got This]
+Separable equations are one of the first real "tools" in your differential equations toolbox. You already know how to integrate. Now you're just using that skill in a new context. Keep practicing the separation step and you'll get very fast at these. Nice work.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="diffeq-separable-equations"
+  questions={[
+    {
+      id: "q1",
+      text: "A differential equation is separable if it can be written in the form:",
+      options: ["$\\frac{dy}{dx} = f(x,y)$", "$\\frac{dy}{dx} = f(x) + g(y)$", "$\\frac{dy}{dx} = f(x) \\cdot g(y)$", "$y'' = f(x)$"],
+      correctIndex: 2,
+      explanation: "The product form $f(x) \\cdot g(y)$ allows us to separate all $y$ terms on one side and $x$ terms on the other."
+    },
+    {
+      id: "q2",
+      text: "The first step when solving a separable equation is usually to:",
+      options: ["Apply the initial condition", "Integrate both sides immediately", "Differentiate again", "Separate the variables"],
+      correctIndex: 3,
+      explanation: "We must first rearrange the equation so all $y$ terms are on one side and $x$ terms on the other."
+    },
+    {
+      id: "q3",
+      text: "Solving $\\frac{dy}{dx} = ky$ gives the general solution:",
+      options: ["$y = kx + C$", "$y = \\frac{k}{x} + C$", "$y = Ce^{kx}$", "$y = k \\ln x + C$"],
+      correctIndex: 2,
+      explanation: "Separating and integrating $\\frac{dy}{y} = k\\,dx$ gives $\\ln|y| = kx + C$, so $y = Ce^{kx}$."
+    },
+    {
+      id: "q4",
+      text: "After separating and integrating, the constant of integration:",
+      options: ["Can be ignored", "Must be solved for immediately", "Appears on one side only (by convention, combined into one $C$)", "Is always zero"],
+      correctIndex: 2,
+      explanation: "Both sides produce a constant, but we combine them into a single $+ C$ on one side."
+    },
+    {
+      id: "q5",
+      text: "Which equation is NOT separable?",
+      options: ["$\\frac{dy}{dx} = x^2 y$", "$\\frac{dy}{dx} = e^x e^y$", "$\\frac{dy}{dx} = x + y$", "$\\frac{dy}{dx} = \\frac{y}{x}$"],
+      correctIndex: 2,
+      explanation: "$x + y$ cannot be factored into $f(x) \\cdot g(y)$, so it is not separable."
+    }
+  ]}
+/>

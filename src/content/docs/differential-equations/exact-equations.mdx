@@ -1,0 +1,148 @@
+---
+title: Exact Equations
+description: Learn to solve exact differential equations by finding the potential function.
+sidebar:
+  order: 5
+---
+
+import ExactEquationDemo from "../../../components/ExactEquationDemo.astro";
+
+## What You'll Learn
+
+You will learn how to recognize exact differential equations, verify they are exact using partial derivatives, and solve them by finding the potential function.
+
+## The Concept
+
+Some first-order differential equations can be written in **differential form**:
+
+$$
+M(x, y) \, dx + N(x, y) \, dy = 0
+$$
+
+This equation is called **exact** if there exists a function $\phi(x, y)$ such that:
+
+$$
+d\phi = M \, dx + N \, dy
+$$
+
+A quick test tells us whether such a $\phi$ exists:
+
+$$
+\frac{\partial M}{\partial y} = \frac{\partial N}{\partial x}
+$$
+
+If this condition holds, we can reconstruct $\phi(x, y)$ by integrating $M$ with respect to $x$ (treating $y$ as constant), then adding the remaining terms from $N$.
+
+The solution is then simply:
+
+$$
+\phi(x, y) = C
+$$
+
+<ExactEquationDemo />
+
+*The visual above shows the level curves of the potential function $\phi(x, y) = x^2 + xy + \frac{3}{2}y^2$. Each ellipse is a solution curve where $\phi$ is constant.*
+
+## Worked Examples
+
+**Example 1: Checking Exactness**
+
+Determine whether the equation $(2x + y) \, dx + (x + 3y) \, dy = 0$ is exact.
+
+**Solution**:
+Here $M = 2x + y$ and $N = x + 3y$.
+
+$$
+\frac{\partial M}{\partial y} = 1, \quad \frac{\partial N}{\partial x} = 1
+$$
+
+They are equal, so the equation is exact.
+
+**Example 2: Solving an Exact Equation**
+
+Solve $(2x + y) \, dx + (x + 3y) \, dy = 0$.
+
+**Solution**:
+Integrate $M$ with respect to $x$:
+
+$$
+\phi(x, y) = x^2 + xy + h(y)
+$$
+
+Now take the partial with respect to $y$ and match to $N$:
+
+$$
+\frac{\partial \phi}{\partial y} = x + h'(y) = x + 3y
+$$
+
+So $h'(y) = 3y$ which gives $h(y) = \frac{3}{2}y^2$.
+
+Final potential function: $\phi(x, y) = x^2 + xy + \frac{3}{2}y^2 = C$
+
+**Example 3: With Initial Condition**
+
+Solve the exact equation $(y + e^x) \, dx + (x + \cos y) \, dy = 0$ with $y(0) = 0$.
+
+**Solution**:
+It is exact. Integrating gives:
+
+$$
+\phi(x, y) = xy + e^x + \sin y = C
+$$
+
+Using $y(0) = 0$: $0 + 1 + 0 = C \implies C = 1$
+
+Implicit solution: $xy + e^x + \sin y = 1$
+
+## Real-World Application
+
+Exact equations appear naturally in physics when working with conservative force fields. For example, finding the potential energy function from a force is essentially solving an exact equation. They also show up in thermodynamics (relating internal energy, entropy, and temperature) and in fluid dynamics when modeling irrotational flow. In engineering, they help solve problems involving exact differentials in electrical networks and heat transfer.
+
+:::note[You've Got This]
+Exact equations are elegant once you get the hang of spotting them and building the potential function. You're steadily adding powerful analytical tools to your kit. Keep practicing the partial derivative test. It becomes second nature quickly.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="diffeq-exact-equations"
+  questions={[
+    {
+      id: "q1",
+      text: "A differential equation $M\\,dx + N\\,dy = 0$ is exact if:",
+      options: ["$M = N$", "$M + N = 0$", "$\\frac{\\partial M}{\\partial y} = \\frac{\\partial N}{\\partial x}$", "$\\frac{\\partial M}{\\partial x} = \\frac{\\partial N}{\\partial y}$"],
+      correctIndex: 2,
+      explanation: "The exactness condition requires the mixed partials to match: $\\frac{\\partial M}{\\partial y} = \\frac{\\partial N}{\\partial x}$."
+    },
+    {
+      id: "q2",
+      text: "After verifying exactness, the next step is to:",
+      options: ["Solve for $y$ directly", "Apply an integrating factor", "Integrate $M$ with respect to $x$ (treating $y$ as constant)", "Integrate $N$ with respect to $x$"],
+      correctIndex: 2,
+      explanation: "We integrate $M$ with respect to $x$, leaving an unknown function $h(y)$ to determine next."
+    },
+    {
+      id: "q3",
+      text: "The general solution to an exact equation has the form:",
+      options: ["$y = f(x) + C$", "$M(x,y) = 0$", "$N(x,y) = \\text{constant}$", "$\\phi(x,y) = C$"],
+      correctIndex: 3,
+      explanation: "The solution is the family of level curves of the potential function $\\phi$."
+    },
+    {
+      id: "q4",
+      text: "The equation $(2xy)\\,dx + (x^2)\\,dy = 0$ is:",
+      options: ["Exact", "Not exact", "Linear but not exact", "Separable but not exact"],
+      correctIndex: 0,
+      explanation: "$\\frac{\\partial M}{\\partial y} = 2x$ and $\\frac{\\partial N}{\\partial x} = 2x$. They match, so it's exact."
+    },
+    {
+      id: "q5",
+      text: "Exact equations often arise in physics when modeling:",
+      options: ["Random processes", "Chaotic systems", "Nonlinear oscillations", "Conservative force fields and potential energy"],
+      correctIndex: 3,
+      explanation: "Conservative forces have a potential function, which is exactly the $\\phi$ we solve for."
+    }
+  ]}
+/>

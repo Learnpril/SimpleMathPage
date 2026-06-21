@@ -1,0 +1,134 @@
+---
+title: Nonhomogeneous Equations - Undetermined Coefficients
+description: Learn to solve second-order nonhomogeneous linear differential equations using the method of undetermined coefficients.
+sidebar:
+  order: 11
+---
+
+import UndeterminedCoefficientsDemo from "../../../components/UndeterminedCoefficientsDemo.astro";
+
+## What You'll Learn
+
+You will learn how to solve nonhomogeneous second-order linear differential equations by finding the general solution to the homogeneous equation and a particular solution using the method of undetermined coefficients.
+
+## The Concept
+
+A **nonhomogeneous** second-order linear equation looks like:
+
+$$
+ay'' + by' + cy = g(x)
+$$
+
+The general solution is:
+
+$$
+y = y_h + y_p
+$$
+
+where $y_h$ is the solution to the homogeneous equation (which we already know how to find), and $y_p$ is a **particular solution** to the full nonhomogeneous equation.
+
+The **method of undetermined coefficients** works when $g(x)$ is a polynomial, exponential, sine, cosine, or a product of these. We guess the form of $y_p$ based on $g(x)$, multiply by $x$ if necessary (when it overlaps with $y_h$), and solve for the unknown coefficients.
+
+<UndeterminedCoefficientsDemo />
+
+*The visual shows how the particular solution (blue, steady-state) and the homogeneous solution (red, transient decay) combine to form the full solution (green). The transient dies out, leaving only the forced response.*
+
+## Worked Examples
+
+**Example 1: Polynomial Right-Hand Side**
+
+Solve $y'' + 3y' + 2y = 6x$.
+
+**Solution**:
+Homogeneous solution: $y_h = C_1 e^{-x} + C_2 e^{-2x}$
+
+Guess for $y_p$: $y_p = Ax + B$
+
+Plug in, solve: $A = 3$, $B = -\frac{9}{2}$
+
+Full solution: $y = C_1 e^{-x} + C_2 e^{-2x} + 3x - \frac{9}{2}$
+
+**Example 2: Exponential Right-Hand Side**
+
+Solve $y'' - 4y' + 4y = 8e^{2x}$.
+
+**Solution**:
+Homogeneous solution has repeated root $r = 2$, so $y_h = (C_1 + C_2 x)e^{2x}$
+
+Guess: $y_p = Ax^2 e^{2x}$ (multiplied by $x^2$ due to overlap)
+
+Solving gives $A = 4$.
+
+Full solution: $y = (C_1 + C_2 x + 4x^2) e^{2x}$
+
+**Example 3: Trigonometric Right-Hand Side**
+
+Solve $y'' + y = 4\cos 3x$ with $y(0) = 0$, $y'(0) = 1$.
+
+**Solution**:
+Homogeneous: $y_h = C_1 \cos x + C_2 \sin x$
+
+Guess: $y_p = A\cos 3x + B\sin 3x$
+
+Substituting: $-9A\cos 3x - 9B\sin 3x + A\cos 3x + B\sin 3x = 4\cos 3x$
+
+So $-8A = 4 \implies A = -\frac{1}{2}$, $B = 0$.
+
+$y_p = -\frac{1}{2}\cos 3x$
+
+Apply ICs: $C_1 = \frac{1}{2}$, $C_2 = 1$
+
+Final: $y = \frac{1}{2}\cos x + \sin x - \frac{1}{2}\cos 3x$
+
+## Real-World Application
+
+Undetermined coefficients is heavily used in electrical engineering to find the steady-state response of circuits to sinusoidal inputs (AC voltage), in mechanical engineering to analyze forced vibrations (e.g., a car driving over a bumpy road), and in control systems to predict how systems respond to external forces or signals. It helps engineers design systems that don't shake apart or overheat under normal operating conditions.
+
+:::note[You've Got This]
+You've now added the key tool for solving equations with external forcing terms. This is what lets differential equations model real systems that are being pushed or driven by outside influences. You're making excellent progress. These techniques are extremely powerful.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="diffeq-undetermined-coefficients"
+  questions={[
+    {
+      id: "q1",
+      text: "The general solution to a nonhomogeneous equation is:",
+      options: ["Only the homogeneous solution", "$y = y_p$ only", "$y = y_h + y_p$", "$y = Ce^{rx}$"],
+      correctIndex: 2,
+      explanation: "It combines the complementary (homogeneous) solution with one particular solution."
+    },
+    {
+      id: "q2",
+      text: "When guessing $y_p$ for a polynomial $g(x)$, we use:",
+      options: ["An exponential", "A sine or cosine", "The homogeneous solution", "A polynomial of the same degree"],
+      correctIndex: 3,
+      explanation: "We match the form of $g(x)$ with unknown coefficients to determine."
+    },
+    {
+      id: "q3",
+      text: "We multiply our guess by $x$ (or $x^2$) when:",
+      options: ["The right-hand side is zero", "The equation is first-order", "The guess overlaps with the homogeneous solution", "We have initial conditions"],
+      correctIndex: 2,
+      explanation: "If the guess is already a solution to the homogeneous equation, we need to multiply by $x$ to get a linearly independent particular solution."
+    },
+    {
+      id: "q4",
+      text: "The method of undetermined coefficients works when $g(x)$ is:",
+      options: ["Any arbitrary function", "A polynomial, exponential, sine, or cosine (or products of these)", "Only a constant", "Undefined"],
+      correctIndex: 1,
+      explanation: "These forms have the property that their derivatives are of the same type, making the guess predictable."
+    },
+    {
+      id: "q5",
+      text: "In the solution $y = y_h + y_p$, the $y_h$ part typically:",
+      options: ["Grows without bound", "Represents the steady-state", "Decays over time (the transient)", "Is always zero"],
+      correctIndex: 2,
+      explanation: "For stable systems, $y_h$ contains decaying exponentials that vanish as $t \\to \\infty$, leaving only $y_p$."
+    }
+  ]}
+/>

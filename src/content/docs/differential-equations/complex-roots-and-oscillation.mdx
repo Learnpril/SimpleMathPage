@@ -1,0 +1,119 @@
+---
+title: Complex Roots and Oscillation
+description: Solve second-order equations with complex roots and understand damped and undamped harmonic motion.
+sidebar:
+  order: 10
+---
+
+import ComplexRootsOscillation from "../../../components/ComplexRootsOscillation.astro";
+
+## What You'll Learn
+
+You will learn how to solve second-order linear homogeneous equations when the characteristic equation has complex roots, and interpret the solutions as oscillatory motion with or without damping.
+
+## The Concept
+
+When the characteristic equation $ar^2 + br + c = 0$ has complex roots $\alpha \pm \beta i$, the general solution is:
+
+$$
+y = e^{\alpha x} (C_1 \cos \beta x + C_2 \sin \beta x)
+$$
+
+- The term $e^{\alpha x}$ controls growth or decay (damping).
+- The term $C_1 \cos \beta x + C_2 \sin \beta x$ produces oscillation with frequency $\beta$.
+
+Special cases:
+
+- $\alpha = 0$: undamped simple harmonic motion (pure oscillation forever)
+- $\alpha \lt 0$: damped oscillation (most real systems)
+- $\alpha \gt 0$: growing oscillation (unstable)
+
+<ComplexRootsOscillation />
+
+*The visual shows three cases: undamped oscillation (constant amplitude), lightly damped (decaying envelope), and heavily damped (rapid decay with minimal oscillation).*
+
+## Worked Examples
+
+**Example 1: Undamped Oscillation**
+
+Solve $y'' + 4y = 0$.
+
+**Solution**:
+Characteristic equation: $r^2 + 4 = 0 \implies r = \pm 2i$
+
+General solution: $y = C_1 \cos 2x + C_2 \sin 2x$
+
+**Example 2: Damped Oscillation**
+
+Solve $y'' + 6y' + 13y = 0$.
+
+**Solution**:
+Characteristic equation: $r^2 + 6r + 13 = 0 \implies r = -3 \pm 2i$
+
+General solution: $y = e^{-3x} (C_1 \cos 2x + C_2 \sin 2x)$
+
+**Example 3: Initial Value Problem**
+
+Solve $y'' + 2y' + 2y = 0$ with $y(0) = 1$, $y'(0) = 0$.
+
+**Solution**:
+Characteristic roots: $-1 \pm i$
+
+General solution: $y = e^{-x} (C_1 \cos x + C_2 \sin x)$
+
+Applying initial conditions: $C_1 = 1$, $C_2 = 1$
+
+Final solution: $y = e^{-x} (\cos x + \sin x)$
+
+## Real-World Application
+
+This mathematics describes real oscillating systems everywhere: car suspensions absorbing bumps, electrical circuits in radios and phones, bridges swaying in the wind, and even the motion of tall buildings during earthquakes. Engineers use these equations to design systems that either resonate at specific frequencies (like musical instruments) or dampen vibrations quickly (like shock absorbers).
+
+:::note[You've Got This]
+Complex roots bring oscillation into the picture, and suddenly differential equations start describing things you can actually see and feel in the real world. You're now equipped to model springs, circuits, and vibrations. This is where the subject gets really fun.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="diffeq-complex-roots-oscillation"
+  questions={[
+    {
+      id: "q1",
+      text: "Complex roots in the characteristic equation produce solutions involving:",
+      options: ["Pure exponentials", "Linear polynomials", "Sine and cosine multiplied by an exponential", "Logarithmic terms"],
+      correctIndex: 2,
+      explanation: "The form is $e^{\\alpha x}(C_1 \\cos \\beta x + C_2 \\sin \\beta x)$."
+    },
+    {
+      id: "q2",
+      text: "When $\\alpha = 0$ in complex roots $\\alpha \\pm \\beta i$, the motion is:",
+      options: ["Overdamped", "Critically damped", "Growing exponentially", "Undamped simple harmonic"],
+      correctIndex: 3,
+      explanation: "No exponential envelope means the oscillation continues at constant amplitude forever."
+    },
+    {
+      id: "q3",
+      text: "The value of $\\beta$ in the complex roots determines:",
+      options: ["The damping rate", "The initial amplitude", "The frequency of oscillation", "The direction of motion"],
+      correctIndex: 2,
+      explanation: "$\\beta$ sets how fast the system oscillates (angular frequency)."
+    },
+    {
+      id: "q4",
+      text: "For the equation $y'' + 4y' + 5y = 0$, the solution will:",
+      options: ["Grow without bound", "Oscillate with increasing amplitude", "Approach a constant", "Decay while oscillating"],
+      correctIndex: 3,
+      explanation: "Roots are $-2 \\pm i$, so $\\alpha = -2 \\lt 0$ means decaying oscillation."
+    },
+    {
+      id: "q5",
+      text: "Complex roots with negative real part model:",
+      options: ["Explosive growth", "Pure exponential decay without oscillation", "Chaotic behavior", "Stable damped oscillations like car suspensions"],
+      correctIndex: 3,
+      explanation: "They describe systems that oscillate but eventually settle down to equilibrium."
+    }
+  ]}
+/>

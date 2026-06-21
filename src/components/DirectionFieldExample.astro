@@ -1,0 +1,136 @@
+---
+/**
+ * DirectionFieldExample — SVG direction field with accurate logistic solution curves.
+ * Equation: dy/dx = y(2 - y).  Exact solutions: y = 2 / (1 + A e^{-2x}).
+ * Equilibria: y = 2 (stable, dashed) and y = 0 (unstable, the x-axis).
+ */
+
+const ox = 165, oy = 200, s = 60;
+const toPx = (x: number) => ox + x * s;
+const toPy = (y: number) => oy - y * s;
+const X0 = 44, X1 = 378, Y0 = 18, Y1 = 262;
+
+function curve(f: (x: number) => number, xmin: number, xmax: number, step = 0.03) {
+  const pts: [number, number][] = [];
+  for (let x = xmin; x <= xmax + 1e-9; x += step) {
+    const px = toPx(x), py = toPy(f(x));
+    if (px >= X0 && px <= X1 && py >= Y0 && py <= Y1) pts.push([px, py]);
+    else if (pts.length) break;
+  }
+  return pts;
+}
+const ptsStr = (pts: [number, number][]) => pts.map(p => `${p[0].toFixed(1)},${p[1].toFixed(1)}`).join(" ");
+function arrowPts(pts: [number, number][], size = 8) {
+  if (pts.length < 2) return "";
+  const [x2, y2] = pts[pts.length - 1];
+  const [x1, y1] = pts[pts.length - 2];
+  const a = Math.atan2(y2 - y1, x2 - x1);
+  const a1 = a + Math.PI * 0.82, a2 = a - Math.PI * 0.82;
+  return `${x2.toFixed(1)},${y2.toFixed(1)} ${(x2 + size * Math.cos(a1)).toFixed(1)},${(y2 + size * Math.sin(a1)).toFixed(1)} ${(x2 + size * Math.cos(a2)).toFixed(1)},${(y2 + size * Math.sin(a2)).toFixed(1)}`;
+}
+
+const cBlue = curve(x => 2 / (1 + 3 * Math.exp(-2 * x)), -2, 3);
+const cGreen = curve(x => 2 / (1 - (1 / 3) * Math.exp(-2 * x)), -0.5, 3);
+const cPurple = curve(x => 2 / (1 - 5 * Math.exp(-2 * x)), -2, 0.7);
+
+const field: { x1: number; y1: number; x2: number; y2: number }[] = [];
+for (let xi = -1.7; xi <= 2.9001; xi += 0.575) {
+  for (let yi = -0.6; yi <= 2.8001; yi += 0.425) {
+    const ang = Math.atan(yi * (2 - yi));
+    const L = 9;
+    field.push({
+      x1: toPx(xi) - L * Math.cos(ang), y1: toPy(yi) + L * Math.sin(ang),
+      x2: toPx(xi) + L * Math.cos(ang), y2: toPy(yi) - L * Math.sin(ang),
+    });
+  }
+}
+---
+
+<figure class="dfx" role="img" aria-label="Direction field for dy/dx = y times (2 minus y), logistic growth, with three solution curves">
+  <svg viewBox="0 0 400 296" xmlns="http://www.w3.org/2000/svg" class="dfx-svg">
+    <g class="dfx-grid">
+      {[-1,0,1,2,3].map(x => <line x1={toPx(x)} y1={Y0} x2={toPx(x)} y2={Y1} />)}
+      {[0,1,2,3].map(y => <line x1={X0} y1={toPy(y)} x2={X1} y2={toPy(y)} />)}
+    </g>
+
+    {/* Axes */}
+    <line x1={X0} y1={toPy(0)} x2={X1} y2={toPy(0)} class="dfx-axis" />
+    <line x1={toPx(0)} y1={Y0} x2={toPx(0)} y2={Y1} class="dfx-axis" />
+    <text x={X1 + 4} y={toPy(0) + 4} class="dfx-lbl axis">x</text>
+    <text x={toPx(0) + 6} y={Y0 + 4} class="dfx-lbl axis">y</text>
+
+    {/* y-axis scale ticks */}
+    <text x={toPx(0) - 8} y={toPy(2) + 4} class="dfx-lbl tick" text-anchor="end">2</text>
+    <text x={toPx(0) - 8} y={toPy(1) + 4} class="dfx-lbl tick" text-anchor="end">1</text>
+
+    {/* Stable equilibrium y = 2 */}
+    <line x1={X0} y1={toPy(2)} x2={X1} y2={toPy(2)} class="dfx-equil" />
+
+    {/* Slope field */}
+    {field.map(f => <line x1={f.x1} y1={f.y1} x2={f.x2} y2={f.y2} class="dfx-slope" />)}
+
+    {/* Solution curves */}
+    <polyline points={ptsStr(cBlue)} class="dfx-curve c-blue" fill="none" />
+    <polygon points={arrowPts(cBlue)} class="dfx-arrow a-blue" />
+    <polyline points={ptsStr(cGreen)} class="dfx-curve c-green" fill="none" />
+    <polygon points={arrowPts(cGreen)} class="dfx-arrow a-green" />
+    <polyline points={ptsStr(cPurple)} class="dfx-curve c-purple" fill="none" />
+    <polygon points={arrowPts(cPurple)} class="dfx-arrow a-purple" />
+
+    {/* Equilibrium labels in clear zones */}
+    <text x={X0 + 4} y={toPy(2) - 6} class="dfx-lbl equil-lbl">y = 2 (stable)</text>
+    <text x={X1 - 4} y={toPy(0) - 7} class="dfx-lbl equil-lbl" text-anchor="end">y = 0 (unstable)</text>
+
+    {/* Equation label */}
+    <text x={toPx(0.6)} y={Y0 + 15} class="dfx-lbl eq">dy/dx = y(2 − y)</text>
+
+    {/* Legend (bottom-right clear zone) */}
+    <g class="dfx-legend">
+      <line x1="250" y1="232" x2="272" y2="232" class="dfx-curve c-blue" />
+      <text x="278" y="236" class="dfx-lbl leg">y(0) = 0.5</text>
+      <line x1="250" y1="250" x2="272" y2="250" class="dfx-curve c-green" />
+      <text x="278" y="254" class="dfx-lbl leg">y(0) = 3</text>
+      <line x1="250" y1="268" x2="272" y2="268" class="dfx-curve c-purple" />
+      <text x="278" y="272" class="dfx-lbl leg">y(0) = −0.5</text>
+    </g>
+  </svg>
+</figure>
+
+<style>
+  .dfx { display: flex; justify-content: center; margin: 1.5rem 0; }
+  .dfx-svg { width: 100%; max-width: 500px; height: auto; }
+  .dfx-grid line { stroke: #262626; stroke-width: 0.5; }
+  .dfx-axis { stroke: #555; stroke-width: 1.2; }
+  .dfx-equil { stroke: #7ee787; stroke-width: 1.4; stroke-dasharray: 6 4; opacity: 0.7; }
+  .dfx-slope { stroke: #5a5a5a; stroke-width: 1; stroke-linecap: round; }
+  .dfx-curve { stroke-width: 2.6; stroke-linecap: round; }
+  .c-blue { stroke: #58a6ff; }
+  .c-green { stroke: #7ee787; }
+  .c-purple { stroke: #d2a8ff; }
+  .a-blue { fill: #58a6ff; }
+  .a-green { fill: #7ee787; }
+  .a-purple { fill: #d2a8ff; }
+  .dfx-lbl { font-family: "Libre Baskerville", Georgia, serif; fill: #aaa; }
+  .axis { font-size: 14px; font-weight: bold; fill: #888; }
+  .tick { font-size: 11px; fill: #777; }
+  .equil-lbl { font-size: 11px; fill: #9a9a9a; font-style: italic; }
+  .eq { font-size: 14px; font-style: italic; fill: #f0883e; }
+  .leg { font-size: 11px; fill: #aaa; }
+
+  :root[data-theme="light"] .dfx-grid line { stroke: #e8e8e8; }
+  :root[data-theme="light"] .dfx-axis { stroke: #999; }
+  :root[data-theme="light"] .dfx-equil { stroke: #1a7f2e; }
+  :root[data-theme="light"] .dfx-slope { stroke: #bbb; }
+  :root[data-theme="light"] .c-blue { stroke: #0550ae; }
+  :root[data-theme="light"] .c-green { stroke: #1a7f2e; }
+  :root[data-theme="light"] .c-purple { stroke: #6b3fa0; }
+  :root[data-theme="light"] .a-blue { fill: #0550ae; }
+  :root[data-theme="light"] .a-green { fill: #1a7f2e; }
+  :root[data-theme="light"] .a-purple { fill: #6b3fa0; }
+  :root[data-theme="light"] .dfx-lbl { fill: #555; }
+  :root[data-theme="light"] .axis { fill: #666; }
+  :root[data-theme="light"] .tick { fill: #888; }
+  :root[data-theme="light"] .equil-lbl { fill: #666; }
+  :root[data-theme="light"] .eq { fill: #c05010; }
+  :root[data-theme="light"] .leg { fill: #555; }
+</style>

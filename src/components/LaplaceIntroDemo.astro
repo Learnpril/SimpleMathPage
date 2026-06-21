@@ -1,0 +1,69 @@
+---
+/**
+ * LaplaceIntroDemo — Flowchart showing the Laplace transform workflow.
+ * Vertical layout: cleaner, more room, nothing cut off.
+ * Step 1 (top): Differential equation in time domain
+ * Step 2 (middle): Algebraic equation in s-domain
+ * Step 3 (bottom): Solution y(t) after inverse transform
+ */
+---
+
+<figure class="lpi" role="img" aria-label="Flowchart showing the Laplace transform process: differential equation to algebraic equation to solution">
+  <svg viewBox="0 0 360 280" xmlns="http://www.w3.org/2000/svg" class="lpi-svg">
+    {/* Box 1: Time domain ODE */}
+    <rect x="80" y="15" width="200" height="55" rx="6" class="lpi-box box-time" />
+    <text x="180" y="38" class="lpi-txt box-title" text-anchor="middle">Time Domain (t)</text>
+    <text x="180" y="56" class="lpi-txt box-eq" text-anchor="middle">y'' + 3y' + 2y = f(t)</text>
+
+    {/* Arrow 1: down, labeled ℒ */}
+    <line x1="180" y1="70" x2="180" y2="105" class="lpi-arrow" />
+    <polygon points="176,105 180,113 184,105" class="lpi-arrowhead" />
+    <text x="196" y="94" class="lpi-txt arrow-lbl">ℒ (transform)</text>
+
+    {/* Box 2: s-domain algebra */}
+    <rect x="80" y="115" width="200" height="55" rx="6" class="lpi-box box-s" />
+    <text x="180" y="138" class="lpi-txt box-title" text-anchor="middle">s-Domain (algebra)</text>
+    <text x="180" y="156" class="lpi-txt box-eq" text-anchor="middle">(s² + 3s + 2)Y(s) = F(s) + ICs</text>
+
+    {/* Arrow 2: down, labeled solve + ℒ⁻¹ */}
+    <line x1="180" y1="170" x2="180" y2="205" class="lpi-arrow" />
+    <polygon points="176,205 180,213 184,205" class="lpi-arrowhead" />
+    <text x="196" y="194" class="lpi-txt arrow-lbl">solve, then ℒ⁻¹</text>
+
+    {/* Box 3: Solution */}
+    <rect x="80" y="215" width="200" height="55" rx="6" class="lpi-box box-sol" />
+    <text x="180" y="238" class="lpi-txt box-title" text-anchor="middle">Solution (t)</text>
+    <text x="180" y="256" class="lpi-txt box-eq" text-anchor="middle">y(t) = C₁e⁻ᵗ + C₂e⁻²ᵗ + yp(t)</text>
+
+    {/* Side annotation */}
+    <text x="14" y="148" class="lpi-txt note">Derivatives</text>
+    <text x="14" y="162" class="lpi-txt note">become</text>
+    <text x="14" y="176" class="lpi-txt note">powers of s</text>
+  </svg>
+</figure>
+
+<style>
+  .lpi { display: flex; justify-content: center; margin: 1.5rem 0; }
+  .lpi-svg { width: 100%; max-width: 440px; height: auto; }
+  .lpi-box { fill: none; stroke-width: 1.8; }
+  .box-time { stroke: #58a6ff; }
+  .box-s { stroke: #7ee787; }
+  .box-sol { stroke: #f0883e; }
+  .lpi-arrow { stroke: #888; stroke-width: 1.5; }
+  .lpi-arrowhead { fill: #888; }
+  .lpi-txt { font-family: "Libre Baskerville", Georgia, serif; }
+  .box-title { font-size: 12px; font-weight: bold; fill: #ccc; }
+  .box-eq { font-size: 10px; fill: #aaa; font-style: italic; }
+  .arrow-lbl { font-size: 10px; fill: #f0883e; font-weight: bold; }
+  .note { font-size: 9.5px; fill: #777; font-style: italic; }
+
+  :root[data-theme="light"] .box-time { stroke: #0550ae; }
+  :root[data-theme="light"] .box-s { stroke: #1a7f2e; }
+  :root[data-theme="light"] .box-sol { stroke: #c05010; }
+  :root[data-theme="light"] .lpi-arrow { stroke: #999; }
+  :root[data-theme="light"] .lpi-arrowhead { fill: #999; }
+  :root[data-theme="light"] .box-title { fill: #333; }
+  :root[data-theme="light"] .box-eq { fill: #555; }
+  :root[data-theme="light"] .arrow-lbl { fill: #c05010; }
+  :root[data-theme="light"] .note { fill: #666; }
+</style>

@@ -1,0 +1,129 @@
+---
+title: Applications - Mixing Problems
+description: Model the concentration of a substance in a tank using differential equations.
+sidebar:
+  order: 8
+---
+
+import MixingTankDemo from "../../../components/MixingTankDemo.astro";
+
+## What You'll Learn
+
+You will learn how to set up and solve differential equations for mixing problems involving tanks with inflow and outflow of different concentrations. This is a classic applied problem that appears throughout engineering and chemistry.
+
+## The Concept
+
+Imagine a tank containing a fixed volume of liquid. A solution with a certain concentration flows in, while the well-mixed solution flows out at the same rate (so the volume stays constant).
+
+Let $Q(t)$ be the amount of solute (in grams, pounds, etc.) in the tank at time $t$. Then the rate of change is:
+
+$$
+\frac{dQ}{dt} = \text{rate in} - \text{rate out}
+$$
+
+If the inflow has concentration $c_{\text{in}}$ and flow rate $r$, and the outflow has concentration $\frac{Q}{V}$ (where $V$ is the constant volume), the equation becomes:
+
+$$
+\frac{dQ}{dt} = r \cdot c_{\text{in}} - r \cdot \frac{Q}{V}
+$$
+
+This is a first-order linear differential equation, which we already know how to solve using an integrating factor.
+
+<MixingTankDemo />
+
+*The diagram above shows a typical mixing tank setup. Solution flows in from the top with concentration $c_{\text{in}}$ at rate $r$, mixes thoroughly, and flows out the bottom at the same rate.*
+
+## Worked Examples
+
+**Example 1: Basic Mixing**
+
+A 100-liter tank initially contains 10 kg of salt. Pure water flows in at 5 L/min while the well-mixed solution flows out at the same rate. How much salt remains after 20 minutes?
+
+**Solution**:
+$V = 100$, $r = 5$, $c_{\text{in}} = 0$.
+
+$$
+\frac{dQ}{dt} = 0 - \frac{5Q}{100} = -\frac{Q}{20}
+$$
+
+Solution: $Q(t) = 10e^{-t/20}$
+
+At $t = 20$: $Q(20) \approx 3.68$ kg.
+
+**Example 2: With Nonzero Inflow**
+
+A 200-gallon tank starts with 40 pounds of salt. Brine containing 2 lb/gal flows in at 3 gal/min while the mixture flows out at 3 gal/min. Find the amount of salt after 30 minutes.
+
+**Solution**:
+
+$$
+\frac{dQ}{dt} = 6 - \frac{3Q}{200}
+$$
+
+Integrating factor: $e^{3t/200}$. Solving gives:
+
+$$
+Q(t) = 400 - 360e^{-3t/200}
+$$
+
+At $t = 30$: $Q(30) \approx 184.6$ pounds.
+
+**Example 3: Changing Volume**
+
+(Advanced) A tank starts with 50 liters of pure water. Brine at 0.5 kg/L flows in at 2 L/min while mixture flows out at 3 L/min. Set up the equation (note volume is decreasing).
+
+**Solution**:
+Volume at time $t$: $V(t) = 50 - t$. The equation becomes more complex but is still solvable with similar techniques.
+
+## Real-World Application
+
+Mixing problems model real industrial processes: chemical plants blending solutions, water treatment facilities adding chlorine, pharmaceutical companies mixing medications, and even home brewing or cooking when ingredients are continuously added and drained. Environmental engineers use them to track pollutant levels in lakes or rivers when there is inflow from contaminated streams and outflow to the ocean.
+
+:::note[You've Got This]
+Mixing problems tie together everything you've learned so far: separation, integrating factors, and real-world modeling. These are exactly the kinds of problems engineers and scientists solve daily. You're building very practical skills now.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="diffeq-mixing-problems"
+  questions={[
+    {
+      id: "q1",
+      text: "In a typical mixing tank problem with constant volume, the differential equation is based on:",
+      options: ["$Q = ct + d$", "$\\frac{dQ}{dt} = \\text{rate in} - \\text{rate out}$", "$\\frac{dQ}{dt} = kQ$", "$\\frac{d^2Q}{dt^2} = r$"],
+      correctIndex: 1,
+      explanation: "The fundamental balance: rate of change equals what comes in minus what goes out."
+    },
+    {
+      id: "q2",
+      text: "If pure water flows into a tank, the inflow concentration $c_{\\text{in}}$ is:",
+      options: ["Equal to the current concentration", "Constant but nonzero", "Zero", "Increasing over time"],
+      correctIndex: 2,
+      explanation: "Pure water contains no solute, so $c_{\\text{in}} = 0$."
+    },
+    {
+      id: "q3",
+      text: "The term $r \\cdot \\frac{Q}{V}$ represents:",
+      options: ["The volume change", "Rate of salt flowing in", "The initial amount", "Rate of salt flowing out"],
+      correctIndex: 3,
+      explanation: "It is the outflow rate times the current concentration $Q/V$ in the tank."
+    },
+    {
+      id: "q4",
+      text: "Mixing tank problems are usually solved using:",
+      options: ["Numerical methods only", "Direction fields only", "The integrating factor method", "Exact equation techniques"],
+      correctIndex: 2,
+      explanation: "They produce first-order linear ODEs, which are solved with integrating factors."
+    },
+    {
+      id: "q5",
+      text: "As $t \\to \\infty$ in a constant-volume mixing problem with nonzero inflow concentration, $Q$ approaches:",
+      options: ["Zero", "The initial amount", "$c_{\\text{in}} \\times V$", "Infinity"],
+      correctIndex: 2,
+      explanation: "Eventually the tank concentration matches the inflow concentration, so $Q \\to c_{\\text{in}} \\cdot V$."
+    }
+  ]}
+/>

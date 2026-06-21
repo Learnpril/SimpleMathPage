@@ -1,0 +1,143 @@
+---
+title: Laplace Transforms - Solving Initial Value Problems
+description: Use Laplace transforms to solve second-order initial value problems efficiently.
+sidebar:
+  order: 14
+---
+
+import LaplaceIVPDemo from "../../../components/LaplaceIVPDemo.astro";
+
+## What You'll Learn
+
+You will learn how to solve second-order (and higher) initial value problems using Laplace transforms, including problems with step functions and more complex forcing terms.
+
+## The Concept
+
+Laplace transforms shine brightest on initial value problems. The process is:
+
+1. Take the Laplace transform of every term in the differential equation.
+2. Use the derivative rules to incorporate initial conditions automatically.
+3. Solve the resulting algebraic equation for $Y(s)$.
+4. Use partial fractions and inverse transforms to get back to $y(t)$.
+
+This method is especially powerful because it handles initial conditions cleanly and works well with discontinuous forcing functions.
+
+<LaplaceIVPDemo />
+
+*The visual shows the solution to $y'' + 4y' + 5y = 0$ with $y(0) = 1$, $y'(0) = -2$. The result is a damped oscillation $y = e^{-2t}(\cos t - \sin t)$, obtained via Laplace transforms. The dashed envelope shows the decay rate.*
+
+## Worked Examples
+
+**Example 1: Standard Second-Order IVP**
+
+Solve $y'' + 4y' + 5y = 0$ with $y(0) = 1$, $y'(0) = -2$.
+
+**Solution**:
+
+$$
+s^2 Y - s + 2 + 4(sY - 1) + 5Y = 0
+$$
+
+$$
+(s^2 + 4s + 5)Y = s + 2
+$$
+
+$$
+Y(s) = \frac{s + 2}{s^2 + 4s + 5} = \frac{s + 2}{(s+2)^2 + 1}
+$$
+
+Complete the square and recognize the form:
+
+$$
+y(t) = e^{-2t}\cos t
+$$
+
+Wait, let's be more careful. $Y = \frac{s+2}{(s+2)^2 + 1}$. Using the shift property: $y(t) = e^{-2t}\cos t$.
+
+**Example 2: With Forcing Function**
+
+Solve $y'' + y = \sin t$ with $y(0) = 0$, $y'(0) = 1$.
+
+**Solution**:
+
+$$
+s^2 Y - 1 + Y = \frac{1}{s^2 + 1}
+$$
+
+$$
+Y(s) = \frac{1}{s^2+1} + \frac{1}{(s^2+1)^2}
+$$
+
+The inverse gives: $y(t) = \sin t + \frac{1}{2}(\sin t - t\cos t)$
+
+**Example 3: Step Function Input**
+
+Solve $y'' + 4y = u(t - \pi)$ (unit step at $t = \pi$) with zero initial conditions.
+
+**Solution**:
+The Laplace transform of the step function gives $\frac{e^{-\pi s}}{s}$:
+
+$$
+Y(s) = \frac{e^{-\pi s}}{s(s^2 + 4)}
+$$
+
+Using partial fractions and the time-shift theorem:
+
+$$
+y(t) = u(t-\pi) \cdot \frac{1}{4}\left(1 - \cos 2(t-\pi)\right)
+$$
+
+The solution is zero until $t = \pi$, then begins oscillating.
+
+## Real-World Application
+
+Engineers use this technique constantly to analyze systems with sudden inputs: a voltage spike in a circuit, a sudden force on a mechanical system, or a control signal sent to a motor. In control theory, Laplace transforms let designers predict how a system will respond to real-world commands and disturbances before building the physical prototype.
+
+:::note[You've Got This]
+You've now reached one of the most practical and powerful tools in all of differential equations. Being able to turn an entire initial value problem into algebra and solve it cleanly is a huge skill. This is exactly what engineers and physicists rely on daily. Excellent work getting here.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="diffeq-laplace-ivps"
+  questions={[
+    {
+      id: "q1",
+      text: "When taking the Laplace transform of $y''$, you must include:",
+      options: ["Only $s^2 Y(s)$", "Just the initial conditions", "$s^2 Y(s) - s\\,y(0) - y'(0)$", "$s\\,Y(s) - y(0)$"],
+      correctIndex: 2,
+      explanation: "Both initial conditions $y(0)$ and $y'(0)$ appear in the transform of $y''$."
+    },
+    {
+      id: "q2",
+      text: "After solving for $Y(s)$, the next step is to:",
+      options: ["Differentiate it", "Plug in more initial conditions", "Factor the denominator only", "Take the inverse Laplace transform"],
+      correctIndex: 3,
+      explanation: "We convert back from the $s$-domain to the time domain to get $y(t)$."
+    },
+    {
+      id: "q3",
+      text: "Laplace transforms are especially useful for:",
+      options: ["Nonlinear equations", "Homogeneous equations with no initial conditions", "Partial differential equations", "IVPs and discontinuous forcing functions"],
+      correctIndex: 3,
+      explanation: "They handle initial conditions and jumps (step functions, impulses) elegantly."
+    },
+    {
+      id: "q4",
+      text: "The Laplace transform of a unit step function $u(t-a)$ is:",
+      options: ["$\\frac{1}{s}$", "$e^{as}$", "$\\frac{1}{s-a}$", "$\\frac{e^{-as}}{s}$"],
+      correctIndex: 3,
+      explanation: "The time shift $u(t-a)$ introduces a factor of $e^{-as}$ in the $s$-domain."
+    },
+    {
+      id: "q5",
+      text: "A major advantage of the Laplace method over classical techniques is:",
+      options: ["It only works for first-order equations", "It requires no algebra", "It automatically includes initial conditions and handles complicated inputs", "It only gives numerical solutions"],
+      correctIndex: 2,
+      explanation: "ICs are built in, and step/impulse functions are handled naturally via the transform."
+    }
+  ]}
+/>

@@ -1,0 +1,152 @@
+---
+title: Laplace Transforms - Definition and Properties
+description: Learn the basics of Laplace transforms and how they convert differential equations into algebraic equations.
+sidebar:
+  order: 13
+---
+
+import LaplaceIntroDemo from "../../../components/LaplaceIntroDemo.astro";
+
+## What You'll Learn
+
+You will learn what the Laplace transform is, how to compute it for common functions, and understand its key properties, especially how it turns differentiation into multiplication by $s$.
+
+## The Concept
+
+The **Laplace transform** of a function $f(t)$ is defined as:
+
+$$
+\mathcal{L}\{f(t)\} = F(s) = \int_{0}^{\infty} e^{-st} f(t) \, dt
+$$
+
+It converts a function of time $t$ into a function of a new variable $s$. The real power comes when we take the Laplace transform of a differential equation:
+
+$$
+\mathcal{L}\{y''\} = s^2 Y(s) - s\,y(0) - y'(0)
+$$
+
+$$
+\mathcal{L}\{y'\} = s\,Y(s) - y(0)
+$$
+
+$$
+\mathcal{L}\{y\} = Y(s)
+$$
+
+This turns a differential equation into a purely algebraic equation that is often much easier to solve. We then use the inverse Laplace transform to get back to the time domain.
+
+<LaplaceIntroDemo />
+
+*The diagram shows the Laplace transform workflow: start with a differential equation in the time domain, transform to the s-domain where it becomes algebra, solve for Y(s), then inverse-transform back to get y(t).*
+
+## Key Properties
+
+$$
+\mathcal{L}\{f'(t)\} = s\,F(s) - f(0)
+$$
+
+$$
+\mathcal{L}\{f''(t)\} = s^2 F(s) - s\,f(0) - f'(0)
+$$
+
+$$
+\mathcal{L}\{e^{at}\} = \frac{1}{s - a}
+$$
+
+$$
+\mathcal{L}\{\sin bt\} = \frac{b}{s^2 + b^2}, \quad \mathcal{L}\{\cos bt\} = \frac{s}{s^2 + b^2}
+$$
+
+$$
+\mathcal{L}\{t^n\} = \frac{n!}{s^{n+1}}
+$$
+
+## Worked Examples
+
+**Example 1: Basic Transform**
+
+Find $\mathcal{L}\{t^2 + 3\sin 2t\}$.
+
+**Solution**:
+
+$$
+\mathcal{L}\{t^2\} + 3\mathcal{L}\{\sin 2t\} = \frac{2}{s^3} + 3 \cdot \frac{2}{s^2 + 4} = \frac{2}{s^3} + \frac{6}{s^2 + 4}
+$$
+
+**Example 2: Solving a Simple IVP**
+
+Solve $y' + 3y = 0$ with $y(0) = 5$ using Laplace transforms.
+
+**Solution**:
+Take Laplace of both sides:
+
+$$
+sY - 5 + 3Y = 0 \implies Y(s) = \frac{5}{s + 3}
+$$
+
+Inverse: $y(t) = 5e^{-3t}$
+
+**Example 3: Second-Order IVP**
+
+Solve $y'' + 4y = 0$ with $y(0) = 1$, $y'(0) = 0$.
+
+**Solution**:
+
+$$
+s^2 Y - s + 4Y = 0 \implies Y(s) = \frac{s}{s^2 + 4}
+$$
+
+Inverse: $y(t) = \cos 2t$
+
+## Real-World Application
+
+Laplace transforms are essential in control theory, electrical engineering (analyzing circuits with sudden switches or AC inputs), mechanical engineering (vibration analysis), and signal processing. They make it dramatically easier to solve initial value problems, especially when there are discontinuous forcing functions like step inputs or impulses.
+
+:::note[You've Got This]
+Laplace transforms are a game-changer. They turn hard differential equations into straightforward algebra. You've just unlocked one of the most powerful tools in applied mathematics and engineering. This is a big moment. Enjoy it.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="diffeq-laplace-transforms-intro"
+  questions={[
+    {
+      id: "q1",
+      text: "The Laplace transform converts:",
+      options: ["Integrals into division", "Derivatives into multiplication by $s$", "Time domain to frequency domain only", "Exponential growth into decay"],
+      correctIndex: 1,
+      explanation: "Differentiation in $t$ becomes multiplication by $s$ in the $s$-domain."
+    },
+    {
+      id: "q2",
+      text: "$\\mathcal{L}\\{e^{at}\\}$ equals:",
+      options: ["$\\frac{1}{s+a}$", "$\\frac{a}{s^2 + a^2}$", "$\\frac{s}{s^2 + a^2}$", "$\\frac{1}{s-a}$"],
+      correctIndex: 3,
+      explanation: "The integral $\\int_0^\\infty e^{-st} e^{at}\\,dt = \\int_0^\\infty e^{-(s-a)t}\\,dt = \\frac{1}{s-a}$."
+    },
+    {
+      id: "q3",
+      text: "The main advantage of Laplace transforms for IVPs is:",
+      options: ["They make the equation longer", "They only work for first-order equations", "They automatically incorporate initial conditions", "They require no algebra"],
+      correctIndex: 2,
+      explanation: "The terms $y(0)$ and $y'(0)$ appear naturally in the transformed equation."
+    },
+    {
+      id: "q4",
+      text: "$\\mathcal{L}\\{\\sin bt\\}$ equals:",
+      options: ["$\\frac{s}{s^2 + b^2}$", "$\\frac{1}{s^2 + b^2}$", "$\\frac{b}{s - b}$", "$\\frac{b}{s^2 + b^2}$"],
+      correctIndex: 3,
+      explanation: "The standard sine transform has $b$ in the numerator and $s^2 + b^2$ in the denominator."
+    },
+    {
+      id: "q5",
+      text: "Laplace transforms are particularly powerful when dealing with:",
+      options: ["Purely homogeneous equations", "Nonlinear equations", "Discontinuous forcing functions and initial value problems", "Partial differential equations only"],
+      correctIndex: 2,
+      explanation: "They excel at handling sudden changes (step functions, impulses) and IVPs."
+    }
+  ]}
+/>

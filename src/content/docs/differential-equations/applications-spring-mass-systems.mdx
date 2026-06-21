@@ -1,0 +1,126 @@
+---
+title: Applications - Spring-Mass Systems
+description: Model and solve the motion of a mass attached to a spring using second-order differential equations.
+sidebar:
+  order: 18
+---
+
+import SpringMassAnimation from "../../../components/SpringMassAnimation.astro";
+
+## What You'll Learn
+
+You will learn how to model a spring-mass system with damping and external forces, derive the governing differential equation, and interpret the different types of motion (underdamped, critically damped, overdamped).
+
+## The Concept
+
+Consider a mass $m$ attached to a spring with spring constant $k$, with damping coefficient $c$, and an optional external force $F(t)$.
+
+Newton's second law gives:
+
+$$
+m \frac{d^2x}{dt^2} = -kx - c \frac{dx}{dt} + F(t)
+$$
+
+Rearranged into standard form:
+
+$$
+mx'' + cx' + kx = F(t)
+$$
+
+The behavior depends on the discriminant of the characteristic equation: $c^2 - 4mk$.
+
+- $c^2 - 4mk \lt 0$: **Underdamped** (oscillates while decaying)
+- $c^2 - 4mk = 0$: **Critically damped** (fastest non-oscillatory return)
+- $c^2 - 4mk \gt 0$: **Overdamped** (slow, non-oscillatory return)
+
+<SpringMassAnimation />
+
+*The interactive 3D animation shows a spring-mass system with damped oscillation. Drag to rotate, scroll to zoom. The mass bounces on the spring and gradually settles to equilibrium.*
+
+## Worked Examples
+
+**Example 1: Underdamped Motion**
+
+A 2 kg mass is attached to a spring with $k = 50$ N/m and damping $c = 4$ Ns/m. Find the position function if released from rest at $x = 0.3$ m.
+
+**Solution**:
+Equation: $2x'' + 4x' + 50x = 0$, or $x'' + 2x' + 25x = 0$
+
+Characteristic equation: $r^2 + 2r + 25 = 0 \implies r = -1 \pm \sqrt{24}i$
+
+Since $c^2 - 4mk = 16 - 400 \lt 0$, this is underdamped.
+
+$$
+x(t) = e^{-t}(0.3\cos(\sqrt{24}\,t) + \frac{0.3}{\sqrt{24}}\sin(\sqrt{24}\,t))
+$$
+
+**Example 2: Critically Damped**
+
+With $m = 1$, $k = 9$, find the damping $c$ for critical damping.
+
+**Solution**:
+$c^2 = 4mk = 36 \implies c = 6$
+
+The equation $x'' + 6x' + 9x = 0$ has repeated root $r = -3$.
+
+Solution: $x(t) = (C_1 + C_2 t)e^{-3t}$
+
+**Example 3: With External Force (Resonance)**
+
+Solve $x'' + 4x = 2\cos(2t)$ (forcing frequency matches natural frequency).
+
+**Solution**:
+Since $\omega = 2$ matches the natural frequency, we get resonance. The particular solution grows as $y_p = \frac{1}{2}t\sin(2t)$, showing amplitude increasing linearly with time.
+
+## Real-World Application
+
+Spring-mass models are everywhere: car suspension systems, building sway during earthquakes, audio speakers, clocks, bungee jumping, and even biological systems like heartbeats or limb movement. Engineers use these equations to tune vehicle ride comfort, design earthquake-resistant buildings, and create stable control systems.
+
+:::note[You've Got This]
+You've reached one of the most satisfying applications in the entire course. You can now mathematically describe and predict the motion of real physical objects. This is where differential equations become truly beautiful. Amazing job making it this far.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="diffeq-spring-mass-systems"
+  questions={[
+    {
+      id: "q1",
+      text: "The standard form of the undamped spring-mass equation is:",
+      options: ["$x'' + cx' + kx = 0$", "$x' = -kx$", "$mx'' + kx = 0$", "$x'' = kx$"],
+      correctIndex: 2,
+      explanation: "With no damping ($c = 0$) and no external force, it's $mx'' + kx = 0$."
+    },
+    {
+      id: "q2",
+      text: "When $c^2 - 4mk \\lt 0$, the system is:",
+      options: ["Overdamped", "Critically damped", "Undamped", "Underdamped (oscillatory)"],
+      correctIndex: 3,
+      explanation: "Complex roots with negative real part produce decaying oscillation."
+    },
+    {
+      id: "q3",
+      text: "Critical damping occurs when:",
+      options: ["$c = 0$", "$k = 0$", "$c^2 \\gt 4mk$", "$c^2 = 4mk$"],
+      correctIndex: 3,
+      explanation: "This is the boundary: fastest return to equilibrium without overshooting."
+    },
+    {
+      id: "q4",
+      text: "Spring-mass systems are used to model:",
+      options: ["Population growth", "Chemical reactions", "Car suspensions, buildings during earthquakes, and speakers", "Financial markets"],
+      correctIndex: 2,
+      explanation: "Anything with a restoring force and inertia follows this equation."
+    },
+    {
+      id: "q5",
+      text: "Adding damping to a spring-mass system:",
+      options: ["Increases oscillation frequency", "Removes all restoring force", "Makes the motion faster", "Causes the amplitude to decay over time"],
+      correctIndex: 3,
+      explanation: "Damping dissipates energy, so oscillations gradually die out."
+    }
+  ]}
+/>

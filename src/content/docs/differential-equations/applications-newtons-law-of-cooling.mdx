@@ -1,0 +1,148 @@
+---
+title: Applications - Newton's Law of Cooling
+description: Use differential equations to model how objects heat up or cool down toward the surrounding temperature.
+sidebar:
+  order: 7
+---
+
+import NewtonsCoolingDemo from "../../../components/NewtonsCoolingDemo.astro";
+
+## What You'll Learn
+
+You will learn how to set up and solve differential equations based on Newton's Law of Cooling, work with initial value problems, and interpret the results in practical situations.
+
+## The Concept
+
+Newton's Law of Cooling states that the rate at which an object changes temperature is proportional to the difference between its temperature and the ambient (surrounding) temperature.
+
+Let $T(t)$ be the temperature of the object at time $t$, and let $T_a$ be the constant ambient temperature. Then:
+
+$$
+\frac{dT}{dt} = -k(T - T_a)
+$$
+
+where $k \gt 0$ is the cooling constant. This is a first-order linear (and also separable) differential equation.
+
+The solution is:
+
+$$
+T(t) = T_a + (T_0 - T_a)e^{-kt}
+$$
+
+where $T_0$ is the initial temperature.
+
+<NewtonsCoolingDemo />
+
+*The visual shows two temperature curves: a hot object cooling down (red) and a cold object warming up (blue), both approaching the ambient temperature (dashed line) exponentially.*
+
+## Worked Examples
+
+**Example 1: Basic Cooling**
+
+A cup of coffee is 90°C when poured. The room is 22°C. After 10 minutes the coffee is 65°C. Find the temperature after 30 minutes.
+
+**Solution**:
+$T_a = 22$, $T(0) = 90$, $T(10) = 65$.
+
+First find $k$:
+
+$$
+65 = 22 + (90 - 22)e^{-10k} \implies 43 = 68e^{-10k}
+$$
+
+$$
+k = -\frac{1}{10}\ln\left(\frac{43}{68}\right) \approx 0.046
+$$
+
+Then at $t = 30$:
+
+$$
+T(30) = 22 + 68e^{-0.046 \cdot 30} \approx 38.9°\text{C}
+$$
+
+**Example 2: Warming Up**
+
+A cold can of soda at 4°C is placed in a 25°C room. After 20 minutes it reaches 12°C. When will it reach 20°C?
+
+**Solution**:
+$T_a = 25$, $T_0 = 4$. Find $k$ from $T(20) = 12$:
+
+$$
+12 = 25 + (4 - 25)e^{-20k} \implies -13 = -21e^{-20k}
+$$
+
+$$
+k = -\frac{1}{20}\ln\left(\frac{13}{21}\right) \approx 0.024
+$$
+
+Solve $T(t) = 20$:
+
+$$
+20 = 25 - 21e^{-0.024t} \implies t = -\frac{1}{0.024}\ln\left(\frac{5}{21}\right) \approx 60 \text{ minutes}
+$$
+
+**Example 3: Crime Scene Application**
+
+A murder victim is found at 9:00 PM with body temperature 28°C. The room is 20°C. One hour later the body is 26.5°C. Estimate the time of death (normal body temp: 37°C).
+
+**Solution**:
+From the two readings, find $k \approx 0.022$. Then solve for $t_0$ when $T = 37$:
+
+$$
+37 = 20 + 17e^{-0.022 \cdot 0} \implies \text{need to work backwards}
+$$
+
+Setting up the equation from time of death gives approximately 1.75 hours before 9:00 PM, so time of death was around 7:15 PM.
+
+## Real-World Application
+
+Newton's Law of Cooling is used in forensics to estimate time of death, in food science to determine safe cooling times for cooked food, and in engineering to design cooling systems for electronics and engines. It also helps meteorologists understand how objects heat up in sunlight or how lakes cool at night. Even your morning coffee or evening tea follows this exact model.
+
+:::note[You've Got This]
+Newton's Law of Cooling is a perfect example of how a simple differential equation can describe something you observe every day. You're now able to model real temperature changes mathematically. This is solid applied work. Keep it up.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="diffeq-newtons-law-cooling"
+  questions={[
+    {
+      id: "q1",
+      text: "Newton's Law of Cooling says the rate of temperature change is proportional to:",
+      options: ["The current temperature", "Time elapsed", "The difference between object and ambient temperature", "The square of the temperature difference"],
+      correctIndex: 2,
+      explanation: "The driving force is the gap between the object's temperature and its surroundings."
+    },
+    {
+      id: "q2",
+      text: "The general solution to Newton's Law of Cooling is:",
+      options: ["$T(t) = T_0 e^{kt}$", "$T(t) = T_a(1 - e^{-kt})$", "$T(t) = T_a + (T_0 - T_a)e^{-kt}$", "$T(t) = kt + T_a$"],
+      correctIndex: 2,
+      explanation: "The object's temperature exponentially approaches the ambient temperature."
+    },
+    {
+      id: "q3",
+      text: "The negative sign in $\\frac{dT}{dt} = -k(T - T_a)$ indicates:",
+      options: ["Cooling only, never warming", "Time runs backwards", "The object moves toward ambient temperature", "The constant $k$ is negative"],
+      correctIndex: 2,
+      explanation: "Whether cooling or warming, the system always moves toward equilibrium with surroundings."
+    },
+    {
+      id: "q4",
+      text: "As $t \\to \\infty$, the solution $T(t)$ approaches:",
+      options: ["Zero", "The initial temperature $T_0$", "Infinity", "The ambient temperature $T_a$"],
+      correctIndex: 3,
+      explanation: "All objects eventually reach thermal equilibrium with their environment."
+    },
+    {
+      id: "q5",
+      text: "Newton's Law of Cooling is used in forensics to estimate:",
+      options: ["Blood type", "Cause of death", "Time of death", "Identity of victim"],
+      correctIndex: 2,
+      explanation: "By measuring body temperature and working the equation backwards, investigators can estimate when death occurred."
+    }
+  ]}
+/>

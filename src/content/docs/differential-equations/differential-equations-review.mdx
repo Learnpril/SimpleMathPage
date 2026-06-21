@@ -1,0 +1,166 @@
+---
+title: Differential Equations Review
+description: Comprehensive review covering all topics from direction fields through spring-mass systems.
+sidebar:
+  order: 19
+---
+
+## Differential Equations Review
+
+You've made it through the entire Differential Equations course. This review spans everything: direction fields, separable and exact equations, growth and decay models, mixing problems, second-order equations (homogeneous and nonhomogeneous), Laplace transforms, systems, phase plane analysis, numerical methods, and spring-mass applications.
+
+That's a lot of ground. You've gone from "what even is a differential equation?" to modeling real physical systems with multiple interacting components. If you can pass this review, you genuinely understand the subject.
+
+Aim for **15 out of 20** to pass. Take your time. Sketch a direction field or write out the characteristic equation if you're stuck on a question. The techniques are all connected, and sometimes the best way to remember a formula is to re-derive it quickly from first principles.
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="diffeq-review"
+  questions={[
+    {
+      id: "q1",
+      text: "A differential equation is called separable if it can be written as:",
+      options: ["$\\frac{dy}{dx} = f(x) + g(y)$", "$\\frac{dy}{dx} = f(x) \\cdot g(y)$", "$y'' = f(x,y)$", "$\\frac{dy}{dx} = ky^2 + x$"],
+      correctIndex: 1,
+      explanation: "The product form allows us to move all $y$ terms to one side and $x$ terms to the other."
+    },
+    {
+      id: "q2",
+      text: "The integrating factor for $\\frac{dy}{dx} + P(x)y = Q(x)$ is:",
+      options: ["$e^{P(x)}$", "$\\int Q(x)\\,dx$", "$e^{\\int P(x)\\,dx}$", "$\\frac{1}{P(x)}$"],
+      correctIndex: 2,
+      explanation: "$\\mu(x) = e^{\\int P(x)\\,dx}$ turns the left side into a perfect derivative."
+    },
+    {
+      id: "q3",
+      text: "An equation $M\\,dx + N\\,dy = 0$ is exact when:",
+      options: ["$M = N$", "$M + N = 0$", "$\\frac{\\partial M}{\\partial x} = N$", "$\\frac{\\partial M}{\\partial y} = \\frac{\\partial N}{\\partial x}$"],
+      correctIndex: 3,
+      explanation: "This condition guarantees a potential function $\\phi(x,y)$ exists."
+    },
+    {
+      id: "q4",
+      text: "The solution to $\\frac{dP}{dt} = kP$ is:",
+      options: ["$P = kt + C$", "$P = \\frac{P_0}{1 - kt}$", "$P = P_0 e^{kt}$", "$P = k\\ln t + C$"],
+      correctIndex: 2,
+      explanation: "This is pure exponential growth or decay."
+    },
+    {
+      id: "q5",
+      text: "Newton's Law of Cooling is modeled by:",
+      options: ["$\\frac{dT}{dt} = kT$", "$\\frac{dT}{dt} = k(T - T_a)^2$", "$T'' + kT = 0$", "$\\frac{dT}{dt} = -k(T - T_a)$"],
+      correctIndex: 3,
+      explanation: "The rate of cooling is proportional to the temperature difference from ambient."
+    },
+    {
+      id: "q6",
+      text: "For the characteristic equation $r^2 + 6r + 13 = 0$, the roots are:",
+      options: ["Real and distinct", "Repeated real", "Purely imaginary", "Complex (with nonzero real part)"],
+      correctIndex: 3,
+      explanation: "Discriminant $36 - 52 = -16 \\lt 0$, so roots are $-3 \\pm 2i$ (complex)."
+    },
+    {
+      id: "q7",
+      text: "The general solution for complex roots $\\alpha \\pm \\beta i$ is:",
+      options: ["$C_1 e^{r_1 x} + C_2 e^{r_2 x}$", "$(C_1 + C_2 x)e^{rx}$", "$C_1\\cos rx + C_2\\sin rx$", "$e^{\\alpha x}(C_1\\cos\\beta x + C_2\\sin\\beta x)$"],
+      correctIndex: 3,
+      explanation: "The exponential controls damping/growth, trig terms produce oscillation."
+    },
+    {
+      id: "q8",
+      text: "In undetermined coefficients, we multiply the guess by $x$ when:",
+      options: ["The right-hand side is zero", "The equation is first-order", "We have complex roots", "The guess overlaps with the homogeneous solution"],
+      correctIndex: 3,
+      explanation: "This ensures the particular solution is linearly independent from $y_h$."
+    },
+    {
+      id: "q9",
+      text: "Variation of parameters is more general because:",
+      options: ["It only works for polynomials", "It requires no integration", "It works for almost any continuous $g(x)$", "It only solves homogeneous equations"],
+      correctIndex: 2,
+      explanation: "It can handle irregular forcing functions that undetermined coefficients cannot."
+    },
+    {
+      id: "q10",
+      text: "$\\mathcal{L}\\{f'(t)\\}$ equals:",
+      options: ["$sF(s)$", "$s^2 F(s)$", "$F(s)/s$", "$sF(s) - f(0)$"],
+      correctIndex: 3,
+      explanation: "The initial condition $f(0)$ is automatically incorporated."
+    },
+    {
+      id: "q11",
+      text: "A second-order ODE is converted to a system by setting:",
+      options: ["$x_1 = y''$", "$x_1 = p$", "$x_1 = y$, $x_2 = y'$", "$x_1 = g(t)$"],
+      correctIndex: 2,
+      explanation: "This is the standard reduction to first-order form."
+    },
+    {
+      id: "q12",
+      text: "In a phase portrait, a saddle point occurs when eigenvalues:",
+      options: ["Are both negative", "Are complex", "Are repeated", "Have opposite signs"],
+      correctIndex: 3,
+      explanation: "One positive and one negative eigenvalue creates attraction and repulsion."
+    },
+    {
+      id: "q13",
+      text: "Euler's method uses the update rule:",
+      options: ["$y_{n+1} = y_n + hf(x_n, y_n)$", "$y_{n+1} = y_n + f(x_{n+1}, y_n)$", "$y_{n+1} = hf(x_n, y_n)$", "$y = y_0 e^{kx}$"],
+      correctIndex: 0,
+      explanation: "Simple forward step: current value plus step size times current slope."
+    },
+    {
+      id: "q14",
+      text: "The spring-mass equation is:",
+      options: ["$\\frac{dP}{dt} = rP(1 - P/K)$", "$\\frac{dT}{dt} = -k(T - T_a)$", "$mx'' + cx' + kx = F(t)$", "$y'' + y = \\sin t$"],
+      correctIndex: 2,
+      explanation: "This models restoring force ($kx$), damping ($cx'$), and external forcing ($F(t)$)."
+    },
+    {
+      id: "q15",
+      text: "Critically damped motion occurs when:",
+      options: ["$c = 0$", "$c^2 \\gt 4mk$", "$c^2 \\lt 4mk$", "$c^2 = 4mk$"],
+      correctIndex: 3,
+      explanation: "The boundary case: fastest return to equilibrium without overshooting."
+    },
+    {
+      id: "q16",
+      text: "Laplace transforms are especially useful for:",
+      options: ["Homogeneous equations only", "Nonlinear equations", "IVPs with discontinuous inputs", "Partial differential equations"],
+      correctIndex: 2,
+      explanation: "They handle initial conditions and step functions elegantly."
+    },
+    {
+      id: "q17",
+      text: "In a direction field, horizontal line segments indicate:",
+      options: ["Rapid growth", "Vertical asymptotes", "Equilibrium solutions (where $dy/dx = 0$)", "Oscillatory behavior"],
+      correctIndex: 2,
+      explanation: "Zero slope means the function is momentarily flat there."
+    },
+    {
+      id: "q18",
+      text: "For the logistic equation, as $t \\to \\infty$ the population approaches:",
+      options: ["Zero", "Infinity", "The initial population", "The carrying capacity $K$"],
+      correctIndex: 3,
+      explanation: "Growth slows as the population nears the environmental limit."
+    },
+    {
+      id: "q19",
+      text: "The Wronskian is used in:",
+      options: ["Euler's method", "Undetermined coefficients", "Direction fields", "Variation of parameters"],
+      correctIndex: 3,
+      explanation: "It appears in the formulas for $u_1'$ and $u_2'$."
+    },
+    {
+      id: "q20",
+      text: "Which tool handles irregular forcing functions best?",
+      options: ["Undetermined coefficients", "Direction fields", "Variation of parameters", "Euler's method"],
+      correctIndex: 2,
+      explanation: "Variation of parameters works for almost any continuous $g(x)$, not just polynomials/exponentials/trig."
+    }
+  ]}
+/>
+
+:::note[You've Got This]
+You just completed a full university-level Differential Equations course, from direction fields all the way to modeling physical systems and using Laplace transforms. That's an incredible achievement. Take a moment to appreciate how far you've come. Now go crush that review. You've got this.
+:::

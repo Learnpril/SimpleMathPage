@@ -1,0 +1,120 @@
+---
+title: What is a Differential Equation?
+description: Understand what differential equations are and why they are the natural next step after calculus.
+sidebar:
+  order: 1
+---
+
+import DirectionFieldSimple from "../../../components/DirectionFieldSimple.astro";
+
+## What You'll Learn
+
+You'll learn what makes an equation "differential," how to classify them, and why direction fields are one of the most useful tools for understanding them. By the end of this lesson you'll be able to look at a differential equation and immediately understand what it's asking about the real world.
+
+## The Concept
+
+A **differential equation** is any equation that contains one or more derivatives. While regular algebra equations ask "what number satisfies this?", a differential equation asks "what *function* has this rate of change?"
+
+The simplest example is:
+
+$$
+\frac{dy}{dx} = 2x
+$$
+
+This equation says the slope of the solution function at any point $x$ is twice the value of $x$. Its solutions are parabolas of the form $y = x^2 + C$.
+
+Differential equations are classified in several ways:
+
+- **Order**: The highest derivative present (first-order, second-order, etc.)
+- **Linear vs Nonlinear**: Whether the function and its derivatives appear only to the first power with no products between them
+- **Ordinary vs Partial**: Whether they involve derivatives with respect to one variable or multiple
+
+One of the best ways to build intuition is with a **direction field** (also called a slope field). At thousands of points in the plane, we draw a short line segment showing the slope that any solution curve must follow at that point.
+
+<DirectionFieldSimple />
+
+*The visual above shows the direction field for $\frac{dy}{dx} = x + y$. Notice how the little line segments guide the possible solution curves through the plane.*
+
+## Worked Examples
+
+**Example 1: Classification**
+
+Classify the equation $\frac{dy}{dx} = 3x - 2y$ by order and linearity.
+
+**Solution**:
+This is a **first-order** equation because the highest derivative is $\frac{dy}{dx}$. It is **linear** because $y$ and $y'$ appear only to the first power with no products between them.
+
+**Example 2: Writing a Differential Equation**
+
+Write a differential equation for the statement: "The rate of change of a population $P$ is proportional to the population itself."
+
+**Solution**:
+Let $P(t)$ be the population at time $t$. Then:
+
+$$
+\frac{dP}{dt} = kP
+$$
+
+where $k$ is the constant of proportionality.
+
+**Example 3: Checking Solutions**
+
+Verify that $y = e^{2x}$ is a solution to $\frac{dy}{dx} = 2y$.
+
+**Solution**:
+Left side: $\frac{dy}{dx} = 2e^{2x}$
+Right side: $2y = 2e^{2x}$
+Both sides match, so it is a solution.
+
+## Real-World Application
+
+Differential equations are the language of change. In video games they power realistic physics, cloth simulation, water flow, and smooth enemy AI all rely on solving differential equations in real time. In engineering they help design stable bridges and control systems for airplanes. Even your phone's screen brightness adjustment or the way your GPS predicts arrival time uses ideas from differential equations.
+
+:::note[You've Got This]
+You just took your first real step into differential equations. This is where calculus starts describing the actual changing world instead of just single moments. You've already survived Calculus 3 and Linear Algebra. This is the next level, and you're ready for it.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="diffeq-what-is-a-differential-equation"
+  questions={[
+    {
+      id: "q1",
+      text: "A differential equation must contain:",
+      options: ["Only numbers", "Only integrals", "At least one derivative", "Only polynomials"],
+      correctIndex: 2,
+      explanation: "The presence of a derivative (or differentials) is what defines a differential equation."
+    },
+    {
+      id: "q2",
+      text: "The equation $y'' + 5y' + 6y = 0$ is what order?",
+      options: ["Third-order", "First-order", "Second-order", "Fourth-order"],
+      correctIndex: 2,
+      explanation: "The highest derivative present is the second derivative $y''$, so it is second-order."
+    },
+    {
+      id: "q3",
+      text: "Which of these is a first-order linear differential equation?",
+      options: ["$y'' + y = 0$", "$(y')^2 = x + y$", "$y' = y^2 + x$", "$\\frac{dy}{dx} = ky$"],
+      correctIndex: 3,
+      explanation: "$\\frac{dy}{dx} = ky$ is first-order (only $y'$) and linear ($y$ appears to the first power only)."
+    },
+    {
+      id: "q4",
+      text: "What does a direction field show?",
+      options: ["The slope that solution curves must follow at many points", "Only equilibrium points", "Exact solutions everywhere", "The final value of the function"],
+      correctIndex: 0,
+      explanation: "Direction fields show the slope at many points, allowing us to sketch solution curves visually."
+    },
+    {
+      id: "q5",
+      text: "The equation $\\frac{dP}{dt} = kP$ describes:",
+      options: ["Linear growth", "Oscillating population", "Constant population", "Exponential growth or decay"],
+      correctIndex: 3,
+      explanation: "This is the classic model for exponential growth (when $k \\gt 0$) and decay (when $k \\lt 0$)."
+    }
+  ]}
+/>

@@ -1,0 +1,118 @@
+---
+title: Numerical Methods - Euler's Method
+description: Approximate solutions to differential equations using Euler's method when exact solutions are unavailable.
+sidebar:
+  order: 17
+---
+
+import EulersMethodDemo from "../../../components/EulersMethodDemo.astro";
+
+## What You'll Learn
+
+You will learn how to use Euler's method to numerically approximate solutions to differential equations, understand its limitations, and know when to use it.
+
+## The Concept
+
+Many differential equations cannot be solved exactly. **Euler's method** gives a simple way to approximate the solution numerically.
+
+For the initial value problem
+
+$$
+\frac{dy}{dx} = f(x, y), \quad y(x_0) = y_0
+$$
+
+we start at the known point and take small steps of size $h$:
+
+$$
+y_{n+1} = y_n + h \cdot f(x_n, y_n)
+$$
+
+$$
+x_{n+1} = x_n + h
+$$
+
+Each step uses the current slope to move forward a small distance $h$. Smaller $h$ gives better accuracy but requires more computation.
+
+<EulersMethodDemo />
+
+*The visual compares the exact solution (blue curve) with Euler's method using a large step size (orange, visibly drifting) and a small step size (green, hugging the exact curve). The staircase pattern shows how each Euler step uses a straight-line approximation.*
+
+## Worked Examples
+
+**Example 1: Basic Euler Approximation**
+
+Use Euler's method with $h = 0.5$ to approximate $y(2)$ for $\frac{dy}{dx} = y$, $y(0) = 1$.
+
+**Solution**:
+Step 0: $x = 0$, $y = 1$
+Step 1: $y_1 = 1 + 0.5(1) = 1.5$
+Step 2: $y_2 = 1.5 + 0.5(1.5) = 2.25$
+Step 3: $y_3 = 2.25 + 0.5(2.25) = 3.375$
+Step 4: $y_4 = 3.375 + 0.5(3.375) = 5.0625$
+
+Euler gives $y(2) \approx 5.06$. Exact: $e^2 \approx 7.39$. Large $h$ causes significant error.
+
+**Example 2: Smaller Step Size**
+
+With $h = 0.25$ (8 steps to reach $x = 2$), Euler gives $y(2) \approx 6.10$. Much closer to 7.39.
+
+**Example 3: Applied Problem**
+
+A population satisfies $\frac{dP}{dt} = 0.5P(1 - P/1000)$, $P(0) = 100$. Using $h = 1$ for 5 steps:
+
+Step 1: $P_1 = 100 + 1 \cdot 0.5(100)(0.9) = 145$
+Step 2: $P_2 = 145 + 1 \cdot 0.5(145)(0.855) \approx 207$
+...continuing yields the numerical trajectory.
+
+## Real-World Application
+
+Euler's method (and its more accurate cousins like Runge-Kutta) is used constantly in computer simulations: video game physics, weather forecasting, pharmacokinetic modeling (drug levels in the body), aircraft flight simulators, and population dynamics. When systems are too complex for exact solutions, numerical methods are the only practical way forward.
+
+:::note[You've Got This]
+You now understand both analytical and numerical approaches. Sometimes exact solutions aren't possible or practical. That's when methods like Euler's become essential. You're building a complete toolkit. Well done.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="diffeq-eulers-method"
+  questions={[
+    {
+      id: "q1",
+      text: "Euler's method approximates the solution by:",
+      options: ["Solving the characteristic equation", "Using Laplace transforms", "Taking small steps using the derivative at the current point", "Integrating exactly"],
+      correctIndex: 2,
+      explanation: "Each step uses the slope $f(x_n, y_n)$ at the current point to estimate the next value."
+    },
+    {
+      id: "q2",
+      text: "Smaller step size $h$ in Euler's method generally:",
+      options: ["Makes the approximation worse", "Has no effect", "Improves accuracy but increases computation", "Only works for linear equations"],
+      correctIndex: 2,
+      explanation: "Smaller $h$ reduces the local truncation error at each step."
+    },
+    {
+      id: "q3",
+      text: "The update formula in Euler's method is:",
+      options: ["$y_{n+1} = y_n + h\\,f(x_n, y_n)$", "$y_{n+1} = y_n + f(x_n, y_n)$", "$y_{n+1} = h\\,f(x_n, y_n)$", "$y_{n+1} = f(x_{n+1}, y_n)$"],
+      correctIndex: 0,
+      explanation: "Multiply slope by step size, add to current value. That's the core Euler step."
+    },
+    {
+      id: "q4",
+      text: "Euler's method is most useful when:",
+      options: ["We already have an exact solution", "The equation is linear with constant coefficients", "We only need qualitative behavior", "No closed-form solution exists or is too difficult"],
+      correctIndex: 3,
+      explanation: "It provides numerical approximations when analytical methods fail."
+    },
+    {
+      id: "q5",
+      text: "The main limitation of basic Euler's method is:",
+      options: ["It is too accurate", "It only works for first-order equations", "It requires symbolic integration", "It can accumulate significant error over many steps"],
+      correctIndex: 3,
+      explanation: "Error compounds with each step unless $h$ is made very small."
+    }
+  ]}
+/>

@@ -1,0 +1,137 @@
+---
+title: Systems of Differential Equations
+description: Convert higher-order equations into systems and solve them using matrix methods and eigenvalues.
+sidebar:
+  order: 15
+---
+
+import SystemsPhasePortrait from "../../../components/SystemsPhasePortrait.astro";
+
+## What You'll Learn
+
+You will learn how to convert higher-order differential equations into equivalent systems of first-order equations and solve those systems using eigenvalues and eigenvectors.
+
+## The Concept
+
+Many real-world problems involve multiple interacting quantities. We can rewrite a higher-order equation as a **system of first-order equations**.
+
+For example, the second-order equation $y'' + 3y' + 2y = 0$ becomes:
+
+$$
+x_1' = x_2
+$$
+
+$$
+x_2' = -2x_1 - 3x_2
+$$
+
+where $x_1 = y$ and $x_2 = y'$.
+
+In matrix form: $\mathbf{x}' = A\mathbf{x}$, where
+
+$$
+A = \begin{bmatrix} 0 & 1 \\ -2 & -3 \end{bmatrix}
+$$
+
+The general solution depends on the eigenvalues and eigenvectors of $A$.
+
+<SystemsPhasePortrait />
+
+*The phase portrait shows trajectories in the $x_1$-$x_2$ plane for a stable system. Multiple initial conditions all flow toward the origin along paths determined by the eigenvectors.*
+
+## Worked Examples
+
+**Example 1: Converting to a System**
+
+Convert $y'' - 5y' + 6y = 0$ into a system.
+
+**Solution**:
+
+$$
+x_1' = x_2
+$$
+
+$$
+x_2' = -6x_1 + 5x_2
+$$
+
+**Example 2: Solving a System**
+
+Solve the system $\mathbf{x}' = A\mathbf{x}$ where $A = \begin{bmatrix} -1 & 1 \\ 0 & -2 \end{bmatrix}$.
+
+**Solution**:
+Eigenvalues: $\lambda_1 = -1$, $\lambda_2 = -2$.
+
+Eigenvectors: $\mathbf{v}_1 = \begin{bmatrix} 1 \\ 0 \end{bmatrix}$, $\mathbf{v}_2 = \begin{bmatrix} 1 \\ -1 \end{bmatrix}$
+
+General solution:
+
+$$
+\mathbf{x}(t) = C_1 e^{-t} \begin{bmatrix} 1 \\ 0 \end{bmatrix} + C_2 e^{-2t} \begin{bmatrix} 1 \\ -1 \end{bmatrix}
+$$
+
+**Example 3: With Initial Conditions**
+
+Solve with $\mathbf{x}(0) = \begin{bmatrix} 3 \\ -1 \end{bmatrix}$.
+
+**Solution**:
+At $t = 0$: $C_1 \begin{bmatrix} 1 \\ 0 \end{bmatrix} + C_2 \begin{bmatrix} 1 \\ -1 \end{bmatrix} = \begin{bmatrix} 3 \\ -1 \end{bmatrix}$
+
+From row 2: $-C_2 = -1 \implies C_2 = 1$. From row 1: $C_1 + 1 = 3 \implies C_1 = 2$.
+
+$$
+\mathbf{x}(t) = 2e^{-t} \begin{bmatrix} 1 \\ 0 \end{bmatrix} + e^{-2t} \begin{bmatrix} 1 \\ -1 \end{bmatrix}
+$$
+
+## Real-World Application
+
+Systems of differential equations are fundamental in modeling coupled oscillators (multiple springs), predator-prey relationships in biology (Lotka-Volterra equations), electrical networks with multiple loops, chemical reaction networks, and even epidemiological models (SIR models for disease spread). In computer graphics and game physics, they simulate realistic multi-body interactions.
+
+:::note[You've Got This]
+You've now connected Linear Algebra directly to differential equations. This is where the two subjects become extremely powerful together. You're building the foundation for modeling complex real-world systems. Fantastic progress.
+:::
+
+## Quiz
+
+import Quiz from "../../../components/Quiz.astro";
+
+<Quiz
+  quizId="diffeq-systems-of-des"
+  questions={[
+    {
+      id: "q1",
+      text: "A second-order ODE can be converted into:",
+      options: ["A single first-order equation", "A third-order equation", "A system of two first-order equations", "An algebraic equation only"],
+      correctIndex: 2,
+      explanation: "We introduce $x_1 = y$ and $x_2 = y'$ to create two coupled first-order equations."
+    },
+    {
+      id: "q2",
+      text: "The matrix form of a linear system is:",
+      options: ["$A\\mathbf{x} = \\mathbf{b}$", "$\\mathbf{x}'' = A\\mathbf{x}$", "$\\mathbf{x}' = A\\mathbf{x}$", "$\\frac{dx}{dt} = kx$"],
+      correctIndex: 2,
+      explanation: "This is the standard state-space form for a first-order linear system."
+    },
+    {
+      id: "q3",
+      text: "The long-term behavior of a linear system is determined by:",
+      options: ["The initial conditions only", "The number of variables", "The forcing function", "The eigenvalues of the coefficient matrix"],
+      correctIndex: 3,
+      explanation: "Negative eigenvalues mean decay (stable), positive mean growth (unstable), imaginary mean oscillation."
+    },
+    {
+      id: "q4",
+      text: "Systems of DEs are essential for modeling:",
+      options: ["Only single-object motion", "Pure exponential decay", "Multiple interacting quantities like predator-prey or coupled circuits", "Algebraic equations"],
+      correctIndex: 2,
+      explanation: "Coupled systems naturally describe multiple quantities that influence each other."
+    },
+    {
+      id: "q5",
+      text: "When converting $y'' + py' + qy = 0$ to a system, we set:",
+      options: ["$x_1 = y'$ only", "$x_1 = p$, $x_2 = q$", "$x_1 = y$, $x_2 = y'$", "$x_1 = y''$, $x_2 = y$"],
+      correctIndex: 2,
+      explanation: "This is the standard substitution that reduces a second-order ODE to a first-order system."
+    }
+  ]}
+/>

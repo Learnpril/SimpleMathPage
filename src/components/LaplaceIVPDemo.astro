@@ -1,0 +1,91 @@
+---
+/**
+ * LaplaceIVPDemo — Shows the solution to the IVP y'' + 4y' + 5y = 0,
+ * y(0)=1, y'(0)=-2. Solution: y = e^{-2t} cos(t).
+ * Also shows the decay envelope ±e^{-2t} to illustrate damping.
+ * Legend below chart.
+ */
+
+const ox = 40, oy = 140, sx = 42, sy = 90;
+const toPx = (t: number) => ox + t * sx;
+const toPy = (v: number) => oy - v * sy;
+const X0 = 20, X1 = 390, Y0 = 15, Y1 = 265;
+
+function curve(f: (t: number) => number, tmin: number, tmax: number, step = 0.03) {
+  const pts: [number, number][] = [];
+  for (let t = tmin; t <= tmax + 1e-9; t += step) {
+    const px = toPx(t), py = toPy(f(t));
+    if (px >= X0 && px <= X1 && py >= Y0 && py <= Y1) pts.push([px, py]);
+  }
+  return pts;
+}
+const ptsStr = (pts: [number, number][]) => pts.map(p => `${p[0].toFixed(1)},${p[1].toFixed(1)}`).join(" ");
+
+// Solution: y = e^{-2t} cos(t)
+const solution = curve(t => Math.exp(-2 * t) * Math.cos(t), 0, 8);
+// Envelope: ±e^{-2t}
+const envTop = curve(t => Math.exp(-2 * t), 0, 8);
+const envBot = curve(t => -Math.exp(-2 * t), 0, 8);
+---
+
+<figure class="livp" role="img" aria-label="Damped oscillation solution from Laplace transform IVP: y equals e to the minus 2t times cos t">
+  <svg viewBox="0 0 400 310" xmlns="http://www.w3.org/2000/svg" class="livp-svg">
+    {/* Grid */}
+    <g class="livp-grid">
+      {[0,2,4,6,8].map(t => toPx(t) <= X1 ? <line x1={toPx(t)} y1={Y0} x2={toPx(t)} y2={Y1} /> : null)}
+      {[-1,0,1].map(v => <line x1={X0} y1={toPy(v)} x2={X1} y2={toPy(v)} />)}
+    </g>
+
+    {/* Axes */}
+    <line x1={X0} y1={toPy(0)} x2={X1} y2={toPy(0)} class="livp-axis" />
+    <line x1={toPx(0)} y1={Y0} x2={toPx(0)} y2={Y1} class="livp-axis" />
+    <text x={X1 + 4} y={toPy(0) + 4} class="livp-lbl axis">t</text>
+    <text x={toPx(0) + 6} y={Y0 + 2} class="livp-lbl axis">y</text>
+
+    {/* Scale ticks */}
+    <text x={toPx(0) - 6} y={toPy(1) + 4} class="livp-lbl tick" text-anchor="end">1</text>
+    <text x={toPx(0) - 6} y={toPy(-1) + 4} class="livp-lbl tick" text-anchor="end">-1</text>
+    <text x={toPx(2)} y={toPy(0) + 14} class="livp-lbl tick" text-anchor="middle">2</text>
+    <text x={toPx(4)} y={toPy(0) + 14} class="livp-lbl tick" text-anchor="middle">4</text>
+    <text x={toPx(6)} y={toPy(0) + 14} class="livp-lbl tick" text-anchor="middle">6</text>
+
+    {/* Decay envelope */}
+    <polyline points={ptsStr(envTop)} class="livp-env" fill="none" />
+    <polyline points={ptsStr(envBot)} class="livp-env" fill="none" />
+
+    {/* Solution curve */}
+    <polyline points={ptsStr(solution)} class="livp-curve" fill="none" />
+
+    {/* Initial condition dot */}
+    <circle cx={toPx(0)} cy={toPy(1)} r="4" class="livp-dot" />
+
+    {/* Legend below chart */}
+    <line x1="50" y1="284" x2="72" y2="284" class="livp-curve" />
+    <text x="78" y="288" class="livp-lbl leg">y = e⁻²ᵗ cos t (solution via Laplace)</text>
+    <line x1="50" y1="300" x2="72" y2="300" class="livp-env" />
+    <text x="78" y="304" class="livp-lbl leg">±e⁻²ᵗ (decay envelope)</text>
+  </svg>
+</figure>
+
+<style>
+  .livp { display: flex; justify-content: center; margin: 1.5rem 0; }
+  .livp-svg { width: 100%; max-width: 500px; height: auto; }
+  .livp-grid line { stroke: #262626; stroke-width: 0.5; }
+  .livp-axis { stroke: #555; stroke-width: 1.2; }
+  .livp-env { stroke: #f0883e; stroke-width: 1.2; stroke-dasharray: 5 4; opacity: 0.6; }
+  .livp-curve { stroke: #58a6ff; stroke-width: 2.6; stroke-linecap: round; }
+  .livp-dot { fill: #7ee787; }
+  .livp-lbl { font-family: "Libre Baskerville", Georgia, serif; fill: #aaa; }
+  .axis { font-size: 13px; font-weight: bold; fill: #888; }
+  .tick { font-size: 10px; fill: #777; }
+  .leg { font-size: 10px; }
+
+  :root[data-theme="light"] .livp-grid line { stroke: #e8e8e8; }
+  :root[data-theme="light"] .livp-axis { stroke: #999; }
+  :root[data-theme="light"] .livp-env { stroke: #c05010; }
+  :root[data-theme="light"] .livp-curve { stroke: #0550ae; }
+  :root[data-theme="light"] .livp-dot { fill: #1a7f2e; }
+  :root[data-theme="light"] .livp-lbl { fill: #555; }
+  :root[data-theme="light"] .axis { fill: #666; }
+  :root[data-theme="light"] .tick { fill: #888; }
+</style>

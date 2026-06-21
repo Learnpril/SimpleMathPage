@@ -1,0 +1,90 @@
+---
+/**
+ * SecondOrderHomogeneousDemo — Three panels showing the three root cases:
+ * 1. Distinct real: y = e^{2x} + e^{-x} (growing exponential)
+ * 2. Repeated: y = (1 + x)e^{-2x} (hump then decay)
+ * 3. Complex: y = e^{-x} cos(2x) (damped oscillation)
+ * Each panel has its own axis and label zone below the chart.
+ */
+
+// Panel geometry
+const pw = 380, ph = 80, gap = 14, topPad = 10;
+const panels = [
+  { y0: topPad, label: "Distinct real roots", color: "#58a6ff" },
+  { y0: topPad + ph + gap, label: "Repeated root", color: "#7ee787" },
+  { y0: topPad + 2 * (ph + gap), label: "Complex roots (oscillation)", color: "#d2a8ff" },
+];
+const totalH = topPad + 3 * ph + 2 * gap + 36; // 36px for legend below
+
+const ox = 50, sx = 55;
+const toPx = (x: number) => ox + x * sx;
+
+function panelCurve(f: (x: number) => number, yCenter: number, yScale: number, xmin: number, xmax: number, step = 0.04) {
+  const pts: [number, number][] = [];
+  for (let x = xmin; x <= xmax + 1e-9; x += step) {
+    const px = toPx(x);
+    const py = yCenter - f(x) * yScale;
+    if (px >= 20 && px <= 395 && py >= yCenter - ph / 2 + 2 && py <= yCenter + ph / 2 - 2) {
+      pts.push([px, py]);
+    }
+  }
+  return pts;
+}
+const ptsStr = (pts: [number, number][]) => pts.map(p => `${p[0].toFixed(1)},${p[1].toFixed(1)}`).join(" ");
+
+// Panel 1: y = e^{-0.3x} - 0.5*e^{-1.5x} (distinct real roots, both negative, bounded)
+const p1Center = panels[0].y0 + ph / 2;
+const c1 = panelCurve(x => Math.exp(-0.3 * x) - 0.5 * Math.exp(-1.5 * x), p1Center, 35, -0.5, 5.5);
+
+// Panel 2: y = (1 + 2x)*e^{-x} (repeated root, hump)
+const p2Center = panels[1].y0 + ph / 2;
+const c2 = panelCurve(x => (1 + 2 * x) * Math.exp(-x), p2Center, 22, -0.5, 5.5);
+
+// Panel 3: y = e^{-0.3x}*cos(2x) (complex roots, damped oscillation)
+const p3Center = panels[2].y0 + ph / 2;
+const c3 = panelCurve(x => Math.exp(-0.3 * x) * Math.cos(2 * x), p3Center, 30, -0.5, 5.5);
+---
+
+<figure class="soh" role="img" aria-label="Three panels showing solution curves for distinct real roots, repeated root, and complex roots cases">
+  <svg viewBox={`0 0 400 ${totalH}`} xmlns="http://www.w3.org/2000/svg" class="soh-svg">
+    {/* Panel backgrounds and axes */}
+    {panels.map((p, i) => {
+      const yMid = p.y0 + ph / 2;
+      return (
+        <g>
+          <rect x="20" y={p.y0} width="370" height={ph} rx="4" class="soh-panel-bg" />
+          <line x1="20" y1={yMid} x2="390" y2={yMid} class="soh-axis" />
+        </g>
+      );
+    })}
+
+    {/* Curves */}
+    <polyline points={ptsStr(c1)} class="soh-curve" style={`stroke:${panels[0].color}`} fill="none" />
+    <polyline points={ptsStr(c2)} class="soh-curve" style={`stroke:${panels[1].color}`} fill="none" />
+    <polyline points={ptsStr(c3)} class="soh-curve" style={`stroke:${panels[2].color}`} fill="none" />
+
+    {/* Legend below all panels */}
+    <line x1="30" y1={totalH - 22} x2="52" y2={totalH - 22} style={`stroke:${panels[0].color}`} class="soh-curve" />
+    <text x="58" y={totalH - 18} class="soh-lbl leg">{panels[0].label}</text>
+
+    <line x1="188" y1={totalH - 22} x2="210" y2={totalH - 22} style={`stroke:${panels[1].color}`} class="soh-curve" />
+    <text x="216" y={totalH - 18} class="soh-lbl leg">{panels[1].label}</text>
+
+    <line x1="30" y1={totalH - 6} x2="52" y2={totalH - 6} style={`stroke:${panels[2].color}`} class="soh-curve" />
+    <text x="58" y={totalH - 2} class="soh-lbl leg">{panels[2].label}</text>
+  </svg>
+</figure>
+
+<style>
+  .soh { display: flex; justify-content: center; margin: 1.5rem 0; }
+  .soh-svg { width: 100%; max-width: 500px; height: auto; }
+  .soh-panel-bg { fill: #1a1a1a; stroke: #333; stroke-width: 0.5; }
+  .soh-axis { stroke: #444; stroke-width: 0.8; stroke-dasharray: 4 3; }
+  .soh-curve { stroke-width: 2.4; stroke-linecap: round; }
+  .soh-lbl { font-family: "Libre Baskerville", Georgia, serif; fill: #aaa; }
+  .leg { font-size: 11px; }
+
+  :root[data-theme="light"] .soh-panel-bg { fill: #f4f4f4; stroke: #ddd; }
+  :root[data-theme="light"] .soh-axis { stroke: #ccc; }
+  :root[data-theme="light"] .soh-lbl { fill: #555; }
+</style>

@@ -1,0 +1,104 @@
+---
+/**
+ * SystemsPhasePortrait — Phase portrait for x' = Ax where
+ * A = [[-1, 1], [0, -2]]. Eigenvalues: -1, -2 (stable node).
+ * Shows multiple trajectories flowing to origin along eigenvector directions.
+ * Solution: x(t) = C1*e^{-t}[1,0] + C2*e^{-2t}[1,-1]
+ * Legend below chart.
+ */
+
+const ox = 200, oy = 145, s = 50;
+const toPx = (x: number) => ox + x * s;
+const toPy = (y: number) => oy - y * s;
+const X0 = 15, X1 = 385, Y0 = 10, Y1 = 270;
+
+// Compute trajectory from initial condition [x10, x20]
+function trajectory(x10: number, x20: number, steps = 120) {
+  const pts: [number, number][] = [];
+  // Solution: x1 = C1*e^{-t} + C2*e^{-2t}, x2 = -C2*e^{-2t}
+  // From ICs: C2 = -x20, C1 = x10 + x20
+  const C1 = x10 + x20;
+  const C2 = -x20;
+  for (let i = 0; i <= steps; i++) {
+    const t = i * 0.05;
+    const x1 = C1 * Math.exp(-t) + C2 * Math.exp(-2 * t);
+    const x2 = -C2 * Math.exp(-2 * t);
+    const px = toPx(x1), py = toPy(x2);
+    if (px >= X0 && px <= X1 && py >= Y0 && py <= Y1) pts.push([px, py]);
+  }
+  return pts;
+}
+const ptsStr = (pts: [number, number][]) => pts.map(p => `${p[0].toFixed(1)},${p[1].toFixed(1)}`).join(" ");
+
+// Multiple trajectories from various ICs
+const trajs = [
+  { ic: [3, -1], color: "#58a6ff" },
+  { ic: [-2, 2], color: "#7ee787" },
+  { ic: [2, 2], color: "#d2a8ff" },
+  { ic: [-3, -1], color: "#f0883e" },
+  { ic: [1, -2.5], color: "#58a6ff" },
+  { ic: [-1, 2.5], color: "#7ee787" },
+].map(t => ({ pts: trajectory(t.ic[0], t.ic[1]), color: t.color }));
+
+// Eigenvector directions (for visual reference)
+// v1 = [1, 0] (horizontal), v2 = [1, -1] (diagonal down-right)
+---
+
+<figure class="spp" role="img" aria-label="Phase portrait showing trajectories flowing to the origin for a stable node system">
+  <svg viewBox="0 0 400 320" xmlns="http://www.w3.org/2000/svg" class="spp-svg">
+    {/* Grid */}
+    <g class="spp-grid">
+      {[-3,-2,-1,0,1,2,3].map(x => toPx(x) >= X0 && toPx(x) <= X1 ? <line x1={toPx(x)} y1={Y0} x2={toPx(x)} y2={Y1} /> : null)}
+      {[-2,-1,0,1,2].map(y => toPy(y) >= Y0 && toPy(y) <= Y1 ? <line x1={X0} y1={toPy(y)} x2={X1} y2={toPy(y)} /> : null)}
+    </g>
+
+    {/* Axes */}
+    <line x1={X0} y1={toPy(0)} x2={X1} y2={toPy(0)} class="spp-axis" />
+    <line x1={toPx(0)} y1={Y0} x2={toPx(0)} y2={Y1} class="spp-axis" />
+    <text x={X1 + 4} y={toPy(0) + 4} class="spp-lbl axis">x₁</text>
+    <text x={toPx(0) + 6} y={Y0 + 2} class="spp-lbl axis">x₂</text>
+
+    {/* Eigenvector lines (dashed) */}
+    <line x1={toPx(-3.5)} y1={toPy(0)} x2={toPx(3.5)} y2={toPy(0)} class="spp-eigen" />
+    <line x1={toPx(-2.5)} y1={toPy(2.5)} x2={toPx(2.5)} y2={toPy(-2.5)} class="spp-eigen" />
+
+    {/* Trajectories */}
+    {trajs.map(t => t.pts.length > 2 ? <polyline points={ptsStr(t.pts)} style={`stroke:${t.color}`} class="spp-traj" fill="none" /> : null)}
+
+    {/* Origin dot */}
+    <circle cx={toPx(0)} cy={toPy(0)} r="4" class="spp-origin" />
+
+    {/* Eigenvector labels */}
+    <text x={toPx(3.2)} y={toPy(0) - 10} class="spp-lbl eig-lbl">v₁ = [1, 0]</text>
+    <text x={toPx(2)} y={toPy(-2.3)} class="spp-lbl eig-lbl">v₂ = [1, −1]</text>
+
+    {/* Legend below chart */}
+    <text x="50" y="292" class="spp-lbl leg-title">Stable node: λ₁ = −1, λ₂ = −2</text>
+    <text x="50" y="308" class="spp-lbl leg">All trajectories → origin along eigenvector directions</text>
+  </svg>
+</figure>
+
+<style>
+  .spp { display: flex; justify-content: center; margin: 1.5rem 0; }
+  .spp-svg { width: 100%; max-width: 500px; height: auto; }
+  .spp-grid line { stroke: #262626; stroke-width: 0.5; }
+  .spp-axis { stroke: #555; stroke-width: 1.2; }
+  .spp-eigen { stroke: #555; stroke-width: 1; stroke-dasharray: 5 4; }
+  .spp-traj { stroke-width: 2.2; stroke-linecap: round; }
+  .spp-origin { fill: #f47067; }
+  .spp-lbl { font-family: "Libre Baskerville", Georgia, serif; fill: #aaa; }
+  .axis { font-size: 13px; font-weight: bold; fill: #888; }
+  .eig-lbl { font-size: 10px; fill: #777; font-style: italic; }
+  .leg-title { font-size: 11px; fill: #f0883e; font-style: italic; }
+  .leg { font-size: 10px; fill: #888; }
+
+  :root[data-theme="light"] .spp-grid line { stroke: #e8e8e8; }
+  :root[data-theme="light"] .spp-axis { stroke: #999; }
+  :root[data-theme="light"] .spp-eigen { stroke: #bbb; }
+  :root[data-theme="light"] .spp-origin { fill: #c4432b; }
+  :root[data-theme="light"] .spp-lbl { fill: #555; }
+  :root[data-theme="light"] .axis { fill: #666; }
+  :root[data-theme="light"] .eig-lbl { fill: #666; }
+  :root[data-theme="light"] .leg-title { fill: #c05010; }
+  :root[data-theme="light"] .leg { fill: #666; }
+</style>
