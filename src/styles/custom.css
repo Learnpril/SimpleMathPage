@@ -1289,3 +1289,111 @@ p:has(> strong:first-child:last-child) {
 .quiz-next-lesson:hover {
   opacity: 0.85;
 }
+
+/* ---------- Homepage Progress CTA ---------- */
+.progress-cta {
+  text-align: center;
+  margin: 1.5rem 0 2rem;
+  padding: 1.25rem;
+  border: 1px solid var(--sl-color-gray-5, #dee2e6);
+  border-radius: 0.75rem;
+  background: var(--sl-color-accent-low);
+}
+
+.progress-cta-link {
+  display: inline-block;
+  padding: 0.6rem 1.5rem;
+  font-family: var(--sl-font);
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #fff;
+  background: var(--sl-color-accent);
+  border-radius: 0.5rem;
+  text-decoration: none;
+  transition: background 0.15s, transform 0.1s;
+}
+
+.progress-cta-link:hover {
+  background: var(--sl-color-accent-high);
+  transform: scale(1.03);
+}
+
+.progress-cta-link:focus-visible {
+  outline: 2px solid var(--sl-color-accent);
+  outline-offset: 3px;
+}
+
+.progress-cta-desc {
+  margin: 0.75rem 0 0;
+  font-size: 0.9rem;
+  color: var(--sl-color-gray-2);
+}
+
+:root[data-theme="light"] .progress-cta-desc {
+  color: var(--sl-color-gray-3);
+}
+
+/* ---------- Progress Navigation Link (Header) ---------- */
+.progress-nav {
+  display: flex;
+  align-items: center;
+}
+
+.progress-nav-link {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.35rem 0.75rem;
+  font-family: var(--sl-font);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--sl-color-gray-2);
+  text-decoration: none;
+  border-radius: 0.375rem;
+  transition: color 0.15s, background-color 0.15s;
+}
+
+.progress-nav-link:hover {
+  color: var(--sl-color-text-accent);
+  background-color: var(--sl-color-accent-low);
+}
+
+.progress-nav-link:focus-visible {
+  outline: 2px solid var(--sl-color-accent);
+  outline-offset: 2px;
+}
+
+.progress-nav-link--active,
+.progress-nav-link[aria-current="page"] {
+  color: var(--sl-color-text-accent);
+  background-color: var(--sl-color-accent-low);
+  border-bottom: 2px solid var(--sl-color-accent);
+}
+
+:root[data-theme="light"] .progress-nav-link {
+  color: var(--sl-color-gray-3);
+}
+
+:root[data-theme="light"] .progress-nav-link:hover {
+  color: var(--sl-color-text-accent);
+}
+
+:root[data-theme="light"] .progress-nav-link--active,
+:root[data-theme="light"] .progress-nav-link[aria-current="page"] {
+  color: var(--sl-color-text-accent);
+}
+
+/* On mobile, show Progress link in the mobile header icons group */
+@media (max-width: 49.9375rem) {
+  .progress-nav {
+    display: none;
+  }
+}
+
+
+/* Mobile progress link active state */
+@media (max-width: 49.9375rem) {
+  a.mobile-header-icon.progress-nav-link--active {
+    color: var(--sl-color-text-accent);
+    opacity: 1;
+  }
+}

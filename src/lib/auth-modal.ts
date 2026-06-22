@@ -11,6 +11,7 @@ import {
   resetPassword,
 } from "./supabase/auth";
 import { createSupabaseClient } from "./supabase/client";
+import { syncLocalProgressToSupabase } from "./supabase/sync";
 
 let modalEl: HTMLElement | null = null;
 let dropdownEl: HTMLElement | null = null;
@@ -307,6 +308,8 @@ function buildModal() {
         submitBtn.disabled = false;
         submitBtn.textContent = "Log In";
       } else {
+        // Fire-and-forget: sync localStorage progress to Supabase
+        syncLocalProgressToSupabase();
         closeModal();
         window.location.reload();
       }
