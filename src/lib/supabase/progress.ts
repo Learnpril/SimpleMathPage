@@ -1,50 +1,58 @@
-import { createSupabaseClient } from './client'
+import { createSupabaseClient } from "./client";
 
 export type UserProgress = {
-  lesson_slug: string
-  section_slug: string
-  completed: boolean
-  score: number
-  is_perfect: boolean
-}
+  lesson_slug: string;
+  section_slug: string;
+  completed: boolean;
+  score: number;
+  is_perfect: boolean;
+};
 
 export async function saveQuizProgress(
   lessonSlug: string,
   sectionSlug: string,
-  score: number
+  score: number,
 ): Promise<boolean> {
-  const supabase = createSupabaseClient()
-  const isPerfect = score === 100
+  const supabase = createSupabaseClient();
+  const isPerfect = score === 100;
 
-  const { error } = await supabase
-    .from('user_progress')
-    .upsert({
+  // Get the current user's ID
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return false; // Not logged in, skip Supabase write
+
+  const { error } = await supabase.from("user_progress").upsert(
+    {
+      user_id: user.id,
       lesson_slug: lessonSlug,
       section_slug: sectionSlug,
       completed: true,
       score,
       is_perfect: isPerfect,
-    })
+    },
+    { onConflict: "user_id,lesson_slug" },
+  );
 
   if (error) {
-    console.error('Failed to save progress:', error)
-    return false
+    console.error("Failed to save progress:", error);
+    return false;
   }
-  return true
+  return true;
 }
 
 export async function getLessonProgress(lessonSlug: string) {
-  const supabase = createSupabaseClient()
-  
-  const { data, error } = await supabase
-    .from('user_progress')
-    .select('score, is_perfect, completed')
-    .eq('lesson_slug', lessonSlug)
-    .single()
+  const supabase = createSupabaseClient();
 
-  if (error && error.code !== 'PGRST116') {
-    console.error(error)
+  const { data, error } = await supabase
+    .from("user_progress")
+    .select("score, is_perfect, completed")
+    .eq("lesson_slug", lessonSlug)
+    .single();
+
+  if (error && error.code !== "PGRST116") {
+    console.error(error);
   }
-  
-  return data || null
+
+  return data || null;
 }

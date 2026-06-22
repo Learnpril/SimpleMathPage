@@ -274,10 +274,14 @@ function buildDropdown(anchorEl?: HTMLElement) {
   if (!btn) return;
   const dd = document.createElement("div");
   dd.className = "prof-dropdown";
-  dd.innerHTML = `<div class="prof-stats"><div class="prof-stat"><span class="prof-stat-num">...</span><span class="prof-stat-label">Loading</span></div></div><button class="prof-logout">Log Out</button>`;
+  dd.innerHTML = `<div class="prof-stats"><div class="prof-stat"><span class="prof-stat-num">...</span><span class="prof-stat-label">Loading</span></div></div><a class="prof-progress-link" href="/progress/">📊 Your Progress</a><button class="prof-change-pw">Change Password</button><button class="prof-logout">Log Out</button>`;
   dd.querySelector(".prof-logout")!.addEventListener("click", async () => {
     await signOut();
     window.location.reload();
+  });
+  dd.querySelector(".prof-change-pw")!.addEventListener("click", () => {
+    closeDropdown();
+    showUpdatePasswordModal();
   });
 
   // On mobile, use fixed positioning so we don't disturb the header layout
