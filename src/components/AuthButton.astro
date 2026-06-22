@@ -2,11 +2,12 @@
 /* This component injects the auth button via a Vite-bundled script */
 ---
 <script>
-  import { initAuthButton } from "../lib/auth-modal";
+  import { initAuthButton, listenForPasswordRecovery } from "../lib/auth-modal";
 
   function init() {
     try {
       initAuthButton();
+      listenForPasswordRecovery();
     } catch {
       /* Supabase not configured */
     }

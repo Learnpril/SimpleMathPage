@@ -78,6 +78,19 @@ import { SUBJECTS } from "../lib/progress-map";
   import { calculateStreak, formatStreak } from "../lib/streak-calc";
   import { getProgressColor } from "../lib/progress-calc";
   import { getTodayDateStr } from "../lib/streak-record";
+  import { showAuthModal } from "../lib/auth-modal";
+
+  // Wire the progress page "Sign In" button to the auth modal
+  function wireSignInButton() {
+    const btn = document.querySelector(".progress-signin-btn");
+    if (btn) {
+      btn.addEventListener("click", () => {
+        showAuthModal();
+      });
+    }
+  }
+
+  wireSignInButton();
 
   async function hydrateDashboard() {
     const errorEl = document.querySelector(".progress-error") as HTMLElement;
@@ -211,6 +224,10 @@ import { SUBJECTS } from "../lib/progress-map";
     justify-content: space-between;
     gap: 1rem;
     flex-wrap: wrap;
+  }
+
+  .progress-signin-prompt[hidden] {
+    display: none;
   }
 
   .progress-signin-prompt p {

@@ -50,6 +50,12 @@ export async function fetchProgressData(): Promise<ProgressDataResult> {
           (progressRows ?? []).map((row) => row.lesson_slug as string),
         );
 
+        // Also merge localStorage progress (covers cases where Supabase write failed)
+        const localSlugs = readPassedSlugsFromLocalStorage();
+        for (const slug of localSlugs) {
+          passedSlugs.add(slug);
+        }
+
         // Fetch streak dates from Supabase
         const streakDates = await readStreakDatesFromSupabase();
 
@@ -63,7 +69,7 @@ export async function fetchProgressData(): Promise<ProgressDataResult> {
           error: null,
         };
       } catch {
-        // Supabase fetch failed — fall back to localStorage
+        // Supabase fetch failed — fall back to localStorage but keep auth state
         const passedSlugs = readPassedSlugsFromLocalStorage();
         const streakDates = readStreakDates();
         const progress = computeProgress(passedSlugs, SUBJECTS, TOTAL_LESSONS);
@@ -71,7 +77,7 @@ export async function fetchProgressData(): Promise<ProgressDataResult> {
         return {
           progress,
           streakDates,
-          isAuthenticated: false,
+          isAuthenticated: true,
           error: "Showing local progress only.",
         };
       }

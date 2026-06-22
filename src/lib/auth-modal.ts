@@ -2,6 +2,7 @@
  * Auth Modal + Profile Dropdown
  * - Logged out: "Log In" button opens auth modal
  * - Logged in: "Hi, username!" button opens profile dropdown with stats + logout
+ * - Recovery flow: detects PASSWORD_RECOVERY event and shows update-password form
  */
 import {
   signIn,
@@ -16,6 +17,139 @@ import { syncLocalProgressToSupabase } from "./supabase/sync";
 let modalEl: HTMLElement | null = null;
 let dropdownEl: HTMLElement | null = null;
 let dropdownOpen = false;
+let recoveryModalEl: HTMLElement | null = null;
+
+/** Listen for Supabase PASSWORD_RECOVERY event and show update-password modal */
+export function listenForPasswordRecovery() {
+  try {
+    const supabase = createSupabaseClient();
+    supabase.auth.onAuthStateChange((event) => {
+      if (event === "PASSWORD_RECOVERY") {
+        showUpdatePasswordModal();
+      }
+    });
+  } catch {
+    /* Supabase not configured */
+  }
+}
+
+function showUpdatePasswordModal() {
+  if (recoveryModalEl) {
+    recoveryModalEl.classList.add("auth-active");
+    return;
+  }
+
+  const overlay = document.createElement("div");
+  overlay.className = "auth-overlay auth-active";
+
+  const modal = document.createElement("div");
+  modal.className = "auth-modal";
+
+  const closeBtn = document.createElement("button");
+  closeBtn.className = "auth-close";
+  closeBtn.innerHTML = "&times;";
+  closeBtn.addEventListener("click", () => {
+    overlay.classList.remove("auth-active");
+  });
+  modal.appendChild(closeBtn);
+
+  const heading = document.createElement("h2");
+  heading.textContent = "Set New Password";
+  heading.style.margin = "0 0 1rem";
+  heading.style.fontSize = "1.25rem";
+  modal.appendChild(heading);
+
+  const form = document.createElement("form");
+  form.className = "auth-form";
+  form.addEventListener("submit", (e) => e.preventDefault());
+
+  const passInput = document.createElement("input");
+  passInput.type = "password";
+  passInput.placeholder = "New password (min 6 characters)";
+  passInput.className = "auth-input";
+  passInput.required = true;
+  passInput.minLength = 6;
+  passInput.autocomplete = "new-password";
+
+  const confirmInput = document.createElement("input");
+  confirmInput.type = "password";
+  confirmInput.placeholder = "Confirm new password";
+  confirmInput.className = "auth-input";
+  confirmInput.required = true;
+  confirmInput.autocomplete = "new-password";
+
+  const errorEl = document.createElement("p");
+  errorEl.className = "auth-error";
+
+  const submitBtn = document.createElement("button");
+  submitBtn.type = "submit";
+  submitBtn.className = "auth-submit";
+  submitBtn.textContent = "Update Password";
+
+  form.appendChild(passInput);
+  form.appendChild(confirmInput);
+  form.appendChild(errorEl);
+  form.appendChild(submitBtn);
+
+  form.addEventListener("submit", async () => {
+    const pass = passInput.value;
+    const confirm = confirmInput.value;
+
+    if (!pass || pass.length < 6) {
+      errorEl.textContent = "Password must be at least 6 characters.";
+      return;
+    }
+    if (pass !== confirm) {
+      errorEl.textContent = "Passwords do not match.";
+      return;
+    }
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = "Updating...";
+    errorEl.textContent = "";
+
+    try {
+      const supabase = createSupabaseClient();
+      const { error } = await supabase.auth.updateUser({ password: pass });
+      if (error) {
+        errorEl.textContent = error.message;
+        submitBtn.disabled = false;
+        submitBtn.textContent = "Update Password";
+      } else {
+        errorEl.style.color = "var(--sl-color-text-accent)";
+        errorEl.textContent = "Password updated! Redirecting...";
+        setTimeout(() => {
+          overlay.classList.remove("auth-active");
+          // Clean the URL hash so recovery token doesn't linger
+          window.history.replaceState(null, "", window.location.pathname);
+          window.location.reload();
+        }, 1500);
+      }
+    } catch {
+      errorEl.textContent = "Something went wrong. Please try again.";
+      submitBtn.disabled = false;
+      submitBtn.textContent = "Update Password";
+    }
+  });
+
+  modal.appendChild(form);
+  overlay.appendChild(modal);
+  document.body.appendChild(overlay);
+  recoveryModalEl = overlay;
+
+  // Focus the password field
+  requestAnimationFrame(() => passInput.focus());
+
+  // Close on Escape
+  document.addEventListener("keydown", (e) => {
+    if (
+      e.key === "Escape" &&
+      recoveryModalEl?.classList.contains("auth-active")
+    ) {
+      recoveryModalEl.classList.remove("auth-active");
+    }
+  });
+}
 
 export function showAuthModal() {
   if (modalEl) {

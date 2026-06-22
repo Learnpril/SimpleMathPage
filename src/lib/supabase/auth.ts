@@ -27,7 +27,7 @@ export async function signOut() {
 export async function resetPassword(email: string) {
   const supabase = createSupabaseClient();
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: window.location.origin,
+    redirectTo: `${window.location.origin}/`,
   });
   return { error };
 }
