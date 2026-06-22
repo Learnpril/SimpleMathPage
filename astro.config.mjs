@@ -439,6 +439,160 @@ export default defineConfig({
           `,
         },
         {
+          tag: "script",
+          content: `
+            /* Feature: Track Last Visited Lesson */
+            document.addEventListener('DOMContentLoaded', function() {
+              var path = window.location.pathname.replace(/^\\//, '').replace(/\\/$/, '');
+              var parts = path.split('/');
+              if (parts.length < 2 || !parts[1]) return;
+              var section = parts[0];
+              var sectionMap = {
+                'arithmetic': 'Arithmetic',
+                'pre-algebra': 'Pre-Algebra',
+                'algebra-basics': 'Algebra Basics',
+                'geometry': 'Geometry',
+                'algebra-2': 'Algebra 2',
+                'trigonometry': 'Trigonometry',
+                'pre-calculus': 'Pre-Calculus',
+                'calculus-1': 'Calculus 1',
+                'calculus-2': 'Calculus 2',
+                'calculus-3': 'Calculus 3',
+                'linear-algebra': 'Linear Algebra',
+                'differential-equations': 'Differential Equations'
+              };
+              var subject = sectionMap[section];
+              if (!subject) return;
+              var h1 = document.querySelector('h1');
+              var rawTitle = h1 ? h1.textContent.trim() : parts[parts.length - 1];
+              var title = rawTitle.split(' - ')[0].split(' | ')[0];
+              var data = {
+                href: '/' + path + '/',
+                title: title,
+                subject: subject,
+                timestamp: Date.now()
+              };
+              try { localStorage.setItem('mbu-last-lesson', JSON.stringify(data)); } catch(e) {}
+            });
+          `,
+        },
+        {
+          tag: "script",
+          content: `
+            /* Feature: Continue Learning Banner + Progress Bar Fill (homepage only) */
+            document.addEventListener('DOMContentLoaded', function() {
+              var path = window.location.pathname.replace(/^\\//, '').replace(/\\/$/, '');
+              if (path !== '' && path !== 'index') return;
+
+              /* --- Continue Learning Banner --- */
+              try {
+                var raw = localStorage.getItem('mbu-last-lesson');
+                if (raw) {
+                  var data = JSON.parse(raw);
+                  var age = Date.now() - (data.timestamp || 0);
+                  var thirtyDays = 30 * 24 * 60 * 60 * 1000;
+                  if (age < thirtyDays && data.href && data.title && data.subject) {
+                    var heading = document.querySelector('h2');
+                    if (heading) {
+                      var banner = document.createElement('a');
+                      banner.className = 'continue-banner';
+                      banner.href = data.href;
+
+                      /* Determine accent color from subject level */
+                      var levelMap = {
+                        'arithmetic': 'foundations',
+                        'pre-algebra': 'foundations',
+                        'algebra-basics': 'foundations',
+                        'geometry': 'intermediate',
+                        'algebra-2': 'intermediate',
+                        'trigonometry': 'intermediate',
+                        'pre-calculus': 'advanced',
+                        'calculus-1': 'advanced',
+                        'calculus-2': 'advanced',
+                        'calculus-3': 'expert',
+                        'linear-algebra': 'expert',
+                        'differential-equations': 'expert'
+                      };
+                      var colorMap = {
+                        'foundations': '#7ee787',
+                        'intermediate': '#d2a8ff',
+                        'advanced': '#58a6ff',
+                        'expert': '#f0883e'
+                      };
+                      var slug = data.href.replace(/^\\//, '').split('/')[0];
+                      var level = levelMap[slug] || 'advanced';
+                      var accentColor = colorMap[level] || '#58a6ff';
+                      banner.style.borderLeftColor = accentColor;
+
+                      banner.innerHTML = '<div class="continue-banner-text">'
+                        + '<div class="continue-banner-subject">' + data.subject + '</div>'
+                        + '<div class="continue-banner-title">' + data.title + '</div>'
+                        + '</div>'
+                        + '<span class="continue-banner-arrow" style="color:' + accentColor + '">Continue \\u2192</span>';
+                      heading.parentNode.insertBefore(banner, heading);
+                    }
+                  }
+                }
+              } catch(e) {}
+
+              /* --- Progress Bar Fill --- */
+              var cards = document.querySelectorAll('.subject-card[data-slug]');
+              cards.forEach(function(card) {
+                var slug = card.getAttribute('data-slug');
+                if (!slug) return;
+
+                /* Collect all lesson slugs for this subject from sidebar nav */
+                var lessonSlugs = [];
+                document.querySelectorAll('nav a[href*="/' + slug + '/"]').forEach(function(a) {
+                  var href = a.getAttribute('href') || '';
+                  var ls = href.replace(/^\\//, '').replace(/\\/$/, '').split('/').pop();
+                  if (ls) lessonSlugs.push(ls);
+                });
+
+                /* If sidebar is not available (homepage may not render full sidebar), 
+                   fall back to scanning localStorage keys that start with mbu-perfect- 
+                   and match the subject slug in the key's origin path */
+                if (lessonSlugs.length === 0) {
+                  /* Fallback: count all mbu-perfect-* keys; we cannot attribute them to subjects without sidebar links */
+                  return;
+                }
+
+                /* Count completed lessons */
+                var completed = 0;
+                lessonSlugs.forEach(function(ls) {
+                  if (localStorage.getItem('mbu-perfect-' + ls)) completed++;
+                });
+
+                if (completed === 0) return;
+
+                var total = lessonSlugs.length;
+                var pct = Math.round((completed / total) * 100);
+
+                var progressBar = card.querySelector('.subject-progress');
+                var progressFill = card.querySelector('.subject-progress-fill');
+                if (progressBar && progressFill) {
+                  progressBar.style.display = 'block';
+                  progressFill.style.width = pct + '%';
+                  /* Color based on progress: blue → green → gold */
+                  if (pct >= 100) {
+                    progressFill.style.background = '#7ee787';
+                  } else if (pct >= 50) {
+                    progressFill.style.background = '#58a6ff';
+                  } else {
+                    progressFill.style.background = '#f0883e';
+                  }
+                }
+
+                /* Update the lessons badge to show completion count */
+                var badge = card.querySelector('.subject-lessons-badge');
+                if (badge) {
+                  badge.textContent = completed + '/' + total + ' complete';
+                }
+              });
+            });
+          `,
+        },
+        {
           tag: "link",
           attrs: {
             rel: "preconnect",
