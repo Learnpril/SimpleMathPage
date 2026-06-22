@@ -49,6 +49,7 @@ const validation = validateQuizData({ quizId, questions });
   import { loadQuizState, saveQuizState, clearQuizState } from "../lib/quiz-state";
   import { computeScore } from "../lib/quiz-scoring";
   import { getAnswerFeedback } from "../lib/quiz-feedback";
+  import { recordStreakDate, getTodayDateStr } from "../lib/streak-record";
   import type { QuizQuestion, QuizState } from "../lib/quiz-types";
   import katex from "katex";
 
@@ -57,6 +58,14 @@ const validation = validateQuizData({ quizId, questions });
     try {
       const { saveQuizProgress } = await import("../lib/supabase/progress");
       await saveQuizProgress(lessonSlug, sectionSlug, pct);
+    } catch (_e) { /* Supabase not configured or user not logged in */ }
+  }
+
+  /** Lazy-load Supabase streak recording (fire-and-forget, non-blocking) */
+  async function tryRecordStreakToSupabase(dateStr: string) {
+    try {
+      const { recordStreakDateToSupabase } = await import("../lib/supabase/streak");
+      await recordStreakDateToSupabase(dateStr);
     } catch (_e) { /* Supabase not configured or user not logged in */ }
   }
 
@@ -194,6 +203,11 @@ const validation = validateQuizData({ quizId, questions });
         // Save to localStorage for sidebar checkmarks
         const perfKey = 'mbu-perfect-' + lessonSlug;
         localStorage.setItem(perfKey, '1');
+
+        // Record streak date to localStorage (always)
+        recordStreakDate(getTodayDateStr());
+        // Record streak date to Supabase if signed in (fire-and-forget)
+        tryRecordStreakToSupabase(getTodayDateStr());
 
         // Show "Next Lesson" button if pagination link exists
         const nextLink = document.querySelector('.pagination-links a[rel="next"]') as HTMLAnchorElement | null;

@@ -1,0 +1,402 @@
+---
+import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
+import { SUBJECTS } from "../lib/progress-map";
+---
+
+<StarlightPage
+  frontmatter={{
+    title: "Your Progress",
+    tableOfContents: false,
+    hero: undefined,
+    pagefind: false,
+  }}
+  hasSidebar={false}
+>
+  <div class="progress-dashboard" aria-labelledby="_top">
+
+    <!-- Guest prompt: shown when not authenticated -->
+    <div class="progress-signin-prompt" hidden>
+      <p>Sign in to save your progress across devices</p>
+      <button class="progress-signin-btn">Sign In</button>
+    </div>
+
+    <section class="progress-stats" aria-label="Overall progress summary">
+      <div class="progress-stat">
+        <span class="progress-stat-value" id="stat-passed">0</span>
+        <span class="progress-stat-label">quizzes passed</span>
+      </div>
+      <div class="progress-stat">
+        <span class="progress-stat-value" id="stat-available">0</span>
+        <span class="progress-stat-label">total available</span>
+      </div>
+      <div class="progress-stat">
+        <span class="progress-stat-value" id="stat-percentage">0%</span>
+        <span class="progress-stat-label">overall completion</span>
+      </div>
+      <div class="progress-stat progress-stat-streak">
+        <span class="progress-stat-value" id="stat-streak">0</span>
+        <span class="progress-stat-label" id="stat-streak-label">days streak</span>
+        <span class="progress-streak-prompt" id="streak-prompt">Complete a quiz today</span>
+      </div>
+    </section>
+
+    <div class="progress-grid" role="list">
+      {
+        SUBJECTS.map((subject) => (
+          <a
+            class="progress-card"
+            role="listitem"
+            href={subject.aboutPath}
+            data-subject={subject.slug}
+          >
+            <h2 class="progress-card-title">{subject.label}</h2>
+            <p class="progress-card-count">
+              <span class="progress-card-passed">0</span> / {subject.lessons.length} lessons
+            </p>
+            <div
+              class="progress-bar"
+              role="progressbar"
+              aria-valuenow="0"
+              aria-valuemin="0"
+              aria-valuemax={String(subject.lessons.length)}
+              aria-label={`${subject.label}: 0 of ${subject.lessons.length} lessons complete (0%)`}
+            >
+              <div class="progress-bar-fill" style="width: 0%;" />
+              <span class="progress-bar-text">0%</span>
+            </div>
+          </a>
+        ))
+      }
+    </div>
+
+    <p class="progress-error" hidden>Progress data could not be loaded.</p>
+  </div>
+</StarlightPage>
+
+<script>
+  import { fetchProgressData } from "../lib/progress-data";
+  import { calculateStreak, formatStreak } from "../lib/streak-calc";
+  import { getProgressColor } from "../lib/progress-calc";
+  import { getTodayDateStr } from "../lib/streak-record";
+
+  async function hydrateDashboard() {
+    const errorEl = document.querySelector(".progress-error") as HTMLElement;
+    const signinPrompt = document.querySelector(
+      ".progress-signin-prompt",
+    ) as HTMLElement;
+
+    try {
+      const result = await fetchProgressData();
+      const { progress, streakDates, isAuthenticated, error } = result;
+
+      // Show error message if there was a problem
+      if (error && errorEl) {
+        errorEl.textContent = error;
+        errorEl.hidden = false;
+      }
+
+      // Show sign-in prompt for guests
+      if (!isAuthenticated && signinPrompt) {
+        signinPrompt.hidden = false;
+      }
+
+      // Populate Total Stats
+      const statPassed = document.getElementById("stat-passed");
+      const statAvailable = document.getElementById("stat-available");
+      const statPercentage = document.getElementById("stat-percentage");
+      const statStreak = document.getElementById("stat-streak");
+      const statStreakLabel = document.getElementById("stat-streak-label");
+      const streakPrompt = document.getElementById("streak-prompt");
+
+      if (statPassed) statPassed.textContent = String(progress.totalPassed);
+      if (statAvailable)
+        statAvailable.textContent = String(progress.totalAvailable);
+      if (statPercentage)
+        statPercentage.textContent = `${progress.overallPercentage}%`;
+
+      // Calculate and display streak
+      const today = getTodayDateStr();
+      const currentStreak = calculateStreak(streakDates, today);
+      const streakDisplay = formatStreak(currentStreak);
+
+      if (statStreak) {
+        if (streakDisplay.hasStreak) {
+          statStreak.textContent = `🔥 ${streakDisplay.value}`;
+          statStreak.classList.add("streak-active");
+        } else {
+          statStreak.textContent = String(streakDisplay.value);
+          statStreak.classList.remove("streak-active");
+        }
+      }
+      if (statStreakLabel) {
+        statStreakLabel.textContent = streakDisplay.label;
+      }
+      if (streakPrompt) {
+        streakPrompt.hidden = streakDisplay.hasStreak;
+      }
+
+      // Populate Subject Cards
+      for (const subjectProgress of progress.subjects) {
+        const card = document.querySelector(
+          `[data-subject="${subjectProgress.subject.slug}"]`,
+        ) as HTMLElement;
+        if (!card) continue;
+
+        const passedEl = card.querySelector(
+          ".progress-card-passed",
+        ) as HTMLElement;
+        const barEl = card.querySelector(".progress-bar") as HTMLElement;
+        const fillEl = card.querySelector(".progress-bar-fill") as HTMLElement;
+        const textEl = card.querySelector(".progress-bar-text") as HTMLElement;
+
+        const { passed, total, percentage } = subjectProgress;
+        const roundedPct = Math.round(percentage);
+        const color = getProgressColor(percentage);
+
+        if (passedEl) passedEl.textContent = String(passed);
+
+        if (barEl) {
+          barEl.setAttribute("aria-valuenow", String(passed));
+          barEl.setAttribute("aria-valuemax", String(total));
+          barEl.setAttribute(
+            "aria-label",
+            `${subjectProgress.subject.label}: ${passed} of ${total} lessons complete (${roundedPct}%)`,
+          );
+        }
+
+        if (fillEl) {
+          fillEl.style.width = `${roundedPct}%`;
+          if (color) {
+            fillEl.style.backgroundColor = color;
+          }
+        }
+
+        if (textEl) {
+          textEl.textContent = `${roundedPct}%`;
+        }
+
+        // Completion indicator for 100%
+        if (percentage === 100) {
+          card.classList.add("progress-card-complete");
+        }
+      }
+    } catch {
+      // Show error state
+      if (errorEl) {
+        errorEl.hidden = false;
+      }
+    }
+  }
+
+  // Run hydration
+  hydrateDashboard();
+</script>
+
+<style>
+  .progress-dashboard {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 1.5rem 1rem;
+  }
+
+  /* Sign-in prompt */
+  .progress-signin-prompt {
+    background: var(--sl-color-accent-low);
+    border: 1px solid var(--sl-color-accent);
+    border-radius: 0.5rem;
+    padding: 1rem 1.5rem;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .progress-signin-prompt p {
+    margin: 0;
+  }
+
+  .progress-signin-btn {
+    background: var(--sl-color-accent);
+    color: var(--sl-color-bg);
+    border: none;
+    border-radius: 0.375rem;
+    padding: 0.5rem 1.25rem;
+    font-weight: 600;
+    cursor: pointer;
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  .progress-signin-btn:hover {
+    opacity: 0.9;
+  }
+
+  /* Stats section */
+  .progress-stats {
+    display: flex;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+  }
+
+  .progress-stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
+    min-width: 120px;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    background: var(--sl-color-bg-sidebar);
+  }
+
+  .progress-stat-value {
+    font-size: 1.75rem;
+    font-weight: 700;
+    line-height: 1.2;
+  }
+
+  .progress-stat-value.streak-active {
+    color: #f0883e;
+  }
+
+  .progress-stat-label {
+    font-size: 0.85rem;
+    opacity: 0.75;
+    margin-top: 0.25rem;
+  }
+
+  .progress-streak-prompt {
+    font-size: 0.8rem;
+    opacity: 0.6;
+    margin-top: 0.25rem;
+    font-style: italic;
+  }
+
+  /* Grid */
+  .progress-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  @media (min-width: 640px) {
+    .progress-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .progress-stats {
+      flex-wrap: nowrap;
+    }
+  }
+
+  @media (min-width: 1025px) {
+    .progress-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  /* Subject cards */
+  .progress-card {
+    display: block;
+    padding: 1.25rem;
+    border-radius: 0.5rem;
+    background: var(--sl-color-bg-sidebar);
+    text-decoration: none;
+    color: inherit;
+    transition:
+      transform 0.15s,
+      box-shadow 0.15s;
+    min-height: 44px;
+  }
+
+  .progress-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+
+  .progress-card-title {
+    font-size: 1.1rem;
+    margin: 0 0 0.5rem;
+  }
+
+  .progress-card-count {
+    font-size: 0.9rem;
+    margin: 0 0 0.75rem;
+    opacity: 0.8;
+  }
+
+  .progress-card-complete {
+    border: 2px solid #7ee787;
+  }
+
+  .progress-card-complete .progress-card-title::after {
+    content: " ✓";
+    color: #7ee787;
+  }
+
+  /* Progress bar */
+  .progress-bar {
+    position: relative;
+    height: 1.25rem;
+    background: #3a3a3a;
+    border-radius: 0.625rem;
+    overflow: hidden;
+  }
+
+  :root:not([data-theme="dark"]) .progress-bar {
+    background: #d4d4d4;
+  }
+
+  .progress-bar-fill {
+    height: 100%;
+    border-radius: 0.625rem;
+    transition: width 0.4s ease;
+    background-color: #58a6ff;
+  }
+
+  .progress-bar-text {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #fff;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+    pointer-events: none;
+  }
+
+  /* Error message */
+  .progress-error {
+    background: #ff6b6b22;
+    border: 1px solid #ff6b6b;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    margin-top: 1.5rem;
+    text-align: center;
+  }
+
+  /* Responsive: stack stats vertically on mobile */
+  @media (max-width: 639px) {
+    .progress-stats {
+      flex-direction: column;
+    }
+  }
+
+  /* Dark mode specific */
+  :root[data-theme="dark"] .progress-card {
+    background: #1e1e1e;
+  }
+
+  :root[data-theme="dark"] .progress-bar {
+    background: #3a3a3a;
+  }
+
+  :root:not([data-theme="dark"]) .progress-card {
+    background: #f1f3f5;
+  }
+</style>

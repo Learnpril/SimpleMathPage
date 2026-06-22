@@ -17,6 +17,7 @@ export default defineConfig({
       },
       components: {
         Head: "./src/components/Head.astro",
+        Header: "./src/components/Header.astro",
       },
       sidebar: [
         {
@@ -137,6 +138,19 @@ export default defineConfig({
                 }
               });
               group.appendChild(themeBtn);
+
+              /* Progress link (bar chart icon) */
+              var progressLink = document.createElement('a');
+              progressLink.className = 'mobile-header-icon';
+              progressLink.href = '/progress/';
+              progressLink.setAttribute('aria-label', 'Progress');
+              progressLink.innerHTML = '<svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M3 13h2v8H3zm4-4h2v12H7zm4-4h2v16h-2zm4 8h2v8h-2zm4-4h2v12h-2z"/></svg>';
+              var curPath = window.location.pathname.replace(/\/$/, '');
+              if (curPath === '/progress') {
+                progressLink.classList.add('progress-nav-link--active');
+                progressLink.setAttribute('aria-current', 'page');
+              }
+              group.appendChild(progressLink);
 
               /* Auth button (person icon) */
               var authBtn = document.createElement('button');
