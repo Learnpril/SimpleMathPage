@@ -14,6 +14,10 @@ import { SUBJECTS } from "../lib/progress-map";
 >
   <div class="progress-dashboard" aria-labelledby="_top">
 
+    <div class="progress-mascot">
+      <img src="/nuggy_thumbsup.png" alt="Nuggy giving a thumbs up" class="progress-mascot-img" />
+    </div>
+
     <!-- Guest prompt: shown when not authenticated -->
     <div class="progress-signin-prompt" hidden>
       <p>Sign in to save your progress across devices</p>
@@ -210,6 +214,17 @@ import { SUBJECTS } from "../lib/progress-map";
     max-width: 1200px;
     margin: 0 auto;
     padding: 1.5rem 1rem;
+  }
+
+  /* Mascot illustration */
+  .progress-mascot {
+    text-align: center;
+    margin-bottom: 1.5rem;
+  }
+
+  .progress-mascot-img {
+    width: 240px;
+    height: auto;
   }
 
   /* Sign-in prompt */
