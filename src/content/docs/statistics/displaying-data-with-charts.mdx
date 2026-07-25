@@ -1,0 +1,226 @@
+---
+title: Displaying Data with Charts
+description: Frequency tables, bar charts, histograms, and how to read the shape of a distribution
+sidebar:
+  order: 3
+---
+
+import Quiz from "../../../components/Quiz.astro";
+import BarVsHistogram from "../../../components/BarVsHistogram.astro";
+import HistogramShapes from "../../../components/HistogramShapes.astro";
+
+## What You'll Learn
+
+In this lesson you'll learn to build a frequency table, choose between a bar chart and a histogram, read the shape of a distribution (symmetric, skewed, bimodal), and spot the chart tricks that mislead.
+
+## The Concept
+
+### Frequency tables
+
+A **frequency table** counts how many observations fall into each category or interval.
+
+- **Frequency** - the raw count.
+- **Relative frequency** - the count divided by the total, so a proportion or percentage.
+- **Cumulative frequency** - a running total as you move through ordered categories.
+
+For quantitative data you first group values into **bins** (also called classes). Bins should be equal width and non-overlapping, and every value must land in exactly one bin.
+
+Choosing bin count is a judgment call. Too few bins hides the shape; too many turns the chart into noise. A rough starting point is $\sqrt{n}$ bins, then adjust until the shape reads clearly.
+
+### Bar charts versus histograms
+
+These look similar and mean different things.
+
+<BarVsHistogram />
+
+A **bar chart** displays **categorical** data. Bars are separated by gaps, and the order of bars carries no meaning unless the categories are ordinal. You're free to sort them by size for readability.
+
+A **histogram** displays **quantitative** data. Bars **touch**, because the bins tile a continuous number line. The order is fixed by the numbers, and rearranging bars would be nonsense.
+
+That difference in whether the bars touch is not decoration. It tells the reader whether there is anything between the bars.
+
+### Other common displays
+
+- **Pie chart** - parts of a whole, categorical. Only honest when the categories are mutually exclusive and cover everything. Hard to read past about five slices, since people compare angles poorly.
+- **Dotplot** - one dot per observation. Great for small datasets; shows every value.
+- **Stem-and-leaf plot** - keeps the actual digits while showing shape. Mostly a teaching tool now.
+- **Line graph** - a quantity over time. The horizontal axis must be time or another ordered continuum.
+- **Boxplot** - the five-number summary, covered in a later lesson. Best for comparing groups.
+
+### Reading the shape
+
+Once you have a histogram, the shape tells you most of what matters.
+
+<HistogramShapes />
+
+**Symmetric** - the left and right halves roughly mirror each other. The mean and median sit close together, near the center.
+
+**Right-skewed** (positively skewed) - a long tail stretching to the right. Most values are low, with a few large ones pulling the mean up above the median. Income, house prices, and wait times are classic examples.
+
+**Left-skewed** (negatively skewed) - a long tail to the left. Most values are high with a few low outliers dragging the mean below the median. Exam scores on an easy test look like this, as does age at death.
+
+The reliable way to remember it: **the skew is named for the direction of the tail, not where the bulk sits.** A pile on the left with a tail to the right is _right_-skewed, which trips up nearly everyone at first.
+
+**Uniform** - all bins about equal height. Rolling a fair die many times.
+
+**Bimodal** - two distinct peaks. This is usually a signal that two different groups got mixed together, like heights of adults without separating by sex. A bimodal histogram is often a hint to split the data.
+
+### How charts mislead
+
+Worth knowing, both to avoid doing it and to catch it:
+
+- **Truncated y-axis.** Starting the vertical axis at 95 instead of 0 turns a trivial difference into a cliff. Legitimate for line graphs of small fluctuations, misleading for bar charts, where bar _length_ is the comparison.
+- **Unequal bin widths.** Makes some bars artificially tall or short.
+- **Cherry-picked range.** Showing only the window where the trend supports your point.
+- **Area distortion.** Scaling a picture's height _and_ width by the same factor makes the area grow as the square, exaggerating the difference visually.
+- **Dual axes.** Two different y-scales can be adjusted until any two series look correlated.
+
+## Worked Examples
+
+**Example 1: Build a frequency table.**
+
+Twenty quiz scores out of 20:
+
+$$
+14, 18, 12, 15, 19, 11, 16, 15, 13, 17, 20, 14, 16, 18, 15, 12, 17, 16, 13, 19
+$$
+
+Group into bins of width 3 starting at 11.
+
+**Solution.**
+
+| Bin   | Tally                          | Frequency | Relative frequency |
+| :---- | :----------------------------- | :-------: | :----------------: |
+| 11–13 | 11, 12, 12, 13, 13             |     5     |        0.25        |
+| 14–16 | 14, 14, 15, 15, 15, 16, 16, 16 |     8     |        0.40        |
+| 17–19 | 17, 17, 18, 18, 19, 19         |     6     |        0.30        |
+| 20–22 | 20                             |     1     |        0.05        |
+
+Total: $5 + 8 + 6 + 1 = 20$ ✓, and the relative frequencies sum to 1.00 ✓.
+
+Always run both checks. They catch a miscount immediately.
+
+**Example 2: Choose the display.**
+
+Which chart for each?
+
+1. Market share of five phone brands
+2. Distribution of employee salaries
+3. Monthly website visitors over two years
+4. Comparing test score distributions across four schools
+
+**Solution.**
+
+1. **Bar chart.** Categorical. A pie chart also works since shares sum to 100%.
+2. **Histogram.** Quantitative and continuous. Expect right skew.
+3. **Line graph.** A quantity over ordered time.
+4. **Side-by-side boxplots.** Compact comparison of center and spread across groups.
+
+**Example 3: Identify the skew.**
+
+A histogram of house prices in a city has most bars between 200k and 400k, then short bars stretching out to 2 million. Describe the shape and compare mean to median.
+
+**Solution.** The long tail points **right**, so the distribution is **right-skewed**.
+
+The handful of multimillion-dollar homes pulls the mean upward while barely moving the median, so
+
+$$
+\text{mean} > \text{median}
+$$
+
+This is exactly why housing reports quote the **median** price. It describes the typical home, while the mean describes a home nobody is buying.
+
+**Example 4: Diagnose a bimodal histogram.**
+
+A histogram of daily commute times for a company shows a peak around 15 minutes and another around 55 minutes, with few values in between. What's likely happening?
+
+**Solution.** Two populations are mixed. Probably employees who live locally and employees who commute from farther out, or people using different transport modes.
+
+The right move is to **split the data** and analyze the groups separately. A single mean would land around 35 minutes, describing almost nobody.
+
+**Example 5: Catch the misleading chart.**
+
+A bar chart compares two products' satisfaction scores, 82% and 86%. The y-axis runs from 80 to 88. The 86% bar looks roughly three times taller than the 82% bar.
+
+**Solution.** The **truncated y-axis** is the problem. With the axis starting at 80, the bars represent 2 units and 6 units of height, a 3× visual ratio, for a real difference of 4 percentage points.
+
+For bar charts the y-axis should start at zero, because the reader is comparing bar lengths. Starting at 80 would be more defensible on a line graph tracking small changes over time, where the reader is comparing slope rather than length.
+
+## Real-World Applications
+
+Every dashboard you've ever used is making these choices on your behalf, and the defaults are often wrong. Business intelligence tools happily draw a bar chart with a truncated axis because it "uses the space better," which quietly exaggerates every comparison.
+
+Journalism runs on these charts, and reputable outlets have style guides mandating zero-based bar axes for exactly this reason. When you see a chart with no axis labels at all, that's usually deliberate.
+
+Medical and scientific papers lean on histograms to justify later choices. If the data is heavily skewed, the researchers must either use median-based methods or transform the data, and the histogram is the evidence for that decision.
+
+In machine learning, plotting the distribution of every feature is a standard first step. Bimodal features suggest a hidden grouping variable, and heavily skewed features often get log-transformed before modeling.
+
+Bimodality detection has real diagnostic value beyond statistics class. If your server response times are bimodal, you probably have two code paths, one hitting a cache and one not. The shape of the histogram is pointing at the architecture.
+
+:::note[You've Got This]
+Two things carry most of the weight here. First, bars touch for numbers and separate for categories, which tells you at a glance what kind of data you're looking at. Second, skew is named for the tail, so a pile on the left with a long right tail is right-skewed. Get those two and you can read most charts correctly. And whenever a difference looks dramatic, glance at the y-axis before you believe it.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="stats-displaying-data-with-charts"
+  questions={[
+    {
+      id: "q1",
+      text: "A distribution has most of its values clustered at the low end with a long tail extending toward high values. What is it called?",
+      options: ["Left-skewed", "Right-skewed", "Symmetric", "Uniform"],
+      correctIndex: 1,
+      explanation:
+        "Skew is named for the direction the tail points, not where the bulk of the data sits. A long tail toward high values makes the distribution right-skewed, and the mean will exceed the median.",
+    },
+    {
+      id: "q2",
+      text: "In a right-skewed distribution, how do the mean and median compare?",
+      options: [
+        "The mean is greater than the median",
+        "The mean is less than the median",
+        "They are always exactly equal",
+        "The relationship cannot be predicted",
+      ],
+      correctIndex: 0,
+      explanation:
+        "The few very large values in the right tail pull the mean upward while barely affecting the median, which only cares about position. This is why median house prices are reported instead of mean prices.",
+    },
+    {
+      id: "q3",
+      text: "Which display is appropriate for showing the market share of six competing brands?",
+      options: ["A histogram", "A bar chart", "A boxplot", "A line graph"],
+      correctIndex: 1,
+      explanation:
+        "Brands are categorical, so a bar chart with separated bars is correct. Histograms and boxplots require quantitative data, and a line graph needs an ordered continuum such as time.",
+    },
+    {
+      id: "q4",
+      text: "A histogram of adult heights shows two clear peaks. What does this most likely indicate?",
+      options: [
+        "The data was entered incorrectly",
+        "The sample is too small to interpret",
+        "Two different groups have been combined in one dataset",
+        "The distribution is uniform",
+      ],
+      correctIndex: 2,
+      explanation:
+        "Bimodality usually signals that a hidden grouping variable is mixing two populations, such as combining male and female heights. Splitting the data and analyzing the groups separately is the standard response.",
+    },
+    {
+      id: "q5",
+      text: "Why is starting the y-axis of a bar chart above zero considered misleading?",
+      options: [
+        "It makes the chart harder to fit on a page",
+        "Readers compare bar lengths, so a truncated axis exaggerates small differences",
+        "It changes the underlying data values",
+        "Bar charts are not allowed to have a y-axis",
+      ],
+      correctIndex: 1,
+      explanation:
+        "The visual message of a bar chart is carried by how long each bar is, so cutting off the bottom inflates the apparent ratio between values. A 4-point gap can be made to look like a threefold difference.",
+    },
+  ]}
+/>

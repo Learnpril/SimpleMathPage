@@ -1,0 +1,247 @@
+---
+title: What Is Statistics?
+description: Populations and samples, descriptive versus inferential statistics, and why sampling works
+sidebar:
+  order: 1
+---
+
+import Quiz from "../../../components/Quiz.astro";
+import PopulationSample from "../../../components/PopulationSample.astro";
+import SymbolKey from "../../../components/SymbolKey.astro";
+
+## What You'll Learn
+
+In this lesson you'll learn the difference between a population and a sample, what parameters and statistics are, how descriptive and inferential statistics differ, and why a well-chosen sample of 1,000 can tell you about a country of 300 million.
+
+<SymbolKey
+  items={[
+    {
+      sym: "N",
+      read: "the population size",
+      note: "how many individuals are in the whole group",
+    },
+    {
+      sym: "n",
+      read: "the sample size",
+      note: "how many you actually measured. Lowercase for samples.",
+    },
+    {
+      sym: "μ",
+      read: "mu, the population mean",
+      note: "a Greek letter, because it describes a population",
+    },
+    {
+      sym: "x̄",
+      read: "x-bar, the sample mean",
+      note: "a Roman letter with a bar, because it comes from a sample",
+    },
+    { sym: "σ", read: "sigma, the population standard deviation" },
+    { sym: "s", read: "the sample standard deviation" },
+  ]}
+/>
+
+The Greek-versus-Roman split is a convention worth learning now: **Greek letters describe populations, Roman letters describe samples.** It tells you at a glance whether a number is a truth about everyone or an estimate from a handful of people.
+
+## The Concept
+
+### Populations and samples
+
+A **population** is every individual you want to know about. Every voter in a country. Every light bulb a factory produces. Every patient with a particular condition.
+
+A **sample** is the subset you actually measure.
+
+<PopulationSample />
+
+The population is almost never measurable. It's too big, too expensive, or partly in the future (the factory hasn't made next month's bulbs yet). Sometimes measuring destroys the item, as with testing how long a bulb lasts.
+
+So statistics does something that sounds impossible and works anyway: measure a few, conclude about the many.
+
+### Parameters and statistics
+
+A **parameter** is a number describing a population. It's a fixed, usually unknown truth.
+
+A **statistic** is a number computed from a sample. It's known, but it varies depending on which sample you happened to draw.
+
+|                    | Population |  Sample   |
+| :----------------- | :--------: | :-------: |
+| Size               |    $N$     |    $n$    |
+| Mean               |   $\mu$    | $\bar{x}$ |
+| Standard deviation |  $\sigma$  |    $s$    |
+| Proportion         |    $p$     | $\hat{p}$ |
+
+The whole project of inference is using the right column to estimate the left one.
+
+### Descriptive versus inferential
+
+**Descriptive statistics** summarizes data you have. "The 40 students in this class averaged 78 on the exam" is a complete, certain fact about those 40 students. Nothing is being guessed.
+
+**Inferential statistics** reaches beyond the data. "Based on these 40 students, the average for all students at this university is probably between 74 and 82" is a claim about people you never tested, and it comes with a stated level of confidence.
+
+Descriptive statistics can't be wrong, only misleading. Inferential statistics can genuinely be wrong, and a good analysis tells you how often it would be.
+
+### Why sampling works
+
+The surprising fact underneath all of this: **sample quality matters far more than sample size relative to the population.**
+
+A random sample of 1,000 people describes a country of 300 million about as well as it describes a town of 30,000. That feels wrong, but it's true, and you'll see why when you reach the Central Limit Theorem. The precision of an estimate depends on $n$, not on the fraction of the population you captured.
+
+What _does_ wreck a sample is **bias**, meaning some members of the population were systematically more likely to be included.
+
+- **Selection bias** - the sampling method skips a group. A phone survey on landlines misses young people.
+- **Voluntary response bias** - people opt in, and those with strong opinions opt in more. Online polls are notorious for this.
+- **Nonresponse bias** - the people who decline to answer differ from the ones who do.
+- **Convenience sampling** - asking whoever is easy to reach, like your own friends.
+
+A **simple random sample** gives every individual an equal chance of selection. It's the gold standard because it has no systematic tilt.
+
+The famous cautionary tale is the 1936 _Literary Digest_ poll, which mailed 10 million ballots and got 2.4 million back, predicting a landslide for Alfred Landon. Franklin Roosevelt won in one of the largest landslides in US history. The magazine's list came from car registrations, telephone directories, and its own subscribers, all of which skewed wealthy during the Depression. A sample of 2.4 million lost to George Gallup's sample of about 50,000, because Gallup's was representative and the _Digest_'s was not.
+
+**A big biased sample is worse than a small fair one**, because the size lends false confidence.
+
+## Worked Examples
+
+**Example 1: Identify the population and sample.**
+
+A city wants to know the average commute time of its 400,000 workers. Researchers survey 800 workers at randomly chosen bus stops.
+
+**Solution.**
+
+- **Population:** all 400,000 workers in the city.
+- **Sample:** the 800 workers surveyed.
+- **Parameter of interest:** $\mu$, the true mean commute time for all workers.
+- **Statistic:** $\bar{x}$, the mean commute time of the 800.
+
+But there's a problem. Sampling at bus stops only reaches people who take the bus, and their commutes likely differ from those who drive or walk. That's **selection bias**, and the estimate will be off no matter how large the sample gets.
+
+**Example 2: Parameter or statistic?**
+
+1. The US Census reports the median household income of all US households.
+2. A poll of 1,500 adults finds 62% support a policy.
+3. A factory tests 50 of the 10,000 bulbs made today and finds 3 defective.
+
+**Solution.**
+
+1. **Parameter.** A census attempts to measure everyone, so this describes the population.
+2. **Statistic.** It's from a sample of 1,500. Written $\hat{p} = 0.62$.
+3. **Statistic.** From a sample of 50, so $\hat{p} = 3/50 = 0.06$.
+
+**Example 3: Descriptive or inferential?**
+
+1. "The average of these 12 test scores is 84."
+2. "We estimate the drug reduces recovery time by 2 days, plus or minus 0.6 days."
+3. "This histogram shows the distribution of our 500 survey responses."
+
+**Solution.**
+
+1. **Descriptive.** A summary of the data in hand.
+2. **Inferential.** A claim about the drug in general, with uncertainty attached.
+3. **Descriptive.** A picture of the collected data, nothing beyond it.
+
+**Example 4: Spot the bias.**
+
+A restaurant emails a satisfaction survey to everyone who joined its loyalty program and reports that 94% of customers are satisfied.
+
+**Solution.** Two problems stack up here.
+
+First, **selection bias**: loyalty program members are people who liked the restaurant enough to sign up. Dissatisfied customers mostly never joined.
+
+Second, **voluntary response bias**: among members, the ones who bother to reply skew toward strong feelings, and satisfied regulars are more likely to engage with a brand they like.
+
+The 94% describes "loyalty members who chose to respond," not "customers." The number may be perfectly accurate and still not answer the question asked.
+
+**Example 5: Does the population size matter?**
+
+A pollster wants a margin of error of about 3 points. Does she need a bigger sample for a country of 300 million than for a city of 300,000?
+
+**Solution.** No, essentially not. For any population much larger than the sample, the margin of error depends on $n$ alone. Roughly 1,100 respondents gives about a 3-point margin either way.
+
+This is why national polls of 1,000 to 1,500 people are standard. It also explains a common complaint, "they never asked me," which is true and irrelevant: the math never required asking a large _fraction_ of anyone.
+
+## Real-World Applications
+
+Election polling is the most visible use, and the most visibly criticized. When polls miss, the cause is almost always bias rather than sample size: some group was harder to reach, or less willing to state a preference. Pollsters spend most of their effort on representativeness, not volume.
+
+Medical trials sample patients to make claims about future patients, which is why the eligibility criteria matter so much. A drug tested only on adults aged 25 to 55 has a population that doesn't include children or the elderly, and extending the conclusion to them is a leap beyond the data.
+
+Quality control samples a production line because testing everything is impossible when the test destroys the product. A crash-test rating comes from wrecking a few cars, not all of them.
+
+In software, A/B tests split users into a sample that sees version A and a sample that sees version B. The whole design rests on the split being random, which is why assigning by something like signup date quietly ruins the experiment.
+
+Census data is the rare case of attempting a true population measurement, and even that ends up using statistical adjustment for people it misses.
+
+:::note[You've Got This]
+The vocabulary in this lesson does more work than it looks like. Getting into the habit of asking "population or sample?" and "parameter or statistic?" before anything else will keep you oriented through the entire section, especially once inference starts. And hold on to the _Literary Digest_ story. It's the cleanest reminder that in statistics, how you got the data matters more than how much of it you got.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="stats-what-is-statistics"
+  questions={[
+    {
+      id: "q1",
+      text: "What is the difference between a population and a sample?",
+      options: [
+        "A population is everyone you want to know about; a sample is the subset you actually measure",
+        "A population is always people; a sample is always objects",
+        "A sample is larger than a population",
+        "They mean the same thing in statistics",
+      ],
+      correctIndex: 0,
+      explanation:
+        "The population is the entire group of interest, which is usually too large or expensive to measure completely. The sample is the portion you collect data from and use to estimate facts about the population.",
+    },
+    {
+      id: "q2",
+      text: "A poll of 1,200 adults finds that 47% plan to vote for a candidate. The 47% is an example of...",
+      options: [
+        "a parameter, because it describes voters",
+        "a statistic, because it was computed from a sample",
+        "a population, because it covers all adults",
+        "a census, because it used a large group",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Numbers computed from a sample are statistics. A parameter would be the true percentage among all voters, which is unknown and is exactly what the statistic is estimating.",
+    },
+    {
+      id: "q3",
+      text: "Which statement is inferential rather than descriptive?",
+      options: [
+        "The 30 patients in the study had a mean age of 54",
+        "This bar chart shows how our 200 responses were distributed",
+        "The highest score among our test takers was 98",
+        "Based on our sample, the true mean is likely between 51 and 57",
+      ],
+      correctIndex: 3,
+      explanation:
+        "Inferential statistics makes a claim that reaches beyond the collected data and attaches uncertainty to it. The other three simply summarize the data already in hand.",
+    },
+    {
+      id: "q4",
+      text: "A website posts an online poll and reports results from everyone who chose to click and answer. What is the main problem?",
+      options: [
+        "Voluntary response bias, since people with strong opinions are more likely to participate",
+        "The sample is too small to be useful",
+        "Online data cannot be analyzed statistically",
+        "Nothing; a large number of responses removes bias",
+      ],
+      correctIndex: 0,
+      explanation:
+        "When people opt in, those with intense views are overrepresented, so the sample tilts systematically. Collecting more responses does not fix bias; it just makes a skewed estimate look more authoritative.",
+    },
+    {
+      id: "q5",
+      text: "Why can a random sample of about 1,000 people describe a country of 300 million reasonably well?",
+      options: [
+        "Because 1,000 is close to 1% of 300 million",
+        "Because large populations are more uniform than small ones",
+        "Because the precision of an estimate depends on the sample size, not on the fraction of the population sampled",
+        "Because pollsters weight each response by 300,000",
+      ],
+      correctIndex: 2,
+      explanation:
+        "For any population far larger than the sample, the margin of error is governed by n alone. That is why national polls do not need to grow as the population grows.",
+    },
+  ]}
+/>

@@ -1,0 +1,284 @@
+---
+title: Five-Number Summary and Boxplots
+description: Quartiles, the interquartile range, boxplots, and a rule for identifying outliers
+sidebar:
+  order: 6
+---
+
+import Quiz from "../../../components/Quiz.astro";
+import BoxplotAnatomy from "../../../components/BoxplotAnatomy.astro";
+
+## What You'll Learn
+
+In this lesson you'll learn to find quartiles and the five-number summary, compute the interquartile range, build a boxplot, and use the 1.5 × IQR rule to flag outliers.
+
+## The Concept
+
+### Percentiles and quartiles
+
+The **$k$-th percentile** is the value below which $k$% of the data falls. If your score is at the 90th percentile, 90% of scores are below yours.
+
+**Quartiles** are the percentiles that cut the data into four equal parts:
+
+- **Q1** (first quartile) = 25th percentile. Median of the lower half.
+- **Q2** (second quartile) = 50th percentile = **the median**.
+- **Q3** (third quartile) = 75th percentile. Median of the upper half.
+
+To find them:
+
+1. Sort the data.
+2. Find the median. That's Q2.
+3. Q1 is the median of the values **below** Q2.
+4. Q3 is the median of the values **above** Q2.
+
+When $n$ is odd, exclude the median itself from both halves. (Different textbooks and software handle this slightly differently, so you'll occasionally see small discrepancies in Q1 and Q3. The method here is the common one taught in intro courses.)
+
+### The five-number summary
+
+Five values that describe a distribution compactly:
+
+$$
+\text{Minimum}, \quad Q_1, \quad \text{Median}, \quad Q_3, \quad \text{Maximum}
+$$
+
+Together they tell you the center, the spread, and roughly the shape, using only positions. Because they're all positional, the whole summary is **resistant to outliers** except for the min and max themselves.
+
+### Interquartile range
+
+The **IQR** is the spread of the middle half of the data:
+
+$$
+IQR = Q_3 - Q_1
+$$
+
+This is the resistant alternative to the standard deviation. It deliberately ignores the top 25% and bottom 25%, so extreme values can't inflate it.
+
+Compare the two spread measures:
+
+|            | Standard deviation |     IQR     |
+| :--------- | :----------------: | :---------: |
+| Uses       |    every value     | middle 50%  |
+| Outliers   |     sensitive      |  resistant  |
+| Pairs with |        mean        |   median    |
+| Best for   |   symmetric data   | skewed data |
+
+Notice the pairing. Report **mean with standard deviation**, or **median with IQR**. Mixing them (median with standard deviation) is unusual and usually a mistake.
+
+### Boxplots
+
+A **boxplot** (or box-and-whisker plot) draws the five-number summary.
+
+<BoxplotAnatomy />
+
+- The **box** spans Q1 to Q3, so its width is the IQR.
+- The **line inside the box** is the median. Not the mean.
+- The **whiskers** extend to the most extreme values that are _not_ outliers.
+- **Points beyond the whiskers** are plotted individually as outliers.
+
+Reading shape from a boxplot:
+
+- **Median centered in the box, equal whiskers** - roughly symmetric.
+- **Median near the left of the box, longer right whisker** - right-skewed.
+- **Median near the right of the box, longer left whisker** - left-skewed.
+
+Boxplots are at their best **comparing groups**. Four boxplots side by side let you compare centers and spreads at a glance in a way four histograms can't match.
+
+What a boxplot **hides**: it cannot show bimodality. Two very different distributions can produce identical boxplots, so for a single dataset a histogram tells you more. Use boxplots for comparison, histograms for shape.
+
+### The 1.5 × IQR rule for outliers
+
+The standard rule defines **fences**:
+
+$$
+\text{Lower fence} = Q_1 - 1.5 \times IQR
+$$
+
+$$
+\text{Upper fence} = Q_3 + 1.5 \times IQR
+$$
+
+Any value outside the fences is flagged as an **outlier**.
+
+The 1.5 is a convention, chosen by John Tukey (who invented the boxplot) as a useful compromise. For normally distributed data it flags roughly 0.7% of values, which is a reasonable "worth a look" rate. Sometimes 3 × IQR is used to mark _extreme_ outliers.
+
+An important point about what to do next: **a flagged outlier is not automatically an error, and you don't automatically delete it.** Investigate first. It might be a typo (a height of 1,700 cm), or it might be the most interesting data point you have (the one customer spending 50× the average). Deleting inconvenient data is how analyses go wrong.
+
+## Worked Examples
+
+**Example 1: Five-number summary, odd count.**
+
+Data: 12, 7, 3, 15, 9, 21, 18, 5, 11
+
+**Solution.**
+
+Sort: 3, 5, 7, 9, 11, 12, 15, 18, 21
+
+$n = 9$, so the median is position 5: **median = 11**.
+
+Lower half (excluding the median): 3, 5, 7, 9. Median of these is $\frac{5+7}{2} = 6$. So **Q1 = 6**.
+
+Upper half: 12, 15, 18, 21. Median is $\frac{15+18}{2} = 16.5$. So **Q3 = 16.5**.
+
+Five-number summary: **3, 6, 11, 16.5, 21**
+
+$$
+IQR = 16.5 - 6 = 10.5
+$$
+
+**Example 2: Five-number summary, even count.**
+
+Data: 4, 8, 11, 14, 16, 20, 25, 30
+
+**Solution.**
+
+Already sorted. $n = 8$, so the median averages positions 4 and 5:
+
+$$
+\text{median} = \frac{14+16}{2} = 15
+$$
+
+Lower half: 4, 8, 11, 14 → $Q_1 = \frac{8+11}{2} = 9.5$
+
+Upper half: 16, 20, 25, 30 → $Q_3 = \frac{20+25}{2} = 22.5$
+
+Summary: **4, 9.5, 15, 22.5, 30**, and $IQR = 13$.
+
+**Example 3: Find the outliers.**
+
+Data: 18, 22, 25, 27, 28, 30, 31, 33, 35, 68
+
+**Solution.**
+
+$n = 10$, so median $= \frac{28+30}{2} = 29$.
+
+Lower half: 18, 22, 25, 27, 28 → $Q_1 = 25$ (middle of five)
+
+Upper half: 30, 31, 33, 35, 68 → $Q_3 = 33$
+
+$$
+IQR = 33 - 25 = 8 \qquad 1.5 \times IQR = 12
+$$
+
+$$
+\text{Lower fence} = 25 - 12 = 13 \qquad \text{Upper fence} = 33 + 12 = 45
+$$
+
+Checking every value: all fall between 13 and 45 except **68**, which exceeds the upper fence.
+
+**68 is an outlier.** The whisker on the right would stop at 35, the largest non-outlier, and 68 would be plotted as a separate point.
+
+Notice the IQR of 8 was unaffected by the 68, which is exactly the resistance we wanted.
+
+**Example 4: Read a boxplot.**
+
+A boxplot has minimum 20, Q1 = 45, median 50, Q3 = 55, maximum 90. Describe the distribution.
+
+**Solution.**
+
+The box (45 to 55) is narrow, so the middle half is tightly packed around 50.
+
+Distance from median to Q1 is 5; median to Q3 is also 5. The box is symmetric.
+
+But the whiskers are wildly unequal: the left reaches down 25 units to 20, the right reaches up 35 units to 90.
+
+So the middle is symmetric while both tails are long, with the right slightly longer. The distribution has a compact core and extreme values on both sides. Worth checking the fences: $IQR = 10$, so fences sit at 30 and 70, meaning both the minimum of 20 and the maximum of 90 would actually be flagged as outliers.
+
+**Example 5: Compare two groups.**
+
+Two branches' customer wait times (minutes):
+
+Branch A summary: 2, 5, 7, 9, 14
+Branch B summary: 1, 4, 7, 15, 32
+
+**Solution.**
+
+Both have a **median of 7**, so "typical" wait is the same.
+
+$$
+IQR_A = 9 - 5 = 4 \qquad IQR_B = 15 - 4 = 11
+$$
+
+Branch B is far less consistent. Its upper quartile is 15, meaning a quarter of B's customers wait over 15 minutes, versus over 9 at A. And B's maximum of 32 is more than double A's worst case.
+
+Identical medians, very different customer experience. A manager looking only at median wait time would conclude the branches perform the same.
+
+## Real-World Applications
+
+Boxplots are the standard tool for comparing groups in scientific papers, precisely because a row of them compresses many distributions into one readable figure. When a paper compares treatment arms or experimental conditions, it's usually boxplots.
+
+Growth charts in pediatrics are percentile charts. A child "at the 40th percentile for height" is being compared to a reference distribution, and the doctor watches whether the child's percentile stays stable over time rather than the raw number.
+
+Standardized test reporting is percentile-based for the same reason: the raw score means nothing without knowing the distribution, and percentile position is directly interpretable.
+
+Salary bands in HR are typically defined by quartiles. "This role pays in the second quartile for the market" is a statement about position in a distribution.
+
+Fraud and anomaly detection often starts with IQR-based outlier flagging, because it's simple, resistant, and needs no assumption that the data is normal. Transactions outside the fences get a second look rather than an automatic rejection, which mirrors the "investigate, don't delete" principle.
+
+In performance monitoring, the same percentile thinking from the previous lesson applies: p95 and p99 latency are percentiles, and engineers watch them instead of the mean because the tail is where user pain lives.
+
+:::note[You've Got This]
+The pairing is the thing to remember: mean goes with standard deviation, median goes with IQR. One pair uses every value and is sensitive to outliers; the other uses positions and shrugs them off. For the 1.5 × IQR rule, compute the IQR first, multiply by 1.5, then step that far out from each quartile. And when you flag an outlier, resist the urge to delete it. Ask what it is first, because sometimes the outlier is the finding.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="stats-five-number-summary-and-boxplots"
+  questions={[
+    {
+      id: "q1",
+      text: "What five values make up the five-number summary?",
+      options: [
+        "Mean, median, mode, variance, standard deviation",
+        "Minimum, Q1, median, Q3, maximum",
+        "Minimum, mean, median, mode, maximum",
+        "Q1, Q2, Q3, IQR, range",
+      ],
+      correctIndex: 1,
+      explanation:
+        "The summary uses only positional values: the two extremes, the two outer quartiles, and the median. Because they are all positions, the summary is largely resistant to outliers.",
+    },
+    {
+      id: "q2",
+      text: "A dataset has Q1 = 30 and Q3 = 50. What is the IQR?",
+      options: ["40", "80", "20", "10"],
+      correctIndex: 2,
+      explanation:
+        "The interquartile range is Q3 - Q1 = 50 - 30 = 20. It measures the spread of the middle half of the data and ignores the extreme quarters entirely.",
+    },
+    {
+      id: "q3",
+      text: "With Q1 = 25 and Q3 = 35, which value would be flagged as an outlier by the 1.5 x IQR rule?",
+      options: ["30", "48", "12", "8"],
+      correctIndex: 3,
+      explanation:
+        "The IQR is 35 - 25 = 10, so 1.5 x IQR = 15 and the fences sit at 25 - 15 = 10 and 35 + 15 = 50. Only 8 falls outside that range, since 12, 30 and 48 all lie between the fences.",
+    },
+    {
+      id: "q4",
+      text: "The line drawn inside the box of a boxplot represents which value?",
+      options: [
+        "The mean",
+        "The median",
+        "The mode",
+        "The midpoint of the range",
+      ],
+      correctIndex: 1,
+      explanation:
+        "The center line marks the median, or Q2. Boxplots are built entirely from positional statistics, so the mean does not appear on a standard boxplot at all.",
+    },
+    {
+      id: "q5",
+      text: "Which measure of spread should be paired with the median when reporting skewed data?",
+      options: [
+        "The standard deviation",
+        "The range",
+        "The variance",
+        "The interquartile range",
+      ],
+      correctIndex: 3,
+      explanation:
+        "The median and IQR are both positional and resistant to outliers, which makes them the natural pair for skewed data. The mean pairs with the standard deviation, since both use every value's magnitude.",
+    },
+  ]}
+/>

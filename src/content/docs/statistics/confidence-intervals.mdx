@@ -1,0 +1,308 @@
+---
+title: Confidence Intervals
+description: Estimating a parameter with a range, margin of error, and what "95% confident" actually means
+sidebar:
+  order: 16
+---
+
+import Quiz from "../../../components/Quiz.astro";
+import ConfidenceIntervalDiagram from "../../../components/ConfidenceIntervalDiagram.astro";
+
+## What You'll Learn
+
+In this lesson you'll learn to build a confidence interval, compute a margin of error, interpret the confidence level correctly (this is the part most people get wrong), and understand the tradeoff between confidence and precision.
+
+## The Concept
+
+### Point estimates aren't enough
+
+A **point estimate** is a single value, like $\bar{x} = 68.4$. It's almost certainly not exactly right, and by itself it says nothing about how close it might be.
+
+A **confidence interval** gives a range of plausible values along with a stated level of confidence. That's a far more honest answer, because it reports the uncertainty instead of hiding it.
+
+### The structure
+
+Every confidence interval has the same form:
+
+$$
+\text{point estimate} \pm \text{margin of error}
+$$
+
+For a population mean with known $\sigma$:
+
+$$
+\bar{x} \pm z^* \frac{\sigma}{\sqrt{n}}
+$$
+
+The pieces:
+
+- $\bar{x}$ - the center, your best single guess.
+- $\frac{\sigma}{\sqrt{n}}$ - the standard error from the previous lesson.
+- $z^*$ - the **critical value**, determined by how confident you want to be.
+
+The whole thing works because the CLT tells us $\bar{x}$ is normally distributed around $\mu$. We're stepping out a certain number of standard errors to capture $\mu$ with a known probability.
+
+### Critical values
+
+| Confidence level | $z^*$ |
+| :--------------: | :---: |
+|       90%        | 1.645 |
+|       95%        | 1.96  |
+|       99%        | 2.576 |
+
+The 1.96 for 95% is the one worth memorizing, and it's why the empirical rule's "about 2 standard deviations" is such a useful approximation.
+
+### Margin of error
+
+$$
+ME = z^* \frac{\sigma}{\sqrt{n}}
+$$
+
+Three things affect it:
+
+- **Higher confidence** → larger $z^*$ → **wider** interval.
+- **Larger sample** → smaller $SE$ → **narrower** interval.
+- **More variable population** → larger $\sigma$ → **wider** interval.
+
+Notice the tension in the first two. You can always increase confidence, but only by giving up precision. A 100% confidence interval would be "somewhere between negative and positive infinity," which is perfectly reliable and completely useless.
+
+### What "95% confident" means
+
+This is the crux of the lesson, and the most misinterpreted idea in introductory statistics.
+
+**Correct interpretation:** the _method_ captures the true parameter in 95% of samples. If you repeated the whole study many times, about 95% of the intervals you constructed would contain $\mu$.
+
+<ConfidenceIntervalDiagram />
+
+**Incorrect interpretation:** "There's a 95% probability that $\mu$ is in this particular interval."
+
+Why is that wrong? Because $\mu$ is a **fixed number**, not a random one. It's either inside your interval or it isn't. There's no probability about it once the interval is computed. The randomness lives in the _sampling_, not in $\mu$.
+
+An analogy that helps: you're throwing rings at a fixed peg. The method (your throwing) lands the ring over the peg 95% of the time. Once a specific ring has landed, it's either on or off. Saying "this ring has a 95% chance of being on the peg" mistakes where the randomness is.
+
+Two more common misreadings worth naming:
+
+- **Not** "95% of the data falls in this interval." The interval estimates the _mean_, not the range of individual values. It's usually much narrower than the data.
+- **Not** "95% of sample means fall in this interval." Also false, and a different claim.
+
+### When σ is unknown: the t-distribution
+
+In practice you rarely know $\sigma$, so you use $s$ from the sample. That extra uncertainty means the normal distribution is slightly too optimistic, and the correct tool is the **t-distribution**:
+
+$$
+\bar{x} \pm t^* \frac{s}{\sqrt{n}}
+$$
+
+The t-distribution looks like the normal but with **heavier tails**, which makes intervals a bit wider to account for not knowing $\sigma$. Its shape depends on the **degrees of freedom**, $df = n - 1$ (the same $n-1$ from the sample variance).
+
+As $n$ grows, t approaches the normal. By $n = 30$ they're close, and by $n = 100$ nearly identical. That's why the $n \geq 30$ rule of thumb appears in so many places.
+
+### Confidence intervals for a proportion
+
+For a proportion, with $\hat{p}$ the sample proportion:
+
+$$
+\hat{p} \pm z^* \sqrt{\frac{\hat{p}(1-\hat{p})}{n}}
+$$
+
+This is where poll margins of error come from. The worst case, requiring the largest sample, is $\hat{p} = 0.5$, since $\hat{p}(1-\hat{p})$ is maximized there. Pollsters often assume 0.5 to be conservative.
+
+## Worked Examples
+
+**Example 1: Build a 95% interval.**
+
+A sample of 100 students has $\bar{x} = 72$ on a test. Population $\sigma = 10$. Construct a 95% confidence interval for $\mu$.
+
+**Solution.**
+
+$$
+SE = \frac{10}{\sqrt{100}} = 1
+$$
+
+$$
+ME = 1.96 \times 1 = 1.96
+$$
+
+$$
+72 \pm 1.96 \quad \Rightarrow \quad (70.04, \; 73.96)
+$$
+
+We're 95% confident the true mean lies between 70.04 and 73.96. More precisely: this interval came from a procedure that captures $\mu$ 95% of the time.
+
+**Example 2: Confidence versus width.**
+
+Using the same data, build 90% and 99% intervals and compare.
+
+**Solution.**
+
+90%: $ME = 1.645 \times 1 = 1.645 \Rightarrow (70.36, \, 73.64)$, width 3.29
+
+95%: $ME = 1.96 \Rightarrow (70.04, \, 73.96)$, width 3.92
+
+99%: $ME = 2.576 \Rightarrow (69.42, \, 74.58)$, width 5.15
+
+Higher confidence buys a wider, less informative interval. The 99% interval is 57% wider than the 90% one. There's no free lunch: you're choosing between being right more often and saying something more specific.
+
+**Example 3: Required sample size.**
+
+How large a sample gives a 95% interval with margin of error 2, when $\sigma = 15$?
+
+**Solution.** Set up and solve for $n$:
+
+$$
+2 = 1.96 \times \frac{15}{\sqrt{n}}
+$$
+
+$$
+\sqrt{n} = \frac{1.96 \times 15}{2} = 14.7
+$$
+
+$$
+n = 14.7^2 = 216.09
+$$
+
+**Always round up** for sample size, to 217. Rounding down would leave the margin slightly above the target.
+
+**Example 4: A poll.**
+
+In a survey of 1,000 voters, 540 support a measure. Build a 95% confidence interval for the true proportion.
+
+**Solution.**
+
+$$
+\hat{p} = \frac{540}{1000} = 0.54
+$$
+
+$$
+SE = \sqrt{\frac{0.54 \times 0.46}{1000}} = \sqrt{\frac{0.2484}{1000}} = \sqrt{0.0002484} \approx 0.01576
+$$
+
+$$
+ME = 1.96 \times 0.01576 \approx 0.0309
+$$
+
+$$
+0.54 \pm 0.031 \quad \Rightarrow \quad (0.509, \; 0.571)
+$$
+
+So 50.9% to 57.1%, which is the familiar "±3 percentage points." Since the whole interval sits above 50%, there's reasonable evidence of majority support.
+
+**Example 5: A poll that's too close to call.**
+
+Same poll but 515 of 1,000 support the measure. Is there evidence of majority support?
+
+**Solution.**
+
+$$
+\hat{p} = 0.515, \quad SE = \sqrt{\frac{0.515 \times 0.485}{1000}} \approx 0.0158
+$$
+
+$$
+ME \approx 0.031 \quad \Rightarrow \quad (0.484, \; 0.546)
+$$
+
+The interval **includes 0.50**, so the data is consistent with the measure having minority support, exactly 50%, or majority support. This is what "statistical tie" or "too close to call" means.
+
+Reporting "51.5% support it" as a fact would overstate what the data shows. This connects directly to hypothesis testing: an interval containing the null value corresponds to a non-significant result.
+
+**Example 6: Interpret correctly.**
+
+A study reports a 95% confidence interval of (12.1, 15.9) for a mean. Which statements are correct?
+
+1. There's a 95% probability $\mu$ is between 12.1 and 15.9.
+2. 95% of the data values fall between 12.1 and 15.9.
+3. If the study were repeated many times, about 95% of the resulting intervals would contain $\mu$.
+4. We're 95% confident that $\mu$ is between 12.1 and 15.9.
+
+**Solution.**
+
+1. **Incorrect.** $\mu$ is fixed; it's either in there or not. The probability statement misplaces the randomness.
+2. **Incorrect.** This interval estimates the mean, not the spread of individual observations.
+3. **Correct.** This is the definition of a confidence level.
+4. **Correct**, as standard shorthand for #3. The phrase "95% confident" is accepted precisely because it avoids claiming a probability about $\mu$.
+
+## Real-World Applications
+
+Political polling reports confidence intervals constantly, usually as a margin of error. Understanding that a 2-point lead with a 3-point margin is not a lead is genuinely useful media literacy, and it's why careful outlets describe such races as tied.
+
+Medical research reports confidence intervals for treatment effects, and increasingly journals require them alongside or instead of p-values. An interval communicates both whether an effect exists and how large it plausibly is, which a p-value alone does not.
+
+Manufacturing uses intervals to estimate process means and defect rates from samples, feeding directly into whether a production run is accepted.
+
+A/B testing platforms show intervals around conversion lift. If the interval for the difference includes zero, the test is inconclusive, no matter how promising the point estimate looks. Stopping a test early because the point estimate looks good, before the interval excludes zero, is a well-known way to fool yourself.
+
+Economic statistics like unemployment rates come from samples and carry margins of error, which is why month-to-month changes smaller than the margin shouldn't be treated as real movements.
+
+In machine learning, cross-validation scores are often reported with intervals, because a model that scores 0.84 ± 0.06 and one that scores 0.87 ± 0.06 aren't meaningfully different.
+
+:::note[You've Got This]
+The formula is the easy part: estimate plus or minus critical value times standard error. The genuinely hard part is the interpretation, and it's worth getting exactly right because it's the most commonly botched idea in the subject. The confidence level describes the _method's_ long-run success rate, not the probability that a particular interval is lucky. And keep the tradeoff in mind: more confidence always costs precision, so a very wide interval isn't better, it's just more cautious.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="stats-confidence-intervals"
+  questions={[
+    {
+      id: "q1",
+      text: "What is the correct interpretation of a 95% confidence interval?",
+      options: [
+        "There is a 95% probability the parameter lies in this specific interval",
+        "95% of the sample data falls within the interval",
+        "If the study were repeated many times, about 95% of such intervals would contain the parameter",
+        "The sample mean has a 95% chance of being correct",
+      ],
+      correctIndex: 2,
+      explanation:
+        "The confidence level is a property of the procedure across repeated samples, not a probability about one computed interval. The parameter is a fixed number, so it is either inside a given interval or it is not.",
+    },
+    {
+      id: "q2",
+      text: "A sample of 64 has a mean of 50, and the population standard deviation is 16. What is the margin of error for a 95% confidence interval?",
+      options: ["3.92", "1.96", "0.49", "31.36"],
+      correctIndex: 0,
+      explanation:
+        "The standard error is 16 / 8 = 2, and the margin of error is 1.96 x 2 = 3.92. The interval would run from 46.08 to 53.92.",
+    },
+    {
+      id: "q3",
+      text: "What happens to a confidence interval when you raise the confidence level from 90% to 99%?",
+      options: [
+        "It becomes narrower",
+        "It becomes wider",
+        "It stays the same width but shifts",
+        "It becomes centered on a different value",
+      ],
+      correctIndex: 1,
+      explanation:
+        "A higher confidence level uses a larger critical value, which increases the margin of error. Being more certain of capturing the parameter necessarily means claiming a broader range.",
+    },
+    {
+      id: "q4",
+      text: "A poll finds 51% support with a 95% interval of (48%, 54%). What should be concluded?",
+      options: [
+        "A majority clearly supports the measure",
+        "The result is consistent with support below, at, or above 50%, so it is too close to call",
+        "Exactly 51% of the population supports it",
+        "The sample size must have been too small to analyze",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Because the interval contains 50%, the data cannot distinguish minority from majority support. Reporting the 51% point estimate as a settled fact would overstate the evidence.",
+    },
+    {
+      id: "q5",
+      text: "Why is the t-distribution used instead of the normal when the population standard deviation is unknown?",
+      options: [
+        "Because the t-distribution has heavier tails, which accounts for the extra uncertainty in estimating sigma",
+        "Because the t-distribution is easier to compute",
+        "Because the sample mean is no longer unbiased",
+        "Because the Central Limit Theorem does not apply to small samples",
+      ],
+      correctIndex: 0,
+      explanation:
+        "Substituting s for sigma introduces additional uncertainty, and the heavier tails of the t-distribution widen the interval to compensate. As the sample size grows, t converges to the normal distribution.",
+    },
+  ]}
+/>

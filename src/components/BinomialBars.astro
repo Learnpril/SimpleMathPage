@@ -1,0 +1,118 @@
+---
+/**
+ * BinomialBars — three binomial distributions with n = 10 and different p,
+ * showing how p controls the skew. All probabilities are computed, not typed.
+ */
+function choose(n: number, k: number): number {
+  let r = 1;
+  for (let i = 1; i <= k; i++) r = (r * (n - k + i)) / i;
+  return Math.round(r);
+}
+function binom(n: number, k: number, p: number): number {
+  return choose(n, k) * Math.pow(p, k) * Math.pow(1 - p, n - k);
+}
+
+const n = 10;
+const panels = [
+  { p: 0.2, title: "p = 0.2", shape: "right-skewed", cls: "orange" },
+  { p: 0.5, title: "p = 0.5", shape: "symmetric", cls: "green" },
+  { p: 0.8, title: "p = 0.8", shape: "left-skewed", cls: "blue" },
+];
+
+const panelW = 176;
+const w = 3 * panelW + 12;
+const h = 250;
+const baseY = 168;
+const barW = 14;
+const maxH = 112;
+// Scale all panels by the same maximum so heights are comparable
+const globalMax = Math.max(...panels.flatMap((pp) => Array.from({ length: n + 1 }, (_, k) => binom(n, k, pp.p))));
+---
+
+<figure
+  class="bnb"
+  role="img"
+  aria-label="Three binomial distributions with ten trials. At p = 0.2 the distribution is right-skewed, at p = 0.5 it is symmetric, and at p = 0.8 it is left-skewed."
+>
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    <text x="14" y="20" class="bnb-head" font-size="12" font-weight="bold">Binomial with n = 10: the shape depends on p</text>
+
+    {panels.map((pp, pi) => {
+      const px = 6 + pi * panelW;
+      const chartStart = px + (panelW - (n + 1) * barW) / 2;
+      const mean = n * pp.p;
+      return (
+        <g>
+          <text x={px + panelW / 2} y="44" class={`bnb-title bnb-t-${pp.cls}`} font-size="12" text-anchor="middle" font-weight="bold">{pp.title}</text>
+          <text x={px + panelW / 2} y="58" class="bnb-sub" font-size="9.5" text-anchor="middle">{pp.shape}</text>
+
+          {Array.from({ length: n + 1 }, (_, k) => {
+            const prob = binom(n, k, pp.p);
+            const bh = (prob / globalMax) * maxH;
+            return (
+              <rect
+                x={chartStart + k * barW}
+                y={baseY - bh}
+                width={barW - 2}
+                height={bh}
+                class={`bnb-bar bnb-b-${pp.cls}`}
+              />
+            );
+          })}
+
+          <line x1={chartStart - 4} y1={baseY} x2={chartStart + (n + 1) * barW} y2={baseY} class="bnb-axis" />
+
+          {/* Mean marker */}
+          <line
+            x1={chartStart + (mean + 0.5) * barW - 1}
+            y1={baseY}
+            x2={chartStart + (mean + 0.5) * barW - 1}
+            y2={baseY + 10}
+            class="bnb-mean"
+          />
+          <text x={chartStart + (mean + 0.5) * barW - 1} y={baseY + 22} class="bnb-meanlbl" font-size="9.5" text-anchor="middle">
+            {`μ = ${mean}`}
+          </text>
+
+          {/* k axis endpoints */}
+          <text x={chartStart + 5} y={baseY + 34} class="bnb-tick" font-size="9.5" text-anchor="middle">0</text>
+          <text x={chartStart + (n + 0.5) * barW} y={baseY + 34} class="bnb-tick" font-size="9.5" text-anchor="middle">10</text>
+          <text x={px + panelW / 2} y={baseY + 46} class="bnb-tick" font-size="9.5" text-anchor="middle">successes k</text>
+        </g>
+      );
+    })}
+
+    <text x={w / 2} y={h - 8} class="bnb-foot" font-size="10" text-anchor="middle">
+      As n grows, every binomial becomes more bell-shaped — a preview of the Central Limit Theorem
+    </text>
+  </svg>
+</figure>
+
+<style>
+  .bnb { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .bnb svg { width:100%; max-width:100%; height:auto; }
+  .bnb-bar { fill-opacity:0.4; stroke-width:1.1; }
+  .bnb-b-orange { fill:#f0883e; stroke:#f0883e; }
+  .bnb-b-green { fill:#7ee787; stroke:#7ee787; }
+  .bnb-b-blue { fill:#58a6ff; stroke:#58a6ff; }
+  .bnb-axis { stroke:#888; stroke-width:1.3; }
+  .bnb-title { font-family:'Libre Baskerville',Georgia,serif; }
+  .bnb-t-orange { fill:#f0883e; }
+  .bnb-t-green { fill:#7ee787; }
+  .bnb-t-blue { fill:#58a6ff; }
+  .bnb-sub { fill:#888; font-family:'Libre Baskerville',Georgia,serif; font-style:italic; }
+  .bnb-mean { stroke:#d2a8ff; stroke-width:2; }
+  .bnb-meanlbl { fill:#d2a8ff; font-family:'Libre Baskerville',Georgia,serif; }
+  .bnb-tick { fill:#888; font-family:'Libre Baskerville',Georgia,serif; }
+  .bnb-head { fill:#eee; font-family:'Libre Baskerville',Georgia,serif; }
+  .bnb-foot { fill:#888; font-family:'Libre Baskerville',Georgia,serif; font-style:italic; }
+  :global([data-theme="light"]) .bnb-b-orange { fill:#b35900; stroke:#b35900; }
+  :global([data-theme="light"]) .bnb-b-green { fill:#116329; stroke:#116329; }
+  :global([data-theme="light"]) .bnb-b-blue { fill:#0550ae; stroke:#0550ae; }
+  :global([data-theme="light"]) .bnb-axis { stroke:#666; }
+  :global([data-theme="light"]) .bnb-t-orange { fill:#b35900; }
+  :global([data-theme="light"]) .bnb-t-green { fill:#116329; }
+  :global([data-theme="light"]) .bnb-t-blue { fill:#0550ae; }
+  :global([data-theme="light"]) .bnb-mean, :global([data-theme="light"]) .bnb-meanlbl { stroke:#6639ba; fill:#6639ba; }
+  :global([data-theme="light"]) .bnb-head { fill:#24292f; }
+</style>

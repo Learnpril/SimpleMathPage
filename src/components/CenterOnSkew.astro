@@ -1,0 +1,158 @@
+---
+/**
+ * CenterOnSkew — a right-skewed distribution with mode, median and mean marked
+ * in order, showing that the mean is dragged toward the tail.
+ *
+ * The three markers are computed numerically from the plotted density rather
+ * than hardcoded, so the mode really sits at the curve's maximum, the median
+ * really splits the area in half, and the mean really is the centroid.
+ *
+ * Labels live in a clear band ABOVE the curve's peak and the tail annotation
+ * sits BELOW the axis, so no text is ever crossed by the curve.
+ */
+const w = 520;
+const h = 334;
+const left = 40;
+const right = 480;
+const span = right - left;
+
+// Label band occupies the top; the curve is drawn beneath it. Rows are 32px
+// apart so each bold label and its italic note read as a pair without the
+// note crowding the label above it.
+const labelRows = [42, 74, 106];
+const baseY = 244;
+const peakH = 112; // peak top lands at y = 132, clear of the lowest label at 116
+
+// Gamma-shaped density on s in [0, 1]: f(s) = s^(k-1) e^(-s/theta).
+// k > 1 keeps f(0) = 0, and these parameters spread mode/median/mean far
+// enough apart to label them legibly.
+const k = 2.375;
+const theta = 0.16;
+const density = (s: number) => Math.pow(s, k - 1) * Math.exp(-s / theta);
+
+// Sample finely so the numeric mode, median and mean are accurate
+const N = 600;
+const samples = Array.from({ length: N + 1 }, (_, i) => {
+  const s = i / N;
+  return { s, x: left + s * span, y: density(s) };
+});
+
+// Mode: where the density is largest
+const maxY = Math.max(...samples.map((p) => p.y));
+const modeS = samples.find((p) => p.y === maxY)!.s;
+
+// Mean: the centroid, sum(s * f) / sum(f)
+const totalMass = samples.reduce((acc, p) => acc + p.y, 0);
+const meanS = samples.reduce((acc, p) => acc + p.s * p.y, 0) / totalMass;
+
+// Median: where the running area first reaches half the total
+let running = 0;
+let medianS = 0;
+for (const p of samples) {
+  running += p.y;
+  if (running >= totalMass / 2) {
+    medianS = p.s;
+    break;
+  }
+}
+
+const toX = (s: number) => left + s * span;
+const modeX = toX(modeS);
+const medianX = toX(medianS);
+const meanX = toX(meanS);
+
+const curve = samples
+  .map((p) => `${p.x.toFixed(1)},${(baseY - (p.y / maxY) * peakH).toFixed(1)}`)
+  .join(" ");
+
+const markers = [
+  { x: modeX, label: "Mode", note: "at the peak", cls: "green", ly: labelRows[0] },
+  { x: medianX, label: "Median", note: "splits area in half", cls: "blue", ly: labelRows[1] },
+  { x: meanX, label: "Mean", note: "balance point", cls: "orange", ly: labelRows[2] },
+];
+const tailStart = meanX + 90;
+---
+
+<figure
+  class="cos"
+  role="img"
+  aria-label="A right-skewed distribution with the mode at the peak of the curve, the median to its right where the area splits in half, and the mean furthest right, pulled toward the long tail"
+>
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    <text x="20" y="22" class="cos-head" font-size="12.5" font-weight="bold">Right-skewed data: the mean is pulled toward the tail</text>
+
+    {/* Filled curve */}
+    <polygon points={`${left},${baseY} ${curve} ${right},${baseY}`} class="cos-fill" />
+    <polyline points={curve} class="cos-curve" fill="none" />
+    <line x1={left - 8} y1={baseY} x2={right + 12} y2={baseY} class="cos-axis" />
+
+    {/* Markers: label sits above the curve, dashed line runs down to the axis */}
+    {markers.map((m) => (
+      <g>
+        <line x1={m.x} y1={m.ly + 22} x2={m.x} y2={baseY} class={`cos-mark cos-m-${m.cls}`} />
+        <text x={m.x + 8} y={m.ly + 4} class={`cos-lbl cos-t-${m.cls}`} font-size="11.5" font-weight="bold">{m.label}</text>
+        <text x={m.x + 8} y={m.ly + 18} class="cos-note" font-size="9.5">{m.note}</text>
+      </g>
+    ))}
+
+    {/* Dot marking the exact apex, so the mode line is visibly anchored to it */}
+    <circle cx={modeX} cy={baseY - peakH} r="3.5" class="cos-apex" />
+
+    {/* Tail annotation, below the axis where nothing can cross it */}
+    <line x1={tailStart} y1={baseY + 16} x2={right - 6} y2={baseY + 16} class="cos-tail" marker-end="url(#cos-head)" />
+    <text x={(tailStart + right) / 2} y={baseY + 32} class="cos-tail-lbl" font-size="9.5" text-anchor="middle">long right tail</text>
+
+    <text x={w / 2} y="298" class="cos-order" font-size="11.5" text-anchor="middle">
+      mode &lt; median &lt; mean
+    </text>
+    <text x={w / 2} y="316" class="cos-foot" font-size="10" text-anchor="middle">
+      A few very large values lift the mean but barely move the median
+    </text>
+    <text x={w / 2} y="330" class="cos-foot" font-size="10" text-anchor="middle">
+      This is why house prices and incomes are reported as medians
+    </text>
+
+    <defs>
+      <marker id="cos-head" markerWidth="7" markerHeight="5" refX="7" refY="2.5" orient="auto">
+        <polygon points="0 0, 7 2.5, 0 5" class="cos-tail-fill" />
+      </marker>
+    </defs>
+  </svg>
+</figure>
+
+<style>
+  .cos { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .cos svg { width:100%; max-width:100%; height:auto; }
+  .cos-fill { fill:#58a6ff; fill-opacity:0.13; }
+  .cos-curve { stroke:#58a6ff; stroke-width:2; }
+  .cos-axis { stroke:#888; stroke-width:1.5; }
+  .cos-mark { stroke-width:2; stroke-dasharray:4,3; }
+  .cos-m-green { stroke:#7ee787; }
+  .cos-m-blue { stroke:#d2a8ff; }
+  .cos-m-orange { stroke:#f0883e; }
+  .cos-apex { fill:#7ee787; }
+  .cos-lbl { font-family:'Libre Baskerville',Georgia,serif; }
+  .cos-t-green { fill:#7ee787; }
+  .cos-t-blue { fill:#d2a8ff; }
+  .cos-t-orange { fill:#f0883e; }
+  .cos-note { fill:#9198a1; font-family:'Libre Baskerville',Georgia,serif; font-style:italic; }
+  .cos-head { fill:#eee; font-family:'Libre Baskerville',Georgia,serif; }
+  .cos-tail { stroke:#888; stroke-width:1.2; }
+  .cos-tail-fill { fill:#888; }
+  .cos-tail-lbl { fill:#888; font-family:'Libre Baskerville',Georgia,serif; font-style:italic; }
+  .cos-order { fill:#f0883e; font-family:'Libre Baskerville',Georgia,serif; font-weight:bold; }
+  .cos-foot { fill:#888; font-family:'Libre Baskerville',Georgia,serif; font-style:italic; }
+  :global([data-theme="light"]) .cos-fill { fill:#0550ae; fill-opacity:0.10; }
+  :global([data-theme="light"]) .cos-curve { stroke:#0550ae; }
+  :global([data-theme="light"]) .cos-axis { stroke:#666; }
+  :global([data-theme="light"]) .cos-m-green { stroke:#116329; }
+  :global([data-theme="light"]) .cos-m-blue { stroke:#6639ba; }
+  :global([data-theme="light"]) .cos-m-orange { stroke:#b35900; }
+  :global([data-theme="light"]) .cos-apex { fill:#116329; }
+  :global([data-theme="light"]) .cos-t-green { fill:#116329; }
+  :global([data-theme="light"]) .cos-t-blue { fill:#6639ba; }
+  :global([data-theme="light"]) .cos-t-orange { fill:#b35900; }
+  :global([data-theme="light"]) .cos-note { fill:#57606a; }
+  :global([data-theme="light"]) .cos-head { fill:#24292f; }
+  :global([data-theme="light"]) .cos-order { fill:#b35900; }
+</style>

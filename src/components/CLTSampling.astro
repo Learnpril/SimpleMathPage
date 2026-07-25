@@ -1,0 +1,130 @@
+---
+/**
+ * CLTSampling — a strongly skewed population on the left, and the sampling
+ * distribution of its mean on the right, which is bell-shaped. The population's
+ * shape does not transfer to the distribution of sample means.
+ */
+const w = 540;
+const h = 262;
+const baseY = 168;
+const maxH = 104;
+
+// Left: heavily right-skewed population
+const popBins = [1.0, 0.62, 0.4, 0.26, 0.17, 0.11, 0.07, 0.04, 0.02, 0.01];
+const popStart = 34;
+const popBinW = 20;
+
+// Right: sampling distribution of the mean, bell-shaped and much narrower
+const nBins = 11;
+const sampBins = Array.from({ length: nBins }, (_, i) => {
+  const t = (i - (nBins - 1) / 2) / 2.1;
+  return Math.exp(-(t * t) / 2);
+});
+const sampStart = 322;
+const sampBinW = 17;
+---
+
+<figure
+  class="clt"
+  role="img"
+  aria-label="A heavily right-skewed population histogram on the left, and the sampling distribution of the sample mean on the right, which is symmetric and bell-shaped and much narrower"
+>
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    <text x="16" y="20" class="clt-head" font-size="12" font-weight="bold">
+      The population's shape does not transfer to the sample means
+    </text>
+
+    {/* ---------- Population ---------- */}
+    <text x="134" y="44" class="clt-title clt-t-orange" font-size="11.5" text-anchor="middle" font-weight="bold">
+      Population
+    </text>
+    <text x="134" y="58" class="clt-sub" font-size="9.5" text-anchor="middle">strongly right-skewed</text>
+
+    {popBins.map((v, i) => (
+      <rect
+        x={popStart + i * popBinW}
+        y={baseY - v * maxH}
+        width={popBinW - 2}
+        height={v * maxH}
+        class="clt-bar-pop"
+      />
+    ))}
+    <line x1={popStart - 6} y1={baseY} x2={popStart + popBins.length * popBinW + 4} y2={baseY} class="clt-axis" />
+    <text x="134" y={baseY + 16} class="clt-tick" font-size="9.5" text-anchor="middle">individual values</text>
+    <text x="134" y={baseY + 32} class="clt-note" font-size="9.5" text-anchor="middle">spread = σ</text>
+
+    {/* Arrow between panels */}
+    <line x1="258" y1={baseY - 50} x2="300" y2={baseY - 50} class="clt-arrow" marker-end="url(#clt-head)" />
+    {/* All three lines sit above the arrow so it never strikes through them */}
+    <text x="279" y={baseY - 88} class="clt-arrow-lbl" font-size="9.5" text-anchor="middle">take many</text>
+    <text x="279" y={baseY - 75} class="clt-arrow-lbl" font-size="9.5" text-anchor="middle">samples of n,</text>
+    <text x="279" y={baseY - 62} class="clt-arrow-lbl" font-size="9.5" text-anchor="middle">plot each mean</text>
+
+    {/* ---------- Sampling distribution ---------- */}
+    <text x="415" y="44" class="clt-title clt-t-green" font-size="11.5" text-anchor="middle" font-weight="bold">
+      Sample means
+    </text>
+    <text x="415" y="58" class="clt-sub" font-size="9.5" text-anchor="middle">approximately normal</text>
+
+    {sampBins.map((v, i) => (
+      <rect
+        x={sampStart + i * sampBinW}
+        y={baseY - v * maxH}
+        width={sampBinW - 2}
+        height={v * maxH}
+        class="clt-bar-samp"
+      />
+    ))}
+    <line x1={sampStart - 6} y1={baseY} x2={sampStart + nBins * sampBinW + 4} y2={baseY} class="clt-axis" />
+    <line x1={sampStart + ((nBins - 1) / 2 + 0.5) * sampBinW - 1} y1={baseY} x2={sampStart + ((nBins - 1) / 2 + 0.5) * sampBinW - 1} y2={baseY + 8} class="clt-mean" />
+    <text x="415" y={baseY + 20} class="clt-mean-lbl" font-size="9.5" text-anchor="middle">centred on μ</text>
+    <text x="415" y={baseY + 34} class="clt-note" font-size="9.5" text-anchor="middle">spread = σ/√n, much narrower</text>
+
+    {/* Footer */}
+    <text x={w / 2} y="222" class="clt-foot" font-size="10.5" text-anchor="middle">
+      For n ≥ 30 the sample mean is approximately normal whatever the population looks like
+    </text>
+    <text x={w / 2} y="240" class="clt-sub" font-size="9.5" text-anchor="middle">
+      This is what lets normal-based inference work on skewed data like income
+    </text>
+    <text x={w / 2} y="256" class="clt-sub" font-size="9.5" text-anchor="middle">
+      Quadrupling n only halves the spread, because of the square root
+    </text>
+
+    <defs>
+      <marker id="clt-head" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+        <polygon points="0 0, 8 3, 0 6" class="clt-arrow-fill" />
+      </marker>
+    </defs>
+  </svg>
+</figure>
+
+<style>
+  .clt { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .clt svg { width:100%; max-width:100%; height:auto; }
+  .clt-bar-pop { fill:#f0883e; fill-opacity:0.4; stroke:#f0883e; stroke-width:1.1; }
+  .clt-bar-samp { fill:#7ee787; fill-opacity:0.4; stroke:#7ee787; stroke-width:1.1; }
+  .clt-axis { stroke:#888; stroke-width:1.3; }
+  .clt-title { font-family:'Libre Baskerville',Georgia,serif; }
+  .clt-t-orange { fill:#f0883e; }
+  .clt-t-green { fill:#7ee787; }
+  .clt-sub { fill:#888; font-family:'Libre Baskerville',Georgia,serif; font-style:italic; }
+  .clt-tick { fill:#888; font-family:'Libre Baskerville',Georgia,serif; }
+  .clt-note { fill:#bbb; font-family:'Libre Baskerville',Georgia,serif; }
+  .clt-mean { stroke:#d2a8ff; stroke-width:2; }
+  .clt-mean-lbl { fill:#d2a8ff; font-family:'Libre Baskerville',Georgia,serif; }
+  .clt-arrow { stroke:#888; stroke-width:1.4; }
+  .clt-arrow-fill { fill:#888; }
+  .clt-arrow-lbl { fill:#888; font-family:'Libre Baskerville',Georgia,serif; font-style:italic; }
+  .clt-head { fill:#eee; font-family:'Libre Baskerville',Georgia,serif; }
+  .clt-foot { fill:#58a6ff; font-family:'Libre Baskerville',Georgia,serif; }
+  :global([data-theme="light"]) .clt-bar-pop { fill:#b35900; fill-opacity:0.3; stroke:#b35900; }
+  :global([data-theme="light"]) .clt-bar-samp { fill:#116329; fill-opacity:0.3; stroke:#116329; }
+  :global([data-theme="light"]) .clt-axis { stroke:#666; }
+  :global([data-theme="light"]) .clt-t-orange { fill:#b35900; }
+  :global([data-theme="light"]) .clt-t-green { fill:#116329; }
+  :global([data-theme="light"]) .clt-note { fill:#444; }
+  :global([data-theme="light"]) .clt-mean, :global([data-theme="light"]) .clt-mean-lbl { stroke:#6639ba; fill:#6639ba; }
+  :global([data-theme="light"]) .clt-head { fill:#24292f; }
+  :global([data-theme="light"]) .clt-foot { fill:#0550ae; }
+</style>

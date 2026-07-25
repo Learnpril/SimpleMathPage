@@ -1463,3 +1463,35 @@ p:has(> strong:first-child:last-child) {
     opacity: 1;
   }
 }
+
+/* ---------- Mobile: keep diagram labels legible ---------- */
+/* An SVG diagram that shrinks to fit a phone screen scales its labels down with
+   it. These figures are 520 to 572 units wide, so on a 390px phone with about
+   366px of usable column they render at roughly 0.65x, turning a 9.5-unit label
+   into 6px of text. Below 600px the figures keep a legible minimum width and
+   scroll sideways instead, which is how wide tables and display equations
+   already behave in this stylesheet.
+
+   Only phones are affected. From 600px up the figures keep filling the content
+   column, which is larger than this minimum and therefore more readable.
+
+   The `:has()` support floor is Chrome 105 / Safari 15.4 / Firefox 121. Older
+   browsers fall back to the shrink-to-fit behaviour rather than breaking. */
+@media (max-width: 600px) {
+  .sl-markdown-content figure:has(> svg[viewBox]) {
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    /* Centering a flex item wider than its scroll container puts the item's
+       leading edge outside the scrollable area, where it cannot be reached. */
+    align-items: flex-start;
+  }
+
+  /* 620px puts the smallest labels in these figures at 10.7 to 11.5 CSS px,
+     just past the 11px floor Apple and Google both recommend for body text. */
+  .sl-markdown-content figure > svg[viewBox] {
+    width: auto;
+    min-width: 620px;
+    max-width: none;
+  }
+}

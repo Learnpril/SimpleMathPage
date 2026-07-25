@@ -1,0 +1,304 @@
+---
+title: Sampling Distributions and the Central Limit Theorem
+description: Why sample means are normal even when the population isn't, and the result that makes inference possible
+sidebar:
+  order: 15
+---
+
+import Quiz from "../../../components/Quiz.astro";
+import CLTSampling from "../../../components/CLTSampling.astro";
+import SymbolKey from "../../../components/SymbolKey.astro";
+
+## What You'll Learn
+
+In this lesson you'll learn what a sampling distribution is, the Central Limit Theorem and why it's the most important result in statistics, the standard error and how it shrinks with sample size, and why quadrupling your sample only halves your error.
+
+<SymbolKey
+  items={[
+    {
+      sym: "x̄",
+      read: "x-bar, a sample mean",
+      note: "one value from the sampling distribution",
+    },
+    {
+      sym: "μ",
+      read: "the population mean",
+      note: "the fixed target being estimated",
+    },
+    {
+      sym: "σ/√n",
+      read: "sigma over root n, the standard error",
+      note: "the standard deviation of the sample mean",
+    },
+    {
+      sym: "SE",
+      read: "standard error",
+      note: "how much a sample statistic varies between samples",
+    },
+  ]}
+/>
+
+## The Concept
+
+### The idea of a sampling distribution
+
+Take a sample of 50 people and compute the mean height. Take another 50 and compute it again. You'll get a slightly different number. And again, slightly different.
+
+The **sampling distribution** is the distribution of a statistic across all possible samples of a given size.
+
+This is a genuinely different kind of distribution from the ones so far, and the distinction matters:
+
+- The **population distribution** describes individual values.
+- The **sampling distribution** describes the _statistic_ computed from samples.
+
+A population of incomes might be wildly skewed. The distribution of sample _means_ from that population is a separate thing entirely, and as we'll see, it behaves far better.
+
+### The Central Limit Theorem
+
+Here is the result that makes statistical inference possible.
+
+> **Central Limit Theorem.** For a sufficiently large sample size, the sampling distribution of the sample mean is approximately **normal**, regardless of the shape of the population distribution, with
+>
+> $$
+> \mu_{\bar{x}} = \mu \qquad \sigma_{\bar{x}} = \frac{\sigma}{\sqrt{n}}
+> $$
+
+Three claims are packed in there:
+
+1. **The mean of sample means equals the population mean.** The sample mean is an _unbiased_ estimator: it doesn't systematically run high or low.
+2. **The spread shrinks by $\sqrt{n}$.** Larger samples give means clustered more tightly around the truth.
+3. **The shape becomes normal**, no matter what the population looked like.
+
+That third point is the remarkable one.
+
+<CLTSampling />
+
+Start with a population that's wildly skewed, or bimodal, or uniform. Take many samples, compute each mean, and plot those means. The result is a bell curve. The population's shape essentially stops mattering.
+
+### Why this matters so much
+
+Nearly all the inference machinery in the rest of this section, confidence intervals and hypothesis tests alike, relies on knowing the sampling distribution. The CLT hands you that distribution for free without requiring the population to be normal.
+
+Without the CLT you'd need a different method for every population shape, and you'd need to know that shape, which you generally don't. With it, one normal-based toolkit covers almost everything.
+
+### How large is "large enough"?
+
+The usual rule of thumb is $n \geq 30$.
+
+Like all rules of thumb, it depends:
+
+- **Population already normal** - any $n$ works, even $n = 2$.
+- **Roughly symmetric** - $n$ around 15 is often fine.
+- **Moderately skewed** - $n \geq 30$ is the standard guidance.
+- **Severely skewed or heavy-tailed** - may need $n$ in the hundreds.
+
+For proportions the analogous condition is $np \geq 10$ and $n(1-p) \geq 10$.
+
+### Standard error
+
+The **standard error** is the standard deviation of the sampling distribution:
+
+$$
+SE = \frac{\sigma}{\sqrt{n}}
+$$
+
+It measures how much sample means bounce around from sample to sample. Small standard error means your estimate is precise.
+
+Keep the two straight:
+
+- **$\sigma$** describes the spread of **individual values** in the population. It does not change when you collect more data.
+- **$SE$** describes the spread of the **sample mean**. It shrinks as $n$ grows.
+
+Confusing these is common. Collecting more data does not make people's heights less variable; it makes your _estimate of the average height_ more precise.
+
+When $\sigma$ is unknown, which is nearly always, use the sample standard deviation:
+
+$$
+SE \approx \frac{s}{\sqrt{n}}
+$$
+
+### The square root penalty
+
+The $\sqrt{n}$ has an important practical consequence: **precision improves slowly.**
+
+To halve the standard error, you must **quadruple** the sample size.
+
+| $n$  | $SE$ (with $\sigma = 10$) |
+| :--: | :-----------------------: |
+|  25  |           2.00            |
+| 100  |           1.00            |
+| 400  |           0.50            |
+| 1600 |           0.25            |
+
+Each halving of error costs four times the data. This is why polls settle around 1,000 respondents: going to 4,000 quadruples the cost to halve the margin of error, and going to 16,000 for another halving is rarely worth it. There's a point of diminishing returns, and it arrives quickly.
+
+## Worked Examples
+
+**Example 1: Describe the sampling distribution.**
+
+A population has $\mu = 100$, $\sigma = 20$. Samples of size 64 are drawn. Describe the sampling distribution of $\bar{x}$.
+
+**Solution.**
+
+$$
+\mu_{\bar{x}} = 100 \qquad SE = \frac{20}{\sqrt{64}} = \frac{20}{8} = 2.5
+$$
+
+Since $n = 64 \geq 30$, the CLT applies, so $\bar{x}$ is approximately $N(100, 2.5^2)$.
+
+Individual values have $\sigma = 20$; sample means have $SE = 2.5$, eight times tighter.
+
+**Example 2: Probability about a sample mean.**
+
+Using the distribution above, find the probability a sample mean exceeds 105.
+
+**Solution.** Standardize using the **standard error**, not $\sigma$:
+
+$$
+z = \frac{105 - 100}{2.5} = 2
+$$
+
+By the empirical rule, about 2.5% of the area lies beyond $z = 2$.
+
+$$
+P(\bar{x} > 105) \approx 0.025
+$$
+
+Using $\sigma = 20$ instead would give $z = 0.25$ and a completely wrong answer near 40%. **This is the most common error in this topic.** Questions about a sample mean use $SE$; questions about a single individual use $\sigma$.
+
+**Example 3: Individual versus mean.**
+
+Same population ($\mu = 100$, $\sigma = 20$). Compare the probability that one individual exceeds 105 with the probability that a sample of 64 has a mean exceeding 105.
+
+**Solution.**
+
+For one individual:
+
+$$
+z = \frac{105-100}{20} = 0.25 \quad \Rightarrow \quad P \approx 0.40
+$$
+
+For the sample mean, from Example 2, $P \approx 0.025$.
+
+So 40% versus 2.5%. Individuals vary a lot; averages of 64 individuals vary very little. Extreme individuals are common, extreme averages are rare, and that averaging-out is the whole reason samples are informative.
+
+**Example 4: The CLT with a skewed population.**
+
+Incomes in a city are strongly right-skewed with $\mu = 55{,}000$ and $\sigma = 30{,}000$. Samples of 100 are taken. Is the sampling distribution of $\bar{x}$ skewed?
+
+**Solution.** No, approximately normal. The population's skew doesn't transfer to the sampling distribution once $n$ is large enough, and $n = 100$ is comfortable even for moderate skew.
+
+$$
+\mu_{\bar{x}} = 55{,}000 \qquad SE = \frac{30{,}000}{\sqrt{100}} = 3{,}000
+$$
+
+This is exactly why we can do inference on income data with normal-based methods despite income being famously non-normal.
+
+**Example 5: Required sample size.**
+
+How large a sample is needed for a standard error of 1 when $\sigma = 15$?
+
+**Solution.**
+
+$$
+1 = \frac{15}{\sqrt{n}} \quad \Rightarrow \quad \sqrt{n} = 15 \quad \Rightarrow \quad n = 225
+$$
+
+Now try halving the target to $SE = 0.5$:
+
+$$
+0.5 = \frac{15}{\sqrt{n}} \quad \Rightarrow \quad \sqrt{n} = 30 \quad \Rightarrow \quad n = 900
+$$
+
+Four times the data for twice the precision, exactly as the $\sqrt{n}$ predicts.
+
+**Example 6: Does the population size appear anywhere?**
+
+The standard error formula involves $\sigma$ and $n$. Where's the population size $N$?
+
+**Solution.** It isn't there, and that answers the puzzle from the very first lesson.
+
+Provided the population is much larger than the sample (the usual guidance is $n$ under 10% of $N$), the precision of your estimate depends only on how many you sampled, not what fraction that represents.
+
+So a sample of 1,000 works as well for 300 million people as for 30,000. A finite population correction factor exists for cases where the sample is a large fraction of the population, but it's rarely needed in practice.
+
+## Real-World Applications
+
+Polling margins of error come straight from the standard error. A reported "±3 percentage points" is roughly two standard errors for a proportion, which pins the required sample near 1,100. Whenever you see that figure, the arithmetic of this lesson produced it.
+
+Quality control charts plot sample means rather than individual measurements precisely because the CLT makes those means predictable and normal. Control limits at $\pm 3 SE$ are meaningful even when individual parts aren't normally distributed.
+
+Clinical trials use the CLT to justify normal-based tests on outcomes that aren't remotely normal individually, like hospital stay lengths.
+
+A/B testing computes standard errors for conversion rates to decide whether an observed difference exceeds what sampling noise would produce. The $\sqrt{n}$ relationship is why detecting small effects requires so much traffic: halving the detectable effect size needs roughly four times the users.
+
+Election forecasting aggregates many polls, which reduces standard error further, though only if the polls' errors are independent. Correlated polling bias, where everyone misses in the same direction, defeats the averaging, and that's what happened in several recent high-profile forecasting misses.
+
+Bootstrapping, a modern computational technique, estimates sampling distributions by resampling the data itself, which lets analysts get standard errors for statistics with no tidy formula.
+
+:::note[You've Got This]
+The Central Limit Theorem is the single most important idea in this section, and its content is genuinely surprising: averages become normal even when the thing being averaged isn't. That's what lets one toolkit handle almost any population. The mistake to guard against is using $\sigma$ where you need $SE$. Ask whether the question is about one individual or about an average of $n$ of them, because that choice changes the answer dramatically. And remember the square root penalty: precision is expensive, and four times the data buys only twice the accuracy.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="stats-sampling-distributions-and-the-central-limit-theorem"
+  questions={[
+    {
+      id: "q1",
+      text: "What does the Central Limit Theorem say about the sampling distribution of the sample mean?",
+      options: [
+        "It has the same shape as the population distribution",
+        "It is approximately normal for a large enough sample, whatever the population's shape",
+        "It becomes more skewed as the sample size grows",
+        "It only applies when the population is already normal",
+      ],
+      correctIndex: 1,
+      explanation:
+        "The theorem's power lies in being indifferent to the population's shape once n is large enough. That is what allows normal-based inference on skewed data such as income.",
+    },
+    {
+      id: "q2",
+      text: "A population has sigma = 24. For samples of size 36, what is the standard error of the mean?",
+      options: ["24", "4", "0.67", "2"],
+      correctIndex: 1,
+      explanation:
+        "The standard error is sigma divided by the square root of n, so 24 / 6 = 4. Sample means vary much less than individual values do.",
+    },
+    {
+      id: "q3",
+      text: "How much must you increase the sample size to cut the standard error in half?",
+      options: ["Double it", "Quadruple it", "Increase it by 50%", "Square it"],
+      correctIndex: 1,
+      explanation:
+        "Because the standard error divides by the square root of n, halving it requires multiplying n by four. This diminishing return is why polls rarely exceed a couple of thousand respondents.",
+    },
+    {
+      id: "q4",
+      text: "What is the difference between the population standard deviation and the standard error?",
+      options: [
+        "They are two names for the same quantity",
+        "Sigma describes spread of individual values; the standard error describes spread of the sample mean",
+        "The standard error is always larger than sigma",
+        "Sigma shrinks as the sample size grows",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Sigma is a fixed property of the population and does not change when you collect more data. The standard error measures how much your estimate varies between samples, and it shrinks as n grows.",
+    },
+    {
+      id: "q5",
+      text: "Why does the standard error formula not include the population size N?",
+      options: [
+        "Because N is always unknown",
+        "Because precision depends on how many you sampled, not what fraction of the population that is",
+        "Because N cancels out of the variance formula",
+        "Because the formula only works for infinite populations",
+      ],
+      correctIndex: 1,
+      explanation:
+        "As long as the population is much larger than the sample, only n governs precision. This is why a national poll of about a thousand people works regardless of whether the country has 30 thousand or 300 million residents.",
+    },
+  ]}
+/>

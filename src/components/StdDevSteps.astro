@@ -1,0 +1,115 @@
+---
+/**
+ * StdDevSteps — the six-step standard deviation procedure worked on the data
+ * 4, 8, 6, 10, 12, with the deviations-sum-to-zero check called out.
+ */
+const data = [4, 8, 6, 10, 12];
+const n = data.length;
+const mean = data.reduce((a, b) => a + b, 0) / n;
+const devs = data.map((x) => x - mean);
+const sq = devs.map((d) => d * d);
+const ss = sq.reduce((a, b) => a + b, 0);
+const variance = ss / (n - 1);
+const sd = Math.sqrt(variance);
+
+const w = 540;
+const h = 262;
+const colX = 150;
+const colGap = 62;
+const rowMean = 76;
+const rowDev = 108;
+const rowSq = 140;
+---
+
+<figure
+  class="sds"
+  role="img"
+  aria-label="Step by step standard deviation calculation for the values 4, 8, 6, 10 and 12, showing deviations that sum to zero, squared deviations totalling 40, a variance of 10 and a standard deviation of about 3.16"
+>
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    <text x="16" y="22" class="sds-head" font-size="12.5" font-weight="bold">Standard deviation, step by step</text>
+
+    {/* Row labels */}
+    <text x="16" y={rowMean + 4} class="sds-rowlbl" font-size="10.5">value x</text>
+    <text x="16" y={rowDev + 4} class="sds-rowlbl sds-t-blue" font-size="10.5">x − x̄</text>
+    <text x="16" y={rowSq + 4} class="sds-rowlbl sds-t-green" font-size="10.5">(x − x̄)²</text>
+
+    {/* Columns of data */}
+    {data.map((x, i) => {
+      const cx = colX + i * colGap;
+      return (
+        <g>
+          <text x={cx} y={rowMean + 4} class="sds-val" font-size="12" text-anchor="middle">{x}</text>
+          <text x={cx} y={rowDev + 4} class="sds-dev" font-size="12" text-anchor="middle">
+            {devs[i] > 0 ? `+${devs[i]}` : `${devs[i]}`}
+          </text>
+          <text x={cx} y={rowSq + 4} class="sds-sq" font-size="12" text-anchor="middle">{sq[i]}</text>
+        </g>
+      );
+    })}
+
+    {/* Sum column */}
+    <line x1={colX + 4.6 * colGap} y1="58" x2={colX + 4.6 * colGap} y2="152" class="sds-divide" />
+    <text x={colX + 5.1 * colGap} y={rowDev + 4} class="sds-sum sds-t-blue" font-size="12" text-anchor="middle">
+      {`= ${devs.reduce((a, b) => a + b, 0)}`}
+    </text>
+    <text x={colX + 5.1 * colGap} y={rowSq + 4} class="sds-sum sds-t-green" font-size="12" text-anchor="middle">{`= ${ss}`}</text>
+
+    {/* Step annotations */}
+    <text x="16" y="44" class="sds-step" font-size="10">{`1. mean x̄ = 40 / 5 = ${mean}`}</text>
+    <text x="200" y="44" class="sds-step" font-size="10">2. subtract the mean</text>
+    <text x="380" y="44" class="sds-step" font-size="10">3. square each one</text>
+
+    {/* The zero-sum check */}
+    <rect x="150" y="164" width="240" height="26" rx="5" class="sds-check-box" />
+    <text x="270" y="181" class="sds-check" font-size="10" text-anchor="middle">
+      check: deviations always sum to 0
+    </text>
+
+    {/* Final steps */}
+    <text x="16" y="212" class="sds-final" font-size="11">
+      {`4. sum of squares = ${ss}`}
+    </text>
+    <text x="200" y="212" class="sds-final" font-size="11">
+      {`5. variance = ${ss} / (5−1) = ${variance}`}
+    </text>
+    <text x="16" y="234" class="sds-final sds-t-orange" font-size="12" font-weight="bold">
+      {`6. s = √${variance} ≈ ${sd.toFixed(2)}`}
+    </text>
+    <text x="200" y="234" class="sds-note" font-size="9.5">
+      values sit typically about 3.16 from the mean of 8
+    </text>
+    <text x="16" y="254" class="sds-note" font-size="9.5">
+      Divide by n − 1 for a sample, or by n when you have the entire population
+    </text>
+  </svg>
+</figure>
+
+<style>
+  .sds { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .sds svg { width:100%; max-width:100%; height:auto; }
+  .sds-head { fill:#eee; font-family:'Libre Baskerville',Georgia,serif; }
+  .sds-rowlbl { fill:#bbb; font-family:'Libre Baskerville',Georgia,serif; }
+  .sds-val { fill:#bbb; font-family:'Libre Baskerville',Georgia,serif; }
+  .sds-dev { fill:#58a6ff; font-family:'Libre Baskerville',Georgia,serif; }
+  .sds-sq { fill:#7ee787; font-family:'Libre Baskerville',Georgia,serif; }
+  .sds-sum { font-family:'Libre Baskerville',Georgia,serif; font-weight:bold; }
+  .sds-t-blue { fill:#58a6ff; }
+  .sds-t-green { fill:#7ee787; }
+  .sds-t-orange { fill:#f0883e; }
+  .sds-step { fill:#888; font-family:'Libre Baskerville',Georgia,serif; font-style:italic; }
+  .sds-final { fill:#bbb; font-family:'Libre Baskerville',Georgia,serif; }
+  .sds-note { fill:#888; font-family:'Libre Baskerville',Georgia,serif; font-style:italic; }
+  .sds-divide { stroke:#555; stroke-width:1; stroke-dasharray:3,3; }
+  .sds-check-box { fill:none; stroke:#58a6ff; stroke-width:1.2; stroke-dasharray:4,3; }
+  .sds-check { fill:#58a6ff; font-family:'Libre Baskerville',Georgia,serif; font-style:italic; }
+  :global([data-theme="light"]) .sds-head { fill:#24292f; }
+  :global([data-theme="light"]) .sds-rowlbl, :global([data-theme="light"]) .sds-val { fill:#444; }
+  :global([data-theme="light"]) .sds-dev, :global([data-theme="light"]) .sds-t-blue { fill:#0550ae; }
+  :global([data-theme="light"]) .sds-sq, :global([data-theme="light"]) .sds-t-green { fill:#116329; }
+  :global([data-theme="light"]) .sds-t-orange { fill:#b35900; }
+  :global([data-theme="light"]) .sds-final { fill:#444; }
+  :global([data-theme="light"]) .sds-divide { stroke:#ccc; }
+  :global([data-theme="light"]) .sds-check-box { stroke:#0550ae; }
+  :global([data-theme="light"]) .sds-check { fill:#0550ae; }
+</style>

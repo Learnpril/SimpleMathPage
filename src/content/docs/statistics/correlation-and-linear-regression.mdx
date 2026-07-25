@@ -1,0 +1,341 @@
+---
+title: Correlation and Linear Regression
+description: Measuring association with r, fitting a least-squares line, and why correlation is not causation
+sidebar:
+  order: 19
+---
+
+import Quiz from "../../../components/Quiz.astro";
+import ScatterCorrelation from "../../../components/ScatterCorrelation.astro";
+import RegressionLine from "../../../components/RegressionLine.astro";
+import SymbolKey from "../../../components/SymbolKey.astro";
+
+## What You'll Learn
+
+In this lesson you'll learn to interpret a correlation coefficient, fit and use a least-squares regression line, understand what $r^2$ measures, and recognize the many ways correlation gets mistaken for causation.
+
+<SymbolKey
+  items={[
+    {
+      sym: "r",
+      read: "the correlation coefficient",
+      note: "measures linear association, from −1 to +1",
+    },
+    {
+      sym: "r²",
+      read: "r squared, the coefficient of determination",
+      note: "the proportion of variation explained",
+    },
+    {
+      sym: "ŷ",
+      read: "y-hat, the predicted value of y",
+      note: "the hat means “estimated”, not observed",
+    },
+    {
+      sym: "b₀, b₁",
+      read: "the intercept and slope",
+      note: "the fitted coefficients of the regression line",
+    },
+    {
+      sym: "y − ŷ",
+      read: "a residual",
+      note: "observed minus predicted; the error for one point",
+    },
+  ]}
+/>
+
+## The Concept
+
+### Scatterplots
+
+For two quantitative variables measured on the same individuals, a **scatterplot** shows each individual as a point. It's the first thing to draw, always, before computing anything.
+
+Look for four things:
+
+- **Direction** - positive (rising) or negative (falling).
+- **Form** - linear, curved, or no pattern.
+- **Strength** - tightly clustered around a pattern or widely scattered.
+- **Outliers** - points far from the overall pattern.
+
+### The correlation coefficient
+
+The **correlation coefficient** $r$ measures the strength and direction of a **linear** relationship.
+
+<ScatterCorrelation />
+
+Properties:
+
+$$
+-1 \leq r \leq 1
+$$
+
+- $r = +1$ - perfect positive linear relationship.
+- $r = -1$ - perfect negative linear relationship.
+- $r = 0$ - no linear relationship.
+- Sign gives direction, magnitude gives strength.
+
+Rough interpretation of magnitude, though the thresholds vary by field:
+
+| $\lvert r \rvert$ | Strength |
+| :---------------: | :------- |
+|     0.0 – 0.3     | weak     |
+|     0.3 – 0.7     | moderate |
+|     0.7 – 1.0     | strong   |
+
+Three properties worth knowing:
+
+**$r$ has no units** and doesn't change if you rescale either variable. Correlation between height and weight is the same in inches and pounds as in centimeters and kilograms.
+
+**$r$ is symmetric.** The correlation of $x$ with $y$ equals that of $y$ with $x$.
+
+**$r$ only detects linear patterns.** A perfect parabola can have $r = 0$ despite a flawless deterministic relationship. This is the main reason to plot the data: $r$ near zero means "no _linear_ relationship," not "no relationship."
+
+$r$ is also **sensitive to outliers**. A single extreme point can drag $r$ from near zero to near one, or mask a strong relationship.
+
+### Least-squares regression
+
+When the pattern is roughly linear, fit a line to predict $y$ from $x$:
+
+$$
+\hat{y} = b_0 + b_1 x
+$$
+
+- $\hat{y}$ - the predicted value.
+- $b_0$ - the intercept, the prediction when $x = 0$.
+- $b_1$ - the slope, the predicted change in $y$ per one-unit increase in $x$.
+
+<RegressionLine />
+
+A **residual** is the vertical miss for one point:
+
+$$
+\text{residual} = y - \hat{y}
+$$
+
+The **least-squares line** is the one minimizing the sum of squared residuals. Squaring means large misses count disproportionately, and it's the same reason variance squares deviations.
+
+The slope connects directly to correlation:
+
+$$
+b_1 = r \cdot \frac{s_y}{s_x}
+$$
+
+And the line always passes through the point $(\bar{x}, \bar{y})$, which is a useful check.
+
+### Interpreting the slope carefully
+
+The slope is the predicted change in $y$ **associated with** a one-unit change in $x$. It is not necessarily the change that _would result_ from intervening on $x$. That distinction is the whole causation problem below.
+
+Also note the intercept is often meaningless. If $x$ is a person's height, $b_0$ predicts the weight of someone zero centimeters tall. Extrapolating outside the range of your data is unreliable, and this is a routine source of absurd predictions.
+
+### The coefficient of determination
+
+$$
+r^2 = (\text{correlation})^2
+$$
+
+$r^2$ is the **proportion of the variation in $y$ explained by the linear relationship with $x$**.
+
+If $r = 0.8$, then $r^2 = 0.64$, so 64% of the variation in $y$ is accounted for, leaving 36% to other factors.
+
+Because squaring shrinks values below 1, $r^2$ is always less than $|r|$, sometimes dramatically. A correlation of 0.5 sounds moderate but explains only 25% of the variation. This is a useful reality check on impressive-sounding correlations.
+
+### Correlation is not causation
+
+The most important warning in statistics. A correlation between $x$ and $y$ admits several explanations:
+
+**1. $x$ causes $y$.** What people usually assume.
+
+**2. $y$ causes $x$.** Reverse causation. Do police numbers cause crime, or does crime cause police hiring?
+
+**3. A confounding variable causes both.** Ice cream sales correlate with drowning deaths. Neither causes the other; hot weather drives both.
+
+**4. Coincidence.** With enough variables, spurious correlations are guaranteed. Search across thousands of time series and you'll find absurd matches with $r > 0.9$.
+
+**5. Selection effects.** The way the data was gathered creates the pattern.
+
+Establishing causation generally requires a **randomized controlled experiment**, where the researcher assigns the treatment. Randomization breaks the link between the treatment and any confounder, which observational data can't do.
+
+When experiments are impossible (you can't randomly assign people to smoke), causal claims require converging evidence: dose-response relationships, plausible mechanism, consistency across populations, and controlling for known confounders. That's how the smoking-cancer link was established despite no randomized trial.
+
+### Other traps
+
+**Simpson's paradox.** A trend present in every subgroup can reverse when groups are combined, or vice versa. A treatment can look better overall while being worse for both men and women separately, if group sizes differ. Always check whether an important grouping variable is being ignored.
+
+**Ecological fallacy.** A correlation at the group level need not hold for individuals.
+
+**Restricted range.** Studying only a narrow slice of $x$ attenuates $r$. Correlation between SAT scores and college grades looks weak at selective colleges partly because everyone admitted has a high score.
+
+## Worked Examples
+
+**Example 1: Interpret correlations.**
+
+Describe each: $r = 0.92$, $r = -0.78$, $r = 0.05$, $r = -0.31$.
+
+**Solution.**
+
+- $0.92$ - strong positive. As $x$ rises, $y$ rises reliably.
+- $-0.78$ - strong negative. As $x$ rises, $y$ falls.
+- $0.05$ - essentially no _linear_ relationship. Could still be curved, so plot it.
+- $-0.31$ - weak-to-moderate negative.
+
+**Example 2: Using a regression line.**
+
+For predicting exam score from hours studied, the fitted line is
+
+$$
+\hat{y} = 52 + 4.3x
+$$
+
+Interpret both coefficients and predict the score for 6 hours.
+
+**Solution.**
+
+**Slope 4.3:** each additional hour of study is associated with a 4.3-point higher predicted score.
+
+**Intercept 52:** predicted score with zero hours of study. Here it's interpretable, since zero hours is realistic and probably within the data range.
+
+$$
+\hat{y} = 52 + 4.3(6) = 52 + 25.8 = 77.8
+$$
+
+**Example 3: Residuals.**
+
+A student in the dataset studied 6 hours and scored 84. Find the residual.
+
+**Solution.**
+
+$$
+\text{residual} = y - \hat{y} = 84 - 77.8 = +6.2
+$$
+
+Positive, so the student scored 6.2 points **above** the prediction. The line underestimated them.
+
+**Example 4: $r$ versus $r^2$.**
+
+A study reports $r = 0.6$ between screen time and sleep quality. How much variation is explained?
+
+**Solution.**
+
+$$
+r^2 = 0.36
+$$
+
+About **36%** of variation in sleep quality is explained by the linear relationship with screen time, leaving 64% to everything else.
+
+A correlation of 0.6 sounds substantial, but it accounts for only about a third of what's going on. Squaring the correlation is a quick way to keep such claims in proportion.
+
+**Example 5: Confounding.**
+
+A study finds a positive correlation between coffee consumption and heart disease. Can we conclude coffee causes heart disease?
+
+**Solution.** No. Several alternatives fit the data equally well.
+
+**Confounding:** heavy coffee drinkers are more likely to smoke, and smoking causes heart disease. Smoking is a confounder producing the correlation without coffee doing anything.
+
+**Reverse causation:** less plausible here, but worth checking.
+
+**Selection:** if the sample came from a cardiology clinic, the population is unrepresentative.
+
+To make progress you'd control for smoking statistically, or better, look for a randomized trial. Historically, several coffee-health scares were substantially explained by smoking as a confounder.
+
+**Example 6: Simpson's paradox.**
+
+A hospital reports that Treatment A has a higher overall success rate than Treatment B. But among mild cases B does better, and among severe cases B also does better. How?
+
+**Solution.** Case severity is a confounder correlated with treatment assignment.
+
+Suppose A is mostly given to mild cases (easy to succeed with) while B is mostly given to severe cases (hard). A's high overall rate reflects its easy caseload, not its effectiveness.
+
+Since B wins in **both** subgroups, B is the better treatment, and the aggregate number is misleading. The lesson: **aggregate comparisons are untrustworthy when the groups differ systematically in composition.** Always look for the lurking variable.
+
+**Example 7: A correlation of zero with a perfect relationship.**
+
+Data: $(-3, 9), (-2, 4), (-1, 1), (0,0), (1,1), (2,4), (3,9)$. Compute $r$ conceptually and interpret.
+
+**Solution.** This is exactly $y = x^2$, a perfect deterministic relationship.
+
+But it's symmetric about $x = 0$: for every rise on the right there's a matching fall on the left, so the linear association cancels and $r = 0$.
+
+So $r = 0$ with a perfect relationship. **Never conclude "no relationship" from $r = 0$ without plotting the data.** All $r$ measures is the linear component.
+
+## Real-World Applications
+
+Medical research constantly confronts the causation problem. Observational studies find correlations between diet, lifestyle, and disease, and many have been overturned when randomized trials followed. Hormone replacement therapy is the classic case: observational data suggested cardiac benefit, and randomized trials later showed harm, with the discrepancy traced to confounding by socioeconomic status.
+
+Economics and social science rely heavily on regression because experiments are often impossible or unethical. Whole subfields exist to extract causal claims from observational data, using instrumental variables, difference-in-differences, and natural experiments.
+
+Machine learning is regression scaled up. Linear regression is the foundation, and the same warnings apply: a model that predicts well has found correlations, which does not mean it has found causes. A model can predict hospital readmission accurately while offering no guidance on what to change.
+
+Sports analytics uses regression to predict performance and to identify undervalued players, which was the original Moneyball insight.
+
+Insurance pricing regresses claims on observable characteristics. Regulators restrict which variables may be used, partly because a correlation can act as a proxy for a protected characteristic.
+
+Business dashboards are full of correlations presented as causes. "Customers who use feature X retain better" is usually confounded by engagement: people who were already going to stay are the ones who explore features.
+
+:::note[You've Got This]
+Plot the data before computing anything, because $r$ can be zero for a perfect curved relationship and can be inflated by a single outlier. Remember $r^2$ rather than $r$ tells you how much is explained, and squaring is a quick antidote to impressive-sounding correlations. And treat the causation warning as a working habit rather than a slogan: whenever you see a correlation, run through the list. Could it be reversed? Is something causing both? How was the sample selected? That short checklist will make you a noticeably better reader of research and dashboards.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="stats-correlation-and-linear-regression"
+  questions={[
+    {
+      id: "q1",
+      text: "What range of values can the correlation coefficient r take?",
+      options: ["0 to 1", "−1 to 1", "0 to 100", "Any real number"],
+      correctIndex: 1,
+      explanation:
+        "Correlation runs from −1 for a perfect negative linear relationship to +1 for a perfect positive one, with 0 meaning no linear association. The sign carries direction and the magnitude carries strength.",
+    },
+    {
+      id: "q2",
+      text: "A study reports r = 0.5. What proportion of the variation in y is explained by the linear relationship with x?",
+      options: ["50%", "25%", "70%", "5%"],
+      correctIndex: 1,
+      explanation:
+        "The proportion explained is r squared, which is 0.25 or 25%. Squaring the correlation is a useful check, because a correlation that sounds moderate often explains surprisingly little.",
+    },
+    {
+      id: "q3",
+      text: "In the regression line ŷ = 30 + 2.5x, what does the slope mean?",
+      options: [
+        "The predicted value of y when x is zero",
+        "Each one-unit increase in x is associated with a 2.5-unit increase in predicted y",
+        "The correlation between x and y is 2.5",
+        "The average value of y is 2.5",
+      ],
+      correctIndex: 1,
+      explanation:
+        "The slope gives the predicted change in y per one-unit change in x. Note the wording is 'associated with' rather than 'causes', since regression alone does not establish causation.",
+    },
+    {
+      id: "q4",
+      text: "Ice cream sales correlate strongly with drowning deaths. What is the best explanation?",
+      options: [
+        "Eating ice cream impairs swimming ability",
+        "Drowning incidents cause people to buy ice cream",
+        "A confounding variable, hot weather, increases both",
+        "The correlation must be a calculation error",
+      ],
+      correctIndex: 2,
+      explanation:
+        "Warm weather independently drives both swimming activity and ice cream purchases, producing a correlation with no causal link between them. This is the textbook illustration of confounding.",
+    },
+    {
+      id: "q5",
+      text: "A dataset follows the exact relationship y = x² symmetrically around zero, yet r = 0. What does this show?",
+      options: [
+        "The data must contain errors",
+        "r only detects linear relationships, so a strong nonlinear pattern can give r = 0",
+        "Correlation cannot be computed for curved data",
+        "The variables are genuinely unrelated",
+      ],
+      correctIndex: 1,
+      explanation:
+        "The correlation coefficient measures only the linear component of association, and a symmetric parabola has none. This is exactly why plotting the data must come before interpreting r.",
+    },
+  ]}
+/>

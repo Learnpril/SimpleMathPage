@@ -1,0 +1,337 @@
+---
+title: Conditional Probability and Independence
+description: Probability when you already know something, tree diagrams, and testing for independence
+sidebar:
+  order: 9
+---
+
+import Quiz from "../../../components/Quiz.astro";
+import ConditionalTree from "../../../components/ConditionalTree.astro";
+import SymbolKey from "../../../components/SymbolKey.astro";
+
+## What You'll Learn
+
+In this lesson you'll learn what conditional probability means, how to compute it, how to use tree diagrams and two-way tables, how to test whether two events are independent, and why $P(A \mid B)$ and $P(B \mid A)$ are not the same thing.
+
+<SymbolKey
+  items={[
+    {
+      sym: "P(A | B)",
+      read: "the probability of A given B",
+      note: "the vertical bar means “given that”, not division",
+    },
+    {
+      sym: "P(A ∩ B)",
+      read: "the probability of A and B",
+      note: "both events occur",
+    },
+    {
+      sym: "P(A ∪ B)",
+      read: "the probability of A or B",
+      note: "at least one occurs",
+    },
+  ]}
+/>
+
+## The Concept
+
+### Probability with information
+
+**Conditional probability** is the probability of an event _given_ that you already know something else happened.
+
+$$
+P(A \mid B) = \frac{P(A \cap B)}{P(B)}
+$$
+
+Read the bar as "given." $P(A \mid B)$ is "the probability of $A$ given $B$."
+
+The intuition: knowing $B$ happened shrinks your world. Instead of the whole sample space, you're now working inside $B$ only. So you ask what fraction of $B$ also contains $A$. That's exactly what the formula computes: the overlap divided by the new, smaller universe.
+
+A quick example. Roll a die. $P(\text{roll is } 2) = \frac{1}{6}$. But given that the roll is even, the world shrinks to $\{2,4,6\}$ and
+
+$$
+P(2 \mid \text{even}) = \frac{1}{3}
+$$
+
+The information doubled the probability.
+
+Note that conditioning can move a probability in either direction. Given that the roll is odd, $P(2 \mid \text{odd}) = 0$.
+
+### Rearranging into the multiplication rule
+
+Multiply both sides by $P(B)$:
+
+$$
+P(A \cap B) = P(B) \times P(A \mid B)
+$$
+
+This is the general multiplication rule from the last lesson. The two formulas are the same statement rearranged.
+
+### Testing for independence
+
+Events $A$ and $B$ are **independent** if knowing one changes nothing:
+
+$$
+P(A \mid B) = P(A)
+$$
+
+Equivalently, and often easier to check:
+
+$$
+P(A \cap B) = P(A) \times P(B)
+$$
+
+If that equation holds, they're independent. If it fails, they're dependent. This is a test you can actually run on data, not just a description.
+
+### The direction of conditioning matters
+
+This is the most important idea in the lesson, and the one that causes real-world harm.
+
+$$
+P(A \mid B) \neq P(B \mid A)
+$$
+
+These are different questions with different answers. Confusing them is called the **prosecutor's fallacy** or, more generally, confusion of the inverse.
+
+An example that makes the gap obvious:
+
+- $P(\text{is a dog} \mid \text{has four legs})$ is fairly low. Plenty of four-legged things aren't dogs.
+- $P(\text{has four legs} \mid \text{is a dog})$ is nearly 1.
+
+Same two properties, wildly different probabilities depending on which you condition on.
+
+The consequential version:
+
+- $P(\text{positive test} \mid \text{has disease})$ is usually high. That's the test being good.
+- $P(\text{has disease} \mid \text{positive test})$ can be surprisingly low for a rare disease.
+
+Getting these mixed up is why a positive screening result is far less alarming than most people assume. The next lesson, on Bayes' theorem, is entirely about converting one direction into the other.
+
+### Tree diagrams
+
+For sequential events, a tree diagram organizes everything.
+
+<ConditionalTree />
+
+The rules for reading a tree:
+
+- Probabilities on branches leaving any single node **sum to 1**.
+- **Multiply along a path** to get the probability of that full sequence.
+- **Add across paths** to get the probability of an event that several paths satisfy.
+- Second-level branches show **conditional** probabilities, given the first-level outcome.
+
+Trees are the most reliable way to avoid errors in multi-step problems, because they force you to write down every case.
+
+### Two-way tables
+
+When you have counts in two categories, a **contingency table** makes conditional probabilities easy to read.
+
+|               | Passed | Failed | Total  |
+| :------------ | :----: | :----: | :----: |
+| Studied       |   42   |   8    |   50   |
+| Did not study |   12   |   18   |   30   |
+| **Total**     | **54** | **26** | **80** |
+
+Everything comes from reading the right row, column, or cell:
+
+- $P(\text{passed}) = \frac{54}{80} = 0.675$ (use the grand total)
+- $P(\text{passed} \mid \text{studied}) = \frac{42}{50} = 0.84$ (restrict to the "studied" row)
+- $P(\text{studied} \mid \text{passed}) = \frac{42}{54} \approx 0.778$ (restrict to the "passed" column)
+
+Notice those last two are both about studying and passing, and they differ (0.84 versus 0.778) because the conditioning direction differs. **The denominator is what changes.** That's the whole trick: conditioning tells you which total to divide by.
+
+Are studying and passing independent here? Check:
+
+$$
+P(\text{passed}) = 0.675 \qquad P(\text{passed} \mid \text{studied}) = 0.84
+$$
+
+Not equal, so they're **dependent**. Studying is associated with passing, which is reassuring.
+
+## Worked Examples
+
+**Example 1: Straight from the formula.**
+
+$P(A) = 0.6$, $P(B) = 0.5$, $P(A \cap B) = 0.3$. Find $P(A \mid B)$ and determine independence.
+
+**Solution.**
+
+$$
+P(A \mid B) = \frac{0.3}{0.5} = 0.6
+$$
+
+Since $P(A \mid B) = 0.6 = P(A)$, the events are **independent**.
+
+Confirm the other way: $P(A) \times P(B) = 0.6 \times 0.5 = 0.3 = P(A \cap B)$ ✓
+
+**Example 2: Cards without replacement.**
+
+Two cards are drawn without replacement. Given the first is a heart, find the probability the second is also a heart.
+
+**Solution.** After removing one heart, 51 cards remain with 12 hearts.
+
+$$
+P(\text{2nd heart} \mid \text{1st heart}) = \frac{12}{51} = \frac{4}{17} \approx 0.235
+$$
+
+Lower than the unconditional $\frac{13}{52} = 0.25$, because a heart is now missing from the deck.
+
+**Example 3: Tree diagram.**
+
+Factory A makes 60% of a company's widgets with a 2% defect rate. Factory B makes 40% with a 5% defect rate. A widget is chosen at random. Find the probability it's defective.
+
+**Solution.** Four paths through the tree:
+
+$$
+P(A \cap \text{def}) = 0.60 \times 0.02 = 0.012
+$$
+
+$$
+P(A \cap \text{good}) = 0.60 \times 0.98 = 0.588
+$$
+
+$$
+P(B \cap \text{def}) = 0.40 \times 0.05 = 0.020
+$$
+
+$$
+P(B \cap \text{good}) = 0.40 \times 0.95 = 0.380
+$$
+
+Check: $0.012+0.588+0.020+0.380 = 1.000$ ✓
+
+Defective can come from either factory, so add those paths:
+
+$$
+P(\text{defective}) = 0.012 + 0.020 = 0.032 = 3.2\%
+$$
+
+**Example 4: Reversing the condition.**
+
+Using Example 3, a widget is found defective. What's the probability it came from Factory B?
+
+**Solution.** Now condition on defectiveness, so the denominator is $P(\text{defective})$.
+
+$$
+P(B \mid \text{def}) = \frac{P(B \cap \text{def})}{P(\text{def})} = \frac{0.020}{0.032} = 0.625
+$$
+
+So 62.5% of defective widgets come from Factory B, even though B makes only 40% of all widgets. Its higher defect rate makes it overrepresented among failures.
+
+Compare the two directions: $P(\text{def} \mid B) = 0.05$ but $P(B \mid \text{def}) = 0.625$. Same two events, and the probabilities differ by more than tenfold. This calculation is Bayes' theorem, which the next lesson formalizes.
+
+**Example 5: Two-way table.**
+
+Of 200 people, 90 own a car, 70 own a bike, and 40 own both. Find $P(\text{bike} \mid \text{car})$ and test independence.
+
+**Solution.**
+
+$$
+P(\text{bike} \mid \text{car}) = \frac{40/200}{90/200} = \frac{40}{90} \approx 0.444
+$$
+
+For independence, compare to $P(\text{bike}) = \frac{70}{200} = 0.35$.
+
+Since $0.444 \neq 0.35$, they're **dependent**. Car owners are somewhat more likely to own bikes than the general group.
+
+Equivalently: $P(\text{car}) \times P(\text{bike}) = 0.45 \times 0.35 = 0.1575$, but $P(\text{both}) = \frac{40}{200} = 0.20$. Not equal, so dependent.
+
+**Example 6: The prosecutor's fallacy.**
+
+A forensic match occurs in 1 in 10,000 innocent people. A defendant matches. A prosecutor argues there's a 1 in 10,000 chance the defendant is innocent. What's wrong?
+
+**Solution.** The prosecutor swapped the conditioning.
+
+The evidence gives $P(\text{match} \mid \text{innocent}) = 0.0001$.
+
+The claim made is about $P(\text{innocent} \mid \text{match})$, which is a different quantity entirely.
+
+Suppose the match came from searching a database of 500,000 people. Among innocent people you'd expect roughly $500{,}000 \times 0.0001 = 50$ matches by chance. If one guilty person also matches, then given a match, the probability of innocence is about $\frac{50}{51} \approx 98\%$, not 0.01%.
+
+The prior probability of guilt, and how the suspect was found, both matter enormously. This error has contributed to real wrongful convictions.
+
+## Real-World Applications
+
+Medical diagnosis is the highest-stakes application. Clinicians must convert test sensitivity, $P(\text{positive} \mid \text{disease})$, into the thing the patient wants to know, $P(\text{disease} \mid \text{positive})$. Studies have repeatedly shown that many physicians get this conversion wrong, systematically overestimating disease probability after a positive screening test.
+
+Spam filters compute $P(\text{spam} \mid \text{contains these words})$ from the more easily measured $P(\text{these words} \mid \text{spam})$. The classic Naive Bayes filter is exactly this lesson plus an independence assumption.
+
+Legal reasoning suffers from the prosecutor's fallacy, and courts in several countries have overturned convictions specifically over misused conditional probability. The Sally Clark case in the UK is the best-known example.
+
+Machine learning classifiers output conditional probabilities, and calibration (making sure a stated 70% confidence really corresponds to being right 70% of the time) is an active engineering concern.
+
+Insurance underwriting conditions on everything it can legally observe: age, location, history. Each variable that changes the conditional probability of a claim changes the premium.
+
+In A/B testing, conditioning matters for interpretation. The conversion rate among users who _saw_ a feature is a conditional probability, and it differs from the rate among all users assigned to that group.
+
+:::note[You've Got This]
+The single habit that makes conditional probability click: **identify the denominator.** Conditioning on $B$ means your world is now just $B$, so $P(B)$ goes on the bottom. Two-way tables make this visible, since conditioning is literally choosing which row or column total to divide by. And take the direction issue seriously, because $P(A \mid B)$ and $P(B \mid A)$ being different is not a technicality. It's the source of the most consequential probability errors made by professionals.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="stats-conditional-probability-and-independence"
+  questions={[
+    {
+      id: "q1",
+      text: "What does the notation P(A | B) mean?",
+      options: [
+        "The probability of A divided by B",
+        "The probability that A and B both occur",
+        "The probability of A given that B has occurred",
+        "The probability of A or B",
+      ],
+      correctIndex: 2,
+      explanation:
+        "The vertical bar is read as 'given', so the expression restricts attention to cases where B happened. It is not a division of events, although the formula for it does involve dividing by P(B).",
+    },
+    {
+      id: "q2",
+      text: "If P(A and B) = 0.24, P(A) = 0.4 and P(B) = 0.6, are A and B independent?",
+      options: [
+        "Yes, because 0.4 x 0.6 = 0.24",
+        "No, because 0.24 is less than 0.4",
+        "No, because the events overlap",
+        "It cannot be determined from this information",
+      ],
+      correctIndex: 0,
+      explanation:
+        "The independence test asks whether P(A and B) equals P(A) times P(B). Here the product is exactly 0.24, matching the joint probability, so the events are independent.",
+    },
+    {
+      id: "q3",
+      text: "Two cards are drawn without replacement from a standard deck. Given the first was a spade, what is the probability the second is a spade?",
+      options: ["13/52", "12/52", "13/51", "12/51"],
+      correctIndex: 3,
+      explanation:
+        "One spade has been removed, leaving 12 spades among 51 remaining cards. Both the numerator and denominator must be reduced, which is what makes the draws dependent.",
+    },
+    {
+      id: "q4",
+      text: "Why is P(disease | positive test) usually much smaller than P(positive test | disease)?",
+      options: [
+        "Because medical tests are usually inaccurate",
+        "Because for a rare disease, healthy people vastly outnumber sick ones, so false positives can outnumber true positives",
+        "Because the two expressions are actually equal",
+        "Because probabilities always decrease when reversed",
+      ],
+      correctIndex: 1,
+      explanation:
+        "When a disease is rare, the huge pool of healthy people generates many false positives even at a low false-positive rate. Those can easily outnumber the true positives drawn from the small sick population.",
+    },
+    {
+      id: "q5",
+      text: "In a tree diagram, how do you find the probability of a specific complete sequence of outcomes?",
+      options: [
+        "Add the probabilities along that path",
+        "Multiply the probabilities along that path",
+        "Take the largest probability on that path",
+        "Divide the first probability by the last",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Each branch after the first carries a conditional probability, and the multiplication rule chains them together. You add only when combining several distinct paths that all satisfy the same event.",
+    },
+  ]}
+/>

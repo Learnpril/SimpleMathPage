@@ -1,0 +1,315 @@
+---
+title: Hypothesis Testing Basics
+description: Null and alternative hypotheses, test statistics, and the logic of statistical proof by contradiction
+sidebar:
+  order: 17
+---
+
+import Quiz from "../../../components/Quiz.astro";
+import HypothesisFlow from "../../../components/HypothesisFlow.astro";
+import SymbolKey from "../../../components/SymbolKey.astro";
+
+## What You'll Learn
+
+In this lesson you'll learn how to state null and alternative hypotheses, why hypothesis testing is proof by contradiction in disguise, how to compute a test statistic, and why you can never "prove the null hypothesis."
+
+<SymbolKey
+  items={[
+    {
+      sym: "H₀",
+      read: "H-naught, the null hypothesis",
+      note: "the claim of no effect or no difference",
+    },
+    {
+      sym: "Hₐ",
+      read: "H-a, the alternative hypothesis",
+      note: "also written H₁; what you suspect is true",
+    },
+    {
+      sym: "α",
+      read: "alpha, the significance level",
+      note: "your threshold for “too unlikely”, usually 0.05",
+    },
+    {
+      sym: "μ₀",
+      read: "mu-naught",
+      note: "the specific value the null hypothesis claims",
+    },
+  ]}
+/>
+
+## The Concept
+
+### The logic
+
+Hypothesis testing is **proof by contradiction** with probability attached. If you worked through the discrete mathematics section, the structure will look familiar.
+
+1. Assume the boring explanation is true (nothing is happening).
+2. Compute how likely your data would be under that assumption.
+3. If the data would be very unlikely, reject the boring explanation.
+4. If not, you don't have enough evidence to reject it.
+
+The parallel to mathematical proof by contradiction is close, with one crucial difference: mathematical contradiction gives certainty, while statistical evidence gives only "this would be surprising." You never reach proof, only degrees of implausibility.
+
+### The two hypotheses
+
+The **null hypothesis** $H_0$ is the claim of no effect, no difference, no change. It's the skeptical default, and it always contains an equality.
+
+The **alternative hypothesis** $H_a$ is what you suspect, the claim that something is going on.
+
+$$
+H_0: \mu = \mu_0 \qquad H_a: \mu \neq \mu_0 \; \text{ or } \; \mu > \mu_0 \; \text{ or } \; \mu < \mu_0
+$$
+
+Rules for stating them:
+
+- $H_0$ always gets the equals sign.
+- $H_a$ gets $\neq$, $>$, or $<$.
+- They must be **mutually exclusive** and cover the possibilities.
+- The hypotheses are about **parameters** ($\mu$, $p$), never about statistics ($\bar{x}$, $\hat{p}$). Writing $H_0: \bar{x} = 50$ is wrong, because you _know_ $\bar{x}$; there's nothing to test.
+
+### One-tailed versus two-tailed
+
+**Two-tailed** ($H_a: \mu \neq \mu_0$) looks for a difference in either direction. Use it when any change matters.
+
+**One-tailed** ($H_a: \mu > \mu_0$ or $\mu < \mu_0$) looks in one direction only. Use it when only one direction is meaningful.
+
+The important discipline: **choose the direction before seeing the data.** Picking a one-tailed test after noticing which way the data leans doubles your effective error rate and is a recognized form of cheating. When in doubt, two-tailed is the conservative choice.
+
+### The significance level
+
+The **significance level** $\alpha$ is your threshold for "too unlikely to be chance." Conventionally $\alpha = 0.05$.
+
+There is nothing sacred about 0.05. Ronald Fisher proposed it as a convenient rule of thumb, and it stuck. Particle physics uses about $3 \times 10^{-7}$ (the "five sigma" standard) because false discoveries there are costly and data is plentiful. Some fields have moved toward 0.005 for claims of new discoveries.
+
+You must set $\alpha$ **before** looking at the data. Adjusting it afterwards to get the answer you want defeats the entire purpose.
+
+### The four steps
+
+<HypothesisFlow />
+
+1. **State** $H_0$ and $H_a$, and choose $\alpha$.
+2. **Compute** the test statistic from the data.
+3. **Find** the p-value, the probability of data this extreme or more if $H_0$ were true.
+4. **Decide** and interpret in context.
+
+### The test statistic
+
+The test statistic measures how far your data sits from what $H_0$ predicted, in standard error units:
+
+$$
+z = \frac{\bar{x} - \mu_0}{\sigma / \sqrt{n}}
+$$
+
+That's the z-score idea applied to a sample mean. A large magnitude means the data is far from the null claim; near zero means the data is consistent with it.
+
+When $\sigma$ is unknown, use $s$ and the t-distribution:
+
+$$
+t = \frac{\bar{x} - \mu_0}{s/\sqrt{n}} \qquad df = n - 1
+$$
+
+### The decision
+
+$$
+p \leq \alpha \; \Rightarrow \; \textbf{reject } H_0 \qquad p > \alpha \; \Rightarrow \; \textbf{fail to reject } H_0
+$$
+
+The wording is deliberate and matters.
+
+**"Reject $H_0$"** means the data was surprising enough under the null to discard it. You have evidence for $H_a$.
+
+**"Fail to reject $H_0$"** means you didn't find enough evidence. Note what it does **not** say: it does not say $H_0$ is true.
+
+### Why you can never accept the null
+
+This is the conceptual heart of the lesson.
+
+Absence of evidence is not evidence of absence. Failing to reject could mean the null is true, or it could mean your sample was too small, your measurement too noisy, or the effect real but small.
+
+The courtroom analogy is exact. A jury returns "not guilty," never "innocent." Not guilty means the prosecution didn't meet the burden of proof, which is compatible with both actual innocence and insufficient evidence.
+
+So the honest phrasings are:
+
+- ✓ "We found no significant evidence that the drug works."
+- ✗ "We proved the drug doesn't work."
+
+Those are different claims, and only the first is supported.
+
+A related point worth carrying forward: **statistical significance is not practical importance.** With a large enough sample, a trivially small effect becomes significant. A drug that lowers blood pressure by 0.2 mmHg might be highly significant in a trial of 50,000 people and clinically worthless. Always ask about effect size alongside significance.
+
+## Worked Examples
+
+**Example 1: State the hypotheses.**
+
+A manufacturer claims its bags contain 500 g on average. A consumer group suspects underfilling. State the hypotheses.
+
+**Solution.**
+
+$$
+H_0: \mu = 500 \qquad H_a: \mu < 500
+$$
+
+One-tailed, because the concern is specifically underfilling. Overfilling wouldn't trouble the consumer group, so testing both directions would waste power.
+
+**Example 2: Two-tailed hypotheses.**
+
+A process should produce parts 10 cm long. Any deviation is a problem. State the hypotheses.
+
+**Solution.**
+
+$$
+H_0: \mu = 10 \qquad H_a: \mu \neq 10
+$$
+
+Two-tailed, since parts too long and parts too short are both defects.
+
+**Example 3: A complete test.**
+
+A company claims mean delivery time is 3 days with $\sigma = 0.8$ days. A sample of 64 deliveries averages 3.25 days. Test at $\alpha = 0.05$ whether deliveries take longer than claimed.
+
+**Solution.**
+
+**Step 1.** $H_0: \mu = 3$, $H_a: \mu > 3$, one-tailed, $\alpha = 0.05$.
+
+**Step 2.** Test statistic:
+
+$$
+SE = \frac{0.8}{\sqrt{64}} = 0.1
+$$
+
+$$
+z = \frac{3.25 - 3}{0.1} = 2.5
+$$
+
+**Step 3.** For a one-tailed test, the p-value is the area beyond $z = 2.5$, which is about **0.0062**.
+
+**Step 4.** Since $0.0062 \leq 0.05$, **reject $H_0$**.
+
+In context: there is significant evidence that mean delivery time exceeds 3 days. The observed 3.25-day average would occur by chance only about 6 times in 1,000 if the true mean really were 3 days.
+
+**Example 4: Failing to reject.**
+
+Same setup, but the sample of 64 averages 3.1 days.
+
+**Solution.**
+
+$$
+z = \frac{3.1 - 3}{0.1} = 1.0
+$$
+
+One-tailed p-value for $z = 1.0$ is about **0.159**.
+
+Since $0.159 > 0.05$, **fail to reject $H_0$**.
+
+In context: there isn't significant evidence that deliveries exceed 3 days. Note carefully what this doesn't establish. We have **not** shown deliveries take exactly 3 days. The true mean might be 3.1, and this sample simply couldn't distinguish that from 3.
+
+**Example 5: Significance without importance.**
+
+A study of 100,000 users finds a new button color raises click-through from 4.00% to 4.06%, with $p = 0.003$. Interpret.
+
+**Solution.** Statistically significant, since $p < 0.05$. The effect is almost certainly real rather than chance.
+
+But the effect is **0.06 percentage points**, a relative improvement of 1.5%. Whether that justifies a redesign depends entirely on business context, not on the p-value.
+
+The enormous sample made a tiny effect detectable. That's exactly what large samples do, and it's why "significant" should never be read as "big." Reporting the effect size and its confidence interval communicates far more than the p-value alone.
+
+**Example 6: Common errors in stating hypotheses.**
+
+What's wrong with each?
+
+1. $H_0: \bar{x} = 25$
+2. $H_0: \mu > 40$
+3. $H_0: \mu = 15$, $H_a: \mu > 20$
+
+**Solution.**
+
+1. Uses the **sample** mean. Hypotheses concern unknown parameters, and $\bar{x}$ is already known.
+2. The null must contain **equality**. This belongs in $H_a$.
+3. The hypotheses don't align. They must partition the possibilities around the same value, so $H_a$ should be $\mu > 15$. As written, values between 15 and 20 are covered by neither.
+
+## Real-World Applications
+
+Drug approval runs on hypothesis testing. The null is that the drug performs no better than placebo, and regulators require the trial to reject it. The asymmetry is deliberate: the burden falls on proving efficacy, and failing to reject means no approval.
+
+A/B testing in software is hypothesis testing applied continuously. The null is that both versions perform identically. A major practical hazard is **peeking**: repeatedly checking results and stopping when significance appears inflates the false positive rate badly, which is why sequential testing methods exist.
+
+Quality control tests whether a process has drifted from specification. The null is that the process is on target.
+
+Court proceedings mirror the structure closely, with presumption of innocence as the null and "beyond reasonable doubt" as a very small $\alpha$.
+
+Scientific publishing has a serious problem rooted here. The **replication crisis** stems partly from p-hacking (trying many analyses until one crosses 0.05) and publication bias (only significant results get published). If twenty labs test a nonexistent effect at $\alpha = 0.05$, one expects a significant result by chance, and if only that lab publishes, the literature is misleading. Preregistration of hypotheses addresses this by requiring the plan before the data.
+
+Particle physics chose its extreme five-sigma threshold precisely because so many analyses run in parallel that a 0.05 standard would generate constant false discoveries.
+
+:::note[You've Got This]
+The logic here is proof by contradiction with probability, so if you've done that in a proofs course you already have the shape of it. Two habits will keep you out of trouble. First, always state hypotheses about parameters, with the equality in the null. Second, say "fail to reject" rather than "accept," because the difference isn't pedantry: one claim is supported by the evidence and the other isn't. And whenever you see a significant result, ask how big the effect is. Significance answers "is it real," not "does it matter."
+:::
+
+## Quiz
+
+<Quiz
+  quizId="stats-hypothesis-testing-basics"
+  questions={[
+    {
+      id: "q1",
+      text: "Which statement correctly describes the null hypothesis?",
+      options: [
+        "It is the claim the researcher hopes to prove",
+        "It is the claim of no effect or no difference, and it contains the equality",
+        "It is always about the sample mean",
+        "It is chosen after examining the data",
+      ],
+      correctIndex: 1,
+      explanation:
+        "The null is the skeptical default asserting nothing is happening, and it always carries the equals sign. The researcher's suspicion belongs in the alternative hypothesis.",
+    },
+    {
+      id: "q2",
+      text: "What does “fail to reject the null hypothesis” mean?",
+      options: [
+        "The null hypothesis has been proven true",
+        "The alternative hypothesis is false",
+        "There was not enough evidence to reject the null, which is not the same as proving it",
+        "The test was performed incorrectly",
+      ],
+      correctIndex: 2,
+      explanation:
+        "Absence of evidence is not evidence of absence, so failing to reject leaves open both that the null is true and that the study lacked power. This mirrors a jury verdict of not guilty rather than innocent.",
+    },
+    {
+      id: "q3",
+      text: "A sample of 100 has a mean of 52 where the null claims mu = 50, and sigma = 8. What is the test statistic?",
+      options: ["2.5", "0.25", "25", "0.8"],
+      correctIndex: 0,
+      explanation:
+        "The standard error is 8 / 10 = 0.8, so z = (52 − 50) / 0.8 = 2.5. The test statistic measures the gap between data and null in standard error units.",
+    },
+    {
+      id: "q4",
+      text: "Which of these hypothesis statements is stated correctly?",
+      options: [
+        "H₀: x̄ = 30 versus Hₐ: x̄ ≠ 30",
+        "H₀: μ > 30 versus Hₐ: μ < 30",
+        "H₀: μ = 30 versus Hₐ: μ ≠ 30",
+        "H₀: μ = 30 versus Hₐ: μ > 45",
+      ],
+      correctIndex: 2,
+      explanation:
+        "Hypotheses must concern the unknown parameter mu, place the equality in the null, and partition the possibilities around the same value. The other options misuse the sample mean, omit the equality, or leave a gap between the two claims.",
+    },
+    {
+      id: "q5",
+      text: "A study with 200,000 participants finds a statistically significant effect of 0.03%. What is the appropriate conclusion?",
+      options: [
+        "The effect is large and important because p is small",
+        "The effect is probably real but may be far too small to matter practically",
+        "The study must contain an error",
+        "Statistical significance guarantees practical significance",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Very large samples can detect effects that are real but trivially small, so significance speaks to existence rather than magnitude. Judging importance requires the effect size and its context, not the p-value.",
+    },
+  ]}
+/>

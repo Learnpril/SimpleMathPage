@@ -76,10 +76,10 @@ export default defineConfig({
           label: "Discrete Mathematics",
           autogenerate: { directory: "discrete-mathematics" },
         },
-        // {
-        //   label: "Statistics",
-        //   autogenerate: { directory: "statistics" },
-        // },
+        {
+          label: "Statistics",
+          autogenerate: { directory: "statistics" },
+        },
         // {
         //   label: "Abstract Algebra",
         //   autogenerate: { directory: "abstract-algebra" },
@@ -117,7 +117,8 @@ export default defineConfig({
                 'calculus-3': 'Calculus 3',
                 'linear-algebra': 'Linear Algebra',
                 'differential-equations': 'Differential Equations',
-                'discrete-mathematics': 'Discrete Mathematics'
+                'discrete-mathematics': 'Discrete Mathematics',
+                'statistics': 'Statistics'
               };
               var label = map[section];
               if (!label) return;
@@ -165,7 +166,8 @@ export default defineConfig({
                 {slug:'calculus-3', label:'Calculus 3', about:'about-calculus-3'},
                 {slug:'linear-algebra', label:'Linear Algebra', about:'about-linear-algebra'},
                 {slug:'differential-equations', label:'Differential Equations', about:'about-differential-equations'},
-                {slug:'discrete-mathematics', label:'Discrete Mathematics', about:'about-discrete-mathematics'}
+                {slug:'discrete-mathematics', label:'Discrete Mathematics', about:'about-discrete-mathematics'},
+                {slug:'statistics', label:'Statistics', about:'about-statistics'}
               ];
               var path = window.location.pathname.replace(/^\\//, '').replace(/\\/$/, '');
               var currentSection = path.split('/')[0] || '';
@@ -402,7 +404,8 @@ export default defineConfig({
                 'calculus-3': 'Calculus 3',
                 'linear-algebra': 'Linear Algebra',
                 'differential-equations': 'Differential Equations',
-                'discrete-mathematics': 'Discrete Mathematics'
+                'discrete-mathematics': 'Discrete Mathematics',
+                'statistics': 'Statistics'
               };
               var subject = sectionMap[section];
               if (!subject) return;
@@ -455,7 +458,8 @@ export default defineConfig({
                         'calculus-3': 'expert',
                         'linear-algebra': 'expert',
                         'differential-equations': 'expert',
-                        'discrete-mathematics': 'expert'
+                        'discrete-mathematics': 'expert',
+                        'statistics': 'expert'
                       };
                       var colorMap = {
                         'foundations': '#7ee787',

@@ -1,0 +1,233 @@
+---
+title: Types of Data and Levels of Measurement
+description: Categorical versus quantitative data, discrete versus continuous, and the four levels of measurement
+sidebar:
+  order: 2
+---
+
+import Quiz from "../../../components/Quiz.astro";
+import DataTypesTree from "../../../components/DataTypesTree.astro";
+
+## What You'll Learn
+
+In this lesson you'll learn to classify data as categorical or quantitative, tell discrete from continuous, and identify the four levels of measurement. This matters because the data type decides which summaries and charts are even legal.
+
+## The Concept
+
+Before you compute anything, you have to know what kind of data you have. Averaging zip codes produces a number, and that number is nonsense. The classification below is what stops you from doing that.
+
+<DataTypesTree />
+
+### Categorical data
+
+**Categorical** (or **qualitative**) data records which group something belongs to. Eye color, country, brand preference, yes/no answers.
+
+You can count how many fall in each category and find the most common one, but you cannot average them.
+
+Watch out for **categories coded as numbers**. If a survey stores "Male = 1, Female = 2, Nonbinary = 3," the data is still categorical. The mean of 1.7 means nothing at all. This is one of the most common real-world data mistakes.
+
+### Quantitative data
+
+**Quantitative** data records an amount, and arithmetic on it is meaningful. Height, income, test scores, number of children.
+
+Quantitative data splits again:
+
+- **Discrete** - countable, with gaps. Number of siblings, cars in a lot, defects in a batch. You can have 3 siblings, never 3.4.
+- **Continuous** - measurable on an unbroken scale. Height, weight, time, temperature. Between 70 and 71 kg there are infinitely many possible values.
+
+The test is the same one from discrete mathematics: between any two values, is there always another?
+
+A practical note: continuous data always arrives rounded, because instruments have limits. Height recorded as 175 cm is really "somewhere near 175." It's still continuous data, just recorded coarsely.
+
+### The four levels of measurement
+
+This is a finer classification, and it tells you exactly which operations make sense.
+
+**1. Nominal** - names only, no order. Blood type, city, favorite color.
+
+Allowed: counts, mode, "same or different."
+
+**2. Ordinal** - ordered, but the gaps between values aren't equal or aren't known. Survey scales (poor / fair / good / excellent), letter grades, race finishing position.
+
+Allowed: everything nominal allows, plus median and percentiles. The catch: you can say "good" beats "fair," but not that the gap from fair to good equals the gap from good to excellent. Averaging ordinal data is common in practice and technically shaky.
+
+**3. Interval** - ordered with equal gaps, but **no true zero**. Temperature in Celsius or Fahrenheit, calendar years, IQ scores.
+
+Allowed: addition and subtraction. Differences are meaningful: 30°C is 10 degrees warmer than 20°C.
+
+Not allowed: ratios. 30°C is **not** "twice as hot" as 15°C, because 0°C doesn't mean "no heat," it's just where water freezes.
+
+**4. Ratio** - ordered, equal gaps, **and a true zero** meaning "none of it." Height, weight, income, time elapsed, count of anything.
+
+Allowed: everything, including ratios. 60 kg really is twice 30 kg, because 0 kg means no mass.
+
+The escalating summary:
+
+| Level    | Ordered? | Equal gaps? | True zero? | Center you can use |
+| :------- | :------: | :---------: | :--------: | :----------------- |
+| Nominal  |    no    |     no      |     no     | mode               |
+| Ordinal  |   yes    |     no      |     no     | mode, median       |
+| Interval |   yes    |     yes     |     no     | mode, median, mean |
+| Ratio    |   yes    |     yes     |    yes     | all, plus ratios   |
+
+Each level allows everything the level above it allows, plus one more thing.
+
+### Why this decides your chart
+
+The data type determines which display is honest:
+
+- **Categorical** - bar chart, pie chart. Bars have gaps because the categories aren't a continuum.
+- **Quantitative** - histogram, boxplot, dotplot. Histogram bars touch because the values are a continuum.
+
+Using a histogram for categories or a bar chart with touching bars for measurements both imply a continuity that isn't there.
+
+## Worked Examples
+
+**Example 1: Classify each variable.**
+
+1. Jersey number on a football shirt
+2. Number of goals scored in a match
+3. Time to run 5 km
+4. Satisfaction rating from 1 to 5
+5. Temperature in Fahrenheit
+6. Annual salary
+
+**Solution.**
+
+1. **Categorical, nominal.** It's a label. The average jersey number is meaningless.
+2. **Quantitative, discrete, ratio.** Countable, and 0 goals genuinely means none.
+3. **Quantitative, continuous, ratio.** 0 seconds means no elapsed time, and 20 minutes is twice 10.
+4. **Categorical-ish, ordinal.** Ordered, but the gap from 1 to 2 need not equal 4 to 5.
+5. **Quantitative, continuous, interval.** No true zero, so ratios fail.
+6. **Quantitative, continuous, ratio.** 0 income means none, and 80,000 is twice 40,000.
+
+**Example 2: The zip code trap.**
+
+A dataset stores zip codes as integers. A colleague computes the mean zip code as 48,213. What went wrong?
+
+**Solution.** Zip codes are **nominal** data that happen to look numeric. The digits encode geography, not quantity. There's no sense in which one zip code is "more" than another, and the mean lands on an unrelated arbitrary location.
+
+The general rule: **just because a value is stored as a number doesn't make it quantitative.** Ask whether arithmetic on it means anything.
+
+**Example 3: Interval versus ratio.**
+
+Yesterday was 10°C, today is 20°C. Is today twice as warm?
+
+**Solution.** No. Celsius is an **interval** scale, so only differences are meaningful: today is 10 degrees warmer.
+
+To see the problem, convert to Fahrenheit: 50°F and 68°F. If "twice as warm" were real, the ratio would survive the conversion, but $68/50 = 1.36$, not 2. The ratio changes with the scale, which proves it wasn't measuring anything.
+
+The Kelvin scale _is_ ratio, because 0 K is true absence of thermal energy. 300 K really is twice 150 K.
+
+**Example 4: Pick the right summary.**
+
+A survey records: favorite streaming service, hours watched per week, and a 1-to-5 recommendation score. What's the best measure of center for each?
+
+**Solution.**
+
+- **Favorite service** - nominal, so **mode** only. The most-chosen service.
+- **Hours watched** - ratio, so **mean** works, though the median may be better if a few heavy viewers skew it.
+- **Recommendation score** - ordinal, so **median** is the defensible choice. Reporting a mean of 3.8 is extremely common and rests on assuming the gaps are equal.
+
+**Example 5: Discrete or continuous?**
+
+1. Number of emails received today
+2. Weight of a package
+3. Shoe size
+4. Number of people in a household
+
+**Solution.**
+
+1. **Discrete.** Whole emails only.
+2. **Continuous.** Any value in a range, limited only by the scale's precision.
+3. **Discrete**, and arguably ordinal. Sizes come in fixed steps like 8, 8.5, 9, and the steps aren't a true continuum.
+4. **Discrete.** Whole people.
+
+## Real-World Applications
+
+Choosing the wrong data type is one of the most common ways a dashboard lies. Averaging a satisfaction scale, averaging categories coded as numbers, or computing a mean of ordinal survey responses all produce plausible-looking figures that don't support the conclusions drawn from them.
+
+Database design depends on it. Storing a category as an integer for efficiency is fine, but the schema should make clear it's a label, or someone downstream will average it. Statistical software has explicit types (R calls categorical variables "factors") precisely to prevent this.
+
+Machine learning requires the distinction constantly. Categorical features need encoding (one-hot, for instance) before a model can use them, because feeding raw category codes tells the model that category 3 is somehow between 2 and 4.
+
+Medical scales are a live controversy. Pain rated 1 to 10 is ordinal, yet clinical studies routinely average it. It's usually treated as acceptable, but it's a known compromise rather than a solved problem.
+
+Survey design lives here too. Choosing between a yes/no question, a five-point scale, and a numeric entry determines what analysis becomes possible later, so the decision has to be made before any data exists.
+
+:::note[You've Got This]
+The single question that resolves almost every case: **does arithmetic on this value mean anything?** If adding two of them or doubling one produces nonsense, it's categorical no matter how numeric it looks. And for the interval-versus-ratio distinction, test whether zero means "none of it." Zero degrees doesn't mean no temperature, but zero dollars really does mean no money.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="stats-types-of-data-and-levels-of-measurement"
+  questions={[
+    {
+      id: "q1",
+      text: "A survey codes responses as 1 = Bus, 2 = Car, 3 = Bicycle. What type of data is this?",
+      options: [
+        "Quantitative, because the values are numbers",
+        "Categorical, because the numbers are labels for groups",
+        "Continuous, because any value between 1 and 3 is possible",
+        "Ratio, because it has a zero point",
+      ],
+      correctIndex: 1,
+      explanation:
+        "The numbers stand in for categories, so arithmetic on them is meaningless. An average of 1.8 does not describe a mode of transport, which is the giveaway that the data is categorical.",
+    },
+    {
+      id: "q2",
+      text: "Which variable is discrete rather than continuous?",
+      options: [
+        "The time it takes to finish a race",
+        "The weight of a bag of apples",
+        "The number of text messages sent in a day",
+        "The height of a doorway",
+      ],
+      correctIndex: 2,
+      explanation:
+        "Text messages come in whole units with gaps between them, so the variable is discrete. The other three can take any value within a range and are continuous.",
+    },
+    {
+      id: "q3",
+      text: "What distinguishes an interval scale from a ratio scale?",
+      options: [
+        "Interval data cannot be ordered",
+        "Ratio data has a true zero meaning “none of it”, so ratios are meaningful",
+        "Interval data must be whole numbers",
+        "Ratio data cannot be negative or averaged",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Both have order and equal gaps, but only a ratio scale has a genuine zero. That is why 60 kg is meaningfully twice 30 kg, while 30°C is not twice as hot as 15°C.",
+    },
+    {
+      id: "q4",
+      text: "Which measure of center is appropriate for ordinal data such as “poor, fair, good, excellent”?",
+      options: [
+        "The mean",
+        "The median",
+        "The variance",
+        "The standard deviation",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Ordinal data has a defensible order, so the median makes sense, but the gaps between categories are not known to be equal, which makes the mean hard to justify. Variance and standard deviation are measures of spread, not center.",
+    },
+    {
+      id: "q5",
+      text: "Why do the bars of a histogram touch while the bars of a bar chart have gaps?",
+      options: [
+        "It is only a stylistic convention with no meaning",
+        "Histograms always show more data than bar charts",
+        "Touching bars show a continuous number line, while gaps show separate categories",
+        "Bar charts must be drawn horizontally",
+      ],
+      correctIndex: 2,
+      explanation:
+        "A histogram displays quantitative data across intervals that join end to end, so touching bars reflect the underlying continuum. Bar charts display distinct categories, and the gaps signal there is nothing in between.",
+    },
+  ]}
+/>

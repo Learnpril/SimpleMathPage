@@ -1,0 +1,453 @@
+---
+title: Statistics Review
+description: Comprehensive review of descriptive statistics, probability, distributions, and inference with mixed practice
+sidebar:
+  order: 20
+---
+
+import Quiz from "../../../components/Quiz.astro";
+import StatsTopicMap from "../../../components/StatsTopicMap.astro";
+import SymbolKey from "../../../components/SymbolKey.astro";
+
+## What You'll Learn
+
+This review pulls together everything from the Statistics section. Use it to test yourself across all four areas before moving on.
+
+<StatsTopicMap />
+
+## Notation Reference
+
+<SymbolKey
+  title="Describing data"
+  items={[
+    {
+      sym: "N, n",
+      read: "population size, sample size",
+      note: "Greek letters describe populations, Roman letters describe samples",
+    },
+    { sym: "μ, x̄", read: "population mean, sample mean" },
+    { sym: "σ, s", read: "population and sample standard deviation" },
+    { sym: "σ², s²", read: "population and sample variance" },
+    { sym: "p, p̂", read: "population proportion, sample proportion" },
+    { sym: "Q1, Q3", read: "first and third quartiles" },
+    {
+      sym: "IQR",
+      read: "interquartile range",
+      note: "Q3 − Q1, the spread of the middle half",
+    },
+  ]}
+/>
+
+<SymbolKey
+  title="Probability and distributions"
+  items={[
+    { sym: "P(A)", read: "the probability of A" },
+    { sym: "P(A | B)", read: "the probability of A given B" },
+    { sym: "A'", read: "the complement of A", note: "A does not happen" },
+    {
+      sym: "E(X)",
+      read: "the expected value of X",
+      note: "the long-run average",
+    },
+    { sym: "z", read: "a z-score", note: "standard deviations from the mean" },
+    { sym: "N(μ, σ²)", read: "normal with mean μ and variance σ²" },
+  ]}
+/>
+
+<SymbolKey
+  title="Inference"
+  items={[
+    {
+      sym: "SE",
+      read: "standard error",
+      note: "σ/√n, the spread of the sample mean",
+    },
+    {
+      sym: "ME",
+      read: "margin of error",
+      note: "critical value times standard error",
+    },
+    { sym: "H₀, Hₐ", read: "null and alternative hypotheses" },
+    {
+      sym: "α",
+      read: "alpha, the significance level",
+      note: "the Type I error rate you accept",
+    },
+    { sym: "β", read: "beta, the Type II error rate", note: "power is 1 − β" },
+    {
+      sym: "r, r²",
+      read: "correlation, and proportion of variation explained",
+    },
+  ]}
+/>
+
+## Key Concepts Summary
+
+### Populations, Samples, and Data Types
+
+- **Population** is everyone of interest; **sample** is who you measured. **Parameter** describes a population, **statistic** describes a sample.
+- **Descriptive** statistics summarizes data you have; **inferential** statistics generalizes beyond it with stated uncertainty.
+- Bias is worse than small size. A big biased sample beats nothing but loses to a small fair one.
+- **Categorical** data records groups; **quantitative** records amounts. Quantitative splits into **discrete** (countable) and **continuous** (measurable).
+- Four levels: **nominal** (names), **ordinal** (ordered), **interval** (equal gaps, no true zero), **ratio** (true zero, ratios valid).
+- Bar charts have gaps for categories; histogram bars touch for a continuum.
+
+### Center and Spread
+
+- $\bar{x} = \frac{\sum x}{n}$. The mean is the balance point and is **sensitive** to outliers.
+- The median is positional and **resistant** to outliers. The mode is the only center for categorical data.
+- **Skew is named for the tail.** Right-skewed means mean > median.
+- $s = \sqrt{\frac{\sum(x-\bar{x})^2}{n-1}}$. Deviations always sum to zero, which is why we square them.
+- Divide by $n-1$ for samples (Bessel's correction) because deviations from $\bar{x}$ run small.
+- Five-number summary: min, Q1, median, Q3, max. $IQR = Q_3 - Q_1$.
+- Outlier fences: $Q_1 - 1.5 \, IQR$ and $Q_3 + 1.5 \, IQR$.
+- Pair **mean with standard deviation**, or **median with IQR**.
+
+### Probability
+
+- $P(A) = \frac{n(A)}{n(S)}$ when outcomes are equally likely, and $0 \leq P(A) \leq 1$.
+- $P(A') = 1 - P(A)$. Use the complement for "at least one."
+- Addition: $P(A \cup B) = P(A) + P(B) - P(A \cap B)$.
+- Multiplication: $P(A \cap B) = P(A)P(B \mid A)$, simplifying to $P(A)P(B)$ when independent.
+- **Mutually exclusive** means both can't happen; **independent** means one doesn't affect the other. These are nearly opposites.
+- Conditional: $P(A \mid B) = \frac{P(A \cap B)}{P(B)}$. Conditioning changes the denominator.
+- $P(A \mid B) \neq P(B \mid A)$. Confusing them is the prosecutor's fallacy.
+- Bayes: $P(A \mid B) = \frac{P(B \mid A)P(A)}{P(B)}$. **Posterior ∝ likelihood × prior.**
+- For rare conditions the **base rate dominates**, so a positive test often means low probability of disease.
+
+### Distributions
+
+- $E(X) = \sum x \, P(X=x)$, the long-run average. It need not be a possible outcome.
+- $\text{Var}(X) = E(X^2) - [E(X)]^2$ is the usual shortcut.
+- Binomial requires **BINS**: binary, independent, fixed $n$, same $p$. Then $P(X=k) = \binom{n}{k}p^k(1-p)^{n-k}$, with $\mu = np$ and $\sigma = \sqrt{np(1-p)}$.
+- Normal distributions are symmetric with mean = median = mode. $\mu$ shifts, $\sigma$ stretches. Probability is **area**, so exact values have probability zero.
+- $z = \frac{x - \mu}{\sigma}$, dimensionless, so it compares across scales.
+- Empirical rule: **68-95-99.7** within 1, 2, 3 standard deviations. Requires approximate normality.
+- Income, waiting times, and stock returns are **not** normal.
+
+### Inference
+
+- **CLT:** sample means are approximately normal for large $n$ whatever the population shape, with $\mu_{\bar{x}} = \mu$ and $SE = \frac{\sigma}{\sqrt{n}}$.
+- Quadruple $n$ to halve $SE$. Precision is expensive.
+- Confidence interval: $\bar{x} \pm z^* \frac{\sigma}{\sqrt{n}}$, with $z^* = 1.96$ for 95%.
+- "95% confident" describes the **method's** long-run success, not the probability for one interval.
+- Higher confidence gives a **wider** interval. Use the **t-distribution** when $\sigma$ is unknown.
+- $H_0$ carries the equality and concerns **parameters**, never statistics.
+- $p \leq \alpha$ rejects. Otherwise **fail to reject**, which never means "accept."
+- p-value $= P(\text{data this extreme} \mid H_0)$. It is not $P(H_0 \mid \text{data})$.
+- **Type I** = false positive (rate $\alpha$); **Type II** = false negative (rate $\beta$). Power $= 1 - \beta$.
+- **Significance ≠ importance.** Large samples make tiny effects significant.
+- $r$ measures **linear** association only; $r^2$ is the proportion of variation explained.
+- Correlation admits reverse causation, confounding, coincidence, and selection effects.
+
+## Worked Review Examples
+
+**Example 1: Center and spread.**
+
+Data: 6, 9, 9, 12, 14
+
+Mean: $\frac{50}{5} = 10$. Median: 9. Mode: 9.
+
+Squared deviations: $16, 1, 1, 4, 16$, summing to 38.
+
+$$
+s = \sqrt{\frac{38}{4}} = \sqrt{9.5} \approx 3.08
+$$
+
+**Example 2: Outlier check.**
+
+Data with $Q_1 = 18$, $Q_3 = 30$. Is 50 an outlier?
+
+$IQR = 12$, so the upper fence is $30 + 1.5(12) = 48$. Since $50 > 48$, **yes**.
+
+**Example 3: Complement rule.**
+
+Five dice are rolled. Find $P(\text{at least one } 4)$.
+
+$$
+1 - \left(\frac{5}{6}\right)^5 = 1 - \frac{3125}{7776} \approx 0.598
+$$
+
+**Example 4: Conditional probability.**
+
+Of 300 people, 120 exercise and 45 of those sleep well. Find $P(\text{sleeps well} \mid \text{exercises})$.
+
+$$
+\frac{45}{120} = 0.375
+$$
+
+**Example 5: Bayes by counts.**
+
+Prevalence 2%, sensitivity 95%, specificity 90%. Find the positive predictive value.
+
+Per 10,000: diseased 200 → 190 true positives. Healthy 9,800 → 980 false positives.
+
+$$
+\frac{190}{190 + 980} = \frac{190}{1170} \approx 0.162
+$$
+
+About 16%, despite a good test, because healthy people vastly outnumber sick ones.
+
+**Example 6: Expected value.**
+
+A game pays 8 dollars with probability 0.25 and loses 2 dollars otherwise. Find $E$.
+
+$$
+E = 8(0.25) + (-2)(0.75) = 2 - 1.5 = +0.50
+$$
+
+**Example 7: Binomial.**
+
+$n = 8$, $p = 0.5$. Find $P(X = 6)$.
+
+$$
+\binom{8}{6}(0.5)^8 = 28 \times \frac{1}{256} = \frac{28}{256} \approx 0.109
+$$
+
+**Example 8: Z-score comparison.**
+
+Score 92 where $\mu = 80, \sigma = 6$ versus score 65 where $\mu = 50, \sigma = 10$.
+
+$$
+z_1 = \frac{12}{6} = 2.0 \qquad z_2 = \frac{15}{10} = 1.5
+$$
+
+The first is stronger relative to its distribution.
+
+**Example 9: Standard error.**
+
+$\sigma = 18$, $n = 81$.
+
+$$
+SE = \frac{18}{9} = 2
+$$
+
+**Example 10: Confidence interval.**
+
+$\bar{x} = 44$, $\sigma = 12$, $n = 144$, 95% confidence.
+
+$$
+SE = \frac{12}{12} = 1, \quad ME = 1.96 \quad \Rightarrow \quad (42.04, \; 45.96)
+$$
+
+**Example 11: Hypothesis test.**
+
+$H_0: \mu = 20$, $\bar{x} = 22.4$, $\sigma = 8$, $n = 100$, two-tailed at $\alpha = 0.05$.
+
+$$
+z = \frac{22.4 - 20}{0.8} = 3.0
+$$
+
+Two-tailed p-value $\approx 0.0027 \leq 0.05$, so **reject $H_0$**.
+
+**Example 12: Correlation.**
+
+$r = -0.7$. Direction is negative, strength is strong, and $r^2 = 0.49$, so 49% of variation is explained.
+
+## Quiz
+
+<Quiz
+  quizId="stats-review"
+  questions={[
+    {
+      id: "q1",
+      text: "A value computed from a sample, such as the mean of 200 survey responses, is called what?",
+      options: ["A parameter", "A statistic", "A population", "A census"],
+      correctIndex: 1,
+      explanation:
+        "Statistics come from samples and are known; parameters describe populations and are usually unknown. The whole point of inference is using the statistic to estimate the parameter.",
+    },
+    {
+      id: "q2",
+      text: "Zip codes stored as integers are what type of data?",
+      options: [
+        "Ratio, because they are numbers",
+        "Categorical and nominal, because the digits are labels",
+        "Continuous, because any value is possible",
+        "Ordinal, because they can be sorted",
+      ],
+      correctIndex: 1,
+      explanation:
+        "The digits encode location rather than quantity, so arithmetic on them is meaningless and an average zip code says nothing. Being stored as a number does not make data quantitative.",
+    },
+    {
+      id: "q3",
+      text: "Find the median of 8, 3, 12, 7, 15, 6.",
+      options: ["7.5", "7", "8.5", "9"],
+      correctIndex: 0,
+      explanation:
+        "Sorted the values are 3, 6, 7, 8, 12, 15, and with six values you average the third and fourth: (7 + 8) / 2 = 7.5. Sorting first is essential.",
+    },
+    {
+      id: "q4",
+      text: "A distribution has a mean of 95 and a median of 72. What shape is it?",
+      options: ["Left-skewed", "Symmetric", "Right-skewed", "Uniform"],
+      correctIndex: 2,
+      explanation:
+        "The mean is pulled toward the tail, and here it sits well above the median, so the tail extends to the right. Income distributions typically look like this.",
+    },
+    {
+      id: "q5",
+      text: "Why does the sample standard deviation divide by n − 1?",
+      options: [
+        "To make the result larger for safety",
+        "Because dividing by n systematically underestimates the population variance",
+        "Because one value is always an outlier",
+        "To convert the units correctly",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Deviations are taken from the sample mean, which sits at the center of the sample, so they run slightly too small. Bessel's correction compensates for that downward bias.",
+    },
+    {
+      id: "q6",
+      text: "With Q1 = 40 and Q3 = 60, which value is an outlier by the 1.5 x IQR rule?",
+      options: ["95", "35", "65", "80"],
+      correctIndex: 0,
+      explanation:
+        "The IQR is 20, so 1.5 x IQR = 30 and the fences sit at 10 and 90. Only 95 lies beyond a fence.",
+    },
+    {
+      id: "q7",
+      text: "If P(A) = 0.7, what is P(not A)?",
+      options: ["0.7", "0.3", "1.7", "0.5"],
+      correctIndex: 1,
+      explanation:
+        "An event and its complement account for all possibilities and sum to 1, so P(not A) = 1 − 0.7 = 0.3.",
+    },
+    {
+      id: "q8",
+      text: "A card is drawn from a standard deck. What is P(face card or club)?",
+      options: ["25/52", "22/52", "12/52", "13/52"],
+      correctIndex: 1,
+      explanation:
+        "There are 12 face cards and 13 clubs, and 3 cards are both, so 12 + 13 − 3 = 22 out of 52. Forgetting to subtract the overlap would give 25/52.",
+    },
+    {
+      id: "q9",
+      text: "Two events cannot both occur. What are they called?",
+      options: [
+        "Independent",
+        "Mutually exclusive",
+        "Complementary",
+        "Conditional",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Mutually exclusive events have zero probability of occurring together. They are in fact strongly dependent, since knowing one happened tells you the other did not.",
+    },
+    {
+      id: "q10",
+      text: "A disease affects 1 in 500 people, and a test is 98% accurate in both directions. A positive result implies roughly what probability of disease?",
+      options: ["About 98%", "About 9%", "About 50%", "About 2%"],
+      correctIndex: 1,
+      explanation:
+        "Per 100,000 there are about 196 true positives but around 1,996 false positives, since the 2% error rate applies to the very large healthy group. That ratio gives roughly 9%.",
+    },
+    {
+      id: "q11",
+      text: "A game pays 15 dollars with probability 0.2 and loses 3 dollars otherwise. What is the expected value?",
+      options: ["+0.60", "+2.40", "−0.30", "+12.00"],
+      correctIndex: 0,
+      explanation:
+        "Multiply each outcome by its probability and add: 15(0.2) + (−3)(0.8) = 3 − 2.4 = +0.60. A positive expected value means the game favors the player over the long run.",
+    },
+    {
+      id: "q12",
+      text: "Which condition is required for a binomial distribution?",
+      options: [
+        "The number of trials must be at least 30",
+        "The probability of success must be 0.5",
+        "The trials must be independent with a constant success probability",
+        "Sampling must be done without replacement",
+      ],
+      correctIndex: 2,
+      explanation:
+        "The BINS conditions require binary outcomes, independent trials, a fixed number of trials, and the same p throughout. Sampling without replacement violates independence and calls for a different distribution.",
+    },
+    {
+      id: "q13",
+      text: "For a binomial variable with n = 50 and p = 0.3, what is the standard deviation?",
+      options: ["15", "10.5", "3.24", "1.80"],
+      correctIndex: 2,
+      explanation:
+        "Using the square root of np(1 − p): 50 x 0.3 x 0.7 = 10.5, and the square root of 10.5 is about 3.24. The mean would be np = 15.",
+    },
+    {
+      id: "q14",
+      text: "A value has a z-score of −2.5. What does this mean?",
+      options: [
+        "The value is 2.5 units below the mean",
+        "The value is 2.5 standard deviations below the mean",
+        "The value is 2.5% below the mean",
+        "The value is impossible",
+      ],
+      correctIndex: 1,
+      explanation:
+        "A z-score counts standard deviations, and the negative sign places the value below the mean. Because the units cancel, z-scores let you compare values from different scales.",
+    },
+    {
+      id: "q15",
+      text: "According to the empirical rule, about what percentage of a normal distribution lies within one standard deviation of the mean?",
+      options: ["50%", "68%", "95%", "99.7%"],
+      correctIndex: 1,
+      explanation:
+        "The 68-95-99.7 rule assigns roughly 68% to the interval within one standard deviation, leaving about 16% in each tail.",
+    },
+    {
+      id: "q16",
+      text: "What does the Central Limit Theorem guarantee?",
+      options: [
+        "Populations become normal as they grow",
+        "Sample means are approximately normal for large n regardless of the population's shape",
+        "Every sample has the same mean as the population",
+        "Standard deviation shrinks as data is collected",
+      ],
+      correctIndex: 1,
+      explanation:
+        "The theorem concerns the sampling distribution of the mean, not the population itself, and its indifference to population shape is what makes normal-based inference so widely applicable.",
+    },
+    {
+      id: "q17",
+      text: "A population has sigma = 20. For samples of size 100, what is the standard error?",
+      options: ["20", "2", "0.2", "10"],
+      correctIndex: 1,
+      explanation:
+        "The standard error is sigma divided by the square root of n, so 20 / 10 = 2. Sample means vary far less than individual values.",
+    },
+    {
+      id: "q18",
+      text: "What does a 95% confidence interval actually mean?",
+      options: [
+        "95% of the data lies inside the interval",
+        "There is a 95% probability the parameter is in this particular interval",
+        "About 95% of intervals built this way would contain the parameter",
+        "The sample mean is accurate to within 5%",
+      ],
+      correctIndex: 2,
+      explanation:
+        "The confidence level describes the reliability of the procedure across repeated samples. Since the parameter is a fixed number, it is either inside a given interval or not, with no probability involved.",
+    },
+    {
+      id: "q19",
+      text: "Rejecting a null hypothesis that is actually true is which kind of error?",
+      options: ["Type I", "Type II", "Sampling error", "Bias"],
+      correctIndex: 0,
+      explanation:
+        "A Type I error is a false positive, claiming an effect that does not exist, and its rate is set by alpha. Missing a real effect is the Type II error.",
+    },
+    {
+      id: "q20",
+      text: "Ice cream sales and drowning deaths are strongly correlated. What does this demonstrate?",
+      options: [
+        "Correlation can arise from a confounding variable rather than causation",
+        "Ice cream consumption is dangerous near water",
+        "The correlation coefficient was calculated incorrectly",
+        "Drowning rates determine ice cream demand",
+      ],
+      correctIndex: 0,
+      explanation:
+        "Hot weather independently raises both swimming activity and ice cream sales, creating an association with no causal link between them. This is the standard illustration of confounding.",
+    },
+  ]}
+/>

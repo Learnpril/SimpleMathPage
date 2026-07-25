@@ -1,0 +1,114 @@
+---
+/**
+ * DataTypesTree — the classification of data: categorical versus quantitative,
+ * then discrete versus continuous, with the levels of measurement beneath.
+ */
+const w = 540;
+const h = 300;
+const bw = 132;
+const bh = 40;
+// Leaf and strip boxes are 40 tall so a label and its note can sit on
+// separate lines with real space between them
+const leafH = 40;
+const rootX = (w - 150) / 2;
+---
+
+<figure
+  class="dtt"
+  role="img"
+  aria-label="Tree classifying data into categorical (nominal and ordinal) and quantitative (discrete and continuous, with interval and ratio levels)"
+>
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    {/* Root */}
+    <rect x={rootX} y="12" width="150" height={bh} rx="7" class="dtt-box dtt-grey" />
+    <text x={rootX + 75} y="37" class="dtt-lbl dtt-t-grey" font-size="13" font-weight="bold" text-anchor="middle">Data</text>
+
+    {/* Root to the two branches */}
+    <line x1={rootX + 75} y1={12 + bh} x2="130" y2="78" class="dtt-link" />
+    <line x1={rootX + 75} y1={12 + bh} x2="410" y2="78" class="dtt-link" />
+
+    {/* Categorical */}
+    <rect x="64" y="80" width={bw} height={bh} rx="7" class="dtt-box dtt-blue" />
+    <text x={64 + bw / 2} y="99" class="dtt-lbl dtt-t-blue" font-size="12" font-weight="bold" text-anchor="middle">Categorical</text>
+    <text x={64 + bw / 2} y="113" class="dtt-sub" font-size="9.5" text-anchor="middle">which group</text>
+
+    {/* Quantitative */}
+    <rect x="344" y="80" width={bw} height={bh} rx="7" class="dtt-box dtt-green" />
+    <text x={344 + bw / 2} y="99" class="dtt-lbl dtt-t-green" font-size="12" font-weight="bold" text-anchor="middle">Quantitative</text>
+    <text x={344 + bw / 2} y="113" class="dtt-sub" font-size="9.5" text-anchor="middle">how much</text>
+
+    {/* Categorical children */}
+    <line x1="130" y1="120" x2="72" y2="164" class="dtt-link" />
+    <line x1="130" y1="120" x2="188" y2="164" class="dtt-link" />
+    <rect x="18" y="164" width="108" height={leafH} rx="6" class="dtt-box dtt-blue-dim" />
+    <text x="72" y="181" class="dtt-leaf dtt-t-blue" font-size="11" text-anchor="middle">Nominal</text>
+    <text x="72" y="197" class="dtt-sub" font-size="9.5" text-anchor="middle">no order</text>
+    <rect x="134" y="164" width="108" height={leafH} rx="6" class="dtt-box dtt-blue-dim" />
+    <text x="188" y="181" class="dtt-leaf dtt-t-blue" font-size="11" text-anchor="middle">Ordinal</text>
+    <text x="188" y="197" class="dtt-sub" font-size="9.5" text-anchor="middle">ordered</text>
+
+    {/* Quantitative children */}
+    <line x1="410" y1="120" x2="352" y2="164" class="dtt-link" />
+    <line x1="410" y1="120" x2="468" y2="164" class="dtt-link" />
+    <rect x="298" y="164" width="108" height={leafH} rx="6" class="dtt-box dtt-green-dim" />
+    <text x="352" y="181" class="dtt-leaf dtt-t-green" font-size="11" text-anchor="middle">Discrete</text>
+    <text x="352" y="197" class="dtt-sub" font-size="9.5" text-anchor="middle">countable</text>
+    <rect x="414" y="164" width="108" height={leafH} rx="6" class="dtt-box dtt-green-dim" />
+    <text x="468" y="181" class="dtt-leaf dtt-t-green" font-size="11" text-anchor="middle">Continuous</text>
+    <text x="468" y="197" class="dtt-sub" font-size="9.5" text-anchor="middle">measurable</text>
+
+    {/* Levels of measurement strip */}
+    <text x={w / 2} y="228" class="dtt-strip-title" font-size="10.5" text-anchor="middle">
+      Levels of measurement, each adding one capability
+    </text>
+    {[
+      { x: 30, label: "Nominal", note: "mode only" },
+      { x: 160, label: "Ordinal", note: "+ median" },
+      { x: 290, label: "Interval", note: "+ mean" },
+      { x: 420, label: "Ratio", note: "+ ratios" },
+    ].map((s, i) => (
+      <g>
+        <rect x={s.x} y="238" width="94" height={leafH} rx="5" class="dtt-box dtt-orange" />
+        <text x={s.x + 47} y="255" class="dtt-leaf dtt-t-orange" font-size="10.5" text-anchor="middle">{s.label}</text>
+        <text x={s.x + 47} y="271" class="dtt-sub" font-size="9.5" text-anchor="middle">{s.note}</text>
+        {i < 3 && <text x={s.x + 111} y="262" class="dtt-plus" font-size="12" text-anchor="middle">›</text>}
+      </g>
+    ))}
+
+    <text x={w / 2} y="294" class="dtt-foot" font-size="9.5" text-anchor="middle">
+      A true zero is what separates ratio from interval, and it is what makes “twice as much” meaningful
+    </text>
+  </svg>
+</figure>
+
+<style>
+  .dtt { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .dtt svg { width:100%; max-width:100%; height:auto; }
+  .dtt-box { fill:none; stroke-width:2; }
+  .dtt-grey { stroke:#888; }
+  .dtt-blue { stroke:#58a6ff; }
+  .dtt-blue-dim { stroke:#58a6ff; stroke-width:1.4; }
+  .dtt-green { stroke:#7ee787; }
+  .dtt-green-dim { stroke:#7ee787; stroke-width:1.4; }
+  .dtt-orange { stroke:#f0883e; stroke-width:1.4; }
+  .dtt-lbl, .dtt-leaf { font-family:'Libre Baskerville',Georgia,serif; }
+  .dtt-t-grey { fill:#bbb; }
+  .dtt-t-blue { fill:#58a6ff; }
+  .dtt-t-green { fill:#7ee787; }
+  .dtt-t-orange { fill:#f0883e; }
+  .dtt-sub { fill:#888; font-family:'Libre Baskerville',Georgia,serif; font-style:italic; }
+  .dtt-link { stroke:#888; stroke-width:1.3; }
+  .dtt-plus { fill:#888; font-family:'Libre Baskerville',Georgia,serif; }
+  .dtt-strip-title { fill:#f0883e; font-family:'Libre Baskerville',Georgia,serif; font-style:italic; }
+  .dtt-foot { fill:#888; font-family:'Libre Baskerville',Georgia,serif; font-style:italic; }
+  :global([data-theme="light"]) .dtt-grey { stroke:#666; }
+  :global([data-theme="light"]) .dtt-blue, :global([data-theme="light"]) .dtt-blue-dim { stroke:#0550ae; }
+  :global([data-theme="light"]) .dtt-green, :global([data-theme="light"]) .dtt-green-dim { stroke:#116329; }
+  :global([data-theme="light"]) .dtt-orange { stroke:#b35900; }
+  :global([data-theme="light"]) .dtt-t-grey { fill:#444; }
+  :global([data-theme="light"]) .dtt-t-blue { fill:#0550ae; }
+  :global([data-theme="light"]) .dtt-t-green { fill:#116329; }
+  :global([data-theme="light"]) .dtt-t-orange { fill:#b35900; }
+  :global([data-theme="light"]) .dtt-link { stroke:#555; }
+  :global([data-theme="light"]) .dtt-strip-title { fill:#b35900; }
+</style>

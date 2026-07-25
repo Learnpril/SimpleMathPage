@@ -1,0 +1,291 @@
+---
+title: Measures of Center
+description: Mean, median, and mode, plus how to choose between them when data is skewed
+sidebar:
+  order: 4
+---
+
+import Quiz from "../../../components/Quiz.astro";
+import CenterOnSkew from "../../../components/CenterOnSkew.astro";
+import SymbolKey from "../../../components/SymbolKey.astro";
+
+## What You'll Learn
+
+In this lesson you'll learn to compute the mean, median, and mode, understand which one resists outliers, and know which to report for a given shape of data. "Average" is ambiguous, and this lesson is about being precise instead.
+
+<SymbolKey
+  items={[
+    {
+      sym: "x̄",
+      read: "x-bar, the sample mean",
+      note: "the mean of your collected data",
+    },
+    {
+      sym: "μ",
+      read: "mu, the population mean",
+      note: "the mean of the entire population",
+    },
+    {
+      sym: "Σx",
+      read: "the sum of all the x values",
+      note: "capital sigma means “add them all up”",
+    },
+    { sym: "n", read: "the sample size", note: "how many values you have" },
+  ]}
+/>
+
+## The Concept
+
+### The mean
+
+The **mean** is the total divided by the count.
+
+$$
+\bar{x} = \frac{\sum x}{n}
+$$
+
+Read the top as "add up every value" and the bottom as "how many there are."
+
+For 4, 7, 9, 12:
+
+$$
+\bar{x} = \frac{4 + 7 + 9 + 12}{4} = \frac{32}{4} = 8
+$$
+
+The mean is the **balance point** of the data. If you put the values on a seesaw, the mean is where it balances. That's a useful mental image, because it explains the mean's weakness: a single value far out on one end tilts the whole thing.
+
+### The median
+
+The **median** is the middle value when the data is sorted.
+
+1. Sort the values.
+2. If $n$ is **odd**, the median is the middle one, at position $\frac{n+1}{2}$.
+3. If $n$ is **even**, average the two middle values.
+
+For 3, 7, 8, 11, 15 (five values): the middle is the 3rd, so the median is **8**.
+
+For 3, 7, 8, 11 (four values): average the middle two, $\frac{7+8}{2} = 7.5$.
+
+**You must sort first.** Forgetting to sort is the single most common median error.
+
+The median is a **positional** measure. It only cares about rank, not magnitude, which is exactly why it shrugs off extreme values.
+
+### The mode
+
+The **mode** is the most frequently occurring value.
+
+For 2, 3, 3, 5, 7, 7, 7, 9: the mode is **7**.
+
+A dataset can have:
+
+- **One mode** (unimodal)
+- **Two modes** (bimodal) if two values tie for most frequent
+- **No mode** if every value appears exactly once
+
+The mode is the only measure of center that works for **categorical** data. The "average" favorite color is meaningless, but the most common one isn't.
+
+### Resistance to outliers
+
+An **outlier** is a value far from the rest. How each measure handles one is the practical heart of this lesson.
+
+Take five salaries: 40k, 45k, 50k, 55k, 60k.
+
+$$
+\bar{x} = \frac{250{,}000}{5} = 50{,}000 \qquad \text{median} = 50{,}000
+$$
+
+Now the boss joins with a 1 million salary:
+
+$$
+\bar{x} = \frac{1{,}250{,}000}{6} = 208{,}333 \qquad \text{median} = \frac{50{,}000 + 55{,}000}{2} = 52{,}500
+$$
+
+The mean more than quadrupled. The median moved by 5%.
+
+The mean is **sensitive** to outliers; the median is **resistant** (or robust). Saying "the average salary here is 208k" is technically true and deeply misleading, since five of the six people earn a quarter of that.
+
+### Choosing between them
+
+<CenterOnSkew />
+
+The relationship between mean and median tells you the shape:
+
+- **Symmetric** - mean ≈ median. Either one works; the mean is more common because it uses all the information.
+- **Right-skewed** - mean > median. The tail pulls the mean up. **Report the median.**
+- **Left-skewed** - mean < median. **Report the median.**
+
+The rule of thumb: **the mean gets dragged toward the tail.** So whichever measure is more extreme points to where the tail is.
+
+When to use each:
+
+- **Mean** - symmetric quantitative data, and any time you need the total (total payroll is $n \times \bar{x}$).
+- **Median** - skewed data, or data with outliers. Income, house prices, response times.
+- **Mode** - categorical data, or when you want the most typical single value.
+
+### Weighted mean
+
+When values carry different importance, weight them:
+
+$$
+\bar{x}_w = \frac{\sum (w \cdot x)}{\sum w}
+$$
+
+A course grade where homework is 30%, midterm 30%, final 40% is a weighted mean. So is a GPA, weighted by credit hours.
+
+## Worked Examples
+
+**Example 1: All three measures.**
+
+Data: 12, 15, 11, 15, 18, 20, 15, 13
+
+**Solution.**
+
+Sort first: 11, 12, 13, 15, 15, 15, 18, 20
+
+**Mean:**
+
+$$
+\bar{x} = \frac{11+12+13+15+15+15+18+20}{8} = \frac{119}{8} = 14.875
+$$
+
+**Median:** $n = 8$ is even, so average positions 4 and 5, both 15:
+
+$$
+\text{median} = \frac{15+15}{2} = 15
+$$
+
+**Mode:** 15 appears three times, more than any other. **Mode = 15.**
+
+All three cluster near 15, which suggests a roughly symmetric distribution.
+
+**Example 2: The outlier effect.**
+
+Seven house prices in thousands: 180, 195, 210, 220, 235, 250, 4000.
+
+**Solution.**
+
+$$
+\bar{x} = \frac{180+195+210+220+235+250+4000}{7} = \frac{5290}{7} \approx 755.7
+$$
+
+Median: $n = 7$ is odd, so position $\frac{7+1}{2} = 4$, giving **220**.
+
+The mean says 756k, but six of the seven houses cost under 251k. Only the mansion is anywhere near the mean, and nothing is _at_ it.
+
+**The median of 220 describes a typical house. The mean describes nothing that exists.** This is why real estate always reports medians.
+
+**Example 3: Median with an even count.**
+
+Data: 7, 3, 9, 4, 8, 6
+
+**Solution.** Sort: 3, 4, 6, 7, 8, 9
+
+$n = 6$, so average the 3rd and 4th values:
+
+$$
+\text{median} = \frac{6 + 7}{2} = 6.5
+$$
+
+Note the median doesn't have to be a value that appears in the data.
+
+**Example 4: Weighted mean.**
+
+A course grades homework 20%, two midterms 25% each, and the final 30%. A student scores 95 on homework, 78 and 84 on midterms, 88 on the final.
+
+**Solution.**
+
+$$
+\bar{x}_w = (0.20)(95) + (0.25)(78) + (0.25)(84) + (0.30)(88)
+$$
+
+$$
+= 19 + 19.5 + 21 + 26.4 = 85.9
+$$
+
+The weights already sum to 1, so no division is needed. Note the unweighted mean of the four scores would be 86.25, slightly different, because the weights shift emphasis toward the heavier midterms.
+
+**Example 5: Working backward from a mean.**
+
+Nine students averaged 82 on a test. A tenth student takes it and the average rises to 83. What did the tenth student score?
+
+**Solution.** The first nine scored a total of $9 \times 82 = 738$.
+
+For ten students to average 83, the total must be $10 \times 83 = 830$.
+
+$$
+830 - 738 = 92
+$$
+
+The tenth student scored **92**. This works because the mean and the total are interchangeable: $\text{total} = n \times \bar{x}$.
+
+**Example 6: Which to report?**
+
+A company's 100 employees have a mean salary of 95k and a median of 62k. Which should the recruiting page show, and what does the gap tell you?
+
+**Solution.** The mean far exceeds the median, so the distribution is strongly **right-skewed**. A small number of executives earn enough to lift the mean 33k above the middle.
+
+The **median of 62k** is the honest figure for "what would I likely earn." Advertising the 95k mean is a well-known way to be truthful and deceptive at once.
+
+## Real-World Applications
+
+Income and wealth statistics are the flagship case. Mean household wealth in many countries is several times the median, because wealth distributions have extraordinarily long right tails. Any argument built on mean wealth is describing a country that mostly doesn't exist, which is why economists work with medians and percentiles.
+
+Salary negotiations turn on this. "Average salary for this role" could be a mean inflated by a few senior outliers. Asking for the median, or better the range and quartiles, gets you a usable number.
+
+Server performance monitoring abandoned the mean entirely. Engineers track **p50, p95, and p99 latency** (the median and high percentiles) because mean response time hides the slow requests that actually annoy users. A mean of 100ms is consistent with most requests taking 50ms and a few taking 5 seconds.
+
+Sports averages are means and inherit the weakness. One extraordinary game can lift a season average enough to obscure typical performance, which is part of why advanced metrics report distributions.
+
+Real estate, as noted, is median by convention. So is the standard reporting of home price indices, precisely because a few luxury sales would otherwise swamp the signal.
+
+:::note[You've Got This]
+The mean is the balance point and the median is the middle position, and that difference explains everything else in this lesson. When a dataset has extreme values, the mean follows them and the median stays put. If you ever see mean and median far apart, that gap is itself information: it's telling you the data is skewed and that someone reporting only the mean may be hoping you don't ask.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="stats-measures-of-center"
+  questions={[
+    {
+      id: "q1",
+      text: "Find the median of 14, 9, 21, 6, 17.",
+      options: ["9", "13.4", "14", "17"],
+      correctIndex: 2,
+      explanation:
+        "Sorting gives 6, 9, 14, 17, 21, and with five values the median is the third one, which is 14. The value 13.4 is the mean, which is a different measure.",
+    },
+    {
+      id: "q2",
+      text: "Which measure of center is most resistant to outliers?",
+      options: ["The mean", "The range", "The median", "The weighted mean"],
+      correctIndex: 2,
+      explanation:
+        "The median depends only on position in the sorted order, so an extreme value shifts it very little. The mean incorporates every value's magnitude and gets pulled toward outliers.",
+    },
+    {
+      id: "q3",
+      text: "A dataset has a mean of 71 and a median of 84. What shape is the distribution?",
+      options: ["Right-skewed", "Symmetric", "Uniform", "Left-skewed"],
+      correctIndex: 3,
+      explanation:
+        "The mean is dragged toward the tail, and here it sits below the median, so the tail extends to the left. That makes the distribution left-skewed.",
+    },
+    {
+      id: "q4",
+      text: "Eight people have a mean age of 30. A ninth person joins and the mean becomes 32. How old is the ninth person?",
+      options: ["48", "34", "40", "32"],
+      correctIndex: 0,
+      explanation:
+        "The original total is 8 x 30 = 240, and the new total must be 9 x 32 = 288. The difference, 288 - 240 = 48, is the ninth person's age.",
+    },
+    {
+      id: "q5",
+      text: "Which measure of center can be used with categorical data such as favorite ice cream flavor?",
+      options: ["The mean", "The mode", "The median", "None of them"],
+      correctIndex: 1,
+      explanation:
+        "The mode is simply the most frequent category, which requires no arithmetic or ordering. The mean needs numeric values and the median needs a meaningful sort order, so neither applies to unordered categories.",
+    },
+  ]}
+/>

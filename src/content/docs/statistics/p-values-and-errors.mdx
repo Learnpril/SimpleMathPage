@@ -1,0 +1,297 @@
+---
+title: p-Values and Errors
+description: What a p-value really means, Type I and Type II errors, statistical power, and the replication crisis
+sidebar:
+  order: 18
+---
+
+import Quiz from "../../../components/Quiz.astro";
+import PValueTails from "../../../components/PValueTails.astro";
+import ErrorTypes from "../../../components/ErrorTypes.astro";
+
+## What You'll Learn
+
+In this lesson you'll learn the precise definition of a p-value and the misinterpretations to avoid, the two kinds of error a test can make, what statistical power is, and why so many published findings fail to replicate.
+
+## The Concept
+
+### What a p-value is
+
+> A **p-value** is the probability of observing data at least as extreme as yours, **assuming the null hypothesis is true.**
+
+Every word in that definition is load-bearing, especially the conditional clause at the end. The p-value is computed _in a world where nothing is happening_, and it tells you how unusual your data would be in that world.
+
+$$
+p = P(\text{data this extreme or more} \mid H_0 \text{ true})
+$$
+
+A small p-value means your data would be surprising if the null were true, which is grounds for doubting the null.
+
+<PValueTails />
+
+For a two-tailed test, "as extreme" counts both directions, so you add both tail areas. For a one-tailed test you use one tail. This is why a two-tailed p-value is double the one-tailed value for the same data.
+
+### What a p-value is not
+
+This list matters, because every item on it appears regularly in published work and press coverage.
+
+**Not the probability the null hypothesis is true.** The p-value conditions _on_ the null being true. It cannot also be a probability _about_ the null. That's the conditional-direction error from the Bayes lesson: $P(\text{data} \mid H_0) \neq P(H_0 \mid \text{data})$.
+
+**Not the probability your results are due to chance.** Same error restated.
+
+**Not a measure of effect size.** A tiny effect with a huge sample gives a small p-value. The p-value conflates effect size and sample size, which is exactly why it's a poor summary on its own.
+
+**Not the probability of replication.** A study with $p = 0.05$ does not have a 95% chance of replicating; the real figure is typically much lower.
+
+**Not a bright line at 0.05.** There is no meaningful difference between $p = 0.049$ and $p = 0.051$, yet one gets published as a discovery and the other often doesn't. The threshold is a convention, not a law of nature.
+
+### The two errors
+
+Any test can go wrong in two directions.
+
+<ErrorTypes />
+
+**Type I error (false positive)** - rejecting a true null. You claim an effect that isn't there.
+
+$$
+P(\text{Type I error}) = \alpha
+$$
+
+This is exactly what $\alpha$ controls. Setting $\alpha = 0.05$ accepts a 5% false positive rate among cases where the null is true.
+
+**Type II error (false negative)** - failing to reject a false null. A real effect goes undetected.
+
+$$
+P(\text{Type II error}) = \beta
+$$
+
+The mnemonic that sticks: the boy who cried wolf. First he cried wolf when there was none, a **Type I** error. Then the villagers ignored a real wolf, a **Type II** error.
+
+### The tradeoff
+
+For a fixed sample size, **reducing one error type increases the other.**
+
+Lowering $\alpha$ from 0.05 to 0.01 makes false positives rarer but makes the test harder to trigger, so real effects get missed more often. There's no setting that minimizes both. The only way to reduce both simultaneously is **a larger sample.**
+
+Which error is worse depends entirely on context:
+
+- **Medical screening** - a Type II error (missing a disease) is usually worse, so tests are tuned toward sensitivity, accepting more false positives.
+- **Criminal justice** - a Type I error (convicting the innocent) is treated as far worse, hence "beyond reasonable doubt," a very small $\alpha$.
+- **Spam filtering** - a Type I error (a real email marked spam) is worse than a Type II (spam reaching the inbox), so filters err toward letting mail through.
+
+### Statistical power
+
+**Power** is the probability of correctly detecting a real effect:
+
+$$
+\text{Power} = 1 - \beta
+$$
+
+It answers: if the effect is real, how likely is my study to find it? The usual target is 0.80, meaning an 80% chance of detection.
+
+Power increases with:
+
+- **Larger sample size** - the main lever you control.
+- **Larger true effect** - big effects are easy to spot.
+- **Smaller variability** - less noise, clearer signal.
+- **Larger $\alpha$** - but that trades against false positives.
+
+**Underpowered studies are a serious problem.** A study with 20% power fails to find a real effect 80% of the time. Worse, when an underpowered study _does_ reach significance, the effect estimate is usually inflated, because only unusually large sample estimates could clear the threshold. This is called the **winner's curse**.
+
+A **power analysis** before collecting data determines the sample size needed to detect an effect worth caring about. Doing it afterwards is far less useful.
+
+### The replication crisis
+
+Several forces from this lesson combine into a real problem in science.
+
+**Publication bias.** Journals prefer significant results. Null findings sit in file drawers, so the published literature overrepresents positive results.
+
+**p-hacking.** Trying many analyses, subgroups, or outcome variables until something crosses 0.05. With enough attempts, chance guarantees a "finding." Testing 20 independent hypotheses at $\alpha = 0.05$ yields about one false positive on average.
+
+**HARKing** (Hypothesizing After Results are Known). Observing a pattern, then presenting it as if predicted in advance. The exploratory analysis was legitimate; presenting it as confirmatory is not.
+
+**Underpowered studies.** Small studies that happen to find significance report exaggerated effects, which then fail to replicate.
+
+Fixes now gaining traction include **preregistration** (publishing your hypotheses and analysis plan before collecting data), **registered reports** (peer review of the design before results exist), required **effect sizes and confidence intervals**, larger collaborative samples, and journals accepting null results.
+
+None of this means statistics is broken. It means the tools require discipline, and that a single significant result is weaker evidence than it was long treated as being.
+
+## Worked Examples
+
+**Example 1: Interpret a p-value correctly.**
+
+A test gives $p = 0.03$. Which statements are correct?
+
+1. There's a 3% probability the null hypothesis is true.
+2. If the null were true, data this extreme would occur about 3% of the time.
+3. There's a 97% probability the alternative is true.
+4. At $\alpha = 0.05$, we reject the null.
+
+**Solution.**
+
+1. **Incorrect.** The p-value assumes the null is true; it can't measure the probability of that assumption.
+2. **Correct.** This is the definition.
+3. **Incorrect.** Same conditional-direction error as #1.
+4. **Correct.** Since $0.03 \leq 0.05$, reject.
+
+**Example 2: One-tailed versus two-tailed.**
+
+A test statistic gives a one-tailed p-value of 0.04. What's the two-tailed p-value, and does the conclusion change at $\alpha = 0.05$?
+
+**Solution.**
+
+$$
+p_{\text{two-tailed}} = 2 \times 0.04 = 0.08
+$$
+
+One-tailed: $0.04 \leq 0.05$, reject.
+Two-tailed: $0.08 > 0.05$, fail to reject.
+
+**Same data, opposite conclusions.** This is precisely why the direction must be chosen before seeing the data. Switching to one-tailed after noticing the direction is a way of manufacturing significance.
+
+**Example 3: Identify the error type.**
+
+A drug has no real effect, but a trial concludes it works. Later, a genuinely effective drug is tested and the trial finds nothing. Name each error.
+
+**Solution.**
+
+First: rejecting a true null, so a **Type I error**, a false positive. An ineffective drug may reach market.
+
+Second: failing to reject a false null, so a **Type II error**, a false negative. A useful drug is abandoned.
+
+Both are costly, in different ways. Regulators generally weight Type I errors more heavily, since approving harmful or useless drugs is more visible than failing to approve good ones.
+
+**Example 4: Power and sample size.**
+
+A study has 45% power to detect an effect. What does that mean, and how would you improve it?
+
+**Solution.** If the effect is real, the study finds it only 45% of the time. It's more likely to miss than to detect, which makes the study a poor use of resources.
+
+$$
+\beta = 1 - 0.45 = 0.55
+$$
+
+so a 55% chance of a Type II error.
+
+To improve: **increase the sample size** (the primary lever), reduce measurement noise, or use a more efficient design such as paired measurements. Raising $\alpha$ would also raise power but at the cost of more false positives.
+
+**Example 5: The multiple comparisons problem.**
+
+A researcher tests 20 independent hypotheses at $\alpha = 0.05$ and finds one significant result. How impressed should you be?
+
+**Solution.** Not very. If all 20 nulls were true, the expected number of significant results by chance is
+
+$$
+20 \times 0.05 = 1
+$$
+
+Finding exactly one significant result is precisely what pure chance predicts.
+
+The probability of at least one false positive is
+
+$$
+1 - (0.95)^{20} \approx 0.64
+$$
+
+So there was a 64% chance of this happening with no real effects at all. Corrections exist, such as the Bonferroni adjustment (test each at $\alpha / 20 = 0.0025$), and reporting how many tests were run is essential.
+
+**Example 6: Why $p = 0.05$ doesn't mean 95% replication.**
+
+A study reports $p = 0.045$. What's the chance a repeat study finds significance?
+
+**Solution.** Much lower than 95%, and often near 50%.
+
+Here's the intuition: a p-value just under the threshold means the observed effect barely cleared it. A replication draws a new sample, whose estimate will land above or below the original roughly symmetrically. If the original was borderline, about half the replications will fall short.
+
+Estimates of replication probability for a $p \approx 0.05$ result typically land around 50%, not 95%. Conflating the confidence level with replication probability is one reason the replication crisis surprised people.
+
+## Real-World Applications
+
+Drug regulation is the most consequential arena. Regulators demand two independent significant trials rather than one, precisely because a single $p < 0.05$ is weak evidence. Publication of all trials, including negative ones, is now mandated in many jurisdictions after cases where unfavorable results went unreported.
+
+Psychology drove the replication crisis into public view. Large replication projects found that only about a third to a half of published findings replicated, prompting widespread reform toward preregistration and larger samples.
+
+A/B testing in industry faces the multiple comparisons problem constantly. A company running hundreds of simultaneous experiments will generate false positives by the dozen at $\alpha = 0.05$, so mature testing platforms apply corrections and require pre-specified sample sizes.
+
+Genomics tests hundreds of thousands of genetic variants at once, which makes uncorrected p-values useless. The field adopted genome-wide significance thresholds around $5 \times 10^{-8}$ specifically to control the false positive rate across so many tests.
+
+Machine learning has its own version: evaluating many model variants on the same test set effectively runs many hypothesis tests, which is why held-out validation sets and final untouched test sets exist.
+
+Legal and policy decisions inherit these tradeoffs. Environmental regulation involves choosing which error to risk: acting on a harm that isn't real, or failing to act on one that is.
+
+:::note[You've Got This]
+The p-value definition is worth memorizing word for word, because almost every misuse comes from dropping the conditional clause. It's the probability of the data given the null, not the probability of the null given the data. Those are different questions, and Bayes' theorem is what separates them. For the error types, the boy who cried wolf covers both cases in one story. And take the replication material seriously: it's not a reason to distrust statistics, it's a reason to treat any single significant finding as a starting point rather than a conclusion.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="stats-p-values-and-errors"
+  questions={[
+    {
+      id: "q1",
+      text: "What is the correct definition of a p-value?",
+      options: [
+        "The probability that the null hypothesis is true",
+        "The probability of observing data at least this extreme, assuming the null hypothesis is true",
+        "The probability that the results were caused by chance",
+        "The probability that the study will replicate",
+      ],
+      correctIndex: 1,
+      explanation:
+        "The p-value is computed in a world where the null holds, so it is conditional on the null rather than a statement about it. Reversing that conditioning is the most common misinterpretation in all of statistics.",
+    },
+    {
+      id: "q2",
+      text: "A researcher rejects a null hypothesis that is actually true. What kind of error is this?",
+      options: [
+        "Type I error, a false positive",
+        "Type II error, a false negative",
+        "A sampling error",
+        "No error, since the decision followed the rules",
+      ],
+      correctIndex: 0,
+      explanation:
+        "Claiming an effect that does not exist is a false positive, controlled by the significance level alpha. Missing a real effect would be the Type II error instead.",
+    },
+    {
+      id: "q3",
+      text: "What is statistical power?",
+      options: [
+        "The probability of a Type I error",
+        "The size of the effect being studied",
+        "The probability of correctly detecting an effect that is real",
+        "The proportion of variance explained by the model",
+      ],
+      correctIndex: 2,
+      explanation:
+        "Power equals 1 minus beta, the chance of avoiding a false negative when a genuine effect exists. Studies are commonly designed for 80% power, and the main way to raise it is a larger sample.",
+    },
+    {
+      id: "q4",
+      text: "For a fixed sample size, what happens when you lower alpha from 0.05 to 0.01?",
+      options: [
+        "Both error types become less likely",
+        "Type I errors become less likely but Type II errors become more likely",
+        "Type II errors become less likely but Type I errors become more likely",
+        "Neither error rate changes",
+      ],
+      correctIndex: 1,
+      explanation:
+        "A stricter threshold makes false positives rarer but also makes the test harder to trigger, so real effects are missed more often. Reducing both error types at once requires collecting more data.",
+    },
+    {
+      id: "q5",
+      text: "A researcher runs 20 independent tests at alpha = 0.05 and reports the one significant result. Why is this problematic?",
+      options: [
+        "Because 20 tests is too few to be meaningful",
+        "Because alpha should always be 0.01 for multiple tests",
+        "Because roughly one false positive is expected by chance when 20 true nulls are tested at 0.05",
+        "Because independent tests cannot be combined",
+      ],
+      correctIndex: 2,
+      explanation:
+        "With 20 tests at a 5% error rate, the expected number of chance significant results is exactly one, so the finding is what pure randomness predicts. Reporting only the winner without disclosing the other 19 tests is p-hacking.",
+    },
+  ]}
+/>

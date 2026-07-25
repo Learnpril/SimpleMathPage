@@ -1,0 +1,278 @@
+---
+title: Z-Scores and the Empirical Rule
+description: Standardizing values, the 68-95-99.7 rule, and comparing scores across different scales
+sidebar:
+  order: 14
+---
+
+import Quiz from "../../../components/Quiz.astro";
+import EmpiricalRule from "../../../components/EmpiricalRule.astro";
+import SymbolKey from "../../../components/SymbolKey.astro";
+
+## What You'll Learn
+
+In this lesson you'll learn to compute a z-score and interpret it, apply the 68-95-99.7 rule, use z-scores to compare values measured on different scales, and work backwards from a percentile to a raw value.
+
+<SymbolKey
+  items={[
+    {
+      sym: "z",
+      read: "the z-score",
+      note: "how many standard deviations a value sits from the mean",
+    },
+    {
+      sym: "N(0, 1)",
+      read: "the standard normal distribution",
+      note: "mean 0, standard deviation 1",
+    },
+    {
+      sym: "μ ± σ",
+      read: "mu plus or minus sigma",
+      note: "one standard deviation either side of the mean",
+    },
+  ]}
+/>
+
+## The Concept
+
+### The z-score
+
+A **z-score** converts a raw value into "how many standard deviations from the mean."
+
+$$
+z = \frac{x - \mu}{\sigma}
+$$
+
+The numerator is the deviation; dividing by $\sigma$ expresses it in standard-deviation units.
+
+Interpretation is direct:
+
+- $z = 0$ means exactly at the mean.
+- $z = +1.5$ means 1.5 standard deviations **above** the mean.
+- $z = -2$ means 2 standard deviations **below** the mean.
+
+Because the units cancel, a z-score is **dimensionless**. That's what makes it powerful: it lets you compare things measured on completely different scales.
+
+### Standardizing
+
+Converting every value in a dataset to a z-score is called **standardizing**. The result always has mean 0 and standard deviation 1, regardless of the original scale.
+
+If the original data was normal, the standardized version is the **standard normal distribution**, written $N(0,1)$. Historically this mattered enormously, because one table of standard normal values served every normal distribution. Software has made the tables obsolete, but the concept remains central.
+
+### The empirical rule
+
+For **approximately normal** distributions, the 68-95-99.7 rule gives you fast estimates.
+
+<EmpiricalRule />
+
+$$
+\mu \pm 1\sigma \approx 68\% \quad\quad \mu \pm 2\sigma \approx 95\% \quad\quad \mu \pm 3\sigma \approx 99.7\%
+$$
+
+Consequences worth memorizing:
+
+- About **32%** of values fall outside 1σ, so 16% in each tail.
+- About **5%** fall outside 2σ, so 2.5% in each tail.
+- About **0.3%** fall outside 3σ, roughly 1 in 370.
+
+That 2.5%-per-tail figure is where the conventional 95% confidence level comes from, and it's why $z = \pm 1.96$ (very nearly 2) appears constantly in later lessons.
+
+The rule requires **approximate normality**. Applying it to skewed data gives wrong answers. For any distribution whatsoever, Chebyshev's inequality gives a weaker but universally valid bound: at least 75% within 2σ and at least 89% within 3σ.
+
+### Using z-scores to compare
+
+This is the everyday application. Two values from different distributions become comparable once standardized.
+
+A score of 85 means nothing until you know the mean and spread. A z-score of $+1.8$ is immediately interpretable as "well above typical."
+
+### Unusual values
+
+A common convention treats $|z| > 2$ as unusual and $|z| > 3$ as very unusual. This connects to outlier detection: the z-score method flags values beyond 3σ, complementing the IQR method from the boxplot lesson.
+
+The two methods disagree sometimes, and that's informative. The z-score approach uses the mean and standard deviation, which are themselves distorted by outliers, so a single extreme value can inflate $\sigma$ enough to hide itself. The IQR method, being positional, doesn't have that problem. For skewed data prefer IQR; for roughly normal data either works.
+
+### Working backwards
+
+Sometimes you know the percentile and need the value. Rearranging:
+
+$$
+x = \mu + z\sigma
+$$
+
+Find the z-score for your target percentile, then convert to the original units.
+
+Common z-values worth knowing:
+
+| Percentile |  $z$  |
+| :--------: | :---: |
+|    90th    | 1.28  |
+|    95th    | 1.645 |
+|   97.5th   | 1.96  |
+|    99th    | 2.33  |
+
+## Worked Examples
+
+**Example 1: Compute a z-score.**
+
+Test scores are normal with $\mu = 75$, $\sigma = 8$. Find the z-score for a score of 87.
+
+**Solution.**
+
+$$
+z = \frac{87 - 75}{8} = \frac{12}{8} = 1.5
+$$
+
+The score is 1.5 standard deviations above the mean. Under the empirical rule, that's above average but not unusual.
+
+**Example 2: A negative z-score.**
+
+Same distribution. Find the z-score for 63.
+
+**Solution.**
+
+$$
+z = \frac{63 - 75}{8} = \frac{-12}{8} = -1.5
+$$
+
+The same distance below the mean. Sign tells direction, magnitude tells distance.
+
+**Example 3: Comparing across scales.**
+
+A student scores 1320 on the SAT ($\mu = 1050$, $\sigma = 200$) and 29 on the ACT ($\mu = 21$, $\sigma = 5$). Which performance was stronger?
+
+**Solution.**
+
+$$
+z_{\text{SAT}} = \frac{1320 - 1050}{200} = \frac{270}{200} = 1.35
+$$
+
+$$
+z_{\text{ACT}} = \frac{29 - 21}{5} = \frac{8}{5} = 1.60
+$$
+
+The **ACT score is stronger** relative to its distribution, despite 29 looking small next to 1320. Raw scores from different scales cannot be compared; standardized ones can.
+
+**Example 4: Applying the empirical rule.**
+
+Adult male heights are approximately normal with $\mu = 175$ cm, $\sigma = 7$ cm. Find the proportion between 168 and 182 cm, and the proportion above 189 cm.
+
+**Solution.**
+
+168 and 182 are exactly $\mu \pm 1\sigma$, so about **68%**.
+
+For 189: $z = \frac{189-175}{7} = 2$. Values beyond $2\sigma$ account for about 5%, split evenly, so about **2.5%** are above 189 cm.
+
+**Example 5: Working backwards.**
+
+Using the height distribution above, how tall must a man be to reach the 95th percentile?
+
+**Solution.** The 95th percentile has $z = 1.645$.
+
+$$
+x = 175 + 1.645(7) = 175 + 11.5 = 186.5 \text{ cm}
+$$
+
+**Example 6: Where the two outlier methods disagree.**
+
+A dataset has values clustered near 50 plus one value of 200. $\bar{x} = 60$, $s = 45$. Does the z-score method flag the 200?
+
+**Solution.**
+
+$$
+z = \frac{200 - 60}{45} \approx 3.1
+$$
+
+Just barely over 3, so it's flagged, but only just. The problem is that the 200 itself inflated both $\bar{x}$ and $s$, which pulled the threshold out toward the outlier. This is called **masking**.
+
+The IQR method wouldn't have this issue, since quartiles ignore extreme values entirely. When you suspect outliers are distorting your summary statistics, the positional methods are more trustworthy.
+
+**Example 7: When the rule doesn't apply.**
+
+Household incomes have $\mu = 70{,}000$ and $\sigma = 55{,}000$. Does about 68% of households earn between 15,000 and 125,000?
+
+**Solution.** Probably not, because income is strongly right-skewed, not normal, and the empirical rule assumes approximate normality.
+
+Notice also that $\mu - 2\sigma = -40{,}000$, a negative income, which is impossible. That's the same warning sign from the previous lesson: when the mean is less than two or three standard deviations above a hard floor of zero, normality is doubtful.
+
+For this data you'd report the median and quartiles instead.
+
+## Real-World Applications
+
+Standardized test reporting converts raw scores to percentiles using exactly this machinery. Your percentile is a statement about your z-score relative to the reference population.
+
+Medical lab results come with reference ranges typically set at the central 95%, which is $\mu \pm 2\sigma$ under normality. That construction guarantees about 1 in 20 healthy people gets an out-of-range result on any given test, which is why a single borderline value usually prompts a repeat rather than a diagnosis.
+
+Manufacturing control charts plot measurements with lines at $\pm 2\sigma$ and $\pm 3\sigma$. A point beyond 3σ triggers investigation, because under normality that should happen only about once in 370 observations, so it suggests the process actually changed.
+
+Growth charts express a child's height and weight as percentiles, which pediatricians track over time. A consistent percentile is reassuring; a rapid drop across percentiles is the signal worth attention.
+
+In machine learning, standardizing features is a routine preprocessing step, because algorithms that use distances (k-nearest neighbors, support vector machines) or gradient descent behave badly when features have wildly different scales. A feature measured in the thousands would otherwise dominate one measured in decimals.
+
+Finance uses the z-score idea for risk metrics, and the "sigma event" language for market moves comes directly from here, along with the well-founded criticism that returns have fatter tails than normality implies.
+
+:::note[You've Got This]
+The z-score formula is short and does a lot: subtract the mean to center, divide by sigma to rescale. What you get is a pure number that means the same thing on every scale, which is why it lets you compare an SAT score to an ACT score. Commit 68-95-99.7 to memory since it makes most estimation questions instant, but stay alert to the assumption behind it. If the data is skewed, or if zero sits within two standard deviations of the mean, reach for medians and quartiles instead.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="stats-z-scores-and-the-empirical-rule"
+  questions={[
+    {
+      id: "q1",
+      text: "A distribution has mean 60 and standard deviation 12. What is the z-score of the value 78?",
+      options: ["1.5", "18", "0.67", "2.0"],
+      correctIndex: 0,
+      explanation:
+        "Subtract the mean and divide by the standard deviation: (78 − 60) / 12 = 18 / 12 = 1.5. The value sits one and a half standard deviations above the mean.",
+    },
+    {
+      id: "q2",
+      text: "According to the empirical rule, approximately what percentage of values in a normal distribution fall within two standard deviations of the mean?",
+      options: ["68%", "75%", "95%", "99.7%"],
+      correctIndex: 2,
+      explanation:
+        "The 68-95-99.7 rule assigns about 95% of the area to the interval from mu minus 2 sigma to mu plus 2 sigma. That leaves roughly 2.5% in each tail.",
+    },
+    {
+      id: "q3",
+      text: "Student A scores 88 on a test with mean 80 and sd 4. Student B scores 70 on a test with mean 60 and sd 8. Who did better relative to their group?",
+      options: [
+        "Student A, with a z-score of 2.0",
+        "Student B, with a z-score of 1.25",
+        "They performed identically",
+        "Student B, because the standard deviation was larger",
+      ],
+      correctIndex: 0,
+      explanation:
+        "Student A's z-score is (88 − 80) / 4 = 2.0 while Student B's is (70 − 60) / 8 = 1.25. Standardizing is what makes scores from different scales comparable.",
+    },
+    {
+      id: "q4",
+      text: "After standardizing a dataset into z-scores, what are its mean and standard deviation?",
+      options: [
+        "Mean 1, standard deviation 0",
+        "Mean 0, standard deviation 1",
+        "Unchanged from the original data",
+        "Mean 50, standard deviation 10",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Subtracting the mean shifts the center to 0 and dividing by sigma rescales the spread to 1. This is precisely the standard normal distribution when the original data was normal.",
+    },
+    {
+      id: "q5",
+      text: "Why is the empirical rule inappropriate for household income data?",
+      options: [
+        "Income values are too large for z-scores",
+        "The rule only works for discrete variables",
+        "Income is strongly right-skewed rather than approximately normal",
+        "Income has no standard deviation",
+      ],
+      correctIndex: 2,
+      explanation:
+        "The 68-95-99.7 percentages come from the symmetric normal curve, and income has a long right tail that breaks that symmetry. A further clue is that mu minus two sigma often lands below zero, which is impossible for income.",
+    },
+  ]}
+/>

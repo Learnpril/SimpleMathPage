@@ -1,0 +1,319 @@
+---
+title: Introduction to Probability
+description: Sample spaces, events, and how to compute the probability of an outcome
+sidebar:
+  order: 7
+---
+
+import Quiz from "../../../components/Quiz.astro";
+import ProbabilityScale from "../../../components/ProbabilityScale.astro";
+import SampleSpaceDice from "../../../components/SampleSpaceDice.astro";
+import SymbolKey from "../../../components/SymbolKey.astro";
+
+## What You'll Learn
+
+In this lesson you'll learn what a sample space is, how to compute the probability of an event, the difference between theoretical and experimental probability, and why the "law of averages" as most people state it is wrong.
+
+<SymbolKey
+  items={[
+    {
+      sym: "S",
+      read: "the sample space",
+      note: "the set of every possible outcome",
+    },
+    {
+      sym: "P(A)",
+      read: "the probability of event A",
+      note: "a number from 0 to 1",
+    },
+    {
+      sym: "A'",
+      read: "not A, the complement of A",
+      note: "also written Aᶜ or Ā",
+    },
+    {
+      sym: "n(A)",
+      read: "the number of outcomes in A",
+      note: "a count, not a probability",
+    },
+  ]}
+/>
+
+## The Concept
+
+### Sample spaces and events
+
+An **experiment** is any process with an uncertain outcome. Rolling a die, flipping a coin, drawing a card.
+
+The **sample space** $S$ is the set of all possible outcomes.
+
+- One coin flip: $S = \{H, T\}$
+- One die roll: $S = \{1, 2, 3, 4, 5, 6\}$
+- Two coin flips: $S = \{HH, HT, TH, TT\}$
+
+An **event** is a subset of the sample space, meaning any collection of outcomes you care about. "Rolling an even number" is the event $\{2, 4, 6\}$.
+
+Getting the sample space right is most of the work. Almost every probability error traces back to miscounting the outcomes.
+
+### Computing probability
+
+When all outcomes are **equally likely**:
+
+$$
+P(A) = \frac{\text{number of outcomes in } A}{\text{total number of outcomes}} = \frac{n(A)}{n(S)}
+$$
+
+Rolling an even number: $P = \frac{3}{6} = \frac{1}{2}$.
+
+The equally-likely condition matters. This formula does **not** work for a weighted die or for outcomes that aren't symmetric.
+
+### The probability scale
+
+Every probability lands between 0 and 1.
+
+<ProbabilityScale />
+
+- $P(A) = 0$ means impossible.
+- $P(A) = 1$ means certain.
+- $P(A) = 0.5$ means as likely as not.
+
+$$
+0 \leq P(A) \leq 1
+$$
+
+If you ever compute a probability above 1 or below 0, you've made an error. It's a useful sanity check.
+
+Probabilities can be written as fractions, decimals, or percentages. $\frac{1}{4} = 0.25 = 25\%$, all the same thing.
+
+### The complement
+
+The **complement** of $A$, written $A'$, is "$A$ does not happen." Since one or the other must occur:
+
+$$
+P(A) + P(A') = 1 \qquad \text{so} \qquad P(A') = 1 - P(A)
+$$
+
+This is more useful than it looks. Whenever a problem asks for "at least one," computing the complement ("none") and subtracting is usually far easier. Same trick as the complement rule in counting.
+
+### The sample space for two dice
+
+This one deserves a picture, because nearly everyone gets it wrong at first.
+
+<SampleSpaceDice />
+
+Two dice have $6 \times 6 = 36$ equally likely outcomes, not 21. The dice are distinguishable even if they look identical: rolling (2, 5) and (5, 2) are two separate outcomes.
+
+This is why 7 is the most common total. There are six ways to make 7 and only one way to make 2, so
+
+$$
+P(\text{total} = 7) = \frac{6}{36} = \frac{1}{6} \qquad P(\text{total} = 2) = \frac{1}{36}
+$$
+
+Treating the totals 2 through 12 as eleven equally likely outcomes gives $\frac{1}{11}$ for everything, which is wrong for every single total.
+
+### Theoretical versus experimental probability
+
+**Theoretical probability** comes from analyzing the structure. A fair coin gives $P(H) = 0.5$ because of symmetry.
+
+**Experimental** (or empirical) **probability** comes from actually running trials:
+
+$$
+P(A) \approx \frac{\text{times } A \text{ occurred}}{\text{number of trials}}
+$$
+
+The **Law of Large Numbers** connects them: as the number of trials grows, the experimental probability converges to the theoretical one. Flip a coin 10 times and you might get 7 heads; flip it 10,000 times and you'll be very near 5,000.
+
+Experimental probability is what you use when theory is unavailable. Nobody can derive the probability that a particular patient responds to a drug from first principles, so we run trials and count.
+
+### The gambler's fallacy
+
+Here's what the Law of Large Numbers does **not** say.
+
+After five heads in a row, tails is **not** "due." A fair coin has no memory. The probability of heads on the next flip is still exactly 0.5.
+
+$$
+P(H \text{ on flip 6} \mid HHHHH) = 0.5
+$$
+
+The fallacy comes from misreading convergence. Long-run proportions do settle near 0.5, but they get there by the sheer weight of more trials diluting early imbalance, not by later flips compensating for earlier ones.
+
+A related error runs the opposite direction, the **hot hand fallacy**, assuming a streak will continue. For genuinely independent events, both are wrong for the same reason: past outcomes carry no information about the next one.
+
+Note the important caveat: this applies to _independent_ events. In situations with real dependence, like drawing cards without replacement, the past absolutely does change the odds. That's the next lessons.
+
+## Worked Examples
+
+**Example 1: Basic probability.**
+
+A bag holds 5 red, 3 blue, and 2 green marbles. One is drawn at random. Find $P(\text{red})$ and $P(\text{not red})$.
+
+**Solution.** Total marbles: $5+3+2 = 10$.
+
+$$
+P(\text{red}) = \frac{5}{10} = 0.5
+$$
+
+$$
+P(\text{not red}) = 1 - 0.5 = 0.5
+$$
+
+Check directly: 3 blue + 2 green = 5 non-red out of 10. Agrees.
+
+**Example 2: Building a sample space.**
+
+A coin is flipped three times. List the sample space and find the probability of exactly two heads.
+
+**Solution.** With 3 flips there are $2^3 = 8$ outcomes:
+
+$$
+S = \{HHH, HHT, HTH, HTT, THH, THT, TTH, TTT\}
+$$
+
+Exactly two heads: $HHT, HTH, THH$. That's 3 outcomes.
+
+$$
+P(\text{exactly 2 heads}) = \frac{3}{8} = 0.375
+$$
+
+Note it's not $\frac{1}{2}$. "Two out of three" being the middle case doesn't make it half.
+
+**Example 3: Two dice.**
+
+Two fair dice are rolled. Find the probability the total is 9.
+
+**Solution.** Sample space has 36 outcomes. Combinations giving 9:
+
+$$
+(3,6), (4,5), (5,4), (6,3)
+$$
+
+Four ways, so
+
+$$
+P(\text{total} = 9) = \frac{4}{36} = \frac{1}{9} \approx 0.111
+$$
+
+Both $(3,6)$ and $(6,3)$ count. Listing only unordered pairs would give 2 and halve the answer.
+
+**Example 4: The complement saves work.**
+
+Four dice are rolled. Find the probability of getting **at least one** six.
+
+**Solution.** Direct counting would need cases for exactly one, two, three, and four sixes. Instead use the complement.
+
+$P(\text{no six on one die}) = \frac{5}{6}$
+
+For all four dice to avoid a six:
+
+$$
+P(\text{no sixes}) = \left(\frac{5}{6}\right)^4 = \frac{625}{1296} \approx 0.482
+$$
+
+$$
+P(\text{at least one six}) = 1 - 0.482 = 0.518
+$$
+
+So slightly better than even odds. This is a version of a famous 17th-century gambling problem, and the complement trick is what makes it a one-line calculation.
+
+**Example 5: Theoretical versus experimental.**
+
+A die is rolled 60 times and shows a 4 exactly 14 times. Compare theoretical and experimental probability. Is the die unfair?
+
+**Solution.**
+
+$$
+P_{\text{theoretical}} = \frac{1}{6} \approx 0.167 \qquad P_{\text{experimental}} = \frac{14}{60} \approx 0.233
+$$
+
+The experimental value is higher, but 60 rolls is a small number of trials. Expected count would be 10, and getting 14 is well within normal random variation for this sample size.
+
+There isn't enough evidence to call the die unfair. Deciding how much deviation is too much is exactly what hypothesis testing does later in this section.
+
+**Example 6: Spot the fallacy.**
+
+A roulette wheel has come up red eight times in a row. A player bets heavily on black, reasoning that black is overdue. Evaluate.
+
+**Solution.** The reasoning is the **gambler's fallacy**. The wheel has no memory, and each spin is independent. On a European wheel, $P(\text{black})$ is still $\frac{18}{37} \approx 0.486$ regardless of history.
+
+There's a subtle counterpoint worth noting: if you genuinely suspected the wheel were biased, eight reds in a row would be weak evidence that it's biased **toward red**, which argues for betting red, not black. Either way, black is not due.
+
+## Real-World Applications
+
+Insurance is applied probability. Premiums come from estimating the probability of a claim across a large pool, and the Law of Large Numbers is what makes the business viable: an individual claim is unpredictable, but the aggregate over a million policies is not.
+
+Medical screening rests on probabilities that people routinely misread, which is why Bayes' theorem gets its own lesson shortly. A positive test result does not mean a high probability of disease, and the gap surprises even clinicians.
+
+Weather forecasts are explicitly probabilistic. "30% chance of rain" is a frequency claim: on days with these conditions, it rains about 30% of the time. It is not a statement about how much of the area gets wet or how confident the forecaster feels.
+
+Quality control samples a batch and computes the probability of observing the defect count found, which is the bridge from probability into inference.
+
+Casinos and lotteries are businesses built on the house edge being a small positive number that the Law of Large Numbers converts into reliable revenue. The same law that makes individual gamblers' outcomes unpredictable makes the casino's aggregate outcome nearly certain.
+
+In computing, randomized algorithms, load balancing, hash functions, and cryptographic key generation all depend on probability, and reasoning about collision probabilities is a daily task in systems design.
+
+:::note[You've Got This]
+Nearly every probability mistake is a sample space mistake, so slow down on counting the outcomes before you divide anything. The two-dice example is the classic trap: 36 outcomes, not 11 totals. Keep the complement rule handy for anything phrased as "at least one," since counting the opposite is almost always faster. And the gambler's fallacy is worth internalizing properly, because it's the most expensive misunderstanding in this entire section.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="stats-introduction-to-probability"
+  questions={[
+    {
+      id: "q1",
+      text: "What is the sample space when two coins are flipped?",
+      options: [
+        "{H, T}",
+        "{HH, HT, TH, TT}",
+        "{0 heads, 1 head, 2 heads}",
+        "{HH, HT, TT}",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Each coin independently lands two ways, giving 2 x 2 = 4 equally likely outcomes. HT and TH are distinct outcomes, which is why listing only three possibilities would be incomplete.",
+    },
+    {
+      id: "q2",
+      text: "If P(A) = 0.35, what is P(not A)?",
+      options: ["0.35", "0.65", "0.5", "1.35"],
+      correctIndex: 1,
+      explanation:
+        "An event and its complement must together account for everything, so they sum to 1. That gives P(not A) = 1 - 0.35 = 0.65.",
+    },
+    {
+      id: "q3",
+      text: "Two fair dice are rolled. What is the probability the total is 7?",
+      options: ["1/11", "1/6", "1/12", "6/11"],
+      correctIndex: 1,
+      explanation:
+        "There are 36 equally likely ordered outcomes and six of them total 7, giving 6/36 = 1/6. Treating the eleven possible totals as equally likely would wrongly give 1/11.",
+    },
+    {
+      id: "q4",
+      text: "A fair coin lands heads six times in a row. What is the probability the next flip is heads?",
+      options: [
+        "Less than 0.5, because tails is due",
+        "Greater than 0.5, because the coin is on a streak",
+        "Exactly 0.5, because the flips are independent",
+        "Impossible to determine without more flips",
+      ],
+      correctIndex: 2,
+      explanation:
+        "A fair coin has no memory, so previous results do not influence the next flip. Believing tails is owed after a run of heads is the gambler's fallacy.",
+    },
+    {
+      id: "q5",
+      text: "Three dice are rolled. What is the easiest way to find the probability of getting at least one 5?",
+      options: [
+        "Add the probabilities of exactly one, exactly two, and exactly three fives",
+        "Compute 1 minus the probability of getting no fives at all",
+        "Multiply 1/6 by three",
+        "Divide 3 by 18",
+      ],
+      correctIndex: 1,
+      explanation:
+        "The complement of 'at least one' is 'none', which is a single clean calculation of (5/6) cubed. Subtracting from 1 avoids adding up three separate cases.",
+    },
+  ]}
+/>

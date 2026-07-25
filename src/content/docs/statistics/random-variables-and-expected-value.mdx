@@ -1,0 +1,319 @@
+---
+title: Random Variables and Expected Value
+description: Probability distributions for discrete random variables, expected value, and why the lottery is a bad bet
+sidebar:
+  order: 11
+---
+
+import Quiz from "../../../components/Quiz.astro";
+import ExpectedValueDiagram from "../../../components/ExpectedValueDiagram.astro";
+import SymbolKey from "../../../components/SymbolKey.astro";
+
+## What You'll Learn
+
+In this lesson you'll learn what a random variable is, how to write a probability distribution, how to compute expected value and interpret it, and how to find the variance of a random variable.
+
+<SymbolKey
+  items={[
+    {
+      sym: "X",
+      read: "a random variable",
+      note: "capital letter for the variable itself",
+    },
+    {
+      sym: "x",
+      read: "a particular value of X",
+      note: "lowercase for a specific outcome",
+    },
+    { sym: "P(X = x)", read: "the probability that X equals x" },
+    {
+      sym: "E(X)",
+      read: "the expected value of X",
+      note: "also written μ; the long-run average",
+    },
+    { sym: "Var(X)", read: "the variance of X", note: "also written σ²" },
+  ]}
+/>
+
+## The Concept
+
+### Random variables
+
+A **random variable** assigns a number to each outcome of an experiment.
+
+Flipping three coins, let $X$ = the number of heads. Then $X$ can be 0, 1, 2, or 3. The randomness is in the experiment; $X$ just translates outcomes into numbers so we can do arithmetic.
+
+Two kinds, matching the data types from earlier:
+
+- **Discrete** - countable values. Number of heads, number of defects, dice totals.
+- **Continuous** - any value in an interval. Height, time, temperature. These need calculus and come in a later lesson.
+
+This lesson handles discrete.
+
+### Probability distributions
+
+A **probability distribution** lists every value the variable can take and its probability.
+
+For $X$ = heads in three flips, from the 8 equally likely outcomes:
+
+|   $x$    |  0  |  1  |  2  |  3  |
+| :------: | :-: | :-: | :-: | :-: |
+| $P(X=x)$ | 1/8 | 3/8 | 3/8 | 1/8 |
+
+Every valid distribution satisfies two rules:
+
+1. Each $0 \leq P(X = x) \leq 1$
+2. $\sum P(X = x) = 1$
+
+Check the second one every time. It catches errors instantly. Here $\frac{1}{8}+\frac{3}{8}+\frac{3}{8}+\frac{1}{8} = 1$ ✓
+
+Notice the coefficients 1, 3, 3, 1 are a row of Pascal's triangle. That's not a coincidence, and it's the bridge to the binomial distribution next lesson.
+
+### Expected value
+
+The **expected value** is the long-run average value of the random variable, weighting each outcome by its probability:
+
+$$
+E(X) = \mu = \sum x \cdot P(X = x)
+$$
+
+It's a weighted mean, with probabilities as the weights.
+
+<ExpectedValueDiagram />
+
+For the three-coin example:
+
+$$
+E(X) = 0\left(\tfrac{1}{8}\right) + 1\left(\tfrac{3}{8}\right) + 2\left(\tfrac{3}{8}\right) + 3\left(\tfrac{1}{8}\right) = \frac{0+3+6+3}{8} = \frac{12}{8} = 1.5
+$$
+
+**The expected value need not be a possible outcome.** You can never flip 1.5 heads. Expected value describes the average of many repetitions, not any single trial. A family can't have 2.3 children either.
+
+This is the most common misunderstanding of the term. "Expected" doesn't mean "the result to expect." It means "the long-run mean."
+
+### Variance and standard deviation of a random variable
+
+Spread works the same way as before, weighted by probability:
+
+$$
+\text{Var}(X) = \sigma^2 = \sum (x - \mu)^2 \cdot P(X = x)
+$$
+
+There's an algebraically equivalent shortcut that's usually less work:
+
+$$
+\text{Var}(X) = E(X^2) - [E(X)]^2
+$$
+
+where $E(X^2) = \sum x^2 \cdot P(X=x)$. Compute the mean of the squares, subtract the square of the mean.
+
+Then as always:
+
+$$
+\sigma = \sqrt{\text{Var}(X)}
+$$
+
+### Fair games and expected value of money
+
+A game is **fair** if $E(\text{net gain}) = 0$. If it's positive the bet favors you; negative and it favors the house.
+
+Essentially every commercial gambling product has negative expected value for the player, and that's the business model. The **house edge** is $-E(\text{net gain})$ expressed as a percentage of the wager.
+
+Expected value is also the right lens for insurance, which has _negative_ expected value for the buyer and is still often rational to purchase. Buying insurance means accepting a small expected loss to avoid a small chance of a catastrophic one. Expected value alone doesn't capture how much worse a ruinous loss is than its numeric size, which is why economists add the idea of utility.
+
+## Worked Examples
+
+**Example 1: Verify a distribution and find E(X).**
+
+|   $x$    |  1  |  2  |  3  |  4  |
+| :------: | :-: | :-: | :-: | :-: |
+| $P(X=x)$ | 0.1 | 0.3 | 0.4 | 0.2 |
+
+**Solution.** Check: $0.1+0.3+0.4+0.2 = 1.0$ ✓
+
+$$
+E(X) = 1(0.1) + 2(0.3) + 3(0.4) + 4(0.2) = 0.1+0.6+1.2+0.8 = 2.7
+$$
+
+**Example 2: Variance both ways.**
+
+Using the distribution above, find $\text{Var}(X)$ and $\sigma$.
+
+**Solution, definition method.**
+
+| $x$ | $x - \mu$ | $(x-\mu)^2$ | $P$ | $(x-\mu)^2 P$ |
+| :-: | :-------: | :---------: | :-: | :-----------: |
+|  1  |   −1.7    |    2.89     | 0.1 |     0.289     |
+|  2  |   −0.7    |    0.49     | 0.3 |     0.147     |
+|  3  |    0.3    |    0.09     | 0.4 |     0.036     |
+|  4  |    1.3    |    1.69     | 0.2 |     0.338     |
+
+$$
+\text{Var}(X) = 0.289+0.147+0.036+0.338 = 0.81
+$$
+
+**Solution, shortcut method.**
+
+$$
+E(X^2) = 1(0.1) + 4(0.3) + 9(0.4) + 16(0.2) = 0.1+1.2+3.6+3.2 = 8.1
+$$
+
+$$
+\text{Var}(X) = 8.1 - (2.7)^2 = 8.1 - 7.29 = 0.81 \; ✓
+$$
+
+$$
+\sigma = \sqrt{0.81} = 0.9
+$$
+
+Both routes agree, and the shortcut needed one table instead of four columns.
+
+**Example 3: A dice game.**
+
+You pay 2 dollars to roll one die and win the number of dollars shown. Is this a good bet?
+
+**Solution.** Winnings average:
+
+$$
+E(\text{win}) = \frac{1+2+3+4+5+6}{6} = 3.5
+$$
+
+Net gain per play:
+
+$$
+E(\text{net}) = 3.50 - 2.00 = +1.50
+$$
+
+Positive expected value, so it's a **good bet for you**. Over 100 plays you'd expect to profit about 150 dollars. No casino would offer this.
+
+**Example 4: Roulette.**
+
+An American roulette wheel has 38 pockets: 18 red, 18 black, 2 green. You bet 10 dollars on red, winning 10 dollars if red comes up and losing 10 otherwise. Find the expected value.
+
+**Solution.**
+
+$$
+P(\text{red}) = \frac{18}{38} \qquad P(\text{not red}) = \frac{20}{38}
+$$
+
+$$
+E = (+10)\left(\frac{18}{38}\right) + (-10)\left(\frac{20}{38}\right) = \frac{180 - 200}{38} = \frac{-20}{38} \approx -0.526
+$$
+
+You lose about **53 cents per 10 dollars wagered**, a house edge of 5.26%. The two green pockets are the entire source of it: without them the game would be exactly fair.
+
+**Example 5: The lottery.**
+
+A ticket costs 2 dollars. The jackpot is 10 million with probability 1 in 20 million, and there's a 100 dollar prize with probability 1 in 50,000. Ignoring other prizes, find the expected value.
+
+**Solution.**
+
+$$
+E(\text{prize}) = 10{,}000{,}000 \times \frac{1}{20{,}000{,}000} + 100 \times \frac{1}{50{,}000}
+$$
+
+$$
+= 0.50 + 0.002 = 0.502
+$$
+
+$$
+E(\text{net}) = 0.502 - 2.00 = -1.498
+$$
+
+You lose about **1.50 dollars per ticket**, so the game returns roughly 25 cents per dollar. Even when a jackpot grows large enough to make the raw expected value positive, splitting the prize among multiple winners and taxes usually pull it back down.
+
+**Example 6: Insurance from both sides.**
+
+A policy costs 300 dollars per year. There's a 1.5% chance of a claim, in which case the insurer pays 15,000 dollars. Find the expected value for each side.
+
+**Solution.** For the insurer:
+
+$$
+E = +300 - 15{,}000(0.015) = 300 - 225 = +75
+$$
+
+For the customer:
+
+$$
+E = -300 + 15{,}000(0.015) = -300 + 225 = -75
+$$
+
+The insurer expects 75 dollars profit per policy, and the customer expects to lose 75. Yet buying may still be sensible: the customer is paying 75 dollars to convert a 1.5% chance of a 15,000 dollar disaster into a certain, survivable 300 dollar cost. The insurer can accept the risk because the Law of Large Numbers makes its aggregate outcome predictable across many policies.
+
+Expected value tells you the average. It deliberately says nothing about whether you can survive the bad case, which is why it isn't the only thing that matters.
+
+## Real-World Applications
+
+Insurance pricing is expected value plus a margin. Actuaries estimate claim probabilities and severities, compute the expected payout, and add loading for expenses and profit. The entire industry is this lesson applied at scale.
+
+Business decisions use **expected monetary value** to compare options with uncertain payoffs. A project with a 30% chance of 1 million and a 70% chance of losing 200,000 has an EV of 160,000, which makes it worth considering, though a company that can't absorb the loss might still decline.
+
+Machine learning trains models by minimizing expected loss, and reinforcement learning agents choose actions to maximize expected future reward. Expected value is the objective function.
+
+Sports analytics is saturated with it. Expected goals in soccer, expected points added in football, and win probability models all assign values to situations by averaging over outcomes.
+
+Portfolio theory pairs expected return with variance, which is exactly the two quantities from this lesson. Modern finance is largely about the tradeoff between them.
+
+And the negative expected value of gambling is why casinos are profitable, reliable businesses rather than gambles themselves. The house doesn't need luck; it needs volume.
+
+:::note[You've Got This]
+The one idea to hold onto is that expected value is a long-run average, not a prediction about the next trial. Flipping three coins has an expected 1.5 heads, and you will never once observe 1.5 heads. Set up a small table with values, probabilities, and products, and expected value becomes routine arithmetic. For variance, the shortcut $E(X^2) - [E(X)]^2$ is almost always faster than the definition, and the two always agree.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="stats-random-variables-and-expected-value"
+  questions={[
+    {
+      id: "q1",
+      text: "What must be true of every discrete probability distribution?",
+      options: [
+        "All probabilities must be equal",
+        "The probabilities must sum to 1",
+        "The expected value must be one of the listed outcomes",
+        "There must be an even number of outcomes",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Since the listed values cover every possibility, their probabilities must account for all the certainty available, which totals 1. Checking this sum is the fastest way to catch an error in a distribution.",
+    },
+    {
+      id: "q2",
+      text: "A random variable takes values 0, 1, and 2 with probabilities 0.5, 0.3 and 0.2. What is E(X)?",
+      options: ["1.0", "0.7", "1.5", "0.5"],
+      correctIndex: 1,
+      explanation:
+        "Multiply each value by its probability and add: 0(0.5) + 1(0.3) + 2(0.2) = 0.3 + 0.4 = 0.7. Expected value is a probability-weighted average, not a simple average of the possible values.",
+    },
+    {
+      id: "q3",
+      text: "Why can the expected value be a number that never actually occurs?",
+      options: [
+        "Because expected value is always an estimate with error",
+        "Because it describes the long-run average across many trials rather than any single outcome",
+        "Because probabilities are rounded",
+        "It cannot; expected value must be a possible outcome",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Expected value averages the outcomes weighted by probability, and averages need not coincide with any individual value. Flipping three coins has an expected 1.5 heads even though 1.5 heads is impossible.",
+    },
+    {
+      id: "q4",
+      text: "You bet 5 dollars on an event with probability 0.4 of winning 5 dollars and probability 0.6 of losing your 5 dollars. What is the expected net gain?",
+      options: ["+1.00", "0", "−1.00", "−2.00"],
+      correctIndex: 2,
+      explanation:
+        "The calculation is (+5)(0.4) + (-5)(0.6) = 2 - 3 = -1. A negative expected value means the bet favors the other side over the long run.",
+    },
+    {
+      id: "q5",
+      text: "If E(X) = 3 and E(X²) = 13, what is Var(X)?",
+      options: ["4", "10", "16", "2"],
+      correctIndex: 0,
+      explanation:
+        "Using the shortcut Var(X) = E(X²) − [E(X)]², we get 13 − 9 = 4. This formula is usually less work than summing squared deviations term by term.",
+    },
+  ]}
+/>

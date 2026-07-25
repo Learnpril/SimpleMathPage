@@ -1,0 +1,96 @@
+---
+/**
+ * SpreadComparison — two datasets with identical means but very different
+ * spread, shown as dotplots on a shared axis.
+ */
+const w = 520;
+const h = 250;
+const left = 50;
+const right = 480;
+const minV = 20;
+const maxV = 80;
+const scale = (v: number) => left + ((v - minV) / (maxV - minV)) * (right - left);
+
+const tight = [46, 48, 49, 50, 50, 51, 52, 54];
+const wide = [24, 32, 41, 48, 52, 59, 68, 76];
+const meanTight = tight.reduce((a, b) => a + b, 0) / tight.length;
+const meanWide = wide.reduce((a, b) => a + b, 0) / wide.length;
+
+function sd(arr: number[]) {
+  const m = arr.reduce((a, b) => a + b, 0) / arr.length;
+  const ss = arr.reduce((a, b) => a + (b - m) ** 2, 0);
+  return Math.sqrt(ss / (arr.length - 1));
+}
+const sdTight = sd(tight).toFixed(1);
+const sdWide = sd(wide).toFixed(1);
+
+const rowA = 82;
+const rowB = 168;
+---
+
+<figure
+  class="spc"
+  role="img"
+  aria-label={`Two dotplots with the same mean of 50. The first clusters tightly with standard deviation ${sdTight}, the second spreads widely with standard deviation ${sdWide}.`}
+>
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    <text x="20" y="22" class="spc-head" font-size="12.5" font-weight="bold">Same mean, different spread</text>
+
+    {/* ---------- Group A: tight ---------- */}
+    <text x="20" y={rowA - 26} class="spc-label spc-t-green" font-size="11.5" font-weight="bold">Group A</text>
+    <text x="86" y={rowA - 26} class="spc-note" font-size="10">{`mean 50, s = ${sdTight}`}</text>
+    <line x1={left - 10} y1={rowA} x2={right + 10} y2={rowA} class="spc-axis" />
+    {tight.map((v, i) => {
+      // stack duplicates upward
+      const dup = tight.slice(0, i).filter((u) => u === v).length;
+      return <circle cx={scale(v)} cy={rowA - 8 - dup * 12} r="5" class="spc-dot-a" />;
+    })}
+    <line x1={scale(meanTight)} y1={rowA - 44} x2={scale(meanTight)} y2={rowA + 8} class="spc-mean" />
+    <text x={scale(meanTight)} y={rowA + 22} class="spc-meanlbl" font-size="9.5" text-anchor="middle">mean</text>
+
+    {/* ---------- Group B: wide ---------- */}
+    <text x="20" y={rowB - 26} class="spc-label spc-t-orange" font-size="11.5" font-weight="bold">Group B</text>
+    <text x="86" y={rowB - 26} class="spc-note" font-size="10">{`mean 50, s = ${sdWide}`}</text>
+    <line x1={left - 10} y1={rowB} x2={right + 10} y2={rowB} class="spc-axis" />
+    {wide.map((v, i) => {
+      const dup = wide.slice(0, i).filter((u) => u === v).length;
+      return <circle cx={scale(v)} cy={rowB - 8 - dup * 12} r="5" class="spc-dot-b" />;
+    })}
+    <line x1={scale(meanWide)} y1={rowB - 44} x2={scale(meanWide)} y2={rowB + 8} class="spc-mean" />
+    <text x={scale(meanWide)} y={rowB + 22} class="spc-meanlbl" font-size="9.5" text-anchor="middle">mean</text>
+
+    {/* Axis ticks */}
+    {[20, 35, 50, 65, 80].map((v) => (
+      <text x={scale(v)} y={rowB + 40} class="spc-tick" font-size="9.5" text-anchor="middle">{v}</text>
+    ))}
+
+    <text x={w / 2} y={h - 12} class="spc-foot" font-size="10.5" text-anchor="middle">
+      Reporting only the mean would make these two groups look identical
+    </text>
+  </svg>
+</figure>
+
+<style>
+  .spc { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .spc svg { width:100%; max-width:100%; height:auto; }
+  .spc-axis { stroke:#555; stroke-width:1.4; }
+  .spc-dot-a { fill:#7ee787; }
+  .spc-dot-b { fill:#f0883e; }
+  .spc-mean { stroke:#d2a8ff; stroke-width:2; stroke-dasharray:4,3; }
+  .spc-meanlbl { fill:#d2a8ff; font-family:'Libre Baskerville',Georgia,serif; font-style:italic; }
+  .spc-label { font-family:'Libre Baskerville',Georgia,serif; }
+  .spc-t-green { fill:#7ee787; }
+  .spc-t-orange { fill:#f0883e; }
+  .spc-note { fill:#888; font-family:'Libre Baskerville',Georgia,serif; }
+  .spc-tick { fill:#888; font-family:'Libre Baskerville',Georgia,serif; }
+  .spc-head { fill:#eee; font-family:'Libre Baskerville',Georgia,serif; }
+  .spc-foot { fill:#888; font-family:'Libre Baskerville',Georgia,serif; font-style:italic; }
+  :global([data-theme="light"]) .spc-axis { stroke:#ccc; }
+  :global([data-theme="light"]) .spc-dot-a { fill:#116329; }
+  :global([data-theme="light"]) .spc-dot-b { fill:#b35900; }
+  :global([data-theme="light"]) .spc-mean { stroke:#6639ba; }
+  :global([data-theme="light"]) .spc-meanlbl { fill:#6639ba; }
+  :global([data-theme="light"]) .spc-t-green { fill:#116329; }
+  :global([data-theme="light"]) .spc-t-orange { fill:#b35900; }
+  :global([data-theme="light"]) .spc-head { fill:#24292f; }
+</style>

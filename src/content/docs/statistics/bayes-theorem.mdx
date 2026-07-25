@@ -1,0 +1,288 @@
+---
+title: Bayes' Theorem
+description: Reversing conditional probabilities, and why a positive test result often doesn't mean what you think
+sidebar:
+  order: 10
+---
+
+import Quiz from "../../../components/Quiz.astro";
+import BayesGrid from "../../../components/BayesGrid.astro";
+
+## What You'll Learn
+
+In this lesson you'll learn Bayes' theorem, how to flip a conditional probability around, the vocabulary of prior and posterior, and why base rates dominate the interpretation of medical tests.
+
+## The Concept
+
+### The problem Bayes solves
+
+You know $P(B \mid A)$ and you want $P(A \mid B)$. The previous lesson established these are different. Bayes' theorem is the conversion.
+
+$$
+P(A \mid B) = \frac{P(B \mid A) \times P(A)}{P(B)}
+$$
+
+Deriving it takes two lines. The joint probability can be written two ways:
+
+$$
+P(A \cap B) = P(A \mid B) \, P(B) \qquad \text{and} \qquad P(A \cap B) = P(B \mid A) \, P(A)
+$$
+
+Set them equal and divide by $P(B)$. That's the whole proof.
+
+### The vocabulary
+
+- **Prior**, $P(A)$ - what you believed before the evidence. Often the **base rate**, the overall prevalence.
+- **Likelihood**, $P(B \mid A)$ - how probable the evidence is if $A$ is true.
+- **Posterior**, $P(A \mid B)$ - your updated belief after seeing the evidence.
+- **Evidence** or marginal, $P(B)$ - how probable the evidence is overall.
+
+The structure to remember: **posterior ∝ likelihood × prior.** Evidence doesn't replace your prior belief, it _updates_ it. A strong prior takes strong evidence to move.
+
+### Finding the denominator
+
+Usually $P(B)$ isn't handed to you. Compute it with the **law of total probability**: the evidence can arise whether or not $A$ holds, so add both routes.
+
+$$
+P(B) = P(B \mid A)P(A) + P(B \mid A')P(A')
+$$
+
+Substituting gives the expanded form:
+
+$$
+P(A \mid B) = \frac{P(B \mid A) P(A)}{P(B \mid A)P(A) + P(B \mid A')P(A')}
+$$
+
+It looks heavy. In practice it's just "the path you want, divided by all the paths that produce the evidence," which is exactly the tree-diagram reasoning from the last lesson.
+
+### Medical testing vocabulary
+
+- **Sensitivity** = $P(\text{positive} \mid \text{disease})$. The true positive rate. Catches the sick.
+- **Specificity** = $P(\text{negative} \mid \text{no disease})$. The true negative rate. Clears the healthy.
+- **False positive rate** = $1 - \text{specificity}$.
+- **Prevalence** = $P(\text{disease})$. The base rate.
+- **Positive predictive value** = $P(\text{disease} \mid \text{positive})$. **This is what a patient wants to know.**
+
+Sensitivity and specificity describe the test. Positive predictive value describes your situation, and it depends on prevalence.
+
+### Why base rates dominate
+
+Here's the result that surprises everyone, including doctors.
+
+A disease affects **1 in 1,000** people. A test has **99% sensitivity** and **99% specificity**. You test positive. What's the probability you have it?
+
+Most people say around 99%. The answer is about **9%**.
+
+<BayesGrid />
+
+Think in counts over 100,000 people, which avoids the algebra entirely:
+
+- **100 have the disease.** The test catches 99% of them → **99 true positives.**
+- **99,900 are healthy.** The test wrongly flags 1% of them → **999 false positives.**
+
+Total positives: $99 + 999 = 1{,}098$. Of those, only 99 are genuinely sick.
+
+$$
+P(\text{disease} \mid \text{positive}) = \frac{99}{1098} \approx 0.090 = 9.0\%
+$$
+
+The test is excellent. The problem is arithmetic: there are 999 healthy people for every sick one, so even a 1% error rate applied to that huge group swamps the true positives.
+
+**Ignoring the base rate is called the base rate fallacy**, and it's the most consequential error in this section.
+
+### The counts trick
+
+Whenever a Bayes problem appears, **convert to counts over a convenient population** instead of manipulating fractions. Pick a round number like 10,000 or 100,000, walk the four cases, and read the answer off the table. It's faster, harder to get wrong, and immediately explainable to someone else.
+
+The four cases are always the same:
+
+|                   |  Has disease   |   No disease   |
+| :---------------- | :------------: | :------------: |
+| **Test positive** | true positive  | false positive |
+| **Test negative** | false negative | true negative  |
+
+## Worked Examples
+
+**Example 1: The formula directly.**
+
+$P(A) = 0.3$, $P(B \mid A) = 0.8$, $P(B \mid A') = 0.2$. Find $P(A \mid B)$.
+
+**Solution.** First the denominator:
+
+$$
+P(B) = (0.8)(0.3) + (0.2)(0.7) = 0.24 + 0.14 = 0.38
+$$
+
+Then Bayes:
+
+$$
+P(A \mid B) = \frac{0.24}{0.38} \approx 0.632
+$$
+
+The evidence raised belief in $A$ from 0.30 to 0.63.
+
+**Example 2: A rare disease, by counts.**
+
+Prevalence 0.5%. Sensitivity 98%. Specificity 95%. Find the positive predictive value.
+
+**Solution.** Take 100,000 people.
+
+- Diseased: $0.005 \times 100{,}000 = 500$
+  - True positives: $500 \times 0.98 = 490$
+  - False negatives: 10
+- Healthy: 99,500
+  - False positives: $99{,}500 \times 0.05 = 4{,}975$
+  - True negatives: 94,525
+
+$$
+P(\text{disease} \mid \text{positive}) = \frac{490}{490 + 4975} = \frac{490}{5465} \approx 0.0897
+$$
+
+About **9%**. Despite a 98% sensitive test, a positive result leaves a 91% chance you're fine. This is why screening programs use a second, different confirmatory test.
+
+**Example 3: How prevalence changes everything.**
+
+Same test as Example 2, but now applied to a high-risk group with 20% prevalence.
+
+**Solution.** Take 100,000 again.
+
+- Diseased: 20,000 → true positives $= 20{,}000 \times 0.98 = 19{,}600$
+- Healthy: 80,000 → false positives $= 80{,}000 \times 0.05 = 4{,}000$
+
+$$
+P(\text{disease} \mid \text{positive}) = \frac{19{,}600}{23{,}600} \approx 0.831
+$$
+
+**83%** instead of 9%. Identical test, different population.
+
+This is precisely why doctors don't screen everyone for everything. Testing a low-risk population generates mostly false positives, causing anxiety, cost, and risk from follow-up procedures. Targeting testing at higher-prevalence groups makes the same test far more informative.
+
+**Example 4: Spam filtering.**
+
+30% of email is spam. The word "winner" appears in 40% of spam and 2% of legitimate email. An email contains "winner." Is it spam?
+
+**Solution.**
+
+$$
+P(\text{winner}) = (0.40)(0.30) + (0.02)(0.70) = 0.12 + 0.014 = 0.134
+$$
+
+$$
+P(\text{spam} \mid \text{winner}) = \frac{0.12}{0.134} \approx 0.896
+$$
+
+About **90%**. The prior of 30% jumped to 90% on one word. Real filters chain many such words together, which is where "Naive Bayes" gets its name: it naively assumes the words are independent.
+
+**Example 5: Updating twice.**
+
+Continuing Example 4, the same email also contains "free," which appears in 50% of spam and 5% of legitimate mail. Update again.
+
+**Solution.** Use the posterior from before as the new prior: $P(\text{spam}) = 0.896$.
+
+$$
+P(\text{free}) = (0.50)(0.896) + (0.05)(0.104) = 0.448 + 0.0052 = 0.4532
+$$
+
+$$
+P(\text{spam} \mid \text{both}) = \frac{0.448}{0.4532} \approx 0.989
+$$
+
+Now 98.9%. **Bayesian updating is sequential**: yesterday's posterior becomes today's prior. This is the mathematical core of learning from evidence.
+
+**Example 6: A negative result.**
+
+Using Example 2's test (98% sensitivity, 95% specificity, 0.5% prevalence), what's the probability of disease given a **negative** result?
+
+**Solution.** From the counts: false negatives 10, true negatives 94,525.
+
+$$
+P(\text{disease} \mid \text{negative}) = \frac{10}{10 + 94{,}525} \approx 0.000106
+$$
+
+About 1 in 9,400, down from a prior of 1 in 200. A negative result on a rare disease is **highly** reassuring, which is the mirror image of why the positive result was so weak. Screening tests are built to rule things out, not to rule them in.
+
+## Real-World Applications
+
+Medical screening policy is set by these calculations. Debates about the right age to begin mammography or prostate screening are arguments about prevalence: at younger ages the base rate is lower, so the same test yields more false positives per true case detected, and the harms of follow-up biopsies can outweigh the benefits.
+
+COVID testing made this public. Rapid antigen tests had good specificity, but when prevalence was very low, a large share of positives were false, which is why confirmatory PCR was recommended. When prevalence spiked, the same positive result became much more trustworthy.
+
+Spam filters, as shown, are direct applications. So is much of medical AI, where a model's reported accuracy on a balanced test set can be wildly optimistic about performance in a population where the condition is rare.
+
+Criminal justice suffers the base rate fallacy badly. DNA databases searched across millions of profiles will produce coincidental matches, and interpreting a match without accounting for how many people were searched is the prosecutor's fallacy in Bayesian form.
+
+Airport security screening and fraud detection face the same tension: with a very low base rate of genuine threats, even a highly accurate system produces mostly false alarms, which is why layered screening exists.
+
+In machine learning, class imbalance is the base rate problem restated. A model predicting a 1-in-1000 event can achieve 99.9% accuracy by always predicting "no," which is why practitioners use precision, recall, and confusion matrices instead of accuracy.
+
+:::note[You've Got This]
+Skip the formula the first several times and use counts. Pick a population of 100,000, work out the four cells, and divide. It gets the right answer, and more importantly it shows you _why_ the answer is what it is: you can literally see the false positives outnumbering the true ones. The lasting takeaway is that a test result alone never tells you the probability you have something. You also need to know how common it is, and for rare conditions that base rate does most of the work.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="stats-bayes-theorem"
+  questions={[
+    {
+      id: "q1",
+      text: "What does Bayes' theorem let you do?",
+      options: [
+        "Convert P(B | A) into P(A | B)",
+        "Prove that two events are independent",
+        "Compute a mean from a median",
+        "Turn a sample statistic into a population parameter",
+      ],
+      correctIndex: 0,
+      explanation:
+        "Bayes' theorem reverses the direction of conditioning, which matters because those two conditional probabilities are generally very different. It does this by combining the likelihood with the prior probability.",
+    },
+    {
+      id: "q2",
+      text: "In Bayesian language, what is the prior probability?",
+      options: [
+        "The probability of the evidence",
+        "Your belief about the hypothesis before seeing the evidence",
+        "The probability the test is accurate",
+        "The final updated probability",
+      ],
+      correctIndex: 1,
+      explanation:
+        "The prior captures what you believed beforehand, often the base rate or prevalence in the population. After incorporating evidence you obtain the posterior.",
+    },
+    {
+      id: "q3",
+      text: "A disease affects 1 in 1,000 people. A test is 99% sensitive and 99% specific. Roughly what is the probability that someone testing positive has the disease?",
+      options: ["About 99%", "About 50%", "About 9%", "About 1%"],
+      correctIndex: 2,
+      explanation:
+        "Per 100,000 people there are about 99 true positives but 999 false positives, since the 1% error rate applies to the very large healthy group. That gives 99/1098, or roughly 9%.",
+    },
+    {
+      id: "q4",
+      text: "Why does the same test give a much higher positive predictive value in a high-risk population?",
+      options: [
+        "The test becomes more sensitive in sick people",
+        "Higher prevalence means more true positives relative to false positives",
+        "High-risk populations are usually larger",
+        "Specificity increases as prevalence increases",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Sensitivity and specificity are properties of the test and do not change, but raising the base rate increases the pool generating true positives and shrinks the pool generating false ones. That shifts the ratio sharply in favor of true positives.",
+    },
+    {
+      id: "q5",
+      text: "What is the base rate fallacy?",
+      options: [
+        "Assuming a sample is representative of a population",
+        "Confusing the mean with the median",
+        "Using n instead of n − 1 in a variance calculation",
+        "Ignoring how common a condition is when interpreting a test result",
+      ],
+      correctIndex: 3,
+      explanation:
+        "The fallacy is judging a positive result only by the test's accuracy while overlooking prevalence. For rare conditions the base rate dominates, which is why an accurate test can still yield mostly false positives.",
+    },
+  ]}
+/>

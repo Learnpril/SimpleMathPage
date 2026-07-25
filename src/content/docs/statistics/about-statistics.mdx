@@ -1,0 +1,81 @@
+---
+title: About Statistics
+description: The mathematics of data, uncertainty, and honest conclusions
+sidebar:
+  order: 0
+---
+
+## What is Statistics?
+
+Statistics is the science of learning from data when you can't see everything.
+
+You want to know what a whole country thinks, but you can only ask 1,200 people. You want to know if a drug works, but you can only test it on a few hundred patients. You want to know whether last month's sales dip means anything, or whether it's just noise.
+
+Statistics is the toolkit for those situations. It has two halves that do very different jobs:
+
+import StatsTopicMap from "../../../components/StatsTopicMap.astro";
+
+<StatsTopicMap />
+
+**Descriptive statistics** summarizes the data you actually have. Averages, spread, charts. No guessing involved.
+
+**Inferential statistics** uses that sample to make a claim about the larger group you couldn't measure, and, crucially, tells you how confident you're entitled to be.
+
+That second half is what makes statistics different from arithmetic. The answer isn't a number, it's a number plus an honest statement of how much it might be wrong.
+
+## A Brief History
+
+Statistics started as literal state-craft. The word shares a root with "state," because the earliest work was governments counting people, land, and taxes. Censuses go back thousands of years, to Babylon, Egypt, and Han China.
+
+The mathematical turn came with gambling. In 1654 **Blaise Pascal** and **Pierre de Fermat** exchanged letters about how to divide the stakes in an interrupted dice game, and in solving it they laid the foundation of probability theory. A serious question about an unserious problem.
+
+**John Graunt** published an analysis of London death records in 1662, arguably the first real work in what we'd now call biostatistics. He noticed patterns in mortality that no individual death could reveal.
+
+The normal distribution arrived through **Abraham de Moivre** (1733) and was developed by **Carl Friedrich Gauss**, who used it to model measurement error in astronomy. That's why it's often called the Gaussian distribution.
+
+The modern discipline is largely a 20th-century invention. **Karl Pearson** gave us correlation and the chi-squared test. **Ronald Fisher** built experimental design, the analysis of variance, and the p-value. **Jerzy Neyman** and **Egon Pearson** formalized hypothesis testing. **William Sealy Gosset**, working as a brewer at Guinness and publishing under the pen name "Student" because his employer wanted secrecy, invented the t-distribution to handle small samples.
+
+More recently, statistics quietly became the engine of machine learning. Every model that "learns from data" is doing statistics at scale.
+
+## Why We're Learning It
+
+Statistics is probably the single most useful math course for everyday life, and that's not a small claim.
+
+Every day you're handed numbers meant to change your mind. A drug reduces risk by 50%. A poll shows a candidate up 3 points. Crime rose 12% last year. Each of those could be solid or could be nearly meaningless, and telling the difference is a learnable skill.
+
+You'll also learn something uncomfortable and valuable: **how easy it is to mislead with true numbers.** A 50% risk reduction sounds enormous until you learn the risk went from 2 in 10,000 to 1 in 10,000. A poll with a 3-point lead and a 4-point margin of error is a coin flip. Statistics teaches you to ask the follow-up question.
+
+And if you write software, this is the math behind A/B tests, recommendation systems, anomaly detection, and every model in the machine learning stack.
+
+## Why It Matters in Real Life
+
+- **Medicine.** Deciding whether a treatment works, and whether a test result means what you think it means.
+- **News and polls.** Reading margins of error, sample sizes, and knowing when a headline outran its data.
+- **Money.** Understanding risk, expected value, insurance, and why the lottery is a bad investment even when the jackpot is huge.
+- **Work.** A/B testing a product change, forecasting demand, spotting whether a metric actually moved.
+- **Sports.** Batting averages, expected goals, and the difference between a hot streak and randomness.
+- **Quality control.** Manufacturers sample a production line rather than testing every unit.
+- **Everyday skepticism.** Recognizing selection bias, correlation mistaken for causation, and cherry-picked comparisons.
+
+## What You'll Learn in This Section
+
+The section moves through four connected areas:
+
+- **Describing data** - populations and samples, types of data, charts and histograms, mean, median, mode, variance, standard deviation, the five-number summary, boxplots, and outliers.
+- **Probability** - sample spaces, the addition and multiplication rules, complements, conditional probability, independence, and Bayes' theorem.
+- **Distributions** - random variables, expected value, the binomial distribution, the normal distribution, z-scores, the empirical rule, sampling distributions, and the Central Limit Theorem.
+- **Inference** - confidence intervals, hypothesis testing, p-values, Type I and Type II errors, statistical significance, correlation, and linear regression.
+
+Each lesson has worked examples, real-world connections, and a quiz.
+
+## How to Get the Most Out of This Section
+
+Compute a few statistics by hand before you trust a calculator to do it. Working through one standard deviation the long way teaches you what the formula is actually measuring, and after that you can happily let software do it forever.
+
+Always ask what the number is _of_. A mean of what population? A percentage of what base? Most statistical confusion in the wild is not bad arithmetic, it's an unstated denominator.
+
+And when you get to inference, slow down on the vocabulary. The precise meaning of "95% confident" and "statistically significant" is narrower than the everyday meaning, and the gap between them is where most misinterpretation lives.
+
+:::note[You've Got This]
+Statistics has a reputation for being fiddly, and the formulas do look busy at first. But almost every one of them is answering a plain question: where's the middle, how spread out is it, and could this have happened by chance? Keep those three questions in mind and the formulas start to feel like tools instead of trivia. This is also the section where you'll catch yourself using the material within a day of learning it.
+:::

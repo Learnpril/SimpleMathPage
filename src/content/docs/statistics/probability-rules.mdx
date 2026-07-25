@@ -1,0 +1,294 @@
+---
+title: Probability Rules
+description: The addition rule, the multiplication rule, mutually exclusive events, and independence
+sidebar:
+  order: 8
+---
+
+import Quiz from "../../../components/Quiz.astro";
+import ProbabilityVenn from "../../../components/ProbabilityVenn.astro";
+
+## What You'll Learn
+
+In this lesson you'll learn the addition rule for "or" questions, the multiplication rule for "and" questions, how mutually exclusive differs from independent, and how to tell which rule a problem needs.
+
+## The Concept
+
+### The two questions
+
+Almost every probability problem is one of these:
+
+- **"Or"** questions combine events. Use the **addition rule**.
+- **"And"** questions require events together. Use the **multiplication rule**.
+
+Getting this right is mostly a matter of reading carefully, and the same or/and distinction you met in the counting principles applies here.
+
+### Mutually exclusive events
+
+Two events are **mutually exclusive** (or disjoint) if they **cannot both happen**.
+
+Drawing a card that's both a heart and a spade is impossible, so those events are mutually exclusive. Rolling both a 3 and a 5 on a single die is impossible.
+
+For mutually exclusive events:
+
+$$
+P(A \text{ and } B) = 0
+$$
+
+### The addition rule
+
+The general rule for "or":
+
+$$
+P(A \text{ or } B) = P(A) + P(B) - P(A \text{ and } B)
+$$
+
+<ProbabilityVenn />
+
+The subtraction is there because outcomes in both events get counted twice when you add. This is the inclusion-exclusion principle from set theory, in probability clothing.
+
+When the events **are mutually exclusive**, the overlap is zero and it simplifies:
+
+$$
+P(A \text{ or } B) = P(A) + P(B)
+$$
+
+The classic error is using the simple version when the events actually overlap. Drawing "a king or a heart" is not $\frac{4}{52} + \frac{13}{52}$, because the king of hearts is in both groups.
+
+### Independence
+
+Two events are **independent** if one occurring doesn't change the probability of the other.
+
+Coin flips are independent. Drawing cards **with** replacement is independent; drawing **without** replacement is not, because removing a card changes what's left.
+
+### The multiplication rule
+
+The general rule for "and":
+
+$$
+P(A \text{ and } B) = P(A) \times P(B \mid A)
+$$
+
+where $P(B \mid A)$ is the probability of $B$ **given that** $A$ happened. That's conditional probability, and it gets its own lesson next.
+
+When the events **are independent**, knowing $A$ tells you nothing, so $P(B \mid A) = P(B)$ and it simplifies:
+
+$$
+P(A \text{ and } B) = P(A) \times P(B)
+$$
+
+Extending to more events, independence lets you just keep multiplying:
+
+$$
+P(A \text{ and } B \text{ and } C) = P(A) \times P(B) \times P(C)
+$$
+
+### Mutually exclusive versus independent
+
+These two terms get confused constantly, and they are nearly opposites.
+
+|                       | Mutually exclusive         | Independent                     |
+| :-------------------- | :------------------------- | :------------------------------ |
+| Meaning               | cannot both happen         | one doesn't affect the other    |
+| $P(A \text{ and } B)$ | $0$                        | $P(A) \times P(B)$              |
+| Relates to            | the **addition** rule      | the **multiplication** rule     |
+| Example               | drawing a heart or a spade | flipping heads then rolling a 6 |
+
+Here's the sharp point: **mutually exclusive events are strongly dependent.** If you know a card is a heart, you know for certain it isn't a spade. That's the maximum possible influence one event can have on another.
+
+So (except in trivial cases where one has probability zero) two events cannot be both mutually exclusive and independent. They're describing opposite situations.
+
+### With and without replacement
+
+This distinction decides whether you get independence.
+
+**With replacement** - the item goes back, so the pool is unchanged and draws are independent.
+
+**Without replacement** - the pool shrinks and changes composition, so draws are dependent and you need the conditional form.
+
+From a deck, two hearts in a row:
+
+$$
+\text{With replacement: } \frac{13}{52} \times \frac{13}{52} = \frac{1}{16}
+$$
+
+$$
+\text{Without replacement: } \frac{13}{52} \times \frac{12}{51} = \frac{1}{17}
+$$
+
+The second is smaller, because removing a heart makes the next heart slightly less likely.
+
+## Worked Examples
+
+**Example 1: Addition rule with overlap.**
+
+Draw one card from a standard 52-card deck. Find $P(\text{king or heart})$.
+
+**Solution.**
+
+$$
+P(\text{king}) = \frac{4}{52} \qquad P(\text{heart}) = \frac{13}{52} \qquad P(\text{king and heart}) = \frac{1}{52}
+$$
+
+The overlap is the king of hearts, exactly one card.
+
+$$
+P(\text{king or heart}) = \frac{4}{52} + \frac{13}{52} - \frac{1}{52} = \frac{16}{52} = \frac{4}{13} \approx 0.308
+$$
+
+Verify by counting: 13 hearts plus 3 non-heart kings = 16 cards. ✓
+
+**Example 2: Mutually exclusive addition.**
+
+Roll one die. Find $P(\text{roll a 2 or a 5})$.
+
+**Solution.** A single die can't show both, so these are mutually exclusive and the overlap is 0.
+
+$$
+P = \frac{1}{6} + \frac{1}{6} = \frac{2}{6} = \frac{1}{3}
+$$
+
+**Example 3: Independent multiplication.**
+
+Flip a coin and roll a die. Find $P(\text{heads and a 6})$.
+
+**Solution.** The coin and die don't influence each other, so they're independent.
+
+$$
+P = \frac{1}{2} \times \frac{1}{6} = \frac{1}{12}
+$$
+
+Check against the sample space: 12 equally likely combinations, exactly one of which is (H, 6). ✓
+
+**Example 4: Dependent multiplication.**
+
+A bag has 4 red and 6 blue marbles. Two are drawn **without replacement**. Find $P(\text{both red})$.
+
+**Solution.** First draw:
+
+$$
+P(\text{red}) = \frac{4}{10}
+$$
+
+Now 9 marbles remain, 3 of them red:
+
+$$
+P(\text{second red} \mid \text{first red}) = \frac{3}{9}
+$$
+
+$$
+P(\text{both red}) = \frac{4}{10} \times \frac{3}{9} = \frac{12}{90} = \frac{2}{15} \approx 0.133
+$$
+
+Using $\frac{4}{10} \times \frac{4}{10} = 0.16$ would incorrectly assume replacement.
+
+**Example 5: Combining both rules.**
+
+A system has two independent backup drives, each with a 3% chance of failing in a year. Find the probability that **at least one** fails.
+
+**Solution.** Complement plus multiplication.
+
+$$
+P(\text{one drive survives}) = 1 - 0.03 = 0.97
+$$
+
+$$
+P(\text{both survive}) = 0.97 \times 0.97 = 0.9409
+$$
+
+$$
+P(\text{at least one fails}) = 1 - 0.9409 = 0.0591 \approx 5.9\%
+$$
+
+Note it's not $3\% + 3\% = 6\%$. Close, but the addition rule would double-count the case where both fail.
+
+**Example 6: Why the independence assumption matters.**
+
+In the example above, suppose both drives sit in the same server and share a power supply. Is the answer still 5.9%?
+
+**Solution.** No, and this is the practically important case. If a power surge or overheating can take out both drives, the failures are **not independent**, and
+
+$$
+P(\text{both fail}) > P(A) \times P(B)
+$$
+
+Real redundancy calculations fail this way often: engineers multiply small probabilities, get a reassuringly tiny number, and overlook the **common cause** that makes the events dependent. Genuine redundancy requires separating the shared risk, which is why critical systems put backups in different buildings on different power grids.
+
+## Real-World Applications
+
+Reliability engineering is built on these rules. Systems in **series** all need to work, so their reliabilities multiply, and adding components makes things worse. Systems in **parallel** need only one to work, so you compute the complement of everything failing, and adding components makes things better. Aircraft, spacecraft, and data centers are designed around this arithmetic, with the common-cause caveat from Example 6 taken very seriously.
+
+Insurance pools depend on claims being roughly independent. That assumption holds fine for car accidents scattered across a country and breaks badly for hurricane damage, where one event triggers thousands of correlated claims at once. Insurers manage this by geographic diversification and reinsurance.
+
+The 2008 financial crisis is a large-scale case of the same error. Mortgage-backed securities were priced assuming defaults were largely independent. When the housing market fell nationally, defaults became highly correlated, and models built on independence understated the risk enormously.
+
+Password and cryptographic security multiplies independent choices, which is why length beats complexity: each additional character multiplies the search space.
+
+In medical testing, combining two independent tests reduces false positives multiplicatively, which is why a screening test is often confirmed by a different kind of test rather than a repeat of the same one, since repeating the same test doesn't give you independence.
+
+:::note[You've Got This]
+Read for "or" versus "and" first, then ask the follow-up: for "or," do the events overlap, and for "and," does the first outcome change the second? Those two questions pick your formula every time. The one distinction really worth locking in is mutually exclusive versus independent, because they sound similar and mean nearly opposite things. Mutually exclusive events are maximally dependent: knowing one happened tells you the other definitely didn't.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="stats-probability-rules"
+  questions={[
+    {
+      id: "q1",
+      text: "Why does the general addition rule subtract P(A and B)?",
+      options: [
+        "Because probabilities cannot exceed 1",
+        "Because outcomes in both events would otherwise be counted twice",
+        "Because A and B must be independent",
+        "Because subtraction converts the result to a percentage",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Adding P(A) and P(B) counts the overlap once in each term, so it appears twice in the total. Subtracting the intersection once leaves every outcome counted exactly once.",
+    },
+    {
+      id: "q2",
+      text: "A card is drawn from a standard deck. What is P(queen or diamond)?",
+      options: ["17/52", "16/52", "13/52", "4/52"],
+      correctIndex: 1,
+      explanation:
+        "There are 4 queens and 13 diamonds, and the queen of diamonds belongs to both, so 4/52 + 13/52 - 1/52 = 16/52. Forgetting to subtract the overlap gives the incorrect 17/52.",
+    },
+    {
+      id: "q3",
+      text: "What does it mean for two events to be independent?",
+      options: [
+        "They cannot both occur at the same time",
+        "Their probabilities add to 1",
+        "One event occurring does not change the probability of the other",
+        "They must have equal probabilities",
+      ],
+      correctIndex: 2,
+      explanation:
+        "Independence means no informational influence, so P(B given A) equals P(B). Events that cannot both occur are mutually exclusive, which is a different and in fact strongly dependent relationship.",
+    },
+    {
+      id: "q4",
+      text: "A bag holds 5 green and 5 yellow marbles. Two are drawn without replacement. What is P(both green)?",
+      options: ["1/4", "2/9", "1/2", "5/18"],
+      correctIndex: 1,
+      explanation:
+        "The first draw gives 5/10 and the second gives 4/9 because one green marble is gone, so the product is 20/90 = 2/9. Assuming replacement would wrongly give 1/4.",
+    },
+    {
+      id: "q5",
+      text: "Can two events with nonzero probabilities be both mutually exclusive and independent?",
+      options: [
+        "Yes, the two terms mean the same thing",
+        "Yes, whenever both probabilities are less than 0.5",
+        "No, mutually exclusive events are strongly dependent, since one occurring rules the other out",
+        "No, because independent events must be mutually exclusive",
+      ],
+      correctIndex: 2,
+      explanation:
+        "If A and B cannot co-occur, then learning A happened tells you B definitely did not, which is the strongest possible dependence. So the two conditions describe opposite situations rather than the same one.",
+    },
+  ]}
+/>

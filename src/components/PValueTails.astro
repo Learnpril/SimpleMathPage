@@ -1,0 +1,117 @@
+---
+/**
+ * PValueTails — the p-value as tail area under the null distribution, shown
+ * one-tailed and two-tailed so the doubling is visible.
+ */
+const panelW = 258;
+const w = 2 * panelW + 24;
+const h = 250;
+const baseY = 162;
+const peakH = 96;
+const sig = 32;
+const zObs = 2.0;
+
+function curveY(t: number) {
+  return baseY - peakH * Math.exp(-(t * t) / 2);
+}
+function tail(cx: number, from: number, to: number) {
+  const pts: string[] = [`${cx + from * sig},${baseY}`];
+  for (let i = 0; i <= 40; i++) {
+    const t = from + (i / 40) * (to - from);
+    pts.push(`${(cx + t * sig).toFixed(1)},${curveY(t).toFixed(1)}`);
+  }
+  pts.push(`${cx + to * sig},${baseY}`);
+  return pts.join(" ");
+}
+function fullCurve(cx: number) {
+  return Array.from({ length: 121 }, (_, i) => {
+    const t = -3.4 + (i / 120) * 6.8;
+    return `${(cx + t * sig).toFixed(1)},${curveY(t).toFixed(1)}`;
+  }).join(" ");
+}
+
+const cxL = 130;
+const cxR = panelW + 24 + 130;
+---
+
+<figure
+  class="pvt"
+  role="img"
+  aria-label="Two null distributions. The one-tailed test shades only the upper tail beyond the observed statistic, about 0.023, while the two-tailed test shades both tails for about 0.046."
+>
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    <text x="14" y="20" class="pvt-head" font-size="12" font-weight="bold">
+      The p-value is tail area under the null distribution
+    </text>
+
+    {/* ---------- One-tailed ---------- */}
+    <text x={cxL} y="44" class="pvt-title pvt-t-green" font-size="11.5" text-anchor="middle" font-weight="bold">One-tailed</text>
+    <text x={cxL} y="58" class="pvt-sub" font-size="9.5" text-anchor="middle">Hₐ: μ &gt; μ₀</text>
+
+    <polyline points={fullCurve(cxL)} class="pvt-curve" fill="none" />
+    <polygon points={tail(cxL, zObs, 3.4)} class="pvt-tail" />
+    <line x1={cxL - 3.5 * sig} y1={baseY} x2={cxL + 3.5 * sig} y2={baseY} class="pvt-axis" />
+
+    <line x1={cxL + zObs * sig} y1={baseY} x2={cxL + zObs * sig} y2={baseY - 62} class="pvt-obs" />
+    <text x={cxL + zObs * sig + 4} y={baseY - 68} class="pvt-obs-lbl" font-size="9.5">observed</text>
+    <text x={cxL + zObs * sig + 26} y={baseY + 30} class="pvt-p" font-size="10" text-anchor="middle">p ≈ 0.023</text>
+    <text x={cxL} y={baseY + 16} class="pvt-tick" font-size="9.5" text-anchor="middle">μ₀</text>
+
+    {/* Divider */}
+    <line x1={panelW + 12} y1="34" x2={panelW + 12} y2="212" class="pvt-divide" stroke-dasharray="4,4" />
+
+    {/* ---------- Two-tailed ---------- */}
+    <text x={cxR} y="44" class="pvt-title pvt-t-blue" font-size="11.5" text-anchor="middle" font-weight="bold">Two-tailed</text>
+    <text x={cxR} y="58" class="pvt-sub" font-size="9.5" text-anchor="middle">Hₐ: μ ≠ μ₀</text>
+
+    <polyline points={fullCurve(cxR)} class="pvt-curve" fill="none" />
+    <polygon points={tail(cxR, zObs, 3.4)} class="pvt-tail" />
+    <polygon points={tail(cxR, -3.4, -zObs)} class="pvt-tail" />
+    <line x1={cxR - 3.5 * sig} y1={baseY} x2={cxR + 3.5 * sig} y2={baseY} class="pvt-axis" />
+
+    <line x1={cxR + zObs * sig} y1={baseY} x2={cxR + zObs * sig} y2={baseY - 62} class="pvt-obs" />
+    <line x1={cxR - zObs * sig} y1={baseY} x2={cxR - zObs * sig} y2={baseY - 62} class="pvt-obs" />
+    <text x={cxR + zObs * sig + 26} y={baseY + 30} class="pvt-p" font-size="9.5" text-anchor="middle">0.023</text>
+    <text x={cxR - zObs * sig - 26} y={baseY + 30} class="pvt-p" font-size="9.5" text-anchor="middle">0.023</text>
+    <text x={cxR} y={baseY + 46} class="pvt-p" font-size="10" text-anchor="middle">p ≈ 0.046 total</text>
+    <text x={cxR} y={baseY + 16} class="pvt-tick" font-size="9.5" text-anchor="middle">μ₀</text>
+
+    {/* Footer */}
+    <text x={w / 2} y="226" class="pvt-foot" font-size="10.5" text-anchor="middle">
+      “As extreme or more” counts both directions in a two-tailed test, so the p-value doubles
+    </text>
+    <text x={w / 2} y="242" class="pvt-sub" font-size="9.5" text-anchor="middle">
+      Choose the direction before seeing the data, or the error rate is not what you think
+    </text>
+  </svg>
+</figure>
+
+<style>
+  .pvt { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .pvt svg { width:100%; max-width:100%; height:auto; }
+  .pvt-curve { stroke:#bbb; stroke-width:1.8; }
+  .pvt-tail { fill:#f0883e; fill-opacity:0.45; }
+  .pvt-axis { stroke:#888; stroke-width:1.3; }
+  .pvt-obs { stroke:#d2a8ff; stroke-width:2; stroke-dasharray:4,3; }
+  .pvt-obs-lbl { fill:#d2a8ff; font-family:'Libre Baskerville',Georgia,serif; font-style:italic; }
+  .pvt-p { fill:#f0883e; font-family:'Libre Baskerville',Georgia,serif; font-weight:bold; }
+  .pvt-title { font-family:'Libre Baskerville',Georgia,serif; }
+  .pvt-t-green { fill:#7ee787; }
+  .pvt-t-blue { fill:#58a6ff; }
+  .pvt-sub { fill:#888; font-family:'Libre Baskerville',Georgia,serif; font-style:italic; }
+  .pvt-tick { fill:#bbb; font-family:'Libre Baskerville',Georgia,serif; }
+  .pvt-head { fill:#eee; font-family:'Libre Baskerville',Georgia,serif; }
+  .pvt-foot { fill:#58a6ff; font-family:'Libre Baskerville',Georgia,serif; font-style:italic; }
+  .pvt-divide { stroke:#555; }
+  :global([data-theme="light"]) .pvt-curve { stroke:#444; }
+  :global([data-theme="light"]) .pvt-tail { fill:#b35900; fill-opacity:0.32; }
+  :global([data-theme="light"]) .pvt-axis { stroke:#666; }
+  :global([data-theme="light"]) .pvt-obs, :global([data-theme="light"]) .pvt-obs-lbl { stroke:#6639ba; fill:#6639ba; }
+  :global([data-theme="light"]) .pvt-p { fill:#b35900; }
+  :global([data-theme="light"]) .pvt-t-green { fill:#116329; }
+  :global([data-theme="light"]) .pvt-t-blue { fill:#0550ae; }
+  :global([data-theme="light"]) .pvt-tick { fill:#444; }
+  :global([data-theme="light"]) .pvt-head { fill:#24292f; }
+  :global([data-theme="light"]) .pvt-foot { fill:#0550ae; }
+  :global([data-theme="light"]) .pvt-divide { stroke:#ccc; }
+</style>

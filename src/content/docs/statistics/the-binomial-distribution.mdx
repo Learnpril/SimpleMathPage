@@ -1,0 +1,267 @@
+---
+title: The Binomial Distribution
+description: Counting successes in a fixed number of independent trials
+sidebar:
+  order: 12
+---
+
+import Quiz from "../../../components/Quiz.astro";
+import BinomialBars from "../../../components/BinomialBars.astro";
+
+## What You'll Learn
+
+In this lesson you'll learn the four conditions that make a situation binomial, the binomial probability formula and where it comes from, how to compute "at least" and "at most" probabilities, and the mean and standard deviation of a binomial variable.
+
+## The Concept
+
+### The four conditions
+
+A situation is **binomial** when all four of these hold. The mnemonic is **BINS**:
+
+- **B**inary - each trial has two outcomes, labeled success and failure.
+- **I**ndependent - trials don't influence each other.
+- **N**umber fixed - you decide $n$ in advance.
+- **S**ame probability - $p$ is identical on every trial.
+
+"Success" carries no positive meaning. It just labels the outcome you're counting, so a defect can be a success.
+
+If any condition fails, this isn't binomial. Drawing cards **without** replacement violates independence and constant $p$. Flipping until you get heads violates fixed $n$.
+
+### The formula
+
+If $X$ counts successes in $n$ trials with success probability $p$:
+
+$$
+P(X = k) = \binom{n}{k} p^k (1-p)^{n-k}
+$$
+
+Every piece has a job:
+
+- $p^k$ - the probability of $k$ successes.
+- $(1-p)^{n-k}$ - the probability of the remaining failures.
+- $\binom{n}{k}$ - **how many different orders** produce $k$ successes.
+
+That last factor is why the binomial coefficient from combinatorics shows up. Getting 2 heads in 3 flips can happen as HHT, HTH, or THH, and $\binom{3}{2} = 3$ counts exactly those arrangements. Without it you'd only be computing the probability of one specific sequence.
+
+Failure probability is often written $q = 1 - p$, giving the compact form $\binom{n}{k}p^k q^{n-k}$.
+
+### The shape
+
+<BinomialBars />
+
+The distribution's shape depends on $p$:
+
+- $p = 0.5$ - symmetric.
+- $p < 0.5$ - right-skewed, since successes are scarce.
+- $p > 0.5$ - left-skewed.
+
+As $n$ grows, the binomial becomes increasingly bell-shaped even when $p$ isn't 0.5. That's a preview of the Central Limit Theorem, and it's why the normal distribution can approximate the binomial for large $n$.
+
+### Mean and standard deviation
+
+The binomial has pleasantly simple formulas:
+
+$$
+\mu = np \qquad \sigma = \sqrt{np(1-p)}
+$$
+
+The mean is intuitive: 100 flips at $p = 0.5$ gives an expected 50 heads. You could derive it from the general expected value definition, but there's no need.
+
+### "At least" and "at most"
+
+Most real questions ask about ranges, not exact counts.
+
+- **Exactly $k$**: one term.
+- **At most $k$**: $P(X \leq k) = P(0) + P(1) + \cdots + P(k)$
+- **At least $k$**: $P(X \geq k) = P(k) + P(k+1) + \cdots + P(n)$
+
+For "at least," the **complement is usually far less work**:
+
+$$
+P(X \geq 1) = 1 - P(X = 0)
+$$
+
+$$
+P(X \geq 2) = 1 - P(X=0) - P(X=1)
+$$
+
+Watch the boundaries carefully. "More than 3" means $X \geq 4$, while "at least 3" means $X \geq 3$. That off-by-one is the most common error in binomial problems.
+
+## Worked Examples
+
+**Example 1: Exact probability.**
+
+A fair coin is flipped 6 times. Find the probability of exactly 4 heads.
+
+**Solution.** $n = 6$, $k = 4$, $p = 0.5$.
+
+$$
+P(X=4) = \binom{6}{4}(0.5)^4(0.5)^2 = 15 \times (0.5)^6 = \frac{15}{64} \approx 0.234
+$$
+
+Since $p = 0.5$, every specific sequence has probability $\frac{1}{64}$, so the answer is just the count of favorable arrangements over 64.
+
+**Example 2: Unequal probability.**
+
+A basketball player makes 70% of free throws. She takes 5. Find the probability she makes exactly 3.
+
+**Solution.** $n=5$, $k=3$, $p=0.7$.
+
+$$
+P(X=3) = \binom{5}{3}(0.7)^3(0.3)^2 = 10 \times 0.343 \times 0.09
+$$
+
+$$
+= 10 \times 0.03087 = 0.3087
+$$
+
+About **30.9%**.
+
+**Example 3: At least one.**
+
+A machine produces parts with a 4% defect rate. In a sample of 20, find the probability of at least one defect.
+
+**Solution.** Complement.
+
+$$
+P(X = 0) = \binom{20}{0}(0.04)^0(0.96)^{20} = (0.96)^{20} \approx 0.4420
+$$
+
+$$
+P(X \geq 1) = 1 - 0.4420 = 0.5580
+$$
+
+About **55.8%**. Worth noticing: with only a 4% defect rate, a sample of 20 still fails more often than not.
+
+**Example 4: At most.**
+
+Using Example 2's player (70% free throws, 5 attempts), find the probability she makes at most 1.
+
+**Solution.**
+
+$$
+P(X=0) = \binom{5}{0}(0.7)^0(0.3)^5 = 1 \times 1 \times 0.00243 = 0.00243
+$$
+
+$$
+P(X=1) = \binom{5}{1}(0.7)^1(0.3)^4 = 5 \times 0.7 \times 0.0081 = 0.02835
+$$
+
+$$
+P(X \leq 1) = 0.00243 + 0.02835 = 0.03078
+$$
+
+About **3.1%**. A good shooter rarely has a game that poor, which is what makes such a result notable if it happens.
+
+**Example 5: Mean and standard deviation.**
+
+A quiz has 40 multiple-choice questions with 4 options each. A student guesses every one. Find the mean and standard deviation of the number correct.
+
+**Solution.** $n = 40$, $p = 0.25$.
+
+$$
+\mu = np = 40(0.25) = 10
+$$
+
+$$
+\sigma = \sqrt{np(1-p)} = \sqrt{40(0.25)(0.75)} = \sqrt{7.5} \approx 2.74
+$$
+
+A guesser averages 10 correct with a typical deviation of under 3. Scoring 20 would be more than three standard deviations above the mean, which is strong evidence they weren't guessing.
+
+**Example 6: Is it binomial?**
+
+Which of these are binomial?
+
+1. Rolling a die 10 times, counting sixes.
+2. Drawing 5 cards from a deck without replacement, counting hearts.
+3. Flipping a coin until the first heads, counting flips.
+4. Surveying 200 randomly chosen voters, counting those who approve.
+
+**Solution.**
+
+1. **Yes.** Binary (six or not), independent, $n=10$ fixed, $p = \frac{1}{6}$ constant.
+2. **No.** Without replacement breaks independence and changes $p$ each draw. This needs the hypergeometric distribution.
+3. **No.** $n$ isn't fixed; it's the random quantity. This is the geometric distribution.
+4. **Yes, effectively.** Technically sampling without replacement, but the population is so much larger than 200 that $p$ barely shifts. The standard rule of thumb is that this approximation is fine when the sample is under about 10% of the population.
+
+## Real-World Applications
+
+Quality control is the textbook use. A factory samples $n$ items and computes how likely the observed defect count is under an assumed rate. If the result is very improbable, the process gets investigated. This is hypothesis testing in miniature.
+
+Clinical trials count patients responding to treatment out of $n$ enrolled. The binomial gives the probability of the observed response count under the assumption the drug does nothing, which is exactly a p-value.
+
+A/B testing counts conversions out of visitors. Every significance calculation on a conversion-rate test rests on binomial (or normal-approximated binomial) probabilities.
+
+Polling counts supporters out of respondents, and the margin of error comes from $\sigma = \sqrt{np(1-p)}$ converted to a proportion. That formula is why sample size drives precision.
+
+Genetics uses it for inheritance. With two carrier parents, each child independently has a 25% chance of inheriting a recessive condition, so the number affected among $n$ children is binomial.
+
+In reliability engineering, the probability that at least $k$ of $n$ redundant components survive is a binomial "at least" calculation, subject to the independence caveat from the probability rules lesson.
+
+:::note[You've Got This]
+Check BINS before reaching for the formula, because the most common mistake isn't the arithmetic, it's applying the binomial to a situation that isn't binomial. Sampling without replacement and "keep going until" scenarios both fail the conditions. Once you're sure it applies, remember the binomial coefficient is there to count arrangements, and use the complement whenever a question says "at least one." And read those boundary words closely: "more than 3" and "at least 3" differ by exactly one term.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="stats-the-binomial-distribution"
+  questions={[
+    {
+      id: "q1",
+      text: "Which situation is NOT binomial?",
+      options: [
+        "Rolling a die 20 times and counting the number of threes",
+        "Drawing 6 cards without replacement and counting the aces",
+        "Flipping a coin 15 times and counting tails",
+        "Testing 50 randomly selected bulbs and counting the defective ones",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Drawing without replacement changes the composition of the deck after each draw, so trials are not independent and p is not constant. That situation calls for the hypergeometric distribution instead.",
+    },
+    {
+      id: "q2",
+      text: "In the binomial formula, what does the binomial coefficient count?",
+      options: [
+        "The probability of a single success",
+        "The number of different orders in which k successes can occur",
+        "The total number of trials",
+        "The expected number of successes",
+      ],
+      correctIndex: 1,
+      explanation:
+        "The powers of p and (1 − p) give the probability of one particular arrangement, and the coefficient counts how many arrangements produce k successes. Without it you would only be finding the chance of one specific sequence.",
+    },
+    {
+      id: "q3",
+      text: "A coin is flipped 5 times. What is the probability of exactly 2 heads?",
+      options: ["10/32", "5/32", "1/32", "2/5"],
+      correctIndex: 0,
+      explanation:
+        "There are 5 choose 2 = 10 arrangements, and each specific sequence has probability 1/32 since p = 0.5. That gives 10/32, or about 0.313.",
+    },
+    {
+      id: "q4",
+      text: "For a binomial variable with n = 60 and p = 0.2, what is the mean?",
+      options: ["30", "12", "0.2", "48"],
+      correctIndex: 1,
+      explanation:
+        "The binomial mean is np = 60 x 0.2 = 12. This says that across many repetitions of 60 trials, you would average 12 successes.",
+    },
+    {
+      id: "q5",
+      text: "What is the easiest way to compute P(at least one success)?",
+      options: [
+        "Add the probabilities for every value of k from 1 to n",
+        "Multiply p by n",
+        "Compute 1 minus P(zero successes)",
+        "Use the mean np as an approximation",
+      ],
+      correctIndex: 2,
+      explanation:
+        "The complement of 'at least one' is 'none', which is a single term of the formula. Summing all the other terms gives the same answer but takes far more work.",
+    },
+  ]}
+/>

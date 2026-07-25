@@ -1,0 +1,85 @@
+---
+/**
+ * StatsTopicMap — the four connected areas of Statistics and the order the
+ * section works through them.
+ */
+const bw = 150;
+const bh = 52;
+const gap = 22;
+const margin = 12;
+const w = margin * 2 + 3 * bw + 2 * gap;
+const h = 214;
+const row1Y = 30;
+const row2Y = 136;
+const colX = (i: number) => margin + i * (bw + gap);
+const areas = [
+  { x: colX(0), y: row1Y, label: "Describing", sub: "center & spread", cls: "green" },
+  { x: colX(1), y: row1Y, label: "Probability", sub: "chance & Bayes", cls: "blue" },
+  { x: colX(2), y: row1Y, label: "Distributions", sub: "normal & binomial", cls: "purple" },
+  { x: colX(1), y: row2Y, label: "Inference", sub: "sample → population", cls: "orange" },
+];
+---
+
+<figure
+  class="stm"
+  role="img"
+  aria-label="Topic map of Statistics: describing data, probability and distributions all feed into inference"
+>
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    {/* Top row connectors */}
+    <line x1={colX(0) + bw} y1={row1Y + bh / 2} x2={colX(1) - 2} y2={row1Y + bh / 2} class="stm-link" marker-end="url(#stm-head)" />
+    <line x1={colX(1) + bw} y1={row1Y + bh / 2} x2={colX(2) - 2} y2={row1Y + bh / 2} class="stm-link" marker-end="url(#stm-head)" />
+
+    {/* All three feed down into inference */}
+    <line x1={colX(0) + bw / 2} y1={row1Y + bh} x2={colX(1) + 24} y2={row2Y - 2} class="stm-link" marker-end="url(#stm-head)" />
+    <line x1={colX(1) + bw / 2} y1={row1Y + bh} x2={colX(1) + bw / 2} y2={row2Y - 2} class="stm-link" marker-end="url(#stm-head)" />
+    <line x1={colX(2) + bw / 2} y1={row1Y + bh} x2={colX(1) + bw - 24} y2={row2Y - 2} class="stm-link" marker-end="url(#stm-head)" />
+
+    {areas.map((a) => (
+      <g>
+        <rect x={a.x} y={a.y} width={bw} height={bh} rx="8" class={`stm-box stm-${a.cls}`} />
+        <text x={a.x + bw / 2} y={a.y + 22} class={`stm-label stm-t-${a.cls}`} font-size="14" text-anchor="middle" font-weight="bold">{a.label}</text>
+        <text x={a.x + bw / 2} y={a.y + 40} class="stm-sub" font-size="10.5" text-anchor="middle">{a.sub}</text>
+      </g>
+    ))}
+
+    <text x={w / 2} y={h - 8} class="stm-foot" font-size="10.5" text-anchor="middle">
+      Everything builds toward inference: saying something about a population you cannot measure
+    </text>
+
+    <defs>
+      <marker id="stm-head" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+        <polygon points="0 0, 8 3, 0 6" class="stm-head-fill" />
+      </marker>
+    </defs>
+  </svg>
+</figure>
+
+<style>
+  .stm { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .stm svg { width:100%; max-width:100%; height:auto; }
+  .stm-box { fill:none; stroke-width:2; }
+  .stm-green { stroke:#7ee787; }
+  .stm-blue { stroke:#58a6ff; }
+  .stm-purple { stroke:#d2a8ff; }
+  .stm-orange { stroke:#f0883e; }
+  .stm-label { font-family:'Libre Baskerville',Georgia,serif; }
+  .stm-t-green { fill:#7ee787; }
+  .stm-t-blue { fill:#58a6ff; }
+  .stm-t-purple { fill:#d2a8ff; }
+  .stm-t-orange { fill:#f0883e; }
+  .stm-sub { fill:#888; font-family:'Libre Baskerville',Georgia,serif; font-style:italic; }
+  .stm-link { stroke:#888; stroke-width:1.5; }
+  .stm-head-fill { fill:#888; }
+  .stm-foot { fill:#888; font-family:'Libre Baskerville',Georgia,serif; font-style:italic; }
+  :global([data-theme="light"]) .stm-green { stroke:#116329; }
+  :global([data-theme="light"]) .stm-blue { stroke:#0550ae; }
+  :global([data-theme="light"]) .stm-purple { stroke:#6639ba; }
+  :global([data-theme="light"]) .stm-orange { stroke:#b35900; }
+  :global([data-theme="light"]) .stm-t-green { fill:#116329; }
+  :global([data-theme="light"]) .stm-t-blue { fill:#0550ae; }
+  :global([data-theme="light"]) .stm-t-purple { fill:#6639ba; }
+  :global([data-theme="light"]) .stm-t-orange { fill:#b35900; }
+  :global([data-theme="light"]) .stm-link { stroke:#555; }
+  :global([data-theme="light"]) .stm-head-fill { fill:#555; }
+</style>

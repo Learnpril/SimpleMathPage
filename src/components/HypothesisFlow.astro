@@ -1,0 +1,131 @@
+---
+/**
+ * HypothesisFlow — the four steps of a hypothesis test, with the decision
+ * branching into reject or fail to reject.
+ */
+const bw = 116;
+const bh = 60;
+const gap = 20;
+const margin = 12;
+const w = margin * 2 + 4 * bw + 3 * gap;
+const h = 256;
+const y = 56;
+const stepX = (i: number) => margin + i * (bw + gap);
+const steps = [
+  { title: "1. State", detail: "H₀ and Hₐ, pick α", cls: "blue" },
+  { title: "2. Compute", detail: "the test statistic", cls: "green" },
+  { title: "3. Find", detail: "the p-value", cls: "green" },
+  { title: "4. Decide", detail: "compare p to α", cls: "purple" },
+];
+---
+
+<figure
+  class="hyf"
+  role="img"
+  aria-label="Four step hypothesis testing flow: state the hypotheses and alpha, compute the test statistic, find the p-value, then decide, branching into reject the null or fail to reject it"
+>
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    <text x="14" y="26" class="hyf-head" font-size="12.5" font-weight="bold">
+      Hypothesis testing: proof by contradiction with probability
+    </text>
+
+    {/* Arrows */}
+    {steps.slice(0, 3).map((_, i) => (
+      <line
+        x1={stepX(i) + bw + 1}
+        y1={y + bh / 2}
+        x2={stepX(i) + bw + gap - 1}
+        y2={y + bh / 2}
+        class="hyf-arrow"
+        marker-end="url(#hyf-head)"
+      />
+    ))}
+
+    {/* Step boxes */}
+    {steps.map((s, i) => (
+      <g>
+        <rect x={stepX(i)} y={y} width={bw} height={bh} rx="7" class={`hyf-box hyf-${s.cls}`} />
+        <text x={stepX(i) + bw / 2} y={y + 24} class={`hyf-title hyf-t-${s.cls}`} font-size="12" text-anchor="middle" font-weight="bold">{s.title}</text>
+        <text x={stepX(i) + bw / 2} y={y + 44} class="hyf-detail" font-size="9.5" text-anchor="middle">{s.detail}</text>
+      </g>
+    ))}
+
+    {/* Decision branches */}
+    {(() => {
+      const dx = stepX(3) + bw / 2;
+      const branchY = y + bh + 34;
+      return (
+        <g>
+          <line x1={dx} y1={y + bh + 1} x2={dx} y2={branchY - 12} class="hyf-arrow" />
+          <line x1={dx} y1={branchY - 12} x2={dx - 150} y2={branchY - 12} class="hyf-arrow" />
+          <line x1={dx} y1={branchY - 12} x2={dx} y2={branchY - 12} class="hyf-arrow" />
+          <line x1={dx - 150} y1={branchY - 12} x2={dx - 150} y2={branchY} class="hyf-arrow" marker-end="url(#hyf-head)" />
+          <line x1={dx} y1={branchY - 12} x2={dx} y2={branchY} class="hyf-arrow" marker-end="url(#hyf-head)" />
+
+          {/* Reject branch. Boxes are 60 tall so all three lines get room. */}
+          <rect x={dx - 218} y={branchY + 4} width="136" height="60" rx="7" class="hyf-box hyf-orange" />
+          <text x={dx - 150} y={branchY + 22} class="hyf-title hyf-t-orange" font-size="11" text-anchor="middle" font-weight="bold">p ≤ α</text>
+          <text x={dx - 150} y={branchY + 40} class="hyf-detail" font-size="9.5" text-anchor="middle">reject H₀</text>
+          <text x={dx - 150} y={branchY + 54} class="hyf-tiny" font-size="9.5" text-anchor="middle">evidence for Hₐ</text>
+
+          {/* Fail to reject branch */}
+          <rect x={dx - 68} y={branchY + 4} width="136" height="60" rx="7" class="hyf-box hyf-grey" />
+          <text x={dx} y={branchY + 22} class="hyf-title hyf-t-grey" font-size="11" text-anchor="middle" font-weight="bold">p &gt; α</text>
+          <text x={dx} y={branchY + 40} class="hyf-detail" font-size="9.5" text-anchor="middle">fail to reject H₀</text>
+          <text x={dx} y={branchY + 54} class="hyf-tiny" font-size="9.5" text-anchor="middle">NOT “accept H₀”</text>
+        </g>
+      );
+    })()}
+
+    <text x={w / 2} y={h - 22} class="hyf-foot" font-size="10.5" text-anchor="middle">
+      Failing to reject is like a “not guilty” verdict: the burden of proof was not met
+    </text>
+    <text x={w / 2} y={h - 6} class="hyf-sub" font-size="9.5" text-anchor="middle">
+      It never establishes that the null is true
+    </text>
+
+    <defs>
+      <marker id="hyf-head" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+        <polygon points="0 0, 8 3, 0 6" class="hyf-arrow-fill" />
+      </marker>
+    </defs>
+  </svg>
+</figure>
+
+<style>
+  .hyf { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .hyf svg { width:100%; max-width:100%; height:auto; }
+  .hyf-box { fill:none; stroke-width:2; }
+  .hyf-blue { stroke:#58a6ff; }
+  .hyf-green { stroke:#7ee787; }
+  .hyf-purple { stroke:#d2a8ff; }
+  .hyf-orange { stroke:#f0883e; }
+  .hyf-grey { stroke:#777; }
+  .hyf-title { font-family:'Libre Baskerville',Georgia,serif; }
+  .hyf-t-blue { fill:#58a6ff; }
+  .hyf-t-green { fill:#7ee787; }
+  .hyf-t-purple { fill:#d2a8ff; }
+  .hyf-t-orange { fill:#f0883e; }
+  .hyf-t-grey { fill:#aaa; }
+  .hyf-detail { fill:#bbb; font-family:'Libre Baskerville',Georgia,serif; }
+  .hyf-tiny { fill:#888; font-family:'Libre Baskerville',Georgia,serif; font-style:italic; }
+  .hyf-arrow { stroke:#888; stroke-width:1.5; fill:none; }
+  .hyf-arrow-fill { fill:#888; }
+  .hyf-head { fill:#eee; font-family:'Libre Baskerville',Georgia,serif; }
+  .hyf-foot { fill:#f0883e; font-family:'Libre Baskerville',Georgia,serif; font-style:italic; }
+  .hyf-sub { fill:#888; font-family:'Libre Baskerville',Georgia,serif; font-style:italic; }
+  :global([data-theme="light"]) .hyf-blue { stroke:#0550ae; }
+  :global([data-theme="light"]) .hyf-green { stroke:#116329; }
+  :global([data-theme="light"]) .hyf-purple { stroke:#6639ba; }
+  :global([data-theme="light"]) .hyf-orange { stroke:#b35900; }
+  :global([data-theme="light"]) .hyf-t-blue { fill:#0550ae; }
+  :global([data-theme="light"]) .hyf-t-green { fill:#116329; }
+  :global([data-theme="light"]) .hyf-t-purple { fill:#6639ba; }
+  :global([data-theme="light"]) .hyf-t-orange { fill:#b35900; }
+  :global([data-theme="light"]) .hyf-t-grey { fill:#555; }
+  :global([data-theme="light"]) .hyf-detail { fill:#444; }
+  :global([data-theme="light"]) .hyf-arrow { stroke:#555; }
+  :global([data-theme="light"]) .hyf-arrow-fill { fill:#555; }
+  :global([data-theme="light"]) .hyf-head { fill:#24292f; }
+  :global([data-theme="light"]) .hyf-foot { fill:#b35900; }
+</style>

@@ -1,0 +1,126 @@
+---
+/**
+ * SampleSpaceDice — the 6x6 grid of two-dice outcomes with the six ways to
+ * total 7 highlighted, plus the frequency of each total. Shows that there are
+ * 36 equally likely outcomes, not 11 equally likely totals.
+ */
+const cell = 26;
+const gridX = 62;
+// Far enough below the subtitle that the column headers do not touch it
+const gridY = 66;
+const w = 540;
+const h = 306;
+const cells: { r: number; c: number; total: number }[] = [];
+for (let r = 1; r <= 6; r++) {
+  for (let c = 1; c <= 6; c++) cells.push({ r, c, total: r + c });
+}
+// Frequency of each total, computed rather than typed
+const freq = new Map<number, number>();
+for (const cellData of cells) freq.set(cellData.total, (freq.get(cellData.total) ?? 0) + 1);
+const totals = [...freq.keys()].sort((a, b) => a - b);
+const histX = 300;
+const histBase = 210;
+const barW = 18;
+---
+
+<figure
+  class="ssd"
+  role="img"
+  aria-label="A six by six grid of the 36 outcomes from rolling two dice, with the six combinations totalling 7 highlighted, beside a bar chart of how many ways each total from 2 to 12 can occur"
+>
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    <text x="16" y="22" class="ssd-head" font-size="12.5" font-weight="bold">Two dice: 36 outcomes, not 11</text>
+    <text x="16" y="38" class="ssd-sub" font-size="10">the dice are distinguishable, so (2,5) and (5,2) are different</text>
+
+    {/* Column headers */}
+    {[1, 2, 3, 4, 5, 6].map((c) => (
+      <text x={gridX + (c - 0.5) * cell} y={gridY - 6} class="ssd-axlbl" font-size="9.5" text-anchor="middle">{c}</text>
+    ))}
+    {/* Row headers */}
+    {[1, 2, 3, 4, 5, 6].map((r) => (
+      <text x={gridX - 8} y={gridY + (r - 0.5) * cell + 4} class="ssd-axlbl" font-size="9.5" text-anchor="end">{r}</text>
+    ))}
+
+    {/* Grid */}
+    {cells.map((d) => (
+      <g>
+        <rect
+          x={gridX + (d.c - 1) * cell}
+          y={gridY + (d.r - 1) * cell}
+          width={cell}
+          height={cell}
+          class={d.total === 7 ? "ssd-cell ssd-cell-hl" : "ssd-cell"}
+        />
+        <text
+          x={gridX + (d.c - 0.5) * cell}
+          y={gridY + (d.r - 0.5) * cell + 4}
+          class={d.total === 7 ? "ssd-num ssd-num-hl" : "ssd-num"}
+          font-size="9.5"
+          text-anchor="middle"
+        >{d.total}</text>
+      </g>
+    ))}
+
+    <text x={gridX + 3 * cell} y={gridY + 6 * cell + 18} class="ssd-hl-lbl" font-size="10" text-anchor="middle">
+      6 ways to total 7
+    </text>
+    <text x={gridX + 3 * cell} y={gridY + 6 * cell + 32} class="ssd-sub" font-size="9.5" text-anchor="middle">
+      so P(7) = 6/36 = 1/6
+    </text>
+
+    {/* Frequency histogram */}
+    <text x={histX + 100} y="58" class="ssd-hist-title" font-size="10.5" text-anchor="middle">ways to make each total</text>
+    {totals.map((t, i) => {
+      const f = freq.get(t)!;
+      const bh = f * 15;
+      const x = histX + i * barW;
+      return (
+        <g>
+          <rect x={x} y={histBase - bh} width={barW - 3} height={bh} class={t === 7 ? "ssd-bar ssd-bar-hl" : "ssd-bar"} />
+          <text x={x + (barW - 3) / 2} y={histBase - bh - 4} class="ssd-freq" font-size="9.5">{f}</text>
+          <text x={x + (barW - 3) / 2} y={histBase + 12} class="ssd-axlbl" font-size="9.5" text-anchor="middle">{t}</text>
+        </g>
+      );
+    })}
+    <line x1={histX - 6} y1={histBase} x2={histX + totals.length * barW} y2={histBase} class="ssd-axis" />
+
+    <text x={histX + 100} y={histBase + 34} class="ssd-sub" font-size="9.5" text-anchor="middle">
+      7 is the most likely total, 2 and 12 the least
+    </text>
+
+    <text x={w / 2} y={h - 22} class="ssd-foot" font-size="10" text-anchor="middle">
+      Treating the eleven totals as equally likely gives 1/11 for each,
+    </text>
+    <text x={w / 2} y={h - 8} class="ssd-foot" font-size="10" text-anchor="middle">
+      which is wrong for every single total
+    </text>
+  </svg>
+</figure>
+
+<style>
+  .ssd { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .ssd svg { width:100%; max-width:100%; height:auto; }
+  .ssd-cell { fill:none; stroke:#555; stroke-width:0.9; }
+  .ssd-cell-hl { fill:#7ee787; fill-opacity:0.28; stroke:#7ee787; stroke-width:1.6; }
+  .ssd-num { fill:#888; font-family:'Libre Baskerville',Georgia,serif; }
+  .ssd-num-hl { fill:#7ee787; font-weight:bold; }
+  .ssd-axlbl { fill:#888; font-family:'Libre Baskerville',Georgia,serif; }
+  .ssd-axis { stroke:#888; stroke-width:1.3; }
+  .ssd-bar { fill:#58a6ff; fill-opacity:0.4; stroke:#58a6ff; stroke-width:1; }
+  .ssd-bar-hl { fill:#7ee787; fill-opacity:0.5; stroke:#7ee787; }
+  .ssd-freq { fill:#888; font-family:'Libre Baskerville',Georgia,serif; text-anchor:middle; }
+  .ssd-hl-lbl { fill:#7ee787; font-family:'Libre Baskerville',Georgia,serif; font-weight:bold; }
+  .ssd-hist-title { fill:#58a6ff; font-family:'Libre Baskerville',Georgia,serif; font-style:italic; }
+  .ssd-head { fill:#eee; font-family:'Libre Baskerville',Georgia,serif; }
+  .ssd-sub { fill:#888; font-family:'Libre Baskerville',Georgia,serif; font-style:italic; }
+  .ssd-foot { fill:#f0883e; font-family:'Libre Baskerville',Georgia,serif; font-style:italic; }
+  :global([data-theme="light"]) .ssd-cell { stroke:#ddd; }
+  :global([data-theme="light"]) .ssd-cell-hl { fill:#116329; fill-opacity:0.18; stroke:#116329; }
+  :global([data-theme="light"]) .ssd-num-hl { fill:#116329; }
+  :global([data-theme="light"]) .ssd-bar { fill:#0550ae; fill-opacity:0.3; stroke:#0550ae; }
+  :global([data-theme="light"]) .ssd-bar-hl { fill:#116329; fill-opacity:0.35; stroke:#116329; }
+  :global([data-theme="light"]) .ssd-hl-lbl { fill:#116329; }
+  :global([data-theme="light"]) .ssd-hist-title { fill:#0550ae; }
+  :global([data-theme="light"]) .ssd-head { fill:#24292f; }
+  :global([data-theme="light"]) .ssd-foot { fill:#b35900; }
+</style>

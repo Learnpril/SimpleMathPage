@@ -1,0 +1,330 @@
+---
+title: Measures of Spread
+description: Range, variance, and standard deviation, and why spread matters as much as center
+sidebar:
+  order: 5
+---
+
+import Quiz from "../../../components/Quiz.astro";
+import SpreadComparison from "../../../components/SpreadComparison.astro";
+import StdDevSteps from "../../../components/StdDevSteps.astro";
+import SymbolKey from "../../../components/SymbolKey.astro";
+
+## What You'll Learn
+
+In this lesson you'll learn to compute range, variance, and standard deviation, understand why we square the deviations, and know why the sample formula divides by $n-1$ instead of $n$.
+
+<SymbolKey
+  items={[
+    { sym: "σ", read: "sigma, the population standard deviation" },
+    { sym: "σ²", read: "sigma squared, the population variance" },
+    { sym: "s", read: "the sample standard deviation" },
+    { sym: "s²", read: "s squared, the sample variance" },
+    {
+      sym: "x − x̄",
+      read: "a deviation from the mean",
+      note: "how far one value sits from the center",
+    },
+    {
+      sym: "Σ(x − x̄)²",
+      read: "the sum of squared deviations",
+      note: "the core of every spread formula",
+    },
+  ]}
+/>
+
+## The Concept
+
+### Why center isn't enough
+
+Two datasets can share a mean and be completely different.
+
+<SpreadComparison />
+
+Both of these have a mean of 50. One clusters tightly; the other sprawls. If they were test scores, the first class is uniformly prepared and the second contains both A students and failures. Reporting only the mean hides that entirely.
+
+**Spread** (or dispersion, or variability) measures how far the data typically strays from the center. It's every bit as important as the center, and often more actionable.
+
+### Range
+
+The simplest measure:
+
+$$
+\text{Range} = \text{maximum} - \text{minimum}
+$$
+
+For 12, 15, 18, 22, 30: range $= 30 - 12 = 18$.
+
+It's easy and nearly useless for serious work, because it depends entirely on the two most extreme values and ignores everything in between. One outlier sets it. Two datasets with the same range can have wildly different shapes.
+
+### Deviations, and the squaring problem
+
+To measure typical distance from the center, start with the **deviation** of each value:
+
+$$
+x - \bar{x}
+$$
+
+Natural next step: average the deviations. That fails immediately, because **the deviations always sum to zero.** The positives and negatives cancel exactly, since the mean is the balance point.
+
+For 2, 4, 9 with $\bar{x} = 5$: deviations are $-3, -1, +4$, summing to 0. Always.
+
+Two fixes exist. You could take absolute values, giving the _mean absolute deviation_, which is perfectly sensible and occasionally used. Statistics instead **squares** the deviations, because squares behave well under calculus and algebra, which makes the whole theory of inference tractable later.
+
+### Variance
+
+**Variance** is the mean of the squared deviations.
+
+For a **population**:
+
+$$
+\sigma^2 = \frac{\sum (x - \mu)^2}{N}
+$$
+
+For a **sample**:
+
+$$
+s^2 = \frac{\sum (x - \bar{x})^2}{n - 1}
+$$
+
+Note the denominators differ. More on that below.
+
+Variance has one annoying property: its units are **squared**. Variance of a set of heights in cm comes out in cm², which is not interpretable. That's what the standard deviation fixes.
+
+### Standard deviation
+
+**Standard deviation** is the square root of the variance, which puts it back in the original units.
+
+$$
+s = \sqrt{\frac{\sum (x - \bar{x})^2}{n-1}} \qquad \sigma = \sqrt{\frac{\sum (x - \mu)^2}{N}}
+$$
+
+Interpretation: roughly the **typical distance of a value from the mean**. If test scores have $\bar{x} = 75$ and $s = 8$, a typical student is about 8 points from 75.
+
+Properties worth knowing:
+
+- $s \geq 0$ always. It's zero only when every value is identical.
+- Same units as the data.
+- Sensitive to outliers, since squaring magnifies large deviations.
+
+### The computation, step by step
+
+<StdDevSteps />
+
+The procedure never changes:
+
+1. Find the mean.
+2. Subtract the mean from each value to get deviations.
+3. Square each deviation.
+4. Add the squares.
+5. Divide by $n-1$ (sample) or $N$ (population). That's the variance.
+6. Take the square root. That's the standard deviation.
+
+A useful check at step 2: your deviations must sum to zero. If they don't, the mean is wrong.
+
+### Why $n - 1$?
+
+This is the question everyone asks, and it has a real answer.
+
+When you compute a sample variance, you use $\bar{x}$ rather than the true $\mu$. But $\bar{x}$ is itself computed from the same data, and it sits at the exact center _of your sample_, which makes your deviations slightly smaller than deviations from the real population mean would be. Dividing by $n$ therefore **underestimates** the population variance systematically.
+
+Dividing by $n-1$ corrects for it exactly. The technical name is **Bessel's correction**, and $n-1$ is called the **degrees of freedom**: once you know the mean and $n-1$ of the values, the last value is determined, so only $n-1$ of the deviations are genuinely free.
+
+Practical note: for large $n$ the correction barely matters ($n=1000$ vs $999$ is a 0.1% difference). For small samples it matters a lot.
+
+Use $N$ only when you genuinely have every member of the population.
+
+### Coefficient of variation
+
+To compare spread across different scales, use the **coefficient of variation**, the standard deviation as a percentage of the mean:
+
+$$
+CV = \frac{s}{\bar{x}} \times 100\%
+$$
+
+A standard deviation of 5 is large for values near 20 and tiny for values near 5,000. The CV makes that comparison possible.
+
+## Worked Examples
+
+**Example 1: Sample standard deviation, fully worked.**
+
+Data: 4, 8, 6, 10, 12 (a sample)
+
+**Solution.**
+
+**Step 1, mean:**
+
+$$
+\bar{x} = \frac{4+8+6+10+12}{5} = \frac{40}{5} = 8
+$$
+
+**Steps 2–3, deviations and squares:**
+
+| $x$ | $x - \bar{x}$ | $(x-\bar{x})^2$ |
+| :-: | :-----------: | :-------------: |
+|  4  |      −4       |       16        |
+|  8  |       0       |        0        |
+|  6  |      −2       |        4        |
+| 10  |       2       |        4        |
+| 12  |       4       |       16        |
+
+Deviations sum to $-4+0-2+2+4 = 0$ ✓
+
+**Step 4, sum of squares:** $16+0+4+4+16 = 40$
+
+**Step 5, variance:**
+
+$$
+s^2 = \frac{40}{5-1} = \frac{40}{4} = 10
+$$
+
+**Step 6, standard deviation:**
+
+$$
+s = \sqrt{10} \approx 3.16
+$$
+
+So values sit typically about 3.16 units from the mean of 8.
+
+**Example 2: Population versus sample on the same data.**
+
+Using the data above, what if those five values were the entire population?
+
+**Solution.**
+
+$$
+\sigma^2 = \frac{40}{5} = 8 \qquad \sigma = \sqrt{8} \approx 2.83
+$$
+
+Compare to $s \approx 3.16$. The sample formula gives a **larger** answer, which is the correction doing its job: it inflates the estimate to account for the fact that a sample underrepresents the population's true spread.
+
+**Example 3: Same mean, different spread.**
+
+Two classes, both with mean 80.
+
+Class A: 78, 79, 80, 81, 82
+Class B: 60, 70, 80, 90, 100
+
+**Solution.**
+
+Class A squared deviations: $4, 1, 0, 1, 4$, summing to 10.
+
+$$
+s_A = \sqrt{\frac{10}{4}} = \sqrt{2.5} \approx 1.58
+$$
+
+Class B squared deviations: $400, 100, 0, 100, 400$, summing to 1000.
+
+$$
+s_B = \sqrt{\frac{1000}{4}} = \sqrt{250} \approx 15.81
+$$
+
+Identical means, standard deviations differing by a factor of 10. Class A is uniformly at the level; Class B has a huge range of ability. Any teaching decision would differ completely between them, and the mean alone would never tell you.
+
+**Example 4: Coefficient of variation.**
+
+Compare variability: a set of adult heights ($\bar{x} = 170$ cm, $s = 8$ cm) versus a set of annual incomes ($\bar{x} = 52{,}000$, $s = 21{,}000$).
+
+**Solution.**
+
+$$
+CV_{\text{height}} = \frac{8}{170} \times 100\% \approx 4.7\%
+$$
+
+$$
+CV_{\text{income}} = \frac{21{,}000}{52{,}000} \times 100\% \approx 40.4\%
+$$
+
+Income is roughly nine times more variable relative to its own scale. Comparing the raw standard deviations (8 versus 21,000) would have been meaningless, since the units differ.
+
+**Example 5: Zero standard deviation.**
+
+What does $s = 0$ tell you?
+
+**Solution.** Every value is identical. If $s = 0$ then $\sum(x-\bar{x})^2 = 0$, and since squares can't be negative, every single deviation must be zero, so every $x$ equals $\bar{x}$.
+
+If you compute this on real data, suspect a mistake: a column of copied values, or a measurement instrument that's stuck.
+
+## Real-World Applications
+
+Investment risk is standard deviation, essentially by definition. Two funds with the same average return but different standard deviations are not the same product: the high-$s$ fund swings harder in both directions. "Volatility" in finance is the standard deviation of returns, and most portfolio theory is about trading expected return against it.
+
+Manufacturing quality control is built on it. Six Sigma takes its name from requiring the tolerance limits to sit six standard deviations from the mean, so almost nothing falls outside spec. A process with a good mean and a large $\sigma$ produces plenty of defective units.
+
+Weather and climate comparisons need spread. Two cities can share an annual mean temperature while one is mild year-round and the other swings between extremes. San Diego and a continental city can average the same and feel nothing alike.
+
+Grading on a curve uses the standard deviation to set boundaries, which is also where z-scores come from in the next lessons.
+
+In A/B testing, the variance of your metric determines how large a sample you need. High-variance metrics (revenue per user, say) require far more traffic to detect a real effect than low-variance ones (click-through rate).
+
+:::note[You've Got This]
+Standard deviation looks like the most formula-heavy thing so far, but the procedure is mechanical and always identical: distance from the mean, square, average, square root. The only genuinely conceptual bit is $n-1$, and if it doesn't click immediately, hold on to this: a sample's spread underestimates the population's, so we shrink the denominator to compensate. Also make a habit of checking that your deviations sum to zero. It catches arithmetic errors before they propagate through five more steps.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="stats-measures-of-spread"
+  questions={[
+    {
+      id: "q1",
+      text: "Why can't we simply average the deviations from the mean to measure spread?",
+      options: [
+        "Because deviations are always positive",
+        "Because the deviations always sum to zero, so the average is always zero",
+        "Because averaging requires squared units",
+        "Because deviations only exist for symmetric data",
+      ],
+      correctIndex: 1,
+      explanation:
+        "The mean is the balance point, so positive and negative deviations cancel exactly and their total is always zero. Squaring (or taking absolute values) removes the cancellation.",
+    },
+    {
+      id: "q2",
+      text: "For the sample 3, 5, 7, the sum of squared deviations is 8. What is the sample variance?",
+      options: ["2.67", "4", "8", "2.83"],
+      correctIndex: 1,
+      explanation:
+        "The sample variance divides by n - 1 = 2, giving 8 / 2 = 4. Dividing by n = 3 would give 2.67, which is the population formula and underestimates the population variance.",
+    },
+    {
+      id: "q3",
+      text: "Why does the sample variance formula divide by n − 1 instead of n?",
+      options: [
+        "To make the arithmetic simpler",
+        "Because samples always contain an error value",
+        "Because dividing by n systematically underestimates the population variance",
+        "Because the last value in a sample is always discarded",
+      ],
+      correctIndex: 2,
+      explanation:
+        "Deviations are measured from the sample mean, which sits at the center of the sample itself, so they run slightly small. Bessel's correction of n - 1 compensates for that bias exactly.",
+    },
+    {
+      id: "q4",
+      text: "Two datasets both have a mean of 100. Dataset A has s = 2 and dataset B has s = 25. What does this tell you?",
+      options: [
+        "Dataset A's values cluster tightly near 100 while B's are widely scattered",
+        "Dataset B has a higher average than A",
+        "Dataset A must contain more values than B",
+        "Dataset B contains an error, since s cannot exceed 10",
+      ],
+      correctIndex: 0,
+      explanation:
+        "Standard deviation measures typical distance from the mean, so a small s means values sit close to the center. Identical means with very different spreads describe quite different situations.",
+    },
+    {
+      id: "q5",
+      text: "What does a standard deviation of exactly 0 indicate?",
+      options: [
+        "The mean is zero",
+        "Every value in the dataset is identical",
+        "The data is perfectly symmetric",
+        "Half the values are above the mean",
+      ],
+      correctIndex: 1,
+      explanation:
+        "A zero standard deviation forces every squared deviation to be zero, which means every value equals the mean. In real data this usually signals a copied column or a stuck instrument.",
+    },
+  ]}
+/>

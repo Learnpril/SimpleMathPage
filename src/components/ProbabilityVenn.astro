@@ -1,0 +1,109 @@
+---
+/**
+ * ProbabilityVenn — the addition rule shown as overlapping circles, with the
+ * king-or-heart card example counted out so the double-counted overlap is visible.
+ */
+const w = 540;
+const h = 250;
+// Circle geometry. The set names sit above the circles rather than beside them,
+// because at the widest point of a circle there is no room for a label that
+// the outline does not cut through.
+const cy = 132;
+const r = 56;
+const axL = 160;
+const axR = 240;
+// Centres of the three regions, used to place the counts
+const onlyLeftX = axL - 26;
+const bothX = (axL + axR) / 2;
+const onlyRightX = axR + 26;
+---
+
+<figure
+  class="pvn"
+  role="img"
+  aria-label="Two overlapping circles for kings and hearts in a deck of cards, showing 3 kings that are not hearts, 12 hearts that are not kings, and 1 card that is both, giving 16 favourable cards rather than 17"
+>
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    <text x="16" y="22" class="pvn-head" font-size="12.5" font-weight="bold">The addition rule: subtract the overlap</text>
+
+    {/* Universe */}
+    <rect x="20" y="46" width="300" height="156" rx="6" class="pvn-universe" />
+    <text x="28" y="62" class="pvn-u" font-size="9.5">52 cards</text>
+
+    {/* Circles */}
+    <circle cx={axL} cy={cy} r={r} class="pvn-circle pvn-a" />
+    <circle cx={axR} cy={cy} r={r} class="pvn-circle pvn-b" />
+
+    {/* Region counts */}
+    <text x={onlyLeftX} y={cy - 2} class="pvn-count" font-size="15" text-anchor="middle" font-weight="bold">3</text>
+    <text x={onlyLeftX} y={cy + 14} class="pvn-rlabel" font-size="9.5" text-anchor="middle">kings only</text>
+
+    <text x={bothX} y={cy - 2} class="pvn-count pvn-overlap-txt" font-size="15" text-anchor="middle" font-weight="bold">1</text>
+    <text x={bothX} y={cy + 14} class="pvn-rlabel" font-size="9.5" text-anchor="middle">both</text>
+
+    <text x={onlyRightX} y={cy - 2} class="pvn-count" font-size="15" text-anchor="middle" font-weight="bold">12</text>
+    <text x={onlyRightX} y={cy + 14} class="pvn-rlabel" font-size="9.5" text-anchor="middle">hearts only</text>
+
+    {/* Set labels, above the circle tops */}
+    <text x={axL - 40} y={cy - r - 12} class="pvn-set pvn-t-blue" font-size="12" text-anchor="middle" font-weight="bold">Kings</text>
+    <text x={axR + 40} y={cy - r - 12} class="pvn-set pvn-t-green" font-size="12" text-anchor="middle" font-weight="bold">Hearts</text>
+
+    {/* Arithmetic panel */}
+    <text x="346" y="72" class="pvn-eq-lbl" font-size="10">count kings:</text>
+    <text x="470" y="72" class="pvn-eq pvn-t-blue" font-size="11" text-anchor="end">4</text>
+    <text x="346" y="92" class="pvn-eq-lbl" font-size="10">count hearts:</text>
+    <text x="470" y="92" class="pvn-eq pvn-t-green" font-size="11" text-anchor="end">+ 13</text>
+    <line x1="346" y1="100" x2="470" y2="100" class="pvn-rule" />
+    <text x="346" y="116" class="pvn-eq-lbl" font-size="10">naive total:</text>
+    <text x="470" y="116" class="pvn-eq" font-size="11" text-anchor="end">17</text>
+    <text x="346" y="136" class="pvn-eq-lbl pvn-t-orange" font-size="10">king of hearts counted twice:</text>
+    <text x="470" y="152" class="pvn-eq pvn-t-orange" font-size="11" text-anchor="end">− 1</text>
+    <line x1="346" y1="160" x2="470" y2="160" class="pvn-rule" />
+    <text x="346" y="178" class="pvn-eq-lbl" font-size="10">correct total:</text>
+    <text x="470" y="178" class="pvn-eq pvn-t-purple" font-size="12.5" text-anchor="end" font-weight="bold">16</text>
+
+    <text x={w / 2} y="222" class="pvn-foot" font-size="11" text-anchor="middle">
+      P(king or heart) = 4/52 + 13/52 − 1/52 = 16/52
+    </text>
+    <text x={w / 2} y="240" class="pvn-sub" font-size="9.5" text-anchor="middle">
+      When events are mutually exclusive the overlap is 0 and the subtraction disappears
+    </text>
+  </svg>
+</figure>
+
+<style>
+  .pvn { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .pvn svg { width:100%; max-width:100%; height:auto; }
+  .pvn-universe { fill:none; stroke:#555; stroke-width:1; }
+  .pvn-circle { fill-opacity:0.16; stroke-width:2; }
+  .pvn-a { fill:#58a6ff; stroke:#58a6ff; }
+  .pvn-b { fill:#7ee787; stroke:#7ee787; }
+  .pvn-count { fill:#eee; font-family:'Libre Baskerville',Georgia,serif; }
+  .pvn-overlap-txt { fill:#f0883e; }
+  .pvn-rlabel { fill:#888; font-family:'Libre Baskerville',Georgia,serif; font-style:italic; }
+  .pvn-set { font-family:'Libre Baskerville',Georgia,serif; }
+  .pvn-t-blue { fill:#58a6ff; }
+  .pvn-t-green { fill:#7ee787; }
+  .pvn-t-orange { fill:#f0883e; }
+  .pvn-t-purple { fill:#d2a8ff; }
+  .pvn-u { fill:#888; font-family:'Libre Baskerville',Georgia,serif; }
+  .pvn-eq-lbl { fill:#bbb; font-family:'Libre Baskerville',Georgia,serif; }
+  .pvn-eq { fill:#bbb; font-family:'Libre Baskerville',Georgia,serif; }
+  .pvn-rule { stroke:#555; stroke-width:1; }
+  .pvn-head { fill:#eee; font-family:'Libre Baskerville',Georgia,serif; }
+  .pvn-foot { fill:#d2a8ff; font-family:'Libre Baskerville',Georgia,serif; }
+  .pvn-sub { fill:#888; font-family:'Libre Baskerville',Georgia,serif; font-style:italic; }
+  :global([data-theme="light"]) .pvn-universe { stroke:#ccc; }
+  :global([data-theme="light"]) .pvn-a { fill:#0550ae; stroke:#0550ae; }
+  :global([data-theme="light"]) .pvn-b { fill:#116329; stroke:#116329; }
+  :global([data-theme="light"]) .pvn-count { fill:#24292f; }
+  :global([data-theme="light"]) .pvn-overlap-txt { fill:#b35900; }
+  :global([data-theme="light"]) .pvn-t-blue { fill:#0550ae; }
+  :global([data-theme="light"]) .pvn-t-green { fill:#116329; }
+  :global([data-theme="light"]) .pvn-t-orange { fill:#b35900; }
+  :global([data-theme="light"]) .pvn-t-purple { fill:#6639ba; }
+  :global([data-theme="light"]) .pvn-eq-lbl, :global([data-theme="light"]) .pvn-eq { fill:#444; }
+  :global([data-theme="light"]) .pvn-rule { stroke:#ccc; }
+  :global([data-theme="light"]) .pvn-head { fill:#24292f; }
+  :global([data-theme="light"]) .pvn-foot { fill:#6639ba; }
+</style>

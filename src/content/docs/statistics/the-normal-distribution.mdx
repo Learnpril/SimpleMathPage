@@ -1,0 +1,233 @@
+---
+title: The Normal Distribution
+description: The bell curve, its properties, and why it appears everywhere in nature and statistics
+sidebar:
+  order: 13
+---
+
+import Quiz from "../../../components/Quiz.astro";
+import NormalCurveAnatomy from "../../../components/NormalCurveAnatomy.astro";
+import BivariateNormal3D from "../../../components/BivariateNormal3D.astro";
+
+## What You'll Learn
+
+In this lesson you'll learn what makes a distribution normal, how the mean and standard deviation control its shape, why area under the curve represents probability, and where the bell curve genuinely applies (and where it doesn't).
+
+## The Concept
+
+### From discrete to continuous
+
+Discrete random variables have gaps, and each specific value can carry a probability. **Continuous** random variables can take any value in an interval, and that changes the rules.
+
+For a continuous variable, the probability of any **exact** value is zero:
+
+$$
+P(X = 170.0000\ldots) = 0
+$$
+
+That sounds strange but follows from there being infinitely many possible values. What's meaningful is the probability of an **interval**: $P(169 < X < 171)$.
+
+For continuous variables, **probability is area under a curve.** The curve is called a **probability density function**, and the total area under it is always 1.
+
+A practical consequence: with continuous distributions it doesn't matter whether you write $<$ or $\leq$, since the endpoint contributes zero area.
+
+### The normal distribution
+
+The **normal distribution** (or Gaussian distribution) is the familiar bell curve.
+
+<NormalCurveAnatomy />
+
+Its defining properties:
+
+- **Symmetric** about the mean.
+- **Unimodal**, one peak at the center.
+- **Mean = median = mode**, all at the center.
+- **Bell-shaped**, with tails approaching but never touching zero.
+- Fully described by just two numbers, $\mu$ and $\sigma$.
+
+Those two parameters do different jobs:
+
+- **$\mu$ sets the location.** Changing it slides the curve left or right without changing its shape.
+- **$\sigma$ sets the width.** Small $\sigma$ gives a tall narrow curve; large $\sigma$ gives a short wide one. The area stays 1 either way, so making it wider necessarily makes it shorter.
+
+The notation $X \sim N(\mu, \sigma^2)$ means "$X$ is normally distributed with mean $\mu$ and variance $\sigma^2$."
+
+The inflection points, where the curve changes from bending down to bending up, sit exactly one standard deviation from the mean. That's a handy way to eyeball $\sigma$ off a graph.
+
+### Why normal distributions are everywhere
+
+Two distinct reasons, often confused.
+
+**First, natural additive processes.** When a quantity results from many small independent influences added together, it tends to be normal. Adult height depends on many genes plus nutrition plus other factors, each contributing a bit. Measurement error accumulates from many small independent sources. This is why Gauss found it in astronomical observations.
+
+**Second, and more important for statistics: the Central Limit Theorem.** Sample means are approximately normal _regardless of the population's shape_, provided the sample is large enough. This is why the normal distribution dominates inference even when the underlying data isn't normal at all. That result gets its own lesson shortly.
+
+### Where the bell curve does not apply
+
+This deserves emphasis, because assuming normality is a common and costly error.
+
+- **Income and wealth** are strongly right-skewed, not normal. They're better modeled by log-normal or power-law distributions.
+- **City populations, word frequencies, earthquake magnitudes** follow power laws with much heavier tails.
+- **Financial returns** have far fatter tails than the normal predicts. Models assuming normality badly underestimate the frequency of extreme market moves, which contributed to several financial crises.
+- **Waiting times** are typically exponential, not normal.
+- **Counts** are often Poisson or binomial.
+
+The giveaway is skew or extreme values. If a distribution has a long tail, or if events six standard deviations out happen more than once a millennium, it isn't normal.
+
+### Multivariable normal distributions
+
+When two variables are each normal and related to each other, the joint distribution forms a bell-shaped surface.
+
+<BivariateNormal3D />
+
+Slicing this surface in any direction gives a normal curve, and its cross-sections at constant height are ellipses. The tilt of those ellipses reflects the correlation between the two variables, which connects directly to the correlation lesson at the end of this section. This is the geometry underlying a great deal of multivariate statistics and machine learning.
+
+## Worked Examples
+
+**Example 1: Reading the parameters.**
+
+A distribution is described as $N(100, 225)$. Find the mean and standard deviation.
+
+**Solution.** The second parameter is the **variance**, not the standard deviation.
+
+$$
+\mu = 100 \qquad \sigma^2 = 225 \qquad \sigma = \sqrt{225} = 15
+$$
+
+Mixing up variance and standard deviation in this notation is a routine error. Check whether the number looks like a plausible spread; 225 would be enormous relative to a mean of 100.
+
+**Example 2: Comparing two curves.**
+
+Test A has $\mu = 70, \sigma = 5$. Test B has $\mu = 70, \sigma = 15$. How do the curves differ?
+
+**Solution.** Same center, so both peak at 70. Test B's $\sigma$ is three times larger, so its curve is three times wider and correspondingly shorter.
+
+Practically: on Test A most scores fall roughly between 55 and 85 (three $\sigma$ either way). On Test B the same range covers only one $\sigma$, and scores spread from about 25 to 115. Test B discriminates far more between students.
+
+**Example 3: Symmetry gives you answers for free.**
+
+Heights are normal with $\mu = 170$ cm. What proportion of people are taller than 170 cm?
+
+**Solution.** Exactly **50%**, by symmetry. The mean splits a normal distribution into two equal halves, and no knowledge of $\sigma$ is needed.
+
+Similarly, $P(X < 170) = 0.50$, and $P(X = 170) = 0$ since it's a single point.
+
+**Example 4: Why exact values have zero probability.**
+
+A machine fills bottles with a mean of 500 ml. What's the probability a bottle contains exactly 500 ml?
+
+**Solution.** Zero, in the mathematical sense, because 500 ml means 500.000000... exactly, and there are infinitely many possible fill volumes.
+
+In practice you'd ask about an interval, like $P(499.5 < X < 500.5)$, which represents the bottles that round to 500 ml. That has a real, nonzero answer. This is why continuous distributions are always used with ranges.
+
+**Example 5: Is normality reasonable?**
+
+Which of these would you model as normal?
+
+1. Heights of adult women
+2. Household income in a country
+3. Errors in a laboratory measurement
+4. Time between customer arrivals at a shop
+
+**Solution.**
+
+1. **Yes.** A classic additive trait, roughly symmetric within a single population.
+2. **No.** Strongly right-skewed with a long upper tail. Log-normal is a better fit.
+3. **Yes.** Measurement error accumulating from many small independent sources is the original motivating case.
+4. **No.** Waiting times are typically exponential, which is right-skewed and bounded below by zero.
+
+**Example 6: The sketch test.**
+
+A dataset of response times has $\mu = 200$ ms and $\sigma = 150$ ms. Why is a normal model suspect?
+
+**Solution.** A normal distribution extends infinitely in both directions, so this model assigns real probability to times below zero. Specifically, zero sits only $\frac{200}{150} \approx 1.33$ standard deviations below the mean, and a normal distribution puts about 9% of its area below that.
+
+Negative response times are impossible, so the model is placing 9% of its probability on outcomes that cannot occur. That's a strong hint the true distribution is right-skewed, which matches what response times actually look like.
+
+The general rule: **if the mean is less than about three standard deviations above a hard lower bound of zero, the distribution probably isn't normal.**
+
+## Real-World Applications
+
+Standardized testing is built on assumed normality. SAT scores are deliberately scaled to a normal distribution with a set mean and standard deviation, which makes percentile conversion straightforward.
+
+Manufacturing tolerances assume normal variation around a target. Process capability indices compare the tolerance width to $\sigma$, and Six Sigma's name comes from placing the specification limits six standard deviations out.
+
+Medical reference ranges are usually the central 95% of a healthy population's distribution, which under normality is about $\mu \pm 2\sigma$. That also means roughly 5% of perfectly healthy people fall outside the "normal range" by construction, which is worth knowing before panicking about a borderline lab result.
+
+Finance uses normal models widely and gets burned by the tails. The 1987 crash and the 2008 crisis both featured moves that normal models rated as essentially impossible. Practitioners now often use fat-tailed alternatives, though normal assumptions persist in many standard tools.
+
+Machine learning uses Gaussians constantly: as noise models, as priors in Bayesian methods, in Gaussian mixture models for clustering, and in the initialization of neural network weights.
+
+Psychometrics scales IQ to a normal distribution with mean 100 and standard deviation 15, which is a design choice rather than a discovered fact about intelligence.
+
+:::note[You've Got This]
+Two ideas carry this lesson. First, for continuous variables probability is area, which is why exact values have zero probability and everything is phrased in intervals. Second, $\mu$ moves the curve and $\sigma$ stretches it, and since the total area is fixed at 1, wider always means shorter. Also stay a little skeptical of normality: it genuinely describes heights and measurement errors, and it genuinely does not describe income, waiting times, or stock returns. The quick sanity check is whether the distribution has a hard boundary nearby or a long tail.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="stats-the-normal-distribution"
+  questions={[
+    {
+      id: "q1",
+      text: "For a continuous random variable, what does the probability of an exact single value equal?",
+      options: [
+        "Zero",
+        "One",
+        "The height of the curve at that point",
+        "It depends on the standard deviation",
+      ],
+      correctIndex: 0,
+      explanation:
+        "Probability for a continuous variable is area under the density curve, and a single point has no width and therefore no area. Meaningful probabilities always come from intervals.",
+    },
+    {
+      id: "q2",
+      text: "In a normal distribution, how do the mean, median, and mode compare?",
+      options: [
+        "The mean exceeds the median, which exceeds the mode",
+        "All three are equal and sit at the center",
+        "The mode is always largest",
+        "They depend on the value of sigma",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Because the normal curve is perfectly symmetric and has a single peak, all three measures of center coincide at the middle. Any separation between mean and median would indicate skew.",
+    },
+    {
+      id: "q3",
+      text: "What happens to a normal curve when sigma increases while mu stays the same?",
+      options: [
+        "The curve shifts to the right",
+        "The curve becomes taller and narrower",
+        "The curve becomes wider and shorter",
+        "The curve becomes skewed",
+      ],
+      correctIndex: 2,
+      explanation:
+        "Sigma controls the spread, so a larger value stretches the curve horizontally. Since the total area must remain 1, spreading out forces the peak to drop.",
+    },
+    {
+      id: "q4",
+      text: "Which variable is LEAST appropriate to model with a normal distribution?",
+      options: [
+        "Heights of adult men",
+        "Household income across a country",
+        "Measurement errors from a calibrated instrument",
+        "Weights of bags of flour from a filling machine",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Income is strongly right-skewed with a long upper tail, so a symmetric bell curve fits poorly and a log-normal model works better. The other three arise from many small additive influences and are approximately normal.",
+    },
+    {
+      id: "q5",
+      text: "In the notation N(50, 64), what is the standard deviation?",
+      options: ["64", "8", "50", "32"],
+      correctIndex: 1,
+      explanation:
+        "The second parameter in this notation is the variance, so the standard deviation is the square root of 64, which is 8. Reading 64 as the standard deviation is a common slip.",
+    },
+  ]}
+/>
