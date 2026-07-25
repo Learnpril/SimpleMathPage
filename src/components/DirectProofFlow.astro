@@ -1,0 +1,90 @@
+---
+/**
+ * DirectProofFlow — the shape of every direct proof: assume the hypothesis,
+ * turn the words into equations, do algebra, land on the conclusion's form.
+ */
+const bw = 118;
+const bh = 62;
+const gap = 20;
+const margin = 10;
+const y = 46;
+const w = margin * 2 + 4 * bw + 3 * gap; // sized to the content so nothing clips
+const h = 190;
+const stepX = (i: number) => margin + i * (bw + gap);
+const steps = [
+  { x: stepX(0), title: "Assume p", detail: "\"n is even\"", cls: "blue" },
+  { x: stepX(1), title: "Unfold", detail: "n = 2k", cls: "green" },
+  { x: stepX(2), title: "Do algebra", detail: "n² = 2(2k²)", cls: "green" },
+  { x: stepX(3), title: "Reach q", detail: "\"n² is even\"", cls: "purple" },
+];
+---
+
+<figure
+  class="dpf"
+  role="img"
+  aria-label="Four step flow of a direct proof: assume the hypothesis, translate definitions into equations, do algebra, then arrive at the conclusion"
+>
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    <text x={w / 2} y="24" class="dpf-head" font-size="13" font-weight="bold" text-anchor="middle">
+      Direct proof of “if p then q”
+    </text>
+
+    {/* Arrows between the boxes */}
+    {steps.slice(0, 3).map((s) => (
+      <line x1={s.x + bw + 1} y1={y + bh / 2} x2={s.x + bw + gap - 1} y2={y + bh / 2} class="dpf-arrow" marker-end="url(#dpf-head)" />
+    ))}
+
+    {/* Step boxes */}
+    {steps.map((s, i) => (
+      <g>
+        <rect x={s.x} y={y} width={bw} height={bh} rx="7" class={`dpf-box dpf-${s.cls}`} />
+        <text x={s.x + bw / 2} y={y + 24} class={`dpf-title dpf-t-${s.cls}`} font-size="12.5" font-weight="bold" text-anchor="middle">{s.title}</text>
+        <text x={s.x + bw / 2} y={y + 44} class="dpf-detail" font-size="11" text-anchor="middle">{s.detail}</text>
+        <text x={s.x + bw / 2} y={y + bh + 18} class="dpf-num" font-size="10" text-anchor="middle">{`step ${i + 1}`}</text>
+      </g>
+    ))}
+
+    <text x={w / 2} y="160" class="dpf-foot" font-size="11" text-anchor="middle">
+      The whole trick is step 2: turn every word into an equation you can manipulate
+    </text>
+    <text x={w / 2} y="176" class="dpf-sub" font-size="10" text-anchor="middle">
+      Then aim your algebra at the exact form the conclusion's definition demands
+    </text>
+
+    <defs>
+      <marker id="dpf-head" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+        <polygon points="0 0, 8 3, 0 6" class="dpf-head-fill" />
+      </marker>
+    </defs>
+  </svg>
+</figure>
+
+<style>
+  .dpf { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .dpf svg { max-width:100%; height:auto; }
+  .dpf-box { fill:none; stroke-width:2; }
+  .dpf-blue { stroke:#58a6ff; }
+  .dpf-green { stroke:#7ee787; }
+  .dpf-purple { stroke:#d2a8ff; }
+  .dpf-title { font-family:'Libre Baskerville',Georgia,serif; }
+  .dpf-t-blue { fill:#58a6ff; }
+  .dpf-t-green { fill:#7ee787; }
+  .dpf-t-purple { fill:#d2a8ff; }
+  .dpf-detail { fill:#888; font-family:'Libre Baskerville',Georgia,serif; }
+  .dpf-num { fill:#666; font-family:'Libre Baskerville',Georgia,serif; font-style:italic; }
+  .dpf-head { fill:#eee; font-family:'Libre Baskerville',Georgia,serif; }
+  .dpf-arrow { stroke:#888; stroke-width:1.5; }
+  .dpf-head-fill { fill:#888; }
+  .dpf-foot { fill:#f0883e; font-family:'Libre Baskerville',Georgia,serif; font-style:italic; }
+  .dpf-sub { fill:#888; font-family:'Libre Baskerville',Georgia,serif; font-style:italic; }
+  :global([data-theme="light"]) .dpf-blue { stroke:#0550ae; }
+  :global([data-theme="light"]) .dpf-green { stroke:#116329; }
+  :global([data-theme="light"]) .dpf-purple { stroke:#6639ba; }
+  :global([data-theme="light"]) .dpf-t-blue { fill:#0550ae; }
+  :global([data-theme="light"]) .dpf-t-green { fill:#116329; }
+  :global([data-theme="light"]) .dpf-t-purple { fill:#6639ba; }
+  :global([data-theme="light"]) .dpf-head { fill:#24292f; }
+  :global([data-theme="light"]) .dpf-arrow { stroke:#555; }
+  :global([data-theme="light"]) .dpf-head-fill { fill:#555; }
+  :global([data-theme="light"]) .dpf-foot { fill:#b35900; }
+</style>

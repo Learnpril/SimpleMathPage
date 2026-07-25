@@ -1,0 +1,280 @@
+---
+title: Predicates and Quantifiers
+description: Move beyond simple propositions with predicates, the universal and existential quantifiers, and their negations
+sidebar:
+  order: 5
+---
+
+import Quiz from "../../../components/Quiz.astro";
+import QuantifierOrder from "../../../components/QuantifierOrder.astro";
+import SymbolKey from "../../../components/SymbolKey.astro";
+
+## What You'll Learn
+
+In this lesson you'll learn what a predicate is, how the universal quantifier ("for all") and existential quantifier ("there exists") turn predicates into propositions, how to negate quantified statements, and why the order of nested quantifiers changes the meaning.
+
+<SymbolKey
+  items={[
+    {
+      sym: "P(x)",
+      read: "P of x",
+      note: "a statement whose truth depends on the value of x",
+    },
+    { sym: "∀x", read: "for all x", note: "an upside-down A, for “All”" },
+    {
+      sym: "∃x",
+      read: "there exists an x",
+      note: "a backwards E, for “Exists”",
+    },
+    {
+      sym: "∃!x",
+      read: "there exists exactly one x",
+      note: "the exclamation point means uniqueness",
+    },
+    {
+      sym: "∀x ∃y",
+      read: "for every x there is some y",
+      note: "read left to right; the y is allowed to depend on x",
+    },
+  ]}
+/>
+
+## The Concept
+
+Propositional logic has a limit. "$x > 5$" isn't a proposition, because its truth depends on $x$. But statements like that are everywhere in mathematics, so we need a way to handle them.
+
+A **predicate** is a statement whose truth depends on one or more variables. We write it like a function:
+
+$$
+P(x): \quad x > 5
+$$
+
+$P(7)$ is true. $P(2)$ is false. $P(x)$ by itself is neither.
+
+Every predicate needs a **domain** (also called the universe of discourse), the set of values the variable is allowed to take. The same predicate can change truth value entirely depending on the domain, so leaving it unstated is a real source of confusion.
+
+### The universal quantifier
+
+$$
+\forall x \, P(x)
+$$
+
+reads "**for all** $x$, $P(x)$." It claims the predicate holds for **every** element of the domain.
+
+- To prove it: show it holds for every element, usually with a general argument.
+- To disprove it: find **one** element where it fails. That element is a **counterexample**.
+
+The asymmetry there is important. Universal claims are hard to prove and easy to destroy.
+
+### The existential quantifier
+
+$$
+\exists x \, P(x)
+$$
+
+reads "**there exists** an $x$ such that $P(x)$." It claims at least one element of the domain satisfies the predicate.
+
+- To prove it: exhibit **one** example. That's a full proof.
+- To disprove it: show it fails for every single element.
+
+Exactly the reverse asymmetry. Existential claims are easy to prove and hard to destroy.
+
+You'll also see $\exists!$, meaning "there exists exactly one."
+
+### Negating quantifiers
+
+This is the practical heart of the lesson:
+
+$$
+\neg \forall x \, P(x) \equiv \exists x \, \neg P(x)
+$$
+
+$$
+\neg \exists x \, P(x) \equiv \forall x \, \neg P(x)
+$$
+
+In words:
+
+- "Not everything has property $P$" means "**something** lacks $P$."
+- "Nothing has property $P$" means "**everything** lacks $P$."
+
+The rule of thumb: **push the negation inward, flip the quantifier.** $\forall$ becomes $\exists$ and vice versa. That's the same shape as De Morgan's laws, and for good reason. Over a finite domain, $\forall$ is a long chain of ANDs and $\exists$ is a long chain of ORs.
+
+The classic mistake: negating "all swans are white" as "all swans are non-white." Wrong. The negation is "**some** swan is not white." You only need one black swan.
+
+### Nested quantifiers
+
+When a predicate has two variables, you need two quantifiers, and **the order matters enormously**.
+
+Let $L(x, y)$ mean "$x$ likes $y$," over a domain of people.
+
+| Statement                       | Meaning                                                      |
+| ------------------------------- | ------------------------------------------------------------ |
+| $\forall x \forall y \, L(x,y)$ | Everyone likes everyone. (Very friendly world.)              |
+| $\exists x \exists y \, L(x,y)$ | Somebody likes somebody. (Very weak claim.)                  |
+| $\forall x \exists y \, L(x,y)$ | Everyone likes at least one person. (Can differ per person.) |
+| $\exists y \forall x \, L(x,y)$ | Some one person is liked by everyone. (Much stronger.)       |
+
+Compare the last two carefully. $\forall x \exists y$ lets the choice of $y$ depend on $x$. $\exists y \forall x$ commits to a single $y$ that works for all $x$.
+
+<QuantifierOrder />
+
+Same-type quantifiers can be swapped freely: $\forall x \forall y \equiv \forall y \forall x$. Mixed quantifiers cannot.
+
+This distinction is not academic. The definition of a limit, the definition of continuity, and most of real analysis hinge on exactly this ordering.
+
+## Worked Examples
+
+**Example 1: Translate to symbols.**
+
+Domain: all integers. Let $E(x)$ mean "$x$ is even" and $P(x)$ mean "$x$ is prime."
+
+1. "Every integer is even or odd."
+2. "Some prime is even."
+3. "No even number greater than 2 is prime."
+
+**Solution.**
+
+1. $\forall x \, (E(x) \vee \neg E(x))$ — a tautology, so trivially true.
+2. $\exists x \, (P(x) \wedge E(x))$ — true, witnessed by $x = 2$.
+3. $\forall x \, ((E(x) \wedge x > 2) \rightarrow \neg P(x))$ — true. Note how "no" turned into a universal with a negated conclusion, not an existential.
+
+**Example 2: Negate and simplify.**
+
+Negate: $\forall x \, (x^2 \geq x)$, over the real numbers.
+
+**Solution.**
+
+$$
+\neg \forall x \, (x^2 \geq x) \equiv \exists x \, (x^2 < x)
+$$
+
+Is the negation true? Try $x = 0.5$: $x^2 = 0.25$, and $0.25 < 0.5$. Yes.
+
+So the original universal statement is **false**, and $x = 0.5$ is the counterexample. Worth noticing: over the domain of **integers** the original statement is true. The domain changed the answer.
+
+**Example 3: Negate a nested statement.**
+
+Negate: $\forall x \exists y \, (x + y = 0)$.
+
+**Solution.** Flip each quantifier as you push the negation through:
+
+$$
+\neg \forall x \exists y \, (x + y = 0) \equiv \exists x \forall y \, (x + y \neq 0)
+$$
+
+Over the integers the original is true (take $y = -x$), so the negation is false, and indeed no single $x$ fails for every $y$.
+
+**Example 4: Order matters.**
+
+Domain: real numbers. Compare these two statements.
+
+- $\forall x \exists y \, (y > x)$
+- $\exists y \forall x \, (y > x)$
+
+**Solution.**
+
+The first is **true**. Given any $x$, pick $y = x + 1$. The $y$ is allowed to depend on $x$.
+
+The second is **false**. It claims one fixed real number is bigger than every real number, including itself. No such number exists.
+
+Same predicate, same domain, two quantifiers swapped, opposite truth values.
+
+**Example 5: Read a definition.**
+
+The formal definition of a limit:
+
+$$
+\forall \varepsilon > 0 \; \exists \delta > 0 \; \forall x \; (0 < |x - a| < \delta \rightarrow |f(x) - L| < \varepsilon)
+$$
+
+**Reading it.** For every error tolerance $\varepsilon$ you name, there is some closeness $\delta$ such that every $x$ within $\delta$ of $a$ lands within $\varepsilon$ of $L$.
+
+The ordering is doing all the work. $\delta$ comes after $\varepsilon$, so it's allowed to depend on $\varepsilon$. If you swapped them and demanded one $\delta$ that works for every $\varepsilon$, almost no function would have a limit.
+
+## Real-World Applications
+
+Database queries are quantified statements. `SELECT * FROM users WHERE ...` is existential: find the ones satisfying a predicate. A constraint like "every order must reference a valid customer" is universal, and the database enforces it on every write.
+
+Software specifications live and die on quantifier order. "Every request eventually gets a response" is $\forall$ then $\exists$. "There is a timeout that bounds every request" is $\exists$ then $\forall$, a much stronger promise. Formal verification tools check specifications written in exactly this notation.
+
+Search engines and type systems use quantifiers too. A generic function that works "for all types $T$" is a universal claim the compiler verifies.
+
+And in everyday argument, quantifier negation keeps you honest. Someone says "all politicians are corrupt." The counterclaim isn't "no politicians are corrupt," it's "at least one isn't." That's a far more defensible position, and confusing the two makes people argue past each other constantly.
+
+:::note[You've Got This]
+The two things to lock in here are the negation rules (flip the quantifier, negate the inside) and the fact that mixed quantifier order changes the meaning. For nested quantifiers, try reading them left to right as a game: "for all" means an opponent picks a value to make it hard for you, "there exists" means you get to pick. $\forall x \exists y$ means they pick first, so you can react. $\exists y \forall x$ means you commit first, and then they try to break it. That framing makes the difference obvious.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="discrete-predicates-and-quantifiers"
+  questions={[
+    {
+      id: "q1",
+      text: "What is required to disprove the statement 'For all x, P(x)'?",
+      options: [
+        "A single counterexample where P(x) is false",
+        "Showing P(x) is false for every x",
+        "Showing P(x) is true for some x",
+        "Nothing; universal statements cannot be disproved",
+      ],
+      correctIndex: 0,
+      explanation:
+        "A universal claim asserts something about every element, so one failure is enough to refute it. Proving it, by contrast, requires covering the whole domain.",
+    },
+    {
+      id: "q2",
+      text: "What is the negation of 'There exists a student who passed every exam'?",
+      options: [
+        "There exists a student who failed every exam",
+        "Every student failed at least one exam",
+        "Every student passed every exam",
+        "No student took every exam",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Negating an existential gives a universal with the inside negated. 'Passed every exam' negates to 'failed at least one exam', so the result is that every student failed at least one.",
+    },
+    {
+      id: "q3",
+      text: "Over the real numbers, which of these statements is true?",
+      options: [
+        "There exists y such that for all x, y is greater than x",
+        "For all x there exists y such that y is greater than x",
+        "There exists x such that for all y, x equals y",
+        "For all x and all y, x is greater than y",
+      ],
+      correctIndex: 1,
+      explanation:
+        "For any given x you can choose y = x + 1, so the second statement holds. The first claims one number exceeds every real number, which is impossible.",
+    },
+    {
+      id: "q4",
+      text: "How do you prove an existential statement 'There exists x such that P(x)'?",
+      options: [
+        "Show P(x) holds for every element of the domain",
+        "Show the negation is a tautology",
+        "Exhibit one specific element that satisfies P",
+        "Build a truth table with all 2^n rows",
+      ],
+      correctIndex: 2,
+      explanation:
+        "A single witness settles an existential claim completely. This is why existential statements are usually much easier to prove than universal ones.",
+    },
+    {
+      id: "q5",
+      text: "Why can the quantifiers in 'for all x, there exists y' NOT be freely swapped?",
+      options: [
+        "Because the domain would change",
+        "Because in that order y may depend on x, but reversing it demands a single y that works for every x",
+        "Because existential quantifiers always come first by convention",
+        "They can be swapped; the order never affects meaning",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Quantifiers are read left to right, so a later existential may depend on earlier variables. Moving it to the front forces one fixed choice covering all cases, which is a strictly stronger claim.",
+    },
+  ]}
+/>

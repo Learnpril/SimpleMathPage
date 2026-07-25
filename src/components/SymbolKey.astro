@@ -1,0 +1,113 @@
+---
+/**
+ * SymbolKey — a compact "how to read this" table for the notation a lesson
+ * introduces. Every symbol gets a plain-English reading plus a concrete example,
+ * so nobody has to guess what a glyph is called.
+ *
+ * Usage:
+ *   <SymbolKey items={[
+ *     { sym: "¬p", read: "not p", note: "flips true to false" },
+ *   ]} />
+ */
+interface Item {
+  sym: string;
+  read: string;
+  note?: string;
+}
+interface Props {
+  items: Item[];
+  title?: string;
+}
+const { items, title = "How to read the symbols in this lesson" } = Astro.props;
+---
+
+<aside class="symkey" aria-label={title}>
+  <p class="symkey-title">{title}</p>
+  <dl class="symkey-list">
+    {
+      items.map((i) => (
+        <div class="symkey-row">
+          <dt class="symkey-sym">{i.sym}</dt>
+          <dd class="symkey-def">
+            <span class="symkey-read">“{i.read}”</span>
+            {i.note && <span class="symkey-note">{i.note}</span>}
+          </dd>
+        </div>
+      ))
+    }
+  </dl>
+</aside>
+
+<style>
+  .symkey {
+    margin: 1.5rem 0;
+    padding: 0.9rem 1.1rem 1rem;
+    border: 1px solid #30363d;
+    border-left: 4px solid #58a6ff;
+    border-radius: 6px;
+    background: rgba(88, 166, 255, 0.05);
+  }
+  .symkey-title {
+    margin: 0 0 0.6rem;
+    font-family: "Libre Baskerville", Georgia, serif;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #58a6ff;
+  }
+  .symkey-list {
+    margin: 0;
+    display: grid;
+    gap: 0.4rem 1rem;
+  }
+  .symkey-row {
+    display: grid;
+    grid-template-columns: minmax(3.2rem, auto) 1fr;
+    gap: 0.1rem 0.9rem;
+    align-items: baseline;
+  }
+  .symkey-sym {
+    margin: 0;
+    font-family: "Libre Baskerville", Georgia, serif;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #7ee787;
+    white-space: nowrap;
+  }
+  .symkey-def {
+    margin: 0;
+    font-family: "Libre Baskerville", Georgia, serif;
+    font-size: 0.88rem;
+    line-height: 1.5;
+  }
+  .symkey-read {
+    color: var(--sl-color-white);
+    font-style: italic;
+  }
+  .symkey-note {
+    color: #9198a1;
+    display: block;
+    font-size: 0.83rem;
+  }
+
+  /* Stack the symbol above its reading on narrow screens */
+  @media (max-width: 30rem) {
+    .symkey-row {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  :global([data-theme="light"]) .symkey {
+    border-color: #d0d7de;
+    border-left-color: #0550ae;
+    background: rgba(5, 80, 174, 0.04);
+  }
+  :global([data-theme="light"]) .symkey-title {
+    color: #0550ae;
+  }
+  :global([data-theme="light"]) .symkey-sym {
+    color: #116329;
+  }
+  :global([data-theme="light"]) .symkey-note {
+    color: #57606a;
+  }
+</style>

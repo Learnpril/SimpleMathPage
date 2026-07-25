@@ -1,0 +1,265 @@
+---
+title: Paths, Cycles, and Connectivity
+description: Learn walks, paths, cycles, connected components, and the Euler and Hamilton circuit conditions
+sidebar:
+  order: 16
+---
+
+import Quiz from "../../../components/Quiz.astro";
+import KonigsbergBridges from "../../../components/KonigsbergBridges.astro";
+import EulerVsHamilton from "../../../components/EulerVsHamilton.astro";
+
+## What You'll Learn
+
+In this lesson you'll learn the precise difference between a walk, a trail, a path, and a cycle, what it means for a graph to be connected, how to identify components and bridges, and the conditions for Euler and Hamilton circuits.
+
+## The Concept
+
+### Walks, trails, paths
+
+- **Walk** - any sequence of vertices where consecutive vertices are joined by an edge. Anything goes: you can revisit vertices and reuse edges.
+- **Trail** - a walk with **no repeated edge**. Vertices may repeat.
+- **Path** - a walk with **no repeated vertex**, which automatically means no repeated edge either.
+- **Circuit** (or closed trail) - starts and ends at the same vertex with no repeated edge.
+- **Cycle** - a closed path: it starts and ends at the same vertex and repeats no other vertex. A cycle needs at least 3 vertices in a simple graph.
+
+The **length** of a walk is its number of edges, not vertices. A path visiting 5 vertices has length 4.
+
+| Type    | Repeat edges? | Repeat vertices?      | Closed? |
+| ------- | ------------- | --------------------- | ------- |
+| Walk    | yes           | yes                   | either  |
+| Trail   | no            | yes                   | either  |
+| Path    | no            | no                    | no      |
+| Circuit | no            | yes                   | yes     |
+| Cycle   | no            | no (except start/end) | yes     |
+
+The distinctions look pedantic until you meet Euler and Hamilton circuits, where "no repeated edge" and "no repeated vertex" turn out to have completely different difficulty levels.
+
+### Connectivity
+
+A graph is **connected** if there's a path between every pair of vertices. Otherwise it's **disconnected**, and it breaks into **connected components**, the maximal connected pieces. A single isolated vertex is a component all by itself.
+
+Two measurements go with this:
+
+- **Distance** - $d(u,v)$ is the length of the shortest path between $u$ and $v$. If no path exists, the distance is infinite.
+- **Diameter** - the largest distance between any pair of vertices in a connected graph. It's the worst-case travel time across the graph.
+
+### Cut vertices and bridges
+
+- **Cut vertex** (or articulation point) - a vertex whose removal disconnects the graph.
+- **Bridge** (or cut edge) - an edge whose removal disconnects the graph.
+
+Key fact: **an edge is a bridge if and only if it lies on no cycle.** If an edge is part of a cycle, there's an alternate route around, so removing it can't disconnect anything.
+
+These are the vulnerability points of a network. A bridge is a single link whose failure splits your network in two, which is exactly what redundancy is designed to eliminate.
+
+### Euler circuits and paths
+
+An **Euler path** uses **every edge exactly once**. An **Euler circuit** does that and returns to the start.
+
+This is the Königsberg bridge problem. Euler asked whether you could cross all seven bridges exactly once, and proved you couldn't, using an argument that needs no search at all.
+
+<KonigsbergBridges />
+
+**The conditions.** For a connected graph:
+
+- An **Euler circuit** exists if and only if **every vertex has even degree.**
+- An **Euler path** (not a circuit) exists if and only if **exactly two vertices have odd degree.** The path must start at one and end at the other.
+- With **any other number** of odd-degree vertices, neither exists. (Remember, the count of odd vertices is always even, so the possibilities are 0, 2, 4, 6, and so on.)
+
+**Why.** Every time you pass through a vertex you use one edge to arrive and one to leave, consuming edges in pairs. So a vertex you pass through needs an even degree. The only vertices allowed an odd degree are the start and end, where one edge is unpaired. A circuit has no separate start and end, so nothing can be odd.
+
+Königsberg had four landmasses with degrees 5, 3, 3, and 3. Four odd vertices, so no Euler path and no Euler circuit. Done in one line.
+
+This condition is easy to check: read the degrees, count the odd ones. Linear time.
+
+### Hamilton circuits and paths
+
+A **Hamilton path** visits **every vertex exactly once**. A **Hamilton circuit** does that and returns to the start.
+
+Euler is about edges. Hamilton is about vertices. One word of difference, and an enormous gap in difficulty.
+
+**There is no simple condition for Hamilton circuits.** No degree check, no easy test. Deciding whether a graph has one is **NP-complete**, meaning no known algorithm solves it efficiently for all graphs, and most computer scientists believe none exists.
+
+There are partial results. **Dirac's theorem** says that if a simple graph has $n \geq 3$ vertices and every vertex has degree at least $n/2$, then a Hamilton circuit exists. That's a sufficient condition, not a necessary one, so failing it tells you nothing.
+
+Some things you can still say quickly:
+
+- A vertex of degree 1 kills any Hamilton circuit, since you'd have to enter and leave it on the same edge.
+- If removing one vertex disconnects the graph, there's no Hamilton circuit.
+
+The two properties are fully independent. A graph can have either one without the other:
+
+<EulerVsHamilton />
+
+The contrast between Euler and Hamilton is one of the cleanest illustrations in mathematics that superficially similar questions can have wildly different computational costs.
+
+## Worked Examples
+
+**Example 1: Classify some walks.**
+
+In the graph with edges $\{A,B\}, \{B,C\}, \{C,D\}, \{D,A\}, \{A,C\}$:
+
+1. $A \to B \to C \to A$
+2. $A \to B \to C \to D \to A \to C$
+3. $A \to B \to C \to B$
+
+**Solution.**
+
+1. No repeated vertices except the start/end, so it's a **cycle** of length 3.
+2. No repeated edge (uses $AB$, $BC$, $CD$, $DA$, $AC$), but $A$ repeats. It's a **trail**, not a path. It's also an Euler path, since it uses all 5 edges once.
+3. $B$ repeats and the edge $BC$ is reused, so it's just a **walk**.
+
+**Example 2: Count components.**
+
+$V = \{1,2,3,4,5,6,7\}$ and $E = \{\{1,2\},\{2,3\},\{4,5\},\{6,7\}\}$.
+
+**Solution.** Trace the reachability:
+
+- $\{1,2,3\}$ are mutually reachable.
+- $\{4,5\}$ form a second piece.
+- $\{6,7\}$ form a third.
+
+**3 connected components.** The graph is disconnected.
+
+**Example 3: Find the bridges.**
+
+Graph: $A{-}B$, $B{-}C$, $C{-}A$, $C{-}D$, $D{-}E$.
+
+**Solution.** $A$, $B$, $C$ form a triangle, so $AB$, $BC$, and $CA$ each lie on a cycle and none is a bridge.
+
+$CD$ lies on no cycle. Removing it separates $\{A,B,C\}$ from $\{D,E\}$. **Bridge.**
+
+$DE$ lies on no cycle. Removing it isolates $E$. **Bridge.**
+
+Cut vertices: $C$ (removing it isolates the $D{-}E$ piece from $A{-}B$) and $D$ (removing it isolates $E$).
+
+**Example 4: Euler circuit test.**
+
+Does this graph have an Euler circuit, an Euler path, or neither?
+
+Degrees: $\deg(A)=2$, $\deg(B)=4$, $\deg(C)=2$, $\deg(D)=2$, and the graph is connected.
+
+**Solution.** All degrees are even, and the graph is connected. **Euler circuit exists.** You can traverse every edge exactly once and return to where you started, beginning anywhere you like.
+
+**Example 5: Euler path test.**
+
+A connected graph has degrees 3, 3, 2, 2, 4. Euler circuit? Euler path?
+
+**Solution.** Odd-degree vertices: the two 3's. That's exactly 2.
+
+**No Euler circuit** (circuits require all even degrees). **Euler path exists**, and it must start at one degree-3 vertex and end at the other.
+
+**Example 6: Königsberg.**
+
+Four landmasses with degrees 5, 3, 3, 3. Can you cross every bridge exactly once?
+
+**Solution.** Count odd degrees: all four are odd. That's 4 odd vertices, more than 2.
+
+**No Euler path and no Euler circuit.** The walk is impossible, and no amount of clever routing changes that.
+
+Euler's insight was that the geography, the distances, and the shapes were all irrelevant. Only the degree counts mattered.
+
+**Example 7: Hamilton circuit.**
+
+Does $K_5$ have a Hamilton circuit? Does the path graph $P_4$ (vertices $A{-}B{-}C{-}D$ in a line)?
+
+**Solution.**
+
+$K_5$: yes. Every pair is adjacent, so any ordering of the vertices works. For example $A \to B \to C \to D \to E \to A$. In fact $K_n$ always has one for $n \geq 3$.
+
+$P_4$: no Hamilton circuit. $A$ and $D$ have degree 1, and a circuit needs to enter and leave each vertex on different edges. There **is** a Hamilton path: $A \to B \to C \to D$.
+
+**Example 8: Euler yes, Hamilton no.**
+
+Consider two triangles sharing a single vertex: triangle $A{-}B{-}C{-}A$ and triangle $C{-}D{-}E{-}C$.
+
+**Solution.** Degrees: $A=2$, $B=2$, $C=4$, $D=2$, $E=2$. All even and connected, so an **Euler circuit exists.**
+
+Hamilton circuit? No. $C$ is a cut vertex, and any circuit visiting all 5 vertices would have to pass through $C$ twice, once to cross into each triangle. That violates the "each vertex exactly once" rule.
+
+So a graph can have an Euler circuit and no Hamilton circuit. The reverse also happens, which is why neither condition tells you anything about the other.
+
+## Real-World Applications
+
+Euler circuits solve route inspection problems, where you must traverse every **edge**. Garbage collection, street sweeping, snow plowing, mail delivery on foot, and utility line inspection are all Euler-flavored, and the practical version, the Chinese postman problem, asks for the shortest route covering every edge when a perfect Euler circuit doesn't exist. The odd-degree condition tells you exactly which streets you'll have to repeat.
+
+Hamilton circuits solve problems where you must visit every **vertex**. Delivery routes hitting a list of addresses, drilling holes in a circuit board, and planning a multi-city trip are Hamilton problems, and the traveling salesman problem is the weighted version. Because these are NP-hard, real logistics software uses heuristics and accepts good-enough answers.
+
+Connectivity analysis is how you find single points of failure. Network engineers look for bridges and cut vertices, because those are the links and routers whose failure partitions the network. Redundant paths exist specifically to ensure no edge is a bridge.
+
+Distance and diameter measure how well-connected a network is. Content delivery networks minimize distance to users, and social network researchers compute diameters to test small-world claims.
+
+DNA sequence assembly uses Euler paths on graphs built from short read fragments, which turned out to be far more tractable than the Hamilton-path formulation researchers originally tried. That switch was a genuine breakthrough in genomics, driven by exactly the difficulty gap in this lesson.
+
+:::note[You've Got This]
+Two things to hold onto. First, the vocabulary: paths avoid repeating vertices, trails avoid repeating edges, and walks don't care. Second, and more useful, Euler is about edges and has a dead-simple degree test, while Hamilton is about vertices and has no easy test at all. If a problem asks about covering every connection, count odd degrees and you're done in seconds. If it asks about visiting every location, expect to work for it.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="discrete-paths-cycles-and-connectivity"
+  questions={[
+    {
+      id: "q1",
+      text: "What distinguishes a path from a trail in a graph?",
+      options: [
+        "A path repeats no vertex, while a trail only avoids repeating edges",
+        "A path must be closed, while a trail must be open",
+        "A path uses every edge, while a trail uses every vertex",
+        "There is no difference between them",
+      ],
+      correctIndex: 0,
+      explanation:
+        "A trail may revisit vertices as long as it never reuses an edge, but a path forbids repeated vertices entirely. Every path is therefore also a trail.",
+    },
+    {
+      id: "q2",
+      text: "A connected graph has vertex degrees 4, 4, 2, 6, and 2. Does it have an Euler circuit?",
+      options: [
+        "No, because it has an odd number of vertices",
+        "Yes, because the graph is connected and every degree is even",
+        "No, because at least two degrees must be odd",
+        "Only if it also has a Hamilton circuit",
+      ],
+      correctIndex: 1,
+      explanation:
+        "An Euler circuit exists in a connected graph exactly when all degrees are even, since each pass through a vertex consumes edges in pairs. Here every degree is even, so a circuit exists.",
+    },
+    {
+      id: "q3",
+      text: "How many vertices of odd degree must a connected graph have to possess an Euler path but no Euler circuit?",
+      options: ["Zero", "One", "Exactly two", "Four or more"],
+      correctIndex: 2,
+      explanation:
+        "The two odd-degree vertices serve as the required start and end points, where one edge is left unpaired. Zero odd vertices gives a full circuit, and four or more makes both impossible.",
+    },
+    {
+      id: "q4",
+      text: "What is the key difference between an Euler circuit and a Hamilton circuit?",
+      options: [
+        "Euler circuits visit every vertex once; Hamilton circuits use every edge once",
+        "Euler circuits use every edge once; Hamilton circuits visit every vertex once",
+        "Euler circuits exist only in directed graphs",
+        "Hamilton circuits require all degrees to be even",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Euler is about edges and has a simple degree-based test. Hamilton is about vertices and deciding whether one exists is NP-complete, with no known efficient general test.",
+    },
+    {
+      id: "q5",
+      text: "An edge in a connected graph is a bridge exactly when...",
+      options: [
+        "it connects two vertices of odd degree",
+        "it lies on no cycle",
+        "it lies on at least one cycle",
+        "it connects the two highest-degree vertices",
+      ],
+      correctIndex: 1,
+      explanation:
+        "If an edge belongs to a cycle then an alternate route exists, so removing it cannot disconnect anything. An edge on no cycle is the only connection between the two sides, so removing it splits the graph.",
+    },
+  ]}
+/>

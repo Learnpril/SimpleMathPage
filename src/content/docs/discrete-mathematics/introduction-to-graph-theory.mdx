@@ -1,0 +1,305 @@
+---
+title: Introduction to Graph Theory
+description: Learn vertices, edges, degree, the handshake theorem, and the standard families of graphs
+sidebar:
+  order: 15
+---
+
+import Quiz from "../../../components/Quiz.astro";
+import GraphAnatomy from "../../../components/GraphAnatomy.astro";
+import GraphFamilies from "../../../components/GraphFamilies.astro";
+import SymbolKey from "../../../components/SymbolKey.astro";
+
+## What You'll Learn
+
+In this lesson you'll learn what a graph is in the discrete math sense, the vocabulary of vertices and edges, how degree works, the handshake theorem, and the common special graphs you'll see over and over.
+
+<SymbolKey
+  items={[
+    {
+      sym: "G = (V, E)",
+      read: "a graph G with vertex set V and edge set E",
+      note: "V holds the dots, E holds the connections",
+    },
+    {
+      sym: "deg(v)",
+      read: "the degree of vertex v",
+      note: "how many edges touch v",
+    },
+    {
+      sym: "Kₙ",
+      read: "the complete graph on n vertices",
+      note: "every pair of vertices is joined",
+    },
+    {
+      sym: "Cₙ",
+      read: "the cycle graph on n vertices",
+      note: "n vertices in a closed ring",
+    },
+    {
+      sym: "Pₙ",
+      read: "the path graph on n vertices",
+      note: "n vertices in an open line",
+    },
+    {
+      sym: "Kₘ,ₙ",
+      read: "the complete bipartite graph",
+      note: "two groups of size m and n, every crossing edge present",
+    },
+  ]}
+/>
+
+## The Concept
+
+A **graph** $G = (V, E)$ consists of a set of **vertices** $V$ (also called nodes) and a set of **edges** $E$, where each edge connects a pair of vertices.
+
+This has nothing to do with graphing functions. Here a graph is a picture of relationships: dots and the connections between them.
+
+$$
+V = \{A, B, C, D\} \qquad E = \{\{A,B\}, \{B,C\}, \{C,D\}, \{A,C\}\}
+$$
+
+That's a 4-vertex graph with 4 edges. Where you draw the dots on the page is irrelevant. Only the connections matter, which means the same graph can be drawn in wildly different-looking ways.
+
+Here is a slightly bigger one with its degrees marked:
+
+<GraphAnatomy />
+
+### Core vocabulary
+
+- **Adjacent** - two vertices joined by an edge are adjacent, or neighbors.
+- **Incident** - an edge is incident to the two vertices it connects.
+- **Degree** - $\deg(v)$ is the number of edges incident to $v$. In the graph above, $\deg(A) = 2$ (edges to $B$ and $C$) and $\deg(C) = 3$.
+- **Isolated vertex** - degree 0. It exists but connects to nothing.
+- **Loop** - an edge from a vertex to itself. It adds 2 to that vertex's degree.
+- **Multiple edges** - two or more edges joining the same pair. A graph with loops or multiple edges is a **multigraph**.
+- **Simple graph** - no loops, no multiple edges. Unless stated otherwise, assume simple.
+
+### Directed versus undirected
+
+In an **undirected graph**, edges have no direction. Friendship is symmetric: if $A$ is connected to $B$, then $B$ is connected to $A$.
+
+In a **directed graph** (**digraph**), each edge is an arrow with a start and an end. Following someone on social media, one-way streets, and web links are all directed.
+
+Directed vertices have two degrees:
+
+- **In-degree:** arrows pointing in.
+- **Out-degree:** arrows pointing out.
+
+### Weighted graphs
+
+A **weighted graph** attaches a number to each edge: distance, cost, time, capacity. Almost every practical application uses weights, and shortest-path algorithms are built for them.
+
+### The handshake theorem
+
+$$
+\sum_{v \in V} \deg(v) = 2|E|
+$$
+
+The sum of all degrees equals twice the number of edges.
+
+Why: every edge has two endpoints, so it contributes exactly 1 to the degree of each, hence 2 to the total. Count the total degree and you've counted every edge twice.
+
+The famous consequence:
+
+> **The number of vertices with odd degree is always even.**
+
+Proof sketch: the total degree $2|E|$ is even. Split the sum into even-degree vertices and odd-degree vertices. The even part is even, so the odd part must also be even. A sum of odd numbers is even only when there's an even count of them. $\blacksquare$
+
+This is why the name "handshake theorem" sticks: at any party, the number of people who shook an odd number of hands is even. And it's why "can a graph have exactly 3 vertices of odd degree?" always answers no.
+
+### Families of graphs
+
+A handful of shapes come up again and again:
+
+<GraphFamilies />
+
+- **Complete graph $K_n$** - every pair of vertices is adjacent, so each vertex has degree $n-1$ and the edge count is $\binom{n}{2} = \frac{n(n-1)}{2}$. $K_5$ has 10 edges, matching the group-chat example from the first lesson.
+- **Cycle graph $C_n$** - $n$ vertices in a ring, $n$ edges, every vertex of degree 2.
+- **Path graph $P_n$** - $n$ vertices in a line, $n-1$ edges. The two endpoints have degree 1.
+- **Bipartite graph** - the vertices split into two sets with **no edges inside either set**, so every edge crosses between them. Students and courses, jobs and applicants, actors and films.
+- **Complete bipartite graph $K_{m,n}$** - bipartite with every possible crossing edge present, giving $mn$ edges.
+- **Regular graph** - every vertex has the same degree. A $k$-regular graph has all degrees equal to $k$. $C_n$ is 2-regular, $K_n$ is $(n-1)$-regular.
+- **Tree** - connected with no cycles. Trees get their own lesson.
+
+### Subgraphs and complements
+
+A **subgraph** is a graph formed by taking a subset of the vertices and a subset of the edges among them.
+
+The **complement** $\bar{G}$ has the same vertices, but an edge exactly where $G$ doesn't. So $G$ and $\bar{G}$ together make $K_n$.
+
+### Isomorphism
+
+Two graphs are **isomorphic** if you can relabel the vertices of one to get the other. They're structurally the same graph, drawn differently.
+
+Necessary conditions: same number of vertices, same number of edges, same multiset of degrees. Those are quick checks that can prove two graphs are **not** isomorphic. They aren't sufficient though, so matching degree sequences doesn't guarantee isomorphism. Determining isomorphism in general is a notoriously hard computational problem.
+
+### Representing a graph
+
+- **Adjacency matrix** - an $n \times n$ grid where entry $(i,j)$ is 1 if there's an edge from $i$ to $j$ and 0 otherwise. For undirected graphs it's symmetric. Fast to check whether a specific edge exists, but uses $n^2$ space.
+- **Adjacency list** - for each vertex, a list of its neighbors. Compact for sparse graphs, which is most real graphs, and fast to iterate over a vertex's neighbors.
+
+Real systems almost always use adjacency lists, because a social network with a billion users and a few hundred friends each would need $10^{18}$ matrix entries to store $10^{11}$ edges.
+
+## Worked Examples
+
+**Example 1: Compute degrees and verify the handshake theorem.**
+
+$V = \{A,B,C,D,E\}$ and $E = \{\{A,B\},\{A,C\},\{B,C\},\{C,D\},\{D,E\}\}$.
+
+**Solution.**
+
+- $\deg(A) = 2$ ($B$, $C$)
+- $\deg(B) = 2$ ($A$, $C$)
+- $\deg(C) = 3$ ($A$, $B$, $D$)
+- $\deg(D) = 2$ ($C$, $E$)
+- $\deg(E) = 1$ ($D$)
+
+Sum: $2+2+3+2+1 = 10$. Edges: 5. And $2 \times 5 = 10$. Confirmed.
+
+Odd-degree vertices: $C$ and $E$. That's 2, an even count, as required.
+
+**Example 2: Is this graph possible?**
+
+Can a simple graph have 5 vertices with degrees 4, 3, 3, 2, 1?
+
+**Solution.** Sum the degrees:
+
+$$
+4 + 3 + 3 + 2 + 1 = 13
+$$
+
+That's odd, but the handshake theorem requires the total degree to be $2|E|$, which is even. **Impossible.**
+
+Faster check: count the odd degrees. Here 3, 3, and 1 are odd, three of them, an odd count. Impossible.
+
+**Example 3: Edges in a complete graph.**
+
+How many edges does $K_{12}$ have? What's the degree of each vertex?
+
+**Solution.**
+
+$$
+|E| = \binom{12}{2} = \frac{12 \times 11}{2} = 66
+$$
+
+Each vertex connects to the other 11, so $\deg(v) = 11$.
+
+Verify with the handshake theorem: $12 \times 11 = 132 = 2 \times 66$. Good.
+
+**Example 4: Bipartite or not?**
+
+Is the cycle $C_4$ bipartite? Is $C_5$?
+
+**Solution.**
+
+$C_4$ has vertices $1{-}2{-}3{-}4{-}1$. Split into $\{1,3\}$ and $\{2,4\}$. Every edge goes between the two sets, and there's no edge inside either. **Bipartite.**
+
+$C_5$ has vertices $1{-}2{-}3{-}4{-}5{-}1$. Try to 2-color it by alternating: 1 is red, 2 is blue, 3 is red, 4 is blue, 5 is red. But 5 is adjacent to 1, and both are red. **Not bipartite.**
+
+The general rule: **a graph is bipartite if and only if it contains no odd-length cycle.** Even cycles alternate perfectly; odd cycles always collide when they close.
+
+**Example 5: Degree sequences and isomorphism.**
+
+Graph $G$ has degree sequence $(3,3,2,2,2)$ and graph $H$ has $(4,3,2,2,1)$. Can they be isomorphic?
+
+**Solution.** No. Isomorphic graphs must have identical degree sequences, and these differ. That's a complete answer.
+
+But be careful about the reverse. Matching degree sequences do **not** prove isomorphism. There are non-isomorphic graph pairs with identical degree sequences, so a match only means you have to look harder.
+
+**Example 6: Complement.**
+
+$G$ has 6 vertices and 7 edges. How many edges does $\bar{G}$ have?
+
+**Solution.** Together they form $K_6$:
+
+$$
+\binom{6}{2} = 15
+$$
+
+$$
+15 - 7 = 8
+$$
+
+$\bar{G}$ has 8 edges.
+
+## Real-World Applications
+
+Social networks are the most literal application. Users are vertices, connections are edges. Friend recommendation looks for vertices two steps away, community detection finds dense subgraphs, and influence ranking uses degree and centrality measures. "Six degrees of separation" is a claim about path lengths in this graph.
+
+Road and transit networks put intersections at vertices and roads at weighted edges. Every routing app runs shortest-path algorithms over exactly this structure, with weights that update live based on traffic.
+
+The internet itself is a graph at several layers: routers connected by links, and web pages connected by hyperlinks. Google's original PageRank algorithm ranked pages by analyzing the link graph, treating it as a directed graph and computing which vertices a random walker would visit most.
+
+Dependency graphs are everywhere in software. Package managers, build systems, and task schedulers all model dependencies as directed graphs, and they detect circular dependencies by looking for cycles.
+
+Bipartite graphs handle matching problems: assigning students to schools, doctors to residencies, riders to drivers, or ads to slots. The residency match program that places medical graduates runs a bipartite matching algorithm on a national scale.
+
+Molecules are graphs too, with atoms as vertices and bonds as edges, and chemists use graph isomorphism to identify whether two structural formulas describe the same compound.
+
+:::note[You've Got This]
+Graph theory is the most visual topic in this section, so use that. Draw the graph before you compute anything. The handshake theorem is your instant sanity check: if a degree sum comes out odd, or you're told there are exactly three odd-degree vertices, something is wrong with the problem or your reading of it. And remember that the drawing doesn't matter, only the connections. Two pictures that look nothing alike can be the same graph.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="discrete-introduction-to-graph-theory"
+  questions={[
+    {
+      id: "q1",
+      text: "What does the degree of a vertex measure?",
+      options: [
+        "The number of edges incident to that vertex",
+        "The distance from that vertex to the farthest vertex",
+        "The total number of vertices in the graph",
+        "The number of cycles passing through that vertex",
+      ],
+      correctIndex: 0,
+      explanation:
+        "Degree counts the edges touching a vertex, which for a simple graph equals its number of neighbors. A loop is the exception, contributing 2 to the degree.",
+    },
+    {
+      id: "q2",
+      text: "A graph has 9 edges. What is the sum of all vertex degrees?",
+      options: ["9", "81", "4.5", "18"],
+      correctIndex: 3,
+      explanation:
+        "By the handshake theorem the degree sum is twice the edge count, since every edge contributes 1 to each of its two endpoints. So the sum is 2 x 9 = 18.",
+    },
+    {
+      id: "q3",
+      text: "How many edges does the complete graph on 8 vertices have?",
+      options: ["28", "64", "56", "16"],
+      correctIndex: 0,
+      explanation:
+        "Every pair of vertices is joined, so the count is 8 choose 2 = (8 x 7) / 2 = 28. The value 56 would double-count each edge.",
+    },
+    {
+      id: "q4",
+      text: "Can a simple graph have exactly three vertices of odd degree?",
+      options: [
+        "Yes, any combination of degrees is possible",
+        "No, the number of odd-degree vertices must always be even",
+        "Yes, but only if the graph is disconnected",
+        "Only if the graph also has a loop",
+      ],
+      correctIndex: 1,
+      explanation:
+        "The total degree must be even because it equals twice the edge count, and a sum of an odd number of odd values is odd. So odd-degree vertices always come in an even count.",
+    },
+    {
+      id: "q5",
+      text: "Which condition characterizes a bipartite graph?",
+      options: [
+        "It has an even number of vertices",
+        "Every vertex has the same degree",
+        "It contains no cycle of odd length",
+        "It has exactly two connected components",
+      ],
+      correctIndex: 2,
+      explanation:
+        "A graph can be split into two independent sets exactly when it has no odd cycles, since an odd cycle forces two adjacent vertices into the same set. This is why C4 is bipartite but C5 is not.",
+    },
+  ]}
+/>

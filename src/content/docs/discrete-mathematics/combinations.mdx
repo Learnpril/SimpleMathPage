@@ -1,0 +1,332 @@
+---
+title: Combinations
+description: Count unordered selections with the binomial coefficient, and connect it to Pascal's triangle and the binomial theorem
+sidebar:
+  order: 13
+---
+
+import Quiz from "../../../components/Quiz.astro";
+import PascalTriangle from "../../../components/PascalTriangle.astro";
+import SymbolKey from "../../../components/SymbolKey.astro";
+
+## What You'll Learn
+
+In this lesson you'll learn what a combination is, how to compute the binomial coefficient, how to tell combination problems from permutation problems, the symmetry and identities that make computation easier, Pascal's triangle, and the binomial theorem.
+
+<SymbolKey
+  items={[
+    {
+      sym: "C(n, r)",
+      read: "n choose r",
+      note: "the number of ways to pick r items when order does not matter",
+    },
+    {
+      sym: "(ⁿᵧ)",
+      read: "n choose r, stacked",
+      note: "the same thing written as two numbers in one pair of brackets, with no fraction bar",
+    },
+    {
+      sym: "Σ",
+      read: "the sum of",
+      note: "a capital Greek sigma; add up every term as the index runs through its range",
+    },
+  ]}
+/>
+
+The stacked bracket notation is worth a closer look, because the missing fraction bar is the whole point:
+
+$$
+\binom{n}{r} \quad \text{means “$n$ choose $r$”, not the fraction } \frac{n}{r}
+$$
+
+And the summation symbol reads as an instruction. This one says "add up $\binom{n}{r}$ for every $r$ from 0 to $n$":
+
+$$
+\sum_{r=0}^{n} \binom{n}{r} \quad = \quad \binom{n}{0} + \binom{n}{1} + \cdots + \binom{n}{n}
+$$
+
+The letter below $\Sigma$ is the counter, the number below is where it starts, and the number on top is where it stops.
+
+## The Concept
+
+A **combination** is a selection of objects where **order does not matter**.
+
+Picking Ana, Ben, and Carla for a committee is the same selection as picking Carla, Ana, and Ben. One committee, not six.
+
+### The formula
+
+The number of ways to choose $r$ items from $n$ distinct items, order irrelevant:
+
+$$
+C(n, r) = \binom{n}{r} = \frac{n!}{r! \, (n-r)!}
+$$
+
+The notation $\binom{n}{r}$ is read "$n$ choose $r$" and is called the **binomial coefficient**. You'll also see $_nC_r$.
+
+**Where the formula comes from.** Start with permutations, $P(n,r)$, which counts ordered selections. Every unordered selection of $r$ items got counted $r!$ times, once for each internal ordering. So divide it out:
+
+$$
+\binom{n}{r} = \frac{P(n,r)}{r!} = \frac{n!}{r!(n-r)!}
+$$
+
+That relationship is worth remembering on its own:
+
+$$
+P(n,r) = \binom{n}{r} \cdot r!
+$$
+
+Permutations are combinations times the arrangements of what you picked.
+
+### Permutation or combination?
+
+One question decides it: **would swapping two of my selected items produce a different outcome?**
+
+| Situation                | Order matters?        | Use               |
+| ------------------------ | --------------------- | ----------------- |
+| President, VP, Treasurer | Yes, roles differ     | Permutation       |
+| A 3-person committee     | No, it's just a group | Combination       |
+| A 4-digit PIN            | Yes                   | Permutation-style |
+| A 5-card poker hand      | No                    | Combination       |
+| Gold, silver, bronze     | Yes                   | Permutation       |
+| 3 pizza toppings         | No                    | Combination       |
+
+Helpful vocabulary cues. "Arrange," "order," "rank," "schedule," and "line up" point to permutations. "Choose," "select," "committee," "group," "team," "subset," and "hand" point to combinations.
+
+### Computing it efficiently
+
+Don't expand large factorials. Cancel first.
+
+$$
+\binom{10}{3} = \frac{10 \times 9 \times 8}{3 \times 2 \times 1} = \frac{720}{6} = 120
+$$
+
+Take $r$ descending terms on top starting at $n$, and $r!$ on the bottom.
+
+### Symmetry
+
+$$
+\binom{n}{r} = \binom{n}{n-r}
+$$
+
+Choosing 3 of 10 to include is the same as choosing 7 of 10 to exclude. Every selection pairs with exactly one rejection.
+
+$$
+\binom{20}{17} = \binom{20}{3} = \frac{20 \times 19 \times 18}{6} = 1{,}140
+$$
+
+Always use the smaller value of $r$. It's much less arithmetic.
+
+### Useful identities
+
+$$
+\binom{n}{0} = 1 \qquad \binom{n}{n} = 1 \qquad \binom{n}{1} = n \qquad \binom{n}{n-1} = n
+$$
+
+$$
+\sum_{r=0}^{n} \binom{n}{r} = 2^n
+$$
+
+That last one is the power set result again. Adding up the subsets of every size gives the total number of subsets.
+
+**Pascal's identity:**
+
+$$
+\binom{n}{r} = \binom{n-1}{r-1} + \binom{n-1}{r}
+$$
+
+Why it's true, with no algebra: pick a specific element $x$. Every $r$-subset either contains $x$ or doesn't. The ones containing $x$ need $r-1$ more from the remaining $n-1$. The ones without $x$ need all $r$ from the remaining $n-1$. Add the two disjoint cases.
+
+### Pascal's triangle
+
+Start with 1 at the top. Each entry is the sum of the two above it, which is Pascal's identity in visual form.
+
+<PascalTriangle />
+
+Row $n$ (counting from 0) holds $\binom{n}{0}$ through $\binom{n}{n}$. So row 4 is 1, 4, 6, 4, 1, meaning a 4-element set has 1 subset of size 0, 4 of size 1, 6 of size 2, 4 of size 3, and 1 of size 4. Total 16, which is $2^4$.
+
+The symmetry of each row is the $\binom{n}{r} = \binom{n}{n-r}$ identity showing up as left-right mirroring.
+
+### The binomial theorem
+
+$$
+(x + y)^n = \sum_{r=0}^{n} \binom{n}{r} x^{n-r} y^r
+$$
+
+The coefficients of an expanded binomial **are** the binomial coefficients, which is where the name comes from.
+
+$$
+(x+y)^4 = x^4 + 4x^3y + 6x^2y^2 + 4xy^3 + y^4
+$$
+
+Those coefficients, 1, 4, 6, 4, 1, are row 4 of Pascal's triangle.
+
+Why: expanding $(x+y)^n$ means picking either $x$ or $y$ from each of $n$ factors. To get the $x^{n-r}y^r$ term you choose which $r$ factors contribute a $y$, and there are $\binom{n}{r}$ ways to do that.
+
+## Worked Examples
+
+**Example 1: Basic combination.**
+
+A team of 4 is chosen from 9 applicants. How many teams are possible?
+
+**Solution.** Order doesn't matter:
+
+$$
+\binom{9}{4} = \frac{9 \times 8 \times 7 \times 6}{4 \times 3 \times 2 \times 1} = \frac{3{,}024}{24} = 126
+$$
+
+**Example 2: Poker hands.**
+
+How many 5-card hands can be dealt from a 52-card deck?
+
+**Solution.** A hand is unordered:
+
+$$
+\binom{52}{5} = \frac{52 \times 51 \times 50 \times 49 \times 48}{120} = \frac{311{,}875{,}200}{120} = 2{,}598{,}960
+$$
+
+**Example 3: Combination with constraints.**
+
+A committee of 5 must be chosen from 7 women and 6 men. How many committees have exactly 3 women and 2 men?
+
+**Solution.** Two independent selections, so choose each and multiply:
+
+$$
+\binom{7}{3} \times \binom{6}{2} = 35 \times 15 = 525
+$$
+
+The pattern is worth internalizing: **combinations within groups, multiplication across groups.**
+
+**Example 4: "At least" with combinations.**
+
+Same 7 women and 6 men, committee of 5. How many committees have **at least 3 women**?
+
+**Solution.** Break into disjoint cases and add.
+
+- Exactly 3 women, 2 men: $\binom{7}{3}\binom{6}{2} = 35 \times 15 = 525$
+- Exactly 4 women, 1 man: $\binom{7}{4}\binom{6}{1} = 35 \times 6 = 210$
+- Exactly 5 women, 0 men: $\binom{7}{5}\binom{6}{0} = 21 \times 1 = 21$
+
+$$
+525 + 210 + 21 = 756
+$$
+
+Complement would also work here, but with only three cases going direct is comparable.
+
+**Example 5: Permutation versus combination side by side.**
+
+From 8 people:
+
+(a) How many ways to choose a 3-person subcommittee?
+(b) How many ways to choose a chair, a secretary, and a treasurer?
+
+**Solution.**
+
+(a) $\binom{8}{3} = \dfrac{8 \times 7 \times 6}{6} = 56$
+
+(b) $P(8,3) = 8 \times 7 \times 6 = 336$
+
+The ratio is exactly $3! = 6$, because each unordered group of 3 can be assigned to the three distinct roles in 6 ways.
+
+**Example 6: Binomial theorem.**
+
+Find the coefficient of $x^3 y^5$ in $(x + y)^8$.
+
+**Solution.** Here $n = 8$ and $r = 5$ (the exponent on $y$):
+
+$$
+\binom{8}{5} = \binom{8}{3} = \frac{8 \times 7 \times 6}{6} = 56
+$$
+
+The coefficient is 56.
+
+**Example 7: A binomial with coefficients.**
+
+Find the coefficient of $x^2$ in $(2x + 3)^5$.
+
+**Solution.** The general term is
+
+$$
+\binom{5}{r}(2x)^{5-r}(3)^r
+$$
+
+For $x^2$ we need $5 - r = 2$, so $r = 3$:
+
+$$
+\binom{5}{3}(2x)^2(3)^3 = 10 \cdot 4x^2 \cdot 27 = 1{,}080x^2
+$$
+
+The coefficient is 1,080. Don't forget to raise the constants inside the parentheses to their powers too.
+
+## Real-World Applications
+
+Lottery odds are pure combinations. A 6-from-49 draw has $\binom{49}{6} = 13{,}983{,}816$ possible tickets, so a single ticket has about a 1 in 14 million chance. Order of the drawn numbers doesn't matter, which is exactly why this is a combination.
+
+Probability rests on this. Every "what are the chances of exactly 3 heads in 10 flips" question is $\binom{10}{3}$ divided by $2^{10}$. The binomial distribution is named for these coefficients.
+
+Clinical trials and A/B testing use combinations to count how many ways subjects can be split into groups, which underpins significance calculations.
+
+In computing, combinations count how many ways to pick $k$ features from $n$ for a model, or $k$ servers from a cluster for a quorum. They also appear in the analysis of algorithms that examine all pairs or all triples of inputs, since $\binom{n}{2}$ pairs is why those algorithms are quadratic.
+
+Sports brackets, seating charts, dominoes ($\binom{7}{2}$ plus 7 doubles for a standard set), and network topology all count with these formulas.
+
+:::note[You've Got This]
+The whole lesson reduces to one decision, and here's the cleanest test: pick two of your chosen items and swap them. If the result is a genuinely different outcome, it's a permutation. If it's the same outcome described differently, it's a combination. Then use symmetry to keep the arithmetic small, and remember the pattern for grouped problems: combinations inside each group, multiply across groups.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="discrete-combinations"
+  questions={[
+    {
+      id: "q1",
+      text: "How many ways can a 3-person committee be selected from 8 people?",
+      options: ["336", "24", "56", "512"],
+      correctIndex: 2,
+      explanation:
+        "A committee is unordered, so use the binomial coefficient: 8 choose 3 = (8 x 7 x 6) / 6 = 56. The value 336 would be the answer if the three had distinct roles.",
+    },
+    {
+      id: "q2",
+      text: "Which of these situations calls for a combination rather than a permutation?",
+      options: [
+        "Selecting 3 toppings for a pizza",
+        "Awarding first, second, and third place",
+        "Creating a 4-digit passcode",
+        "Deciding the batting order for a lineup",
+      ],
+      correctIndex: 0,
+      explanation:
+        "Pizza toppings form an unordered set, so swapping two of them gives the same pizza. The other three all produce different outcomes when the order changes.",
+    },
+    {
+      id: "q3",
+      text: "Why does 15 choose 12 equal 15 choose 3?",
+      options: [
+        "Because 12 plus 3 equals 15, and factorials always cancel that way",
+        "Because choosing 12 to include is equivalent to choosing 3 to leave out",
+        "It is a coincidence that only works for these numbers",
+        "Because both equal 15 factorial divided by 12",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Every selection of 12 items pairs uniquely with the 3 items left behind, so the two counts must match. This symmetry lets you always compute with the smaller value of r.",
+    },
+    {
+      id: "q4",
+      text: "A group has 6 seniors and 5 juniors. How many 4-person teams contain exactly 2 seniors and 2 juniors?",
+      options: ["330", "150", "60", "25"],
+      correctIndex: 1,
+      explanation:
+        "Choose within each group and multiply across groups: (6 choose 2) x (5 choose 2) = 15 x 10 = 150.",
+    },
+    {
+      id: "q5",
+      text: "In the expansion of (x + y) to the 7th power, what is the coefficient of the term x^4 y^3?",
+      options: ["21", "35", "7", "42"],
+      correctIndex: 1,
+      explanation:
+        "By the binomial theorem the coefficient is 7 choose 3, which equals (7 x 6 x 5) / 6 = 35. This is also the fourth entry in row 7 of Pascal's triangle.",
+    },
+  ]}
+/>

@@ -1,0 +1,288 @@
+---
+title: Propositional Logic and Truth Tables
+description: Learn what a proposition is, how to combine propositions with AND, OR, and NOT, and how to build a truth table
+sidebar:
+  order: 2
+---
+
+import Quiz from "../../../components/Quiz.astro";
+import LogicConnectives from "../../../components/LogicConnectives.astro";
+import SymbolKey from "../../../components/SymbolKey.astro";
+
+## What You'll Learn
+
+In this lesson you'll learn what counts as a proposition, the three basic logical connectives (negation, conjunction, disjunction), the symbols mathematicians use for them, and how to build a truth table that settles any question about a compound statement.
+
+This is the lesson where the symbols start. Here's the whole set up front, so you can glance back at it any time:
+
+<SymbolKey
+  items={[
+    {
+      sym: "p, q, r",
+      read: "p, q, r",
+      note: "names for statements that are either true or false",
+    },
+    {
+      sym: "¬p",
+      read: "not p",
+      note: "flips the truth value; also written !p in code",
+    },
+    {
+      sym: "p ∧ q",
+      read: "p and q",
+      note: "true only when both parts are true",
+    },
+    {
+      sym: "p ∨ q",
+      read: "p or q",
+      note: "true when at least one part is true, including both",
+    },
+    {
+      sym: "p ⊕ q",
+      read: "p exclusive-or q",
+      note: "true when exactly one part is true, never both",
+    },
+    { sym: "T, F", read: "true, false", note: "the two possible truth values" },
+  ]}
+/>
+
+## The Concept
+
+A **proposition** is a statement that is either true or false, but not both.
+
+These are propositions:
+
+- "7 is a prime number." (true)
+- "Paris is the capital of Italy." (false)
+- "$3 + 4 = 12$" (false)
+
+These are **not** propositions:
+
+- "What time is it?" (a question)
+- "Close the door." (a command)
+- "$x + 1 = 5$" (depends on $x$, so it has no fixed truth value)
+- "This sentence is false." (paradox, can't be either)
+
+We name propositions with letters: $p$, $q$, $r$. Each one has a **truth value**, either T (true) or F (false).
+
+There are three basic ways to combine them, and each one has a physical form as a circuit component:
+
+<LogicConnectives />
+
+### Negation: NOT
+
+The **negation** of $p$ is written $\neg p$ and read "not $p$." It flips the truth value.
+
+| $p$ | $\neg p$ |
+| :-: | :------: |
+|  T  |    F     |
+|  F  |    T     |
+
+If $p$ is "it is raining," then $\neg p$ is "it is not raining."
+
+### Conjunction: AND
+
+The **conjunction** of $p$ and $q$ is written $p \wedge q$ and read "$p$ and $q$." It is true **only when both parts are true**.
+
+| $p$ | $q$ | $p \wedge q$ |
+| :-: | :-: | :----------: |
+|  T  |  T  |      T       |
+|  T  |  F  |      F       |
+|  F  |  T  |      F       |
+|  F  |  F  |      F       |
+
+A useful memory hook: AND is demanding. One failure ruins it.
+
+### Disjunction: OR
+
+The **disjunction** of $p$ and $q$ is written $p \vee q$ and read "$p$ or $q$." It is true when **at least one** part is true.
+
+| $p$ | $q$ | $p \vee q$ |
+| :-: | :-: | :--------: |
+|  T  |  T  |     T      |
+|  T  |  F  |     T      |
+|  F  |  T  |     T      |
+|  F  |  F  |     F      |
+
+Important: this is **inclusive or**. If both are true, the whole thing is still true. Everyday English often means "one or the other but not both" ("soup or salad"), but mathematical OR always includes the both case. When you specifically want to exclude the both case you use **exclusive or**, written $p \oplus q$, which is true when exactly one part is true.
+
+### Building a truth table
+
+A truth table lists every possible combination of truth values for the basic propositions, then works outward to the compound statement.
+
+With $n$ distinct propositions there are $2^n$ rows. One proposition gives 2 rows, two give 4, three give 8, four give 16.
+
+The standard procedure:
+
+1. Write a column for each basic proposition and fill in all $2^n$ combinations.
+2. Add a column for each intermediate piece, working from the inside of the expression outward.
+3. Combine the intermediate columns to get the final answer.
+
+### A note on notation
+
+You will see these symbols written several ways depending on the field:
+
+| Meaning | Math notation | Programming | Circuit / engineering |
+| ------- | ------------- | ----------- | --------------------- |
+| NOT     | $\neg p$      | `!p`        | $\bar{p}$             |
+| AND     | $p \wedge q$  | `p && q`    | $p \cdot q$           |
+| OR      | $p \vee q$    | `p \|\| q`  | $p + q$               |
+
+They mean exactly the same things. If you've written an `if` statement, you already know propositional logic.
+
+### Precedence
+
+Just like arithmetic has an order of operations, so does logic. From highest to lowest:
+
+$$
+\neg \quad \text{then} \quad \wedge \quad \text{then} \quad \vee
+$$
+
+So $\neg p \wedge q$ means $(\neg p) \wedge q$, not $\neg (p \wedge q)$. Use parentheses whenever there's any doubt, and there's usually doubt.
+
+## Worked Examples
+
+**Example 1: Build a truth table for $\neg p \vee q$.**
+
+Two propositions, so 4 rows. Work inside out: first $\neg p$, then OR it with $q$.
+
+| $p$ | $q$ | $\neg p$ | $\neg p \vee q$ |
+| :-: | :-: | :------: | :-------------: |
+|  T  |  T  |    F     |        T        |
+|  T  |  F  |    F     |        F        |
+|  F  |  T  |    T     |        T        |
+|  F  |  F  |    T     |        T        |
+
+Row 2 is the only false row. Notice that this table is going to look very familiar when we get to conditional statements.
+
+**Example 2: Build a truth table for $(p \wedge q) \vee \neg r$.**
+
+Three propositions, so 8 rows.
+
+| $p$ | $q$ | $r$ | $p \wedge q$ | $\neg r$ | $(p \wedge q) \vee \neg r$ |
+| :-: | :-: | :-: | :----------: | :------: | :------------------------: |
+|  T  |  T  |  T  |      T       |    F     |             T              |
+|  T  |  T  |  F  |      T       |    T     |             T              |
+|  T  |  F  |  T  |      F       |    F     |             F              |
+|  T  |  F  |  F  |      F       |    T     |             T              |
+|  F  |  T  |  T  |      F       |    F     |             F              |
+|  F  |  T  |  F  |      F       |    T     |             T              |
+|  F  |  F  |  T  |      F       |    F     |             F              |
+|  F  |  F  |  F  |      F       |    T     |             T              |
+
+The statement is false in exactly 3 of 8 cases: whenever $r$ is true and $p \wedge q$ is not.
+
+**Example 3: Translate into symbols.**
+
+Let $p$ = "the server is online," $q$ = "the database is reachable," $r$ = "maintenance mode is on."
+
+Translate: "The server is online and the database is reachable, but maintenance mode is not on."
+
+**Solution.** The word "but" is just AND with attitude. It carries no different logical meaning.
+
+$$
+p \wedge q \wedge \neg r
+$$
+
+**Example 4: Tautology and contradiction.**
+
+A **tautology** is a statement that is true in every row. A **contradiction** is false in every row.
+
+Check $p \vee \neg p$:
+
+| $p$ | $\neg p$ | $p \vee \neg p$ |
+| :-: | :------: | :-------------: |
+|  T  |    F     |        T        |
+|  F  |    T     |        T        |
+
+Always true, so it's a tautology. This one is called the **law of the excluded middle**.
+
+Now check $p \wedge \neg p$:
+
+| $p$ | $\neg p$ | $p \wedge \neg p$ |
+| :-: | :------: | :---------------: |
+|  T  |    F     |         F         |
+|  F  |    T     |         F         |
+
+Always false, so it's a contradiction. Good, because "it is raining and it is not raining" should never be true.
+
+## Real-World Applications
+
+Every conditional in every program you've ever run is propositional logic. When you write:
+
+```
+if (isLoggedIn && !isBanned) { showDashboard(); }
+```
+
+you've written $p \wedge \neg q$. And when a bug turns out to be "this condition is wrong in one specific case," a truth table finds it in about ninety seconds.
+
+Digital circuits are built out of physical AND, OR, and NOT gates, and chip designers use truth tables to specify exactly what a circuit should do before building it. Database queries with `WHERE active = true AND deleted = false` are the same logic again.
+
+Outside of computing, insurance policies, tax rules, and eligibility requirements ("you qualify if you are over 65 or have a documented disability, and you are not currently enrolled elsewhere") are compound propositions. Writing them as symbols is often the fastest way to figure out whether you actually qualify.
+
+:::note[You've Got This]
+Truth tables are the one tool in this whole section that is completely mechanical. You never have to be clever with them, you just have to be organized. Fill in the rows in a consistent order, do one column at a time, and check the inside pieces before the outside ones. If you're ever unsure whether two logical statements mean the same thing, a truth table settles it with no argument.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="discrete-propositional-logic-and-truth-tables"
+  questions={[
+    {
+      id: "q1",
+      text: "Which of the following is a proposition?",
+      options: [
+        "Please pass the salt.",
+        "How many prime numbers are there?",
+        "The number 15 is divisible by 4.",
+        "x is greater than 10.",
+      ],
+      correctIndex: 2,
+      explanation:
+        "A proposition must have a definite truth value. '15 is divisible by 4' is false, which is fine. A command, a question, and a statement depending on an unknown x are all not propositions.",
+    },
+    {
+      id: "q2",
+      text: "For which combination of truth values is p AND q true?",
+      options: [
+        "Only when p is true and q is true",
+        "Whenever at least one of p or q is true",
+        "Only when p and q have different truth values",
+        "Whenever p is true, regardless of q",
+      ],
+      correctIndex: 0,
+      explanation:
+        "Conjunction requires both parts to hold. If either p or q is false, the conjunction is false.",
+    },
+    {
+      id: "q3",
+      text: "How many rows does a truth table need for a statement built from 4 distinct propositions?",
+      options: ["8", "4", "32", "16"],
+      correctIndex: 3,
+      explanation:
+        "Each proposition doubles the number of combinations, so n propositions need 2 to the n rows. With n = 4 that is 2^4 = 16.",
+    },
+    {
+      id: "q4",
+      text: "If p is true and q is false, what is the truth value of (NOT p) OR q?",
+      options: [
+        "True",
+        "False",
+        "It depends on other propositions",
+        "Undefined",
+      ],
+      correctIndex: 1,
+      explanation:
+        "NOT p is false since p is true, and q is false. False OR false is false.",
+    },
+    {
+      id: "q5",
+      text: "Which statement is a tautology?",
+      options: ["p AND (NOT p)", "p AND q", "p OR (NOT p)", "p OR q"],
+      correctIndex: 2,
+      explanation:
+        "A tautology is true in every row. Either p is true or its negation is, so p OR NOT p is always true. By contrast p AND NOT p is always false, a contradiction.",
+    },
+  ]}
+/>

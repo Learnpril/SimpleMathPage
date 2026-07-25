@@ -1,0 +1,144 @@
+---
+/**
+ * FunctionTypes — injective, surjective, and bijective as arrow diagrams
+ * between two sets. The failure in each of the first two panels is flagged.
+ */
+const w = 540;
+const h = 272;
+const panels = [
+  {
+    cx: 78,
+    title: "Injective",
+    sub: "one-to-one",
+    // each domain element hits a distinct target, but one target is missed
+    dom: 3,
+    cod: 4,
+    map: [0, 1, 2],
+    note: "nothing hit twice",
+    fail: "but 4 is missed → not surjective",
+    cls: "green",
+  },
+  {
+    cx: 268,
+    title: "Surjective",
+    sub: "onto",
+    // every target hit, but two domain elements collide
+    dom: 4,
+    cod: 3,
+    map: [0, 0, 1, 2],
+    note: "nothing missed",
+    fail: "but two inputs share a target → not injective",
+    cls: "blue",
+  },
+  {
+    cx: 458,
+    title: "Bijective",
+    sub: "both at once",
+    dom: 3,
+    cod: 3,
+    map: [0, 1, 2],
+    note: "a perfect pairing",
+    fail: "has an inverse",
+    cls: "purple",
+  },
+];
+const topY = 78;
+const gap = 34;
+const halfW = 30;
+---
+
+<figure
+  class="fnt"
+  role="img"
+  aria-label="Three arrow diagrams: an injective function that misses a codomain element, a surjective function where two inputs collide, and a bijective function pairing every element exactly once"
+>
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    {panels.map((p) => {
+      const lx = p.cx - halfW;
+      const rx = p.cx + halfW;
+      const domY = (i: number) => topY + i * gap;
+      const codY = (i: number) => topY + i * gap;
+      return (
+        <g>
+          <text x={p.cx} y="30" class={`fnt-title fnt-t-${p.cls}`} font-size="12.5" font-weight="bold" text-anchor="middle">{p.title}</text>
+          <text x={p.cx} y="46" class="fnt-sub" font-size="9.5" text-anchor="middle">{p.sub}</text>
+          <text x={lx} y="64" class="fnt-setlbl" font-size="9" text-anchor="middle">A</text>
+          <text x={rx} y="64" class="fnt-setlbl" font-size="9" text-anchor="middle">B</text>
+
+          {/* Arrows */}
+          {p.map.map((t, i) => (
+            <line x1={lx + 7} y1={domY(i)} x2={rx - 8} y2={codY(t)} class={`fnt-arrow-${p.cls}`} marker-end={`url(#fnt-h-${p.cls})`} />
+          ))}
+
+          {/* Domain dots */}
+          {Array.from({ length: p.dom }).map((_, i) => (
+            <circle cx={lx} cy={domY(i)} r="5.5" class="fnt-dom" />
+          ))}
+
+          {/* Codomain dots — an unhit target is drawn hollow and orange */}
+          {Array.from({ length: p.cod }).map((_, i) => (
+            <circle cx={rx} cy={codY(i)} r="5.5" class={p.map.includes(i) ? "fnt-cod" : "fnt-cod-miss"} />
+          ))}
+
+          <text x={p.cx} y="212" class={`fnt-note fnt-t-${p.cls}`} font-size="9.5" text-anchor="middle">{p.note}</text>
+          <text x={p.cx} y="230" class={p.cls === "purple" ? "fnt-good" : "fnt-fail"} font-size="8.5" text-anchor="middle">{p.fail}</text>
+        </g>
+      );
+    })}
+
+    <text x={w / 2} y="262" class="fnt-foot" font-size="10.5" text-anchor="middle">
+      Only bijections can be inverted, which is why every encoding scheme must be one
+    </text>
+
+    <defs>
+      <marker id="fnt-h-green" markerWidth="7" markerHeight="5" refX="7" refY="2.5" orient="auto">
+        <polygon points="0 0, 7 2.5, 0 5" class="fnt-fill-green" />
+      </marker>
+      <marker id="fnt-h-blue" markerWidth="7" markerHeight="5" refX="7" refY="2.5" orient="auto">
+        <polygon points="0 0, 7 2.5, 0 5" class="fnt-fill-blue" />
+      </marker>
+      <marker id="fnt-h-purple" markerWidth="7" markerHeight="5" refX="7" refY="2.5" orient="auto">
+        <polygon points="0 0, 7 2.5, 0 5" class="fnt-fill-purple" />
+      </marker>
+    </defs>
+  </svg>
+</figure>
+
+<style>
+  .fnt { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .fnt svg { max-width:100%; height:auto; }
+  .fnt-dom { fill:#888; }
+  .fnt-cod { fill:#888; }
+  .fnt-cod-miss { fill:none; stroke:#f0883e; stroke-width:2; }
+  .fnt-title { font-family:'Libre Baskerville',Georgia,serif; }
+  .fnt-t-green { fill:#7ee787; }
+  .fnt-t-blue { fill:#58a6ff; }
+  .fnt-t-purple { fill:#d2a8ff; }
+  .fnt-sub { fill:#888; font-family:'Libre Baskerville',Georgia,serif; font-style:italic; }
+  .fnt-setlbl { fill:#666; font-family:'Libre Baskerville',Georgia,serif; }
+  .fnt-note { font-family:'Libre Baskerville',Georgia,serif; }
+  .fnt-fail { fill:#f0883e; font-family:'Libre Baskerville',Georgia,serif; font-style:italic; }
+  .fnt-good { fill:#7ee787; font-family:'Libre Baskerville',Georgia,serif; font-style:italic; }
+  .fnt-arrow-green { stroke:#7ee787; stroke-width:1.4; }
+  .fnt-arrow-blue { stroke:#58a6ff; stroke-width:1.4; }
+  .fnt-arrow-purple { stroke:#d2a8ff; stroke-width:1.4; }
+  .fnt-fill-green { fill:#7ee787; }
+  .fnt-fill-blue { fill:#58a6ff; }
+  .fnt-fill-purple { fill:#d2a8ff; }
+  .fnt-foot { fill:#f0883e; font-family:'Libre Baskerville',Georgia,serif; font-style:italic; }
+  :global([data-theme="light"]) .fnt-dom { fill:#555; }
+  :global([data-theme="light"]) .fnt-cod { fill:#555; }
+  :global([data-theme="light"]) .fnt-cod-miss { stroke:#b35900; }
+  :global([data-theme="light"]) .fnt-t-green { fill:#116329; }
+  :global([data-theme="light"]) .fnt-t-blue { fill:#0550ae; }
+  :global([data-theme="light"]) .fnt-t-purple { fill:#6639ba; }
+  :global([data-theme="light"]) .fnt-fail { fill:#b35900; }
+  :global([data-theme="light"]) .fnt-good { fill:#116329; }
+  :global([data-theme="light"]) .fnt-arrow-green { stroke:#116329; }
+  :global([data-theme="light"]) .fnt-arrow-blue { stroke:#0550ae; }
+  :global([data-theme="light"]) .fnt-arrow-purple { stroke:#6639ba; }
+  :global([data-theme="light"]) .fnt-fill-green { fill:#116329; }
+  :global([data-theme="light"]) .fnt-fill-blue { fill:#0550ae; }
+  :global([data-theme="light"]) .fnt-fill-purple { fill:#6639ba; }
+  :global([data-theme="light"]) .fnt-foot { fill:#b35900; }
+</style>

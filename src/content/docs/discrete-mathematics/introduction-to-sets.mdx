@@ -1,0 +1,379 @@
+---
+title: Introduction to Sets
+description: Learn set notation, membership, subsets, cardinality, and the power set
+sidebar:
+  order: 6
+---
+
+import Quiz from "../../../components/Quiz.astro";
+import SubsetVenn from "../../../components/SubsetVenn.astro";
+import PowerSetCube3D from "../../../components/PowerSetCube3D.astro";
+import SymbolKey from "../../../components/SymbolKey.astro";
+
+## What You'll Learn
+
+In this lesson you'll learn what a set is, the two ways to describe one, how membership and subset relationships differ, how to count the elements of a set, and how to build the power set.
+
+This lesson brings a lot of notation at once. Nothing here is hard, but it's worth knowing the names:
+
+<SymbolKey
+  items={[
+    {
+      sym: "{1, 2, 3}",
+      read: "the set containing 1, 2 and 3",
+      note: "curly braces always mean “set”",
+    },
+    {
+      sym: "x ∈ A",
+      read: "x is an element of A",
+      note: "x is one of the things listed in A",
+    },
+    {
+      sym: "x ∉ A",
+      read: "x is not an element of A",
+      note: "the same symbol with a slash",
+    },
+    {
+      sym: "A ⊆ B",
+      read: "A is a subset of B",
+      note: "every element of A is also in B",
+    },
+    {
+      sym: "A ⊂ B",
+      read: "A is a proper subset of B",
+      note: "a subset, but not the whole of B",
+    },
+    {
+      sym: "∅",
+      read: "the empty set",
+      note: "the set with no elements; also written { }",
+    },
+    {
+      sym: "|A|",
+      read: "the cardinality of A",
+      note: "how many elements A has, not absolute value",
+    },
+    {
+      sym: "𝒫(A)",
+      read: "the power set of A",
+      note: "the set of every subset of A",
+    },
+    {
+      sym: "A × B",
+      read: "A cross B",
+      note: "all ordered pairs with a first entry from A and a second from B",
+    },
+    {
+      sym: "{x | …}",
+      read: "the set of all x such that …",
+      note: "the bar means “such that”; some books use a colon",
+    },
+  ]}
+/>
+
+## The Concept
+
+A **set** is an unordered collection of distinct objects. The objects are called **elements** or **members**.
+
+Two rules define everything about sets:
+
+1. **Order doesn't matter.** $\{1, 2, 3\}$ and $\{3, 1, 2\}$ are the same set.
+2. **Duplicates don't count.** $\{1, 2, 2, 3\}$ is the same set as $\{1, 2, 3\}$.
+
+If order matters, you want a sequence or tuple, not a set. If repetition matters, you want a multiset.
+
+### Two ways to describe a set
+
+**Roster notation** lists the elements:
+
+$$
+A = \{2, 4, 6, 8, 10\}
+$$
+
+**Set-builder notation** describes them with a predicate:
+
+$$
+A = \{x \mid x \text{ is an even integer and } 0 < x \leq 10\}
+$$
+
+The vertical bar reads "such that." Some books use a colon instead: $\{x : \ldots\}$.
+
+Set-builder is essential for infinite sets, where you can't list everything:
+
+$$
+\{x \in \mathbb{Z} \mid x > 0\} \quad \text{the positive integers}
+$$
+
+### Membership
+
+$$
+3 \in \{1, 2, 3\} \qquad 5 \notin \{1, 2, 3\}
+$$
+
+$\in$ means "is an element of." $\notin$ means "is not an element of."
+
+### Special sets
+
+The **empty set** has no elements:
+
+$$
+\emptyset = \{\, \}
+$$
+
+Watch out: $\emptyset$ and $\{\emptyset\}$ are different. The first is empty. The second is a set containing one thing, which happens to be the empty set. Like an empty box versus a box containing an empty box.
+
+Standard number sets have reserved symbols:
+
+| Symbol       | Set             | Examples                   |
+| ------------ | --------------- | -------------------------- |
+| $\mathbb{N}$ | Natural numbers | $1, 2, 3, \ldots$          |
+| $\mathbb{Z}$ | Integers        | $\ldots, -1, 0, 1, \ldots$ |
+| $\mathbb{Q}$ | Rationals       | $\frac{1}{2}, -3, 0.75$    |
+| $\mathbb{R}$ | Real numbers    | $\pi, \sqrt{2}, 4$         |
+| $\mathbb{C}$ | Complex numbers | $3 + 2i$                   |
+
+(Some sources include 0 in $\mathbb{N}$ and some don't. Check the convention wherever you're reading.)
+
+The **universal set** $U$ is the set of all elements under consideration in a given problem. It's context-dependent, and you need it to make sense of complements.
+
+### Subsets
+
+$A$ is a **subset** of $B$, written $A \subseteq B$, if every element of $A$ is also in $B$. In quantifier notation:
+
+$$
+A \subseteq B \quad \text{means} \quad \forall x \, (x \in A \rightarrow x \in B)
+$$
+
+$A$ is a **proper subset**, written $A \subset B$, if $A \subseteq B$ and $A \neq B$.
+
+Two facts that follow immediately:
+
+- $\emptyset \subseteq A$ for every set $A$. (Vacuously true: there's no element of $\emptyset$ that could fail the condition.)
+- $A \subseteq A$ for every set $A$.
+
+**Set equality** means mutual containment:
+
+$$
+A = B \quad \text{iff} \quad A \subseteq B \text{ and } B \subseteq A
+$$
+
+That's how you prove two sets are equal: show each contains the other. It's the set-theory version of proving a biconditional.
+
+### Element versus subset
+
+This distinction causes more errors than anything else in this lesson. Let $A = \{1, 2, \{3, 4\}\}$.
+
+- $1 \in A$. True, 1 is listed.
+- $\{1\} \subseteq A$. True, the set containing 1 is a subset.
+- $\{1\} \in A$. **False.** $\{1\}$ is not one of the three listed elements.
+- $\{3,4\} \in A$. True, it is literally one of the elements.
+- $3 \in A$. **False.** 3 is inside an element of $A$, but is not itself an element of $A$.
+
+$\in$ compares an object to a set. $\subseteq$ compares a set to a set.
+
+<SubsetVenn />
+
+### Cardinality
+
+The **cardinality** of $A$, written $|A|$, is the number of elements it contains.
+
+$$
+|\{a, b, c\}| = 3 \qquad |\emptyset| = 0
+$$
+
+For $A = \{1, 2, \{3, 4\}\}$, the cardinality is **3**, not 4. The nested set counts as one element.
+
+### The power set
+
+The **power set** of $A$, written $\mathcal{P}(A)$, is the set of **all** subsets of $A$.
+
+For $A = \{a, b\}$:
+
+$$
+\mathcal{P}(A) = \{\emptyset, \{a\}, \{b\}, \{a, b\}\}
+$$
+
+Note that $\emptyset$ and $A$ itself are always included.
+
+The size follows a clean rule:
+
+$$
+|\mathcal{P}(A)| = 2^{|A|}
+$$
+
+**Why $2^n$?** To build a subset, walk through the $n$ elements and make an independent yes-or-no decision about each one. That's $2$ choices, $n$ times, so $2^n$ total. Every subset corresponds to exactly one pattern of decisions.
+
+That's a counting argument, and it's your first taste of combinatorics.
+
+For a 3-element set those decisions have a shape you already know. Each element is one axis, so the 8 subsets are the 8 corners of a cube, and walking along any edge adds or removes exactly one element:
+
+<PowerSetCube3D />
+
+### Cartesian product
+
+The **Cartesian product** $A \times B$ is the set of all **ordered pairs** with the first entry from $A$ and the second from $B$:
+
+$$
+A \times B = \{(a, b) \mid a \in A, b \in B\}
+$$
+
+If $A = \{1, 2\}$ and $B = \{x, y\}$:
+
+$$
+A \times B = \{(1,x), (1,y), (2,x), (2,y)\}
+$$
+
+Size: $|A \times B| = |A| \cdot |B|$.
+
+Order matters here, so $A \times B \neq B \times A$ in general. And $\mathbb{R} \times \mathbb{R} = \mathbb{R}^2$ is exactly the coordinate plane you've been using since pre-algebra.
+
+## Worked Examples
+
+**Example 1: Convert between notations.**
+
+Write $\{x \in \mathbb{Z} \mid -3 \leq x < 3\}$ in roster notation.
+
+**Solution.** Integers from $-3$ up to but not including 3:
+
+$$
+\{-3, -2, -1, 0, 1, 2\}
+$$
+
+Cardinality 6. The asymmetric endpoints are deliberate, so read the inequalities carefully.
+
+**Example 2: Classify each statement as true or false.**
+
+Let $B = \{1, 2, 3, 4, 5\}$.
+
+1. $3 \in B$
+2. $\{3\} \in B$
+3. $\{3\} \subseteq B$
+4. $\{1, 6\} \subseteq B$
+5. $\emptyset \subseteq B$
+6. $|B| = 5$
+
+**Solution.**
+
+1. **True.**
+2. **False.** The element is 3, not $\{3\}$.
+3. **True.** Every element of $\{3\}$ (namely 3) is in $B$.
+4. **False.** 6 is not in $B$, so containment fails.
+5. **True.** The empty set is a subset of everything.
+6. **True.**
+
+**Example 3: Build a power set.**
+
+Find $\mathcal{P}(\{1, 2, 3\})$.
+
+**Solution.** Organize by size, which prevents you from missing any.
+
+- Size 0: $\emptyset$
+- Size 1: $\{1\}, \{2\}, \{3\}$
+- Size 2: $\{1,2\}, \{1,3\}, \{2,3\}$
+- Size 3: $\{1,2,3\}$
+
+$$
+\mathcal{P}(\{1,2,3\}) = \{\emptyset, \{1\}, \{2\}, \{3\}, \{1,2\}, \{1,3\}, \{2,3\}, \{1,2,3\}\}
+$$
+
+That's 8 subsets, and $2^3 = 8$. Checks out. Notice the counts by size are 1, 3, 3, 1, which is a row of Pascal's triangle. That's not a coincidence, and you'll see why in the combinations lesson.
+
+**Example 4: Prove set equality.**
+
+Let $A = \{x \in \mathbb{Z} \mid x = 4k \text{ for some } k \in \mathbb{Z}\}$ and $B = \{x \in \mathbb{Z} \mid x = 2m \text{ for some even } m \in \mathbb{Z}\}$. Show $A = B$.
+
+**Solution.** Prove containment in both directions.
+
+**$A \subseteq B$:** Let $x \in A$, so $x = 4k$. Write $x = 2(2k)$. Since $2k$ is even, $x$ has the form $2m$ with $m$ even. So $x \in B$.
+
+**$B \subseteq A$:** Let $x \in B$, so $x = 2m$ with $m$ even. Then $m = 2j$ for some integer $j$, so $x = 2(2j) = 4j$. So $x \in A$.
+
+Both containments hold, therefore $A = B$. Both sets are the multiples of 4.
+
+**Example 5: Cartesian product.**
+
+If $|A| = 3$ and $|B| = 5$, what are $|A \times B|$ and $|\mathcal{P}(A \times B)|$?
+
+**Solution.**
+
+$$
+|A \times B| = 3 \cdot 5 = 15
+$$
+
+$$
+|\mathcal{P}(A \times B)| = 2^{15} = 32768
+$$
+
+Power sets grow fast. That's a real constraint in computing, where "check every subset" is usually not a viable algorithm.
+
+## Real-World Applications
+
+Sets are the data model underneath relational databases. A table is a set of rows, a `SELECT` is a filter, and a `JOIN` operates on a Cartesian product. The `DISTINCT` keyword exists precisely because sets don't allow duplicates.
+
+Most programming languages ship a set type (`Set` in JavaScript and Python, `HashSet` in Java and Rust) with fast membership testing. Whenever you need "have I seen this before?" a set is the right tool.
+
+Search filters on shopping sites are set operations. Selecting two brands and one price range asks for the intersection of a union.
+
+In practical terms, cardinality is what powers permission systems and tagging. And the power set explains why feature-flag combinations get out of hand: 10 independent flags produce 1,024 possible configurations, which is why nobody tests them all.
+
+:::note[You've Got This]
+Sets are the easiest topic in this section conceptually, but the notation trips people up. If you only guard against one mistake, make it the element-versus-subset confusion: $\in$ asks "is this thing in the box?" and $\subseteq$ asks "is everything in this box also in that box?" Write out small examples until that feels automatic, because set operations in the next lesson build directly on it.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="discrete-introduction-to-sets"
+  questions={[
+    {
+      id: "q1",
+      text: "What is the cardinality of the set {1, 2, {3, 4}, 2}?",
+      options: ["4", "3", "5", "2"],
+      correctIndex: 1,
+      explanation:
+        "Duplicates do not count, so the repeated 2 is ignored, and the nested set {3, 4} counts as a single element. That leaves 1, 2, and {3, 4}, for a cardinality of 3.",
+    },
+    {
+      id: "q2",
+      text: "For the set A = {5, 6, 7}, which statement is TRUE?",
+      options: [
+        "{5} is an element of A",
+        "5 is a subset of A",
+        "{5, 6} is a subset of A",
+        "{5, 8} is a subset of A",
+      ],
+      correctIndex: 2,
+      explanation:
+        "Both 5 and 6 belong to A, so the set {5, 6} is a subset. The element 5 belongs to A but is not a subset by itself, and {5, 8} fails because 8 is not in A.",
+    },
+    {
+      id: "q3",
+      text: "How many subsets does a set with 6 elements have?",
+      options: ["12", "36", "64", "720"],
+      correctIndex: 2,
+      explanation:
+        "The power set of an n-element set has 2 to the n members, since each element is independently included or excluded. Here 2^6 = 64.",
+    },
+    {
+      id: "q4",
+      text: "Which set is a subset of every set?",
+      options: [
+        "The empty set",
+        "The universal set",
+        "The set containing the empty set",
+        "The set of natural numbers",
+      ],
+      correctIndex: 0,
+      explanation:
+        "The subset condition is vacuously satisfied for the empty set because it has no element that could fail to belong. Note that the set containing the empty set has one element and is not a subset of every set.",
+    },
+    {
+      id: "q5",
+      text: "If A has 4 elements and B has 7 elements, how many ordered pairs are in the Cartesian product A x B?",
+      options: ["11", "16", "49", "28"],
+      correctIndex: 3,
+      explanation:
+        "Each of the 4 first coordinates pairs with each of the 7 second coordinates, giving 4 x 7 = 28 ordered pairs.",
+    },
+  ]}
+/>

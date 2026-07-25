@@ -1,0 +1,543 @@
+---
+title: Discrete Mathematics Review
+description: Comprehensive review of logic, sets, proofs, counting, graphs, relations, and modular arithmetic with mixed practice
+sidebar:
+  order: 20
+---
+
+import Quiz from "../../../components/Quiz.astro";
+import DiscreteTopicMap from "../../../components/DiscreteTopicMap.astro";
+import SymbolKey from "../../../components/SymbolKey.astro";
+
+## What You'll Learn
+
+This review pulls together everything from the Discrete Mathematics section. Use it to test yourself across all five areas before moving on.
+
+<DiscreteTopicMap />
+
+## Notation Reference
+
+Every symbol used in this section, in one place.
+
+<SymbolKey
+  title="Logic"
+  items={[
+    { sym: "¬p", read: "not p" },
+    { sym: "p ∧ q", read: "p and q", note: "true only when both hold" },
+    { sym: "p ∨ q", read: "p or q", note: "true when at least one holds" },
+    { sym: "p ⊕ q", read: "p exclusive-or q", note: "exactly one, never both" },
+    { sym: "p → q", read: "if p, then q" },
+    { sym: "p ↔ q", read: "p if and only if q" },
+    { sym: "p ≡ q", read: "p is logically equivalent to q" },
+    { sym: "∀x", read: "for all x" },
+    { sym: "∃x", read: "there exists an x" },
+    { sym: "∃!x", read: "there exists exactly one x" },
+  ]}
+/>
+
+<SymbolKey
+  title="Sets"
+  items={[
+    { sym: "x ∈ A", read: "x is an element of A" },
+    { sym: "x ∉ A", read: "x is not an element of A" },
+    { sym: "A ⊆ B", read: "A is a subset of B" },
+    { sym: "∅", read: "the empty set" },
+    {
+      sym: "|A|",
+      read: "the cardinality of A",
+      note: "the element count, not absolute value",
+    },
+    { sym: "𝒫(A)", read: "the power set of A" },
+    { sym: "A ∪ B", read: "A union B" },
+    { sym: "A ∩ B", read: "A intersect B" },
+    { sym: "A − B", read: "A minus B" },
+    { sym: "Ā", read: "the complement of A" },
+    { sym: "A × B", read: "A cross B", note: "the set of ordered pairs" },
+  ]}
+/>
+
+<SymbolKey
+  title="Proofs and counting"
+  items={[
+    { sym: "a | b", read: "a divides b", note: "a statement, not a fraction" },
+    { sym: "a ∤ b", read: "a does not divide b" },
+    { sym: "∎", read: "end of proof", note: "also QED" },
+    { sym: "∴", read: "therefore" },
+    { sym: "n!", read: "n factorial" },
+    { sym: "P(n, r)", read: "permutations of r from n", note: "order matters" },
+    { sym: "C(n, r)", read: "n choose r", note: "order does not matter" },
+    { sym: "Σ", read: "the sum of" },
+    { sym: "⌈x⌉", read: "the ceiling of x", note: "round up" },
+    { sym: "⌊x⌋", read: "the floor of x", note: "round down" },
+  ]}
+/>
+
+<SymbolKey
+  title="Graphs, relations, and modular arithmetic"
+  items={[
+    { sym: "G = (V, E)", read: "a graph with vertices V and edges E" },
+    { sym: "deg(v)", read: "the degree of vertex v" },
+    {
+      sym: "Kₙ, Cₙ, Pₙ",
+      read: "the complete, cycle, and path graphs on n vertices",
+    },
+    { sym: "(a, b)", read: "the ordered pair a, b" },
+    { sym: "[a]", read: "the equivalence class of a" },
+    { sym: "f : A → B", read: "f is a function from A to B" },
+    { sym: "a mod n", read: "a modulo n", note: "the remainder" },
+    { sym: "a ≡ b (mod n)", read: "a is congruent to b modulo n" },
+    { sym: "gcd(a, b)", read: "the greatest common divisor" },
+  ]}
+/>
+
+## Key Concepts Summary
+
+### Propositional Logic
+
+- A **proposition** has a definite truth value. Predicates with free variables do not.
+- Connectives: $\neg p$ (not), $p \wedge q$ (and, true only when both are), $p \vee q$ (inclusive or, true when at least one is)
+- A truth table with $n$ propositions needs $2^n$ rows
+- **Tautology**: true in every row. **Contradiction**: false in every row.
+- **De Morgan's laws**: $\neg(p \wedge q) \equiv \neg p \vee \neg q$ and $\neg(p \vee q) \equiv \neg p \wedge \neg q$. Push the negation in, flip the connective.
+
+### Conditionals
+
+- $p \rightarrow q$ is false **only** when $p$ is true and $q$ is false
+- $p \rightarrow q \equiv \neg p \vee q$, so $\neg(p \rightarrow q) \equiv p \wedge \neg q$
+- **Contrapositive** $\neg q \rightarrow \neg p$ is equivalent to the original
+- **Converse** $q \rightarrow p$ and **inverse** $\neg p \rightarrow \neg q$ are **not** equivalent to it
+- "$p$ only if $q$" and "$q$ is necessary for $p$" both mean $p \rightarrow q$
+- $p \leftrightarrow q \equiv (p \rightarrow q) \wedge (q \rightarrow p)$, so proving it takes two proofs
+
+### Quantifiers
+
+- $\forall x \, P(x)$: hard to prove, disproved by one counterexample
+- $\exists x \, P(x)$: proved by one example, hard to disprove
+- $\neg \forall x \, P(x) \equiv \exists x \, \neg P(x)$ and $\neg \exists x \, P(x) \equiv \forall x \, \neg P(x)$
+- Mixed quantifier order matters: $\forall x \exists y$ lets $y$ depend on $x$; $\exists y \forall x$ demands one fixed $y$
+
+### Sets
+
+- Unordered, no duplicates. $\{1,2,2,3\} = \{1,2,3\}$
+- $\in$ compares object to set; $\subseteq$ compares set to set
+- $\emptyset \subseteq A$ always. $A = B$ iff $A \subseteq B$ and $B \subseteq A$
+- $|\mathcal{P}(A)| = 2^{|A|}$, and $|A \times B| = |A| \cdot |B|$
+- Operations: $A \cup B$, $A \cap B$, $A - B$, $\bar{A}$, $A \oplus B$
+- **Inclusion-exclusion**: $|A \cup B| = |A| + |B| - |A \cap B|$, and for three sets add singles, subtract pairs, add the triple
+
+### Proof Techniques
+
+- **Direct**: assume $p$, unfold definitions ($n = 2k$ for even, $n = 2k+1$ for odd, $b = ak$ for $a \mid b$), derive $q$
+- **Counterexample**: one case where $p$ holds and $q$ fails disproves an implication
+- **Contrapositive**: assume $\neg q$, derive $\neg p$. Best when the hypothesis is about a squared quantity
+- **Contradiction**: assume $p \wedge \neg q$, derive an impossibility. Best for non-existence and irrationality claims
+- **Induction**: base case plus inductive step. Both required. **Strong induction** assumes all cases up to $k$
+
+### Counting
+
+- **Multiplication principle** (and, steps in sequence): multiply
+- **Addition principle** (or, mutually exclusive alternatives): add
+- With repetition: $n^k$. Without: $n(n-1)\cdots(n-k+1)$
+- **Complement rule** for "at least one": total minus none
+- **Permutations** (order matters): $P(n,r) = \dfrac{n!}{(n-r)!}$
+- Repeated items: $\dfrac{n!}{n_1! \, n_2! \cdots n_k!}$. Circular: $(n-1)!$
+- **Combinations** (order does not matter): $\binom{n}{r} = \dfrac{n!}{r!(n-r)!}$
+- Symmetry: $\binom{n}{r} = \binom{n}{n-r}$. Sum over all $r$: $2^n$
+- **Binomial theorem**: coefficient of $x^{n-r}y^r$ in $(x+y)^n$ is $\binom{n}{r}$
+- **Pigeonhole**: $n$ objects in $k$ boxes forces $\lceil n/k \rceil$ in some box. To guarantee $m$ in a box, take $k(m-1)+1$
+
+### Graphs
+
+- $G = (V,E)$. **Handshake theorem**: $\sum \deg(v) = 2|E|$, so the count of odd-degree vertices is even
+- $K_n$ has $\binom{n}{2}$ edges, each vertex of degree $n-1$
+- Bipartite **iff** no odd cycle
+- **Path**: no repeated vertex. **Trail**: no repeated edge. **Cycle**: closed path
+- **Bridge** iff the edge lies on no cycle
+- **Euler** (every edge once): circuit iff all degrees even; path iff exactly two odd
+- **Hamilton** (every vertex once): no simple test, NP-complete
+- **Tree**: connected, acyclic, $|E| = |V| - 1$, unique path between every pair
+- Balanced binary tree of $n$ vertices has height about $\log_2 n$
+- **MST**: Kruskal sorts edges globally and skips cycles; Prim grows one tree outward
+
+### Relations and Modular Arithmetic
+
+- **Reflexive**, **symmetric**, **antisymmetric**, **transitive**
+- **Equivalence relation** = reflexive + symmetric + transitive, and it partitions the set
+- **Partial order** = reflexive + antisymmetric + transitive, and it permits incomparable pairs
+- **Injective**: nothing hit twice. **Surjective**: nothing missed. **Bijective**: both, and only these have inverses
+- $a \equiv b \pmod n$ iff $n \mid (a-b)$. Congruence mod $n$ is an equivalence relation with $n$ classes
+- Addition, subtraction, multiplication, and powers all respect congruence, so **reduce early**
+- Division needs a **modular inverse**, which exists iff $\gcd(a,n) = 1$
+- **Fermat's little theorem**: for prime $p$ with $p \nmid a$, $a^{p-1} \equiv 1 \pmod p$
+
+## Worked Review Examples
+
+**Example 1: Negate a compound statement.**
+
+Negate: "If the build passes and the tests are green, then we deploy."
+
+Let $p$ = build passes, $q$ = tests green, $r$ = we deploy. The statement is $(p \wedge q) \rightarrow r$.
+
+$$
+\neg\big((p \wedge q) \rightarrow r\big) \equiv (p \wedge q) \wedge \neg r
+$$
+
+"The build passes, the tests are green, and we do not deploy."
+
+**Example 2: Quantifier negation.**
+
+Negate: $\forall x \exists y \, (x \cdot y = 1)$ over the real numbers.
+
+$$
+\exists x \forall y \, (x \cdot y \neq 1)
+$$
+
+The negation is **true**, witnessed by $x = 0$, since $0 \cdot y = 0$ for every $y$. So the original statement is false.
+
+**Example 3: Inclusion-exclusion.**
+
+Of 200 surveyed users, 120 use the mobile app, 90 use the desktop app, and 45 use both. How many use neither?
+
+$$
+|M \cup D| = 120 + 90 - 45 = 165
+$$
+
+$$
+200 - 165 = 35
+$$
+
+**Example 4: Contrapositive proof.**
+
+**Claim.** For integers $n$, if $n^2 - 6n + 5$ is even, then $n$ is odd.
+
+**Proof by contrapositive.** Assume $n$ is even, so $n = 2k$.
+
+$$
+n^2 - 6n + 5 = 4k^2 - 12k + 5 = 2(2k^2 - 6k + 2) + 1
+$$
+
+That's odd. So an even $n$ produces an odd value, and the contrapositive holds. $\blacksquare$
+
+**Example 5: Induction.**
+
+**Claim.** $1 + 3 + 5 + \cdots + (2n-1) = n^2$ for all $n \geq 1$.
+
+**Base case:** $n=1$. Left side is 1, right side is $1^2 = 1$. ✓
+
+**Inductive step:** Assume $1 + 3 + \cdots + (2k-1) = k^2$. Then
+
+$$
+1 + 3 + \cdots + (2k-1) + (2k+1) = k^2 + 2k + 1 = (k+1)^2
+$$
+
+By induction the formula holds for all $n \geq 1$. $\blacksquare$
+
+**Example 6: Mixed counting.**
+
+A team of 5 is chosen from 8 engineers and 6 designers, and must include at least 1 designer. How many teams?
+
+Complement rule. Total teams:
+
+$$
+\binom{14}{5} = 2002
+$$
+
+Teams with **no** designer, all engineers:
+
+$$
+\binom{8}{5} = 56
+$$
+
+$$
+2002 - 56 = 1946
+$$
+
+**Example 7: Permutation with repeats.**
+
+How many distinct arrangements of the letters in **ASSESSES**?
+
+8 letters: A (1), S (5), E (2).
+
+$$
+\frac{8!}{1! \, 5! \, 2!} = \frac{40320}{240} = 168
+$$
+
+**Example 8: Pigeonhole.**
+
+How many cards must you draw from a standard 52-card deck to guarantee 3 of the same suit?
+
+4 suits, want 3 in one. Worst case is 2 of each suit:
+
+$$
+4(3-1) + 1 = 9
+$$
+
+**Example 9: Graph analysis.**
+
+A connected graph has degrees 3, 3, 4, 4, 2. Edges? Euler circuit? Euler path? Tree?
+
+$$
+|E| = \frac{3+3+4+4+2}{2} = \frac{16}{2} = 8
+$$
+
+Two odd degrees (the 3's), so **no Euler circuit** but an **Euler path** exists between them. Not a tree, since a tree on 5 vertices would need 4 edges, not 8.
+
+**Example 10: Kruskal's algorithm.**
+
+Vertices $P,Q,R,S$. Edges: $PQ=4$, $PR=1$, $PS=6$, $QR=2$, $QS=3$, $RS=5$.
+
+Sorted: $PR(1)$, $QR(2)$, $QS(3)$, $PQ(4)$, $RS(5)$, $PS(6)$.
+
+1. $PR(1)$ — add
+2. $QR(2)$ — add
+3. $QS(3)$ — add. Now 3 edges for 4 vertices, done.
+
+$$
+\text{MST} = \{PR, QR, QS\}, \quad \text{weight} = 6
+$$
+
+**Example 11: Modular arithmetic.**
+
+Compute $5^{30} \bmod 13$.
+
+13 is prime and $13 \nmid 5$, so Fermat gives $5^{12} \equiv 1 \pmod{13}$. Reduce the exponent mod 12:
+
+$$
+30 = 2 \cdot 12 + 6 \quad \Longrightarrow \quad 5^{30} \equiv 5^6 \pmod{13}
+$$
+
+$$
+5^2 = 25 \equiv 12 \equiv -1 \pmod{13}
+$$
+
+$$
+5^6 = (5^2)^3 \equiv (-1)^3 = -1 \equiv 12 \pmod{13}
+$$
+
+**Example 12: Classify a relation.**
+
+Is "has the same number of characters as" on a set of strings an equivalence relation?
+
+- Reflexive: every string has its own length. ✓
+- Symmetric: length equality goes both ways. ✓
+- Transitive: equal lengths chain. ✓
+
+Yes, and its equivalence classes group strings by length.
+
+## Quiz
+
+<Quiz
+  quizId="discrete-mathematics-review"
+  questions={[
+    {
+      id: "q1",
+      text: "Which of the following is NOT a proposition?",
+      options: [
+        "The number 12 is prime.",
+        "Every square is a rectangle.",
+        "x is greater than 7.",
+        "Paris is in France.",
+      ],
+      correctIndex: 2,
+      explanation:
+        "A proposition needs a fixed truth value, and 'x is greater than 7' depends on the unknown x, making it a predicate instead. The first statement is a proposition even though it is false.",
+    },
+    {
+      id: "q2",
+      text: "How many rows does a truth table with 5 distinct propositions require?",
+      options: ["10", "25", "32", "120"],
+      correctIndex: 2,
+      explanation:
+        "Each proposition doubles the row count, so n propositions need 2 to the n rows. Here 2^5 = 32.",
+    },
+    {
+      id: "q3",
+      text: "What is the negation of 'the file is readable and the disk is mounted'?",
+      options: [
+        "The file is unreadable and the disk is unmounted",
+        "The file is unreadable or the disk is unmounted",
+        "The file is readable or the disk is mounted",
+        "If the file is readable then the disk is unmounted",
+      ],
+      correctIndex: 1,
+      explanation:
+        "De Morgan's law converts a negated AND into an OR of the negations. Failing 'both' only requires at least one part to fail.",
+    },
+    {
+      id: "q4",
+      text: "Which statement is logically equivalent to 'if the alarm sounds, then smoke was detected'?",
+      options: [
+        "If smoke was detected, then the alarm sounds",
+        "If the alarm does not sound, then smoke was not detected",
+        "If smoke was not detected, then the alarm does not sound",
+        "The alarm sounds and smoke was detected",
+      ],
+      correctIndex: 2,
+      explanation:
+        "Only the contrapositive, which swaps and negates both parts, is equivalent to the original. The first option is the converse and the second is the inverse.",
+    },
+    {
+      id: "q5",
+      text: "What is the negation of 'every employee completed the training'?",
+      options: [
+        "No employee completed the training",
+        "Every employee failed the training",
+        "At least one employee did not complete the training",
+        "Exactly one employee completed the training",
+      ],
+      correctIndex: 2,
+      explanation:
+        "Negating a universal claim produces an existential one with the inside negated. A single incomplete employee is enough to refute it.",
+    },
+    {
+      id: "q6",
+      text: "For the set A = {2, {3}, 4}, which statement is TRUE?",
+      options: [
+        "3 is an element of A",
+        "{3} is an element of A",
+        "{2, 3} is a subset of A",
+        "The cardinality of A is 4",
+      ],
+      correctIndex: 1,
+      explanation:
+        "The set {3} is listed directly as one of the three elements. The bare value 3 is nested inside an element rather than being one, so it does not belong to A, and the cardinality is 3.",
+    },
+    {
+      id: "q7",
+      text: "In a group of 80 people, 50 speak Spanish, 35 speak French, and 20 speak both. How many speak neither?",
+      options: ["15", "10", "5", "25"],
+      correctIndex: 0,
+      explanation:
+        "Inclusion-exclusion gives 50 + 35 - 20 = 65 speaking at least one language, so 80 - 65 = 15 speak neither.",
+    },
+    {
+      id: "q8",
+      text: "A set has 7 elements. How many subsets does it have?",
+      options: ["49", "14", "128", "5040"],
+      correctIndex: 2,
+      explanation:
+        "Each element is independently included or excluded, so the power set has 2 to the 7 = 128 members.",
+    },
+    {
+      id: "q9",
+      text: "To disprove the claim 'for every integer n, 2n + 3 is prime', what suffices?",
+      options: [
+        "Showing it holds for n = 1 through 20",
+        "One integer n for which 2n + 3 is composite",
+        "Showing 2n + 3 is composite for all n",
+        "Proving the contrapositive",
+      ],
+      correctIndex: 1,
+      explanation:
+        "A single counterexample fully refutes a universal claim, and n = 3 works since 2(3) + 3 = 9 = 3 x 3. Verifying many successful cases proves nothing about the rest.",
+    },
+    {
+      id: "q10",
+      text: "Which proof technique is most natural for showing that the square root of 3 is irrational?",
+      options: [
+        "Direct proof",
+        "Mathematical induction",
+        "Proof by contradiction",
+        "Disproof by counterexample",
+      ],
+      correctIndex: 2,
+      explanation:
+        "Irrationality is a non-existence claim, so you assume a fraction in lowest terms exists and derive an impossibility. Induction applies to statements indexed by the positive integers, which this is not.",
+    },
+    {
+      id: "q11",
+      text: "In a proof by induction, why must the base case be verified?",
+      options: [
+        "It anchors the chain; a valid inductive step alone can prove false statements",
+        "It is only needed for inequality proofs",
+        "It replaces the need for an inductive hypothesis",
+        "It establishes that the statement holds for all n at once",
+      ],
+      correctIndex: 0,
+      explanation:
+        "The inductive step only links consecutive cases, so without a verified starting point nothing follows. The false claim n = n + 1 has a perfectly valid inductive step and no base case.",
+    },
+    {
+      id: "q12",
+      text: "A menu has 6 starters, 8 mains, and 5 desserts. How many three-course meals with one of each are possible?",
+      options: ["19", "240", "120", "48"],
+      correctIndex: 1,
+      explanation:
+        "Choosing one of each is a sequence of independent steps, so multiply: 6 x 8 x 5 = 240. Adding would answer a different question, namely ordering a single item.",
+    },
+    {
+      id: "q13",
+      text: "How many distinct arrangements are there of the letters in the word PEPPER?",
+      options: ["720", "120", "30", "60"],
+      correctIndex: 3,
+      explanation:
+        "There are 6 letters with P appearing 3 times and E twice, so divide out the identical copies: 6! / (3! x 2! x 1!) = 720 / 12 = 60.",
+    },
+    {
+      id: "q14",
+      text: "A club of 10 chooses a 4-person committee with no distinct roles. How many committees are possible?",
+      options: ["5040", "210", "40", "1000"],
+      correctIndex: 1,
+      explanation:
+        "Order does not matter for a plain committee, so use 10 choose 4 = 210. The value 5040 would apply if the four positions were distinct offices.",
+    },
+    {
+      id: "q15",
+      text: "A drawer holds socks in 6 colors. How many socks must be drawn to guarantee a matching pair?",
+      options: ["7", "6", "12", "2"],
+      correctIndex: 0,
+      explanation:
+        "In the worst case the first 6 socks are all different colors, so the 7th must match one. The formula is k(m-1) + 1 = 6(1) + 1 = 7.",
+    },
+    {
+      id: "q16",
+      text: "A connected graph has 11 edges. What is the sum of all its vertex degrees?",
+      options: ["11", "121", "22", "44"],
+      correctIndex: 2,
+      explanation:
+        "The handshake theorem gives a degree sum of twice the edge count, since each edge contributes 1 to each endpoint. So the sum is 2 x 11 = 22.",
+    },
+    {
+      id: "q17",
+      text: "A connected graph has exactly two vertices of odd degree. What can you conclude?",
+      options: [
+        "It has an Euler circuit but no Euler path",
+        "It has an Euler path but no Euler circuit",
+        "It has neither an Euler path nor an Euler circuit",
+        "It must be a tree",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Exactly two odd-degree vertices allow a trail using every edge once, starting at one odd vertex and ending at the other. A circuit would require every degree to be even.",
+    },
+    {
+      id: "q18",
+      text: "A tree has 30 vertices. How many edges does it have?",
+      options: ["30", "29", "31", "60"],
+      correctIndex: 1,
+      explanation:
+        "Every tree satisfies |E| = |V| - 1, since each vertex beyond the first requires exactly one connecting edge. So 30 vertices means 29 edges.",
+    },
+    {
+      id: "q19",
+      text: "Which set of properties defines a partial order?",
+      options: [
+        "Reflexive, symmetric, transitive",
+        "Symmetric, antisymmetric, transitive",
+        "Reflexive, antisymmetric, transitive",
+        "Antisymmetric and transitive only",
+      ],
+      correctIndex: 2,
+      explanation:
+        "Partial orders are reflexive, antisymmetric, and transitive, which is what lets them model 'comes before' while still allowing incomparable pairs. Swapping antisymmetry for symmetry gives an equivalence relation.",
+    },
+    {
+      id: "q20",
+      text: "Compute (58 x 71) mod 7 by reducing each factor first.",
+      options: ["2", "6", "1", "4"],
+      correctIndex: 0,
+      explanation:
+        "Reducing gives 58 congruent to 2 and 71 congruent to 1 mod 7, so the product is 2 x 1 = 2. Reducing before multiplying keeps the arithmetic small and gives the same answer.",
+    },
+  ]}
+/>

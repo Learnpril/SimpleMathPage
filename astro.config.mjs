@@ -1,14 +1,17 @@
 import { defineConfig } from "astro/config";
 import starlight from "@astrojs/starlight";
+import sitemap from "@astrojs/sitemap";
 import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
 
 export default defineConfig({
+  site: "https://momsbasementuniversity.com",
   markdown: {
     remarkPlugins: [remarkMath],
     rehypePlugins: [rehypeKatex],
   },
   integrations: [
+    sitemap(),
     starlight({
       title: "Mom's Basement University",
       favicon: "/favicon.png",
@@ -69,10 +72,10 @@ export default defineConfig({
           label: "Differential Equations",
           autogenerate: { directory: "differential-equations" },
         },
-        // {
-        //   label: "Discrete Mathematics",
-        //   autogenerate: { directory: "discrete-mathematics" },
-        // },
+        {
+          label: "Discrete Mathematics",
+          autogenerate: { directory: "discrete-mathematics" },
+        },
         // {
         //   label: "Statistics",
         //   autogenerate: { directory: "statistics" },
@@ -113,7 +116,8 @@ export default defineConfig({
                 'calculus-2': 'Calculus 2',
                 'calculus-3': 'Calculus 3',
                 'linear-algebra': 'Linear Algebra',
-                'differential-equations': 'Differential Equations'
+                'differential-equations': 'Differential Equations',
+                'discrete-mathematics': 'Discrete Mathematics'
               };
               var label = map[section];
               if (!label) return;
@@ -160,7 +164,8 @@ export default defineConfig({
                 {slug:'calculus-2', label:'Calculus 2', about:'about-calculus-2'},
                 {slug:'calculus-3', label:'Calculus 3', about:'about-calculus-3'},
                 {slug:'linear-algebra', label:'Linear Algebra', about:'about-linear-algebra'},
-                {slug:'differential-equations', label:'Differential Equations', about:'about-differential-equations'}
+                {slug:'differential-equations', label:'Differential Equations', about:'about-differential-equations'},
+                {slug:'discrete-mathematics', label:'Discrete Mathematics', about:'about-discrete-mathematics'}
               ];
               var path = window.location.pathname.replace(/^\\//, '').replace(/\\/$/, '');
               var currentSection = path.split('/')[0] || '';
@@ -396,7 +401,8 @@ export default defineConfig({
                 'calculus-2': 'Calculus 2',
                 'calculus-3': 'Calculus 3',
                 'linear-algebra': 'Linear Algebra',
-                'differential-equations': 'Differential Equations'
+                'differential-equations': 'Differential Equations',
+                'discrete-mathematics': 'Discrete Mathematics'
               };
               var subject = sectionMap[section];
               if (!subject) return;
@@ -448,7 +454,8 @@ export default defineConfig({
                         'calculus-2': 'advanced',
                         'calculus-3': 'expert',
                         'linear-algebra': 'expert',
-                        'differential-equations': 'expert'
+                        'differential-equations': 'expert',
+                        'discrete-mathematics': 'expert'
                       };
                       var colorMap = {
                         'foundations': '#7ee787',

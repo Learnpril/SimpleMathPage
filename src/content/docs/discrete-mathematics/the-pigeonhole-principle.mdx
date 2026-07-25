@@ -1,0 +1,229 @@
+---
+title: The Pigeonhole Principle
+description: A deceptively simple counting idea that proves surprising results with almost no computation
+sidebar:
+  order: 14
+---
+
+import Quiz from "../../../components/Quiz.astro";
+import PigeonholeDiagram from "../../../components/PigeonholeDiagram.astro";
+import SymbolKey from "../../../components/SymbolKey.astro";
+
+## What You'll Learn
+
+In this lesson you'll learn the pigeonhole principle in its simple and generalized forms, how to identify the "pigeons" and "holes" in a problem, and how a nearly obvious statement proves genuinely surprising things.
+
+<SymbolKey
+  items={[
+    {
+      sym: "⌈x⌉",
+      read: "the ceiling of x",
+      note: "round up to the next whole number: ⌈3.2⌉ = 4, and ⌈5⌉ = 5",
+    },
+    {
+      sym: "⌊x⌋",
+      read: "the floor of x",
+      note: "round down instead: ⌊3.8⌋ = 3. The brackets point the way you round.",
+    },
+  ]}
+/>
+
+## The Concept
+
+### The simple form
+
+> If $n+1$ objects are placed into $n$ boxes, then at least one box contains at least 2 objects.
+
+That's it. If you have 13 people and 12 months, at least two share a birth month. Nothing deep is happening.
+
+The name comes from the picture of pigeons flying into pigeonholes: more birds than holes means someone is sharing.
+
+<PigeonholeDiagram />
+
+Formally, if $f: A \rightarrow B$ is a function and $|A| > |B|$, then $f$ cannot be injective. Some two inputs map to the same output.
+
+### Why it's more useful than it looks
+
+The principle proves that something **must exist** without telling you where it is or how to find it. That's an unusual and powerful kind of statement.
+
+It also lets you prove things with no computation at all. You count two quantities, notice one is bigger, and you're done.
+
+### The generalized form
+
+> If $n$ objects are placed into $k$ boxes, then at least one box contains at least $\left\lceil \dfrac{n}{k} \right\rceil$ objects.
+
+The $\lceil \cdot \rceil$ is the **ceiling function**, meaning round up to the nearest integer.
+
+$$
+\left\lceil \frac{100}{12} \right\rceil = \lceil 8.33 \rceil = 9
+$$
+
+So among 100 people, at least 9 share a birth month.
+
+The reverse direction is often what you want: to **guarantee** at least $m$ objects in some box with $k$ boxes, you need
+
+$$
+n > k(m-1) \quad \text{objects, so} \quad n = k(m-1) + 1
+$$
+
+The logic: $k(m-1)$ objects could spread out with exactly $m-1$ in each box, dodging the requirement. One more forces a box to reach $m$. This is the **worst case** reasoning, and it's the heart of every "how many must I take?" problem.
+
+### Using it
+
+Three steps, and the whole difficulty is in step 1:
+
+1. **Identify the pigeons** (the objects being placed).
+2. **Identify the holes** (the categories).
+3. **Compare the counts** and apply the formula.
+
+Choosing the right holes is the creative part. In easy problems the categories are obvious (months, colors, days). In harder ones you have to invent them: remainders after division, ranges of values, positions on a board.
+
+A quick check on your setup: if it isn't clear that every pigeon lands in exactly one hole, your holes are wrong.
+
+## Worked Examples
+
+**Example 1: The basic version.**
+
+Show that in any group of 13 people, at least two were born in the same month.
+
+**Solution.** Pigeons: 13 people. Holes: 12 months. Since $13 > 12$, some month holds at least 2 people. $\blacksquare$
+
+**Example 2: Socks in the dark.**
+
+A drawer holds 10 black socks, 12 white socks, and 8 gray socks, all mixed up. How many socks must you pull out, without looking, to guarantee a matching pair?
+
+**Solution.** Holes: 3 colors. Worst case, the first 3 socks are all different colors. The 4th must match one of them.
+
+$$
+n = k(m-1) + 1 = 3(2-1) + 1 = 4
+$$
+
+**4 socks.** The counts of each color never mattered, only the number of colors, which is the kind of detail these problems like to bury.
+
+**Example 3: Guaranteeing a larger group.**
+
+How many people are needed to guarantee that at least 4 share a birth month?
+
+**Solution.** $k = 12$ holes, want $m = 4$ in some hole:
+
+$$
+n = 12(4-1) + 1 = 37
+$$
+
+**37 people.** With 36 you could have exactly 3 per month and never hit 4.
+
+**Example 4: Inventing the holes with remainders.**
+
+Show that among any 5 integers, some two have the same remainder when divided by 4.
+
+**Solution.** Holes: the possible remainders mod 4, which are $\{0, 1, 2, 3\}$. That's 4 holes. Pigeons: 5 integers. Since $5 > 4$, two share a remainder. $\blacksquare$
+
+A consequence: those two integers have a difference divisible by 4, since equal remainders subtract away. Remainder classes are the single most useful non-obvious choice of holes.
+
+**Example 5: Sums from a set.**
+
+Choose any 5 numbers from $\{1, 2, 3, 4, 5, 6, 7, 8\}$. Show that some two of them sum to 9.
+
+**Solution.** Group the numbers into pairs that sum to 9:
+
+$$
+\{1,8\}, \{2,7\}, \{3,6\}, \{4,5\}
+$$
+
+That's 4 holes covering all 8 numbers. Pigeons: your 5 chosen numbers. Since $5 > 4$, two of your numbers fall in the same pair, and that pair sums to 9. $\blacksquare$
+
+Notice the holes were **constructed** to make the conclusion automatic. That's the technique in these harder problems: build the categories so that sharing a category _is_ the property you want.
+
+**Example 6: Handshakes.**
+
+In a room of $n$ people ($n \geq 2$) where some pairs shake hands, show that at least two people shook the same number of hands.
+
+**Solution.** Each person shakes between 0 and $n-1$ hands, giving $n$ possible values, so naively pigeons and holes are equal and we get nothing.
+
+But the values 0 and $n-1$ cannot both occur. If someone shook everyone's hand ($n-1$), then nobody shook zero hands. So at most $n-1$ of the $n$ values are actually available.
+
+Now $n$ people into at most $n-1$ holes forces a repeat. $\blacksquare$
+
+The extra step of eliminating one hole is what makes this problem interesting, and it's a common pattern: get the counts to $n$ versus $n$, then argue one hole is unreachable.
+
+**Example 7: The hair count classic.**
+
+Show that in a city of 1,000,000 people, at least two have exactly the same number of hairs on their head.
+
+**Solution.** A human head holds at most about 150,000 hairs. Holes: the possible hair counts, $0$ through $150{,}000$, so $150{,}001$ holes. Pigeons: 1,000,000 people. Since $1{,}000{,}000 > 150{,}001$, at least two match. $\blacksquare$
+
+In fact by the generalized form at least $\lceil 1{,}000{,}000 / 150{,}001 \rceil = 7$ people share a hair count.
+
+## Real-World Applications
+
+Hash collisions are the pigeonhole principle in production. A hash function maps arbitrarily many possible inputs into a fixed number of output slots, so collisions are not a bug to be engineered away, they are mathematically unavoidable. Every hash table implementation must handle them, and every claim of a "collision-free" hash for unbounded input is false by this principle.
+
+Lossless compression has the same limit. You cannot write a program that shrinks every possible input file, because mapping all $2^n$ inputs into fewer than $2^n$ outputs would force two inputs to the same compressed form, making decompression ambiguous. Real compressors shrink _typical_ files and grow random ones.
+
+Memory allocation and caching hit it too. With more memory addresses than cache lines, some addresses must map to the same line, which is exactly why cache eviction policies exist.
+
+Network port exhaustion, IP address collisions, and database index bucketing all come from the same place. And in scheduling, the principle tells you when a conflict is guaranteed: 25 meetings in a day with only 8 available rooms and 8 time slots means overlap is unavoidable, no matter how clever the scheduler is.
+
+Outside of computing, it's an argument you can make in a sentence. Two people in any group of 400 share a birthday, guaranteed, because there are only 366 possible dates.
+
+:::note[You've Got This]
+This principle is unusual because the hard part is never the math. It's deciding what the holes are. If a problem looks like it needs the pigeonhole principle but you can't see the categories, try these: remainders after dividing by some number, pairs that sum to a target, or ranges of values. And for "how many must I take to guarantee" questions, always reason about the worst case first: what's the most adversarial way the objects could be distributed, and what's one more than that?
+:::
+
+## Quiz
+
+<Quiz
+  quizId="discrete-the-pigeonhole-principle"
+  questions={[
+    {
+      id: "q1",
+      text: "What does the simple pigeonhole principle state?",
+      options: [
+        "If n+1 objects go into n boxes, some box holds at least 2 objects",
+        "If n objects go into n boxes, every box holds exactly 1 object",
+        "Objects can always be distributed evenly among boxes",
+        "If n objects go into n+1 boxes, some box holds 2 objects",
+      ],
+      correctIndex: 0,
+      explanation:
+        "With more objects than boxes, an even one-per-box distribution is impossible, so some box must hold at least two. The reverse setup, fewer objects than boxes, guarantees nothing.",
+    },
+    {
+      id: "q2",
+      text: "A drawer contains red, blue, green, and yellow socks. How many socks must you draw in the dark to guarantee a matching pair?",
+      options: ["4", "8", "2", "5"],
+      correctIndex: 3,
+      explanation:
+        "In the worst case the first 4 socks are all different colors, so the 5th must match one. The formula is k(m-1) + 1 = 4(1) + 1 = 5.",
+    },
+    {
+      id: "q3",
+      text: "Among 40 students, what is the minimum number guaranteed to share the same birth month?",
+      options: ["3", "4", "12", "2"],
+      correctIndex: 1,
+      explanation:
+        "The generalized form gives the ceiling of 40 divided by 12, which is the ceiling of 3.33, so 4 students must share a month.",
+    },
+    {
+      id: "q4",
+      text: "How many integers must you pick to guarantee that two of them have the same remainder when divided by 7?",
+      options: ["7", "8", "14", "6"],
+      correctIndex: 1,
+      explanation:
+        "There are 7 possible remainders (0 through 6), so those are the holes. With 8 integers, two must land in the same remainder class.",
+    },
+    {
+      id: "q5",
+      text: "Why does the pigeonhole principle prove that no lossless compression algorithm can shrink every possible file?",
+      options: [
+        "Because compression algorithms are too slow for large files",
+        "Because some files contain no repeated patterns",
+        "Because mapping all inputs to strictly fewer outputs would force two inputs to share one compressed form",
+        "Because file systems limit the minimum file size",
+      ],
+      correctIndex: 2,
+      explanation:
+        "If every input mapped to a strictly shorter output, there would be more inputs than available shorter outputs, so two distinct files would compress identically and decompression could not recover the original.",
+    },
+  ]}
+/>

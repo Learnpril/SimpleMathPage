@@ -1,0 +1,321 @@
+---
+title: Direct Proof and Counterexample
+description: Learn to write your first real proofs and to disprove false claims with a single counterexample
+sidebar:
+  order: 8
+---
+
+import Quiz from "../../../components/Quiz.astro";
+import DirectProofFlow from "../../../components/DirectProofFlow.astro";
+import SymbolKey from "../../../components/SymbolKey.astro";
+
+## What You'll Learn
+
+In this lesson you'll learn what a mathematical proof actually is, how to write a direct proof of an if-then statement, the standard definitions for even, odd, and divisible that make these proofs possible, and how to disprove a universal claim with one counterexample.
+
+<SymbolKey
+  items={[
+    {
+      sym: "a | b",
+      read: "a divides b",
+      note: "b is a multiple of a, with no remainder. A statement, not a fraction.",
+    },
+    {
+      sym: "a ∤ b",
+      read: "a does not divide b",
+      note: "dividing leaves a remainder",
+    },
+    {
+      sym: "∎",
+      read: "end of proof",
+      note: "also written QED, or as a hollow square □",
+    },
+    {
+      sym: "∴",
+      read: "therefore",
+      note: "introduces the conclusion of an argument",
+    },
+  ]}
+/>
+
+## The Concept
+
+A **proof** is a convincing argument that a statement is true for **every** case it claims to cover, built from definitions, previously established results, and valid logic.
+
+The word "every" is what makes this hard, and it's also why examples aren't proofs. Checking a claim for $n = 1, 2, 3, \ldots, 100$ shows it works 100 times. It says nothing about $n = 101$.
+
+### What you're allowed to use
+
+A proof can use:
+
+- **Definitions.** These are the workhorses. Most beginner proofs are just "unfold the definitions and do algebra."
+- **Axioms.** Basic assumed truths, like the fact that the sum of two integers is an integer.
+- **Previously proven theorems.**
+- **Valid logical steps.**
+
+A proof cannot use: examples, pictures alone, "it's obvious," or "everyone knows."
+
+### The definitions you need
+
+Almost every proof in this lesson runs on these. Learn them as equations, not as English.
+
+An integer $n$ is **even** if there exists an integer $k$ with
+
+$$
+n = 2k
+$$
+
+An integer $n$ is **odd** if there exists an integer $k$ with
+
+$$
+n = 2k + 1
+$$
+
+An integer $a$ **divides** $b$, written $a \mid b$, if there exists an integer $k$ with
+
+$$
+b = ak
+$$
+
+Read $a \mid b$ as "$a$ divides $b$," meaning $b$ is a multiple of $a$ with no remainder. The slashed version $a \nmid b$ means "$a$ does **not** divide $b$," the same way $\neq$ negates $=$. So $3 \mid 12$ is true, and $3 \nmid 7$ is true because 7 leaves a remainder. Careful not to confuse $a \mid b$ (a statement, either true or false) with the fraction $a/b$ (a number).
+
+An integer $n > 1$ is **prime** if its only positive divisors are 1 and $n$.
+
+Two integers are **consecutive** if they differ by 1, so they look like $n$ and $n+1$.
+
+The move that makes proofs work: when you're told something is even, immediately write $n = 2k$. Now you have algebra to do instead of a vague property to reason about.
+
+### Direct proof
+
+Most theorems have the form $p \rightarrow q$. A **direct proof** does this:
+
+1. **Assume** $p$ is true.
+2. **Translate** $p$ into equations using definitions.
+3. **Work** forward with algebra and logic.
+4. **Arrive** at $q$, translated back into words.
+
+The structure on the page:
+
+> **Claim.** If $p$, then $q$.
+>
+> **Proof.** Assume $p$. [definitions, algebra, reasoning] Therefore $q$. $\blacksquare$
+
+The $\blacksquare$ (or QED) marks the end. You'll also see an open box, $\square$.
+
+<DirectProofFlow />
+
+### The universal quantifier is implied
+
+"If $n$ is even, then $n^2$ is even" really means
+
+$$
+\forall n \in \mathbb{Z} \, (n \text{ is even} \rightarrow n^2 \text{ is even})
+$$
+
+That's why you must work with a general $n$ and never with a specific one. Starting a proof with "let $n = 6$" is fatal, no matter how the algebra goes afterward.
+
+### Disproof by counterexample
+
+To **disprove** a universal claim, produce one case where it fails. That's the negation rule from the quantifiers lesson:
+
+$$
+\neg \forall x \, P(x) \equiv \exists x \, \neg P(x)
+$$
+
+One counterexample is a complete disproof. You don't need to explain why the claim is wrong in general, or find a second counterexample, or feel bad about how easy it was.
+
+Be careful about what you're negating. To disprove "if $p$ then $q$" you need a case where $p$ **holds** and $q$ **fails**. A case where $p$ fails tells you nothing, because the implication is vacuously true there.
+
+### Common mistakes
+
+- **Assuming the conclusion** - starting from what you want to prove and working backward to something true proves nothing on its own. Write it in the valid direction.
+- **Using specific numbers** - "let's try $n = 4$: $4^2 = 16$, which is even, so it's proved." No. That's one case.
+- **Reusing a variable name** - if $m$ and $n$ are both even, write $m = 2j$ and $n = 2k$. Using $2k$ for both silently assumes they're equal, which quietly proves a much weaker claim.
+- **Circular reasoning** - using the theorem, or something equivalent to it, as a step in its own proof.
+
+## Worked Examples
+
+**Example 1: The sum of two even integers is even.**
+
+**Proof.** Let $m$ and $n$ be even integers. By definition there exist integers $j$ and $k$ with $m = 2j$ and $n = 2k$.
+
+Then
+
+$$
+m + n = 2j + 2k = 2(j + k)
+$$
+
+Since $j$ and $k$ are integers, $j + k$ is an integer. So $m + n$ equals 2 times an integer, which is the definition of even.
+
+Therefore the sum of two even integers is even. $\blacksquare$
+
+Notice the shape. Unfold definitions, factor out the 2, point at the definition again. That last step, explicitly noting that $j+k$ is an integer, is what makes it rigorous rather than hand-wavy.
+
+**Example 2: If $n$ is odd, then $n^2$ is odd.**
+
+**Proof.** Let $n$ be an odd integer, so $n = 2k + 1$ for some integer $k$.
+
+$$
+n^2 = (2k+1)^2 = 4k^2 + 4k + 1 = 2(2k^2 + 2k) + 1
+$$
+
+Let $m = 2k^2 + 2k$, which is an integer since $k$ is. Then $n^2 = 2m + 1$, which is odd by definition.
+
+Therefore if $n$ is odd, $n^2$ is odd. $\blacksquare$
+
+The trick every time: manipulate the expression into the exact form the definition demands, here $2(\text{something}) + 1$.
+
+**Example 3: The product of two consecutive integers is even.**
+
+**Proof.** Let the integers be $n$ and $n+1$. Consider two cases.
+
+**Case 1: $n$ is even.** Then $n = 2k$, so
+
+$$
+n(n+1) = 2k(n+1) = 2\big(k(n+1)\big)
+$$
+
+which is even.
+
+**Case 2: $n$ is odd.** Then $n + 1 = 2k + 2 = 2(k+1)$ is even, so
+
+$$
+n(n+1) = n \cdot 2(k+1) = 2\big(n(k+1)\big)
+$$
+
+which is even.
+
+Every integer is even or odd, so the cases are exhaustive. Therefore $n(n+1)$ is always even. $\blacksquare$
+
+This is **proof by cases**. It's completely legitimate as long as your cases cover every possibility.
+
+**Example 4: Divisibility is transitive.**
+
+**Claim.** If $a \mid b$ and $b \mid c$, then $a \mid c$.
+
+**Proof.** Assume $a \mid b$ and $b \mid c$. By definition there are integers $j$ and $k$ with
+
+$$
+b = aj \qquad c = bk
+$$
+
+Substitute the first into the second:
+
+$$
+c = (aj)k = a(jk)
+$$
+
+Since $jk$ is an integer, $a \mid c$ by definition. $\blacksquare$
+
+Short, clean, and it works for every integer at once. Notice again the two distinct variable names.
+
+**Example 5: Disprove a claim.**
+
+**Claim.** For every positive integer $n$, the value $n^2 + n + 41$ is prime.
+
+**Disproof.** Try small values: $n=1$ gives 43 (prime), $n=2$ gives 47 (prime), $n=3$ gives 53 (prime). It keeps working for a while, which is exactly what makes this claim famous.
+
+But take $n = 40$:
+
+$$
+40^2 + 40 + 41 = 1600 + 40 + 41 = 1681 = 41^2
+$$
+
+Since $1681 = 41 \cdot 41$, it is not prime. The claim is false. $\blacksquare$
+
+This one holds for $n = 1$ through $39$ and then breaks. Forty consecutive successes and the claim is still false. That's the whole argument for why proofs exist.
+
+**Example 6: Disprove a converse.**
+
+**Claim.** If $n^2$ is divisible by 4, then $n$ is divisible by 4.
+
+**Disproof.** Take $n = 6$. Then $n^2 = 36$, and $36 = 4 \cdot 9$, so $n^2$ is divisible by 4. But $6$ is not divisible by 4.
+
+The hypothesis holds and the conclusion fails, so the implication is false. $\blacksquare$
+
+## Real-World Applications
+
+Proof is the difference between "my tests pass" and "this cannot fail." Aerospace software, cryptographic protocols, and medical device firmware get formally verified precisely because testing can only ever check finitely many cases, and $n = 40$ might be the one you skipped.
+
+Counterexamples are how security research works. Nobody proves an encryption scheme is unbreakable by trying it a lot. They look for a single input that breaks the guarantee, and one is enough to retire the algorithm.
+
+In everyday engineering, this shows up as edge cases. "Every user has a last name" is a universal claim, and one user in Indonesia with a single mononym is a counterexample that breaks your form validation. Learning to hunt for counterexamples makes you noticeably better at spotting bad assumptions in a spec before they become bugs.
+
+The style of thinking transfers beyond math too. When someone makes a sweeping claim, the productive response is usually not a counter-sweep. It's one well-chosen example.
+
+:::note[You've Got This]
+Your first few proofs will feel like you're not doing anything, because the steps are so small and so obvious. That's actually correct. A good proof is a sequence of steps each too small to argue with. Write down the definitions in equation form before you try to be clever, and most of these problems solve themselves. If you get stuck, ask what form the conclusion needs to be in, then aim your algebra at that shape.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="discrete-direct-proof-and-counterexample"
+  questions={[
+    {
+      id: "q1",
+      text: "In a direct proof of the statement 'if p then q', what do you begin by doing?",
+      options: [
+        "Assume p is true and derive q",
+        "Assume q is false and derive a contradiction",
+        "Test the statement on several examples",
+        "Assume q is true and derive p",
+      ],
+      correctIndex: 0,
+      explanation:
+        "A direct proof takes the hypothesis as given and reasons forward to the conclusion. Assuming the negation of the conclusion is contradiction or contrapositive, and testing examples is not a proof at all.",
+    },
+    {
+      id: "q2",
+      text: "By definition, an integer n is odd when it can be written as...",
+      options: [
+        "n = 2k for some integer k",
+        "n divided by 2 has a decimal part",
+        "n = 2k + 1 for some integer k",
+        "n is not divisible by any even number",
+      ],
+      correctIndex: 2,
+      explanation:
+        "The algebraic form 2k + 1 is what makes odd numbers usable in a proof. Turning a word like 'odd' into an equation is the first move in nearly every direct proof.",
+    },
+    {
+      id: "q3",
+      text: "Which of these is enough to disprove the claim 'for every integer n, n^2 + n + 1 is odd'?",
+      options: [
+        "Showing it holds for n = 1 through n = 100",
+        "Showing that the claim is hard to prove",
+        "A single integer n for which the expression is even",
+        "Showing the expression is even for all n",
+      ],
+      correctIndex: 2,
+      explanation:
+        "Negating a universal statement produces an existential one, so a single failing case is a complete disproof. Verifying many cases does not prove a universal claim, and you do not need to show it fails everywhere.",
+    },
+    {
+      id: "q4",
+      text: "A student writes: 'Let m and n be even. Then m = 2k and n = 2k, so m + n = 4k.' What is wrong?",
+      options: [
+        "Nothing; the proof is valid",
+        "Reusing k for both forces m and n to be equal",
+        "Even numbers are not of the form 2k",
+        "The sum of two even numbers is not always even",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Each even number needs its own witness, so you must write m = 2j and n = 2k. Reusing the same variable secretly assumes m equals n, which proves a much narrower claim.",
+    },
+    {
+      id: "q5",
+      text: "To disprove the implication 'if a number is divisible by 3, then it is divisible by 9', which counterexample works?",
+      options: [
+        "9, which is divisible by 3 and by 9",
+        "6, which is divisible by 3 but not by 9",
+        "10, which is divisible by neither",
+        "27, which is divisible by both",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Disproving an implication requires the hypothesis to hold while the conclusion fails. 6 is divisible by 3 yet not by 9, so it breaks the claim; cases where the hypothesis fails are vacuously true and prove nothing.",
+    },
+  ]}
+/>

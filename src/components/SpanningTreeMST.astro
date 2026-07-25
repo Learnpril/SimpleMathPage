@@ -1,0 +1,113 @@
+---
+/**
+ * SpanningTreeMST — the weighted graph from the worked example with the
+ * minimum spanning tree highlighted. Chosen edges are solid; the edges Kruskal
+ * skipped because they would close a cycle are dashed.
+ */
+const w = 480;
+const h = 260;
+const V = {
+  A: { x: 60, y: 70 },
+  B: { x: 180, y: 46 },
+  C: { x: 120, y: 168 },
+  D: { x: 290, y: 108 },
+  E: { x: 400, y: 190 },
+} as const;
+type Key = keyof typeof V;
+// inMst marks the 4 edges Kruskal keeps; order is the weight-sorted order
+const edges: { a: Key; b: Key; wt: number; inMst: boolean; step?: string }[] = [
+  { a: "B", b: "C", wt: 1, inMst: true, step: "1st" },
+  { a: "A", b: "B", wt: 2, inMst: true, step: "2nd" },
+  { a: "A", b: "C", wt: 3, inMst: false },
+  { a: "B", b: "D", wt: 4, inMst: true, step: "3rd" },
+  { a: "C", b: "D", wt: 5, inMst: false },
+  { a: "D", b: "E", wt: 6, inMst: true, step: "4th" },
+  { a: "C", b: "E", wt: 7, inMst: false },
+];
+---
+
+<figure
+  class="mst"
+  role="img"
+  aria-label="A weighted graph on five vertices where the minimum spanning tree uses edges BC, AB, BD and DE for a total weight of 13, while AC, CD and CE are skipped"
+>
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    <text x="14" y="22" class="mst-head" font-size="12.5" font-weight="bold">Minimum spanning tree (Kruskal)</text>
+
+    {/* Edges */}
+    {edges.map((e) => (
+      <line
+        x1={V[e.a].x}
+        y1={V[e.a].y}
+        x2={V[e.b].x}
+        y2={V[e.b].y}
+        class={e.inMst ? "mst-edge-in" : "mst-edge-out"}
+        stroke-dasharray={e.inMst ? undefined : "5,4"}
+      />
+    ))}
+
+    {/* Weight labels */}
+    {edges.map((e) => (
+      <g>
+        <circle
+          cx={(V[e.a].x + V[e.b].x) / 2}
+          cy={(V[e.a].y + V[e.b].y) / 2}
+          r="9.5"
+          class={e.inMst ? "mst-wbg-in" : "mst-wbg-out"}
+        />
+        <text
+          x={(V[e.a].x + V[e.b].x) / 2}
+          y={(V[e.a].y + V[e.b].y) / 2 + 4}
+          class={e.inMst ? "mst-wt-in" : "mst-wt-out"}
+          font-size="10.5"
+          font-weight="bold"
+          text-anchor="middle"
+        >{e.wt}</text>
+      </g>
+    ))}
+
+    {/* Vertices */}
+    {(Object.keys(V) as Key[]).map((k) => (
+      <g>
+        <circle cx={V[k].x} cy={V[k].y} r="16" class="mst-node" />
+        <text x={V[k].x} y={V[k].y + 5} class="mst-vl" font-size="13" font-weight="bold" text-anchor="middle">{k}</text>
+      </g>
+    ))}
+
+    {/* Legend */}
+    <line x1="20" y1="216" x2="52" y2="216" class="mst-edge-in" />
+    <text x="60" y="220" class="mst-legend" font-size="9.5">in the tree (4 edges, weight 13)</text>
+    <line x1="20" y1="234" x2="52" y2="234" class="mst-edge-out" stroke-dasharray="5,4" />
+    <text x="60" y="238" class="mst-legend" font-size="9.5">skipped — would close a cycle</text>
+
+    <text x={w - 14} y="220" class="mst-foot" font-size="10.5" text-anchor="end">1 + 2 + 4 + 6 = 13</text>
+    <text x={w - 14} y="238" class="mst-sub" font-size="9.5" text-anchor="end">stop at n − 1 = 4 edges</text>
+  </svg>
+</figure>
+
+<style>
+  .mst { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .mst svg { max-width:100%; height:auto; }
+  .mst-edge-in { stroke:#7ee787; stroke-width:3; }
+  .mst-edge-out { stroke:#666; stroke-width:1.5; }
+  .mst-node { fill:#121212; stroke:#58a6ff; stroke-width:2.4; }
+  .mst-vl { fill:#eee; font-family:'Libre Baskerville',Georgia,serif; }
+  .mst-wbg-in { fill:#121212; stroke:#7ee787; stroke-width:1.2; }
+  .mst-wbg-out { fill:#121212; stroke:#666; stroke-width:1; }
+  .mst-wt-in { fill:#7ee787; font-family:'Libre Baskerville',Georgia,serif; }
+  .mst-wt-out { fill:#888; font-family:'Libre Baskerville',Georgia,serif; }
+  .mst-head { fill:#58a6ff; font-family:'Libre Baskerville',Georgia,serif; }
+  .mst-legend { fill:#888; font-family:'Libre Baskerville',Georgia,serif; }
+  .mst-foot { fill:#7ee787; font-family:'Libre Baskerville',Georgia,serif; font-weight:bold; }
+  .mst-sub { fill:#888; font-family:'Libre Baskerville',Georgia,serif; font-style:italic; }
+  :global([data-theme="light"]) .mst-edge-in { stroke:#116329; }
+  :global([data-theme="light"]) .mst-edge-out { stroke:#bbb; }
+  :global([data-theme="light"]) .mst-node { fill:#ffffff; stroke:#0550ae; }
+  :global([data-theme="light"]) .mst-vl { fill:#24292f; }
+  :global([data-theme="light"]) .mst-wbg-in { fill:#ffffff; stroke:#116329; }
+  :global([data-theme="light"]) .mst-wbg-out { fill:#ffffff; stroke:#bbb; }
+  :global([data-theme="light"]) .mst-wt-in { fill:#116329; }
+  :global([data-theme="light"]) .mst-wt-out { fill:#888; }
+  :global([data-theme="light"]) .mst-head { fill:#0550ae; }
+  :global([data-theme="light"]) .mst-foot { fill:#116329; }
+</style>

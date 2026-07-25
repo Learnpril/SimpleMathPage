@@ -1,0 +1,310 @@
+---
+title: Proof by Induction
+description: Prove statements about all positive integers using the domino principle, including strong induction and recursive structures
+sidebar:
+  order: 10
+---
+
+import Quiz from "../../../components/Quiz.astro";
+import InductionSteps from "../../../components/InductionSteps.astro";
+
+## What You'll Learn
+
+In this lesson you'll learn how mathematical induction proves infinitely many statements at once, the exact structure a valid induction proof must have, how to apply it to divisibility and inequality claims (not just summation formulas), and what strong induction adds.
+
+If you worked through induction in Pre-Calculus, this lesson takes the proof-technique angle: what makes the method valid, where it breaks, and how it applies to recursive structures rather than just sums.
+
+## The Concept
+
+Suppose you want to prove a claim $P(n)$ for **every** positive integer. That's infinitely many statements. You cannot check them one at a time.
+
+Induction gets around this with two finite pieces of work.
+
+Picture an infinite line of dominoes. To knock them all down you need exactly two things:
+
+1. The first one falls.
+2. Each falling domino knocks over the next.
+
+Given those two facts, every domino falls, and you never had to watch them all.
+
+<InductionSteps />
+
+### The structure
+
+- **Base case** - prove $P(1)$ directly. (Or $P(0)$, or whatever the smallest relevant value is.)
+- **Inductive step** - prove that for every $k \geq 1$, if $P(k)$ is true then $P(k+1)$ is true. That is, prove the implication $P(k) \rightarrow P(k+1)$.
+- **Conclusion** - by the principle of mathematical induction, $P(n)$ holds for all $n \geq 1$.
+
+The assumption "$P(k)$ is true" inside the inductive step is called the **inductive hypothesis**. Writing it down explicitly is not optional, and it's where most of the work happens: a good induction proof always uses the inductive hypothesis somewhere, and if yours doesn't, something has gone wrong.
+
+### Why this isn't circular
+
+A frequent objection: "you assumed $P(k)$, so aren't you assuming what you're proving?"
+
+No. You never claim $P(k)$ is actually true. You prove a **conditional**: _if_ it holds at $k$, _then_ it holds at $k+1$. That's a statement about a link in a chain, and it's proved directly. Combine the link with a verified starting point and you get every case by a cascade.
+
+### Both pieces are mandatory
+
+A **base case without an inductive step** verifies exactly one case, which is useless.
+
+An **inductive step without a base case** builds a chain with nothing to anchor it. Here's what goes wrong. Consider the false claim "$n = n + 1$ for all $n$." The inductive step actually works: assume $k = k+1$, add 1 to both sides, get $k+1 = k+2$, which is $P(k+1)$. Flawless step, no base case, absurd conclusion.
+
+A more entertaining version: "all horses are the same color." The inductive step looks fine if you're careless about small cases, and the conclusion is obviously false.
+
+### The standard template
+
+> **Claim.** $P(n)$ for all $n \geq 1$.
+>
+> **Proof.** By induction on $n$.
+>
+> **Base case:** $n = 1$. [Verify both sides.]
+>
+> **Inductive step:** Let $k \geq 1$ and assume $P(k)$ holds, i.e. [state it explicitly]. We show $P(k+1)$.
+>
+> [Start from the $P(k+1)$ expression, split off the new piece, substitute the inductive hypothesis, simplify to the target form.]
+>
+> By induction, $P(n)$ holds for all $n \geq 1$. $\blacksquare$
+
+The mechanical move in the inductive step is almost always: **peel off the last term, apply the hypothesis to what remains.**
+
+### Strong induction
+
+Sometimes $P(k)$ alone isn't enough and you need several earlier cases. **Strong induction** lets you assume $P(1), P(2), \ldots, P(k)$ all hold, then prove $P(k+1)$.
+
+It sounds more powerful, and in a practical sense it is, but the two forms are logically equivalent. Anything provable one way is provable the other. Use strong induction when the claim at $k+1$ naturally decomposes into two smaller pieces of unknown size, which is exactly what happens with prime factorization and with recursive algorithms that split a problem in half.
+
+Strong induction often needs **more than one base case**, because the inductive step might reach back two or more steps.
+
+## Worked Examples
+
+**Example 1: Sum of the first $n$ positive integers.**
+
+**Claim.** $1 + 2 + 3 + \cdots + n = \dfrac{n(n+1)}{2}$ for all $n \geq 1$.
+
+**Proof.** By induction on $n$.
+
+**Base case:** $n = 1$. Left side is 1. Right side is $\frac{1 \cdot 2}{2} = 1$. They match.
+
+**Inductive step:** Assume for some $k \geq 1$ that
+
+$$
+1 + 2 + \cdots + k = \frac{k(k+1)}{2}
+$$
+
+Show it for $k+1$. Peel off the last term:
+
+$$
+1 + 2 + \cdots + k + (k+1) = \frac{k(k+1)}{2} + (k+1)
+$$
+
+using the inductive hypothesis on the first $k$ terms. Factor out $(k+1)$:
+
+$$
+= (k+1)\left(\frac{k}{2} + 1\right) = (k+1) \cdot \frac{k+2}{2} = \frac{(k+1)(k+2)}{2}
+$$
+
+That's exactly the formula with $n = k+1$.
+
+By induction, the formula holds for all $n \geq 1$. $\blacksquare$
+
+**Example 2: A divisibility claim.**
+
+**Claim.** $n^3 - n$ is divisible by 3 for all $n \geq 1$.
+
+**Proof.** By induction on $n$.
+
+**Base case:** $n = 1$. $1 - 1 = 0$, and $3 \mid 0$. True.
+
+**Inductive step:** Assume $3 \mid (k^3 - k)$, so $k^3 - k = 3m$ for some integer $m$.
+
+Expand the $k+1$ case:
+
+$$
+(k+1)^3 - (k+1) = k^3 + 3k^2 + 3k + 1 - k - 1 = (k^3 - k) + 3k^2 + 3k
+$$
+
+Substitute the inductive hypothesis:
+
+$$
+= 3m + 3k^2 + 3k = 3(m + k^2 + k)
+$$
+
+Since $m + k^2 + k$ is an integer, the expression is divisible by 3.
+
+By induction, $3 \mid (n^3 - n)$ for all $n \geq 1$. $\blacksquare$
+
+The key maneuver: expand, then **rearrange to expose the previous case** so the hypothesis can be substituted.
+
+**Example 3: An inequality.**
+
+**Claim.** $2^n > n$ for all $n \geq 1$.
+
+**Proof.** By induction on $n$.
+
+**Base case:** $n = 1$. $2^1 = 2 > 1$. True.
+
+**Inductive step:** Assume $2^k > k$ for some $k \geq 1$. Then
+
+$$
+2^{k+1} = 2 \cdot 2^k > 2k
+$$
+
+using the hypothesis. Now since $k \geq 1$, we have $k \geq 1$, so $2k = k + k \geq k + 1$. Chaining:
+
+$$
+2^{k+1} > 2k \geq k+1
+$$
+
+By induction, $2^n > n$ for all $n \geq 1$. $\blacksquare$
+
+Inequality inductions need one extra step: after applying the hypothesis you usually have to bridge from what you got to what you wanted, and that bridge uses a fact about $k$.
+
+**Example 4: Counting subsets.**
+
+**Claim.** A set with $n$ elements has $2^n$ subsets, for all $n \geq 0$.
+
+**Proof.** By induction on $n$.
+
+**Base case:** $n = 0$. The empty set has exactly one subset, itself. And $2^0 = 1$. True.
+
+**Inductive step:** Assume every $k$-element set has $2^k$ subsets. Let $S$ have $k+1$ elements. Pick one element $x \in S$ and let $T = S - \{x\}$, so $|T| = k$.
+
+Every subset of $S$ either contains $x$ or doesn't.
+
+- Subsets **without** $x$ are exactly the subsets of $T$: there are $2^k$ of these.
+- Subsets **with** $x$ are exactly a subset of $T$ with $x$ added: also $2^k$ of these.
+
+These groups don't overlap and cover everything, so
+
+$$
+2^k + 2^k = 2 \cdot 2^k = 2^{k+1}
+$$
+
+By induction, an $n$-element set has $2^n$ subsets. $\blacksquare$
+
+Notice there's no algebra here at all. The induction is on a **structure**, which is the flavor you'll see most in computer science.
+
+**Example 5: Strong induction.**
+
+**Claim.** Every integer $n \geq 2$ can be written as a product of primes.
+
+**Proof.** By strong induction on $n$.
+
+**Base case:** $n = 2$. Already prime, so it's a product of one prime.
+
+**Inductive step:** Let $k \geq 2$ and assume every integer from 2 through $k$ is a product of primes. Consider $k+1$.
+
+**Case 1: $k+1$ is prime.** Then it's a product of one prime. Done.
+
+**Case 2: $k+1$ is composite.** Then $k+1 = a \cdot b$ where $2 \leq a, b \leq k$. By the strong inductive hypothesis, both $a$ and $b$ are products of primes. Multiplying those factorizations gives a prime factorization of $k+1$.
+
+By strong induction, every integer $n \geq 2$ is a product of primes. $\blacksquare$
+
+Ordinary induction can't do this, because $a$ and $b$ are somewhere below $k+1$ and you have no idea where. You need the whole range available, which is exactly what strong induction gives you.
+
+**Example 6: Strong induction with two base cases.**
+
+**Claim.** Define $a_1 = 1$, $a_2 = 3$, and $a_n = 2a_{n-1} - a_{n-2}$ for $n \geq 3$. Then $a_n = 2n - 1$ for all $n \geq 1$.
+
+**Proof.** By strong induction.
+
+**Base cases:** $a_1 = 1 = 2(1) - 1$. And $a_2 = 3 = 2(2) - 1$. Both check out.
+
+**Inductive step:** Let $k \geq 2$ and assume $a_j = 2j - 1$ for all $1 \leq j \leq k$. Then
+
+$$
+a_{k+1} = 2a_k - a_{k-1} = 2(2k-1) - (2(k-1)-1) = 4k - 2 - (2k - 3) = 2k + 1
+$$
+
+And $2(k+1) - 1 = 2k+1$. Match.
+
+By strong induction, $a_n = 2n-1$ for all $n \geq 1$. $\blacksquare$
+
+Two base cases are required here because the recurrence reaches back two terms. One base case would leave $a_2$ unjustified.
+
+## Real-World Applications
+
+Induction is how you prove a recursive function correct. Base case of the proof matches the base case of the function, inductive step matches the recursive call. If you've ever written a recursive function and wondered whether it's right for all inputs, induction is the answer, and the proof usually mirrors the code line for line.
+
+Loop invariants are the iterative version. You show a property holds before the loop starts, that each iteration preserves it, and therefore it holds when the loop ends. That's a base case and an inductive step wearing different names, and it's the standard technique for verifying sorting and searching algorithms.
+
+Algorithm complexity analysis uses induction to solve recurrences. Proving that merge sort runs in $O(n \log n)$ time involves an induction on the recursion depth, and strong induction is the natural fit because the problem splits into two halves.
+
+Data structure invariants are the same story. "Every red-black tree operation preserves the balance property" is proved by induction over the sequence of operations. Same for blockchain integrity, where each block's validity depends on the previous one, which is a chain in the most literal sense.
+
+:::note[You've Got This]
+The single most common way to lose points on an induction proof is to state the inductive hypothesis vaguely or skip it entirely. Write it out as a full equation before you touch the $k+1$ case, and then look for where you can substitute it. If you get through the whole inductive step without using the hypothesis, you either proved something directly (fine, but then you didn't need induction) or you made an error. And remember, both parts are required. The step without the base case proves nothing at all.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="discrete-proof-by-induction"
+  questions={[
+    {
+      id: "q1",
+      text: "What are the two required components of a proof by mathematical induction?",
+      options: [
+        "A base case and an inductive step",
+        "A counterexample and a contradiction",
+        "A hypothesis and a converse",
+        "Two separate base cases",
+      ],
+      correctIndex: 0,
+      explanation:
+        "You must anchor the chain by verifying the smallest case, and you must prove that truth at k forces truth at k + 1. Leaving out either one breaks the argument entirely.",
+    },
+    {
+      id: "q2",
+      text: "Why is proof by induction not circular reasoning, even though it assumes P(k)?",
+      options: [
+        "Because P(k) is verified separately for every k",
+        "Because you prove the conditional 'if P(k) then P(k+1)', never claiming P(k) is true outright",
+        "Because the base case makes the assumption unnecessary",
+        "Because k is always chosen to be 1",
+      ],
+      correctIndex: 1,
+      explanation:
+        "The inductive step establishes a link, not a fact. Combining that conditional with a verified base case is what produces every case by cascade.",
+    },
+    {
+      id: "q3",
+      text: "A student proves the inductive step for the claim 'n = n + 1' by adding 1 to both sides of the assumption. Why does the proof fail?",
+      options: [
+        "The algebra in the step is invalid",
+        "Induction cannot be used on equations",
+        "There is no valid base case, so nothing anchors the chain",
+        "The inductive hypothesis was stated too strongly",
+      ],
+      correctIndex: 2,
+      explanation:
+        "The inductive step really is valid, which is exactly the point. Without a true base case the chain has nothing to start from, so a working step alone proves nothing.",
+    },
+    {
+      id: "q4",
+      text: "In the inductive step for a summation formula, what is the standard first move?",
+      options: [
+        "Substitute n = 1 into both sides",
+        "Assume the formula fails and derive a contradiction",
+        "Separate off the (k+1)-th term and apply the inductive hypothesis to the rest",
+        "Differentiate both sides with respect to k",
+      ],
+      correctIndex: 2,
+      explanation:
+        "Peeling off the new term exposes the sum of the first k terms, which the inductive hypothesis lets you replace with the closed form. From there it is algebra to reach the target expression.",
+    },
+    {
+      id: "q5",
+      text: "What distinguishes strong induction from ordinary induction?",
+      options: [
+        "It assumes all cases from the base up to k, not just P(k)",
+        "It does not require a base case",
+        "It proves statements about real numbers rather than integers",
+        "It works backward from P(k+1) to P(k)",
+      ],
+      correctIndex: 0,
+      explanation:
+        "Strong induction makes the entire range of earlier cases available, which is essential when the k+1 case breaks into smaller pieces of unpredictable size, as in prime factorization. It still requires at least one base case, sometimes several.",
+    },
+  ]}
+/>

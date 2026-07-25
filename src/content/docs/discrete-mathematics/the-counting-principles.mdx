@@ -1,0 +1,292 @@
+---
+title: The Counting Principles
+description: Learn the multiplication and addition principles, the complement rule, and how to count systematically
+sidebar:
+  order: 11
+---
+
+import Quiz from "../../../components/Quiz.astro";
+import CountingTree from "../../../components/CountingTree.astro";
+
+## What You'll Learn
+
+In this lesson you'll learn the two foundational rules of counting, when to multiply versus when to add, how the complement rule turns hard problems into easy ones, and how to handle counting with and without repetition.
+
+## The Concept
+
+Combinatorics is the art of counting things you'd never want to list. Almost all of it reduces to two principles.
+
+### The multiplication principle
+
+If a process consists of a sequence of steps, where step 1 has $n_1$ options, step 2 has $n_2$ options, and so on, then the total number of outcomes is
+
+$$
+n_1 \times n_2 \times \cdots \times n_k
+$$
+
+**Signal word: AND.** You make choice 1 **and** choice 2 **and** choice 3.
+
+A shirt (4 options) and pants (3 options) and shoes (2 options) give $4 \times 3 \times 2 = 24$ outfits.
+
+Drawing it as a tree shows where the product comes from. Each branch splits the same number of ways, so the leaves multiply:
+
+<CountingTree />
+
+The critical requirement: the **number** of options at each step must not depend on the earlier choices. The specific options can change, but the count can't. If picking a red shirt left you with 3 pants and picking a blue shirt left you with 2, plain multiplication doesn't apply and you'd break the problem into cases.
+
+### The addition principle
+
+If a task can be done in one of several **mutually exclusive** ways, with $n_1$ options in the first way, $n_2$ in the second, and so on, the total is
+
+$$
+n_1 + n_2 + \cdots + n_k
+$$
+
+**Signal word: OR.** You take route 1 **or** route 2.
+
+If a menu has 5 pasta dishes and 7 pizzas and you're ordering one item, you have $5 + 7 = 12$ choices.
+
+The critical requirement: the categories must not overlap. If they do, you're back to inclusion-exclusion:
+
+$$
+|A \cup B| = |A| + |B| - |A \cap B|
+$$
+
+### Multiply or add?
+
+This is the decision people get wrong, and the fix is a single question: **am I doing all of these, or just one of them?**
+
+|           | Multiply             | Add                 |
+| --------- | -------------------- | ------------------- |
+| Structure | steps in sequence    | alternatives        |
+| Keyword   | and, then, each      | or, either          |
+| Test      | do I do all of them? | do I pick just one? |
+
+An outfit needs a shirt **and** pants: multiply. A single dinner order is pasta **or** pizza: add.
+
+Real problems mix both. A password that is 6 characters **or** 7 characters, where each character is a letter **or** a digit, needs addition at the outer level and multiplication inside each case.
+
+### Repetition allowed or not
+
+For a sequence of $k$ choices from $n$ items:
+
+**With repetition** (each choice independent, items can repeat):
+
+$$
+n^k
+$$
+
+Example: a 4-digit PIN allowing repeats is $10^4 = 10{,}000$.
+
+**Without repetition** (each item used at most once):
+
+$$
+n \times (n-1) \times (n-2) \times \cdots \times (n - k + 1)
+$$
+
+Example: a 4-digit PIN with no repeated digits is $10 \times 9 \times 8 \times 7 = 5{,}040$.
+
+Each step removes one option, so the counts step down. This is a permutation, and the next lesson gives it a formula.
+
+### The complement rule
+
+Sometimes counting what you don't want is far easier. If the total number of outcomes is $|U|$, then
+
+$$
+|A| = |U| - |\bar{A}|
+$$
+
+**Signal phrase: "at least one."** Whenever a problem says "at least one," try the complement first. The opposite of "at least one" is "none," and "none" is usually a clean multiplication.
+
+Counting "at least one" directly means adding up the exactly-one, exactly-two, exactly-three cases, which is slow and error-prone. Counting "none" and subtracting takes one line.
+
+### Two habits that prevent mistakes
+
+- **Draw a tree for small cases** - a tree diagram makes the structure of a counting problem visible, and it exposes whether your options really are independent.
+- **Sanity check with tiny numbers** - if you're unsure about a formula, shrink the problem until you can count by hand, then see whether your formula agrees.
+
+## Worked Examples
+
+**Example 1: Straight multiplication.**
+
+A café offers 3 sizes, 4 milk options, and 5 syrups. How many drinks can you build choosing one of each?
+
+**Solution.** Three independent steps:
+
+$$
+3 \times 4 \times 5 = 60
+$$
+
+**Example 2: Addition with cases.**
+
+A restaurant has 6 appetizers, 9 entrees, and 4 desserts. How many ways to order exactly one item? How many ways to order a full three-course meal?
+
+**Solution.**
+
+One item is a choice among alternatives, so add:
+
+$$
+6 + 9 + 4 = 19
+$$
+
+A three-course meal takes one of each, so multiply:
+
+$$
+6 \times 9 \times 4 = 216
+$$
+
+Same numbers, opposite operations, because the question changed from "or" to "and."
+
+**Example 3: License plates.**
+
+A plate format is 3 letters followed by 3 digits.
+
+(a) How many plates are possible?
+(b) How many with no repeated characters?
+
+**Solution.**
+
+(a) Repetition allowed:
+
+$$
+26^3 \times 10^3 = 17{,}576 \times 1{,}000 = 17{,}576{,}000
+$$
+
+(b) No repeats within letters, no repeats within digits:
+
+$$
+(26 \times 25 \times 24) \times (10 \times 9 \times 8) = 15{,}600 \times 720 = 11{,}232{,}000
+$$
+
+**Example 4: The complement rule.**
+
+A password is exactly 6 characters, each a lowercase letter or a digit (36 options). How many passwords contain **at least one** digit?
+
+**Solution.** Direct counting would need cases for exactly one digit, exactly two, and so on. Use the complement instead.
+
+Total passwords:
+
+$$
+36^6 = 2{,}176{,}782{,}336
+$$
+
+Passwords with **no** digit, meaning letters only:
+
+$$
+26^6 = 308{,}915{,}776
+$$
+
+Subtract:
+
+$$
+2{,}176{,}782{,}336 - 308{,}915{,}776 = 1{,}867{,}866{,}560
+$$
+
+About 86% of such passwords contain a digit, which is a decent argument that "must contain a digit" is a weak rule.
+
+**Example 5: Combining both principles.**
+
+A password must be 4 **or** 5 characters long, each character from a 62-symbol alphabet (26 lowercase, 26 uppercase, 10 digits). How many are possible?
+
+**Solution.** The two lengths are mutually exclusive alternatives, so add the cases; within each case, multiply:
+
+$$
+62^4 + 62^5 = 14{,}776{,}336 + 916{,}132{,}832 = 930{,}909{,}168
+$$
+
+Notice the 5-character case dwarfs the 4-character case. Length matters much more than people expect, which is why passphrases beat clever short passwords.
+
+**Example 6: A restricted count.**
+
+How many 4-digit numbers (1000 through 9999) are even and have no repeated digits?
+
+**Solution.** Constraints interact, so handle the most restricted positions first, and split into cases when needed.
+
+The last digit must be even: $0, 2, 4, 6, 8$. The first digit can't be 0. Those two rules collide, so use cases.
+
+**Case 1: last digit is 0.** Then the first digit has 9 options (1 through 9). Second digit: 8 remaining. Third: 7.
+
+$$
+9 \times 8 \times 7 \times 1 = 504
+$$
+
+**Case 2: last digit is 2, 4, 6, or 8** (4 options). The first digit can't be 0 and can't equal the last digit, leaving 8 options. Then 8 remaining for the second position, 7 for the third.
+
+$$
+4 \times 8 \times 8 \times 7 = 1{,}792
+$$
+
+Total:
+
+$$
+504 + 1{,}792 = 2{,}296
+$$
+
+The lesson here: when a constraint on one position depends on another, split into cases so that within each case the counts are independent.
+
+## Real-World Applications
+
+Password strength is a counting problem, full stop. When a site tells you your password would take 4 billion years to crack, it computed the size of the search space with the multiplication principle and divided by a guess rate. This also explains why adding one character multiplies the space by the alphabet size while adding one rule (like "must contain a symbol") barely changes it.
+
+Address space design uses the same math. IPv4 has $2^{32}$ addresses, about 4.3 billion, which the internet outgrew. IPv6 has $2^{128}$, which is roughly $3.4 \times 10^{38}$ and will not be outgrown.
+
+Test coverage is a counting problem with a warning attached. A form with 8 optional checkboxes has $2^8 = 256$ possible states. Add three dropdowns with 5 options each and you're at $256 \times 125 = 32{,}000$ combinations, which is why exhaustive UI testing isn't a plan.
+
+Product configurators, DNA sequence spaces, lottery odds, and phone number exhaustion (area codes running out is literally a counting result) all come from these two principles.
+
+:::note[You've Got This]
+Before you compute anything, answer two questions: am I doing all of these steps or just picking one, and can items repeat? Those two answers determine the whole approach, and almost every counting error is a mis-answer to one of them rather than bad arithmetic. And keep the complement rule loaded: as soon as you see "at least one," count the opposite and subtract.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="discrete-the-counting-principles"
+  questions={[
+    {
+      id: "q1",
+      text: "A deli has 4 breads, 6 meats, and 3 cheeses. How many sandwiches use one of each?",
+      options: ["13", "72", "36", "24"],
+      correctIndex: 1,
+      explanation:
+        "Choosing one of each is a sequence of independent steps, so multiply: 4 x 6 x 3 = 72.",
+    },
+    {
+      id: "q2",
+      text: "A bookstore has 12 mysteries and 9 biographies. How many ways can you buy exactly one book?",
+      options: ["21", "108", "3", "42"],
+      correctIndex: 0,
+      explanation:
+        "The two categories are mutually exclusive alternatives and you pick only one item, so add: 12 + 9 = 21. Multiplying would count pairs of books instead.",
+    },
+    {
+      id: "q3",
+      text: "How many 3-letter sequences can be formed from the 26 letters if no letter may repeat?",
+      options: ["17576", "2600", "15600", "78"],
+      correctIndex: 2,
+      explanation:
+        "Each step removes one option: 26 x 25 x 24 = 15,600. Allowing repeats would instead give 26 cubed, which is 17,576.",
+    },
+    {
+      id: "q4",
+      text: "A 5-character code uses digits 0 through 9. How many codes contain at least one 7?",
+      options: ["10000", "40951", "59049", "50000"],
+      correctIndex: 1,
+      explanation:
+        "Use the complement: total codes are 10^5 = 100,000, and codes with no 7 are 9^5 = 59,049. Subtracting gives 100,000 - 59,049 = 40,951.",
+    },
+    {
+      id: "q5",
+      text: "What condition must hold for the multiplication principle to apply directly?",
+      options: [
+        "All the steps must have the same number of options",
+        "The number of options at each step must not depend on earlier choices",
+        "No repetition may be allowed at any step",
+        "There must be exactly two steps",
+      ],
+      correctIndex: 1,
+      explanation:
+        "The identities of the available options may shift, but the count at each step must stay fixed. When a count depends on an earlier choice, you split the problem into cases first.",
+    },
+  ]}
+/>

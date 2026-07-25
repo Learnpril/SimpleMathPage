@@ -1,0 +1,78 @@
+---
+/**
+ * DiscreteTopicMap — the five connected areas of Discrete Mathematics
+ * and the order the section works through them.
+ */
+const w = 560;
+const h = 210;
+const bw = 150;
+const bh = 52;
+const row1Y = 26;
+const row2Y = 132;
+const areas = [
+  { x: 10, y: row1Y, label: "Logic", sub: "true / false", cls: "blue" },
+  { x: 205, y: row1Y, label: "Sets", sub: "collections", cls: "green" },
+  { x: 400, y: row1Y, label: "Proofs", sub: "why it's true", cls: "purple" },
+  { x: 108, y: row2Y, label: "Counting", sub: "how many", cls: "orange" },
+  { x: 303, y: row2Y, label: "Graphs", sub: "connections", cls: "blue" },
+];
+---
+
+<figure
+  class="dtm"
+  role="img"
+  aria-label="Topic map of Discrete Mathematics: Logic leads to Sets and Proofs, which lead to Counting and Graphs"
+>
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    {/* Connectors: Logic to Sets to Proofs across the top row */}
+    <line x1={10 + bw} y1={row1Y + bh / 2} x2="203" y2={row1Y + bh / 2} class="dtm-link" marker-end="url(#dtm-head)" />
+    <line x1={205 + bw} y1={row1Y + bh / 2} x2="398" y2={row1Y + bh / 2} class="dtm-link" marker-end="url(#dtm-head)" />
+
+    {/* Connectors down into the second row */}
+    <line x1="130" y1={row1Y + bh} x2="175" y2={row2Y - 2} class="dtm-link" marker-end="url(#dtm-head)" />
+    <line x1="330" y1={row1Y + bh} x2="370" y2={row2Y - 2} class="dtm-link" marker-end="url(#dtm-head)" />
+
+    {/* Area boxes */}
+    {areas.map((a) => (
+      <g>
+        <rect x={a.x} y={a.y} width={bw} height={bh} rx="8" class={`dtm-box dtm-${a.cls}`} />
+        <text x={a.x + bw / 2} y={a.y + 22} class={`dtm-label dtm-t-${a.cls}`} font-size="15" text-anchor="middle">{a.label}</text>
+        <text x={a.x + bw / 2} y={a.y + 40} class="dtm-sub" font-size="11" text-anchor="middle">{a.sub}</text>
+      </g>
+    ))}
+
+    <defs>
+      <marker id="dtm-head" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+        <polygon points="0 0, 8 3, 0 6" class="dtm-head-fill" />
+      </marker>
+    </defs>
+  </svg>
+</figure>
+
+<style>
+  .dtm { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .dtm svg { max-width:100%; height:auto; }
+  .dtm-box { fill:none; stroke-width:2; }
+  .dtm-blue { stroke:#58a6ff; }
+  .dtm-green { stroke:#7ee787; }
+  .dtm-purple { stroke:#d2a8ff; }
+  .dtm-orange { stroke:#f0883e; }
+  .dtm-label { font-family:'Libre Baskerville',Georgia,serif; font-weight:bold; }
+  .dtm-t-blue { fill:#58a6ff; }
+  .dtm-t-green { fill:#7ee787; }
+  .dtm-t-purple { fill:#d2a8ff; }
+  .dtm-t-orange { fill:#f0883e; }
+  .dtm-sub { fill:#888; font-family:'Libre Baskerville',Georgia,serif; font-style:italic; }
+  .dtm-link { stroke:#888; stroke-width:1.5; }
+  .dtm-head-fill { fill:#888; }
+  :global([data-theme="light"]) .dtm-blue { stroke:#0550ae; }
+  :global([data-theme="light"]) .dtm-green { stroke:#116329; }
+  :global([data-theme="light"]) .dtm-purple { stroke:#6639ba; }
+  :global([data-theme="light"]) .dtm-orange { stroke:#b35900; }
+  :global([data-theme="light"]) .dtm-t-blue { fill:#0550ae; }
+  :global([data-theme="light"]) .dtm-t-green { fill:#116329; }
+  :global([data-theme="light"]) .dtm-t-purple { fill:#6639ba; }
+  :global([data-theme="light"]) .dtm-t-orange { fill:#b35900; }
+  :global([data-theme="light"]) .dtm-link { stroke:#555; }
+  :global([data-theme="light"]) .dtm-head-fill { fill:#555; }
+</style>

@@ -1,0 +1,326 @@
+---
+title: Set Operations and Venn Diagrams
+description: Learn union, intersection, difference, and complement, plus the inclusion-exclusion principle
+sidebar:
+  order: 7
+---
+
+import Quiz from "../../../components/Quiz.astro";
+import VennOperations from "../../../components/VennOperations.astro";
+import VennThreeSets from "../../../components/VennThreeSets.astro";
+import SymbolKey from "../../../components/SymbolKey.astro";
+
+## What You'll Learn
+
+In this lesson you'll learn the four core set operations, how to picture them with Venn diagrams, the set-theory versions of De Morgan's laws, and the inclusion-exclusion principle for counting overlapping collections.
+
+<SymbolKey
+  items={[
+    {
+      sym: "A ∪ B",
+      read: "A union B",
+      note: "everything in either set; the U shape is a memory aid for “Union”",
+    },
+    { sym: "A ∩ B", read: "A intersect B", note: "only what is in both sets" },
+    {
+      sym: "A − B",
+      read: "A minus B",
+      note: "what is in A but not B; also written A \\ B",
+    },
+    {
+      sym: "Ā",
+      read: "the complement of A",
+      note: "everything in the universe that is not in A; also written Aᶜ",
+    },
+    {
+      sym: "A ⊕ B",
+      read: "the symmetric difference",
+      note: "in one set or the other, but not both",
+    },
+    {
+      sym: "U",
+      read: "the universal set",
+      note: "everything under consideration in this problem",
+    },
+  ]}
+/>
+
+## The Concept
+
+Let $A$ and $B$ be sets inside a universal set $U$.
+
+### Union
+
+$$
+A \cup B = \{x \mid x \in A \text{ or } x \in B\}
+$$
+
+Everything in either set. The OR is inclusive, so elements in both are included once.
+
+$$
+\{1,2,3\} \cup \{3,4,5\} = \{1,2,3,4,5\}
+$$
+
+### Intersection
+
+$$
+A \cap B = \{x \mid x \in A \text{ and } x \in B\}
+$$
+
+Only what's in both.
+
+$$
+\{1,2,3\} \cap \{3,4,5\} = \{3\}
+$$
+
+If $A \cap B = \emptyset$, the sets are **disjoint**. They share nothing.
+
+### Difference
+
+$$
+A - B = \{x \mid x \in A \text{ and } x \notin B\}
+$$
+
+Also written $A \setminus B$. Everything in $A$ that isn't in $B$.
+
+$$
+\{1,2,3\} - \{3,4,5\} = \{1,2\}
+$$
+
+Difference is **not** commutative. $\{3,4,5\} - \{1,2,3\} = \{4,5\}$, a different answer.
+
+### Complement
+
+$$
+\bar{A} = A^c = U - A = \{x \in U \mid x \notin A\}
+$$
+
+Everything in the universe that isn't in $A$. This only makes sense once you've fixed $U$. If $U = \{1,\ldots,10\}$ and $A = \{1,2,3\}$, then $\bar{A} = \{4,5,6,7,8,9,10\}$. Change $U$ and the complement changes.
+
+### Symmetric difference
+
+$$
+A \oplus B = (A - B) \cup (B - A)
+$$
+
+In one or the other, but not both. This is the set version of exclusive or.
+
+$$
+\{1,2,3\} \oplus \{3,4,5\} = \{1,2,4,5\}
+$$
+
+### Venn diagrams
+
+Shading the four operations side by side is the fastest way to keep them straight:
+
+<VennOperations />
+
+Draw $U$ as a rectangle and each set as a circle inside it. Two overlapping circles carve the rectangle into **4 regions**:
+
+1. In $A$ only
+2. In both ($A \cap B$)
+3. In $B$ only
+4. In neither (outside both circles, but inside $U$)
+
+Three circles carve it into **8 regions**. That's $2^n$ again, one region per pattern of in/out decisions, exactly like the power set.
+
+Venn diagrams are excellent for building intuition and for solving counting problems where you know some overlaps. They are **not** a proof technique for general claims, but they'll almost always tell you whether a claim is worth trying to prove.
+
+### The correspondence with logic
+
+Set operations and logical connectives are the same structure in different clothing:
+
+| Sets            | Logic                 | Meaning      |
+| --------------- | --------------------- | ------------ |
+| $A \cup B$      | $p \vee q$            | or           |
+| $A \cap B$      | $p \wedge q$          | and          |
+| $\bar{A}$       | $\neg p$              | not          |
+| $A \subseteq B$ | $p \rightarrow q$     | implies      |
+| $A = B$         | $p \leftrightarrow q$ | iff          |
+| $\emptyset$     | contradiction         | always false |
+| $U$             | tautology             | always true  |
+
+So every law from the logic lessons has a set-theory twin. Including these:
+
+- **De Morgan's laws** - $\overline{A \cup B} = \bar{A} \cap \bar{B}$ and $\overline{A \cap B} = \bar{A} \cup \bar{B}$
+- **Distributive laws** - $A \cap (B \cup C) = (A \cap B) \cup (A \cap C)$ and $A \cup (B \cap C) = (A \cup B) \cap (A \cup C)$
+- **Identity** - $A \cup \emptyset = A$ and $A \cap U = A$
+- **Complement** - $A \cup \bar{A} = U$ and $A \cap \bar{A} = \emptyset$
+
+### Inclusion-exclusion
+
+Here's the counting question. If $|A| = 10$ and $|B| = 8$, how big is $A \cup B$?
+
+Not 18, unless the sets are disjoint. Adding the cardinalities counts everything in the overlap **twice**, so you subtract the overlap once to fix it:
+
+$$
+|A \cup B| = |A| + |B| - |A \cap B|
+$$
+
+For three sets it gets more interesting. Add the singles, subtract the pairs, add the triple back:
+
+$$
+|A \cup B \cup C| = |A| + |B| + |C| - |A \cap B| - |A \cap C| - |B \cap C| + |A \cap B \cap C|
+$$
+
+The alternating signs keep going for more sets. The reason the triple intersection comes back with a plus sign: it was added 3 times by the singles, then subtracted 3 times by the pairs, leaving it at zero. So you add it once more to count it exactly once.
+
+Here are all 8 regions filled in for the developer survey in Example 3 below. Notice that the counts only work out if you start from the centre and work outward:
+
+<VennThreeSets />
+
+## Worked Examples
+
+**Example 1: Compute all the operations.**
+
+$U = \{1,2,3,4,5,6,7,8\}$, $A = \{1,2,3,4\}$, $B = \{3,4,5,6\}$.
+
+**Solution.**
+
+- $A \cup B = \{1,2,3,4,5,6\}$
+- $A \cap B = \{3,4\}$
+- $A - B = \{1,2\}$
+- $B - A = \{5,6\}$
+- $\bar{A} = \{5,6,7,8\}$
+- $\bar{B} = \{1,2,7,8\}$
+- $A \oplus B = \{1,2,5,6\}$
+
+Quick check of De Morgan: $\overline{A \cup B} = \{7,8\}$, and $\bar{A} \cap \bar{B} = \{5,6,7,8\} \cap \{1,2,7,8\} = \{7,8\}$. Match.
+
+**Example 2: Inclusion-exclusion with two sets.**
+
+In a class of 30 students, 18 take Spanish, 15 take French, and 7 take both. How many take at least one language? How many take neither?
+
+**Solution.**
+
+$$
+|S \cup F| = 18 + 15 - 7 = 26
+$$
+
+26 students take at least one. Then
+
+$$
+30 - 26 = 4
+$$
+
+4 students take neither.
+
+Sanity check with the four Venn regions: Spanish only is $18 - 7 = 11$, French only is $15 - 7 = 8$, both is 7, neither is 4. Total $11 + 8 + 7 + 4 = 30$. Good.
+
+**Example 3: Inclusion-exclusion with three sets.**
+
+A survey of 100 developers found:
+
+- 60 use Python, 45 use JavaScript, 30 use Rust
+- 25 use Python and JavaScript, 15 use Python and Rust, 10 use JavaScript and Rust
+- 5 use all three
+
+How many use at least one? How many use none?
+
+**Solution.**
+
+$$
+60 + 45 + 30 - 25 - 15 - 10 + 5 = 90
+$$
+
+90 use at least one, so $100 - 90 = 10$ use none of the three.
+
+**Example 4: Fill in a three-circle Venn diagram.**
+
+Using the numbers from Example 3, find how many use **only** Python.
+
+**Solution.** Always work from the center outward.
+
+- All three: 5
+- Python and JavaScript but not Rust: $25 - 5 = 20$
+- Python and Rust but not JavaScript: $15 - 5 = 10$
+- JavaScript and Rust but not Python: $10 - 5 = 5$
+- Python only: $60 - 20 - 10 - 5 = 25$
+
+So 25 developers use Python and nothing else. Doing this in the wrong order, outside-in, is how people end up double-counting.
+
+**Example 5: Prove a set identity.**
+
+Show that $A - B = A \cap \bar{B}$.
+
+**Solution.** Prove both containments.
+
+**$A - B \subseteq A \cap \bar{B}$:** Let $x \in A - B$. By definition $x \in A$ and $x \notin B$. Since $x \notin B$, we have $x \in \bar{B}$. So $x \in A$ and $x \in \bar{B}$, meaning $x \in A \cap \bar{B}$.
+
+**$A \cap \bar{B} \subseteq A - B$:** Let $x \in A \cap \bar{B}$. Then $x \in A$ and $x \in \bar{B}$, so $x \notin B$. Therefore $x \in A - B$.
+
+Both directions hold, so the sets are equal. This identity is handy because it converts a difference into an intersection, which lets you apply De Morgan and the distributive laws.
+
+## Real-World Applications
+
+SQL is set operations with different keywords. `UNION` is union, `INTERSECT` is intersection, `EXCEPT` or `MINUS` is difference, and `NOT IN` is a complement relative to whatever your universe happens to be. Understanding inclusion-exclusion is how you avoid reporting inflated totals when your categories overlap.
+
+Search engines apply set operations to term-matching document sets. A query with a minus sign is a set difference.
+
+Version control merges are essentially symmetric differences: which lines changed in one branch but not the other.
+
+Inclusion-exclusion is the tool for any "at least one" counting question. How many passwords contain at least one digit or one symbol? How many customers bought product A or B? How many students are eligible for at least one scholarship? All the same computation, and all of them go wrong if you just add.
+
+Marketing audience overlap is the everyday version. If a campaign reaches 40,000 people on one platform and 35,000 on another, the total reach is not 75,000 unless nobody uses both platforms, which is never.
+
+:::note[You've Got This]
+The Venn diagram is your best friend here. If a set identity looks unfamiliar, shade the left side in a diagram, shade the right side in a second diagram, and compare. And for inclusion-exclusion problems, always fill the innermost overlap first and work outward. That one habit prevents almost every error people make on these.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="discrete-set-operations-and-venn-diagrams"
+  questions={[
+    {
+      id: "q1",
+      text: "If A = {2, 4, 6, 8} and B = {4, 8, 12}, what is A - B?",
+      options: ["{4, 8}", "{2, 6}", "{12}", "{2, 6, 12}"],
+      correctIndex: 1,
+      explanation:
+        "The difference keeps elements of A that are not in B. Removing 4 and 8 from A leaves {2, 6}. Note that 12 is not included because it was never in A.",
+    },
+    {
+      id: "q2",
+      text: "In a group of 50 people, 30 own a dog, 22 own a cat, and 12 own both. How many own at least one of the two?",
+      options: ["52", "40", "46", "38"],
+      correctIndex: 1,
+      explanation:
+        "By inclusion-exclusion, 30 + 22 - 12 = 40. Subtracting the overlap corrects for counting the 12 dual owners twice.",
+    },
+    {
+      id: "q3",
+      text: "Which expression equals the complement of (A intersect B)?",
+      options: [
+        "complement of A intersect complement of B",
+        "A union B",
+        "complement of A union complement of B",
+        "A minus B",
+      ],
+      correctIndex: 2,
+      explanation:
+        "De Morgan's law for sets: complementing an intersection turns it into the union of the complements. An element fails to be in both sets exactly when it is missing from at least one.",
+    },
+    {
+      id: "q4",
+      text: "Two sets are called disjoint when...",
+      options: [
+        "their union equals the universal set",
+        "one is a subset of the other",
+        "they have the same cardinality",
+        "their intersection is the empty set",
+      ],
+      correctIndex: 3,
+      explanation:
+        "Disjoint means sharing no elements at all, which is exactly the statement that the intersection is empty. In that case the union's cardinality is just the sum of the two cardinalities.",
+    },
+    {
+      id: "q5",
+      text: "Given |A| = 20, |B| = 25, |C| = 15, |A and B| = 8, |A and C| = 6, |B and C| = 5, and |A and B and C| = 2, what is the size of the union of all three?",
+      options: ["43", "60", "48", "37"],
+      correctIndex: 0,
+      explanation:
+        "Add the singles, subtract the pairs, add the triple: 20 + 25 + 15 - 8 - 6 - 5 + 2 = 43.",
+    },
+  ]}
+/>

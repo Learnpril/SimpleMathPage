@@ -1,0 +1,80 @@
+---
+/**
+ * LogicConnectives — NOT, AND, and OR drawn as logic gates, the physical
+ * form these connectives take in a circuit.
+ */
+const w = 540;
+const h = 170;
+---
+
+<figure
+  class="lgc"
+  role="img"
+  aria-label="The NOT, AND, and OR logic gates, each labelled with the condition under which its output is true"
+>
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    {/* ---------- NOT ---------- */}
+    <text x="75" y="24" class="lgc-name lgc-t-purple" font-size="14" font-weight="bold" text-anchor="middle">NOT</text>
+    <line x1="15" y1="80" x2="45" y2="80" class="lgc-wire" />
+    <text x="22" y="72" class="lgc-io" font-size="12">p</text>
+    <polygon points="45,58 45,102 82,80" class="lgc-gate lgc-purple" />
+    <circle cx="87" cy="80" r="5" class="lgc-gate lgc-purple" />
+    <line x1="92" y1="80" x2="130" y2="80" class="lgc-wire" />
+    <text x="113" y="72" class="lgc-io" font-size="12">¬p</text>
+    <text x="75" y="132" class="lgc-rule" font-size="11" text-anchor="middle">flips the value</text>
+
+    {/* ---------- AND ---------- */}
+    <text x="255" y="24" class="lgc-name lgc-t-green" font-size="14" font-weight="bold" text-anchor="middle">AND</text>
+    <line x1="185" y1="66" x2="220" y2="66" class="lgc-wire" />
+    <line x1="185" y1="94" x2="220" y2="94" class="lgc-wire" />
+    <text x="192" y="60" class="lgc-io" font-size="12">p</text>
+    <text x="192" y="112" class="lgc-io" font-size="12">q</text>
+    <path d="M220,52 L248,52 A28,28 0 0 1 248,108 L220,108 Z" class="lgc-gate lgc-green" />
+    <line x1="276" y1="80" x2="315" y2="80" class="lgc-wire" />
+    <text x="292" y="72" class="lgc-io" font-size="12">p ∧ q</text>
+    <text x="255" y="132" class="lgc-rule" font-size="11" text-anchor="middle">true only if both are true</text>
+
+    {/* ---------- OR ---------- */}
+    <text x="440" y="24" class="lgc-name lgc-t-blue" font-size="14" font-weight="bold" text-anchor="middle">OR</text>
+    <line x1="365" y1="66" x2="400" y2="66" class="lgc-wire" />
+    <line x1="365" y1="94" x2="400" y2="94" class="lgc-wire" />
+    <text x="372" y="60" class="lgc-io" font-size="12">p</text>
+    <text x="372" y="112" class="lgc-io" font-size="12">q</text>
+    <path d="M396,52 Q416,80 396,108 Q436,108 462,80 Q436,52 396,52 Z" class="lgc-gate lgc-blue" />
+    <line x1="462" y1="80" x2="500" y2="80" class="lgc-wire" />
+    <text x="478" y="72" class="lgc-io" font-size="12">p ∨ q</text>
+    <text x="440" y="132" class="lgc-rule" font-size="11" text-anchor="middle">true if at least one is true</text>
+
+    {/* Footnote */}
+    <text x={w / 2} y="158" class="lgc-foot" font-size="11" text-anchor="middle">
+      OR is inclusive: if both are true, the output is still true
+    </text>
+  </svg>
+</figure>
+
+<style>
+  .lgc { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .lgc svg { max-width:100%; height:auto; }
+  .lgc-gate { fill:none; stroke-width:2; }
+  .lgc-green { stroke:#7ee787; }
+  .lgc-blue { stroke:#58a6ff; }
+  .lgc-purple { stroke:#d2a8ff; }
+  .lgc-wire { stroke:#888; stroke-width:1.5; }
+  .lgc-name { font-family:'Libre Baskerville',Georgia,serif; }
+  .lgc-t-green { fill:#7ee787; }
+  .lgc-t-blue { fill:#58a6ff; }
+  .lgc-t-purple { fill:#d2a8ff; }
+  .lgc-io { fill:#888; font-family:'Libre Baskerville',Georgia,serif; }
+  .lgc-rule { fill:#888; font-family:'Libre Baskerville',Georgia,serif; }
+  .lgc-foot { fill:#f0883e; font-family:'Libre Baskerville',Georgia,serif; font-style:italic; }
+  :global([data-theme="light"]) .lgc-green { stroke:#116329; }
+  :global([data-theme="light"]) .lgc-blue { stroke:#0550ae; }
+  :global([data-theme="light"]) .lgc-purple { stroke:#6639ba; }
+  :global([data-theme="light"]) .lgc-wire { stroke:#555; }
+  :global([data-theme="light"]) .lgc-t-green { fill:#116329; }
+  :global([data-theme="light"]) .lgc-t-blue { fill:#0550ae; }
+  :global([data-theme="light"]) .lgc-t-purple { fill:#6639ba; }
+  :global([data-theme="light"]) .lgc-io { fill:#555; }
+  :global([data-theme="light"]) .lgc-rule { fill:#555; }
+  :global([data-theme="light"]) .lgc-foot { fill:#b35900; }
+</style>

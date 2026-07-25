@@ -1,0 +1,181 @@
+---
+/**
+ * PowerSetCube3D — the 8 subsets of {a, b, c} as the corners of a cube.
+ * Each axis is one element's in/out decision, so every edge adds or removes
+ * exactly one element. This is why an n-element set has 2^n subsets.
+ */
+---
+
+<figure
+  class="psc"
+  role="img"
+  aria-label="Interactive 3D cube whose eight corners are the eight subsets of the set a b c, with each edge joining subsets that differ by exactly one element"
+>
+  <div class="psc-canvas" data-psc3d></div>
+  <div class="psc-hint">Drag to rotate · Scroll/Pinch to zoom</div>
+  <figcaption class="psc-cap">
+    Each axis is one yes/no decision, so the corners are the 2<sup>3</sup> = 8 subsets.
+    Every edge adds or removes a single element.
+  </figcaption>
+</figure>
+
+<script>
+  import * as THREE from "three";
+  import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+
+  function initScene(container: HTMLElement) {
+    const width = Math.min(container.clientWidth, 480);
+    const height = 360;
+    const isDark = document.documentElement.dataset.theme !== "light";
+
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(isDark ? 0x121212 : 0xf8f9fa);
+
+    const camera = new THREE.PerspectiveCamera(42, width / height, 0.1, 200);
+    camera.position.set(3.6, 2.6, 4.2);
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(width, height);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    container.appendChild(renderer.domElement);
+
+    // Colour by subset size: empty, one element, two, all three
+    const sizeColors = isDark
+      ? [0x888888, 0x7ee787, 0x58a6ff, 0xf0883e]
+      : [0x777777, 0x116329, 0x0550ae, 0xb35900];
+
+    // The 8 subsets, indexed by their in/out bits for a, b, c
+    const corners: { bits: [number, number, number]; label: string; size: number }[] = [];
+    for (let a = 0; a < 2; a++) {
+      for (let b = 0; b < 2; b++) {
+        for (let c = 0; c < 2; c++) {
+          const parts: string[] = [];
+          if (a) parts.push("a");
+          if (b) parts.push("b");
+          if (c) parts.push("c");
+          corners.push({
+            bits: [a, b, c],
+            label: parts.length ? "{" + parts.join(",") + "}" : "\u2205",
+            size: a + b + c,
+          });
+        }
+      }
+    }
+
+    const S = 1.1; // half-edge length
+    const pos = (bits: [number, number, number]) =>
+      new THREE.Vector3((bits[0] * 2 - 1) * S, (bits[1] * 2 - 1) * S, (bits[2] * 2 - 1) * S);
+
+    // Edges: any two subsets differing in exactly one bit
+    const edgeMat = new THREE.LineBasicMaterial({
+      color: isDark ? 0x666666 : 0xaaaaaa,
+    });
+    for (let i = 0; i < corners.length; i++) {
+      for (let j = i + 1; j < corners.length; j++) {
+        const diff = corners[i].bits.reduce(
+          (acc, v, k) => acc + Math.abs(v - corners[j].bits[k]),
+          0,
+        );
+        if (diff !== 1) continue;
+        const geo = new THREE.BufferGeometry().setFromPoints([
+          pos(corners[i].bits),
+          pos(corners[j].bits),
+        ]);
+        scene.add(new THREE.Line(geo, edgeMat));
+      }
+    }
+
+    // Vertex spheres
+    for (const c of corners) {
+      const mat = new THREE.MeshPhongMaterial({ color: sizeColors[c.size] });
+      const sphere = new THREE.Mesh(new THREE.SphereGeometry(0.13, 20, 16), mat);
+      sphere.position.copy(pos(c.bits));
+      scene.add(sphere);
+    }
+
+    // Text labels as sprites
+    function makeLabel(text: string, p: THREE.Vector3, color: number) {
+      const canvas = document.createElement("canvas");
+      canvas.width = 256;
+      canvas.height = 64;
+      const ctx = canvas.getContext("2d")!;
+      ctx.font = "bold 34px sans-serif";
+      ctx.fillStyle = "#" + color.toString(16).padStart(6, "0");
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText(text, 128, 32);
+      const sprite = new THREE.Sprite(
+        new THREE.SpriteMaterial({ map: new THREE.CanvasTexture(canvas), transparent: true }),
+      );
+      // Nudge the label outward from the cube centre so it clears the geometry
+      const out = p.clone().normalize().multiplyScalar(0.42);
+      sprite.position.copy(p).add(out);
+      sprite.scale.set(1.15, 0.29, 1);
+      scene.add(sprite);
+    }
+    for (const c of corners) makeLabel(c.label, pos(c.bits), sizeColors[c.size]);
+
+    // Axis hints: which element each direction toggles
+    const axisColor = isDark ? 0x888888 : 0x666666;
+    makeLabel("+a", new THREE.Vector3(S * 1.5, -S, -S), axisColor);
+    makeLabel("+b", new THREE.Vector3(-S, S * 1.5, -S), axisColor);
+    makeLabel("+c", new THREE.Vector3(-S, -S, S * 1.5), axisColor);
+
+    scene.add(new THREE.AmbientLight(0xffffff, 0.75));
+    const dl = new THREE.DirectionalLight(0xffffff, 0.5);
+    dl.position.set(4, 5, 4);
+    scene.add(dl);
+
+    const controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.08;
+    controls.autoRotate = true;
+    controls.autoRotateSpeed = 0.7;
+    controls.minDistance = 3;
+    controls.maxDistance = 14;
+    controls.target.set(0, 0, 0);
+
+    let animId: number;
+    function animate() {
+      animId = requestAnimationFrame(animate);
+      controls.update();
+      renderer.render(scene, camera);
+    }
+    animate();
+
+    return () => {
+      cancelAnimationFrame(animId);
+      renderer.dispose();
+    };
+  }
+
+  function setup() {
+    document.querySelectorAll<HTMLElement>("[data-psc3d]").forEach((el) => {
+      if (el.querySelector("canvas")) return;
+      const obs = new IntersectionObserver(
+        (entries) => {
+          if (entries[0].isIntersecting) {
+            obs.disconnect();
+            initScene(el);
+          }
+        },
+        { threshold: 0.05 },
+      );
+      obs.observe(el);
+    });
+  }
+
+  setup();
+  document.addEventListener("astro:page-load", setup);
+</script>
+
+<style>
+  .psc { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .psc-canvas { width:100%; max-width:480px; min-height:360px; border-radius:8px; overflow:hidden; }
+  .psc-canvas canvas { border-radius:8px; }
+  .psc-hint { font-family:'Libre Baskerville',Georgia,serif; font-size:0.8rem; color:#888; margin-top:0.4rem; }
+  .psc-cap {
+    font-family:'Libre Baskerville',Georgia,serif; font-size:0.85rem; color:#888;
+    font-style:italic; text-align:center; max-width:460px; margin-top:0.5rem;
+  }
+</style>

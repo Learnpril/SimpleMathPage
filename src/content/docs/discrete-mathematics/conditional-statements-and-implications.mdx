@@ -1,0 +1,308 @@
+---
+title: Conditional Statements and Implications
+description: Master if-then statements, the converse, inverse, and contrapositive, and the biconditional
+sidebar:
+  order: 4
+---
+
+import Quiz from "../../../components/Quiz.astro";
+import ImplicationGrid from "../../../components/ImplicationGrid.astro";
+import ConverseContrapositive from "../../../components/ConverseContrapositive.astro";
+import SymbolKey from "../../../components/SymbolKey.astro";
+
+## What You'll Learn
+
+In this lesson you'll learn how the if-then statement works in logic (including the part that surprises everyone), how to form the converse, inverse, and contrapositive of a conditional, which of those is equivalent to the original, and what a biconditional means.
+
+<SymbolKey
+  items={[
+    {
+      sym: "p → q",
+      read: "if p, then q",
+      note: "also read “p implies q”; the arrow points from cause to consequence",
+    },
+    {
+      sym: "p ↔ q",
+      read: "p if and only if q",
+      note: "often shortened to “p iff q”; true when both sides match",
+    },
+    {
+      sym: "⇒, ⇔",
+      read: "implies, if and only if",
+      note: "heavier arrows some books use for the same two ideas",
+    },
+  ]}
+/>
+
+## The Concept
+
+A **conditional statement**, also called an **implication**, has the form "if $p$, then $q$." We write it
+
+$$
+p \rightarrow q
+$$
+
+The part before the arrow, $p$, is the **hypothesis** or **antecedent**. The part after, $q$, is the **conclusion** or **consequent**.
+
+Here's the truth table, and it's the one table in this whole subject worth staring at for a minute:
+
+| $p$ | $q$ | $p \rightarrow q$ |
+| :-: | :-: | :---------------: |
+|  T  |  T  |         T         |
+|  T  |  F  |       **F**       |
+|  F  |  T  |         T         |
+|  F  |  F  |         T         |
+
+An implication is false in exactly **one** case: when the hypothesis is true but the conclusion is false. That's the only way a promise gets broken.
+
+Laid out as a grid, the lopsidedness is obvious:
+
+<ImplicationGrid />
+
+### Why the last two rows are true
+
+This is the part that feels wrong at first. Why should "if $p$ then $q$" be **true** when $p$ is false?
+
+Think of an implication as a promise. Suppose a teacher says:
+
+> "If you score above 90, you get an A."
+
+When does that promise get broken? Only if you score above 90 and don't get an A. That's row 2.
+
+- You score 95 and get an A. Promise kept. (Row 1)
+- You score 95 and get a B. **Promise broken.** (Row 2)
+- You score 70 and get an A. Maybe generous, but the promise said nothing about what happens below 90. Not broken. (Row 3)
+- You score 70 and get a C. Nothing was promised about this case. Not broken. (Row 4)
+
+An implication makes no claim at all about what happens when the hypothesis fails. So it can't be violated there, and in logic "not violated" means true. When $p$ is false, the implication is called **vacuously true**.
+
+"If pigs can fly, then $2 + 2 = 5$" is a true statement. Weird, but harmless, because pigs can't fly so the claim never gets tested.
+
+### The key equivalence
+
+Compare the implication table to $\neg p \vee q$ from the truth tables lesson. They match. So:
+
+$$
+p \rightarrow q \equiv \neg p \vee q
+$$
+
+This is how you negate an implication. Apply De Morgan:
+
+$$
+\neg(p \rightarrow q) \equiv \neg(\neg p \vee q) \equiv p \wedge \neg q
+$$
+
+**The negation of an if-then statement is not another if-then statement.** It's an AND. To deny "if $p$ then $q$," you assert that $p$ happened and $q$ didn't. That's exactly the single false row.
+
+### The three related conditionals
+
+Given $p \rightarrow q$, there are three standard variations:
+
+| Name               | Form                        | Reads as                 |
+| ------------------ | --------------------------- | ------------------------ |
+| **Original**       | $p \rightarrow q$           | If $p$, then $q$         |
+| **Converse**       | $q \rightarrow p$           | If $q$, then $p$         |
+| **Inverse**        | $\neg p \rightarrow \neg q$ | If not $p$, then not $q$ |
+| **Contrapositive** | $\neg q \rightarrow \neg p$ | If not $q$, then not $p$ |
+
+The truth table:
+
+| $p$ | $q$ | $p \rightarrow q$ | $q \rightarrow p$ | $\neg p \rightarrow \neg q$ | $\neg q \rightarrow \neg p$ |
+| :-: | :-: | :---------------: | :---------------: | :-------------------------: | :-------------------------: |
+|  T  |  T  |         T         |         T         |              T              |              T              |
+|  T  |  F  |         F         |         T         |              T              |              F              |
+|  F  |  T  |         T         |         F         |              F              |              T              |
+|  F  |  F  |         T         |         T         |              T              |              T              |
+
+Read the columns carefully:
+
+- **The contrapositive is equivalent to the original.** Columns 3 and 6 match exactly.
+- **The converse is not.** Rows 2 and 3 disagree.
+- **The inverse is not** either. But notice the converse and inverse match each other, since each is the contrapositive of the other.
+
+$$
+p \rightarrow q \equiv \neg q \rightarrow \neg p
+$$
+
+The four statements pair up on the diagonals:
+
+<ConverseContrapositive />
+
+This single fact powers an entire proof technique, which is the next lesson. If a statement is awkward to prove directly, prove the contrapositive instead. It's the same claim.
+
+### Necessary and sufficient
+
+Mathematicians phrase $p \rightarrow q$ several ways, and they all mean the same thing:
+
+- If $p$, then $q$
+- $p$ implies $q$
+- $p$ is **sufficient** for $q$ (having $p$ is enough to guarantee $q$)
+- $q$ is **necessary** for $p$ ($p$ can't happen without $q$)
+- $q$ whenever $p$
+- $p$ only if $q$
+
+That last one trips people up. "You may enter only if you have a ticket" means having a ticket is necessary, so it translates to $\text{enter} \rightarrow \text{ticket}$, not the other way around.
+
+### The biconditional
+
+The **biconditional** $p \leftrightarrow q$ means "$p$ if and only if $q$," often abbreviated **iff**. It's true when both parts have the **same** truth value.
+
+| $p$ | $q$ | $p \leftrightarrow q$ |
+| :-: | :-: | :-------------------: |
+|  T  |  T  |           T           |
+|  T  |  F  |           F           |
+|  F  |  T  |           F           |
+|  F  |  F  |           T           |
+
+It's the same as asserting both directions at once:
+
+$$
+p \leftrightarrow q \equiv (p \rightarrow q) \wedge (q \rightarrow p)
+$$
+
+This is why proving an "if and only if" theorem always takes two proofs. You show $p$ forces $q$, then you show $q$ forces $p$.
+
+Definitions in math are almost always biconditionals. "An integer is even if and only if it is divisible by 2" works in both directions, which is what makes it a definition rather than just a fact.
+
+## Worked Examples
+
+**Example 1: Form all three variations.**
+
+Statement: "If a number is divisible by 6, then it is divisible by 3." (True.)
+
+- **Converse:** "If a number is divisible by 3, then it is divisible by 6." **False.** 9 is divisible by 3 but not 6.
+- **Inverse:** "If a number is not divisible by 6, then it is not divisible by 3." **False.** Same counterexample, 9.
+- **Contrapositive:** "If a number is not divisible by 3, then it is not divisible by 6." **True**, as it must be, since it's equivalent to the original.
+
+**Example 2: Negate an implication.**
+
+Negate: "If the alarm is armed, then the doors are locked."
+
+**Solution.** Using $\neg(p \rightarrow q) \equiv p \wedge \neg q$:
+
+"The alarm is armed **and** the doors are **not** locked."
+
+A very common wrong answer is "if the alarm is armed, then the doors are not locked." That's a different statement entirely, and it isn't the negation.
+
+**Example 3: Spot the fallacy.**
+
+A system logs: "If the disk is full, the backup fails." The backup failed. Did the disk fill up?
+
+**Solution.** No. That's using the converse, which doesn't follow. The backup could have failed for a dozen other reasons: network timeout, bad credentials, corrupt file.
+
+This mistake is called **affirming the consequent**, or the **converse error**.
+
+What _would_ be valid: the backup **succeeded**, therefore the disk was **not** full. That's the contrapositive, and it's airtight.
+
+**Example 4: Translate necessary and sufficient.**
+
+"Being a square is sufficient for being a rectangle. Being a rectangle is necessary for being a square."
+
+**Solution.** Both sentences say the same thing:
+
+$$
+\text{square} \rightarrow \text{rectangle}
+$$
+
+The converse is false: a 3-by-5 rectangle is not a square. So this is a one-directional implication, not a biconditional.
+
+**Example 5: A biconditional.**
+
+Is this a valid biconditional? "An integer $n$ is even if and only if $n^2$ is even."
+
+**Solution.** Check both directions.
+
+Forward: if $n$ is even then $n = 2k$, so $n^2 = 4k^2 = 2(2k^2)$, which is even. True.
+
+Backward: if $n^2$ is even, is $n$ even? Yes, and the easiest argument is the contrapositive: if $n$ is odd, then $n = 2k+1$ and $n^2 = 4k^2 + 4k + 1 = 2(2k^2+2k) + 1$, which is odd. So an even $n^2$ forces an even $n$.
+
+Both directions hold, so the biconditional is valid.
+
+## Real-World Applications
+
+The converse error is probably the single most common reasoning mistake in ordinary life, and knowing its name makes it easy to catch.
+
+Medical testing runs on this. "If you have the disease, the test comes back positive" does not mean "if the test comes back positive, you have the disease." The gap between those two statements is the false positive rate, and misunderstanding it leads to real harm.
+
+Legal reasoning is full of necessary-versus-sufficient distinctions. Meeting a residency requirement might be necessary for a benefit without being sufficient.
+
+In programming, the contrapositive shows up as guard clauses. Instead of nesting the happy path inside a condition, you check the negation of the conclusion and bail out early. It's the same logic, restructured for readability.
+
+Debugging is contrapositive reasoning almost end to end. "If the config loaded, the version string would be set. The version string is empty. Therefore the config did not load." That's valid, and it eliminates a whole branch of the search.
+
+:::note[You've Got This]
+The vacuous truth thing bothers nearly everyone the first time. If you're stuck on it, hold onto the promise analogy: a promise about what happens when you score above 90 simply isn't broken by anything that happens when you score below 90. And if you remember only one thing from this lesson, make it this: the contrapositive is your friend and the converse is a trap.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="discrete-conditional-statements-and-implications"
+  questions={[
+    {
+      id: "q1",
+      text: "In which single case is the implication 'if p then q' false?",
+      options: [
+        "When p is false and q is true",
+        "When p is true and q is false",
+        "When both p and q are false",
+        "When both p and q are true",
+      ],
+      correctIndex: 1,
+      explanation:
+        "An implication is a promise, and it is only broken when the hypothesis holds but the conclusion does not. Every other row is true, including both rows where p is false.",
+    },
+    {
+      id: "q2",
+      text: "Which statement is logically equivalent to 'If it is snowing, then school is closed'?",
+      options: [
+        "If school is closed, then it is snowing",
+        "If it is not snowing, then school is not closed",
+        "If school is not closed, then it is not snowing",
+        "It is snowing and school is closed",
+      ],
+      correctIndex: 2,
+      explanation:
+        "The contrapositive swaps and negates both parts, and it is always equivalent to the original. The first option is the converse and the second is the inverse; neither is equivalent.",
+    },
+    {
+      id: "q3",
+      text: "What is the correct negation of 'If the file exists, then the backup ran'?",
+      options: [
+        "If the file exists, then the backup did not run",
+        "If the file does not exist, then the backup ran",
+        "The file exists and the backup did not run",
+        "The file does not exist and the backup did not run",
+      ],
+      correctIndex: 2,
+      explanation:
+        "Since p implies q is equivalent to (NOT p) OR q, its negation is p AND (NOT q). The negation of an implication is a conjunction, not another implication.",
+    },
+    {
+      id: "q4",
+      text: "'You can board only if you have a boarding pass.' Which implication does this express?",
+      options: [
+        "boarding pass implies you can board",
+        "you board implies you have a boarding pass",
+        "no boarding pass implies you can board",
+        "you board if and only if you have a boarding pass",
+      ],
+      correctIndex: 1,
+      explanation:
+        "'Only if' marks a necessary condition. Having the pass is necessary for boarding, so boarding implies having the pass. Having a pass alone does not guarantee you board.",
+    },
+    {
+      id: "q5",
+      text: "To prove a biconditional statement 'p if and only if q', what must you establish?",
+      options: [
+        "Only that p implies q",
+        "That p and q are both true",
+        "Only that q implies p",
+        "That p implies q and that q implies p",
+      ],
+      correctIndex: 3,
+      explanation:
+        "A biconditional is the conjunction of both implications, so it requires proving both directions. Establishing just one direction leaves the other unverified.",
+    },
+  ]}
+/>

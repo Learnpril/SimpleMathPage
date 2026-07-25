@@ -1,0 +1,284 @@
+---
+title: Proof by Contradiction and Contrapositive
+description: Learn two indirect proof techniques and when each one is the right tool
+sidebar:
+  order: 9
+---
+
+import Quiz from "../../../components/Quiz.astro";
+import ContradictionFlow from "../../../components/ContradictionFlow.astro";
+
+## What You'll Learn
+
+In this lesson you'll learn the two main indirect proof techniques: proof by contrapositive and proof by contradiction. You'll see how each one is set up, why each is logically valid, and how to tell which one a problem is asking for.
+
+## The Concept
+
+Some statements resist a direct attack. If you assume the hypothesis and get stuck immediately, that's usually a signal to try an indirect approach.
+
+### Proof by contrapositive
+
+Recall from the conditionals lesson:
+
+$$
+p \rightarrow q \equiv \neg q \rightarrow \neg p
+$$
+
+The contrapositive is **logically equivalent** to the original, so proving it proves the original. Not "almost," not "close enough." It is the same claim.
+
+The setup:
+
+1. State that you'll prove the contrapositive.
+2. Assume $\neg q$.
+3. Derive $\neg p$ directly.
+4. Conclude that $p \rightarrow q$ follows.
+
+**When to use it:** when the negation of the conclusion is more useful than the hypothesis. This happens a lot. "If $n^2$ is even, then $n$ is even" gives you almost nothing to work with, because "$n^2$ is even" means $n^2 = 2k$ and you can't take a clean square root of that. But the contrapositive assumes $n$ is odd, which hands you $n = 2j+1$ and you're immediately doing algebra.
+
+Rule of thumb: if the hypothesis is about a squared or composed quantity and the conclusion is about the raw quantity, try the contrapositive.
+
+### Proof by contradiction
+
+Also called _reductio ad absurdum_. The idea: assume your statement is false, and show that assumption forces an impossibility. Since the assumption leads to something that cannot be, the assumption must be wrong, so the statement is true.
+
+To prove a statement $S$:
+
+1. Assume $\neg S$.
+2. Reason until you reach a contradiction, meaning something and its own negation are both true.
+3. Conclude $\neg S$ is impossible, so $S$ holds.
+
+For an implication $p \rightarrow q$, the negation is $p \wedge \neg q$. So you assume the hypothesis holds **and** the conclusion fails, and hunt for the impossibility.
+
+$$
+\neg(p \rightarrow q) \equiv p \wedge \neg q
+$$
+
+**When to use it:** proving something does **not** exist, proving something is irrational, proving uniqueness, or any time the claim is hard to build toward but easy to break.
+
+The contradiction you land on can be anything absurd: $1 = 0$, a number both even and odd, a fraction in lowest terms that isn't, a smallest element that has something smaller.
+
+<ContradictionFlow />
+
+### How the two techniques differ
+
+They look similar and they're often confused.
+
+|                  | **Contrapositive**          | **Contradiction**           |
+| ---------------- | --------------------------- | --------------------------- |
+| What you assume  | $\neg q$ only               | $p$ and $\neg q$ together   |
+| What you aim for | $\neg p$, a specific target | any contradiction at all    |
+| Applies to       | implications only           | any statement               |
+| Feels like       | a direct proof, relabeled   | a trap you set for yourself |
+
+Contrapositive is more constrained, which is usually an advantage. You know exactly what you're trying to reach. Contradiction is more flexible but you have to notice the absurdity when you hit it.
+
+If a problem is an implication and you can see how $\neg q$ would give you traction, use the contrapositive. It's cleaner and easier to check.
+
+## Worked Examples
+
+**Example 1: Contrapositive.**
+
+**Claim.** For any integer $n$, if $n^2$ is even, then $n$ is even.
+
+**Proof by contrapositive.** The contrapositive is: if $n$ is odd, then $n^2$ is odd.
+
+Assume $n$ is odd, so $n = 2k+1$ for some integer $k$. Then
+
+$$
+n^2 = 4k^2 + 4k + 1 = 2(2k^2 + 2k) + 1
+$$
+
+Since $2k^2 + 2k$ is an integer, $n^2$ is odd.
+
+The contrapositive holds, so the original claim holds. $\blacksquare$
+
+Try the direct route to feel the difference. Assume $n^2 = 2k$. Now what? You'd need to argue about square roots of a form you don't control. The contrapositive is a two-line proof.
+
+**Example 2: Contrapositive with a sum.**
+
+**Claim.** If $m + n$ is odd, then $m$ and $n$ have opposite parity (one even, one odd).
+
+**Proof by contrapositive.** The contrapositive: if $m$ and $n$ have the same parity, then $m + n$ is even.
+
+**Case 1: both even.** $m = 2j$, $n = 2k$, so $m + n = 2(j+k)$, even.
+
+**Case 2: both odd.** $m = 2j+1$, $n = 2k+1$, so
+
+$$
+m + n = 2j + 2k + 2 = 2(j + k + 1)
+$$
+
+which is even.
+
+Same parity forces an even sum, so the original claim holds. $\blacksquare$
+
+**Example 3: Contradiction with a bound.**
+
+**Claim.** There is no largest even integer.
+
+**Proof by contradiction.** Suppose there is a largest even integer. Call it $N$.
+
+Consider $N + 2$. Since $N$ is even, $N = 2k$, so $N + 2 = 2(k+1)$ is also even. And $N + 2 > N$.
+
+So $N + 2$ is an even integer larger than $N$, contradicting the assumption that $N$ was the largest.
+
+The assumption is impossible, so no largest even integer exists. $\blacksquare$
+
+This is the standard shape for "no largest / no smallest" claims: assume one exists, then construct something bigger or smaller.
+
+**Example 4: The classic. $\sqrt{2}$ is irrational.**
+
+**Proof by contradiction.** Suppose $\sqrt{2}$ is rational. Then it can be written as a fraction in lowest terms:
+
+$$
+\sqrt{2} = \frac{a}{b}
+$$
+
+where $a$ and $b$ are integers, $b \neq 0$, and $a, b$ share no common factor.
+
+Square both sides:
+
+$$
+2 = \frac{a^2}{b^2} \quad \Longrightarrow \quad a^2 = 2b^2
+$$
+
+So $a^2$ is even. By Example 1, $a$ must be even. Write $a = 2c$:
+
+$$
+(2c)^2 = 2b^2 \quad \Longrightarrow \quad 4c^2 = 2b^2 \quad \Longrightarrow \quad b^2 = 2c^2
+$$
+
+So $b^2$ is even, and by Example 1 again, $b$ is even.
+
+But now $a$ and $b$ are both even, so they share a factor of 2. That contradicts "lowest terms."
+
+The assumption is impossible, so $\sqrt{2}$ is irrational. $\blacksquare$
+
+This proof is roughly 2,500 years old and reportedly caused a crisis among the Pythagoreans, who had built a worldview on the idea that all quantities were ratios of whole numbers. Notice it leans on Example 1, which is why we proved that first.
+
+**Example 5: Contradiction with primes.**
+
+**Claim.** There are infinitely many prime numbers. (Euclid, around 300 BCE.)
+
+**Proof by contradiction.** Suppose there are finitely many primes. List them all:
+
+$$
+p_1, p_2, p_3, \ldots, p_n
+$$
+
+Construct
+
+$$
+N = (p_1 \cdot p_2 \cdot p_3 \cdots p_n) + 1
+$$
+
+$N$ is larger than every prime in the list, so $N$ is not on the list, so $N$ is not prime. Every integer greater than 1 has a prime factor, so some $p_i$ from the list divides $N$.
+
+But $p_i$ divides the product $p_1 p_2 \cdots p_n$, so dividing $N$ by $p_i$ leaves a remainder of 1. So $p_i$ does not divide $N$.
+
+We have $p_i$ both dividing and not dividing $N$. Contradiction.
+
+Therefore there are infinitely many primes. $\blacksquare$
+
+**Example 6: Contradiction with a rational and an irrational.**
+
+**Claim.** If $r$ is rational and $x$ is irrational, then $r + x$ is irrational.
+
+**Proof by contradiction.** Assume $r$ is rational, $x$ is irrational, and $r + x$ is rational.
+
+Write $r = \frac{a}{b}$ and $r + x = \frac{c}{d}$ with integers $a,b,c,d$ and $b,d \neq 0$. Then
+
+$$
+x = (r + x) - r = \frac{c}{d} - \frac{a}{b} = \frac{cb - ad}{db}
+$$
+
+The numerator and denominator are integers and $db \neq 0$, so $x$ is rational.
+
+But $x$ was assumed irrational. Contradiction, so $r + x$ must be irrational. $\blacksquare$
+
+## Real-World Applications
+
+Contradiction is the everyday tool of debugging, whether or not anyone calls it that. "If the cache were working, this response would be fast. It's slow. So the cache isn't working." You assume the thing you doubt, follow it to an observation that conflicts with reality, and eliminate it.
+
+Impossibility results in computer science are all contradiction proofs. The halting problem is undecidable because assuming a halting-detector exists lets you build a program that must both halt and not halt. Similar arguments prove lower bounds on sorting and the impossibility of certain distributed-systems guarantees. These results save enormous effort, because they tell you to stop looking.
+
+Cryptography depends on this style of reasoning. Security proofs are typically of the form "if an attacker could break this scheme, they could also solve a problem believed to be intractable."
+
+Legal and scientific reasoning use it too. A reductio argument in court ("if the defendant were at the scene, the timestamps would overlap, and they don't") is exactly this technique. And in science, the falsification model is contradiction-shaped: derive a consequence from the hypothesis, test it, and if it fails, the hypothesis goes.
+
+:::note[You've Got This]
+The signal to reach for the contrapositive is getting stuck one line into a direct proof. The signal to reach for contradiction is a claim about something not existing, or something being impossible, or something being irrational. Also, be honest about what you've reached. A contradiction means two statements that literally cannot both be true. "This seems unlikely" isn't a contradiction, and the discipline of naming exactly which two facts collide is what keeps these proofs sound.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="discrete-proof-by-contradiction-and-contrapositive"
+  questions={[
+    {
+      id: "q1",
+      text: "To prove 'if p then q' by contrapositive, what do you assume and what do you derive?",
+      options: [
+        "Assume q, derive p",
+        "Assume NOT q, derive NOT p",
+        "Assume p and NOT q, derive a contradiction",
+        "Assume NOT p, derive NOT q",
+      ],
+      correctIndex: 1,
+      explanation:
+        "The contrapositive of p implies q is NOT q implies NOT p, and it is logically equivalent to the original. Assuming NOT p and deriving NOT q would be the inverse, which is not equivalent.",
+    },
+    {
+      id: "q2",
+      text: "When proving the implication 'if p then q' by contradiction, what do you assume?",
+      options: [
+        "That p is false",
+        "That q is true",
+        "That p is true and q is false",
+        "That p and q are both false",
+      ],
+      correctIndex: 2,
+      explanation:
+        "The negation of an implication is p AND NOT q, so that is exactly the assumption you work from. You then look for any impossibility that follows.",
+    },
+    {
+      id: "q3",
+      text: "In the classic proof that the square root of 2 is irrational, what contradiction is reached?",
+      options: [
+        "The fraction turns out to equal zero",
+        "Both the numerator and denominator turn out even, contradicting lowest terms",
+        "The square root turns out to be negative",
+        "The numerator turns out larger than the denominator",
+      ],
+      correctIndex: 1,
+      explanation:
+        "The argument shows a is even, then that b is even, so the fraction was not in lowest terms after all. That collides directly with the assumption made at the start.",
+    },
+    {
+      id: "q4",
+      text: "Why is proof by contrapositive often easier than a direct proof for 'if n squared is even, then n is even'?",
+      options: [
+        "Because it lets you assume n is odd, which gives a usable algebraic form",
+        "Because it only requires checking a few examples",
+        "Because the contrapositive is a weaker claim",
+        "Because squaring is not defined for odd numbers",
+      ],
+      correctIndex: 0,
+      explanation:
+        "Assuming n is odd gives you n = 2k + 1 immediately, making the algebra straightforward. The contrapositive is equivalent, not weaker, so nothing is lost.",
+    },
+    {
+      id: "q5",
+      text: "Which type of claim is proof by contradiction especially well suited to?",
+      options: [
+        "Claims that a formula holds for all positive integers",
+        "Claims that two sets are equal",
+        "Claims that something does not exist or is impossible",
+        "Claims that require checking many separate cases",
+      ],
+      correctIndex: 2,
+      explanation:
+        "Non-existence claims give you a concrete object to assume and then break, which is exactly what contradiction needs. Statements about all positive integers are usually better handled by induction.",
+    },
+  ]}
+/>

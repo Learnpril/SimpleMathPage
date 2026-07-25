@@ -1,0 +1,307 @@
+---
+title: Trees and Spanning Trees
+description: Learn what makes a graph a tree, rooted tree vocabulary, spanning trees, and minimum spanning tree algorithms
+sidebar:
+  order: 17
+---
+
+import Quiz from "../../../components/Quiz.astro";
+import TreeAnatomy from "../../../components/TreeAnatomy.astro";
+import SpanningTreeMST from "../../../components/SpanningTreeMST.astro";
+
+## What You'll Learn
+
+In this lesson you'll learn the definition of a tree and the equivalent ways to characterize one, the vocabulary of rooted trees, why a tree on $n$ vertices always has $n-1$ edges, what a spanning tree is, and how Kruskal's and Prim's algorithms find a minimum spanning tree.
+
+## The Concept
+
+A **tree** is a connected graph with no cycles.
+
+That's it, but the consequences are unusually rich. Trees are the most useful special case of graph in all of computer science.
+
+### Equivalent characterizations
+
+For a graph $G$ with $n$ vertices, all of the following say the same thing:
+
+1. $G$ is connected and has no cycles.
+2. $G$ is connected and has exactly $n-1$ edges.
+3. $G$ has no cycles and has exactly $n-1$ edges.
+4. There is **exactly one** path between every pair of vertices.
+5. $G$ is connected, and removing any edge disconnects it. (Every edge is a bridge.)
+6. $G$ has no cycles, and adding any edge creates exactly one cycle.
+
+Any one of these implies the rest. Characterization 4 is often the most useful intuition: a tree is a graph where routes are unique. No choices, no redundancy, no alternate paths.
+
+### Why $n-1$ edges
+
+Start with one vertex and no edges. Every time you add a new vertex to a tree, you must connect it with exactly one edge: zero edges would disconnect it, and two or more would create a cycle.
+
+So the edge count always trails the vertex count by exactly one:
+
+$$
+|E| = |V| - 1
+$$
+
+This also means a tree is the **minimally connected** graph. Remove any edge and it falls apart. Trees have zero redundancy, which is efficient and fragile in equal measure.
+
+### A forest
+
+A graph with no cycles that isn't necessarily connected is a **forest**. Each component is a tree. A forest with $n$ vertices and $c$ components has
+
+$$
+|E| = n - c
+$$
+
+edges.
+
+### Rooted trees
+
+Designate one vertex as the **root** and the tree acquires a hierarchy. Now everything hangs downward from the root, and you get a full vocabulary:
+
+- **Root:** the designated top vertex.
+- **Parent:** the vertex directly above a given vertex. The root has none.
+- **Child:** a vertex directly below.
+- **Sibling:** vertices with the same parent.
+- **Leaf:** a vertex with no children.
+- **Internal vertex:** any non-leaf.
+- **Ancestor / descendant:** anything above / below on the path to or from the root.
+- **Depth (or level):** distance from the root. The root has depth 0.
+- **Height:** the greatest depth in the tree.
+- **Subtree:** a vertex plus all its descendants.
+
+<TreeAnatomy />
+
+A **binary tree** allows at most 2 children per vertex. An **$m$-ary tree** allows at most $m$.
+
+A **full** $m$-ary tree has every internal vertex holding exactly $m$ children. A **balanced** tree keeps all leaves at roughly the same depth, which is what makes search operations fast.
+
+Two useful bounds for a binary tree of height $h$:
+
+- At most $2^h$ vertices at depth $h$.
+- At most $2^{h+1} - 1$ vertices total.
+
+Flip that around and a balanced binary tree holding $n$ vertices has height about $\log_2 n$. That logarithm is the entire reason balanced trees are the standard data structure for search: a million items sit within about 20 steps of the root.
+
+### Spanning trees
+
+A **spanning tree** of a connected graph $G$ is a subgraph that:
+
+- includes **every** vertex of $G$, and
+- is a tree.
+
+You're throwing away edges until only enough remain to keep everything connected, and no more.
+
+Every connected graph has at least one spanning tree, and most have many. $K_n$ has $n^{n-2}$ of them, a result called **Cayley's formula**. $K_4$ has $4^2 = 16$ spanning trees.
+
+### Minimum spanning trees
+
+In a **weighted** connected graph, a **minimum spanning tree** (MST) is a spanning tree whose total edge weight is as small as possible.
+
+Two classic greedy algorithms find one, and remarkably, greedy works here. That's unusual, and it's why these algorithms are so short.
+
+**Kruskal's algorithm** (sort edges globally):
+
+1. Sort all edges by weight, ascending.
+2. Go through them in order. Add an edge if it does **not** create a cycle with edges already chosen; otherwise skip it.
+3. Stop after $n-1$ edges.
+
+**Prim's algorithm** (grow one tree):
+
+1. Start at any vertex.
+2. Repeatedly add the cheapest edge connecting a vertex already in the tree to a vertex not yet in it.
+3. Stop after $n-1$ edges.
+
+Both always produce a minimum spanning tree. If the edge weights are all distinct, the MST is unique and both algorithms find the same one. With ties, there can be several MSTs with equal total weight, and the algorithms may land on different ones.
+
+Kruskal thinks globally and can build several fragments that merge later. Prim keeps one connected blob that grows outward. Kruskal is usually easier by hand; Prim is often faster on dense graphs.
+
+Running Kruskal on the graph from Example 5 below keeps four edges and skips three:
+
+<SpanningTreeMST />
+
+## Worked Examples
+
+**Example 1: Is it a tree?**
+
+A connected graph has 10 vertices and 12 edges. Is it a tree?
+
+**Solution.** A tree on 10 vertices has exactly 9 edges. This has 12, so **no**.
+
+The 3 extra edges mean the graph contains cycles. In general, a connected graph with $n$ vertices and $m$ edges has $m - n + 1$ independent cycles, so this one has 3.
+
+**Example 2: Complete the count.**
+
+A tree has 15 vertices. How many edges? If 9 of them are leaves, how many internal vertices?
+
+**Solution.**
+
+$$
+|E| = 15 - 1 = 14
+$$
+
+Internal vertices: $15 - 9 = 6$.
+
+**Example 3: Rooted tree vocabulary.**
+
+A rooted tree: root $R$ has children $A$ and $B$. $A$ has children $C$ and $D$. $B$ has child $E$. $E$ has children $F$ and $G$.
+
+Identify the leaves, the height, the depth of $F$, and the descendants of $B$.
+
+**Solution.**
+
+- **Leaves** (no children): $C$, $D$, $F$, $G$.
+- **Depths:** $R$ is 0. $A, B$ are 1. $C, D, E$ are 2. $F, G$ are 3.
+- **Height:** 3, the maximum depth.
+- **Depth of $F$:** 3.
+- **Descendants of $B$:** $E$, $F$, $G$.
+
+Total vertices: 7. Edges: 6, as required.
+
+**Example 4: Binary tree height.**
+
+What is the minimum possible height of a binary tree with 100 vertices?
+
+**Solution.** A binary tree of height $h$ holds at most $2^{h+1} - 1$ vertices.
+
+- $h = 5$: at most $2^6 - 1 = 63$. Not enough.
+- $h = 6$: at most $2^7 - 1 = 127$. Enough.
+
+**Minimum height 6.** A balanced tree achieves it; a badly built one could be as tall as 99.
+
+**Example 5: Kruskal's algorithm.**
+
+Find the MST of this weighted graph.
+
+Vertices: $A, B, C, D, E$. Edges:
+
+$$
+AB = 2, \; AC = 3, \; BC = 1, \; BD = 4, \; CD = 5, \; CE = 7, \; DE = 6
+$$
+
+**Solution.** Sort ascending: $BC(1)$, $AB(2)$, $AC(3)$, $BD(4)$, $CD(5)$, $DE(6)$, $CE(7)$.
+
+Process in order:
+
+1. $BC(1)$ — add. Tree: $\{BC\}$
+2. $AB(2)$ — add, no cycle. Tree: $\{BC, AB\}$
+3. $AC(3)$ — **skip.** $A$ and $C$ are already connected via $B$, so this would close a cycle.
+4. $BD(4)$ — add. Tree: $\{BC, AB, BD\}$
+5. $CD(5)$ — **skip.** $C$ and $D$ already connected.
+6. $DE(6)$ — add. Tree: $\{BC, AB, BD, DE\}$
+
+We now have 4 edges for 5 vertices, so we stop.
+
+$$
+\text{MST} = \{BC, AB, BD, DE\}, \quad \text{total weight} = 1 + 2 + 4 + 6 = 13
+$$
+
+**Example 6: Prim's algorithm on the same graph.**
+
+**Solution.** Start at $A$.
+
+1. In tree: $\{A\}$. Cheapest edge leaving: $AB(2)$ vs $AC(3)$. Take $AB(2)$. Tree: $\{A,B\}$
+2. Edges leaving $\{A,B\}$: $AC(3)$, $BC(1)$, $BD(4)$. Cheapest is $BC(1)$. Tree: $\{A,B,C\}$
+3. Edges leaving: $BD(4)$, $CD(5)$, $CE(7)$. Cheapest is $BD(4)$. Tree: $\{A,B,C,D\}$
+4. Edges leaving: $CE(7)$, $DE(6)$. Cheapest is $DE(6)$. Tree: all 5 vertices.
+
+$$
+\text{MST} = \{AB, BC, BD, DE\}, \quad \text{total weight} = 13
+$$
+
+Same tree, same weight, arrived at in a different order. That's the expected outcome when weights are distinct.
+
+**Example 7: Counting spanning trees.**
+
+How many spanning trees does $K_5$ have?
+
+**Solution.** By Cayley's formula, $n^{n-2}$:
+
+$$
+5^3 = 125
+$$
+
+## Real-World Applications
+
+File systems are rooted trees. Directories are internal vertices, files are leaves, and the unique-path property is why every file has exactly one absolute path. The `..` reference is just "go to my parent."
+
+The DOM in every web page is a rooted tree, which is why CSS selectors can talk about children, descendants, and siblings. XML and JSON parse into trees for the same reason.
+
+Balanced search trees are the workhorse of databases. B-trees and B+ trees index nearly every relational database on earth, and their whole value proposition is the $\log n$ height bound: finding one row among a billion takes a handful of disk reads instead of a billion.
+
+Minimum spanning trees solve real infrastructure problems, and the algorithms were invented for exactly that. Laying fiber to connect a set of towns with the least cable, wiring a building's electrical network, designing pipeline layouts, and planning circuit board traces are all MST problems. Network routing protocols use spanning trees to eliminate loops, which is literally what the Spanning Tree Protocol on Ethernet switches does.
+
+Decision trees drive machine learning classifiers and medical triage protocols. Huffman coding, the basis of much file compression, builds a binary tree where frequently used symbols sit near the root and get short codes.
+
+Version control history is a tree (a directed acyclic graph once you allow merges), with branches as literal branches. Organizational charts, taxonomies, family trees, and tournament brackets are all trees, and they all inherit the unique-path property.
+
+:::note[You've Got This]
+The $n-1$ edge rule is the fastest sanity check in this lesson. Count vertices, count edges, and if they don't differ by exactly one, it isn't a tree. For MST problems, Kruskal by hand is hard to beat: sort the edges, walk down the list, and skip anything that closes a cycle. The only judgment call is spotting cycles, and for small graphs that's just looking at your drawing. Stop as soon as you have n-1 edges.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="discrete-trees-and-spanning-trees"
+  questions={[
+    {
+      id: "q1",
+      text: "A tree has 23 vertices. How many edges does it have?",
+      options: ["23", "22", "24", "46"],
+      correctIndex: 1,
+      explanation:
+        "Every tree on n vertices has exactly n - 1 edges, since each new vertex added to a tree requires exactly one new edge. So 23 vertices means 22 edges.",
+    },
+    {
+      id: "q2",
+      text: "Which property characterizes a tree?",
+      options: [
+        "Every vertex has degree at least 2",
+        "It contains exactly one cycle",
+        "There is exactly one path between every pair of vertices",
+        "It has an even number of vertices",
+      ],
+      correctIndex: 2,
+      explanation:
+        "Unique paths follow from being connected with no cycles: connectivity guarantees at least one path, and the absence of cycles rules out a second. Trees have no cycles at all.",
+    },
+    {
+      id: "q3",
+      text: "In a rooted tree, what is a leaf?",
+      options: [
+        "The vertex designated as the root",
+        "A vertex with no children",
+        "A vertex at depth 1",
+        "A vertex with exactly two children",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Leaves are the terminal vertices with no children below them. Any vertex that does have children is called internal.",
+    },
+    {
+      id: "q4",
+      text: "What does Kruskal's algorithm do at each step?",
+      options: [
+        "Adds the cheapest remaining edge unless it would create a cycle",
+        "Adds the most expensive edge that keeps the graph connected",
+        "Removes the heaviest edge from any cycle it finds",
+        "Adds any edge touching the current tree, chosen at random",
+      ],
+      correctIndex: 0,
+      explanation:
+        "Kruskal sorts all edges by weight and greedily accepts each one that does not close a cycle, stopping after n - 1 edges. Prim's algorithm is the variant that grows a single connected tree outward.",
+    },
+    {
+      id: "q5",
+      text: "A spanning tree of a connected graph must...",
+      options: [
+        "include every edge of the original graph",
+        "include every vertex of the original graph and contain no cycles",
+        "have the same number of edges as the original graph",
+        "be a subgraph with exactly two components",
+      ],
+      correctIndex: 1,
+      explanation:
+        "A spanning tree covers all the vertices while keeping only enough edges to stay connected, which means exactly n - 1 edges and no cycles. It generally discards many of the original edges.",
+    },
+  ]}
+/>

@@ -1,0 +1,332 @@
+---
+title: Relations and Functions
+description: Learn relations on sets, the reflexive, symmetric, and transitive properties, equivalence relations, and injective, surjective, and bijective functions
+sidebar:
+  order: 18
+---
+
+import Quiz from "../../../components/Quiz.astro";
+import RelationProperties from "../../../components/RelationProperties.astro";
+import FunctionTypes from "../../../components/FunctionTypes.astro";
+import SymbolKey from "../../../components/SymbolKey.astro";
+
+## What You'll Learn
+
+In this lesson you'll learn what a relation is, the properties that classify relations (reflexive, symmetric, antisymmetric, transitive), what makes an equivalence relation and a partial order, and how functions are classified as injective, surjective, or bijective.
+
+<SymbolKey
+  items={[
+    {
+      sym: "(a, b)",
+      read: "the ordered pair a, b",
+      note: "order matters here, unlike in a set",
+    },
+    {
+      sym: "a R b",
+      read: "a is related to b",
+      note: "the same thing as saying the pair (a, b) is in R",
+    },
+    {
+      sym: "[a]",
+      read: "the equivalence class of a",
+      note: "everything related to a",
+    },
+    {
+      sym: "f : A → B",
+      read: "f is a function from A to B",
+      note: "A is the domain, B is the codomain",
+    },
+    {
+      sym: "a ↦ 2a",
+      read: "a maps to 2a",
+      note: "a bar on the arrow's tail; it names the rule rather than the function",
+    },
+    {
+      sym: "f⁻¹",
+      read: "f inverse",
+      note: "the function that undoes f; only bijections have one",
+    },
+  ]}
+/>
+
+## The Concept
+
+### Relations
+
+A **relation** $R$ from set $A$ to set $B$ is any subset of the Cartesian product $A \times B$. A relation **on** $A$ is a subset of $A \times A$.
+
+That's a very loose definition, and deliberately so. A relation is just a set of ordered pairs. If $(a,b) \in R$ we write $a \, R \, b$ and say "$a$ is related to $b$."
+
+Examples of relations on the integers: "is less than," "is equal to," "divides," "has the same remainder mod 5 as." Examples elsewhere: "is a friend of," "is a prerequisite for," "is a subset of."
+
+You can picture a relation on $A$ as a **directed graph** where vertices are elements of $A$ and an arrow goes from $a$ to $b$ whenever $a \, R \, b$. That picture makes the properties below easy to see.
+
+### The four key properties
+
+Let $R$ be a relation on a set $A$.
+
+- **Reflexive** - every element relates to itself: $\forall a \in A, \; (a,a) \in R$. "Equals" is reflexive. "Is less than" is not, since $3 < 3$ is false. In the digraph picture, every vertex has a self-loop.
+- **Symmetric** - the relation always works both ways: $(a,b) \in R \rightarrow (b,a) \in R$. "Is a sibling of" is symmetric. "Is the parent of" is not. In the digraph, every arrow has a matching reverse arrow.
+- **Antisymmetric** - it never works both ways for distinct elements: $\big((a,b) \in R \wedge (b,a) \in R\big) \rightarrow a = b$. "Less than or equal to" qualifies, since $a \leq b$ and $b \leq a$ force $a = b$.
+- **Transitive** - chains collapse: $\big((a,b) \in R \wedge (b,c) \in R\big) \rightarrow (a,c) \in R$. "Is less than" is transitive, and so is "divides" (we proved that in the direct proof lesson). "Is a friend of" usually is not.
+
+One warning on the third one: antisymmetric is **not** the negation of symmetric. A relation can be both (equality) or neither.
+
+Drawn as arrows, each property becomes a shape you can check at a glance:
+
+<RelationProperties />
+
+### Equivalence relations
+
+A relation that is **reflexive, symmetric, and transitive** is an **equivalence relation**.
+
+Equivalence relations formalize the idea of "the same in some respect." Equality is the strictest example, but there are many looser ones:
+
+- "Has the same birthday as" on a set of people.
+- "Is congruent mod $n$" on the integers.
+- "Has the same length as" on a set of strings.
+
+The big structural result: **an equivalence relation on $A$ partitions $A$ into disjoint equivalence classes.** The class of $a$, written $[a]$, is everything related to $a$. Every element belongs to exactly one class, and the classes cover $A$ completely.
+
+That's a two-way street. Every equivalence relation gives you a partition, and every partition gives you an equivalence relation. They are the same idea in two languages.
+
+Congruence mod 3 on the integers, for example, splits $\mathbb{Z}$ into exactly three classes:
+
+$$
+[0] = \{\ldots, -3, 0, 3, 6, \ldots\}, \quad [1] = \{\ldots, -2, 1, 4, 7, \ldots\}, \quad [2] = \{\ldots, -1, 2, 5, 8, \ldots\}
+$$
+
+Three classes, no overlap, covering everything.
+
+### Partial orders
+
+A relation that is **reflexive, antisymmetric, and transitive** is a **partial order**.
+
+Partial orders formalize "comes before" or "is at most." Examples: $\leq$ on numbers, $\subseteq$ on sets, "divides" on positive integers, and task dependency in a project.
+
+The word **partial** matters. Some pairs may be **incomparable**. Under $\subseteq$, the sets $\{1,2\}$ and $\{2,3\}$ are incomparable, since neither contains the other. If every pair is comparable, the order is **total** (or **linear**), which is what $\leq$ on the reals gives you.
+
+Task scheduling is the practical case: some tasks must come before others, and unrelated tasks can happen in either order. A **topological sort** produces a valid total ordering consistent with the partial order, which is exactly what a build system computes.
+
+### Functions
+
+A **function** $f: A \rightarrow B$ is a relation where **every** element of $A$ is paired with **exactly one** element of $B$.
+
+$A$ is the **domain**, $B$ is the **codomain**, and the **range** (or image) is the set of values actually produced. The range is a subset of the codomain, possibly a proper one.
+
+So a function is a special relation with two extra rules: nothing in the domain is left out, and nothing in the domain maps to two places.
+
+### Injective, surjective, bijective
+
+- **Injective** (one-to-one) - distinct inputs give distinct outputs, so $f(a_1) = f(a_2) \rightarrow a_1 = a_2$. Nothing in $B$ gets hit twice.
+- **Surjective** (onto) - every element of the codomain is hit: $\forall b \in B$ there is some $a \in A$ with $f(a) = b$. The range equals the codomain, so nothing in $B$ is missed.
+- **Bijective** - both injective and surjective. A perfect pairing, every element of $A$ matched to exactly one element of $B$ and vice versa.
+
+<FunctionTypes />
+
+Only bijections have **inverse functions**. If $f$ isn't injective the inverse would be ambiguous; if it isn't surjective the inverse would be undefined somewhere.
+
+### Cardinality connections
+
+For **finite** sets, these give you counting facts immediately:
+
+- An injection $A \rightarrow B$ requires $|A| \leq |B|$.
+- A surjection $A \rightarrow B$ requires $|A| \geq |B|$.
+- A bijection $A \rightarrow B$ requires $|A| = |B|$.
+
+The first one is the pigeonhole principle stated in function language: if $|A| > |B|$, no injection exists, so two inputs must collide.
+
+Bijections are also how mathematicians compare **infinite** sets. Two sets have the same cardinality if a bijection exists between them, which leads to the strange and true fact that there are exactly as many even integers as integers, since $n \mapsto 2n$ is a bijection.
+
+## Worked Examples
+
+**Example 1: Classify a relation.**
+
+Let $R$ on $\{1,2,3\}$ be $\{(1,1),(2,2),(3,3),(1,2),(2,1)\}$. Which properties does it have?
+
+**Solution.**
+
+- **Reflexive?** Need $(1,1),(2,2),(3,3)$. All present. **Yes.**
+- **Symmetric?** $(1,2)$ is present and so is $(2,1)$. The self-loops are their own reverses. **Yes.**
+- **Antisymmetric?** $(1,2)$ and $(2,1)$ both present but $1 \neq 2$. **No.**
+- **Transitive?** Check the chains. $(1,2)$ and $(2,1)$ give $(1,1)$, present. $(2,1)$ and $(1,2)$ give $(2,2)$, present. **Yes.**
+
+Reflexive, symmetric, transitive, so this is an **equivalence relation**. Its classes are $\{1,2\}$ and $\{3\}$.
+
+**Example 2: "Divides" on positive integers.**
+
+Classify the relation $a \mid b$.
+
+**Solution.**
+
+- **Reflexive?** $a \mid a$ since $a = a \cdot 1$. **Yes.**
+- **Symmetric?** $2 \mid 6$ but $6 \nmid 2$. **No.**
+- **Antisymmetric?** If $a \mid b$ and $b \mid a$ with both positive, then $a = b$. **Yes.**
+- **Transitive?** Proved earlier: $a \mid b$ and $b \mid c$ give $a \mid c$. **Yes.**
+
+Reflexive, antisymmetric, transitive, so **divides is a partial order** on the positive integers. It's partial and not total, because 4 and 6 are incomparable: neither divides the other.
+
+**Example 3: Congruence mod $n$.**
+
+Show that "$a \equiv b \pmod{5}$" is an equivalence relation on $\mathbb{Z}$.
+
+**Solution.** Recall $a \equiv b \pmod 5$ means $5 \mid (a - b)$.
+
+**Reflexive:** $a - a = 0$ and $5 \mid 0$. Yes.
+
+**Symmetric:** If $5 \mid (a-b)$ then $a - b = 5k$, so $b - a = -5k = 5(-k)$, and $5 \mid (b-a)$. Yes.
+
+**Transitive:** If $a - b = 5j$ and $b - c = 5k$, then
+
+$$
+a - c = (a-b) + (b-c) = 5j + 5k = 5(j+k)
+$$
+
+so $5 \mid (a-c)$. Yes.
+
+All three hold, so it's an equivalence relation, and it partitions $\mathbb{Z}$ into the 5 classes $[0], [1], [2], [3], [4]$. $\blacksquare$
+
+**Example 4: Classify functions.**
+
+For each function, decide whether it's injective, surjective, or bijective.
+
+(a) $f: \mathbb{R} \rightarrow \mathbb{R}$, $f(x) = 2x + 3$
+(b) $g: \mathbb{R} \rightarrow \mathbb{R}$, $g(x) = x^2$
+(c) $h: \mathbb{Z} \rightarrow \mathbb{Z}$, $h(n) = 2n$
+(d) $k: \mathbb{R} \rightarrow [0, \infty)$, $k(x) = x^2$
+
+**Solution.**
+
+(a) **Bijective.** Injective: $2x_1 + 3 = 2x_2 + 3$ forces $x_1 = x_2$. Surjective: for any $y$, take $x = (y-3)/2$. The inverse is $f^{-1}(y) = (y-3)/2$.
+
+(b) **Neither.** Not injective, since $g(2) = g(-2) = 4$. Not surjective, since no real squares to $-1$.
+
+(c) **Injective, not surjective.** $2n_1 = 2n_2$ forces $n_1 = n_2$. But 3 is never an output, since outputs are all even. Interesting note: this is an injection from $\mathbb{Z}$ to $\mathbb{Z}$ that isn't a bijection, which can only happen with infinite sets.
+
+(d) **Surjective, not injective.** Every non-negative real is a square, so it's onto. But $k(2) = k(-2)$, so not one-to-one. Changing the codomain changed the classification without changing the formula, which is why the codomain is part of the function's definition.
+
+**Example 5: Counting functions.**
+
+Let $|A| = 3$ and $|B| = 5$.
+
+(a) How many functions $A \rightarrow B$?
+(b) How many injective functions $A \rightarrow B$?
+(c) How many bijective functions $A \rightarrow B$?
+
+**Solution.**
+
+(a) Each of the 3 elements independently picks one of 5 targets:
+
+$$
+5^3 = 125
+$$
+
+(b) Injective means no reuse, so it's an ordered selection:
+
+$$
+P(5,3) = 5 \times 4 \times 3 = 60
+$$
+
+(c) A bijection requires $|A| = |B|$. Since $3 \neq 5$, there are **0**.
+
+**Example 6: Partial order and topological sort.**
+
+Tasks with dependencies: $A$ before $C$, $B$ before $C$, $C$ before $D$, $B$ before $E$.
+
+Find a valid execution order.
+
+**Solution.** Repeatedly take any task with no unmet dependencies.
+
+- $A$ and $B$ have none. Take $A$, then $B$.
+- $C$ now has both dependencies met. Take $C$.
+- $D$ and $E$ are both free. Take $D$, then $E$.
+
+Order: $A, B, C, D, E$.
+
+Another valid order: $B, E, A, C, D$. The partial order allows multiple total orderings, precisely because $A$ and $B$ are incomparable, and so are $D$ and $E$.
+
+## Real-World Applications
+
+Relational databases are named for relations in exactly this sense. A table is a relation, a row is a tuple, and a foreign key encodes a relation between two tables. Query optimizers reason about transitivity to infer constraints you never wrote down.
+
+Equivalence relations power deduplication and caching. "Same content hash" is an equivalence relation, and grouping files by their class is how backup systems avoid storing the same photo forty times. Unicode normalization, case-insensitive comparison, and canonical URL forms all define equivalence classes and pick one representative from each.
+
+Partial orders drive build systems and package managers. `make`, `npm`, `cargo`, and CI pipelines all take a dependency graph, verify it's acyclic, and topologically sort it. When a package manager reports a circular dependency, it failed to find a topological sort, which is a direct consequence of the antisymmetry requirement being violated.
+
+Injective functions are the requirement behind primary keys and unique constraints. A database index is useful precisely because the mapping from key to row is injective. Hash functions try to be injective and fail by the pigeonhole principle, which is why collision handling exists.
+
+Bijections are the mathematical content of encoding and encryption. Base64, character encodings, and every cipher must be bijective, because a non-injective encoding cannot be decoded and a non-surjective one wastes representable space.
+
+Version control, access control hierarchies, taxonomies, and course prerequisite systems all model partial orders.
+
+:::note[You've Got This]
+The property checks are mechanical if you take them one at a time and hunt for a counterexample rather than trying to see the whole picture at once. For reflexive, check every self-pair. For symmetric, find one arrow whose reverse is missing. For transitive, find one two-step chain whose shortcut is missing. And for functions, remember the shorthand: injective means nothing gets hit twice, surjective means nothing gets missed, bijective means both.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="discrete-relations-and-functions"
+  questions={[
+    {
+      id: "q1",
+      text: "Which three properties define an equivalence relation?",
+      options: [
+        "Reflexive, antisymmetric, transitive",
+        "Symmetric, antisymmetric, transitive",
+        "Reflexive, symmetric, transitive",
+        "Reflexive, symmetric, antisymmetric",
+      ],
+      correctIndex: 2,
+      explanation:
+        "Equivalence relations capture the idea of 'the same in some respect', requiring reflexivity, symmetry, and transitivity. Swapping symmetry for antisymmetry gives a partial order instead.",
+    },
+    {
+      id: "q2",
+      text: "The relation 'is less than' on the integers fails which property?",
+      options: [
+        "Reflexive, because no integer is less than itself",
+        "Transitive, because chains do not carry over",
+        "Antisymmetric, because it works both ways",
+        "It satisfies all four properties",
+      ],
+      correctIndex: 0,
+      explanation:
+        "Strict less-than never relates an element to itself, so reflexivity fails. It is transitive and antisymmetric, which is why the non-strict version is a partial order but this one is not.",
+    },
+    {
+      id: "q3",
+      text: "A function is injective when...",
+      options: [
+        "every element of the codomain is produced by some input",
+        "distinct inputs always produce distinct outputs",
+        "the domain and codomain have the same size",
+        "every input maps to exactly one output",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Injective means one-to-one, so no output value is reused. Hitting every codomain element is surjectivity, and mapping each input to exactly one output is just the definition of a function.",
+    },
+    {
+      id: "q4",
+      text: "How many injective functions exist from a 3-element set to a 6-element set?",
+      options: ["216", "18", "120", "20"],
+      correctIndex: 2,
+      explanation:
+        "Each input must take a distinct target, so this is an ordered selection: 6 x 5 x 4 = 120. The value 216 counts all functions, including non-injective ones.",
+    },
+    {
+      id: "q5",
+      text: "Why is the subset relation on sets called a PARTIAL order rather than a total order?",
+      options: [
+        "Because it is not transitive for all sets",
+        "Because it fails reflexivity for the empty set",
+        "Because some pairs of sets are incomparable, with neither containing the other",
+        "Because it only applies to finite sets",
+      ],
+      correctIndex: 2,
+      explanation:
+        "A total order requires every pair to be comparable, but sets like {1,2} and {2,3} have no containment relationship in either direction. The relation is still reflexive, antisymmetric, and transitive.",
+    },
+  ]}
+/>

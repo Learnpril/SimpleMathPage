@@ -1,0 +1,78 @@
+---
+title: About Discrete Mathematics
+description: The math of things you can count, and the logic behind every proof and program
+sidebar:
+  order: 0
+---
+
+## What is Discrete Mathematics?
+
+Discrete Mathematics is the study of things that come in separate, countable pieces. Whole numbers. Individual choices. Nodes in a network. Statements that are either true or false.
+
+import DiscreteTopicMap from "../../../components/DiscreteTopicMap.astro";
+
+<DiscreteTopicMap />
+
+That's the opposite of what you've done in calculus, where everything flows smoothly and you care about what happens as a gap shrinks to nothing. In discrete math there are no gaps to shrink. A graph has 7 vertices, not 7.3. A committee has 4 people. A logical statement is true or it is false.
+
+Because of that, the questions change. Instead of "how fast is this changing?" you ask "how many ways can this happen?" and "is this argument actually valid?" and "can I get from here to there?"
+
+## A Brief History
+
+Discrete math is old in its parts and young as a subject.
+
+Counting problems go back to antiquity. The Indian mathematician Bhaskara wrote about combinations in the 12th century, and Pascal and Fermat worked out the foundations of counting and probability in their famous 1654 correspondence about gambling problems.
+
+Formal logic starts with Aristotle's syllogisms around 350 BCE, but sat mostly unchanged for two thousand years until **George Boole** published _The Laws of Thought_ in 1854, showing that logical reasoning could be written as algebra. That single idea is why your computer works.
+
+Graph theory has a birthday: 1736, when **Leonhard Euler** proved you could not walk across all seven bridges of Königsberg exactly once. He threw away the map, kept only the connections, and invented an entire field by accident.
+
+Set theory came from **Georg Cantor** in the 1870s, and it was genuinely controversial. His proof that some infinities are bigger than others upset a lot of mathematicians who thought infinity was infinity and that was that.
+
+The subject got pulled together as one course in the 20th century, driven almost entirely by computer science. Every algorithm, every database query, every circuit is discrete math wearing a costume.
+
+## Why We're Learning It
+
+Two big reasons.
+
+**First, this is where you learn to prove things.** Up to now math has mostly been "here's a procedure, apply it." Discrete math asks "why is that procedure correct, for every possible input, forever?" You'll learn direct proof, proof by contradiction, and mathematical induction. These are the tools that separate "it worked on the examples I tried" from "it is true."
+
+**Second, this is the math of computing.** If you've ever wondered what math programmers actually use day to day, it's this. Boolean logic, sets, recursion, graphs, and counting. Not integrals.
+
+There's a third, quieter reason: discrete math is unusually approachable. Most of the problems can be stated in plain English and attacked with careful thinking rather than heavy machinery. Some of the most satisfying results in this section need no algebra at all.
+
+## Why It Matters in Real Life
+
+- **Search and navigation.** Every route your GPS finds is a shortest-path problem on a graph.
+- **Social networks.** Friend suggestions, "degrees of separation," and community detection are all graph theory.
+- **Passwords and security.** Estimating how long a password takes to crack is a counting problem. Encryption runs on modular arithmetic.
+- **Databases.** SQL joins and filters are set operations wearing different syntax.
+- **Scheduling.** Assigning exams to time slots without conflicts is graph coloring.
+- **Reliability.** "Can this system fail in a way we haven't considered?" is a logic question, and formal verification answers it with truth tables and proofs.
+- **Everyday arguments.** Recognizing that "if it rains, the game is cancelled" does **not** mean "the game was cancelled, so it rained" will save you from a lot of bad reasoning.
+
+## What You'll Learn in This Section
+
+The section moves through five connected areas:
+
+- **Logic** - propositions, truth tables, logical equivalence, De Morgan's laws, conditional statements, and quantifiers. The grammar of mathematics.
+- **Sets** - membership, subsets, unions, intersections, complements, Venn diagrams, and Cartesian products.
+- **Proof techniques** - direct proof, disproof by counterexample, proof by contrapositive, proof by contradiction, and mathematical induction.
+- **Counting** - the multiplication and addition principles, permutations, combinations, the binomial theorem, and the pigeonhole principle.
+- **Graphs and structures** - vertices and edges, degree, paths and cycles, connectivity, Euler and Hamilton circuits, trees, spanning trees, relations, and functions. Plus modular arithmetic, the arithmetic of remainders.
+
+Each lesson has worked examples, real-world connections, and a quiz.
+
+## How to Get the Most Out of This Section
+
+Write the proofs out by hand. Reading a proof and following it is not the same skill as producing one, and only one of those two skills transfers.
+
+For counting problems, always ask yourself two questions before computing anything: does order matter, and can I repeat? Those two answers pick the formula for you. Most counting mistakes are formula-selection mistakes, not arithmetic mistakes.
+
+For logic, build the truth table even when you think you can see the answer. It takes two minutes and it is never wrong.
+
+And when a graph problem looks impossible, draw it. Almost every graph theory insight in this section becomes obvious the moment you have a decent picture.
+
+:::note[You've Got This]
+Discrete math has a reputation for being the course where math "gets weird." It isn't weird, it's just honest. It stops handing you procedures and starts asking you to justify things. That feels harder at first and then it feels like a superpower. Take the proofs slowly and let the counting problems be puzzles instead of homework.
+:::

@@ -1,0 +1,283 @@
+---
+title: Permutations
+description: Count ordered arrangements with factorials, the nPr formula, repeated items, and circular arrangements
+sidebar:
+  order: 12
+---
+
+import Quiz from "../../../components/Quiz.astro";
+import PermutationSlots from "../../../components/PermutationSlots.astro";
+import SymbolKey from "../../../components/SymbolKey.astro";
+
+## What You'll Learn
+
+In this lesson you'll learn what a permutation is, how factorials work, the formula for arranging $r$ items out of $n$, how to handle arrangements with repeated identical items, and how circular arrangements differ.
+
+<SymbolKey
+  items={[
+    {
+      sym: "n!",
+      read: "n factorial",
+      note: "multiply every whole number from n down to 1",
+    },
+    {
+      sym: "P(n, r)",
+      read: "the number of permutations of r items from n",
+      note: "also written ₙPᵣ",
+    },
+  ]}
+/>
+
+## The Concept
+
+A **permutation** is an arrangement of objects **in a specific order**. Order is the defining feature. ABC and CBA are different permutations of the same three letters.
+
+### Factorials
+
+The number of ways to arrange all $n$ distinct objects in a row is
+
+$$
+n! = n \times (n-1) \times (n-2) \times \cdots \times 2 \times 1
+$$
+
+Why? The first position has $n$ candidates, the second has $n-1$ (one is used up), and so on down to 1. Multiplication principle.
+
+$$
+5! = 5 \times 4 \times 3 \times 2 \times 1 = 120
+$$
+
+By definition,
+
+$$
+0! = 1
+$$
+
+That looks arbitrary but it isn't. There's exactly one way to arrange nothing: the empty arrangement. Defining $0! = 1$ also makes every formula below work at its boundaries without special-casing.
+
+Factorials get large fast. $10! = 3{,}628{,}800$ and $20!$ is about $2.4 \times 10^{18}$. This is why "just try every ordering" is not an algorithm.
+
+### Permutations of $r$ from $n$
+
+To arrange only $r$ of the $n$ objects:
+
+$$
+P(n, r) = \frac{n!}{(n-r)!}
+$$
+
+Also written $_nP_r$ or $P^n_r$.
+
+Where it comes from: you're filling $r$ positions, with $n$ choices for the first, $n-1$ for the second, down to $n - r + 1$ for the last:
+
+$$
+P(n,r) = n(n-1)(n-2)\cdots(n-r+1)
+$$
+
+Dividing $n!$ by $(n-r)!$ cancels off exactly the tail you don't want.
+
+<PermutationSlots />
+
+$$
+P(8,3) = \frac{8!}{5!} = 8 \times 7 \times 6 = 336
+$$
+
+Two boundary cases worth noting: $P(n, n) = \frac{n!}{0!} = n!$, and $P(n, 0) = 1$.
+
+In practice, don't compute the big factorials. Just multiply $r$ descending terms starting at $n$.
+
+### Permutations with repeated items
+
+If some objects are identical, many "different" arrangements look the same, and you've overcounted.
+
+For $n$ objects where $n_1$ are of one identical type, $n_2$ of another, and so on:
+
+$$
+\frac{n!}{n_1! \, n_2! \cdots n_k!}
+$$
+
+The reasoning: treat all objects as distinct to get $n!$, then divide out the arrangements you can't tell apart. The $n_1$ copies of the first type can be shuffled $n_1!$ ways with no visible change, so divide by $n_1!$, and similarly for each type.
+
+Classic example, the word **LEVEL**: 5 letters with L twice, E twice, V once.
+
+$$
+\frac{5!}{2! \, 2! \, 1!} = \frac{120}{4} = 30
+$$
+
+### Circular permutations
+
+Arranging $n$ people around a round table is different, because a rotation of an arrangement is usually considered the same arrangement. There's no "first seat."
+
+$$
+(n-1)!
+$$
+
+Why: fix one person anywhere to kill the rotational freedom, then arrange the remaining $n-1$ relative to them. Equivalently, $n!$ linear arrangements divided by the $n$ rotations that produce each circular one.
+
+If reflections also count as identical (a bracelet you can flip over, rather than a table), divide by 2 more:
+
+$$
+\frac{(n-1)!}{2}
+$$
+
+### Arrangements with restrictions
+
+Two standard techniques.
+
+- **Items must be together** - glue them into a single block, arrange the blocks, then multiply by the internal arrangements of the block.
+- **Items must be separated** - count the total and subtract the together case, or place the unrestricted items first and slot the restricted ones into the gaps.
+
+## Worked Examples
+
+**Example 1: Full arrangement.**
+
+How many ways can 7 books be arranged on a shelf?
+
+**Solution.** All 7 distinct, order matters:
+
+$$
+7! = 5{,}040
+$$
+
+**Example 2: Partial arrangement.**
+
+A club of 12 members elects a president, vice president, and treasurer. No person holds two offices. How many outcomes?
+
+**Solution.** Order matters, because the roles are different.
+
+$$
+P(12, 3) = 12 \times 11 \times 10 = 1{,}320
+$$
+
+Compare: if you were just picking a 3-person committee with no roles, order would not matter and the answer would be 220. That's the next lesson.
+
+**Example 3: Repeated letters.**
+
+How many distinct arrangements of the letters in **MISSISSIPPI**?
+
+**Solution.** 11 letters total: M (1), I (4), S (4), P (2).
+
+$$
+\frac{11!}{1! \, 4! \, 4! \, 2!} = \frac{39{,}916{,}800}{1 \times 24 \times 24 \times 2} = \frac{39{,}916{,}800}{1{,}152} = 34{,}650
+$$
+
+Without the correction you'd claim $11! \approx 40$ million arrangements, over a thousand times too many.
+
+**Example 4: Circular arrangement.**
+
+Eight people sit around a round table. How many distinct seatings if rotations are considered the same?
+
+**Solution.**
+
+$$
+(8-1)! = 7! = 5{,}040
+$$
+
+If instead the seats were numbered (so rotating produces a genuinely different seating), the answer would be $8! = 40{,}320$.
+
+**Example 5: Must be together.**
+
+In how many ways can 6 people line up if two specific people, Ana and Ben, must stand next to each other?
+
+**Solution.** Treat Ana-Ben as one block. Now you have 5 units to arrange:
+
+$$
+5! = 120
+$$
+
+Within the block, Ana and Ben can be in 2 orders:
+
+$$
+120 \times 2 = 240
+$$
+
+**Example 6: Must be apart.**
+
+Same 6 people. How many ways if Ana and Ben must **not** be adjacent?
+
+**Solution.** Complement rule. Total arrangements minus the adjacent ones:
+
+$$
+6! - 240 = 720 - 240 = 480
+$$
+
+**Example 7: A restriction on position.**
+
+How many 5-letter arrangements of the letters in DIGITS start with a vowel?
+
+**Solution.** DIGITS has 6 letters: D, I, G, I, T, S, with I appearing twice. We're arranging 5 of the 6, which makes this messier than it looks, so let's simplify to arranging all 6 letters starting with a vowel.
+
+The only vowel is I, and there are two identical copies. Fix an I in the first position. The remaining 5 letters are D, G, I, T, S, all distinct:
+
+$$
+5! = 120
+$$
+
+Because the two I's are identical, fixing "an I" first counts each distinct word once, so the answer is 120. Watch for the trap of multiplying by 2 for the "two choices of I" — those choices produce identical words.
+
+## Real-World Applications
+
+Any problem of the form "in what order?" is a permutation problem. Scheduling job interviews, ordering tasks in a build pipeline, and seating charts all count this way.
+
+The traveling salesman problem is the famous cautionary tale. Visiting $n$ cities in some order gives $(n-1)!/2$ distinct routes. For 20 cities that's over $6 \times 10^{16}$. Checking them all at a billion per second takes roughly two years, which is why this problem is attacked with heuristics rather than brute force.
+
+Cryptography and security estimate work factors with permutations. Shuffling a deck of 52 cards yields $52! \approx 8 \times 10^{67}$ orderings, which is a genuinely staggering number and the reason a well-shuffled deck has almost certainly never occurred before in history.
+
+Genomics counts sequence arrangements. Playlist ordering, tournament brackets, DNA fragment assembly, and anagram generators all use this math too.
+
+The repeated-items formula shows up in probability, where it computes the number of distinct outcomes when several results are indistinguishable, like the number of ways to get exactly 3 heads in 10 coin flips.
+
+:::note[You've Got This]
+Everything here comes back to one question: does order matter? If yes, you're in permutation territory. Then check for identical items, because forgetting to divide them out is the most common error on these problems, and it's usually off by a large factor rather than a small one. When you compute nPr, skip the factorials and just multiply r descending numbers starting at n. Faster and far less error-prone.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="discrete-permutations"
+  questions={[
+    {
+      id: "q1",
+      text: "How many ways can 6 distinct trophies be arranged in a row on a shelf?",
+      options: ["36", "720", "120", "64"],
+      correctIndex: 1,
+      explanation:
+        "All six items are arranged and order matters, so the answer is 6! = 720.",
+    },
+    {
+      id: "q2",
+      text: "A race has 10 runners. How many different ways can gold, silver, and bronze be awarded?",
+      options: ["720", "120", "1000", "30"],
+      correctIndex: 0,
+      explanation:
+        "The medals are distinct, so order matters: P(10,3) = 10 x 9 x 8 = 720. Treating it as an unordered selection would give only 120.",
+    },
+    {
+      id: "q3",
+      text: "How many distinct arrangements are there of the letters in the word BANANA?",
+      options: ["720", "120", "360", "60"],
+      correctIndex: 3,
+      explanation:
+        "There are 6 letters with A appearing 3 times and N twice, so divide out the identical copies: 6! / (3! x 2! x 1!) = 720 / 12 = 60.",
+    },
+    {
+      id: "q4",
+      text: "Five friends sit around a circular table where rotations count as the same seating. How many distinct arrangements are there?",
+      options: ["120", "60", "24", "20"],
+      correctIndex: 2,
+      explanation:
+        "Fixing one person removes the rotational duplication, leaving (5-1)! = 4! = 24 arrangements. The linear count of 120 overcounts each circular seating five times.",
+    },
+    {
+      id: "q5",
+      text: "Why is 0! defined to equal 1?",
+      options: [
+        "Because there is exactly one way to arrange zero objects, and it keeps the formulas consistent",
+        "Because multiplying by zero would give zero",
+        "It is an arbitrary convention with no justification",
+        "Because 0! is actually undefined in most textbooks",
+      ],
+      correctIndex: 0,
+      explanation:
+        "The empty arrangement is a single valid arrangement, and setting 0! = 1 makes expressions like P(n,n) = n!/0! come out correctly without special cases.",
+    },
+  ]}
+/>

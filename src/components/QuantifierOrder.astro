@@ -1,0 +1,90 @@
+---
+/**
+ * QuantifierOrder — why swapping mixed quantifiers changes the meaning.
+ * Left: each x gets its own y. Right: one single y must serve every x.
+ */
+const w = 540;
+const h = 220;
+const xs = [0, 1, 2];
+const rowY = (i: number) => 66 + i * 42;
+---
+
+<figure
+  class="qo"
+  role="img"
+  aria-label="On the left, for all x there exists y, where each x is matched to its own y. On the right, there exists y for all x, where a single y must work for every x."
+>
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    {/* ================= LEFT: forall x, exists y ================= */}
+    <text x="125" y="24" class="qo-title qo-t-green" font-size="14" font-weight="bold" text-anchor="middle">∀x ∃y</text>
+    <text x="125" y="42" class="qo-sub" font-size="10.5" text-anchor="middle">y may depend on x</text>
+
+    {xs.map((i) => (
+      <g>
+        <circle cx="50" cy={rowY(i)} r="13" class="qo-node qo-x" />
+        <text x="50" y={rowY(i) + 4} class="qo-lbl" font-size="11" text-anchor="middle">{`x${i + 1}`}</text>
+        <line x1="65" y1={rowY(i)} x2="185" y2={rowY(i)} class="qo-arrow-g" marker-end="url(#qo-head-g)" />
+        <circle cx="200" cy={rowY(i)} r="13" class="qo-node qo-y-g" />
+        <text x="200" y={rowY(i) + 4} class="qo-lbl" font-size="11" text-anchor="middle">{`y${i + 1}`}</text>
+      </g>
+    ))}
+    <text x="125" y="198" class="qo-verdict qo-t-green" font-size="11" text-anchor="middle">Three different y's are fine</text>
+
+    {/* Divider */}
+    <line x1={w / 2} y1="34" x2={w / 2} y2="180" class="qo-divide" stroke-dasharray="4,4" />
+
+    {/* ================= RIGHT: exists y, forall x ================= */}
+    <text x="415" y="24" class="qo-title qo-t-orange" font-size="14" font-weight="bold" text-anchor="middle">∃y ∀x</text>
+    <text x="415" y="42" class="qo-sub" font-size="10.5" text-anchor="middle">one y must serve all x</text>
+
+    {xs.map((i) => (
+      <g>
+        <circle cx="330" cy={rowY(i)} r="13" class="qo-node qo-x" />
+        <text x="330" y={rowY(i) + 4} class="qo-lbl" font-size="11" text-anchor="middle">{`x${i + 1}`}</text>
+        <line x1="345" y1={rowY(i)} x2="468" y2={rowY(1)} class="qo-arrow-o" marker-end="url(#qo-head-o)" />
+      </g>
+    ))}
+    <circle cx="483" cy={rowY(1)} r="15" class="qo-node qo-y-o" />
+    <text x="483" y={rowY(1) + 4} class="qo-lbl" font-size="11" text-anchor="middle">y</text>
+    <text x="415" y="198" class="qo-verdict qo-t-orange" font-size="11" text-anchor="middle">A much stronger claim</text>
+
+    <defs>
+      <marker id="qo-head-g" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+        <polygon points="0 0, 8 3, 0 6" class="qo-fill-g" />
+      </marker>
+      <marker id="qo-head-o" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+        <polygon points="0 0, 8 3, 0 6" class="qo-fill-o" />
+      </marker>
+    </defs>
+  </svg>
+</figure>
+
+<style>
+  .qo { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .qo svg { max-width:100%; height:auto; }
+  .qo-node { fill:none; stroke-width:2; }
+  .qo-x { stroke:#58a6ff; }
+  .qo-y-g { stroke:#7ee787; }
+  .qo-y-o { stroke:#f0883e; }
+  .qo-lbl { fill:#888; font-family:'Libre Baskerville',Georgia,serif; }
+  .qo-title { font-family:'Libre Baskerville',Georgia,serif; }
+  .qo-t-green { fill:#7ee787; }
+  .qo-t-orange { fill:#f0883e; }
+  .qo-sub { fill:#888; font-family:'Libre Baskerville',Georgia,serif; font-style:italic; }
+  .qo-verdict { font-family:'Libre Baskerville',Georgia,serif; font-style:italic; }
+  .qo-arrow-g { stroke:#7ee787; stroke-width:1.5; }
+  .qo-arrow-o { stroke:#f0883e; stroke-width:1.5; }
+  .qo-fill-g { fill:#7ee787; }
+  .qo-fill-o { fill:#f0883e; }
+  .qo-divide { stroke:#555; }
+  :global([data-theme="light"]) .qo-x { stroke:#0550ae; }
+  :global([data-theme="light"]) .qo-y-g { stroke:#116329; }
+  :global([data-theme="light"]) .qo-y-o { stroke:#b35900; }
+  :global([data-theme="light"]) .qo-t-green { fill:#116329; }
+  :global([data-theme="light"]) .qo-t-orange { fill:#b35900; }
+  :global([data-theme="light"]) .qo-arrow-g { stroke:#116329; }
+  :global([data-theme="light"]) .qo-arrow-o { stroke:#b35900; }
+  :global([data-theme="light"]) .qo-fill-g { fill:#116329; }
+  :global([data-theme="light"]) .qo-fill-o { fill:#b35900; }
+  :global([data-theme="light"]) .qo-divide { stroke:#ccc; }
+</style>

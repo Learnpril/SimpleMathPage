@@ -1,0 +1,106 @@
+---
+/**
+ * DeMorganVenn — three shaded Venn panels showing that the union of the two
+ * complements is exactly the complement of the intersection:
+ * NOT A, then NOT B, then their union = NOT(A AND B).
+ */
+const w = 540;
+const h = 200;
+const panels = [
+  { x: 12, id: "a", title: "¬p", caption: "everything outside p" },
+  { x: 194, id: "b", title: "¬q", caption: "everything outside q" },
+  { x: 376, id: "u", title: "¬p ∨ ¬q", caption: "= ¬(p ∧ q)" },
+];
+const pw = 152;
+const py = 40;
+const ph = 104;
+const cy = py + ph / 2;
+const r = 34;
+---
+
+<figure
+  class="dmv"
+  role="img"
+  aria-label="Three Venn diagrams: the region outside p, the region outside q, and their union, which is everything except the overlap of p and q"
+>
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      {panels.map((p) => {
+        const ax = p.x + 58;
+        const bx = p.x + 94;
+        return (
+          <g>
+            {/* Clip used to isolate the p-and-q overlap */}
+            <clipPath id={`dmv-clip-${p.id}`}>
+              <circle cx={bx} cy={cy} r={r} />
+            </clipPath>
+            <mask id={`dmv-mask-${p.id}`}>
+              <rect x={p.x} y={py} width={pw} height={ph} fill="white" />
+              {p.id === "a" && <circle cx={ax} cy={cy} r={r} fill="black" />}
+              {p.id === "b" && <circle cx={bx} cy={cy} r={r} fill="black" />}
+              {p.id === "u" && (
+                <circle cx={ax} cy={cy} r={r} fill="black" clip-path={`url(#dmv-clip-${p.id})`} />
+              )}
+            </mask>
+          </g>
+        );
+      })}
+    </defs>
+
+    {panels.map((p) => {
+      const ax = p.x + 58;
+      const bx = p.x + 94;
+      return (
+        <g>
+          {/* Panel title */}
+          <text x={p.x + pw / 2} y="24" class="dmv-title" font-size="14" font-weight="bold" text-anchor="middle">{p.title}</text>
+
+          {/* Shaded region */}
+          <rect x={p.x} y={py} width={pw} height={ph} class="dmv-shade" mask={`url(#dmv-mask-${p.id})`} />
+
+          {/* Universe box */}
+          <rect x={p.x} y={py} width={pw} height={ph} class="dmv-universe" />
+          <text x={p.x + 6} y={py + 14} class="dmv-u-label" font-size="10">U</text>
+
+          {/* Set outlines */}
+          <circle cx={ax} cy={cy} r={r} class="dmv-circle" />
+          <circle cx={bx} cy={cy} r={r} class="dmv-circle" />
+          <text x={ax - 20} y={cy + 4} class="dmv-set" font-size="13" text-anchor="middle">p</text>
+          <text x={bx + 20} y={cy + 4} class="dmv-set" font-size="13" text-anchor="middle">q</text>
+
+          {/* Caption */}
+          <text x={p.x + pw / 2} y={py + ph + 22} class="dmv-caption" font-size="11" text-anchor="middle">{p.caption}</text>
+        </g>
+      );
+    })}
+
+    {/* Operators between panels */}
+    <text x="180" y={cy + 6} class="dmv-op" font-size="18" text-anchor="middle">∪</text>
+    <text x="364" y={cy + 6} class="dmv-op" font-size="18" text-anchor="middle">=</text>
+
+    <text x={w / 2} y="192" class="dmv-foot" font-size="11" text-anchor="middle">
+      Only the overlap stays unshaded, so the union of the complements misses exactly p ∧ q
+    </text>
+  </svg>
+</figure>
+
+<style>
+  .dmv { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .dmv svg { max-width:100%; height:auto; }
+  .dmv-shade { fill:#58a6ff; fill-opacity:0.30; }
+  .dmv-universe { fill:none; stroke:#555; stroke-width:1; }
+  .dmv-circle { fill:none; stroke:#7ee787; stroke-width:1.8; }
+  .dmv-set { fill:#7ee787; font-family:'Libre Baskerville',Georgia,serif; font-weight:bold; }
+  .dmv-u-label { fill:#888; font-family:'Libre Baskerville',Georgia,serif; }
+  .dmv-title { fill:#58a6ff; font-family:'Libre Baskerville',Georgia,serif; }
+  .dmv-caption { fill:#888; font-family:'Libre Baskerville',Georgia,serif; font-style:italic; }
+  .dmv-op { fill:#d2a8ff; font-family:'Libre Baskerville',Georgia,serif; }
+  .dmv-foot { fill:#f0883e; font-family:'Libre Baskerville',Georgia,serif; font-style:italic; }
+  :global([data-theme="light"]) .dmv-shade { fill:#0550ae; fill-opacity:0.22; }
+  :global([data-theme="light"]) .dmv-universe { stroke:#ccc; }
+  :global([data-theme="light"]) .dmv-circle { stroke:#116329; }
+  :global([data-theme="light"]) .dmv-set { fill:#116329; }
+  :global([data-theme="light"]) .dmv-title { fill:#0550ae; }
+  :global([data-theme="light"]) .dmv-op { fill:#6639ba; }
+  :global([data-theme="light"]) .dmv-foot { fill:#b35900; }
+</style>

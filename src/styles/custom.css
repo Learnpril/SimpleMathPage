@@ -613,6 +613,28 @@ starlight-toc {
   }
 }
 
+/* ---------- Center truth tables in the content column ---------- */
+/* Starlight renders markdown tables as full-width blocks (display: block), so a
+   truth table sits flush left even when its columns are centered. Targeting
+   `th[align="center"]` picks out exactly the tables written with `:-:` column
+   alignment, which in practice means the truth tables, and leaves prose and
+   comparison tables flush left where long text reads better.
+   `max-width: 100%` preserves Starlight's horizontal scroll on narrow screens. */
+.sl-markdown-content table:has(th[align="center"]) {
+  width: fit-content;
+  max-width: 100%;
+  margin-inline: auto;
+}
+
+/* Starlight strips the outer cell padding so flush-left tables line up with body
+   text. A centered table is a standalone block, so give it balanced edges back. */
+.sl-markdown-content table:has(th[align="center"]) :is(th, td):first-child {
+  padding-inline-start: 1rem;
+}
+.sl-markdown-content table:has(th[align="center"]) :is(th, td):last-child {
+  padding-inline-end: 1rem;
+}
+
 /* KaTeX array/table borders — vertical separators transparent, hlines high contrast */
 .katex .arraycolsep,
 .katex .vertical-separator {

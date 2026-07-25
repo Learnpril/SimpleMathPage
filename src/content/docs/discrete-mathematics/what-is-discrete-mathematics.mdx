@@ -1,0 +1,179 @@
+---
+title: What Is Discrete Mathematics?
+description: Understand the difference between discrete and continuous math, and meet the main topics of the subject
+sidebar:
+  order: 1
+---
+
+import Quiz from "../../../components/Quiz.astro";
+import DiscreteVsContinuous from "../../../components/DiscreteVsContinuous.astro";
+
+## What You'll Learn
+
+In this lesson you'll learn what makes something "discrete," how discrete math differs from the continuous math you've seen in algebra and calculus, and what the major branches of the subject are. Think of this as the map before the road trip.
+
+## The Concept
+
+**Discrete** means separated, distinct, countable. **Continuous** means unbroken, flowing, with no gaps.
+
+The number of chairs in a room is discrete. You can have 4 chairs or 5 chairs, never 4.5. The temperature of the room is continuous. Between 68 and 69 degrees there are infinitely many values, and the temperature passes through all of them.
+
+Here's the test that matters: **between any two values, is there always another one?**
+
+- Integers: between 4 and 5 there is no integer. **Discrete.**
+- Real numbers: between 4 and 5 there is 4.5, and between 4 and 4.5 there is 4.25, forever. **Continuous.**
+
+<DiscreteVsContinuous />
+
+Calculus lives on the continuous side. Derivatives and integrals both depend on being able to shrink a gap toward zero, and that only makes sense if there's always something in the gap.
+
+Discrete math lives on the other side, and it asks different kinds of questions:
+
+- **How many?** Counting arrangements, selections, and possibilities.
+- **Is this true?** Logic, validity, and proof.
+- **Is there a path?** Networks, connections, and structure.
+- **What's left over?** Divisibility and remainders.
+
+### The five main areas
+
+- **Logic** - the study of statements that are true or false, and how to combine them. It's the foundation for everything else, because every proof is an argument in logic.
+- **Set theory** - the study of collections. A set is just a collection of distinct objects, and it turns out that almost every mathematical object can be described as a set.
+- **Combinatorics** - counting, done carefully. "How many 5-card hands are there?" is a combinatorics question, and the answer is 2,598,960.
+- **Graph theory** - the study of things connected to other things. A **graph** here is not a plot of a function. It's a set of dots (**vertices**) with lines between some of them (**edges**).
+- **Number theory** - in this section, the arithmetic of integers: divisibility, primes, and remainders.
+
+### Why computers care
+
+A computer is a discrete machine. It stores bits, which are 0 or 1 with nothing in between. It executes a whole number of instructions. Its memory has finitely many addresses.
+
+So when you ask "how much math do programmers use?" the honest answer is: a lot, but mostly this kind. A calculus-heavy field like graphics or machine learning is the exception, not the rule.
+
+## Worked Examples
+
+**Example 1: Classify each quantity as discrete or continuous.**
+
+1. The number of students enrolled in a class.
+2. The exact weight of a bag of flour.
+3. The number of possible passwords of length 8.
+4. The time it takes you to run a mile.
+
+**Solution.**
+
+1. **Discrete.** You can have 23 students or 24, never 23.5.
+2. **Continuous.** A bag could weigh 2.0001 pounds or 2.00011 pounds.
+3. **Discrete.** It's a count, and a huge one, but still a whole number.
+4. **Continuous.** Your stopwatch rounds it, but the actual duration can be any real value.
+
+Notice that #3 being enormous doesn't make it continuous. Discrete does not mean small.
+
+**Example 2: A counting question you can already answer.**
+
+A café offers 3 sizes of coffee and 4 syrup flavors. How many different size-plus-syrup combinations are there?
+
+**Solution.** For each of the 3 sizes you have 4 syrup choices:
+
+$$
+3 \times 4 = 12
+$$
+
+There are 12 combinations. This is the **multiplication principle**, and it's the single most useful idea in all of counting. You'll meet it formally in a later lesson, but you already have the instinct for it.
+
+**Example 3: A logic question you can already answer.**
+
+Someone tells you: "If it's Tuesday, the trash gets collected." You observe that the trash got collected. Can you conclude it's Tuesday?
+
+**Solution.** No. The statement only tells you what happens on Tuesdays. It says nothing about whether the trash might also get collected on other days. Maybe it's collected on Tuesdays _and_ Fridays.
+
+This particular mistake is common enough to have a name, the **converse error**, and you'll see exactly why it fails when we build truth tables.
+
+**Example 4: A graph question you can already answer.**
+
+Five friends are in a group chat. Every person is connected to every other person. How many distinct pairs of friends are there?
+
+**Solution.** Line them up: A, B, C, D, E.
+
+- A pairs with B, C, D, E: 4 pairs
+- B pairs with C, D, E: 3 new pairs
+- C pairs with D, E: 2 new
+- D pairs with E: 1 new
+
+$$
+4 + 3 + 2 + 1 = 10
+$$
+
+There are 10 pairs. In graph theory language, the **complete graph** on 5 vertices has 10 edges.
+
+## Real-World Applications
+
+Discrete math is the reason a lot of everyday technology works at all.
+
+When your phone finds a driving route, it's running a shortest-path algorithm over a graph where intersections are vertices and roads are edges. When a website tells you your password is weak, it's estimating the size of a set of possibilities. When a scheduling app fits 30 meetings into a week without double-booking anyone, it's solving a graph coloring problem.
+
+Outside of tech, the logic half of this subject is just good thinking. Contracts, legal arguments, medical diagnoses, and debugging your own code all come down to reasoning carefully about what actually follows from what.
+
+:::note[You've Got This]
+If you came here from calculus, discrete math will feel like a different sport. That's fine, and honestly it's often a relief. There are fewer formulas to memorize and more thinking to do. If a problem looks impossible, try small cases first. Count the pairs among 3 friends, then 4, then 5. Patterns show up fast when the numbers are small.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="discrete-what-is-discrete-mathematics"
+  questions={[
+    {
+      id: "q1",
+      text: "Which of the following quantities is discrete?",
+      options: [
+        "The volume of water in a lake",
+        "The number of cars in a parking lot",
+        "The air pressure inside a tire",
+        "The length of a piece of string",
+      ],
+      correctIndex: 1,
+      explanation:
+        "A count of cars must be a whole number, so it is discrete. Volume, pressure, and length can all take any value in a range, so they are continuous.",
+    },
+    {
+      id: "q2",
+      text: "What is the key test for whether a set of values is continuous rather than discrete?",
+      options: [
+        "The values are very large",
+        "The values are all positive",
+        "Between any two values there is always another value",
+        "The values can be added and multiplied",
+      ],
+      correctIndex: 2,
+      explanation:
+        "Continuous sets have no gaps: between any two values you can always find another. Between two consecutive integers there is no integer, which is what makes the integers discrete.",
+    },
+    {
+      id: "q3",
+      text: "In graph theory, what does the word 'graph' refer to?",
+      options: [
+        "A plot of a function on coordinate axes",
+        "A bar chart summarizing data",
+        "A collection of vertices with edges connecting some of them",
+        "A table of values for an equation",
+      ],
+      correctIndex: 2,
+      explanation:
+        "In discrete math a graph is a structure of vertices (dots) and edges (connections). It has nothing to do with plotting functions, which is an unfortunate collision of vocabulary.",
+    },
+    {
+      id: "q4",
+      text: "A deli offers 5 types of bread and 6 types of filling. How many different single-bread, single-filling sandwiches are possible?",
+      options: ["11", "30", "15", "56"],
+      correctIndex: 1,
+      explanation:
+        "By the multiplication principle, each of the 5 breads can be paired with each of the 6 fillings: 5 x 6 = 30.",
+    },
+    {
+      id: "q5",
+      text: "Which branch of discrete mathematics is most directly concerned with determining whether an argument is valid?",
+      options: ["Logic", "Combinatorics", "Graph theory", "Number theory"],
+      correctIndex: 0,
+      explanation:
+        "Logic studies statements, how they combine, and what conclusions genuinely follow. It is the foundation underneath every proof in the other branches.",
+    },
+  ]}
+/>

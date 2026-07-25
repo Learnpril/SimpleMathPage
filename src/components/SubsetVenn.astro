@@ -1,0 +1,77 @@
+---
+/**
+ * SubsetVenn — A inside B inside the universe, with individual elements drawn
+ * as dots so the element-versus-subset distinction is visible.
+ */
+const w = 480;
+const h = 236;
+---
+
+<figure
+  class="sbv"
+  role="img"
+  aria-label="Set A with elements 1 and 2 sits entirely inside set B, which also contains 3 and 4. The element 9 lies outside both but inside the universal set."
+>
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    {/* Universe */}
+    <rect x="14" y="34" width={w - 28} height="152" rx="4" class="sbv-universe" />
+    <text x="22" y="50" class="sbv-u" font-size="12">U</text>
+
+    {/* B (outer circle) */}
+    <ellipse cx="170" cy="109" rx="128" ry="66" class="sbv-b" />
+    <text x="66" y="82" class="sbv-b-label" font-size="14" font-weight="bold">B</text>
+
+    {/* A (inner circle) */}
+    <ellipse cx="132" cy="112" rx="62" ry="44" class="sbv-a" />
+    <text x="94" y="94" class="sbv-a-label" font-size="14" font-weight="bold">A</text>
+
+    {/* Elements inside A */}
+    <circle cx="120" cy="118" r="5" class="sbv-dot-a" />
+    <text x="120" y="137" class="sbv-el" font-size="11" text-anchor="middle">1</text>
+    <circle cx="152" cy="118" r="5" class="sbv-dot-a" />
+    <text x="152" y="137" class="sbv-el" font-size="11" text-anchor="middle">2</text>
+
+    {/* Elements in B but not A */}
+    <circle cx="232" cy="100" r="5" class="sbv-dot-b" />
+    <text x="232" y="119" class="sbv-el" font-size="11" text-anchor="middle">3</text>
+    <circle cx="266" cy="130" r="5" class="sbv-dot-b" />
+    <text x="266" y="149" class="sbv-el" font-size="11" text-anchor="middle">4</text>
+
+    {/* Element outside both */}
+    <circle cx="390" cy="150" r="5" class="sbv-dot-out" />
+    <text x="390" y="169" class="sbv-el" font-size="11" text-anchor="middle">9</text>
+
+    {/* Statements */}
+    <text x="14" y="206" class="sbv-true" font-size="10.5">A ⊆ B  ✓ every element of A is in B</text>
+    <text x="14" y="224" class="sbv-true" font-size="10.5">1 ∈ A  ✓ and {"{1}"} ⊆ A  ✓</text>
+    <text x="252" y="206" class="sbv-false" font-size="10.5">9 ∉ B  and 9 ∉ A</text>
+    <text x="252" y="224" class="sbv-false" font-size="10.5">{"{1}"} ∉ A  (a subset, not an element)</text>
+  </svg>
+</figure>
+
+<style>
+  .sbv { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .sbv svg { max-width:100%; height:auto; }
+  .sbv-universe { fill:none; stroke:#555; stroke-width:1; }
+  .sbv-b { fill:#58a6ff; fill-opacity:0.10; stroke:#58a6ff; stroke-width:2; }
+  .sbv-a { fill:#7ee787; fill-opacity:0.14; stroke:#7ee787; stroke-width:2; }
+  .sbv-a-label { fill:#7ee787; font-family:'Libre Baskerville',Georgia,serif; }
+  .sbv-b-label { fill:#58a6ff; font-family:'Libre Baskerville',Georgia,serif; }
+  .sbv-dot-a { fill:#7ee787; }
+  .sbv-dot-b { fill:#58a6ff; }
+  .sbv-dot-out { fill:#f0883e; }
+  .sbv-el { fill:#888; font-family:'Libre Baskerville',Georgia,serif; }
+  .sbv-u { fill:#888; font-family:'Libre Baskerville',Georgia,serif; }
+  .sbv-true { fill:#7ee787; font-family:'Libre Baskerville',Georgia,serif; }
+  .sbv-false { fill:#f0883e; font-family:'Libre Baskerville',Georgia,serif; }
+  :global([data-theme="light"]) .sbv-universe { stroke:#ccc; }
+  :global([data-theme="light"]) .sbv-b { fill:#0550ae; fill-opacity:0.08; stroke:#0550ae; }
+  :global([data-theme="light"]) .sbv-a { fill:#116329; fill-opacity:0.10; stroke:#116329; }
+  :global([data-theme="light"]) .sbv-a-label { fill:#116329; }
+  :global([data-theme="light"]) .sbv-b-label { fill:#0550ae; }
+  :global([data-theme="light"]) .sbv-dot-a { fill:#116329; }
+  :global([data-theme="light"]) .sbv-dot-b { fill:#0550ae; }
+  :global([data-theme="light"]) .sbv-dot-out { fill:#b35900; }
+  :global([data-theme="light"]) .sbv-true { fill:#116329; }
+  :global([data-theme="light"]) .sbv-false { fill:#b35900; }
+</style>

@@ -1,0 +1,88 @@
+---
+/**
+ * ConverseContrapositive — the four related conditionals arranged in a square.
+ * The diagonals are the equivalent pairs; the sides are the traps.
+ */
+const w = 500;
+const h = 268;
+const bw = 150;
+const bh = 46;
+const lx = 30;
+const rx = 320;
+const ty = 46;
+const by = 168;
+const nodes = [
+  { x: lx, y: ty, form: "p → q", name: "Original", cls: "green" },
+  { x: rx, y: ty, form: "q → p", name: "Converse", cls: "orange" },
+  { x: lx, y: by, form: "¬q → ¬p", name: "Contrapositive", cls: "green" },
+  { x: rx, y: by, form: "¬p → ¬q", name: "Inverse", cls: "orange" },
+];
+---
+
+<figure
+  class="cvc"
+  role="img"
+  aria-label="The original conditional and its contrapositive are logically equivalent, shown on one diagonal. The converse and inverse are equivalent to each other but not to the original."
+>
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    {/* Equivalence link: original to contrapositive (left column) */}
+    <line x1={lx + bw / 2} y1={ty + bh} x2={lx + bw / 2} y2={by} class="cvc-eq" />
+    <text x={lx + bw / 2 + 6} y={(ty + bh + by) / 2 + 4} class="cvc-eq-label" font-size="10.5">equivalent</text>
+
+    {/* Equivalence link: converse to inverse (right column) */}
+    <line x1={rx + bw / 2} y1={ty + bh} x2={rx + bw / 2} y2={by} class="cvc-eq" />
+    <text x={rx + bw / 2 + 6} y={(ty + bh + by) / 2 + 4} class="cvc-eq-label" font-size="10.5">equivalent</text>
+
+    {/* Non-equivalence across the top */}
+    <line x1={lx + bw} y1={ty + bh / 2} x2={rx} y2={ty + bh / 2} class="cvc-neq" stroke-dasharray="5,4" />
+    <text x={(lx + bw + rx) / 2} y={ty + bh / 2 - 8} class="cvc-neq-label" font-size="10.5" text-anchor="middle">NOT equivalent</text>
+    <text x={(lx + bw + rx) / 2} y={ty + bh / 2 + 18} class="cvc-trap" font-size="9.5" text-anchor="middle">the classic error</text>
+
+    {/* Non-equivalence across the bottom */}
+    <line x1={lx + bw} y1={by + bh / 2} x2={rx} y2={by + bh / 2} class="cvc-neq" stroke-dasharray="5,4" />
+    <text x={(lx + bw + rx) / 2} y={by + bh / 2 - 8} class="cvc-neq-label" font-size="10.5" text-anchor="middle">NOT equivalent</text>
+
+    {/* Nodes */}
+    {nodes.map((n) => (
+      <g>
+        <rect x={n.x} y={n.y} width={bw} height={bh} rx="7" class={`cvc-box cvc-${n.cls}`} />
+        <text x={n.x + bw / 2} y={n.y + 20} class={`cvc-form cvc-t-${n.cls}`} font-size="14" font-weight="bold" text-anchor="middle">{n.form}</text>
+        <text x={n.x + bw / 2} y={n.y + 36} class="cvc-name" font-size="10" text-anchor="middle">{n.name}</text>
+      </g>
+    ))}
+
+    <text x={w / 2} y="238" class="cvc-foot" font-size="11" text-anchor="middle">
+      Prove the contrapositive and you have proved the original.
+    </text>
+    <text x={w / 2} y="256" class="cvc-foot" font-size="11" text-anchor="middle">
+      The converse is a separate claim.
+    </text>
+  </svg>
+</figure>
+
+<style>
+  .cvc { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .cvc svg { max-width:100%; height:auto; }
+  .cvc-box { fill:none; stroke-width:2; }
+  .cvc-green { stroke:#7ee787; }
+  .cvc-orange { stroke:#f0883e; }
+  .cvc-form { font-family:'Libre Baskerville',Georgia,serif; }
+  .cvc-t-green { fill:#7ee787; }
+  .cvc-t-orange { fill:#f0883e; }
+  .cvc-name { fill:#888; font-family:'Libre Baskerville',Georgia,serif; font-style:italic; }
+  .cvc-eq { stroke:#7ee787; stroke-width:2; }
+  .cvc-eq-label { fill:#7ee787; font-family:'Libre Baskerville',Georgia,serif; }
+  .cvc-neq { stroke:#f0883e; stroke-width:1.5; }
+  .cvc-neq-label { fill:#f0883e; font-family:'Libre Baskerville',Georgia,serif; }
+  .cvc-trap { fill:#888; font-family:'Libre Baskerville',Georgia,serif; font-style:italic; }
+  .cvc-foot { fill:#d2a8ff; font-family:'Libre Baskerville',Georgia,serif; font-style:italic; }
+  :global([data-theme="light"]) .cvc-green { stroke:#116329; }
+  :global([data-theme="light"]) .cvc-orange { stroke:#b35900; }
+  :global([data-theme="light"]) .cvc-t-green { fill:#116329; }
+  :global([data-theme="light"]) .cvc-t-orange { fill:#b35900; }
+  :global([data-theme="light"]) .cvc-eq { stroke:#116329; }
+  :global([data-theme="light"]) .cvc-eq-label { fill:#116329; }
+  :global([data-theme="light"]) .cvc-neq { stroke:#b35900; }
+  :global([data-theme="light"]) .cvc-neq-label { fill:#b35900; }
+  :global([data-theme="light"]) .cvc-foot { fill:#6639ba; }
+</style>

@@ -1,0 +1,393 @@
+---
+title: Modular Arithmetic
+description: Learn the arithmetic of remainders, congruence, modular operations, and how it powers cryptography and hashing
+sidebar:
+  order: 19
+---
+
+import Quiz from "../../../components/Quiz.astro";
+import ModularClock from "../../../components/ModularClock.astro";
+import SymbolKey from "../../../components/SymbolKey.astro";
+
+## What You'll Learn
+
+In this lesson you'll learn the division algorithm, what congruence modulo $n$ means, how to add and multiply in modular arithmetic, why division is the tricky operation, and how modular exponentiation makes modern cryptography possible.
+
+<SymbolKey
+  items={[
+    {
+      sym: "a mod n",
+      read: "a modulo n",
+      note: "the remainder when a is divided by n",
+    },
+    {
+      sym: "a ≡ b (mod n)",
+      read: "a is congruent to b modulo n",
+      note: "a and b leave the same remainder. Three bars, not two: it is not plain equality.",
+    },
+    {
+      sym: "≢",
+      read: "is not congruent to",
+      note: "the congruence symbol with a slash through it",
+    },
+    { sym: "a | b", read: "a divides b", note: "b is a multiple of a" },
+    {
+      sym: "a ∤ b",
+      read: "a does not divide b",
+      note: "dividing leaves a remainder",
+    },
+    {
+      sym: "gcd(a, b)",
+      read: "the greatest common divisor of a and b",
+      note: "the largest number dividing both. When it equals 1 the two are called coprime.",
+    },
+    {
+      sym: "a⁻¹",
+      read: "the modular inverse of a",
+      note: "the value that multiplies with a to give 1, mod n",
+    },
+  ]}
+/>
+
+## The Concept
+
+### The division algorithm
+
+For any integer $a$ and positive integer $n$, there exist **unique** integers $q$ (quotient) and $r$ (remainder) with
+
+$$
+a = qn + r \qquad 0 \leq r < n
+$$
+
+We write $r = a \bmod n$.
+
+$$
+17 = 3 \cdot 5 + 2 \quad \Longrightarrow \quad 17 \bmod 5 = 2
+$$
+
+The remainder is always in $\{0, 1, \ldots, n-1\}$. That constraint is what makes it well-defined.
+
+**Negative numbers.** In mathematics the remainder is always non-negative:
+
+$$
+-7 = (-2)(5) + 3 \quad \Longrightarrow \quad -7 \bmod 5 = 3
+$$
+
+Be aware that many programming languages disagree. In C, Java, and JavaScript, `-7 % 5` returns $-3$, because they truncate the quotient toward zero. Python returns 3, matching the mathematical convention. This is a real source of bugs, so check your language.
+
+### Congruence
+
+$$
+a \equiv b \pmod{n} \quad \text{means} \quad n \mid (a - b)
+$$
+
+Read: "$a$ is congruent to $b$ modulo $n$." Equivalently, $a$ and $b$ leave the same remainder when divided by $n$.
+
+$$
+17 \equiv 2 \pmod{5} \qquad 38 \equiv 3 \pmod{5} \qquad -7 \equiv 3 \pmod{5}
+$$
+
+From the relations lesson: congruence mod $n$ is an **equivalence relation**, and it partitions the integers into $n$ **residue classes**. Modular arithmetic is arithmetic on those classes.
+
+The intuition everyone already has is a clock. On a 12-hour clock, 15:00 is 3 o'clock because $15 \equiv 3 \pmod{12}$. Days of the week are mod 7. Angles are mod 360.
+
+<ModularClock />
+
+### Arithmetic that works
+
+Congruence plays nicely with addition, subtraction, and multiplication. If $a \equiv b \pmod n$ and $c \equiv d \pmod n$, then
+
+$$
+a + c \equiv b + d \pmod{n}
+$$
+
+$$
+a - c \equiv b - d \pmod{n}
+$$
+
+$$
+ac \equiv bd \pmod{n}
+$$
+
+$$
+a^k \equiv b^k \pmod{n}
+$$
+
+This is enormously practical. **You can reduce mod $n$ at any point in a calculation**, which keeps numbers small.
+
+To compute $47 \times 63 \bmod 10$, don't multiply first. Reduce first:
+
+$$
+47 \times 63 \equiv 7 \times 3 = 21 \equiv 1 \pmod{10}
+$$
+
+Check: $47 \times 63 = 2961$, which ends in 1. Correct.
+
+### Division does not work the same way
+
+You **cannot** freely divide in modular arithmetic. From $6 \equiv 12 \pmod 6$ you cannot cancel a 3 to get $2 \equiv 4 \pmod 6$, which is false.
+
+Instead of dividing, you multiply by a **modular inverse**. The inverse of $a$ mod $n$ is a value $a^{-1}$ with
+
+$$
+a \cdot a^{-1} \equiv 1 \pmod{n}
+$$
+
+**It exists if and only if $\gcd(a, n) = 1$**, meaning $a$ and $n$ are coprime.
+
+For example, mod 7: $3 \cdot 5 = 15 \equiv 1 \pmod 7$, so $3^{-1} \equiv 5 \pmod 7$.
+
+But mod 6, the value 2 has no inverse, because $\gcd(2,6) = 2$. No multiple of 2 is ever congruent to 1 mod 6, since all multiples of 2 are even and 1 mod 6 lands on odd numbers.
+
+This is why **prime moduli are special**. If $p$ is prime, every nonzero value from 1 to $p-1$ is coprime to $p$, so every one of them has an inverse. That makes arithmetic mod a prime behave almost exactly like ordinary arithmetic, which is why cryptography uses primes constantly.
+
+### Modular exponentiation
+
+Computing $a^k \bmod n$ is the core operation of public-key cryptography, and the naive approach is hopeless. $7^{100}$ has 85 digits, and real cryptography uses exponents in the thousands of bits.
+
+Two ideas fix it.
+
+- **Reduce at every step** - never let the number grow past the modulus.
+- **Square and multiply** - instead of $k$ multiplications, use about $\log_2 k$ of them by repeated squaring.
+
+The squaring trick looks like this:
+
+$$
+a^{16} = \big(\big(\big(a^2\big)^2\big)^2\big)^2
+$$
+
+Four squarings instead of fifteen multiplications. For a 2048-bit exponent this is the difference between "instant" and "longer than the universe has existed."
+
+### Fermat's little theorem
+
+If $p$ is prime and $p \nmid a$ (read: "$p$ does **not** divide $a$," so $a$ is not a multiple of $p$), then
+
+$$
+a^{p-1} \equiv 1 \pmod{p}
+$$
+
+That side condition is doing real work. If $a$ **were** a multiple of $p$, then $a \equiv 0$, and $0^{p-1} = 0$ rather than 1. Try $p = 5$: for $a = 2$ you get $2^4 = 16 \equiv 1 \pmod 5$, but for $a = 10$ you get $10^4 \equiv 0 \pmod 5$. Every $a$ that isn't a multiple of 5 lands on 1.
+
+This collapses huge exponents. To compute $3^{100} \bmod 7$, note $3^6 \equiv 1 \pmod 7$, so reduce the exponent mod 6:
+
+$$
+100 = 16 \cdot 6 + 4 \quad \Longrightarrow \quad 3^{100} \equiv 3^4 = 81 \equiv 4 \pmod 7
+$$
+
+The theorem also underlies primality testing. If $a^{n-1} \not\equiv 1 \pmod n$ for some $a$, then $n$ is definitely composite, and you learned that without factoring it.
+
+## Worked Examples
+
+**Example 1: Compute remainders.**
+
+Find $a \bmod 7$ for $a = 45$, $a = 7$, $a = -12$.
+
+**Solution.**
+
+$45 = 6 \cdot 7 + 3$, so $45 \bmod 7 = 3$.
+
+$7 = 1 \cdot 7 + 0$, so $7 \bmod 7 = 0$.
+
+$-12 = (-2)(7) + 2$, so $-12 \bmod 7 = 2$. (Go **down** to the next multiple of 7 below $-12$, which is $-14$, then the remainder is the distance up: $-12 - (-14) = 2$.)
+
+**Example 2: Reduce as you go.**
+
+Compute $(83 + 129) \times 47 \bmod 9$.
+
+**Solution.** Reduce each piece first.
+
+$83 \bmod 9$: $9 \cdot 9 = 81$, so $83 \equiv 2$.
+
+$129 \bmod 9$: $9 \cdot 14 = 126$, so $129 \equiv 3$.
+
+$47 \bmod 9$: $9 \cdot 5 = 45$, so $47 \equiv 2$.
+
+$$
+(2 + 3) \times 2 = 10 \equiv 1 \pmod 9
+$$
+
+The answer is 1. Direct computation gives $212 \times 47 = 9964$, and $9964 = 9 \cdot 1107 + 1$. Confirmed, with far less arithmetic.
+
+**Example 3: A large power.**
+
+Compute $3^{20} \bmod 11$.
+
+**Solution.** Use repeated squaring, reducing every time.
+
+$$
+3^2 = 9
+$$
+
+$$
+3^4 = 9^2 = 81 \equiv 4 \pmod{11}
+$$
+
+$$
+3^8 \equiv 4^2 = 16 \equiv 5 \pmod{11}
+$$
+
+$$
+3^{16} \equiv 5^2 = 25 \equiv 3 \pmod{11}
+$$
+
+Now $20 = 16 + 4$:
+
+$$
+3^{20} = 3^{16} \cdot 3^4 \equiv 3 \cdot 4 = 12 \equiv 1 \pmod{11}
+$$
+
+The answer is 1. Note that $3^{20}$ is about 3.5 billion, and we never computed a number bigger than 25.
+
+Faster route with Fermat: 11 is prime, so $3^{10} \equiv 1 \pmod{11}$, and $3^{20} = (3^{10})^2 \equiv 1$.
+
+**Example 4: Find a modular inverse.**
+
+Find $5^{-1} \bmod 12$.
+
+**Solution.** First check it exists: $\gcd(5,12) = 1$, so yes.
+
+For small moduli, just test values until $5k \equiv 1$:
+
+- $5 \cdot 1 = 5$
+- $5 \cdot 2 = 10$
+- $5 \cdot 3 = 15 \equiv 3$
+- $5 \cdot 4 = 20 \equiv 8$
+- $5 \cdot 5 = 25 \equiv 1$ ✓
+
+So $5^{-1} \equiv 5 \pmod{12}$. (5 is its own inverse here, which happens sometimes.)
+
+For large moduli you'd use the extended Euclidean algorithm rather than guessing.
+
+**Example 5: Solve a congruence.**
+
+Solve $4x \equiv 6 \pmod{10}$.
+
+**Solution.** Careful, $\gcd(4,10) = 2$, so 4 has no inverse mod 10 and we can't just multiply through.
+
+Test all residues $x = 0$ through 9:
+
+- $x=4$: $16 \equiv 6$ ✓
+- $x=9$: $36 \equiv 6$ ✓
+
+All other values fail. So $x \equiv 4$ or $x \equiv 9 \pmod{10}$, giving **two** solution classes.
+
+The general rule: $ax \equiv b \pmod n$ has solutions exactly when $\gcd(a,n) \mid b$, and then it has exactly $\gcd(a,n)$ solutions mod $n$. Here $\gcd = 2$ and $2 \mid 6$, so two solutions, as found.
+
+**Example 6: Day of the week.**
+
+Today is Wednesday. What day is it in 500 days?
+
+**Solution.** Days cycle mod 7.
+
+$$
+500 = 71 \cdot 7 + 3 \quad \Longrightarrow \quad 500 \equiv 3 \pmod 7
+$$
+
+Three days after Wednesday is **Saturday**.
+
+**Example 7: A check digit.**
+
+ISBN-10 check digits satisfy
+
+$$
+\sum_{i=1}^{10} i \cdot d_i \equiv 0 \pmod{11}
+$$
+
+where $d_i$ is the $i$-th digit read left to right. Verify that 0-306-40615-2 is valid.
+
+**Solution.** Digits: 0, 3, 0, 6, 4, 0, 6, 1, 5, 2.
+
+$$
+1(0) + 2(3) + 3(0) + 4(6) + 5(4) + 6(0) + 7(6) + 8(1) + 9(5) + 10(2)
+$$
+
+$$
+= 0 + 6 + 0 + 24 + 20 + 0 + 42 + 8 + 45 + 20 = 165
+$$
+
+$$
+165 = 15 \cdot 11 \quad \Longrightarrow \quad 165 \equiv 0 \pmod{11}
+$$
+
+**Valid.** The weighting by position is what lets this scheme catch transposition errors, not just single-digit typos.
+
+## Real-World Applications
+
+Public-key cryptography is modular arithmetic. RSA encrypts with $c \equiv m^e \pmod n$ and decrypts with $m \equiv c^d \pmod n$, where $n$ is a product of two large primes. Its security rests on the fact that modular exponentiation is fast while factoring $n$ to recover $d$ is not. Diffie-Hellman key exchange, which secures most HTTPS connections, relies on the difficulty of the discrete logarithm problem in modular arithmetic.
+
+Hash tables use `hash(key) % table_size` to map keys into buckets. Choosing a prime table size is a modular arithmetic decision: it spreads keys more evenly when the hash values happen to share factors with the table size.
+
+Check digits are everywhere. Credit card numbers use the Luhn algorithm mod 10, ISBNs use mod 11 or mod 10, and bank routing numbers, VINs, and shipping barcodes all use similar schemes to catch typos before they cause problems.
+
+Cyclic buffers and ring data structures wrap with `(index + 1) % capacity`, which is how audio buffers, network packet queues, and streaming windows manage fixed memory without reallocating.
+
+Pseudorandom number generators are built on modular recurrences of the form $x_{n+1} = (ax_n + c) \bmod m$. Their quality depends entirely on the choice of $a$, $c$, and $m$.
+
+And calendars are modular arithmetic in the wild. Leap year rules, the day-of-week calculation for any date in history, and the calculation of Easter are all congruence problems.
+
+:::note[You've Got This]
+The single most useful habit here is reducing early and often. You never need to compute a big number and then take its remainder, and doing so is how these problems become tedious. Reduce every intermediate value, and the arithmetic stays tiny. The one real trap is division: you cannot cancel factors the way you would with ordinary equations, and instead you multiply by a modular inverse, which only exists when the value is coprime to the modulus. Check that gcd before you try.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="discrete-modular-arithmetic"
+  questions={[
+    {
+      id: "q1",
+      text: "What is 43 mod 8?",
+      options: ["5", "3", "6", "4"],
+      correctIndex: 1,
+      explanation:
+        "Since 8 x 5 = 40, we have 43 = 5(8) + 3, so the remainder is 3. Remainders always fall between 0 and one less than the modulus.",
+    },
+    {
+      id: "q2",
+      text: "The statement 'a is congruent to b modulo n' means...",
+      options: [
+        "a and b are both divisible by n",
+        "n divides the difference a minus b",
+        "a divided by b leaves remainder n",
+        "a and b are both prime relative to n",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Congruence means the difference is a multiple of the modulus, which is the same as saying a and b leave identical remainders when divided by n.",
+    },
+    {
+      id: "q3",
+      text: "Compute (37 x 54) mod 6 by reducing first.",
+      options: ["0", "3", "1", "4"],
+      correctIndex: 0,
+      explanation:
+        "Reducing gives 37 congruent to 1 and 54 congruent to 0 mod 6, so the product is 1 x 0 = 0. Since 54 is itself a multiple of 6, the whole product is divisible by 6.",
+    },
+    {
+      id: "q4",
+      text: "When does a value a have a multiplicative inverse modulo n?",
+      options: [
+        "Whenever a is less than n",
+        "Whenever n is even",
+        "Whenever a and n are coprime, meaning their gcd is 1",
+        "Always, for any a and any n",
+      ],
+      correctIndex: 2,
+      explanation:
+        "An inverse exists exactly when gcd(a, n) = 1. This is why a prime modulus is so convenient: every nonzero residue is then coprime to it and has an inverse.",
+    },
+    {
+      id: "q5",
+      text: "Why is modular exponentiation computed by repeated squaring with reduction at each step?",
+      options: [
+        "Because the result would otherwise be negative",
+        "Because it avoids astronomically large intermediate values and needs only about log-many multiplications",
+        "Because exponents are undefined in modular arithmetic",
+        "Because squaring is the only operation allowed modulo a prime",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Reducing at every step keeps intermediate numbers bounded by the modulus, and squaring cuts the number of multiplications from k down to roughly log base 2 of k. Together these make RSA-scale exponentiation practical.",
+    },
+  ]}
+/>

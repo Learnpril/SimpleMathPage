@@ -1,0 +1,271 @@
+---
+title: Logical Equivalence and De Morgan's Laws
+description: Learn when two logical statements mean the same thing and how to correctly negate compound statements
+sidebar:
+  order: 3
+---
+
+import Quiz from "../../../components/Quiz.astro";
+import DeMorganVenn from "../../../components/DeMorganVenn.astro";
+import SymbolKey from "../../../components/SymbolKey.astro";
+
+## What You'll Learn
+
+In this lesson you'll learn what it means for two statements to be logically equivalent, how to prove equivalence with a truth table, the standard laws of logic you can use to simplify statements, and De Morgan's laws, which tell you how to correctly negate an AND or an OR.
+
+<SymbolKey
+  items={[
+    {
+      sym: "p ≡ q",
+      read: "p is logically equivalent to q",
+      note: "same truth value in every row of the truth table",
+    },
+    {
+      sym: "≢",
+      read: "is not equivalent to",
+      note: "the same symbol with a slash, like ≠ negates =",
+    },
+    {
+      sym: "T",
+      read: "a tautology",
+      note: "a statement that is true in every case",
+    },
+    {
+      sym: "F",
+      read: "a contradiction",
+      note: "a statement that is false in every case",
+    },
+  ]}
+/>
+
+One heads-up on $\equiv$: it shows up again in the modular arithmetic lesson meaning "leaves the same remainder." Same glyph, different job. Context tells you which is meant.
+
+## The Concept
+
+Two statements are **logically equivalent** if they have the same truth value in every possible case. We write this as
+
+$$
+p \equiv q
+$$
+
+or sometimes $p \Leftrightarrow q$. The test is simple: build a truth table for both and compare the final columns. If they match in every row, the statements are equivalent, and you can freely swap one for the other.
+
+This matters because it lets you rewrite a complicated statement as a simpler one that means exactly the same thing, which is the logical version of simplifying an algebraic expression.
+
+### De Morgan's Laws
+
+These are the two most useful rules in propositional logic, and also the two most commonly botched.
+
+$$
+\neg(p \wedge q) \equiv \neg p \vee \neg q
+$$
+
+$$
+\neg(p \vee q) \equiv \neg p \wedge \neg q
+$$
+
+In words:
+
+- **NOT (A and B)** means **not A, or not B**. The negation of "both" is "at least one fails."
+- **NOT (A or B)** means **not A, and not B**. The negation of "at least one" is "neither."
+
+The pattern to memorize: **push the negation inward and flip the connective.** AND becomes OR, OR becomes AND.
+
+Shading the regions makes the first law visible. Take everything outside $p$, add everything outside $q$, and the only thing you never cover is the overlap:
+
+<DeMorganVenn />
+
+Let's prove the first one.
+
+| $p$ | $q$ | $p \wedge q$ | $\neg(p \wedge q)$ | $\neg p$ | $\neg q$ | $\neg p \vee \neg q$ |
+| :-: | :-: | :----------: | :----------------: | :------: | :------: | :------------------: |
+|  T  |  T  |      T       |         F          |    F     |    F     |          F           |
+|  T  |  F  |      F       |         T          |    F     |    T     |          T           |
+|  F  |  T  |      F       |         T          |    T     |    F     |          T           |
+|  F  |  F  |      F       |         T          |    T     |    T     |          T           |
+
+Columns 4 and 7 match in all four rows. Equivalent.
+
+### The common mistake
+
+The wrong move is to negate each piece and leave the connective alone:
+
+$$
+\neg(p \wedge q) \not\equiv \neg p \wedge \neg q
+$$
+
+Here's why that's wrong in plain English. Suppose someone says "I have a passport and a visa." To contradict them, do you need to show they have neither? No. Showing they're missing just the visa is enough. So the negation is "I'm missing the passport **or** I'm missing the visa," not "I'm missing both."
+
+### The other laws
+
+These all get proved the same way, with a truth table. Keep them handy.
+
+- **Identity** - $p \wedge \text{T} \equiv p$ and $p \vee \text{F} \equiv p$
+- **Domination** - $p \vee \text{T} \equiv \text{T}$ and $p \wedge \text{F} \equiv \text{F}$
+- **Double negation** - $\neg(\neg p) \equiv p$
+- **Idempotent** - $p \wedge p \equiv p$ and $p \vee p \equiv p$
+- **Commutative** - $p \wedge q \equiv q \wedge p$ and $p \vee q \equiv q \vee p$
+- **Associative** - $(p \wedge q) \wedge r \equiv p \wedge (q \wedge r)$
+- **Distributive** - $p \wedge (q \vee r) \equiv (p \wedge q) \vee (p \wedge r)$, and also $p \vee (q \wedge r) \equiv (p \vee q) \wedge (p \vee r)$
+- **Absorption** - $p \vee (p \wedge q) \equiv p$ and $p \wedge (p \vee q) \equiv p$
+
+Most of these look like algebra rules, and that's not a coincidence. Boole's whole insight was that logic behaves like an algebra. The one that has no arithmetic analogue is the second distributive law: in ordinary algebra $a + (b \cdot c)$ does **not** equal $(a+b)(a+c)$, but in logic the corresponding statement does hold.
+
+## Worked Examples
+
+**Example 1: Negate a real sentence.**
+
+Negate: "The password is at least 8 characters and contains a digit."
+
+**Solution.** Let $p$ = "at least 8 characters," $q$ = "contains a digit." The statement is $p \wedge q$, so the negation is:
+
+$$
+\neg(p \wedge q) \equiv \neg p \vee \neg q
+$$
+
+"The password is shorter than 8 characters **or** it contains no digit."
+
+That's exactly the condition a validator should reject on. Note that a password could fail on both counts, and the OR still covers that case.
+
+**Example 2: Negate a nested statement.**
+
+Negate $\neg(p \vee (q \wedge r))$ and simplify so no negation applies to a compound.
+
+**Solution.** Apply De Morgan to the outer OR:
+
+$$
+\neg(p \vee (q \wedge r)) \equiv \neg p \wedge \neg(q \wedge r)
+$$
+
+Now apply De Morgan to the inner AND:
+
+$$
+\equiv \neg p \wedge (\neg q \vee \neg r)
+$$
+
+Done. Work from the outside inward, one connective at a time.
+
+**Example 3: Simplify using the laws.**
+
+Simplify $(p \wedge q) \vee (p \wedge \neg q)$.
+
+**Solution.**
+
+$$
+(p \wedge q) \vee (p \wedge \neg q) \equiv p \wedge (q \vee \neg q)
+$$
+
+by the distributive law. Now $q \vee \neg q$ is a tautology, so it's just T:
+
+$$
+\equiv p \wedge \text{T} \equiv p
+$$
+
+The whole thing collapses to $p$. This makes sense: the statement says "$p$ is true and $q$ is true, or $p$ is true and $q$ is false." Either way, $p$ is true, and we've said nothing about $q$.
+
+**Example 4: Verify an equivalence with a truth table.**
+
+Are $\neg p \vee q$ and $\neg(p \wedge \neg q)$ equivalent?
+
+| $p$ | $q$ | $\neg p \vee q$ | $\neg q$ | $p \wedge \neg q$ | $\neg(p \wedge \neg q)$ |
+| :-: | :-: | :-------------: | :------: | :---------------: | :---------------------: |
+|  T  |  T  |        T        |    F     |         F         |            T            |
+|  T  |  F  |        F        |    T     |         T         |            F            |
+|  F  |  T  |        T        |    F     |         F         |            T            |
+|  F  |  F  |        T        |    T     |         F         |            T            |
+
+Columns 3 and 6 match. **Equivalent.** You could also have gotten there in one step with De Morgan plus double negation.
+
+## Real-World Applications
+
+De Morgan's laws are a daily tool in programming. Any time you invert a condition, you're using them:
+
+```
+if (!(isLoggedIn && hasPermission)) { denyAccess(); }
+```
+
+is the same as
+
+```
+if (!isLoggedIn || !hasPermission) { denyAccess(); }
+```
+
+The second version usually reads better and short-circuits earlier. Getting this transformation wrong is a classic source of security bugs, where a check that was supposed to block two conditions ends up blocking only their combination.
+
+Database queries hit the same thing. `NOT (status = 'active' AND verified = true)` matches rows where the status isn't active **or** the row isn't verified, which is a much bigger set than most people expect on first read.
+
+Circuit designers use these laws to rebuild a circuit using fewer or cheaper gate types, since NAND gates alone can produce every other operation.
+
+And in ordinary argument, De Morgan is your defense against a common rhetorical move. If someone claims "you can't have both low taxes and high services," the honest negation is "you could have low taxes without high services, or high services without low taxes," not "you must have neither."
+
+:::note[You've Got This]
+De Morgan's laws are worth committing to memory, but you never actually have to trust your memory. If you can't remember whether the connective flips, build the 4-row truth table. It takes a minute and it's proof, not recall. The plain-English version helps too: the opposite of "both" is "at least one isn't," and the opposite of "either" is "neither."
+:::
+
+## Quiz
+
+<Quiz
+  quizId="discrete-logical-equivalence-and-de-morgans-laws"
+  questions={[
+    {
+      id: "q1",
+      text: "What is the correct negation of p AND q?",
+      options: [
+        "(NOT p) AND (NOT q)",
+        "(NOT p) OR (NOT q)",
+        "p OR q",
+        "NOT p, with q unchanged",
+      ],
+      correctIndex: 1,
+      explanation:
+        "De Morgan's law: negating an AND turns it into an OR of the negations. The negation of 'both hold' is 'at least one fails.'",
+    },
+    {
+      id: "q2",
+      text: "A sign reads: 'Entry requires a ticket or a membership card.' What must be true for someone to be denied entry?",
+      options: [
+        "They have no ticket and no membership card",
+        "They have no ticket, but might have a card",
+        "They have no membership card, but might have a ticket",
+        "They have exactly one of the two",
+      ],
+      correctIndex: 0,
+      explanation:
+        "Negating an OR gives an AND of the negations, so denial requires lacking both the ticket and the card. Having either one is enough to get in.",
+    },
+    {
+      id: "q3",
+      text: "Two logical statements are logically equivalent when...",
+      options: [
+        "they contain the same propositions",
+        "they are both true in at least one row of a truth table",
+        "they have the same truth value in every possible row",
+        "they use the same connectives",
+      ],
+      correctIndex: 2,
+      explanation:
+        "Equivalence means agreement in every case. Matching in one row is not enough, and the statements may look completely different while still being equivalent.",
+    },
+    {
+      id: "q4",
+      text: "Simplify (p OR q) AND (p OR (NOT q)).",
+      options: ["q", "Always false", "Always true", "p"],
+      correctIndex: 3,
+      explanation:
+        "By the distributive law this is p OR (q AND NOT q). Since q AND NOT q is always false, the expression becomes p OR false, which is p.",
+    },
+    {
+      id: "q5",
+      text: "Rewrite NOT(p OR (NOT q)) so that no negation sits on a compound statement.",
+      options: [
+        "(NOT p) AND q",
+        "(NOT p) OR q",
+        "p AND (NOT q)",
+        "(NOT p) AND (NOT q)",
+      ],
+      correctIndex: 0,
+      explanation:
+        "De Morgan turns the negated OR into an AND of negations: (NOT p) AND NOT(NOT q). Double negation then simplifies NOT(NOT q) to q, giving (NOT p) AND q.",
+    },
+  ]}
+/>

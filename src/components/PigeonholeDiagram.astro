@@ -1,0 +1,94 @@
+---
+/**
+ * PigeonholeDiagram — 4 objects into 3 boxes. Whichever way you spread them,
+ * some box ends up with 2. Shown as the worst-case attempt plus the forced result.
+ */
+const w = 560;
+const h = 240;
+const boxW = 72;
+const boxH = 62;
+const boxY = 74;
+const leftX = [20, 100, 180];
+const rightX = [308, 388, 468];
+const dividerX = 280;
+const leftMid = (leftX[0] + leftX[2] + boxW) / 2;
+const rightMid = (rightX[0] + rightX[2] + boxW) / 2;
+---
+
+<figure
+  class="pgh"
+  role="img"
+  aria-label="Three boxes holding one object each, then a fourth object added which forces one box to hold two"
+>
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    {/* ---------- Left: 3 objects, 3 boxes ---------- */}
+    <text x={leftMid} y="26" class="pgh-title pgh-t-blue" font-size="13" font-weight="bold" text-anchor="middle">3 objects, 3 boxes</text>
+    <text x={leftMid} y="44" class="pgh-sub" font-size="10" text-anchor="middle">the best case: one each</text>
+
+    {leftX.map((x) => (
+      <g>
+        <rect x={x} y={boxY} width={boxW} height={boxH} rx="5" class="pgh-box" />
+        <circle cx={x + boxW / 2} cy={boxY + boxH / 2} r="10" class="pgh-obj" />
+      </g>
+    ))}
+    <text x={leftMid} y="164" class="pgh-verdict pgh-t-blue" font-size="11" text-anchor="middle">no box is forced to share</text>
+
+    {/* Divider */}
+    <line x1={dividerX} y1="40" x2={dividerX} y2="180" class="pgh-divide" stroke-dasharray="4,4" />
+
+    {/* ---------- Right: 4 objects, 3 boxes ---------- */}
+    <text x={rightMid} y="26" class="pgh-title pgh-t-orange" font-size="13" font-weight="bold" text-anchor="middle">4 objects, 3 boxes</text>
+    <text x={rightMid} y="44" class="pgh-sub" font-size="10" text-anchor="middle">one more than there are boxes</text>
+
+    {rightX.map((x, i) => (
+      <g>
+        <rect x={x} y={boxY} width={boxW} height={boxH} rx="5" class={i === 0 ? "pgh-box pgh-box-full" : "pgh-box"} />
+        {i === 0 ? (
+          <g>
+            <circle cx={x + boxW / 2 - 15} cy={boxY + boxH / 2} r="10" class="pgh-obj" />
+            <circle cx={x + boxW / 2 + 15} cy={boxY + boxH / 2} r="10" class="pgh-obj-extra" />
+            <text x={x + boxW / 2} y={boxY - 8} class="pgh-mark" font-size="11" text-anchor="middle">2 here!</text>
+          </g>
+        ) : (
+          <circle cx={x + boxW / 2} cy={boxY + boxH / 2} r="10" class="pgh-obj" />
+        )}
+      </g>
+    ))}
+    <text x={rightMid} y="164" class="pgh-verdict pgh-t-orange" font-size="11" text-anchor="middle">some box must hold at least 2</text>
+
+    {/* Footer */}
+    <text x={w / 2} y="204" class="pgh-foot" font-size="11" text-anchor="middle">
+      n + 1 objects in n boxes forces a shared box — no matter how you arrange them
+    </text>
+    <text x={w / 2} y="222" class="pgh-sub2" font-size="10" text-anchor="middle">
+      To guarantee m in one box with k boxes, you need k(m − 1) + 1 objects
+    </text>
+  </svg>
+</figure>
+
+<style>
+  .pgh { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .pgh svg { max-width:100%; height:auto; }
+  .pgh-box { fill:none; stroke:#555; stroke-width:1.8; }
+  .pgh-box-full { stroke:#f0883e; stroke-width:2.5; }
+  .pgh-obj { fill:#58a6ff; }
+  .pgh-obj-extra { fill:#f0883e; }
+  .pgh-title { font-family:'Libre Baskerville',Georgia,serif; }
+  .pgh-t-blue { fill:#58a6ff; }
+  .pgh-t-orange { fill:#f0883e; }
+  .pgh-sub { fill:#888; font-family:'Libre Baskerville',Georgia,serif; font-style:italic; }
+  .pgh-sub2 { fill:#888; font-family:'Libre Baskerville',Georgia,serif; font-style:italic; }
+  .pgh-verdict { font-family:'Libre Baskerville',Georgia,serif; font-style:italic; }
+  .pgh-mark { fill:#f0883e; font-family:'Libre Baskerville',Georgia,serif; font-weight:bold; }
+  .pgh-divide { stroke:#555; }
+  .pgh-foot { fill:#d2a8ff; font-family:'Libre Baskerville',Georgia,serif; font-style:italic; }
+  :global([data-theme="light"]) .pgh-box { stroke:#ccc; }
+  :global([data-theme="light"]) .pgh-box-full { stroke:#b35900; }
+  :global([data-theme="light"]) .pgh-obj { fill:#0550ae; }
+  :global([data-theme="light"]) .pgh-obj-extra { fill:#b35900; }
+  :global([data-theme="light"]) .pgh-t-blue { fill:#0550ae; }
+  :global([data-theme="light"]) .pgh-t-orange { fill:#b35900; }
+  :global([data-theme="light"]) .pgh-mark { fill:#b35900; }
+  :global([data-theme="light"]) .pgh-divide { stroke:#ccc; }
+  :global([data-theme="light"]) .pgh-foot { fill:#6639ba; }
+</style>

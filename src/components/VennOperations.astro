@@ -1,0 +1,115 @@
+---
+/**
+ * VennOperations — the four core set operations as shaded Venn panels:
+ * union, intersection, difference, and complement.
+ */
+const w = 540;
+const h = 320;
+const pw = 152;
+const ph = 100;
+const r = 32;
+const ops = [
+  { id: "un", col: 0, row: 0, title: "A ∪ B", caption: "in either set" },
+  { id: "in", col: 1, row: 0, title: "A ∩ B", caption: "in both sets" },
+  { id: "df", col: 0, row: 1, title: "A − B", caption: "in A but not B" },
+  { id: "cp", col: 1, row: 1, title: "A with a bar (complement)", caption: "everything not in A" },
+];
+const colX = (c: number) => 40 + c * 240;
+const rowY = (r0: number) => 46 + r0 * 148;
+---
+
+<figure
+  class="vop"
+  role="img"
+  aria-label="Four Venn diagrams with shaded regions showing union, intersection, difference, and complement"
+>
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      {ops.map((o) => {
+        const px = colX(o.col);
+        const py = rowY(o.row);
+        const cy = py + ph / 2;
+        const ax = px + 56;
+        const bx = px + 92;
+        return (
+          <g>
+            <clipPath id={`vop-clipb-${o.id}`}>
+              <circle cx={bx} cy={cy} r={r} />
+            </clipPath>
+            <mask id={`vop-mask-${o.id}`}>
+              {/* Complement starts from the whole universe; the rest start empty */}
+              <rect
+                x={px}
+                y={py}
+                width={pw}
+                height={ph}
+                fill={o.id === "cp" ? "white" : "black"}
+              />
+              {o.id === "un" && (
+                <g fill="white">
+                  <circle cx={ax} cy={cy} r={r} />
+                  <circle cx={bx} cy={cy} r={r} />
+                </g>
+              )}
+              {o.id === "in" && (
+                <circle cx={ax} cy={cy} r={r} fill="white" clip-path={`url(#vop-clipb-${o.id})`} />
+              )}
+              {o.id === "df" && (
+                <g>
+                  <circle cx={ax} cy={cy} r={r} fill="white" />
+                  <circle cx={bx} cy={cy} r={r} fill="black" />
+                </g>
+              )}
+              {o.id === "cp" && <circle cx={ax} cy={cy} r={r} fill="black" />}
+            </mask>
+          </g>
+        );
+      })}
+    </defs>
+
+    {ops.map((o) => {
+      const px = colX(o.col);
+      const py = rowY(o.row);
+      const cy = py + ph / 2;
+      const ax = px + 56;
+      const bx = px + 92;
+      return (
+        <g>
+          <text x={px + pw / 2} y={py - 12} class="vop-title" font-size="13" font-weight="bold" text-anchor="middle">
+            {o.id === "cp" ? "A\u0305  (complement of A)" : o.title}
+          </text>
+
+          {/* Shading */}
+          <rect x={px} y={py} width={pw} height={ph} class="vop-shade" mask={`url(#vop-mask-${o.id})`} />
+
+          {/* Universe and set outlines */}
+          <rect x={px} y={py} width={pw} height={ph} class="vop-universe" />
+          <text x={px + 5} y={py + 13} class="vop-u" font-size="9">U</text>
+          <circle cx={ax} cy={cy} r={r} class="vop-circle" />
+          <circle cx={bx} cy={cy} r={r} class="vop-circle" />
+          <text x={ax - 19} y={cy + 4} class="vop-set" font-size="12" text-anchor="middle">A</text>
+          <text x={bx + 19} y={cy + 4} class="vop-set" font-size="12" text-anchor="middle">B</text>
+
+          <text x={px + pw / 2} y={py + ph + 18} class="vop-caption" font-size="10.5" text-anchor="middle">{o.caption}</text>
+        </g>
+      );
+    })}
+  </svg>
+</figure>
+
+<style>
+  .vop { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .vop svg { max-width:100%; height:auto; }
+  .vop-shade { fill:#58a6ff; fill-opacity:0.32; }
+  .vop-universe { fill:none; stroke:#555; stroke-width:1; }
+  .vop-circle { fill:none; stroke:#7ee787; stroke-width:1.8; }
+  .vop-set { fill:#7ee787; font-family:'Libre Baskerville',Georgia,serif; font-weight:bold; }
+  .vop-u { fill:#888; font-family:'Libre Baskerville',Georgia,serif; }
+  .vop-title { fill:#58a6ff; font-family:'Libre Baskerville',Georgia,serif; }
+  .vop-caption { fill:#888; font-family:'Libre Baskerville',Georgia,serif; font-style:italic; }
+  :global([data-theme="light"]) .vop-shade { fill:#0550ae; fill-opacity:0.24; }
+  :global([data-theme="light"]) .vop-universe { stroke:#ccc; }
+  :global([data-theme="light"]) .vop-circle { stroke:#116329; }
+  :global([data-theme="light"]) .vop-set { fill:#116329; }
+  :global([data-theme="light"]) .vop-title { fill:#0550ae; }
+</style>
