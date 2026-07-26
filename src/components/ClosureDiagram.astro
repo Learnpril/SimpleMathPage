@@ -1,0 +1,110 @@
+---
+/**
+ * ClosureDiagram — closure is the question "does the answer land back inside?"
+ * The even integers are closed under addition; the odd integers are not, and the
+ * sum visibly leaves the box.
+ */
+const w = 540;
+const h = 268;
+const boxY = 54;
+const boxH = 124;
+const boxW = 210;
+const leftX = 24;
+const rightX = 306;
+const leftCx = leftX + boxW / 2;
+const rightCx = rightX + boxW / 2;
+---
+
+<figure
+  class="clo"
+  role="img"
+  aria-label="The even integers are closed under addition because 4 plus 6 is 10, which is still even, while the odd integers are not closed because 3 plus 5 is 8, which falls outside the set"
+>
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    <text x="16" y="22" class="clo-head" font-size="12.5" font-weight="bold">Closure: does the answer stay inside?</text>
+
+    {/* ---------- Closed ---------- */}
+    <text x={leftCx} y="44" class="clo-title clo-t-green" font-size="11.5" text-anchor="middle" font-weight="bold">Even integers under +</text>
+    <rect x={leftX} y={boxY} width={boxW} height={boxH} rx="10" class="clo-set clo-set-green" />
+
+    <line x1={leftCx - 43} y1={112} x2={leftCx - 12} y2={140} class="clo-arrow" marker-end="url(#clo-head)" />
+    <line x1={leftCx + 43} y1={112} x2={leftCx + 12} y2={140} class="clo-arrow" marker-end="url(#clo-head)" />
+
+    <circle cx={leftCx - 43} cy="98" r="14" class="clo-dot clo-d-green" />
+    <text x={leftCx - 43} y="102" class="clo-el" font-size="11" text-anchor="middle">4</text>
+    <circle cx={leftCx + 43} cy="98" r="14" class="clo-dot clo-d-green" />
+    <text x={leftCx + 43} y="102" class="clo-el" font-size="11" text-anchor="middle">6</text>
+
+    <circle cx={leftCx} cy="152" r="16" class="clo-result clo-r-green" />
+    <text x={leftCx} y="156" class="clo-el-strong clo-t-green" font-size="12" text-anchor="middle" font-weight="bold">10</text>
+
+    <text x={leftCx} y="198" class="clo-cap clo-t-green" font-size="10.5" text-anchor="middle">4 + 6 = 10, still even</text>
+
+    {/* ---------- Not closed ---------- */}
+    <text x={rightCx} y="44" class="clo-title clo-t-orange" font-size="11.5" text-anchor="middle" font-weight="bold">Odd integers under +</text>
+    <rect x={rightX} y={boxY} width={boxW} height={boxH} rx="10" class="clo-set clo-set-orange" />
+
+    {/* The sum leaves the set, so the arrows cross the boundary */}
+    <line x1={rightCx - 43} y1={112} x2={rightCx - 11} y2={190} class="clo-arrow clo-escape" marker-end="url(#clo-head-esc)" />
+    <line x1={rightCx + 43} y1={112} x2={rightCx + 11} y2={190} class="clo-arrow clo-escape" marker-end="url(#clo-head-esc)" />
+
+    <circle cx={rightCx - 43} cy="98" r="14" class="clo-dot clo-d-orange" />
+    <text x={rightCx - 43} y="102" class="clo-el" font-size="11" text-anchor="middle">3</text>
+    <circle cx={rightCx + 43} cy="98" r="14" class="clo-dot clo-d-orange" />
+    <text x={rightCx + 43} y="102" class="clo-el" font-size="11" text-anchor="middle">5</text>
+
+    <circle cx={rightCx} cy="206" r="16" class="clo-result clo-r-orange" />
+    <text x={rightCx} y="210" class="clo-el-strong clo-t-orange" font-size="12" text-anchor="middle" font-weight="bold">8</text>
+
+    <text x={rightCx} y="240" class="clo-cap clo-t-orange" font-size="10.5" text-anchor="middle">3 + 5 = 8, not odd</text>
+
+    <text x={w / 2} y="262" class="clo-foot" font-size="10" text-anchor="middle">
+      Without closure the operation is not an operation on that set at all
+    </text>
+
+    <defs>
+      <marker id="clo-head" markerWidth="7" markerHeight="5" refX="7" refY="2.5" orient="auto">
+        <polygon points="0 0, 7 2.5, 0 5" class="clo-head-fill" />
+      </marker>
+      <marker id="clo-head-esc" markerWidth="7" markerHeight="5" refX="7" refY="2.5" orient="auto">
+        <polygon points="0 0, 7 2.5, 0 5" class="clo-head-esc-fill" />
+      </marker>
+    </defs>
+  </svg>
+</figure>
+
+<style>
+  .clo { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .clo svg { width:100%; max-width:100%; height:auto; }
+  .clo-set { fill:none; stroke-width:1.8; }
+  .clo-set-green { stroke:#7ee787; }
+  .clo-set-orange { stroke:#f0883e; stroke-dasharray:6,4; }
+  .clo-dot { stroke-width:1.6; fill-opacity:0.18; }
+  .clo-d-green { fill:#7ee787; stroke:#7ee787; }
+  .clo-d-orange { fill:#f0883e; stroke:#f0883e; }
+  .clo-result { fill:none; stroke-width:2.4; }
+  .clo-r-green { stroke:#7ee787; }
+  .clo-r-orange { stroke:#ff7b72; }
+  .clo-el { fill:#c9d1d9; font-family:'Libre Baskerville',Georgia,serif; }
+  .clo-el-strong { font-family:'Libre Baskerville',Georgia,serif; }
+  .clo-title, .clo-cap { font-family:'Libre Baskerville',Georgia,serif; }
+  .clo-t-green { fill:#7ee787; }
+  .clo-t-orange { fill:#f0883e; }
+  .clo-arrow { stroke:#888; stroke-width:1.5; }
+  .clo-escape { stroke:#ff7b72; stroke-dasharray:4,3; }
+  .clo-head-fill { fill:#888; }
+  .clo-head-esc-fill { fill:#ff7b72; }
+  .clo-head { fill:#eee; font-family:'Libre Baskerville',Georgia,serif; }
+  .clo-foot { fill:#9198a1; font-family:'Libre Baskerville',Georgia,serif; font-style:italic; }
+  :global([data-theme="light"]) .clo-set-green, :global([data-theme="light"]) .clo-d-green, :global([data-theme="light"]) .clo-r-green, :global([data-theme="light"]) .clo-t-green { stroke:#116329; fill:#116329; }
+  :global([data-theme="light"]) .clo-d-green { fill:#116329; }
+  :global([data-theme="light"]) .clo-r-green { fill:none; }
+  :global([data-theme="light"]) .clo-set-orange, :global([data-theme="light"]) .clo-d-orange, :global([data-theme="light"]) .clo-t-orange { stroke:#b35900; fill:#b35900; }
+  :global([data-theme="light"]) .clo-r-orange, :global([data-theme="light"]) .clo-escape { stroke:#a40e26; }
+  :global([data-theme="light"]) .clo-head-esc-fill { fill:#a40e26; }
+  :global([data-theme="light"]) .clo-el { fill:#24292f; }
+  :global([data-theme="light"]) .clo-arrow { stroke:#555; }
+  :global([data-theme="light"]) .clo-head-fill { fill:#555; }
+  :global([data-theme="light"]) .clo-head { fill:#24292f; }
+  :global([data-theme="light"]) .clo-foot { fill:#57606a; }
+</style>

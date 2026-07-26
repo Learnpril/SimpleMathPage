@@ -3,12 +3,13 @@ import starlight from "@astrojs/starlight";
 import sitemap from "@astrojs/sitemap";
 import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
+import rehypeBoldHeading from "./src/lib/rehype-bold-heading.mjs";
 
 export default defineConfig({
   site: "https://momsbasementuniversity.com",
   markdown: {
     remarkPlugins: [remarkMath],
-    rehypePlugins: [rehypeKatex],
+    rehypePlugins: [rehypeKatex, rehypeBoldHeading],
   },
   integrations: [
     sitemap(),
@@ -80,10 +81,10 @@ export default defineConfig({
           label: "Statistics",
           autogenerate: { directory: "statistics" },
         },
-        // {
-        //   label: "Abstract Algebra",
-        //   autogenerate: { directory: "abstract-algebra" },
-        // },
+        {
+          label: "Abstract Algebra",
+          autogenerate: { directory: "abstract-algebra" },
+        },
         // {
         //   label: "Real Analysis",
         //   autogenerate: { directory: "real-analysis" },
@@ -118,7 +119,8 @@ export default defineConfig({
                 'linear-algebra': 'Linear Algebra',
                 'differential-equations': 'Differential Equations',
                 'discrete-mathematics': 'Discrete Mathematics',
-                'statistics': 'Statistics'
+                'statistics': 'Statistics',
+                'abstract-algebra': 'Abstract Algebra'
               };
               var label = map[section];
               if (!label) return;
@@ -167,7 +169,8 @@ export default defineConfig({
                 {slug:'linear-algebra', label:'Linear Algebra', about:'about-linear-algebra'},
                 {slug:'differential-equations', label:'Differential Equations', about:'about-differential-equations'},
                 {slug:'discrete-mathematics', label:'Discrete Mathematics', about:'about-discrete-mathematics'},
-                {slug:'statistics', label:'Statistics', about:'about-statistics'}
+                {slug:'statistics', label:'Statistics', about:'about-statistics'},
+                {slug:'abstract-algebra', label:'Abstract Algebra', about:'about-abstract-algebra'}
               ];
               var path = window.location.pathname.replace(/^\\//, '').replace(/\\/$/, '');
               var currentSection = path.split('/')[0] || '';
@@ -405,7 +408,8 @@ export default defineConfig({
                 'linear-algebra': 'Linear Algebra',
                 'differential-equations': 'Differential Equations',
                 'discrete-mathematics': 'Discrete Mathematics',
-                'statistics': 'Statistics'
+                'statistics': 'Statistics',
+                'abstract-algebra': 'Abstract Algebra'
               };
               var subject = sectionMap[section];
               if (!subject) return;
@@ -459,7 +463,8 @@ export default defineConfig({
                         'linear-algebra': 'expert',
                         'differential-equations': 'expert',
                         'discrete-mathematics': 'expert',
-                        'statistics': 'expert'
+                        'statistics': 'expert',
+                        'abstract-algebra': 'expert'
                       };
                       var colorMap = {
                         'foundations': '#7ee787',

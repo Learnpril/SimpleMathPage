@@ -1,0 +1,316 @@
+---
+title: Normal Subgroups and Quotient Groups
+description: When cosets can be multiplied, and how to build a smaller group out of a bigger one
+sidebar:
+  order: 10
+---
+
+import Quiz from "../../../components/Quiz.astro";
+import SymbolKey from "../../../components/SymbolKey.astro";
+import QuotientCollapse from "../../../components/QuotientCollapse.astro";
+import CayleyTable from "../../../components/CayleyTable.astro";
+
+## What You'll Learn
+
+In this lesson you'll learn what makes a subgroup normal, why normality is exactly what's needed to multiply cosets, how to build the quotient group $G/N$, and what quotients are for. This is the traditional hard spot in a first course, so it's worth going slowly.
+
+<SymbolKey
+  items={[
+    {
+      sym: "N ⊴ G",
+      read: "N is a normal subgroup of G",
+      note: "the extra bar on the ≤ marks normality",
+    },
+    {
+      sym: "gng⁻¹",
+      read: "g n g inverse, the conjugate of n by g",
+      note: "do g, then n, then undo g: the same move seen from a different vantage point",
+    },
+    {
+      sym: "G/N",
+      read: "G mod N, the quotient group",
+      note: "the group whose elements are the cosets of N",
+    },
+    {
+      sym: "gN",
+      read: "the coset of N containing g",
+      note: "one element of the quotient group; also written [g]",
+    },
+    {
+      sym: "Z(G)",
+      read: "the center of G",
+      note: "the elements commuting with everything; always normal",
+    },
+  ]}
+/>
+
+## The Concept
+
+### The problem cosets create
+
+We want to make the cosets of $H$ into a group. The obvious rule is
+
+$$
+(aH)(bH) = abH
+$$
+
+But there's a catch. A coset has many names: if $a' \in aH$ then $a'H = aH$. For the rule to define anything at all, the answer has to come out the same whichever representative you pick. **The operation must be well-defined**, and for a general subgroup it isn't.
+
+Concretely, in $S_3$ with $H = \{e, s\}$: we have $rH = \{r, rs\}$, so $r$ and $rs$ name the same coset. Multiply on the left by $sH$:
+
+- Using $r$: $(sH)(rH) = srH = r^2sH = \{r^2s, r^2\}$
+- Using $rs$: $(sH)(rsH) = s(rs)H = (r^2s)sH = r^2 H = \{r^2, r^2s\}$
+
+Those happen to agree. Try instead $(rH)(sH)$ two ways: with $r$, get $rsH = \{rs, r\}$; with $rs$, get $(rs)(s)H = rH = \{r, rs\}$. Also agree. But now compute $(rH)(rH)$: using $r$ twice gives $r^2H = \{r^2, r^2s\}$; using $r$ and $rs$ gives $r(rs)H = r^2sH = \{r^2s, r^2\}$. Still fine — but the general pattern breaks for other choices, and the theorem below says exactly when.
+
+### Normal subgroups
+
+$N \le G$ is **normal**, written $N \trianglelefteq G$, if any of these equivalent conditions holds:
+
+1. $gN = Ng$ for all $g \in G$ — left and right cosets coincide.
+2. $gNg^{-1} = N$ for all $g \in G$ — conjugation preserves $N$.
+3. $gng^{-1} \in N$ for all $g \in G$, $n \in N$ — the practical test.
+
+Condition 3 is what you actually check. Note it does **not** say $gng^{-1} = n$; the conjugate may be a different element of $N$, it just has to stay inside.
+
+**Conjugation** $n \mapsto gng^{-1}$ means "do $g$, then $n$, then undo $g$." It's the same operation viewed from a relabelled position. So normality says: **the subgroup looks the same from everywhere in the group.**
+
+Some automatic cases:
+
+- In an **abelian** group, every subgroup is normal, since $gng^{-1} = ngg^{-1} = n$.
+- Any subgroup of **index 2** is normal. With only two cosets, $N$ and everything else, there's no room for left and right to differ.
+- $\{e\}$ and $G$ are always normal.
+- The **center** $Z(G)$ is always normal, since its elements commute with everything.
+
+### Quotient groups
+
+> If $N \trianglelefteq G$, the set of cosets $G/N$ with $(aN)(bN) = abN$ **is a group**, of order $[G:N] = |G|/|N|$.
+
+Normality is exactly what makes the operation well-defined. Here's the check: suppose $aN = a'N$ and $bN = b'N$, so $a' = an_1$ and $b' = bn_2$. Then
+
+$$
+a'b' = an_1bn_2 = ab(b^{-1}n_1b)n_2
+$$
+
+Normality makes $b^{-1}n_1b \in N$, so $a'b' \in abN$, and the answer is the same coset. Without normality that middle term escapes and the rule collapses.
+
+<QuotientCollapse />
+
+The quotient's identity is $N$ itself, and $(aN)^{-1} = a^{-1}N$.
+
+### What a quotient does
+
+Forming $G/N$ **deliberately forgets information**: it declares everything in $N$ to be equivalent to the identity. What survives is whatever $N$ couldn't see.
+
+The clearest example is $\mathbb{Z}/n\mathbb{Z} = \mathbb{Z}_n$. Quotienting the integers by the multiples of $n$ throws away everything except the remainder. Clock arithmetic is a quotient group, and you've been using one since childhood.
+
+That's the standard use: a quotient keeps the feature you care about and discards the rest.
+
+### Simple groups
+
+A group with no normal subgroups other than $\{e\}$ and itself is **simple**. Simple groups can't be broken down by quotients, which makes them the atoms of finite group theory.
+
+$\mathbb{Z}_p$ for prime $p$ is simple. $A_5$, of order 60, is the smallest non-abelian simple group. The classification of all finite simple groups took fifty years and ten thousand pages, and $A_5$'s simplicity is precisely why the quintic has no solution formula.
+
+### A worked quotient in a non-abelian group
+
+<CayleyTable
+  labels={["e", "r", "r²", "s", "rs", "r²s"]}
+  op={(i, j) => {
+    const aI = i % 3;
+    const bI = i < 3 ? 0 : 1;
+    const aJ = j % 3;
+    const bJ = j < 3 ? 0 : 1;
+    const a = (aI + (bI === 1 ? 3 - aJ : aJ)) % 3;
+    const b = (bI + bJ) % 2;
+    return b === 0 ? a : 3 + a;
+  }}
+  opSymbol="∘"
+  title="S₃ with the normal subgroup A₃ = {e, r, r²} shaded"
+  highlight={[0, 1, 2]}
+  highlightLabel="A₃, normal of index 2"
+  caption="The shaded block is closed, and so is the unshaded complement viewed as a single coset. Collapsing each to a point gives S₃/A₃ ≅ ℤ₂: rotation or reflection, nothing else remembered."
+/>
+
+$A_3$ has index 2 in $S_3$, so it is normal. The quotient $S_3/A_3$ has two elements: "even" and "odd." All the detail about _which_ rotation or reflection is discarded, and what remains is exactly parity.
+
+## Worked Examples
+
+**Example 1: Show every subgroup of an abelian group is normal.**
+
+**Solution.** Let $G$ be abelian, $H \le G$, $g \in G$, $h \in H$.
+
+$$
+ghg^{-1} = hgg^{-1} = he = h \in H
+$$
+
+The first step uses commutativity. So condition 3 holds and $H \trianglelefteq G$. ∎
+
+This is why normality never comes up in $\mathbb{Z}$ or $\mathbb{Z}_n$: it's automatic.
+
+**Example 2: Show $\{e, s\}$ is not normal in $S_3$.**
+
+**Solution.** Test condition 3 with $g = r$, $n = s$, using $sr = r^2s$ so $sr^{-1} = sr^2 = rs$:
+
+$$
+rsr^{-1} = r(sr^{-1}) = r(rs) = r^2s
+$$
+
+Is $r^2s \in \{e, s\}$? No.
+
+**Not normal.** Geometrically: conjugating a reflection by a rotation gives a _different_ reflection, because rotating the whole picture moves the mirror line.
+
+**Example 3: Show $A_n$ is normal in $S_n$.**
+
+**Solution.** $A_n$ has index 2 in $S_n$, so it is normal immediately.
+
+For the direct argument, take $\sigma \in A_n$ (even) and any $\tau \in S_n$. Signs multiply, so
+
+$$
+\operatorname{sign}(\tau\sigma\tau^{-1}) = \operatorname{sign}(\tau)\operatorname{sign}(\sigma)\operatorname{sign}(\tau)^{-1} = \operatorname{sign}(\sigma) = +1
+$$
+
+The conjugate is even, hence in $A_n$. ∎
+
+**Example 4: Build $\mathbb{Z}_{12}/\langle 4 \rangle$.**
+
+**Solution.** $N = \langle 4 \rangle = \{0,4,8\}$, $|N| = 3$, so the quotient has order $12/3 = 4$.
+
+Cosets: $\{0,4,8\}$, $\{1,5,9\}$, $\{2,6,10\}$, $\{3,7,11\}$, which we name $[0], [1], [2], [3]$.
+
+Addition: $[1] + [1] = [2]$, $[2]+[2] = [4] = [0]$, $[1]+[3] = [4] = [0]$.
+
+So $[1]$ has order 4 and generates:
+
+$$
+\mathbb{Z}_{12}/\langle 4 \rangle \cong \mathbb{Z}_4
+$$
+
+Pattern worth remembering: $\mathbb{Z}_n / \langle d \rangle \cong \mathbb{Z}_d$ when $d \mid n$.
+
+**Example 5: A quotient that loses non-abelianness.**
+
+Compute $D_4/\{e, r^2\}$.
+
+**Solution.** $N = \{e, r^2\}$ is the center of $D_4$, so it's normal. $|N| = 2$ and $|D_4| = 8$, so the quotient has order 4.
+
+Cosets: $\{e,r^2\}$, $\{r, r^3\}$, $\{s, r^2s\}$, $\{rs, r^3s\}$.
+
+In the quotient, $(rN)^2 = r^2N = N$, the identity. Likewise $(sN)^2 = N$ and $(rsN)^2 = N$. Every non-identity element squares to the identity, so
+
+$$
+D_4/Z(D_4) \cong \mathbb{Z}_2 \times \mathbb{Z}_2
+$$
+
+the Klein four-group. **A non-abelian group has an abelian quotient.** That's typical: quotienting by the center forgets exactly the information that made things fail to commute.
+
+**Example 6: Why $A_4$ has no subgroup of order 6, revisited.**
+
+**Solution.** Suppose $H \le A_4$ with $|H| = 6$. Index 2 makes $H$ normal, so $A_4/H \cong \mathbb{Z}_2$.
+
+In a group of order 2 every element satisfies $x^2 = e$, so for every $g \in A_4$ we get $(gH)^2 = H$, meaning $g^2 \in H$.
+
+Now take any 3-cycle $g$. Then $g^2 = g^{-1}$ is also a 3-cycle, and as $g$ runs over the eight 3-cycles of $A_4$ so does $g^2$. So $H$ contains all eight 3-cycles plus $e$: at least 9 elements.
+
+That contradicts $|H| = 6$. **No such subgroup.** ∎
+
+The quotient did the work: assuming the subgroup existed forced a constraint on every element, and counting broke it.
+
+## Real-World Applications
+
+**Modular arithmetic.** Every time you compute a day of the week, a clock time, or a checksum, you're working in the quotient $\mathbb{Z}/n\mathbb{Z}$. The quotient construction is what makes "it's the same as 3 o'clock" a legitimate equation rather than sloppiness.
+
+**Error-correcting codes.** For a linear code $C \le \mathbb{Z}_2^n$, the quotient $\mathbb{Z}_2^n / C$ is the **syndrome** space. A decoder computes which coset a received word falls in, and the syndrome is the name of that coset. Syndrome decoding is the quotient group used as an algorithm.
+
+**Homology in topology.** Homology groups are quotients: cycles modulo boundaries. The quotient is precisely what detects holes, because it declares "boundaries don't count" and sees what's left. This is the mechanism behind topological data analysis.
+
+**Physics and gauge theory.** Physical states are often defined up to a symmetry, meaning the real state space is a quotient. Gauge invariance says two mathematically different field configurations describe the same physics, and the quotient by the gauge group is the physically meaningful object.
+
+**Cryptography.** Elliptic curve cryptography works in a quotient of a group of points, and RSA works in $\mathbb{Z}/n\mathbb{Z}$. Quotients are what make these groups finite and computable.
+
+**Music theory.** Pitch classes are a quotient: the group of all pitches modulo octave equivalence gives $\mathbb{Z}_{12}$. Saying "C is C regardless of octave" is forming a quotient group.
+
+:::note[You've Got This]
+This is the lesson people find hardest, so if it felt steep, that's the material and not you. Two anchors will get you through. First, normality is the condition $gng^{-1} \in N$, and its meaning is "the subgroup looks the same from every vantage point in the group." Second, a quotient is deliberate forgetting: ℤ/nℤ throws away everything but the remainder, and you've trusted that construction your whole life without calling it a quotient group. When the abstraction gets slippery, compute a small example in ℤ₁₂ and the fog lifts fast.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="abstract-normal-subgroups-and-quotient-groups"
+  questions={[
+    {
+      id: "q1",
+      text: "Which condition defines a normal subgroup N of G?",
+      options: [
+        "gng⁻¹ = n for every g in G and n in N",
+        "gng⁻¹ ∈ N for every g in G and n in N",
+        "N is abelian",
+        "N contains the center of G",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Conjugates must land back inside N, though not necessarily on the same element. Requiring gng⁻¹ = n exactly would say N sits in the center, which is much stronger.",
+    },
+    {
+      id: "q2",
+      text: "Why is every subgroup of index 2 automatically normal?",
+      options: [
+        "Because 2 is prime",
+        "Because index-2 subgroups are always abelian",
+        "Because there are only two cosets, so the left and right coset decompositions must agree",
+        "Because it contains the identity",
+      ],
+      correctIndex: 2,
+      explanation:
+        "With only two cosets, N and its complement, there is no freedom for the left and right decompositions to differ. So gN = Ng for every g and N is normal.",
+    },
+    {
+      id: "q3",
+      text: "What is ℤ₁₂/⟨4⟩ isomorphic to?",
+      options: ["ℤ₃", "ℤ₄", "ℤ₁₂", "The Klein four-group"],
+      correctIndex: 1,
+      explanation:
+        "⟨4⟩ = {0, 4, 8} has order 3, so the quotient has order 12/3 = 4. The coset [1] generates it, since [1]+[1] = [2] and [2]+[2] = [0], so the quotient is cyclic of order 4.",
+    },
+    {
+      id: "q4",
+      text: "Why does normality make the coset product (aN)(bN) = abN well-defined?",
+      options: [
+        "Because all cosets have the same size",
+        "Because rewriting a as an₁ and b as bn₂ produces a term b⁻¹n₁b, which normality keeps inside N",
+        "Because N contains the identity",
+        "Because the cosets partition G",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Expanding a'b' = an₁bn₂ = ab(b⁻¹n₁b)n₂ leaves a conjugate of n₁ in the middle. Normality puts it back in N, so the product lands in the same coset regardless of the representatives chosen.",
+    },
+    {
+      id: "q5",
+      text: "What is a simple group?",
+      options: [
+        "A group with a small number of elements",
+        "An abelian group",
+        "A group whose only normal subgroups are the trivial one and itself",
+        "A cyclic group",
+      ],
+      correctIndex: 2,
+      explanation:
+        "Simple groups admit no nontrivial quotients, which makes them the indecomposable building blocks of finite group theory. A₅, of order 60, is the smallest non-abelian example.",
+    },
+    {
+      id: "q6",
+      text: "In S₃, is the subgroup {e, s} generated by a reflection normal?",
+      options: [
+        "Yes, because it has order 2",
+        "Yes, because S₃ is generated by reflections",
+        "No, because conjugating s by r gives r²s, which is not in the subgroup",
+        "No, because it does not contain the identity",
+      ],
+      correctIndex: 2,
+      explanation:
+        "Computing rsr⁻¹ = r²s takes you outside {e, s}, so condition 3 fails. Geometrically, rotating the picture moves the mirror line, turning one reflection into a different one.",
+    },
+  ]}
+/>

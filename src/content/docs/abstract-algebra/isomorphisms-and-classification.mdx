@@ -1,0 +1,290 @@
+---
+title: Isomorphisms and Classification
+description: When two groups are secretly the same, how to prove it, and how to prove they are not
+sidebar:
+  order: 12
+---
+
+import Quiz from "../../../components/Quiz.astro";
+import IsomorphismRelabel from "../../../components/IsomorphismRelabel.astro";
+import CayleyTable from "../../../components/CayleyTable.astro";
+
+## What You'll Learn
+
+In this lesson you'll learn what an isomorphism is, how to build one, the invariants that let you prove two groups are _not_ isomorphic, and what it means to classify all groups of a given order.
+
+## The Concept
+
+### The definition
+
+An **isomorphism** is a homomorphism that is also a bijection. If one exists between $G$ and $H$ we write
+
+$$
+G \cong H
+$$
+
+and say the groups are **isomorphic**. It means: same structure, different names. Every statement about $G$ expressible purely in group-theoretic terms is also true of $H$.
+
+An isomorphism is a perfect dictionary. It translates each element, and it translates every product correctly.
+
+<IsomorphismRelabel />
+
+$\mathbb{Z}_4$ under addition and $U(5)$ under multiplication look nothing alike. One adds, one multiplies. But $k \mapsto 2^k \bmod 5$ matches them exactly: adding exponents corresponds to multiplying powers, which is the same trick that makes logarithms work.
+
+### Proving two groups are isomorphic
+
+Two routes.
+
+**Build the map.** Find a candidate, check it's a homomorphism, check it's a bijection. For cyclic groups, send generator to generator: if $G = \langle a \rangle$ and $H = \langle b \rangle$ with $|a| = |b|$, then $a^k \mapsto b^k$ works.
+
+**Cite a theorem.** Often faster. Both cyclic of the same order? Isomorphic. Both of prime order $p$? Both $\cong \mathbb{Z}_p$. Use the first isomorphism theorem to identify a quotient.
+
+### Proving two groups are NOT isomorphic
+
+This is where most exam questions live, and the method is to find an **invariant**: a property preserved by isomorphism that one group has and the other lacks.
+
+The standard checklist:
+
+- **Order of the group.** Different sizes can't be isomorphic. Necessary, not sufficient.
+- **Abelian or not.** An isomorphism preserves commuting.
+- **Element orders.** If $\varphi$ is an isomorphism then $|\varphi(a)| = |a|$. So compare the _multiset_ of element orders.
+- **Cyclic or not.** Equivalently, does an element of order $|G|$ exist?
+- **Number of subgroups**, and the shape of the subgroup lattice.
+- **Number of elements of each order.** The sharpest of the easy tests.
+- **Size of the center.**
+
+To show $G \not\cong H$, name one invariant where they differ. To show $G \cong H$, you must exhibit a map; no amount of matching invariants proves isomorphism.
+
+### Element orders as a fingerprint
+
+<CayleyTable
+  labels={["0", "1", "2", "3"]}
+  op={(i, j) => (i + j) % 4}
+  opSymbol="+"
+  title="ℤ₄: element orders are 1, 4, 2, 4"
+  caption="The element 1 has order 4, so a single element generates the group. Reading down the diagonal, only 2 squares to the identity."
+/>
+
+<CayleyTable
+  labels={["e", "a", "b", "c"]}
+  op={(i, j) =>
+    [
+      [0, 1, 2, 3],
+      [1, 0, 3, 2],
+      [2, 3, 0, 1],
+      [3, 2, 1, 0],
+    ][i][j]
+  }
+  opSymbol="∗"
+  title="Klein four-group: element orders are 1, 2, 2, 2"
+  caption="The whole diagonal is the identity, so every non-identity element has order 2 and nothing generates the group."
+/>
+
+Both have order 4 and both are abelian. But $\mathbb{Z}_4$ has an element of order 4 and the Klein group has none, so **no bijection can be a homomorphism**: an isomorphism would have to send an order-4 element to an order-4 element, and there isn't one to receive it.
+
+### Classification
+
+To **classify** the groups of order $n$ is to list every group of that order, with no repeats up to isomorphism. Some counts:
+
+| Order | Number of groups |
+| :---: | :--------------: |
+|   1   |        1         |
+|   2   |        1         |
+|   3   |        1         |
+|   4   |        2         |
+|   5   |        1         |
+|   6   |        2         |
+|   7   |        1         |
+|   8   |        5         |
+|   9   |        2         |
+|  10   |        2         |
+|  12   |        5         |
+|  16   |        14        |
+
+Prime orders always give exactly one, by the argument from the cyclic-groups lesson. The counts otherwise grow erratically: there are 14 groups of order 16 but only 5 of order 12.
+
+Two classification results worth knowing:
+
+**Fundamental theorem of finite abelian groups.** Every finite abelian group is a direct product of cyclic groups of prime-power order, uniquely up to reordering. So abelian groups are completely understood: to list the abelian groups of order 8, list the ways to write 8 as a product of prime powers — $\mathbb{Z}_8$, $\mathbb{Z}_4 \times \mathbb{Z}_2$, $\mathbb{Z}_2^3$ — and you're done.
+
+**Classification of finite simple groups.** Every finite simple group is cyclic of prime order, alternating, one of 16 infinite families of Lie type, or one of 26 sporadic exceptions. Announced complete in 2004 after roughly fifty years and ten thousand journal pages. The largest sporadic group, the Monster, has about $8 \times 10^{53}$ elements.
+
+Non-abelian groups in general are not classified and will not be; the simple ones are the building blocks, but assembling them can be done in many ways.
+
+## Worked Examples
+
+**Example 1: Show $(\mathbb{R}, +) \cong (\mathbb{R}^+, \times)$.**
+
+**Solution.** Let $\varphi(x) = e^x$.
+
+Homomorphism: $\varphi(x+y) = e^{x+y} = e^x e^y = \varphi(x)\varphi(y)$ ✓
+
+Bijection: $e^x$ is strictly increasing from $\mathbb{R}$ onto $(0,\infty)$, with inverse $\ln$ ✓
+
+**Isomorphic.** The inverse isomorphism is the logarithm, and $\log(xy) = \log x + \log y$ is the same statement read backwards. Slide rules were mechanical implementations of this isomorphism.
+
+**Example 2: Show $\mathbb{Z}_6 \cong \mathbb{Z}_2 \times \mathbb{Z}_3$.**
+
+**Solution.** $|\mathbb{Z}_2 \times \mathbb{Z}_3| = 6$ ✓. Find an element of order 6.
+
+$$
+(1,1) \to (0,2) \to (1,0) \to (0,1) \to (1,2) \to (0,0)
+$$
+
+Six steps, so $|(1,1)| = 6$ and the group is cyclic of order 6. Since every cyclic group of order 6 is isomorphic to $\mathbb{Z}_6$, we're done.
+
+Explicitly, $k \mapsto (k \bmod 2, k \bmod 3)$ is the isomorphism, and it's the Chinese Remainder Theorem in group language. The general statement: $\mathbb{Z}_m \times \mathbb{Z}_n \cong \mathbb{Z}_{mn}$ exactly when $\gcd(m,n) = 1$.
+
+**Example 3: Show $\mathbb{Z}_4 \not\cong \mathbb{Z}_2 \times \mathbb{Z}_2$.**
+
+**Solution.** Both have order 4 and both are abelian, so those tests don't separate them.
+
+Element orders. In $\mathbb{Z}_4$: $|1| = 4$. In $\mathbb{Z}_2 \times \mathbb{Z}_2$, every element added to itself gives $(0,0)$, so all three non-identity elements have order 2.
+
+An isomorphism preserves element order, so it would need an order-4 element in the target. There is none.
+
+**Not isomorphic.** ∎
+
+**Example 4: Show $S_3 \not\cong \mathbb{Z}_6$.**
+
+**Solution.** Both have order 6. But $\mathbb{Z}_6$ is abelian and $S_3$ is not, since $rs \ne sr$.
+
+**Not isomorphic.** These are the only two groups of order 6, so the classification of order 6 is complete.
+
+**Example 5: All abelian groups of order 12.**
+
+**Solution.** $12 = 2^2 \cdot 3$. The prime-power factorizations available:
+
+- $4 = 2^2$ or $4 = 2 \times 2$
+- $3$ has only one option
+
+So:
+
+$$
+\mathbb{Z}_4 \times \mathbb{Z}_3 \cong \mathbb{Z}_{12}, \qquad \mathbb{Z}_2 \times \mathbb{Z}_2 \times \mathbb{Z}_3 \cong \mathbb{Z}_2 \times \mathbb{Z}_6
+$$
+
+**Two** abelian groups of order 12. There are five groups of order 12 in total, so three are non-abelian: $D_6$, $A_4$, and the dicyclic group of order 12.
+
+**Example 6: Distinguishing two groups of order 8.**
+
+Show $D_4 \not\cong \mathbb{Z}_4 \times \mathbb{Z}_2$.
+
+**Solution.** Both have order 8, and both have exactly one element of order 1 and elements of order 2 and 4. So count carefully.
+
+$D_4$: one element of order 1, five of order 2 ($r^2$ and four reflections), two of order 4 ($r, r^3$).
+
+$\mathbb{Z}_4 \times \mathbb{Z}_2$: elements are $(a,b)$ with order $\operatorname{lcm}(|a|,|b|)$. Order 2 requires $\operatorname{lcm} = 2$: these are $(2,0), (0,1), (2,1)$, so **three** elements of order 2.
+
+Five versus three. **Not isomorphic.**
+
+The quickest route is even simpler: $\mathbb{Z}_4 \times \mathbb{Z}_2$ is abelian and $D_4$ is not. But the order-counting method is the one that works when both groups are abelian or both non-abelian.
+
+**Example 7: An automorphism.**
+
+Find all automorphisms of $\mathbb{Z}_5$.
+
+**Solution.** An automorphism must send a generator to a generator. Every non-identity element of $\mathbb{Z}_5$ is a generator, so $\varphi(1)$ can be any of $1,2,3,4$, and $\varphi(k) = k\varphi(1)$ is then forced.
+
+Four automorphisms, and $\operatorname{Aut}(\mathbb{Z}_5) \cong U(5) \cong \mathbb{Z}_4$.
+
+In general $\operatorname{Aut}(\mathbb{Z}_n) \cong U(n)$, of order $\varphi(n)$. So the group of "relabellings that respect structure" is itself one of our reference groups.
+
+## Real-World Applications
+
+**Data structure equivalence.** Recognizing that two differently implemented structures satisfy the same laws lets you reuse every proof and every algorithm. Category theory, which grew directly out of this way of thinking, is now the standard language for reasoning about such equivalences in programming.
+
+**Cryptography.** Choosing which group to run a protocol in is a security decision, and isomorphic groups are equally secure _mathematically_ but not equally secure _computationally_: the discrete logarithm is easy in $(\mathbb{Z}_n, +)$ and believed hard in an elliptic curve group of the same order. Isomorphism preserves structure, not the cost of computing the isomorphism, and that gap is where cryptography lives.
+
+**Chemistry.** Two molecules with isomorphic symmetry groups share spectroscopic selection rules regardless of what atoms they contain, which lets chemists transfer conclusions between unrelated compounds.
+
+**Physics.** $SU(2)$ and the unit quaternions are isomorphic, and both double-cover $SO(3)$. That relationship is why quantum spin behaves as it does, requiring a 720° rotation to return to the original state.
+
+**Music.** Transposition and inversion of pitch-class sets form a group isomorphic to $D_{12}$, so a theorem about dihedral symmetry becomes a theorem about musical transformation.
+
+**Graph isomorphism.** Deciding whether two graphs are the same up to relabelling is a famous computational problem, neither known to be in P nor known to be NP-complete. The 2015 quasi-polynomial algorithm by László Babai is a landmark, and it leans heavily on group theory.
+
+:::note[You've Got This]
+The asymmetry here is the thing to internalize: to prove two groups are isomorphic you must build a map, but to prove they are not you only need one invariant that differs. So when a problem asks "are these the same group?", run the cheap checklist first — order, abelian, element orders — and only start constructing a dictionary once nothing separates them. Counting elements of each order is the sharpest tool in that kit and it settles most cases on its own.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="abstract-isomorphisms-and-classification"
+  questions={[
+    {
+      id: "q1",
+      text: "What is an isomorphism?",
+      options: [
+        "Any bijection between two groups",
+        "A homomorphism that is also a bijection",
+        "A map preserving the identity element",
+        "A homomorphism with trivial image",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Both conditions are needed: the map must respect the operation and match the elements up one to one. A bijection alone can easily fail to preserve products.",
+    },
+    {
+      id: "q2",
+      text: "Why is ℤ₄ not isomorphic to the Klein four-group?",
+      options: [
+        "They have different orders",
+        "One is abelian and the other is not",
+        "ℤ₄ has an element of order 4 and the Klein group does not",
+        "The Klein group is not really a group",
+      ],
+      correctIndex: 2,
+      explanation:
+        "Both have order 4 and both are abelian, so element orders are what separate them. Isomorphisms preserve element order, and there is no order-4 element in the Klein group to receive the image of 1.",
+    },
+    {
+      id: "q3",
+      text: "Which of these is NOT preserved by an isomorphism?",
+      options: [
+        "The order of each element",
+        "Whether the group is abelian",
+        "The particular names given to the elements",
+        "The number of subgroups",
+      ],
+      correctIndex: 2,
+      explanation:
+        "Isomorphism is precisely relabelling, so the names are exactly what changes. Everything expressible in purely group-theoretic terms carries across.",
+    },
+    {
+      id: "q4",
+      text: "How many groups of order 8 are there up to isomorphism?",
+      options: ["Two", "Three", "Five", "Eight"],
+      correctIndex: 2,
+      explanation:
+        "Three abelian ones, ℤ₈, ℤ₄ × ℤ₂ and ℤ₂³, plus two non-abelian ones, D₄ and the quaternion group Q₈. So counting elements never determines a group.",
+    },
+    {
+      id: "q5",
+      text: "When is ℤₘ × ℤₙ isomorphic to ℤₘₙ?",
+      options: [
+        "Always",
+        "Only when m = n",
+        "Exactly when gcd(m, n) = 1",
+        "Only when both m and n are prime",
+      ],
+      correctIndex: 2,
+      explanation:
+        "Coprimality makes lcm(m,n) = mn, so some element attains the full order and the product is cyclic. It is the Chinese Remainder Theorem stated in group language.",
+    },
+    {
+      id: "q6",
+      text: "What does the fundamental theorem of finite abelian groups say?",
+      options: [
+        "Every finite abelian group is cyclic",
+        "Every finite abelian group is a direct product of cyclic groups of prime-power order, uniquely up to order",
+        "Every finite group is abelian",
+        "Every abelian group has prime order",
+      ],
+      correctIndex: 1,
+      explanation:
+        "The decomposition into prime-power cyclic factors exists and is unique up to rearrangement, so finite abelian groups are completely classified. Listing them reduces to listing factorizations of the order.",
+    },
+  ]}
+/>

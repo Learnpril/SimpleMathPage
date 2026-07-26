@@ -1,0 +1,323 @@
+---
+title: Group Homomorphisms
+description: Structure-preserving maps, kernels and images, and the first isomorphism theorem
+sidebar:
+  order: 11
+---
+
+import Quiz from "../../../components/Quiz.astro";
+import SymbolKey from "../../../components/SymbolKey.astro";
+import HomomorphismKernel from "../../../components/HomomorphismKernel.astro";
+
+## What You'll Learn
+
+In this lesson you'll learn what a homomorphism is, how to compute a kernel and an image, why the kernel is always normal, and how the first isomorphism theorem ties every homomorphism back to a quotient group.
+
+<SymbolKey
+  items={[
+    {
+      sym: "φ: G → H",
+      read: "phi, a map from G to H",
+      note: "the standard name for a homomorphism",
+    },
+    {
+      sym: "ker φ",
+      read: "the kernel of phi",
+      note: "everything sent to the identity of H; always a normal subgroup of G",
+    },
+    {
+      sym: "im φ",
+      read: "the image of phi",
+      note: "everything actually hit in H; always a subgroup of H",
+    },
+    {
+      sym: "e_G, e_H",
+      read: "the identity of G and the identity of H",
+      note: "two different identities, in two different groups",
+    },
+    {
+      sym: "≅",
+      read: "is isomorphic to",
+      note: "there is a bijective homomorphism between them",
+    },
+    {
+      sym: "↦",
+      read: "maps to",
+      note: "used for a specific element's image, as in 5 ↦ 1",
+    },
+  ]}
+/>
+
+## The Concept
+
+### The definition
+
+A **homomorphism** is a map $\varphi: G \to H$ between groups satisfying
+
+$$
+\varphi(ab) = \varphi(a)\varphi(b) \qquad \text{for all } a, b \in G
+$$
+
+Read it carefully: the product on the left happens in $G$, the product on the right happens in $H$. The condition says **combining first and then mapping gives the same result as mapping first and then combining.**
+
+That single equation forces everything else.
+
+$$
+\varphi(e_G) = e_H, \qquad \varphi(a^{-1}) = \varphi(a)^{-1}, \qquad \varphi(a^n) = \varphi(a)^n
+$$
+
+The first: $\varphi(e) = \varphi(ee) = \varphi(e)\varphi(e)$, and cancelling one copy gives $\varphi(e) = e_H$. The second follows by applying $\varphi$ to $aa^{-1} = e$.
+
+So you never need to _require_ that identities and inverses are respected. They come free, which is a nice illustration of how much a well-chosen definition does.
+
+### Kernel and image
+
+Two subsets carry all the information.
+
+$$
+\ker \varphi = \{g \in G : \varphi(g) = e_H\}, \qquad \operatorname{im} \varphi = \{\varphi(g) : g \in G\}
+$$
+
+The **kernel** is everything crushed to the identity. The **image** is what actually gets hit.
+
+<HomomorphismKernel />
+
+**$\ker \varphi \trianglelefteq G$.** It's a subgroup: if $\varphi(a) = \varphi(b) = e$ then $\varphi(ab^{-1}) = \varphi(a)\varphi(b)^{-1} = e$. And it's normal: for $k \in \ker\varphi$ and any $g$,
+
+$$
+\varphi(gkg^{-1}) = \varphi(g)\varphi(k)\varphi(g)^{-1} = \varphi(g) e_H \varphi(g)^{-1} = e_H
+$$
+
+**$\operatorname{im}\varphi \le H$**, by a similar one-line check. But it is generally _not_ normal in $H$.
+
+That asymmetry is worth noting: kernels are always normal, images generally aren't. In fact **every normal subgroup is the kernel of some homomorphism** — the projection $G \to G/N$ — so "normal subgroup" and "kernel" describe the same class of objects.
+
+### The kernel measures injectivity
+
+$$
+\varphi \text{ is injective} \iff \ker \varphi = \{e_G\}
+$$
+
+If the kernel is trivial and $\varphi(a) = \varphi(b)$, then $\varphi(ab^{-1}) = e$, so $ab^{-1} \in \ker\varphi = \{e\}$, giving $a = b$. Conversely if $k \ne e$ is in the kernel, then $k$ and $e$ have the same image, so $\varphi$ isn't injective.
+
+The kernel also tells you the exact amount of collapsing: **every fibre has size $|\ker \varphi|$.** All the preimages are cosets of the kernel, which is why they came out equal-sized in the figure.
+
+### The first isomorphism theorem
+
+> $$
+> G / \ker \varphi \;\cong\; \operatorname{im} \varphi
+> $$
+
+This is the central theorem of the lesson, and arguably of the whole group-theory half of the section. In words: **quotienting out exactly what a map forgets leaves precisely what it remembers.**
+
+The proof is short. Define $\Phi: G/\ker\varphi \to \operatorname{im}\varphi$ by $\Phi(g \ker\varphi) = \varphi(g)$. It's well-defined because $g\ker\varphi = g'\ker\varphi$ implies $g^{-1}g' \in \ker\varphi$, hence $\varphi(g) = \varphi(g')$. It's a homomorphism because $\varphi$ is. It's surjective onto the image by construction, and injective because $\Phi(g\ker\varphi) = e$ forces $g \in \ker\varphi$, the identity coset. ∎
+
+The counting corollary is used constantly:
+
+$$
+|G| = |\ker\varphi| \cdot |\operatorname{im}\varphi|
+$$
+
+### Types of homomorphism
+
+- **Monomorphism** - injective. Trivial kernel. Embeds $G$ inside $H$.
+- **Epimorphism** - surjective. The image is all of $H$.
+- **Isomorphism** - both. The groups are structurally identical.
+- **Endomorphism** - a homomorphism from $G$ to itself.
+- **Automorphism** - an isomorphism from $G$ to itself. These form a group $\operatorname{Aut}(G)$ under composition.
+
+## Worked Examples
+
+**Example 1: Is $\varphi: \mathbb{Z} \to \mathbb{Z}$ with $\varphi(x) = 3x$ a homomorphism?**
+
+**Solution.** Both groups are additive, so check $\varphi(a+b) = \varphi(a) + \varphi(b)$:
+
+$$
+\varphi(a+b) = 3(a+b) = 3a + 3b = \varphi(a) + \varphi(b) \ \checkmark
+$$
+
+**Yes.** $\ker\varphi = \{x : 3x = 0\} = \{0\}$, so it's injective. $\operatorname{im}\varphi = 3\mathbb{Z}$, so it's not surjective.
+
+By the first isomorphism theorem, $\mathbb{Z}/\{0\} \cong 3\mathbb{Z}$, which just says $\mathbb{Z} \cong 3\mathbb{Z}$: an infinite group can be isomorphic to a proper subgroup of itself.
+
+**Example 2: Is $\varphi(x) = x^2$ a homomorphism on $\mathbb{Z}$?**
+
+**Solution.** Need $\varphi(a+b) = \varphi(a) + \varphi(b)$, that is $(a+b)^2 = a^2 + b^2$.
+
+Take $a = b = 1$: left side $4$, right side $2$. **No.**
+
+But on the _multiplicative_ group of nonzero reals, $\varphi(x) = x^2$ satisfies $(ab)^2 = a^2b^2$ and **is** a homomorphism. The same formula can be a homomorphism for one operation and not another, which is why naming the operation matters.
+
+**Example 3: Kernel and image of reduction mod $n$.**
+
+Let $\varphi: \mathbb{Z} \to \mathbb{Z}_6$ be $\varphi(x) = x \bmod 6$.
+
+**Solution.** Homomorphism: $(a+b) \bmod 6 = (a \bmod 6) + (b \bmod 6)$ in $\mathbb{Z}_6$. ✓
+
+$$
+\ker\varphi = 6\mathbb{Z}, \qquad \operatorname{im}\varphi = \mathbb{Z}_6
+$$
+
+Surjective, not injective. The first isomorphism theorem gives
+
+$$
+\mathbb{Z}/6\mathbb{Z} \cong \mathbb{Z}_6
+$$
+
+which is the formal justification of the notation $\mathbb{Z}/n\mathbb{Z}$ for $\mathbb{Z}_n$.
+
+**Example 4: The determinant.**
+
+Show $\det: GL_2(\mathbb{R}) \to \mathbb{R}^*$ is a homomorphism and find its kernel.
+
+**Solution.** $\det(AB) = \det(A)\det(B)$ is the multiplicative property of determinants, which is exactly the homomorphism condition from matrix multiplication to real multiplication. ✓
+
+$$
+\ker(\det) = \{A : \det A = 1\} = SL_2(\mathbb{R})
+$$
+
+the **special linear group**. Since kernels are normal, $SL_2(\mathbb{R}) \trianglelefteq GL_2(\mathbb{R})$ for free — a genuinely useful fact obtained without any conjugation computation.
+
+The map is surjective (scale a diagonal matrix), so
+
+$$
+GL_2(\mathbb{R})/SL_2(\mathbb{R}) \cong \mathbb{R}^*
+$$
+
+**Example 5: The sign homomorphism.**
+
+**Solution.** Define $\operatorname{sign}: S_n \to \{1, -1\}$ sending even permutations to $1$ and odd to $-1$. Parities add, so signs multiply, and it's a homomorphism.
+
+$$
+\ker(\operatorname{sign}) = A_n
+$$
+
+So $A_n$ is normal in $S_n$, again for free. The map is surjective for $n \ge 2$, so
+
+$$
+S_n / A_n \cong \mathbb{Z}_2, \qquad |A_n| = \frac{n!}{2}
+$$
+
+Both of those facts were asserted in earlier lessons; here they drop out of one homomorphism.
+
+**Example 6: Counting with the kernel.**
+
+$\varphi: \mathbb{Z}_{20} \to \mathbb{Z}_{20}$ is given by $\varphi(x) = 8x$. Find the kernel, the image, and check the counting formula.
+
+**Solution.** $\ker\varphi = \{x : 8x \equiv 0 \pmod{20}\}$. Since $\gcd(8,20) = 4$, this needs $2x \equiv 0 \pmod 5$, so $x \equiv 0 \pmod 5$:
+
+$$
+\ker\varphi = \{0, 5, 10, 15\}, \qquad |\ker\varphi| = 4
+$$
+
+The image is the multiples of $\gcd(8,20) = 4$:
+
+$$
+\operatorname{im}\varphi = \{0,4,8,12,16\}, \qquad |\operatorname{im}\varphi| = 5
+$$
+
+Check: $4 \times 5 = 20 = |\mathbb{Z}_{20}|$ ✓. And $\mathbb{Z}_{20}/\ker\varphi \cong \mathbb{Z}_5$, matching the image.
+
+**Example 7: A map that fails the definition.**
+
+Is $\varphi: \mathbb{Z}_6 \to \mathbb{Z}_6$ with $\varphi(x) = x + 1$ a homomorphism?
+
+**Solution.** Homomorphisms must send the identity to the identity, and $\varphi(0) = 1 \ne 0$.
+
+**No.** Check directly: $\varphi(1 + 2) = \varphi(3) = 4$, but $\varphi(1) + \varphi(2) = 2 + 3 = 5$.
+
+This is a common trap: shifting looks structure-like but isn't. A translation is a _bijection_, and it is a symmetry of the set, but it does not respect the operation.
+
+## Real-World Applications
+
+**Hash functions and checksums.** A checksum that satisfies $h(x + y) = h(x) + h(y)$ is a homomorphism, and its kernel is exactly the set of undetectable errors. Designing a good checksum means choosing a kernel that avoids the error patterns you expect, which is why CRC polynomials are chosen so carefully.
+
+**Homomorphic encryption.** An encryption scheme is homomorphic when $E(a) \cdot E(b) = E(a + b)$, letting a server compute on encrypted data without decrypting it. Fully homomorphic encryption, first constructed in 2009, is the extreme version, and it is a straight application of this definition to real privacy problems.
+
+**Fourier and Laplace transforms.** The Fourier transform converts convolution into pointwise multiplication, which is a homomorphism between two group structures on functions. This is precisely why signal processing and differential-equation solving get easier in the transform domain.
+
+**Logarithms.** $\log(xy) = \log x + \log y$ says the logarithm is a homomorphism from the positive reals under multiplication to the reals under addition. It is an isomorphism, and slide rules were physical devices for exploiting it.
+
+**Physics.** A representation of a symmetry group is a homomorphism from the group into a group of matrices. Particle physics classifies particles by which representation they belong to, so this definition is the organizing principle of the Standard Model.
+
+**Compiler optimization.** A program transformation is safe when it commutes with evaluation, which is a homomorphism condition. Reasoning about which optimizations preserve semantics is reasoning about structure-preserving maps.
+
+:::note[You've Got This]
+One equation to remember, $\varphi(ab) = \varphi(a)\varphi(b)$, and one theorem, $G/\ker\varphi \cong \operatorname{im}\varphi$. Everything in the lesson hangs off those. The most useful practical habit is checking $\varphi(e) = e$ first, because it disqualifies bad candidates instantly. And notice how much the kernel does: it tells you whether the map is injective, how big each fibre is, and it handed us the normality of $A_n$ and $SL_2$ without a single conjugation. That leverage is why homomorphisms, rather than groups, are what a working algebraist actually thinks about.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="abstract-group-homomorphisms"
+  questions={[
+    {
+      id: "q1",
+      text: "What condition must a map φ: G → H satisfy to be a homomorphism?",
+      options: [
+        "φ must be a bijection",
+        "φ(ab) = φ(a)φ(b) for all a, b in G",
+        "φ(a) = a for all a in G",
+        "φ must send distinct elements to distinct elements",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Only that one equation is required, and it forces φ(e) = e and φ(a⁻¹) = φ(a)⁻¹ automatically. Being a bijection is the extra condition that upgrades a homomorphism to an isomorphism.",
+    },
+    {
+      id: "q2",
+      text: "The kernel of a homomorphism is always what kind of subgroup of the domain?",
+      options: ["Cyclic", "Normal", "Trivial", "Of index 2"],
+      correctIndex: 1,
+      explanation:
+        "Conjugating a kernel element gives φ(gkg⁻¹) = φ(g)e φ(g)⁻¹ = e, so conjugates stay in the kernel. In fact every normal subgroup arises as some homomorphism's kernel.",
+    },
+    {
+      id: "q3",
+      text: "A homomorphism φ: G → H is injective exactly when",
+      options: [
+        "its image is all of H",
+        "its kernel is trivial",
+        "G and H have the same order",
+        "G is abelian",
+      ],
+      correctIndex: 1,
+      explanation:
+        "If ker φ = {e} then φ(a) = φ(b) forces ab⁻¹ in the kernel, so a = b. Any nonidentity kernel element collapses with the identity, destroying injectivity.",
+    },
+    {
+      id: "q4",
+      text: "What does the first isomorphism theorem state?",
+      options: [
+        "G ≅ ker φ × im φ",
+        "G / ker φ ≅ im φ",
+        "ker φ ≅ im φ",
+        "Every group is isomorphic to a permutation group",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Quotienting out what the map forgets leaves exactly what it remembers. The counting corollary |G| = |ker φ| · |im φ| follows immediately for finite groups.",
+    },
+    {
+      id: "q5",
+      text: "For φ: ℤ₂₀ → ℤ₂₀ given by φ(x) = 8x, what is the order of the kernel?",
+      options: ["2", "4", "5", "8"],
+      correctIndex: 1,
+      explanation:
+        "Solving 8x ≡ 0 mod 20 requires x ≡ 0 mod 5, giving {0, 5, 10, 15}, so the kernel has 4 elements. The image has 5, and 4 × 5 = 20 as the counting formula requires.",
+    },
+    {
+      id: "q6",
+      text: "Why is SL₂(ℝ), the matrices of determinant 1, automatically normal in GL₂(ℝ)?",
+      options: [
+        "Because it is abelian",
+        "Because it has index 2",
+        "Because it is the kernel of the determinant homomorphism, and kernels are always normal",
+        "Because every matrix subgroup is normal",
+      ],
+      correctIndex: 2,
+      explanation:
+        "The determinant is a homomorphism to the nonzero reals under multiplication, since det(AB) = det(A)det(B), and SL₂ is exactly its kernel. Kernels are always normal, so no conjugation calculation is needed.",
+    },
+  ]}
+/>

@@ -1,0 +1,342 @@
+---
+title: Finite Fields
+description: Every possible finite field, how to build them, and why they run modern communication
+sidebar:
+  order: 17
+---
+
+import Quiz from "../../../components/Quiz.astro";
+import SymbolKey from "../../../components/SymbolKey.astro";
+import FiniteFieldOrders from "../../../components/FiniteFieldOrders.astro";
+import CayleyTable from "../../../components/CayleyTable.astro";
+
+## What You'll Learn
+
+In this lesson you'll learn exactly which finite fields exist, how to build $GF(p^n)$ from an irreducible polynomial, how to compute in $GF(4)$ and $GF(8)$, and why $GF(4)$ is not $\mathbb{Z}_4$.
+
+<SymbolKey
+  items={[
+    {
+      sym: "GF(q)",
+      read: "the Galois field of order q",
+      note: "also written 𝔽_q; exists exactly when q is a prime power",
+    },
+    {
+      sym: "GF(pⁿ)",
+      read: "the field with p to the n elements",
+      note: "characteristic p, built as a degree-n extension of 𝔽ₚ",
+    },
+    {
+      sym: "char F",
+      read: "the characteristic of F",
+      note: "how many times 1 must be added to itself to reach 0",
+    },
+    {
+      sym: "𝔽₂[x]/⟨f⟩",
+      read: "polynomials over 𝔽₂ modulo f",
+      note: "the construction that produces GF(2ⁿ) when f is irreducible of degree n",
+    },
+    {
+      sym: "GF(q)*",
+      read: "the nonzero elements of GF(q)",
+      note: "always a cyclic group of order q − 1",
+    },
+  ]}
+/>
+
+## The Concept
+
+### Which finite fields exist
+
+<FiniteFieldOrders />
+
+> **Classification of finite fields.** A field with $q$ elements exists **if and only if** $q = p^n$ for a prime $p$ and integer $n \ge 1$. For each such $q$ there is **exactly one** field of that order, up to isomorphism.
+
+This is one of the most satisfying classification theorems in mathematics: a complete and short answer.
+
+Why no field of order 6? A field's characteristic must be prime, and a finite field of characteristic $p$ is a vector space over $\mathbb{F}_p$, so its size is $p^n$. Since 6 is not a prime power, there's nothing to build.
+
+Notation: $GF(q)$ or $\mathbb{F}_q$. When $q = p$ is prime, $GF(p) = \mathbb{Z}_p$.
+
+### $GF(p^n)$ is not $\mathbb{Z}_{p^n}$
+
+This is the single most common misconception in the topic, so it's worth stating bluntly.
+
+$\mathbb{Z}_4$ is **not** a field: 2 has no inverse, since $2b$ is even and never $\equiv 1 \pmod 4$. But $GF(4)$ exists and is a field. They are different rings of the same size.
+
+The differences:
+
+- $\mathbb{Z}_4$ has characteristic 4; $GF(4)$ has characteristic **2**.
+- In $GF(4)$, $x + x = 0$ for every element.
+- $\mathbb{Z}_4$ is cyclic under addition; $GF(4)$'s additive group is $\mathbb{Z}_2 \times \mathbb{Z}_2$.
+
+**Only when $n = 1$ do the two coincide.**
+
+### Building $GF(p^n)$
+
+The recipe uses the theorem from the previous lesson.
+
+1. Find an **irreducible** polynomial $f$ of degree $n$ over $\mathbb{F}_p$.
+2. Form $\mathbb{F}_p[x]/\langle f \rangle$.
+
+Since $f$ is irreducible, the quotient is a field. Its elements are the remainders on division by $f$, that is, polynomials of degree $< n$. There are $p$ choices for each of $n$ coefficients, giving $p^n$ elements exactly as required.
+
+Different irreducible polynomials of the same degree give isomorphic fields, which is the uniqueness half of the classification. In practice a specific polynomial gets standardized so that implementations interoperate.
+
+### $GF(4)$ in full
+
+Take $p = 2$, $n = 2$, and $f = x^2 + x + 1$, which is irreducible over $\mathbb{F}_2$ because neither 0 nor 1 is a root.
+
+Elements: $0, 1, a, a+1$, writing $a$ for the coset of $x$. The defining relation is
+
+$$
+a^2 + a + 1 = 0 \quad \Longrightarrow \quad a^2 = a + 1
+$$
+
+using that $-1 = 1$ in characteristic 2.
+
+<CayleyTable
+  labels={["0", "1", "a", "a+1"]}
+  op={(i, j) => i ^ j}
+  opSymbol="+"
+  title="GF(4) addition — coefficientwise mod 2, which is XOR"
+  caption="The whole diagonal is 0, so every element is its own additive inverse and the characteristic is 2. The additive group is ℤ₂ × ℤ₂, not ℤ₄."
+/>
+
+<CayleyTable
+  labels={["0", "1", "a", "a+1"]}
+  op={(i, j) => {
+    // Elements are b₁a + b₀ over 𝔽₂, reduced with a² = a + 1
+    const b1 = (i >> 1) & 1;
+    const b0 = i & 1;
+    const c1 = (j >> 1) & 1;
+    const c0 = j & 1;
+    const hi = (b1 * c1 + b1 * c0 + b0 * c1) % 2;
+    const lo = (b1 * c1 + b0 * c0) % 2;
+    return hi * 2 + lo;
+  }}
+  opSymbol="×"
+  title="GF(4) multiplication — reduced using a² = a + 1"
+  caption="Every nonzero row is a rearrangement of 1, a, a+1, so all three nonzero elements are invertible. Note a · (a+1) = 1, so a and a+1 are inverses."
+/>
+
+Reading the multiplication table: $a \cdot a = a + 1$, and $a \cdot (a+1) = a^2 + a = (a+1) + a = 1$. So $a^{-1} = a+1$.
+
+Note $a^3 = a \cdot a^2 = a(a+1) = 1$, so $a$ has multiplicative order 3 and generates $GF(4)^* = \{1, a, a^2\}$.
+
+### The multiplicative group is always cyclic
+
+> $GF(q)^*$, the nonzero elements under multiplication, is **cyclic** of order $q - 1$.
+
+A generator is called a **primitive element**. This is a strong statement — it says every finite field's nonzero part is as simple as possible — and it's why discrete logarithms make sense in finite fields, and hence why Diffie-Hellman works there.
+
+For $GF(4)$: $a$ is primitive, since $a^1 = a$, $a^2 = a+1$, $a^3 = 1$.
+
+Combining with Lagrange: every nonzero $x$ satisfies
+
+$$
+x^{q-1} = 1, \qquad \text{so} \qquad x^q = x \ \text{ for all } x \in GF(q)
+$$
+
+including $x = 0$. That identity is used constantly in coding theory.
+
+### The Frobenius map
+
+In characteristic $p$, the map
+
+$$
+\phi(x) = x^p
+$$
+
+is a **field homomorphism**, because $(x+y)^p = x^p + y^p$ there — all the middle binomial coefficients are divisible by $p$. It's the "freshman's dream," true in characteristic $p$ and false over $\mathbb{R}$.
+
+On $\mathbb{F}_p$ itself, $\phi$ is the identity by Fermat's little theorem. On $GF(p^n)$ it generates a cyclic group of $n$ automorphisms, and that group is the Galois group of the extension. Finite fields have the simplest possible Galois theory.
+
+## Worked Examples
+
+**Example 1: Why is there no field of order 6?**
+
+**Solution.** Suppose $F$ had 6 elements. Its characteristic must be prime, so 2, 3, or 5. A finite field of characteristic $p$ contains $\mathbb{F}_p$ and is a vector space over it, so $|F| = p^n$ for some $n$.
+
+$6 = 2 \cdot 3$ is not a prime power. **No such field exists.** ∎
+
+$\mathbb{Z}_6$ exists as a ring, of course, but has zero divisors: $2 \cdot 3 = 0$.
+
+**Example 2: Build $GF(8)$.**
+
+**Solution.** $8 = 2^3$, so we need an irreducible cubic over $\mathbb{F}_2$. Candidates with nonzero constant term (or $x$ would divide them): $x^3+x+1$ and $x^3+x^2+1$.
+
+Test $f = x^3+x+1$: $f(0) = 1$, $f(1) = 1+1+1 = 1$. No roots, and a cubic with no root is irreducible. ✓
+
+$$
+GF(8) = \mathbb{F}_2[x]/\langle x^3+x+1\rangle
+$$
+
+Elements are all $c_2x^2 + c_1x + c_0$ with $c_i \in \{0,1\}$: eight of them, matching one 3-bit byte fragment. The relation is $a^3 = a + 1$.
+
+Powers of $a$: $a, a^2, a^3 = a+1, a^4 = a^2+a, a^5 = a^3+a^2 = a^2+a+1, a^6 = a^3+a^2+a = a^2+1, a^7 = a^3 + a = 1$.
+
+Seven distinct powers before returning to 1, so $a$ is primitive and $GF(8)^* \cong \mathbb{Z}_7$.
+
+**Example 3: Compute in $GF(4)$.**
+
+Find $(a+1)^2$ and $a^{-1}$.
+
+**Solution.** Using $a^2 = a+1$ and characteristic 2 (so $2a = 0$):
+
+$$
+(a+1)^2 = a^2 + 2a + 1 = a^2 + 1 = (a+1) + 1 = a
+$$
+
+For the inverse of $a$: from $a^2 = a + 1$, multiply by... simpler, note
+
+$$
+a(a+1) = a^2 + a = (a+1) + a = 1
+$$
+
+So $a^{-1} = a+1$. ✓ (And symmetrically $(a+1)^{-1} = a$.)
+
+Notice $(a+1)^2 = a$ and $a^2 = a+1$: squaring swaps the two, which is the Frobenius map in action.
+
+**Example 4: Why $GF(4) \ne \mathbb{Z}_4$.**
+
+**Solution.** In $GF(4)$, characteristic 2 means $x + x = 0$ for every element, so
+
+$$
+1 + 1 = 0
+$$
+
+In $\mathbb{Z}_4$, $1 + 1 = 2 \ne 0$.
+
+The additive groups differ: $GF(4)^+ \cong \mathbb{Z}_2\times\mathbb{Z}_2$ (every element of order 2), while $\mathbb{Z}_4$ is cyclic with 1 of order 4.
+
+And decisively, $\mathbb{Z}_4$ isn't a field at all: $2 \cdot 0 = 0$, $2\cdot1 = 2$, $2\cdot2 = 0$, $2\cdot3 = 2$, so 2 never produces 1.
+
+**Example 5: Solve a linear equation in $GF(4)$.**
+
+Solve $a x + 1 = 0$.
+
+**Solution.** In characteristic 2, $-1 = 1$, so the equation is $ax = 1$, giving $x = a^{-1} = a+1$.
+
+Check: $a(a+1) = 1$, so $ax + 1 = 1 + 1 = 0$ ✓
+
+**Example 6: Count irreducible polynomials.**
+
+How many monic irreducible quadratics are there over $\mathbb{F}_2$?
+
+**Solution.** Monic quadratics over $\mathbb{F}_2$: $x^2$, $x^2+1$, $x^2+x$, $x^2+x+1$. Four in total.
+
+- $x^2 = x \cdot x$: reducible.
+- $x^2+1 = (x+1)^2$ over $\mathbb{F}_2$, since $2x = 0$: reducible.
+- $x^2+x = x(x+1)$: reducible.
+- $x^2+x+1$: no root, so irreducible.
+
+**Exactly one.** That's why $GF(4)$ has a canonical construction — there's no other choice of modulus.
+
+For higher degrees there are several, and any of them gives an isomorphic field. Two monic irreducible cubics exist over $\mathbb{F}_2$, and both build $GF(8)$.
+
+**Example 7: The identity $x^q = x$.**
+
+Verify $x^4 = x$ for all $x \in GF(4)$.
+
+**Solution.** For $x = 0$: $0 = 0$ ✓
+
+For nonzero $x$, the multiplicative group has order 3, so $x^3 = 1$ and hence $x^4 = x$ ✓
+
+Explicitly: $1^4 = 1$; $a^4 = a^3 \cdot a = 1 \cdot a = a$; $(a+1)^4 = (a+1)^3(a+1) = a$... let's check that directly. $(a+1)^2 = a$ from Example 3, so $(a+1)^4 = a^2 = a+1$ ✓
+
+So every element of $GF(4)$ is a root of $x^4 - x$, which means $x^4 - x$ factors completely over $GF(4)$. In general $x^q - x$ is exactly the product of $(x - \alpha)$ over all $\alpha \in GF(q)$, which is one clean way to characterize the field.
+
+## Real-World Applications
+
+**AES.** The Advanced Encryption Standard operates on bytes as elements of $GF(2^8)$, constructed as $\mathbb{F}_2[x]/\langle x^8+x^4+x^3+x+1\rangle$. One byte is one field element, which is why the construction is so convenient in hardware. The S-box is essentially the map $x \mapsto x^{-1}$ in this field, chosen because inversion is highly nonlinear and so resists linear cryptanalysis.
+
+**Reed–Solomon codes.** QR codes, CDs, DVDs, Blu-ray, and NASA deep-space links use Reed–Solomon over $GF(256)$. A QR code can lose up to 30% of its area and still decode, because the data are values of a polynomial over a finite field and enough surviving points determine it uniquely. The Voyager probes' images reached Earth through these codes.
+
+**RAID storage.** RAID 6 tolerates two simultaneous disk failures by storing two parity blocks computed in $GF(2^8)$. Recovering a failed drive means solving a small linear system over that field.
+
+**Elliptic-curve cryptography.** Curves are defined over $GF(p)$ or $GF(2^n)$. The security assumption is the difficulty of the discrete logarithm in the curve's group, which relies on the field being finite and the group being cyclic of large prime order.
+
+**Random number generation.** Linear feedback shift registers are multiplication by a primitive element in $GF(2^n)$, and choosing a primitive polynomial gives maximal period $2^n - 1$. Used in GPS signal generation, Bluetooth frequency hopping, and hardware test patterns.
+
+**Combinatorial designs.** Finite projective planes are built from finite fields, and the existence question for orders that are not prime powers is a hard open problem. The nonexistence of a projective plane of order 10 was settled in 1989 by thousands of hours of computer search.
+
+:::note[You've Got This]
+The classification is the thing to remember, and it's short: a finite field exists exactly for prime-power orders, and there's exactly one of each. The trap to avoid is assuming that $GF(p^n)$ is the same thing as $\mathbb{Z}_{p^n}$; GF(4) has characteristic 2 while ℤ₄ has characteristic 4 and isn't a field at all. Beyond that, the construction is mechanical: pick an irreducible polynomial of the right degree and quotient by it. Practise a few multiplications in GF(4) with a² = a + 1 until the reduction step feels automatic, because that's exactly the arithmetic running inside every AES encryption and every QR code you scan.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="abstract-finite-fields"
+  questions={[
+    {
+      id: "q1",
+      text: "For which values of n does a field with n elements exist?",
+      options: [
+        "Every n greater than 1",
+        "Only prime n",
+        "Exactly the prime powers pᵏ",
+        "Only even n",
+      ],
+      correctIndex: 2,
+      explanation:
+        "A finite field has prime characteristic p and is a vector space over 𝔽ₚ, forcing its size to be pᵏ. For each prime power there is exactly one such field up to isomorphism.",
+    },
+    {
+      id: "q2",
+      text: "Is GF(4) the same ring as ℤ₄?",
+      options: [
+        "Yes, both have four elements",
+        "No: GF(4) has characteristic 2, and ℤ₄ is not even a field",
+        "Yes, after relabelling the elements",
+        "No, because GF(4) has five elements",
+      ],
+      correctIndex: 1,
+      explanation:
+        "In GF(4) every element satisfies x + x = 0, so the characteristic is 2 and the additive group is ℤ₂ × ℤ₂. ℤ₄ has characteristic 4 and the element 2 has no inverse there.",
+    },
+    {
+      id: "q3",
+      text: "In GF(4) with a² = a + 1, what is a · (a + 1)?",
+      options: ["0", "1", "a", "a + 1"],
+      correctIndex: 1,
+      explanation:
+        "Expanding gives a² + a, and substituting a² = a + 1 yields (a + 1) + a = 1, since a + a = 0 in characteristic 2. So a and a + 1 are multiplicative inverses.",
+    },
+    {
+      id: "q4",
+      text: "How do you construct GF(8)?",
+      options: [
+        "As ℤ₈ under addition and multiplication mod 8",
+        "As 𝔽₂[x] modulo an irreducible cubic such as x³ + x + 1",
+        "As ℤ₂ × ℤ₄",
+        "As 𝔽₂[x] modulo x³",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Quotienting 𝔽₂[x] by an irreducible polynomial of degree 3 gives a field whose elements are the 2³ = 8 polynomials of degree below 3. Using x³ would fail, since x³ is reducible.",
+    },
+    {
+      id: "q5",
+      text: "What is the structure of GF(q)*, the nonzero elements under multiplication?",
+      options: [
+        "It is never a group",
+        "It is cyclic of order q − 1",
+        "It is isomorphic to ℤ_q",
+        "It is non-abelian for q > 4",
+      ],
+      correctIndex: 1,
+      explanation:
+        "The multiplicative group of any finite field is cyclic, and a generator is called a primitive element. That cyclic structure is what makes discrete logarithms, and hence Diffie-Hellman, meaningful.",
+    },
+    {
+      id: "q6",
+      text: "How many monic irreducible quadratics are there over 𝔽₂?",
+      options: ["Zero", "One", "Two", "Four"],
+      correctIndex: 1,
+      explanation:
+        "Of x², x²+1, x²+x and x²+x+1, the first three factor, since x²+1 = (x+1)² in characteristic 2. Only x²+x+1 is irreducible, which is why GF(4) has a single canonical construction.",
+    },
+  ]}
+/>

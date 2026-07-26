@@ -1,0 +1,326 @@
+---
+title: Introduction to Rings
+description: Adding a second operation, and the structures that result
+sidebar:
+  order: 13
+---
+
+import Quiz from "../../../components/Quiz.astro";
+import SymbolKey from "../../../components/SymbolKey.astro";
+import RingLadder from "../../../components/RingLadder.astro";
+
+## What You'll Learn
+
+In this lesson you'll learn the ring axioms, why multiplication is deliberately given less structure than addition, the difference between a ring and a ring with unity, and how the familiar number systems fit into the picture.
+
+<SymbolKey
+  items={[
+    {
+      sym: "(R, +, ×)",
+      read: "the ring R with addition and multiplication",
+      note: "two operations now, and they are not interchangeable",
+    },
+    {
+      sym: "0",
+      read: "the additive identity of R",
+      note: "always exists in a ring",
+    },
+    {
+      sym: "1",
+      read: "the multiplicative identity",
+      note: "optional; a ring having one is called a ring with unity",
+    },
+    {
+      sym: "−a",
+      read: "the additive inverse of a",
+      note: "always exists; a multiplicative inverse need not",
+    },
+    {
+      sym: "R[x]",
+      read: "polynomials in x with coefficients in R",
+      note: "a ring built from another ring",
+    },
+    {
+      sym: "R*",
+      read: "the units of R",
+      note: "the elements that do have multiplicative inverses",
+    },
+  ]}
+/>
+
+## The Concept
+
+### Two operations
+
+A group has one operation. But the number systems you actually use have two, and the interesting behaviour lies in how they interact.
+
+A **ring** is a set $R$ with two operations, $+$ and $\times$, satisfying:
+
+**For addition** — $(R, +)$ is an abelian group:
+
+1. Closed under $+$
+2. Associative
+3. Has an identity $0$
+4. Every $a$ has an additive inverse $-a$
+5. Commutative: $a + b = b + a$
+
+**For multiplication:**
+
+6. Closed under $\times$
+7. Associative
+
+**Connecting them** — distributivity:
+
+$$
+a(b+c) = ab + ac, \qquad (a+b)c = ac + bc
+$$
+
+That's it. Notice the asymmetry: **addition is a full abelian group; multiplication gets only closure and associativity.** No commutativity, no identity, no inverses required.
+
+This asymmetry is not laziness, it's realism. Matrix multiplication doesn't commute. Not every integer has a reciprocal. Requiring more would exclude the examples we care about most.
+
+### The ladder of ring types
+
+<RingLadder />
+
+Because so much is optional, ring theory has a vocabulary of qualifiers:
+
+- **Commutative ring** - $ab = ba$ always.
+- **Ring with unity** (or _with identity_) - there is a $1$ with $1a = a1 = a$.
+- **Integral domain** - commutative, with unity, and no zero divisors.
+- **Field** - a commutative ring with unity where every nonzero element is invertible.
+
+Terminology warning: some books define "ring" to include a unity and use "rng" for the version without. This site does not require unity, so $2\mathbb{Z}$ counts as a ring.
+
+### Units
+
+An element $u \in R$ is a **unit** if it has a multiplicative inverse in $R$. The units form a group under multiplication, written $R^*$ or $U(R)$.
+
+- In $\mathbb{Z}$, the units are $\{1, -1\}$. Only two.
+- In $\mathbb{Q}$, every nonzero element is a unit.
+- In $\mathbb{Z}_n$, the units are exactly the residues coprime to $n$ — the group $U(n)$ from earlier lessons, now revealed as the unit group of a ring.
+
+**A field is precisely a commutative ring with unity in which every nonzero element is a unit.** That's the shortest correct definition of a field.
+
+### Consequences of the axioms
+
+Some facts hold in every ring, and each is a short exercise in using distributivity.
+
+**$0a = a0 = 0$.** Not an axiom, a theorem:
+
+$$
+0a = (0+0)a = 0a + 0a
+$$
+
+Subtracting $0a$ from both sides (legal, since addition is a group) gives $0 = 0a$.
+
+**$(-a)b = -(ab)$.** Because $ab + (-a)b = (a + (-a))b = 0b = 0$, so $(-a)b$ is the additive inverse of $ab$.
+
+**$(-a)(-b) = ab$.** Apply the previous rule twice. This is the real answer to "why does a negative times a negative give a positive": it's forced by distributivity, not a convention someone chose.
+
+### Zero divisors
+
+A nonzero $a$ is a **zero divisor** if there is a nonzero $b$ with $ab = 0$.
+
+In $\mathbb{Z}$ this never happens: a product of nonzero integers is nonzero. In $\mathbb{Z}_6$ it does: $2 \cdot 3 = 6 \equiv 0$, so 2 and 3 are zero divisors.
+
+Zero divisors break something you rely on constantly: **cancellation**. In $\mathbb{Z}_6$, from $2x = 2y$ you cannot conclude $x = y$, since $2 \cdot 1 = 2$ and $2 \cdot 4 = 8 \equiv 2$. Solving equations in a ring with zero divisors requires care, and the next lesson is about the rings where this problem is absent.
+
+### Examples worth knowing
+
+- $\mathbb{Z}$ — commutative, unity, no zero divisors. An integral domain, not a field.
+- $\mathbb{Z}_n$ — commutative with unity. A field exactly when $n$ is prime.
+- $\mathbb{Q}, \mathbb{R}, \mathbb{C}$ — fields.
+- $M_2(\mathbb{R})$, the $2\times 2$ real matrices — unity (the identity matrix), **not** commutative, and full of zero divisors.
+- $\mathbb{R}[x]$, real polynomials — commutative with unity, an integral domain, not a field (there's no polynomial inverse for $x$).
+- $2\mathbb{Z}$, the even integers — commutative, no zero divisors, but **no unity**, since $1$ is odd.
+
+## Worked Examples
+
+**Example 1: Is $2\mathbb{Z}$ a ring?**
+
+**Solution.** Addition: the even integers form an abelian group under $+$ ✓
+
+Multiplication: even times even is even ✓, and associativity is inherited ✓
+
+Distributivity: inherited from $\mathbb{Z}$ ✓
+
+**Yes, a ring.** But it has **no unity**: we'd need an even $u$ with $ua = a$ for all even $a$, and $u = 1$ is the only candidate in $\mathbb{Z}$, which is odd.
+
+So $2\mathbb{Z}$ is a commutative ring without unity, and it shows that unity is a genuine extra condition.
+
+**Example 2: Find the zero divisors in $\mathbb{Z}_{12}$.**
+
+**Solution.** Look for nonzero $a$ with $ab \equiv 0 \pmod{12}$ for some nonzero $b$.
+
+$$
+2 \cdot 6 = 12 \equiv 0, \quad 3 \cdot 4 = 12 \equiv 0, \quad 8 \cdot 3 = 24 \equiv 0, \quad 9 \cdot 4 = 36 \equiv 0, \quad 10 \cdot 6 = 60 \equiv 0
+$$
+
+Zero divisors: $\{2, 3, 4, 6, 8, 9, 10\}$.
+
+Non-zero-divisors: $\{1, 5, 7, 11\}$ — exactly $U(12)$.
+
+**The pattern:** in $\mathbb{Z}_n$, an element is a unit when $\gcd(a,n) = 1$ and a zero divisor otherwise. Every nonzero element is one or the other, never both.
+
+**Example 3: Zero divisors among matrices.**
+
+**Solution.** Take
+
+$$
+A = \begin{pmatrix} 1 & 0 \\ 0 & 0 \end{pmatrix}, \qquad B = \begin{pmatrix} 0 & 0 \\ 0 & 1 \end{pmatrix}
+$$
+
+Both nonzero, but
+
+$$
+AB = \begin{pmatrix} 0 & 0 \\ 0 & 0 \end{pmatrix}
+$$
+
+Both are zero divisors. In fact a matrix is a zero divisor exactly when its determinant is 0, which is the same as failing to be invertible. In $M_n(\mathbb{R})$ every element is either a unit or a zero divisor, just as in $\mathbb{Z}_n$.
+
+**Example 4: Prove $(-a)(-b) = ab$ in any ring.**
+
+**Solution.** First, $(-a)b = -(ab)$:
+
+$$
+ab + (-a)b = (a + (-a))b = 0 \cdot b = 0
+$$
+
+so $(-a)b$ is the additive inverse of $ab$. The same argument on the right gives $a(-b) = -(ab)$.
+
+Now apply it twice:
+
+$$
+(-a)(-b) = -\big(a(-b)\big) = -\big(-(ab)\big) = ab
+$$
+
+using that additive inverses undo themselves in the group $(R,+)$. ∎
+
+Note what the proof used: distributivity, the additive group, and the theorem $0b = 0$. Nothing about numbers.
+
+**Example 5: A ring where $x^2 = x$ for everything.**
+
+**Solution.** Take $R = \mathbb{Z}_2 = \{0, 1\}$. Then $0^2 = 0$ and $1^2 = 1$.
+
+More interestingly, the set of subsets of a fixed set, with symmetric difference as $+$ and intersection as $\times$, is a **Boolean ring**, and there $A \cap A = A$ for every $A$.
+
+Boolean rings are the algebra of logic circuits, which is why simplifying a circuit and simplifying a ring expression are the same activity.
+
+**Example 6: Is $\mathbb{Z}_5$ a field?**
+
+**Solution.** Commutative with unity ✓. Check each nonzero element for an inverse:
+
+$$
+1 \cdot 1 = 1, \quad 2 \cdot 3 = 6 \equiv 1, \quad 3 \cdot 2 = 1, \quad 4 \cdot 4 = 16 \equiv 1
+$$
+
+All four have inverses. **Yes, a field.**
+
+Compare $\mathbb{Z}_6$: the element 2 has no inverse, because $2b$ is always even and therefore never $\equiv 1 \pmod 6$. So $\mathbb{Z}_6$ is not a field.
+
+$\mathbb{Z}_n$ is a field exactly when $n$ is prime, which is the subject of the next lesson.
+
+## Real-World Applications
+
+**Computer arithmetic.** Fixed-width integer types are the ring $\mathbb{Z}_{2^{32}}$ or $\mathbb{Z}_{2^{64}}$. This is why unsigned overflow wraps rather than erring, and why $\mathbb{Z}_{2^{32}}$ has zero divisors: $2^{16} \times 2^{16} = 0$ in 32-bit arithmetic. Real overflow bugs come from expecting integer-like behaviour from a ring that has zero divisors.
+
+**Cryptography.** RSA operates in the ring $\mathbb{Z}_n$ for $n = pq$. Its zero divisors are the multiples of $p$ and $q$, so stumbling onto one would reveal the factorization. The scheme lives entirely inside the unit group $U(n)$.
+
+**Error-correcting codes.** Reed–Solomon codes, used in QR codes, CDs and deep-space communication, work in polynomial rings over finite fields. The ring structure is what makes encoding and decoding into polynomial arithmetic instead of table lookup.
+
+**Boolean algebra and digital logic.** Circuit design is computation in a Boolean ring, and logic minimization is algebraic simplification. Every chip layout tool rests on this.
+
+**Computer algebra systems.** Mathematica, SageMath and SymPy are organized around ring types. Whether a system can factor, divide, or solve depends on which ring axioms your coefficients satisfy, so the type hierarchy in the software mirrors the ladder in this lesson.
+
+**Image and signal processing.** Convolution makes the set of signals into a ring, and filter design is ring arithmetic. The reason the Fourier transform simplifies filtering is that it is a ring homomorphism turning convolution into multiplication.
+
+:::note[You've Got This]
+The one thing to hold onto is the asymmetry: addition gets everything, multiplication gets almost nothing. Every qualifier in ring theory — commutative, with unity, domain, field — is just a note about how much extra multiplication happens to have. The other idea worth carrying forward is zero divisors, because they are what break cancellation, and cancellation is something you have used without thinking since arithmetic. ℤ₆ is the example to keep handy: 2 × 3 = 0 there, and once that stops feeling strange, rings will feel comfortable.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="abstract-introduction-to-rings"
+  questions={[
+    {
+      id: "q1",
+      text: "In a ring, which operation is required to form an abelian group?",
+      options: [
+        "Multiplication",
+        "Addition",
+        "Both addition and multiplication",
+        "Neither",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Addition must be a full abelian group, while multiplication is only required to be closed and associative. That asymmetry is what lets matrices and the integers both count as rings.",
+    },
+    {
+      id: "q2",
+      text: "Which of these is NOT required by the ring axioms?",
+      options: [
+        "Multiplication distributes over addition",
+        "Multiplication is associative",
+        "Multiplication is commutative",
+        "Addition has an identity element",
+      ],
+      correctIndex: 2,
+      explanation:
+        "Commutativity of multiplication is optional, which is why the 2×2 matrices form a ring. A ring that happens to have it is called a commutative ring.",
+    },
+    {
+      id: "q3",
+      text: "Which elements of ℤ₁₂ are zero divisors?",
+      options: [
+        "None of them",
+        "All the nonzero elements",
+        "2, 3, 4, 6, 8, 9 and 10",
+        "1, 5, 7 and 11",
+      ],
+      correctIndex: 2,
+      explanation:
+        "An element of ℤₙ is a zero divisor exactly when it shares a factor with n, and a unit otherwise. So 1, 5, 7 and 11 are units and the remaining nonzero elements are zero divisors.",
+    },
+    {
+      id: "q4",
+      text: "Why is 2ℤ, the even integers, a ring without unity?",
+      options: [
+        "Because it is not closed under multiplication",
+        "Because the only candidate for a multiplicative identity is 1, which is odd",
+        "Because it has no additive identity",
+        "Because multiplication of even numbers is not associative",
+      ],
+      correctIndex: 1,
+      explanation:
+        "All the ring axioms hold, but a multiplicative identity would have to act as 1 does, and 1 is not even. It is a legitimate ring with no unity element.",
+    },
+    {
+      id: "q5",
+      text: "What is a unit in a ring?",
+      options: [
+        "An element equal to 1",
+        "An element with a multiplicative inverse in the ring",
+        "Any nonzero element",
+        "An element whose square is itself",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Units are the invertible elements, and they form a group under multiplication. In ℤ only 1 and −1 qualify, while in a field every nonzero element does.",
+    },
+    {
+      id: "q6",
+      text: "Why does 0a = 0 hold in every ring?",
+      options: [
+        "It is listed as one of the ring axioms",
+        "Because 0a = (0+0)a = 0a + 0a, and cancelling in the additive group gives 0",
+        "Because multiplication is commutative",
+        "Because 0 is a zero divisor",
+      ],
+      correctIndex: 1,
+      explanation:
+        "It is a theorem, not an axiom, proved from distributivity plus the fact that addition is a group. The same technique proves (−a)(−b) = ab, which is why a negative times a negative is positive.",
+    },
+  ]}
+/>

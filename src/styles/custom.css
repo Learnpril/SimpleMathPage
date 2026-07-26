@@ -719,8 +719,19 @@ body {
 }
 
 /* ---------- Worked example spacing ---------- */
-/* Add vertical space before bold paragraph headings used as worked example titles */
-p:has(> strong:first-child:last-child) {
+/* Add vertical space before bold paragraph headings such as "**Example 2: ...**"
+   and "**Solution.**".
+
+   The `bold-heading` class is applied at build time by
+   src/lib/rehype-bold-heading.mjs, which checks that the paragraph's entire
+   content is one bold run. This used to be attempted in CSS with
+
+     p:has(> strong:first-child:last-child)
+
+   but :first-child and :last-child only count element children, so that also
+   matched any paragraph with plain text around a single bold phrase — which is
+   ordinary prose, and it opened a 4rem hole mid-paragraph-run. */
+.sl-markdown-content p.bold-heading {
   margin-top: 4rem;
 }
 

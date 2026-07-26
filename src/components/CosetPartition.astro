@@ -1,0 +1,121 @@
+---
+/**
+ * CosetPartition — the cosets of H = ⟨4⟩ inside ℤ₁₂, shown as a partition.
+ *
+ * The cosets are computed by adding each element to H and de-duplicating, so the
+ * count, the sizes and the arithmetic in the caption are all derived. This is
+ * Lagrange's theorem made visible: equal-sized blocks tiling the group exactly.
+ */
+const n = 12;
+const gen = 4;
+
+// H = ⟨gen⟩
+const H: number[] = [];
+for (let k = 0, x = 0; k < n; k++, x = (x + gen) % n) {
+  if (H.includes(x)) break;
+  H.push(x);
+}
+H.sort((a, b) => a - b);
+
+// Distinct left cosets g + H
+const cosets: { rep: number; els: number[] }[] = [];
+const claimed = new Set<number>();
+for (let g = 0; g < n; g++) {
+  if (claimed.has(g)) continue;
+  const els = H.map((hEl) => (g + hEl) % n).sort((a, b) => a - b);
+  els.forEach((e) => claimed.add(e));
+  cosets.push({ rep: g, els });
+}
+
+const index = cosets.length;
+const w = 540;
+const h = 296;
+const cellW = 46;
+const cellH = 30;
+const cellGap = 8;
+const startX = 160;
+const rowY = cosets.map((_, i) => 76 + i * 46);
+const palette = ["green", "blue", "purple", "orange", "pink", "grey"];
+---
+
+<figure
+  class="cos2"
+  role="img"
+  aria-label={`The ${index} cosets of the subgroup H = {${H.join(", ")}} inside the integers mod 12. Each coset has ${H.length} elements, they do not overlap, and together they cover all 12 elements, so 12 = ${index} times ${H.length}.`}
+>
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    <text x="16" y="20" class="cos2-head" font-size="12.5" font-weight="bold">Cosets cut a group into equal blocks</text>
+    <text x="16" y="42" class="cos2-sub" font-size="10.5">
+      {`H = ⟨${gen}⟩ = {${H.join(", ")}} sitting inside ℤ${"₁₂"}`}
+    </text>
+
+    {cosets.map((c, ci) => (
+      <g>
+        <text x={startX - 18} y={rowY[ci] + 5} class={`cos2-rowlbl cos2-t-${palette[ci]}`} font-size="11" text-anchor="end" font-weight="bold">
+          {c.rep === 0 ? "H" : `${c.rep} + H`}
+        </text>
+        {c.els.map((el, i) => (
+          <g>
+            <rect
+              x={startX + i * (cellW + cellGap)}
+              y={rowY[ci] - cellH / 2}
+              width={cellW}
+              height={cellH}
+              rx="6"
+              class={`cos2-cell cos2-${palette[ci]}`}
+            />
+            <text
+              x={startX + i * (cellW + cellGap) + cellW / 2}
+              y={rowY[ci] + 5}
+              class="cos2-el"
+              font-size="11.5"
+              text-anchor="middle"
+            >{el}</text>
+          </g>
+        ))}
+        <text x={startX + H.length * (cellW + cellGap) + 12} y={rowY[ci] + 5} class="cos2-size" font-size="9.5">
+          {`${c.els.length} elements`}
+        </text>
+      </g>
+    ))}
+
+    <text x={w / 2} y="262" class="cos2-foot" font-size="10.5" text-anchor="middle">
+      {`${index} cosets × ${H.length} elements each = ${index * H.length}, which is exactly |ℤ₁₂|`}
+    </text>
+    <text x={w / 2} y="280" class="cos2-sub2" font-size="9.5" text-anchor="middle">
+      {`Lagrange's theorem: |G| = [G:H] · |H|, here ${n} = ${index} · ${H.length}`}
+    </text>
+  </svg>
+</figure>
+
+<style>
+  .cos2 { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .cos2 svg { width:100%; max-width:100%; height:auto; }
+  .cos2-cell { fill-opacity:0.16; stroke-width:1.6; }
+  .cos2-green { fill:#7ee787; stroke:#7ee787; }
+  .cos2-blue { fill:#58a6ff; stroke:#58a6ff; }
+  .cos2-purple { fill:#d2a8ff; stroke:#d2a8ff; }
+  .cos2-orange { fill:#f0883e; stroke:#f0883e; }
+  .cos2-pink { fill:#ff7b72; stroke:#ff7b72; }
+  .cos2-grey { fill:#8b949e; stroke:#8b949e; }
+  .cos2-t-green { fill:#7ee787; }
+  .cos2-t-blue { fill:#58a6ff; }
+  .cos2-t-purple { fill:#d2a8ff; }
+  .cos2-t-orange { fill:#f0883e; }
+  .cos2-t-pink { fill:#ff7b72; }
+  .cos2-t-grey { fill:#8b949e; }
+  .cos2-rowlbl { font-family:'Libre Baskerville',Georgia,serif; }
+  .cos2-el { fill:#eee; font-family:'Libre Baskerville',Georgia,serif; }
+  .cos2-size { fill:#9198a1; font-family:'Libre Baskerville',Georgia,serif; font-style:italic; }
+  .cos2-head { fill:#eee; font-family:'Libre Baskerville',Georgia,serif; }
+  .cos2-sub, .cos2-sub2 { fill:#9198a1; font-family:'Libre Baskerville',Georgia,serif; font-style:italic; }
+  .cos2-foot { fill:#58a6ff; font-family:'Libre Baskerville',Georgia,serif; }
+  :global([data-theme="light"]) .cos2-green, :global([data-theme="light"]) .cos2-t-green { fill:#116329; stroke:#116329; }
+  :global([data-theme="light"]) .cos2-blue, :global([data-theme="light"]) .cos2-t-blue { fill:#0550ae; stroke:#0550ae; }
+  :global([data-theme="light"]) .cos2-purple, :global([data-theme="light"]) .cos2-t-purple { fill:#6639ba; stroke:#6639ba; }
+  :global([data-theme="light"]) .cos2-orange, :global([data-theme="light"]) .cos2-t-orange { fill:#b35900; stroke:#b35900; }
+  :global([data-theme="light"]) .cos2-el { fill:#24292f; }
+  :global([data-theme="light"]) :is(.cos2-size, .cos2-sub, .cos2-sub2) { fill:#57606a; }
+  :global([data-theme="light"]) .cos2-head { fill:#24292f; }
+  :global([data-theme="light"]) .cos2-foot { fill:#0550ae; }
+</style>

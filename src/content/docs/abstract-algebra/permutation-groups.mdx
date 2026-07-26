@@ -1,0 +1,333 @@
+---
+title: Permutation Groups
+description: The symmetric group, cycle notation, transpositions, and why every finite group is a permutation group
+sidebar:
+  order: 7
+---
+
+import Quiz from "../../../components/Quiz.astro";
+import SymbolKey from "../../../components/SymbolKey.astro";
+import PermutationCycles from "../../../components/PermutationCycles.astro";
+import CayleyTable from "../../../components/CayleyTable.astro";
+
+## What You'll Learn
+
+In this lesson you'll learn to compose permutations, write them in cycle notation, compute their orders, determine whether they're even or odd, and see Cayley's theorem: every group is secretly a group of permutations.
+
+<SymbolKey
+  items={[
+    {
+      sym: "Sₙ",
+      read: "the symmetric group on n letters",
+      note: "all n! rearrangements of n objects, combined by composition",
+    },
+    {
+      sym: "σ, τ",
+      read: "sigma and tau",
+      note: "the conventional names for permutations",
+    },
+    {
+      sym: "(1 3 5)",
+      read: "the cycle sending 1 to 3, 3 to 5, and 5 back to 1",
+      note: "anything not listed is left alone",
+    },
+    {
+      sym: "στ",
+      read: "sigma after tau",
+      note: "apply τ first, then σ — right to left, like function composition",
+    },
+    {
+      sym: "Aₙ",
+      read: "the alternating group",
+      note: "the even permutations in Sₙ, exactly half of them for n ≥ 2",
+    },
+    {
+      sym: "n!",
+      read: "n factorial",
+      note: "n × (n−1) × ⋯ × 1, the number of ways to order n things",
+    },
+  ]}
+/>
+
+## The Concept
+
+### The symmetric group
+
+A **permutation** of a set is a bijection from the set to itself: a rearrangement that misses nothing and duplicates nothing.
+
+The set of all permutations of $\{1, 2, \dots, n\}$ under composition is the **symmetric group** $S_n$, with
+
+$$
+|S_n| = n!
+$$
+
+It's a group: composing two bijections gives a bijection (closure), composition of functions is associative, the do-nothing permutation is the identity, and every bijection has an inverse.
+
+$S_n$ is non-abelian for $n \ge 3$, and it grows fast. $|S_4| = 24$, $|S_{10}| = 3{,}628{,}800$.
+
+### Cycle notation
+
+Two-row notation lists each input above its output. Cycle notation is shorter and reveals the structure.
+
+<PermutationCycles />
+
+To find the cycles, start anywhere and follow the map until you return. Then start again with an element you haven't used. Elements mapping to themselves are **fixed points** and are usually omitted.
+
+Two facts make cycle notation powerful:
+
+- **Disjoint cycles commute.** They move separate elements, so their order of application is irrelevant.
+- **The order of a permutation is the lcm of its cycle lengths.** A 3-cycle returns home every 3 steps and a 2-cycle every 2, so the whole thing returns after $\operatorname{lcm}(3,2) = 6$.
+
+Cycle notation is not unique: $(1\ 3\ 5) = (3\ 5\ 1) = (5\ 1\ 3)$, since you can start anywhere in the loop. But the _set_ of cycles is determined.
+
+### Composing permutations
+
+The standard convention is **right to left**, matching function composition: in $\sigma\tau$, apply $\tau$ first.
+
+Compute $\sigma\tau$ where $\sigma = (1\ 2\ 3)$ and $\tau = (1\ 2)$, tracking each element:
+
+- $1 \xrightarrow{\tau} 2 \xrightarrow{\sigma} 3$, so $1 \mapsto 3$.
+- $2 \xrightarrow{\tau} 1 \xrightarrow{\sigma} 2$, so $2 \mapsto 2$.
+- $3 \xrightarrow{\tau} 3 \xrightarrow{\sigma} 1$, so $3 \mapsto 1$.
+
+Result: $(1\ 3)$.
+
+Now the other order, $\tau\sigma$: $1 \xrightarrow{\sigma} 2 \xrightarrow{\tau} 1$, so $1$ is fixed; $2 \xrightarrow{\sigma} 3 \xrightarrow{\tau} 3$; $3 \xrightarrow{\sigma} 1 \xrightarrow{\tau} 2$. Result: $(2\ 3)$.
+
+$\sigma\tau \ne \tau\sigma$, confirming $S_3$ is non-abelian. Some books compose left to right; check the convention before trusting an answer.
+
+### Transpositions and parity
+
+A **transposition** is a 2-cycle: it swaps two elements and fixes the rest.
+
+**Every permutation is a product of transpositions.** A cycle decomposes as
+
+$$
+(a_1\ a_2\ \dots\ a_k) = (a_1\ a_k)(a_1\ a_{k-1})\cdots(a_1\ a_2)
+$$
+
+which uses $k - 1$ transpositions.
+
+The decomposition isn't unique, but its **parity** is. A permutation is **even** if it needs an even number of transpositions and **odd** otherwise, and no permutation is both. That invariance is a genuine theorem, not a definition.
+
+Quick rule: a $k$-cycle has parity matching $k-1$. So 3-cycles are even, 2-cycles are odd, 4-cycles are odd. For a general permutation, add up $(k_i - 1)$ over its cycles.
+
+The **sign** is $+1$ for even and $-1$ for odd, and signs multiply: even times odd is odd, and so on. This is the same parity that determines the sign of a term in a determinant expansion.
+
+### The alternating group
+
+The even permutations form a subgroup $A_n$, the **alternating group**, with
+
+$$
+|A_n| = \frac{n!}{2} \quad (n \ge 2)
+$$
+
+Half of all permutations are even. The odd ones do **not** form a subgroup: odd composed with odd is even, so closure fails immediately.
+
+$A_5$ has order 60 and is the smallest non-abelian **simple** group, meaning it has no normal subgroups besides the trivial ones. That single fact is why the quintic has no solution formula, as the final lessons explain.
+
+### Cayley's theorem
+
+Here's a striking result: **every group is isomorphic to a subgroup of some symmetric group.**
+
+The construction is direct. For $g \in G$, define the map $\lambda_g(x) = gx$. It's a bijection on $G$ (cancellation makes it injective, and $g^{-1}y$ is a preimage for $y$), so it's a permutation of the set $G$. Sending $g \mapsto \lambda_g$ embeds $G$ into the permutations of its own elements.
+
+So permutation groups are not a special case; they are the general case in disguise. Concretely, a group of order $n$ sits inside $S_n$. That's not always the most efficient description, but it's always available.
+
+### $S_3$ in full
+
+<CayleyTable
+  labels={["e", "r", "r²", "s", "rs", "r²s"]}
+  op={(i, j) => {
+    // Write each element as rᵃsᵇ, with r³ = e, s² = e and the relation sr = r²s.
+    // Then (rᵃsᵇ)(rᶜsᵈ) = r^(a ± c) s^(b+d), minus when b = 1.
+    const aI = i % 3;
+    const bI = i < 3 ? 0 : 1;
+    const aJ = j % 3;
+    const bJ = j < 3 ? 0 : 1;
+    const a = (aI + (bI === 1 ? 3 - aJ : aJ)) % 3;
+    const b = (bI + bJ) % 2;
+    return b === 0 ? a : 3 + a;
+  }}
+  opSymbol="∘"
+  title="S₃ as symmetries of a triangle: r is a rotation, s a reflection"
+  highlight={[0, 1, 2]}
+  highlightLabel="the rotations A₃"
+  caption="The shaded block is the alternating group A₃, the three even permutations. Notice the table is not symmetric about the diagonal, so S₃ is non-abelian."
+/>
+
+## Worked Examples
+
+**Example 1: Write $\sigma$ in cycle notation.**
+
+$\sigma$ sends $1\to4$, $2\to6$, $3\to3$, $4\to5$, $5\to1$, $6\to2$.
+
+**Solution.** Start at 1: $1 \to 4 \to 5 \to 1$. That's $(1\ 4\ 5)$.
+
+Next unused element is 2: $2 \to 6 \to 2$. That's $(2\ 6)$.
+
+Then 3 maps to itself, a fixed point.
+
+$$
+\sigma = (1\ 4\ 5)(2\ 6)
+$$
+
+Order: $\operatorname{lcm}(3, 2) = \mathbf{6}$.
+
+Parity: the 3-cycle is even (2 transpositions), the 2-cycle is odd (1 transposition), total 3 transpositions, so $\sigma$ is **odd**.
+
+**Example 2: Compose two permutations.**
+
+Compute $\sigma\tau$ for $\sigma = (1\ 2\ 4)$ and $\tau = (2\ 3)(1\ 4)$ in $S_4$.
+
+**Solution.** Right to left, so $\tau$ first.
+
+- $1 \xrightarrow{\tau} 4 \xrightarrow{\sigma} 1$. Fixed.
+- $2 \xrightarrow{\tau} 3 \xrightarrow{\sigma} 3$. So $2 \mapsto 3$.
+- $3 \xrightarrow{\tau} 2 \xrightarrow{\sigma} 4$. So $3 \mapsto 4$.
+- $4 \xrightarrow{\tau} 1 \xrightarrow{\sigma} 2$. So $4 \mapsto 2$.
+
+$$
+\sigma\tau = (2\ 3\ 4)
+$$
+
+Order 3, and even.
+
+**Example 3: Find the inverse of a cycle.**
+
+**Solution.** Reverse it. If $\sigma = (1\ 3\ 5\ 2)$ then
+
+$$
+\sigma^{-1} = (2\ 5\ 3\ 1) = (1\ 2\ 5\ 3)
+$$
+
+Check: $\sigma$ sends $1 \to 3$, and $\sigma^{-1}$ must send $3 \to 1$. In $(1\ 2\ 5\ 3)$, indeed $3 \to 1$. ✓
+
+For a product, reverse the order as well as each factor: $((1\ 2)(3\ 4\ 5))^{-1} = (3\ 5\ 4)(1\ 2)$. Since these particular cycles are disjoint they commute, so the order doesn't matter here, but it does in general.
+
+**Example 4: The order of a big permutation.**
+
+Find the order of $\sigma = (1\ 2\ 3\ 4)(5\ 6\ 7)(8\ 9)$ in $S_9$.
+
+**Solution.**
+
+$$
+|\sigma| = \operatorname{lcm}(4, 3, 2) = 12
+$$
+
+Parity: $(4-1) + (3-1) + (2-1) = 3 + 2 + 1 = 6$ transpositions, which is even, so $\sigma \in A_9$.
+
+Note that a permutation can have large order in a modest group: nothing about $|S_9| = 362{,}880$ suggests 12 in particular.
+
+**Example 5: Why the odd permutations aren't a subgroup.**
+
+**Solution.** Take $(1\ 2)$ and $(3\ 4)$, both odd. Their product $(1\ 2)(3\ 4)$ needs two transpositions, so it is **even**.
+
+Closure fails. And the identity is even, so the odd permutations don't contain it either. Two separate reasons, either one fatal.
+
+The even permutations have no such problem: even plus even is even, the identity is even (zero transpositions), and the inverse of an even permutation is even. Hence $A_n \le S_n$.
+
+**Example 6: Cayley's theorem on a small group.**
+
+Realize $\mathbb{Z}_3 = \{0,1,2\}$ as a subgroup of $S_3$.
+
+**Solution.** For each $g$, write the permutation $\lambda_g(x) = g + x \bmod 3$ on the positions labelled $0, 1, 2$.
+
+$\lambda_0$ fixes everything: the identity.
+
+$\lambda_1$: $0 \to 1$, $1 \to 2$, $2 \to 0$, so $\lambda_1 = (0\ 1\ 2)$.
+
+$\lambda_2$: $0 \to 2$, $1 \to 0$, $2 \to 1$, so $\lambda_2 = (0\ 2\ 1)$.
+
+The image $\{e, (0\ 1\ 2), (0\ 2\ 1)\}$ is a subgroup of $S_3$ of order 3, and it is exactly $A_3$. So $\mathbb{Z}_3 \cong A_3 \le S_3$. ∎
+
+Notice the embedding used only left multiplication and cancellation, so the same recipe works for any finite group.
+
+## Real-World Applications
+
+**Card shuffling.** A shuffle of 52 cards is an element of $S_{52}$, a group with about $8 \times 10^{67}$ elements. A perfect riffle shuffle is a specific permutation whose order is 8 for a 52-card deck: do it eight times and the deck returns exactly to its starting arrangement, which is a favourite magician's trick and a straight consequence of cycle structure.
+
+**Rubik's cube.** The cube group is a subgroup of $S_{48}$, permuting the 48 movable stickers. Constraints on which permutations are achievable, such as the fact that you cannot flip a single edge, are statements about which subgroup it is. Parity arguments are what prove certain scrambles impossible.
+
+**Sorting networks and parallel algorithms.** Any sorting algorithm computes a permutation, and lower bounds on comparison sorting come from counting: distinguishing $n!$ possible orders needs at least $\log_2(n!)$ comparisons, which is $\Theta(n \log n)$.
+
+**Determinants.** The Leibniz formula for a determinant sums over all of $S_n$, weighting each term by the sign of the permutation. Parity is not an incidental detail there; it is what makes the determinant alternate, and hence what makes it detect linear dependence.
+
+**Chemistry.** The symmetry operations of a molecule permute its atoms, so a molecular symmetry group is a subgroup of a symmetric group. Which subgroup determines the spectroscopic selection rules, and hence what an infrared spectrum looks like.
+
+**Cryptography.** Block ciphers are permutations of the space of blocks, chosen to be efficiently computable and efficiently invertible while looking structureless. AES is a carefully engineered element of a symmetric group on $2^{128}$ points.
+
+:::note[You've Got This]
+Cycle notation is the skill to drill here, and it repays the effort immediately: once a permutation is in cycles, its order is an lcm and its parity is a sum, both computable in seconds. Two things to be careful about. Composition runs right to left by default, so check the convention in any source you read. And parity is about the _number_ of transpositions, not the number of cycles, which is a slip worth catching now. The Cayley theorem result is worth sitting with too: every finite group you will ever meet is a permutation group wearing a disguise.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="abstract-permutation-groups"
+  questions={[
+    {
+      id: "q1",
+      text: "What is the order of the permutation (1 2 3 4 5)(6 7) in S₇?",
+      options: ["7", "10", "12", "5"],
+      correctIndex: 1,
+      explanation:
+        "The order of a permutation is the least common multiple of its cycle lengths, so lcm(5, 2) = 10. Adding the lengths or multiplying the group's size are both common wrong turns.",
+    },
+    {
+      id: "q2",
+      text: "How many elements does S₅ have?",
+      options: ["25", "60", "120", "32"],
+      correctIndex: 2,
+      explanation:
+        "The symmetric group on n letters has n! elements, and 5! = 120. The alternating group A₅ is the half of these that are even, giving 60.",
+    },
+    {
+      id: "q3",
+      text: "Is the permutation (1 2 3 4) even or odd?",
+      options: [
+        "Even, because 4 is even",
+        "Odd, because a k-cycle needs k − 1 transpositions and 3 is odd",
+        "Even, because it has one cycle",
+        "Neither, parity applies only to products of 2-cycles",
+      ],
+      correctIndex: 1,
+      explanation:
+        "A k-cycle factors into k − 1 transpositions, so a 4-cycle takes 3 of them and is odd. The parity of a cycle is the opposite of the parity of its length.",
+    },
+    {
+      id: "q4",
+      text: "Why do the odd permutations fail to form a subgroup of Sₙ?",
+      options: [
+        "There are fewer odd permutations than even ones",
+        "Composition of permutations is not associative",
+        "The product of two odd permutations is even, and the identity is even",
+        "Odd permutations have no inverses",
+      ],
+      correctIndex: 2,
+      explanation:
+        "Closure fails, since odd composed with odd gives an even permutation, and the identity is even so it is not in the set at all. The even permutations do form the subgroup Aₙ.",
+    },
+    {
+      id: "q5",
+      text: "Compute στ where σ = (1 2 3) and τ = (1 2), composing right to left.",
+      options: ["(1 3)", "(2 3)", "(1 2 3)", "the identity"],
+      correctIndex: 0,
+      explanation:
+        "Apply τ first: 1 goes to 2 then σ sends 2 to 3, so 1 ↦ 3; 2 goes to 1 then to 2, fixed; 3 is fixed by τ then σ sends it to 1. The result is (1 3).",
+    },
+    {
+      id: "q6",
+      text: "What does Cayley's theorem say?",
+      options: [
+        "Every group of prime order is cyclic",
+        "Every finite group is isomorphic to a subgroup of some symmetric group",
+        "Every permutation is a product of transpositions",
+        "The order of a subgroup divides the order of the group",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Sending g to the map x ↦ gx realises each group element as a permutation of the group's own elements, embedding G in a symmetric group. So permutation groups are the general case, not a special one.",
+    },
+  ]}
+/>

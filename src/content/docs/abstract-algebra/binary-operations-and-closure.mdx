@@ -1,0 +1,342 @@
+---
+title: Binary Operations and Closure
+description: What counts as an operation, and the four properties worth checking on every one
+sidebar:
+  order: 2
+---
+
+import Quiz from "../../../components/Quiz.astro";
+import SymbolKey from "../../../components/SymbolKey.astro";
+import ClosureDiagram from "../../../components/ClosureDiagram.astro";
+import CayleyTable from "../../../components/CayleyTable.astro";
+
+## What You'll Learn
+
+In this lesson you'll learn the precise definition of a binary operation, how to test closure, associativity, commutativity, identities, and inverses, and how to read an operation table. Every structure in this section is a set plus an operation, so this is the ground floor.
+
+<SymbolKey
+  items={[
+    {
+      sym: "∗",
+      read: "star, a generic operation",
+      note: "a stand-in for whatever the operation is; could be +, ×, or something new",
+    },
+    {
+      sym: "a ∗ b",
+      read: "a star b",
+      note: "the result of combining a and b, in that order",
+    },
+    {
+      sym: "S × S",
+      read: "S cross S",
+      note: "all ordered pairs of elements of S; the inputs to a binary operation",
+    },
+    {
+      sym: "∈",
+      read: "is an element of",
+      note: "a ∈ S means a belongs to the set S",
+    },
+    {
+      sym: "e",
+      read: "the identity element",
+      note: "the element that changes nothing",
+    },
+    {
+      sym: "∀",
+      read: "for all",
+      note: "the claim holds for every element, with no exceptions",
+    },
+  ]}
+/>
+
+## The Concept
+
+### What a binary operation is
+
+A **binary operation** on a set $S$ is a rule that takes two elements of $S$, in a definite order, and returns exactly one element of $S$.
+
+$$
+* : S \times S \to S
+$$
+
+"Binary" refers to two inputs. Three requirements hide in that one-line definition, and each is worth naming:
+
+- **Two inputs, in order.** The pair $(a, b)$ is not the pair $(b, a)$. The operation may or may not care, but it is allowed to.
+- **Exactly one output.** No ambiguity. $\pm\sqrt{x}$ is not a legal operation because it returns two things.
+- **The output is in $S$.** This is closure, and it's built into the definition.
+
+That last point trips people up. An operation is not just a formula; it's a formula **together with the set it acts on**. Division is a perfectly good operation on the nonzero rationals and not an operation on the integers at all.
+
+### Closure
+
+$S$ is **closed** under $*$ if $a * b \in S$ for every $a, b \in S$.
+
+<ClosureDiagram />
+
+The even integers are closed under addition: even plus even is even, always. The odd integers are not, and it takes only one counterexample to say so. $3 + 5 = 8$, which is not odd. One escape is enough.
+
+To show closure fails, exhibit a single pair. To show it holds, you need an argument covering all pairs. Even numbers are $2m$ and $2n$, and $2m + 2n = 2(m+n)$, which is even. That's a proof, not a spot check.
+
+### Associativity
+
+$*$ is **associative** if
+
+$$
+(a * b) * c = a * (b * c) \qquad \forall a, b, c \in S
+$$
+
+This says **grouping doesn't matter**, so a chain like $a * b * c * d$ is unambiguous and parentheses can be dropped. Nearly every useful operation has it, and the ones that don't are genuinely awkward to work with.
+
+Addition and multiplication of numbers are associative. Subtraction and division are not. Function composition and matrix multiplication are.
+
+Associativity is not the same as commutativity, and the two are constantly confused.
+
+### Commutativity
+
+$*$ is **commutative** if
+
+$$
+a * b = b * a \qquad \forall a, b \in S
+$$
+
+This says **order doesn't matter**. Note carefully:
+
+- Associativity is about **parentheses**.
+- Commutativity is about **order**.
+
+They're independent. Matrix multiplication is associative but not commutative. Averaging two numbers, $a * b = \frac{a+b}{2}$, is commutative but not associative.
+
+Commutativity is deliberately **not** a group axiom. Groups that have it are called abelian, and treating it as optional is what lets group theory describe physical symmetry, where order usually does matter.
+
+### Identity elements
+
+An element $e \in S$ is an **identity** for $*$ if
+
+$$
+e * a = a * e = a \qquad \forall a \in S
+$$
+
+The identity does nothing. Both sides of the equation are required, because an operation can have a one-sided identity that fails on the other side.
+
+- $0$ is the identity for addition.
+- $1$ is the identity for multiplication.
+- The identity matrix is the identity for matrix multiplication.
+- The empty string is the identity for concatenation.
+
+An identity is **unique** when it exists. Suppose $e$ and $f$ are both identities. Then $e * f = f$ (because $e$ is an identity) and $e * f = e$ (because $f$ is one). So $e = f$. That short argument is your first abstract proof, and notice it used nothing but the definition.
+
+### Inverses
+
+Given an identity $e$, an element $b$ is an **inverse** of $a$ if
+
+$$
+a * b = b * a = e
+$$
+
+The inverse undoes the element. For addition, the inverse of $5$ is $-5$. For multiplication, the inverse of $5$ is $\frac{1}{5}$, which is why $\mathbb{Z}$ has no multiplicative inverses but $\mathbb{Q}$ does.
+
+Inverses only make sense once you have an identity, since $e$ appears in the definition. Order matters here too: some structures have elements with a left inverse and no right inverse.
+
+### Operation tables
+
+For a small finite set, write the whole operation out. The entry in row $a$, column $b$ is $a * b$.
+
+<CayleyTable
+  labels={["0", "1", "2", "3"]}
+  op={(i, j) => (i + j) % 4}
+  opSymbol="+"
+  title="Addition modulo 4 on {0, 1, 2, 3}"
+  caption="Every entry is one of the four elements, so the set is closed. Each row and column contains every element exactly once, which is what guarantees inverses."
+/>
+
+A table answers three of the four questions at a glance:
+
+- **Closure** - every entry is in the set. Scan for strays.
+- **Identity** - a row that reproduces the column headings in order, with the matching column doing the same.
+- **Inverses** - the identity appears in every row and every column.
+- **Commutativity** - the table is symmetric about the main diagonal.
+
+Associativity is the one you can't see. Checking it on a table of $n$ elements means verifying $n^3$ triples, which is why we normally inherit it from a known operation instead.
+
+Tables like these are called **Cayley tables**, after Arthur Cayley.
+
+## Worked Examples
+
+**Example 1: Is $a * b = a + b - ab$ a binary operation on $\mathbb{Z}$? Is it associative?**
+
+**Solution.** Closure first: $a$, $b$, and $ab$ are integers, so $a + b - ab$ is an integer. It's a binary operation on $\mathbb{Z}$.
+
+Associativity requires expanding both groupings.
+
+$$
+(a * b) * c = (a + b - ab) + c - (a + b - ab)c = a + b + c - ab - ac - bc + abc
+$$
+
+$$
+a * (b * c) = a + (b + c - bc) - a(b + c - bc) = a + b + c - bc - ab - ac + abc
+$$
+
+Both come to $a + b + c - ab - ac - bc + abc$. **Associative.**
+
+It's also commutative, since swapping $a$ and $b$ leaves $a + b - ab$ unchanged. The identity is $0$, because $a * 0 = a + 0 - 0 = a$.
+
+**Example 2: Find the identity for $a * b = a + b + 3$ on $\mathbb{Z}$.**
+
+**Solution.** We need $e$ with $a * e = a$ for every $a$.
+
+$$
+a + e + 3 = a \implies e + 3 = 0 \implies e = -3
+$$
+
+Check the other side: $(-3) * a = -3 + a + 3 = a$. ✓
+
+The identity is $\mathbf{-3}$, not $0$. **The identity depends on the operation, not on the set.** Assuming it must be $0$ or $1$ is a standard mistake.
+
+Inverses exist too: solving $a * b = -3$ gives $a + b + 3 = -3$, so $b = -a - 6$. Every element has one, so this is a group.
+
+**Example 3: Is subtraction commutative or associative on $\mathbb{Z}$?**
+
+**Solution.** Neither.
+
+Commutativity: $5 - 3 = 2$ but $3 - 5 = -2$. Fails.
+
+Associativity: $(10 - 4) - 3 = 3$ but $10 - (4 - 3) = 9$. Fails.
+
+It is closed, and it does have a right identity, since $a - 0 = a$. But $0 - a = -a \ne a$ in general, so $0$ is not a two-sided identity. This is exactly the one-sided case mentioned earlier.
+
+**Example 4: Reading a table.**
+
+<CayleyTable
+  labels={["e", "a", "b", "c"]}
+  op={(i, j) =>
+    [
+      [0, 1, 2, 3],
+      [1, 0, 3, 2],
+      [2, 3, 0, 1],
+      [3, 2, 1, 0],
+    ][i][j]
+  }
+  opSymbol="∗"
+  title="A four-element operation"
+  caption="Symmetric across the diagonal, so the operation is commutative. The identity sits on every diagonal entry, so each element is its own inverse."
+/>
+
+**Solution.** Work through the checklist.
+
+- **Closure.** Every entry is one of $e, a, b, c$. ✓
+- **Identity.** The row for $e$ reads $e, a, b, c$, matching the headings, and the column for $e$ does the same. So $e$ is the identity. ✓
+- **Inverses.** $e$ appears in every row and column. Reading the diagonal, $a * a = e$, $b * b = e$, $c * c = e$. **Every element is its own inverse.** ✓
+- **Commutativity.** The table is symmetric about the main diagonal. ✓
+
+This is the **Klein four-group**, and it will return several times. Note it is not the same as addition mod 4, even though both have four elements: here every element squares to the identity, and in $\mathbb{Z}_4$ the element $1$ does not.
+
+**Example 5: Where does $a * b = \frac{a+b}{2}$ fail?**
+
+**Solution.** On the rationals it's closed and commutative. Associativity:
+
+$$
+(a * b) * c = \frac{\frac{a+b}{2} + c}{2} = \frac{a + b + 2c}{4}
+$$
+
+$$
+a * (b * c) = \frac{a + \frac{b+c}{2}}{2} = \frac{2a + b + c}{4}
+$$
+
+These differ unless $a = c$. Take $a=0, b=0, c=4$: the first gives $2$, the second gives $1$. **Not associative.**
+
+Averaging is the cleanest example of commutative-but-not-associative, and it shows why the two properties need separate names. It has no identity either: $\frac{a+e}{2} = a$ forces $e = a$, which depends on $a$.
+
+**Example 6: A one-sided identity.**
+
+On the set of $2 \times 2$ matrices, is there an identity for the operation $A * B = AB$ restricted to matrices with first column zero?
+
+**Solution.** Let $S$ be matrices of the form $\begin{pmatrix} 0 & b \\ 0 & d \end{pmatrix}$. First check closure:
+
+$$
+\begin{pmatrix} 0 & b_1 \\ 0 & d_1 \end{pmatrix}\begin{pmatrix} 0 & b_2 \\ 0 & d_2 \end{pmatrix} = \begin{pmatrix} 0 & b_1 d_2 \\ 0 & d_1 d_2 \end{pmatrix}
+$$
+
+Closed. ✓ Associativity is inherited from matrix multiplication. ✓
+
+For an identity we'd need $E \in S$ with $EA = AE = A$. The usual identity matrix is not in $S$, since its first column isn't zero. Trying $E = \begin{pmatrix} 0 & 0 \\ 0 & 1 \end{pmatrix}$: then $AE = \begin{pmatrix} 0 & b \\ 0 & d\end{pmatrix} = A$ ✓, but $EA = \begin{pmatrix} 0 & d \\ 0 & d \end{pmatrix} \ne A$ unless $b = d$.
+
+So $E$ is a **right identity only**. The structure is closed and associative with no two-sided identity, which makes it a semigroup and not a group.
+
+## Real-World Applications
+
+**Type systems and generics.** A binary operation is exactly a function of type `(T, T) -> T`. Languages with interfaces let you write code once against that shape. Rust's `Add` trait, Haskell's `Semigroup` and `Monoid` classes, and Java's `BinaryOperator<T>` are all this definition rendered as code. `Monoid` is literally "associative binary operation with an identity."
+
+**Parallel reduction.** Summing a billion numbers across many cores requires splitting the work and combining partial results. That regrouping is only valid if the operation is associative, which is why `reduce` in parallel frameworks demands an associative combiner. Floating-point addition is _not_ quite associative, which is why parallel sums can give slightly different answers run to run.
+
+**Databases.** Aggregate functions that can be computed incrementally are ones with associative combiners. `COUNT`, `SUM`, `MIN` and `MAX` parallelize cleanly. `MEDIAN` does not, for essentially the reason averaging fails associativity.
+
+**Version control.** Merging branches is a binary operation on repository states. It is not associative in general, and it is not commutative, which is a fair part of why merge conflicts are unpleasant.
+
+**Cryptographic hashing.** Concatenation of bit strings is an associative operation with an identity (the empty string), and Merkle trees exploit exactly that structure to let you verify a piece of a large dataset without downloading all of it.
+
+:::note[You've Got This]
+There's a checklist hiding in this lesson, and it's worth committing to memory: closed, associative, identity, inverses, and then optionally commutative. Every structure in this section gets tested against it. Two things to hold onto. First, an operation belongs to a set, so "is division an operation?" has no answer until you say division of what. Second, associativity is about parentheses and commutativity is about order, and mixing them up will cost you on every future lesson. Get those straight now and the rest of the section has a much easier time.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="abstract-binary-operations-and-closure"
+  questions={[
+    {
+      id: "q1",
+      text: "Which set is NOT closed under the given operation?",
+      options: [
+        "The even integers under addition",
+        "The positive integers under subtraction",
+        "The nonzero rationals under multiplication",
+        "The integers under multiplication",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Subtracting positive integers can leave the set: 3 - 7 = -4 is not a positive integer. The other three always produce a result of the same kind.",
+    },
+    {
+      id: "q2",
+      text: "For the operation a ∗ b = a + b + 3 on the integers, what is the identity element?",
+      options: ["0", "3", "-3", "There is no identity"],
+      correctIndex: 2,
+      explanation:
+        "Solving a + e + 3 = a gives e = -3, and checking the other side, (-3) + a + 3 = a. The identity depends on the operation, so it need not be 0 or 1.",
+    },
+    {
+      id: "q3",
+      text: "An operation satisfies (a ∗ b) ∗ c = a ∗ (b ∗ c) for all elements. Which property is that?",
+      options: ["Commutativity", "Closure", "Associativity", "Invertibility"],
+      correctIndex: 2,
+      explanation:
+        "That equation says regrouping the parentheses does not change the result, which is associativity. Commutativity is the separate condition a ∗ b = b ∗ a about the order of the operands.",
+    },
+    {
+      id: "q4",
+      text: "Averaging, a ∗ b = (a + b)/2, on the rationals is commutative. Is it associative?",
+      options: [
+        "Yes, both properties always come together",
+        "No, and (0 ∗ 0) ∗ 4 = 2 while 0 ∗ (0 ∗ 4) = 1 shows it",
+        "Yes, because addition is associative",
+        "It is not even closed, so the question does not apply",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Averaging is closed and commutative on the rationals but not associative, and those two values are a counterexample. It is the standard illustration that commutativity and associativity are independent properties.",
+    },
+    {
+      id: "q5",
+      text: "Looking at a Cayley table, how do you spot that the operation is commutative?",
+      options: [
+        "The identity appears in every row and column",
+        "Each row contains every element exactly once",
+        "The table is symmetric about the main diagonal",
+        "The first row matches the column headings",
+      ],
+      correctIndex: 2,
+      explanation:
+        "Symmetry about the main diagonal means the entry for a ∗ b equals the entry for b ∗ a in every case, which is exactly commutativity. The identity appearing everywhere signals inverses, and a matching first row signals the identity element.",
+    },
+  ]}
+/>

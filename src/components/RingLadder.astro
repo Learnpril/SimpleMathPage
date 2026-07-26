@@ -1,0 +1,104 @@
+---
+/**
+ * RingLadder — the chain of structures from ring up to field, each rung adding
+ * exactly one requirement. Reading downward, examples get scarcer and theorems
+ * get stronger.
+ */
+const w = 540;
+const h = 342;
+const rowX = 20;
+const rowW = w - 2 * rowX;
+const rowH = 46;
+const rows = [46, 100, 154, 208, 262];
+
+const rungs = [
+  {
+    name: "Ring",
+    rule: "+ is an abelian group; × is associative and distributes over +",
+    eg: "2×2 matrices",
+    cls: "grey",
+  },
+  {
+    name: "Commutative ring",
+    rule: "…and ab = ba for all a, b",
+    eg: "ℤ, ℝ[x]",
+    cls: "blue",
+  },
+  {
+    name: "Ring with unity",
+    rule: "…and there is a multiplicative identity 1",
+    eg: "ℤ (2ℤ has none)",
+    cls: "green",
+  },
+  {
+    name: "Integral domain",
+    rule: "…and no zero divisors: ab = 0 forces a = 0 or b = 0",
+    eg: "ℤ, ℤ[x]",
+    cls: "purple",
+  },
+  {
+    name: "Field",
+    rule: "…and every nonzero element has a multiplicative inverse",
+    eg: "ℚ, ℝ, ℂ, ℤₚ",
+    cls: "orange",
+  },
+];
+---
+
+<figure
+  class="rld"
+  role="img"
+  aria-label="A ladder of algebraic structures: ring, commutative ring, ring with unity, integral domain, and field. Each level adds one requirement, so examples become scarcer and theorems become stronger as you descend."
+>
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    <text x="16" y="24" class="rld-head" font-size="12.5" font-weight="bold">Each rung adds exactly one rule</text>
+
+    {rungs.map((r, i) => (
+      <g>
+        <rect x={rowX} y={rows[i]} width={rowW} height={rowH} rx="8" class={`rld-box rld-${r.cls}`} />
+        <text x={rowX + 16} y={rows[i] + 19} class={`rld-name rld-t-${r.cls}`} font-size="12" font-weight="bold">{r.name}</text>
+        <text x={rowX + 16} y={rows[i] + 37} class="rld-rule" font-size="9.5">{r.rule}</text>
+        <text x={rowX + rowW - 16} y={rows[i] + 19} class="rld-eg" font-size="10" text-anchor="end">{r.eg}</text>
+      </g>
+    ))}
+
+    <text x={w / 2} y="330" class="rld-foot" font-size="10.5" text-anchor="middle">
+      Every field is an integral domain; the converse fails, since ℤ has no reciprocals
+    </text>
+  </svg>
+</figure>
+
+<style>
+  .rld { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .rld svg { width:100%; max-width:100%; height:auto; }
+  .rld-box { fill:none; stroke-width:2; }
+  .rld-grey { stroke:#8b949e; }
+  .rld-blue { stroke:#58a6ff; }
+  .rld-green { stroke:#7ee787; }
+  .rld-purple { stroke:#d2a8ff; }
+  .rld-orange { stroke:#f0883e; }
+  .rld-name { font-family:'Libre Baskerville',Georgia,serif; }
+  .rld-t-grey { fill:#c9d1d9; }
+  .rld-t-blue { fill:#58a6ff; }
+  .rld-t-green { fill:#7ee787; }
+  .rld-t-purple { fill:#d2a8ff; }
+  .rld-t-orange { fill:#f0883e; }
+  .rld-rule { fill:#9198a1; font-family:'Libre Baskerville',Georgia,serif; font-style:italic; }
+  .rld-eg { fill:#c9d1d9; font-family:'Libre Baskerville',Georgia,serif; }
+  .rld-head { fill:#eee; font-family:'Libre Baskerville',Georgia,serif; }
+  .rld-foot { fill:#58a6ff; font-family:'Libre Baskerville',Georgia,serif; font-style:italic; }
+  :global([data-theme="light"]) .rld-grey { stroke:#57606a; }
+  :global([data-theme="light"]) .rld-blue { stroke:#0550ae; }
+  :global([data-theme="light"]) .rld-green { stroke:#116329; }
+  :global([data-theme="light"]) .rld-purple { stroke:#6639ba; }
+  :global([data-theme="light"]) .rld-orange { stroke:#b35900; }
+  :global([data-theme="light"]) .rld-t-grey { fill:#24292f; }
+  :global([data-theme="light"]) .rld-t-blue { fill:#0550ae; }
+  :global([data-theme="light"]) .rld-t-green { fill:#116329; }
+  :global([data-theme="light"]) .rld-t-purple { fill:#6639ba; }
+  :global([data-theme="light"]) .rld-t-orange { fill:#b35900; }
+  :global([data-theme="light"]) .rld-rule { fill:#57606a; }
+  :global([data-theme="light"]) .rld-eg { fill:#24292f; }
+  :global([data-theme="light"]) .rld-head { fill:#24292f; }
+  :global([data-theme="light"]) .rld-foot { fill:#0550ae; }
+</style>

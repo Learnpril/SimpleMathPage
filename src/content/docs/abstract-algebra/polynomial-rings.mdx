@@ -1,0 +1,325 @@
+---
+title: Polynomial Rings
+description: Polynomials as an algebraic structure, division with remainder, and irreducibility
+sidebar:
+  order: 15
+---
+
+import Quiz from "../../../components/Quiz.astro";
+import SymbolKey from "../../../components/SymbolKey.astro";
+import PolyDegreeBars from "../../../components/PolyDegreeBars.astro";
+
+## What You'll Learn
+
+In this lesson you'll learn to treat polynomials as ring elements rather than functions, use the division algorithm, connect roots to linear factors, and test polynomials for irreducibility. These are the tools that build finite fields two lessons from now.
+
+<SymbolKey
+  items={[
+    {
+      sym: "R[x]",
+      read: "R adjoin x, the polynomials in x over R",
+      note: "coefficients from R, one variable, finitely many terms",
+    },
+    {
+      sym: "deg f",
+      read: "the degree of f",
+      note: "the exponent on the highest nonzero term",
+    },
+    {
+      sym: "f | g",
+      read: "f divides g",
+      note: "g = fh for some polynomial h, with no remainder",
+    },
+    {
+      sym: "ℚ[x]",
+      read: "polynomials with rational coefficients",
+      note: "the field the coefficients come from changes what can be factored",
+    },
+    {
+      sym: "𝔽ₚ",
+      read: "the field with p elements",
+      note: "another name for ℤₚ when p is prime",
+    },
+  ]}
+/>
+
+## The Concept
+
+### Polynomials as ring elements
+
+In earlier courses a polynomial was a function you graphed. Here it is an **element of a ring**, and that shift matters.
+
+For a ring $R$, the polynomial ring $R[x]$ consists of all expressions
+
+$$
+a_nx^n + a_{n-1}x^{n-1} + \dots + a_1x + a_0, \qquad a_i \in R
+$$
+
+with the usual addition and multiplication. Two polynomials are equal when their coefficients match, **not** when they agree as functions. Over $\mathbb{F}_2$ the polynomials $x^2 + x$ and $0$ take the same value at every element of the field, but they are different ring elements. Keeping this straight matters in finite fields.
+
+Inheritance of structure:
+
+- $R$ commutative $\implies$ $R[x]$ commutative
+- $R$ has unity $\implies$ $R[x]$ has unity
+- $R$ an integral domain $\implies$ $R[x]$ an integral domain
+
+But $R[x]$ is **never a field**, even when $R$ is: $x$ has no inverse, because $\deg(fg) = \deg f + \deg g$ can't be zero unless both factors are constants.
+
+### Degree bookkeeping
+
+<PolyDegreeBars />
+
+Over an integral domain, $\deg(fg) = \deg f + \deg g$. The reason is that the leading coefficients multiply to something nonzero. Over a ring with zero divisors this can fail: in $\mathbb{Z}_4[x]$, $(2x)(2x) = 4x^2 = 0$, and the degrees don't add at all.
+
+Conventionally $\deg 0$ is $-\infty$ or left undefined, so the degree formula holds without exceptions.
+
+### The division algorithm
+
+> If $F$ is a **field** and $f, g \in F[x]$ with $g \ne 0$, there are unique $q, r \in F[x]$ with
+>
+> $$
+> f = qg + r, \qquad \deg r < \deg g
+> $$
+
+This is long division of polynomials, and it works for the same reason it works for integers: repeatedly subtract a multiple of $g$ to kill the leading term.
+
+**The field hypothesis matters.** The algorithm divides by $g$'s leading coefficient, which requires that coefficient to be invertible. Over $\mathbb{Z}$ you cannot divide $x^2$ by $2x + 1$ and stay in $\mathbb{Z}[x]$.
+
+Because of the division algorithm, $F[x]$ is a **Euclidean domain**, so gcds exist, the Euclidean algorithm runs, and unique factorization into irreducibles holds. Polynomials over a field behave remarkably like the integers.
+
+### Roots and factors
+
+> **Factor theorem.** For $F$ a field and $f \in F[x]$: $f(a) = 0 \iff (x - a) \mid f$.
+
+Proof: divide $f$ by $x - a$. The remainder has degree less than 1, so it's a constant $c$, giving $f = q(x-a) + c$. Substituting $x = a$ yields $f(a) = c$. So $f(a) = 0$ exactly when $c = 0$. ∎
+
+Substituting into $f = q(x-a) + c$ is also the **remainder theorem**: the remainder on dividing by $x - a$ is just $f(a)$.
+
+**Corollary.** A nonzero polynomial of degree $n$ over a field has **at most $n$ roots**. Each root removes a linear factor and drops the degree by one.
+
+That corollary needs the field hypothesis. Over $\mathbb{Z}_8$, $x^2 - 1$ has four roots, as an earlier lesson showed.
+
+### Irreducibility
+
+A non-constant $f \in F[x]$ is **irreducible over $F$** if it cannot be written as a product of two polynomials of strictly smaller degree, both in $F[x]$.
+
+Irreducible polynomials play the role of primes. And crucially, **irreducibility depends on the field**:
+
+- $x^2 - 2$ is irreducible over $\mathbb{Q}$, since $\sqrt2$ is irrational.
+- Over $\mathbb{R}$ it factors as $(x - \sqrt2)(x + \sqrt2)$.
+- $x^2 + 1$ is irreducible over $\mathbb{R}$ but factors as $(x-i)(x+i)$ over $\mathbb{C}$.
+
+So "irreducible" is never a property of a polynomial alone. Always ask: over what?
+
+Useful tests:
+
+- **Degree 1** is always irreducible.
+- **Degree 2 or 3**: irreducible over $F$ exactly when it has no root in $F$. A factorization would have to include a linear factor.
+- **Degree 4 or more**: no root does **not** imply irreducible. $x^4 + 4 = (x^2-2x+2)(x^2+2x+2)$ has no real root but factors over $\mathbb{Q}$ into quadratics.
+- **Rational root theorem**: a root $p/q$ in lowest terms of an integer polynomial must have $p \mid a_0$ and $q \mid a_n$. A finite list to check.
+- **Eisenstein's criterion**: if a prime $p$ divides every coefficient except the leading one, and $p^2 \nmid a_0$, then the polynomial is irreducible over $\mathbb{Q}$.
+
+## Worked Examples
+
+**Example 1: Divide $f = x^3 - 2x^2 + 4$ by $g = x - 3$ over $\mathbb{Q}$.**
+
+**Solution.** Long division.
+
+$x^3 \div x = x^2$. Multiply: $x^3 - 3x^2$. Subtract: $x^2 + 4$.
+
+$x^2 \div x = x$. Multiply: $x^2 - 3x$. Subtract: $3x + 4$.
+
+$3x \div x = 3$. Multiply: $3x - 9$. Subtract: $13$.
+
+$$
+x^3 - 2x^2 + 4 = (x-3)(x^2 + x + 3) + 13
+$$
+
+Check with the remainder theorem: $f(3) = 27 - 18 + 4 = 13$ ✓. Since the remainder is nonzero, $x - 3$ is not a factor.
+
+**Example 2: Is $x^3 - 3x - 1$ irreducible over $\mathbb{Q}$?**
+
+**Solution.** Degree 3, so it's irreducible exactly when it has no rational root.
+
+By the rational root theorem, candidates are $\pm 1$.
+
+$$
+f(1) = 1 - 3 - 1 = -3 \ne 0, \qquad f(-1) = -1 + 3 - 1 = 1 \ne 0
+$$
+
+No rational roots, so **irreducible over $\mathbb{Q}$**.
+
+Over $\mathbb{R}$ it does factor, since every odd-degree real polynomial has a real root — that root is just irrational.
+
+**Example 3: Factor $x^4 + 4$ over $\mathbb{Q}$.**
+
+**Solution.** No rational roots (candidates $\pm1, \pm2, \pm4$ all fail, and $x^4 + 4 > 0$ always). But degree 4 means a factorization into two quadratics is possible.
+
+Complete a square:
+
+$$
+x^4 + 4 = (x^4 + 4x^2 + 4) - 4x^2 = (x^2+2)^2 - (2x)^2
+$$
+
+Difference of squares:
+
+$$
+= (x^2 - 2x + 2)(x^2 + 2x + 2)
+$$
+
+**Reducible over $\mathbb{Q}$** despite having no rational root. This is exactly why the "no root implies irreducible" shortcut stops at degree 3.
+
+**Example 4: Eisenstein's criterion.**
+
+Show $x^4 + 6x^3 + 12x^2 + 18x + 6$ is irreducible over $\mathbb{Q}$.
+
+**Solution.** Try $p = 3$. It divides $6, 12, 18, 6$ — every coefficient except the leading 1. And $9 \nmid 6$.
+
+Eisenstein applies: **irreducible over $\mathbb{Q}$**.
+
+The rational root theorem alone would have left the possibility of a quadratic-times-quadratic factorization open, and checking that by hand is tedious. Eisenstein settles it in one line.
+
+**Example 5: Factoring over a finite field.**
+
+Factor $x^2 + x + 1$ over $\mathbb{F}_2$, then over $\mathbb{F}_3$.
+
+**Solution.** Over $\mathbb{F}_2 = \{0,1\}$: $f(0) = 1$, $f(1) = 1 + 1 + 1 = 3 \equiv 1$. No roots, degree 2, so **irreducible over $\mathbb{F}_2$**.
+
+Over $\mathbb{F}_3 = \{0,1,2\}$: $f(0) = 1$, $f(1) = 3 \equiv 0$. A root.
+
+So $x - 1 \mid f$. Dividing gives $f = (x-1)(x+2)$ over $\mathbb{F}_3$. Check: $(x-1)(x+2) = x^2 + x - 2 = x^2 + x + 1$ since $-2 \equiv 1 \pmod 3$ ✓
+
+**Same polynomial, irreducible over one field and reducible over another.** The irreducible one over $\mathbb{F}_2$ is what builds the field $GF(4)$ two lessons from now.
+
+**Example 6: Degrees failing to add.**
+
+Show that $\deg(fg) = \deg f + \deg g$ can fail in $\mathbb{Z}_6[x]$.
+
+**Solution.** Take $f = 2x$ and $g = 3x$, both of degree 1.
+
+$$
+fg = 6x^2 = 0 \text{ in } \mathbb{Z}_6[x]
+$$
+
+The product is the zero polynomial, which has no degree at all, rather than degree 2.
+
+The culprit is that $\mathbb{Z}_6$ has zero divisors, so leading coefficients can multiply to zero. This also shows $\mathbb{Z}_6[x]$ is not an integral domain, consistent with the rule that $R[x]$ is a domain exactly when $R$ is.
+
+**Example 7: Greatest common divisor of polynomials.**
+
+Find $\gcd(x^3 - 1, x^2 - 1)$ over $\mathbb{Q}$.
+
+**Solution.** Euclidean algorithm.
+
+$$
+x^3 - 1 = x(x^2 - 1) + (x - 1)
+$$
+
+$$
+x^2 - 1 = (x+1)(x - 1) + 0
+$$
+
+The last nonzero remainder is $x - 1$, so $\gcd = x - 1$.
+
+Sanity check by factoring: $x^3 - 1 = (x-1)(x^2+x+1)$ and $x^2 - 1 = (x-1)(x+1)$. The shared factor is $x - 1$ ✓
+
+The algorithm works because $\mathbb{Q}[x]$ is a Euclidean domain, which is a direct consequence of the division algorithm.
+
+## Real-World Applications
+
+**Error-correcting codes.** Reed–Solomon and BCH codes encode data as polynomial coefficients over a finite field, and the code is defined by which polynomials are divisible by a chosen generator. Decoding finds the error-locator polynomial and takes its roots, which are the positions of the corrupted symbols. Every QR code you scan performs polynomial division.
+
+**Cryptographic hashing.** CRC checksums compute the remainder of a message polynomial divided by a fixed polynomial over $\mathbb{F}_2$. The generator polynomial is chosen for its factorization properties, and how many bit errors the CRC catches follows directly from those properties.
+
+**AES.** The Advanced Encryption Standard works in $GF(2^8)$, built as $\mathbb{F}_2[x]$ modulo the irreducible polynomial $x^8 + x^4 + x^3 + x + 1$. Its MixColumns step is literally multiplication of polynomials with coefficients in that field.
+
+**Computer algebra and symbolic integration.** Partial fraction decomposition needs the denominator factored into irreducibles over the relevant field, and the answer's form depends on which field: a real factorization gives arctangent terms where a complex one gives logarithms.
+
+**Interpolation and graphics.** Fitting a curve through $n+1$ points is finding a degree-$n$ polynomial, and uniqueness follows from the at-most-$n$-roots corollary. Bézier curves in every font renderer and drawing program are polynomial arithmetic.
+
+**Signal processing.** A digital filter's behaviour is determined by the roots of its transfer function's polynomials, and stability is a statement about where those roots lie. Factoring the polynomial is designing the filter.
+
+:::note[You've Got This]
+The mental shift here is treating a polynomial as a thing you compute with rather than a curve you draw, and the payoff is that ℚ[x] behaves almost exactly like ℤ: division with remainder, gcds, primes (now called irreducibles), unique factorization. The one point that catches people is that irreducibility is never absolute. x² + 1 is irreducible over ℝ and splits over ℂ, so "is it irreducible?" is an incomplete question until you name the field. Hold onto that and the finite field construction ahead will feel natural.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="abstract-polynomial-rings"
+  questions={[
+    {
+      id: "q1",
+      text: "Why is ℚ[x] not a field, even though ℚ is?",
+      options: [
+        "Because polynomial multiplication is not commutative",
+        "Because x has no multiplicative inverse, since degrees add",
+        "Because ℚ[x] has zero divisors",
+        "Because ℚ[x] has no unity element",
+      ],
+      correctIndex: 1,
+      explanation:
+        "If fg = 1 then deg f + deg g = 0, so both factors are constants and x cannot be inverted. R[x] is never a field, regardless of how nice R is.",
+    },
+    {
+      id: "q2",
+      text: "What is the remainder when x³ − 2x² + 4 is divided by x − 3?",
+      options: ["0", "4", "13", "31"],
+      correctIndex: 2,
+      explanation:
+        "By the remainder theorem the remainder is f(3) = 27 − 18 + 4 = 13. Since it is nonzero, x − 3 is not a factor.",
+    },
+    {
+      id: "q3",
+      text: "A degree-3 polynomial over a field is irreducible exactly when",
+      options: [
+        "it has no root in that field",
+        "its leading coefficient is 1",
+        "it has three distinct roots",
+        "its discriminant is negative",
+      ],
+      correctIndex: 0,
+      explanation:
+        "Any factorization of a cubic must include a linear factor, and a linear factor means a root. The shortcut fails from degree 4 onward, where a factorization into two quadratics is possible.",
+    },
+    {
+      id: "q4",
+      text: "Is x⁴ + 4 irreducible over ℚ?",
+      options: [
+        "Yes, because it has no rational root",
+        "Yes, because it is always positive",
+        "No, it factors as (x² − 2x + 2)(x² + 2x + 2)",
+        "No, it factors into four linear factors over ℚ",
+      ],
+      correctIndex: 2,
+      explanation:
+        "Writing it as (x² + 2)² − (2x)² and using the difference of squares gives two rational quadratics. Having no root does not imply irreducibility once the degree reaches 4.",
+    },
+    {
+      id: "q5",
+      text: "The polynomial x² + x + 1 over 𝔽₂ is",
+      options: [
+        "reducible, since it factors as (x+1)²",
+        "irreducible, since neither 0 nor 1 is a root",
+        "equal to zero",
+        "of degree 3",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Evaluating gives f(0) = 1 and f(1) = 3 ≡ 1, so there is no root in 𝔽₂ and a degree-2 polynomial with no root is irreducible. This polynomial is what builds the field GF(4).",
+    },
+    {
+      id: "q6",
+      text: "Why does the division algorithm for polynomials require a field of coefficients?",
+      options: [
+        "Because fields are infinite",
+        "Because the algorithm divides by the divisor's leading coefficient, which must be invertible",
+        "Because only fields are commutative",
+        "Because polynomials over rings have no degree",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Each step multiplies the divisor by something chosen to cancel the current leading term, which needs the leading coefficient's inverse. Over ℤ you cannot divide x² by 2x + 1 and stay in ℤ[x].",
+    },
+  ]}
+/>

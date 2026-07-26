@@ -1,0 +1,111 @@
+---
+/**
+ * FieldTower — a tower of field extensions over ℚ, with the multiplicativity of
+ * degree made explicit. The total degree is computed as the product of the steps,
+ * and the basis listed on the right has exactly that many elements.
+ */
+const steps = [2, 2];
+const total = steps.reduce((a, b) => a * b, 1);
+const basis = ["1", "√2", "√3", "√6"];
+
+const w = 540;
+const h = 332;
+const boxW = 190;
+const boxH = 40;
+const towerCx = 160;
+const levels = [
+  { y: 102, label: "ℚ(√2, √3)", cls: "purple" },
+  { y: 182, label: "ℚ(√2)", cls: "blue" },
+  { y: 262, label: "ℚ", cls: "green" },
+];
+---
+
+<figure
+  class="fto"
+  role="img"
+  aria-label={`A tower of fields: the rationals inside the rationals adjoined root 2, inside the rationals adjoined root 2 and root 3. Each step has degree 2, so the total degree is ${total}, matching the ${basis.length}-element basis 1, root 2, root 3, root 6.`}
+>
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    <text x="16" y="20" class="fto-head" font-size="12.5" font-weight="bold">Degrees multiply as you climb a tower</text>
+    <text x="16" y="42" class="fto-sub" font-size="10.5">Each step adjoins one new square root, doubling the dimension</text>
+
+    {/* Connecting edges, drawn between box borders */}
+    {steps.map((deg, i) => {
+      const top = levels[i];
+      const bottom = levels[i + 1];
+      return (
+        <g>
+          <line
+            x1={towerCx}
+            y1={bottom.y - boxH / 2}
+            x2={towerCx}
+            y2={top.y + boxH / 2}
+            class="fto-link"
+          />
+          <text x={towerCx + 14} y={(top.y + bottom.y) / 2 + 4} class="fto-deg" font-size="9.5">
+            {`degree ${deg}`}
+          </text>
+        </g>
+      );
+    })}
+
+    {levels.map((l) => (
+      <g>
+        <rect x={towerCx - boxW / 2} y={l.y - boxH / 2} width={boxW} height={boxH} rx="8" class={`fto-box fto-${l.cls}`} />
+        <text x={towerCx} y={l.y + 5} class={`fto-lbl fto-t-${l.cls}`} font-size="13" text-anchor="middle" font-weight="bold">{l.label}</text>
+      </g>
+    ))}
+
+    {/* Basis panel */}
+    <rect x="340" y="92" width="176" height="90" rx="8" class="fto-panel" />
+    <text x="428" y="112" class="fto-ptitle" font-size="10.5" text-anchor="middle" font-weight="bold">basis over ℚ</text>
+    <text x="428" y="136" class="fto-basis" font-size="12" text-anchor="middle">{basis.join(",  ")}</text>
+    <text x="428" y="158" class="fto-sub2" font-size="9.5" text-anchor="middle">
+      {`${basis.length} elements, so`}
+    </text>
+    <text x="428" y="173" class="fto-sub2" font-size="9.5" text-anchor="middle">
+      {`the degree is ${total}`}
+    </text>
+
+    <text x={w / 2} y="302" class="fto-foot" font-size="10.5" text-anchor="middle">
+      {`[ℚ(√2, √3) : ℚ] = ${steps.join(" · ")} = ${total}`}
+    </text>
+    <text x={w / 2} y="320" class="fto-sub" font-size="9.5" text-anchor="middle">
+      A degree is a vector-space dimension, which is why the steps multiply rather than add
+    </text>
+  </svg>
+</figure>
+
+<style>
+  .fto { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .fto svg { width:100%; max-width:100%; height:auto; }
+  .fto-box { fill:none; stroke-width:2; }
+  .fto-green { stroke:#7ee787; }
+  .fto-blue { stroke:#58a6ff; }
+  .fto-purple { stroke:#d2a8ff; }
+  .fto-lbl { font-family:'Libre Baskerville',Georgia,serif; }
+  .fto-t-green { fill:#7ee787; }
+  .fto-t-blue { fill:#58a6ff; }
+  .fto-t-purple { fill:#d2a8ff; }
+  .fto-link { stroke:#888; stroke-width:1.6; }
+  .fto-deg { fill:#f0883e; font-family:'Libre Baskerville',Georgia,serif; font-style:italic; }
+  .fto-panel { fill:none; stroke:#555; stroke-width:1.2; stroke-dasharray:5,4; }
+  .fto-ptitle { fill:#c9d1d9; font-family:'Libre Baskerville',Georgia,serif; }
+  .fto-basis { fill:#7ee787; font-family:'Libre Baskerville',Georgia,serif; }
+  .fto-head { fill:#eee; font-family:'Libre Baskerville',Georgia,serif; }
+  .fto-sub, .fto-sub2 { fill:#9198a1; font-family:'Libre Baskerville',Georgia,serif; font-style:italic; }
+  .fto-foot { fill:#58a6ff; font-family:'Libre Baskerville',Georgia,serif; }
+  :global([data-theme="light"]) .fto-green, :global([data-theme="light"]) .fto-t-green, :global([data-theme="light"]) .fto-basis { stroke:#116329; fill:#116329; }
+  :global([data-theme="light"]) .fto-green { fill:none; }
+  :global([data-theme="light"]) .fto-blue, :global([data-theme="light"]) .fto-t-blue { stroke:#0550ae; fill:#0550ae; }
+  :global([data-theme="light"]) .fto-blue { fill:none; }
+  :global([data-theme="light"]) .fto-purple, :global([data-theme="light"]) .fto-t-purple { stroke:#6639ba; fill:#6639ba; }
+  :global([data-theme="light"]) .fto-purple { fill:none; }
+  :global([data-theme="light"]) .fto-deg { fill:#b35900; }
+  :global([data-theme="light"]) .fto-link { stroke:#555; }
+  :global([data-theme="light"]) .fto-panel { stroke:#ccc; }
+  :global([data-theme="light"]) .fto-ptitle { fill:#24292f; }
+  :global([data-theme="light"]) :is(.fto-sub, .fto-sub2) { fill:#57606a; }
+  :global([data-theme="light"]) .fto-head { fill:#24292f; }
+  :global([data-theme="light"]) .fto-foot { fill:#0550ae; }
+</style>

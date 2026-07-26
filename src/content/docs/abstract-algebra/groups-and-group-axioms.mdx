@@ -1,0 +1,312 @@
+---
+title: Groups and the Group Axioms
+description: The central definition of the section, and the first theorems that follow from it
+sidebar:
+  order: 3
+---
+
+import Quiz from "../../../components/Quiz.astro";
+import SymbolKey from "../../../components/SymbolKey.astro";
+import GroupAxioms from "../../../components/GroupAxioms.astro";
+
+## What You'll Learn
+
+In this lesson you'll learn the definition of a group, how to verify it, and the first few theorems that follow from the axioms alone. This is the most important definition in the section, and everything after it is either an example or a consequence.
+
+<SymbolKey
+  items={[
+    {
+      sym: "(G, ∗)",
+      read: "the group G under the operation star",
+      note: "naming both the set and the operation, because the set alone is not a group",
+    },
+    {
+      sym: "a⁻¹",
+      read: "a inverse",
+      note: "the element that undoes a; for addition this means −a, not 1/a",
+    },
+    {
+      sym: "|G|",
+      read: "the order of G",
+      note: "how many elements G has; ∞ if it is infinite",
+    },
+    {
+      sym: "ℤ",
+      read: "the integers",
+      note: "…, −2, −1, 0, 1, 2, … Blackboard bold marks a standard set",
+    },
+    {
+      sym: "ℤₙ",
+      read: "the integers mod n",
+      note: "the n remainders {0, 1, …, n−1} with arithmetic that wraps around",
+    },
+    {
+      sym: "aⁿ",
+      read: "a to the n",
+      note: "a combined with itself n times; in additive notation this is written na",
+    },
+  ]}
+/>
+
+## The Concept
+
+### The definition
+
+A **group** is a set $G$ together with a binary operation $*$ satisfying four conditions.
+
+<GroupAxioms />
+
+Written out formally, $(G, *)$ is a group when:
+
+1. **Closure.** For all $a, b \in G$, $a * b \in G$.
+2. **Associativity.** For all $a, b, c \in G$, $(a * b) * c = a * (b * c)$.
+3. **Identity.** There exists $e \in G$ with $e * a = a * e = a$ for all $a \in G$.
+4. **Inverses.** For each $a \in G$ there exists $a^{-1} \in G$ with $a * a^{-1} = a^{-1} * a = e$.
+
+That's the whole definition. Four lines, and a century of mathematics comes out of it.
+
+Two remarks on how to read it. Closure is often folded into the phrase "binary operation on $G$," so some books list only three axioms. And commutativity is **absent on purpose**: a group where $a * b = b * a$ always holds is called **abelian**, and leaving it optional is what allows groups to describe physical symmetry, where order genuinely matters.
+
+### Order of a group
+
+The **order** of $G$, written $|G|$, is the number of elements. $|\mathbb{Z}_6| = 6$. The integers under addition form an infinite group.
+
+Be careful: "order" also refers to a property of a single element, defined in a later lesson. Context tells them apart, but the collision is real and worth flagging now.
+
+### Notation conventions
+
+Two styles appear throughout, and mixing them up causes genuine errors.
+
+- **Multiplicative.** Write $ab$ for the operation, $e$ or $1$ for the identity, $a^{-1}$ for inverses, $a^n$ for repetition. Used for general groups.
+- **Additive.** Write $a + b$, $0$ for the identity, $-a$ for inverses, $na$ for repetition. Used when the group is abelian and the operation genuinely is addition.
+
+The trap: in the additive group $\mathbb{Z}$, the inverse of $5$ is $-5$, **not** $\frac{1}{5}$. The symbol $a^{-1}$ means "whatever undoes $a$," and what that is depends entirely on the operation.
+
+### First theorems
+
+The value of an abstract definition is that you can prove things from it directly. Here are three, and notice that each proof uses only the four axioms.
+
+**The identity is unique.**
+
+Suppose $e$ and $f$ are both identities. Then
+
+$$
+e = e * f = f
+$$
+
+The first equality holds because $f$ is an identity, the second because $e$ is. So $e = f$. There is only ever one identity, which justifies calling it _the_ identity.
+
+**Inverses are unique.**
+
+Suppose $b$ and $c$ are both inverses of $a$. Then
+
+$$
+b = b * e = b * (a * c) = (b * a) * c = e * c = c
+$$
+
+Every step is one axiom: identity, definition of $c$, associativity, definition of $b$, identity. This is why $a^{-1}$ is well-defined notation.
+
+**Cancellation.**
+
+If $a * b = a * c$ then $b = c$.
+
+Operate on the left by $a^{-1}$:
+
+$$
+a^{-1} * (a * b) = a^{-1} * (a * c) \implies (a^{-1} * a) * b = (a^{-1} * a) * c \implies e * b = e * c \implies b = c
+$$
+
+Cancellation is exactly what inverses buy you. It is also why every row of a Cayley table contains each element exactly once: if a row repeated an element, cancellation would force two column headings to be equal.
+
+**The shoe-sock rule.**
+
+$$
+(ab)^{-1} = b^{-1}a^{-1}
+$$
+
+The order **reverses**. To undo "put on socks, then shoes," you take off shoes, then socks. Check it:
+
+$$
+(ab)(b^{-1}a^{-1}) = a(bb^{-1})a^{-1} = aea^{-1} = aa^{-1} = e
+$$
+
+In an abelian group the reversal is invisible, which is why this is a favourite exam question.
+
+Also $(a^{-1})^{-1} = a$: undoing an undo returns you to the start.
+
+### How to check whether something is a group
+
+A reliable order of attack:
+
+1. **Name the set and the operation.** Both. "Is the integers a group?" is not a question.
+2. **Closure.** Try to break it with a specific pair.
+3. **Associativity.** Usually inherited from a known operation. If the operation is novel, expand both groupings.
+4. **Identity.** Solve $a * e = a$ for $e$, then verify the other side.
+5. **Inverses.** Solve $a * b = e$ for $b$, then check $b$ is really in the set.
+
+Step 5 is where most candidates die. The formula for the inverse exists, but the answer lands outside the set: $\frac{1}{3}$ is a perfectly good number and not an integer.
+
+## Worked Examples
+
+**Example 1: Is $(\mathbb{Z}, +)$ a group?**
+
+**Solution.**
+
+- **Closure.** Integer plus integer is an integer. ✓
+- **Associativity.** Standard property of addition. ✓
+- **Identity.** $0$, since $0 + a = a + 0 = a$. ✓
+- **Inverses.** For $a$, take $-a$, which is an integer, and $a + (-a) = 0$. ✓
+
+**Yes**, and it is abelian since $a + b = b + a$. It is infinite.
+
+**Example 2: Is $(\mathbb{Q}, \times)$ a group?**
+
+**Solution.** Closure ✓, associativity ✓, identity $1$ ✓. Inverses: for $a \ne 0$ the inverse is $\frac{1}{a}$, a rational. But $0$ has **no** inverse, since $0 \cdot b = 0 \ne 1$ for every $b$.
+
+**No.** One element without an inverse is fatal.
+
+Remove it and $(\mathbb{Q} \setminus \{0\}, \times)$ **is** a group. Note you must check closure again after removing an element: a product of nonzero rationals is nonzero, so it holds.
+
+**Example 3: Is $(\mathbb{Z}_5 \setminus \{0\}, \times \bmod 5)$ a group?**
+
+**Solution.** The set is $\{1, 2, 3, 4\}$.
+
+Closure: compute a few. $2 \cdot 3 = 6 \equiv 1$, $2 \cdot 4 = 8 \equiv 3$, $3 \cdot 4 = 12 \equiv 2$, $4 \cdot 4 = 16 \equiv 1$. Nothing ever gives $0$, because $5$ is prime and a product of two numbers not divisible by 5 is not divisible by 5. ✓
+
+Associativity ✓ (inherited from integer multiplication). Identity $1$ ✓.
+
+Inverses: $1^{-1} = 1$, $2^{-1} = 3$ (since $2 \cdot 3 = 6 \equiv 1$), $3^{-1} = 2$, $4^{-1} = 4$ (since $16 \equiv 1$). ✓
+
+**Yes**, a group of order 4.
+
+Now contrast $\mathbb{Z}_6 \setminus \{0\} = \{1,2,3,4,5\}$: here $2 \cdot 3 = 6 \equiv 0$, so closure fails immediately. **The primality of the modulus is what makes the difference**, and that observation grows into the theory of fields later in the section.
+
+**Example 4: Is the set of $2\times 2$ real matrices a group under multiplication?**
+
+**Solution.** Closure ✓, associativity ✓, identity $I = \begin{pmatrix} 1 & 0 \\ 0 & 1\end{pmatrix}$ ✓.
+
+Inverses fail. The matrix $\begin{pmatrix} 1 & 1 \\ 1 & 1 \end{pmatrix}$ has determinant $0$ and no inverse.
+
+**No.** Restricting to matrices with nonzero determinant gives $GL_2(\mathbb{R})$, the **general linear group**, which is a group: $\det(AB) = \det(A)\det(B) \ne 0$ gives closure, and invertible matrices have inverses by definition. It is **non-abelian**, since
+
+$$
+\begin{pmatrix} 1 & 1 \\ 0 & 1\end{pmatrix}\begin{pmatrix} 1 & 0 \\ 1 & 1\end{pmatrix} = \begin{pmatrix} 2 & 1 \\ 1 & 1\end{pmatrix}, \qquad \begin{pmatrix} 1 & 0 \\ 1 & 1\end{pmatrix}\begin{pmatrix} 1 & 1 \\ 0 & 1\end{pmatrix} = \begin{pmatrix} 1 & 1 \\ 1 & 2\end{pmatrix}
+$$
+
+**Example 5: Prove that in any group, $(a^{-1})^{-1} = a$.**
+
+**Solution.** By definition, $(a^{-1})^{-1}$ is the unique element $x$ with $a^{-1} x = x a^{-1} = e$.
+
+But $a$ itself satisfies this: $a^{-1} a = e$ and $a a^{-1} = e$, straight from the definition of $a^{-1}$.
+
+Since inverses are unique (proved above), $(a^{-1})^{-1} = a$. ∎
+
+Notice the shape of the argument: to identify an inverse, exhibit something that works and cite uniqueness. That pattern recurs constantly.
+
+**Example 6: A group with exactly one element.**
+
+**Solution.** Take $G = \{e\}$ with $e * e = e$. Closure ✓, associativity ✓ (only one triple to check), identity $e$ ✓, inverse of $e$ is $e$ ✓.
+
+This is the **trivial group**. It's not interesting, but it is a group, and it matters for the same reason the empty set matters: theorems have to be true in the degenerate case too. There is no group with zero elements, since axiom 3 demands an identity.
+
+**Example 7: Where associativity fails and nothing else does.**
+
+Let $G = \{1, 2, 3\}$ with $a \* b = $ the larger of the two.
+
+**Solution.** Closure ✓. Identity: $1 * a = a$ for all $a$, so $1$ works ✓. Associativity: taking the maximum is associative ✓.
+
+Inverses: we need $a * b = 1$, but the maximum of $2$ and anything is at least $2$. So $2$ has no inverse. **Not a group.**
+
+This structure, closed and associative with an identity but without inverses, is called a **monoid**. String concatenation is the standard example: you can join strings and the empty string does nothing, but you cannot un-join.
+
+## Real-World Applications
+
+**Rubik's cube.** The moves form a group of order 43,252,003,274,489,856,000. Closure: any two sequences compose into a sequence. Identity: doing nothing. Inverses: run the sequence backwards. Associativity: concatenation of move lists. Solvers exploit **commutators** $aba^{-1}b^{-1}$, which are guaranteed to be the identity if $a$ and $b$ commute, and which in practice disturb only a small region of the cube.
+
+**Cryptography.** Diffie-Hellman key exchange runs inside $(\mathbb{Z}_p \setminus \{0\}, \times)$, exactly the group from Example 3 with a large prime. The whole protocol depends on that set being a group, and its security on the difficulty of reversing exponentiation in it.
+
+**Computer graphics and robotics.** Rotations in 3D form the group $SO(3)$, which is non-abelian: turn a die about $x$ then $z$, versus $z$ then $x$, and the results differ. Because rotation composition is group multiplication, quaternions are preferred over stacked Euler angles, since they compose without the degeneracies that plague angle triples.
+
+**Physics.** Noether's theorem ties each continuous symmetry group of a system to a conserved quantity. The Standard Model is specified by naming a group, $SU(3) \times SU(2) \times U(1)$; the particles are essentially bookkeeping for how that group acts.
+
+**Music.** The twelve pitch classes under transposition form $\mathbb{Z}_{12}$. Adding 7 repeatedly cycles through all twelve notes, which is the circle of fifths, and the reason it works is that 7 and 12 share no common factor. That fact reappears as a theorem two lessons from now.
+
+:::note[You've Got This]
+Four axioms. Memorize them in order, closure, associativity, identity, inverses, and you have the working tool for the whole section. The single most useful habit is being pedantic about naming the operation along with the set, because almost every "is this a group?" mistake comes from leaving it implicit. And when you're asked to prove something in a general group, remember you have exactly four facts to work with, which is fewer options than it sounds like and makes the proofs more findable than you'd expect.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="abstract-groups-and-group-axioms"
+  questions={[
+    {
+      id: "q1",
+      text: "Which of these is NOT one of the four group axioms?",
+      options: [
+        "Closure",
+        "Commutativity",
+        "Associativity",
+        "Existence of inverses",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Commutativity is deliberately left out. A group that happens to satisfy a·b = b·a is called abelian, and leaving it optional is what lets group theory describe symmetries where order matters.",
+    },
+    {
+      id: "q2",
+      text: "Why is (ℚ, ×) not a group?",
+      options: [
+        "Multiplication of rationals is not associative",
+        "There is no multiplicative identity",
+        "Zero has no multiplicative inverse",
+        "The rationals are not closed under multiplication",
+      ],
+      correctIndex: 2,
+      explanation:
+        "Everything works except inverses: no rational b satisfies 0 · b = 1. Removing zero fixes it, and the nonzero rationals under multiplication do form a group.",
+    },
+    {
+      id: "q3",
+      text: "In a group, what does (ab)⁻¹ equal?",
+      options: ["a⁻¹b⁻¹", "b⁻¹a⁻¹", "ab", "(ba)⁻¹"],
+      correctIndex: 1,
+      explanation:
+        "The order reverses: (ab)(b⁻¹a⁻¹) = a(bb⁻¹)a⁻¹ = e. It is the shoe-sock rule, and the reversal only becomes invisible in an abelian group.",
+    },
+    {
+      id: "q4",
+      text: "In the group (ℤ, +), what is the inverse of 7?",
+      options: ["1/7", "7", "-7", "0"],
+      correctIndex: 2,
+      explanation:
+        "The operation is addition, so the inverse must undo adding 7, and 7 + (-7) = 0 is the identity. Writing a⁻¹ does not mean a reciprocal; it means whatever reverses the operation at hand.",
+    },
+    {
+      id: "q5",
+      text: "A structure is closed and associative and has an identity, but some element lacks an inverse. What is it?",
+      options: [
+        "An abelian group",
+        "A monoid",
+        "A field",
+        "A non-abelian group",
+      ],
+      correctIndex: 1,
+      explanation:
+        "That is a monoid, and string concatenation is the standard example: you can join strings and the empty string is an identity, but there is no way to un-join. Missing inverses means it is not a group.",
+    },
+    {
+      id: "q6",
+      text: "Why does the set {1, 2, 3, 4} form a group under multiplication mod 5, while {1, 2, 3, 4, 5} fails under multiplication mod 6?",
+      options: [
+        "Because 4 is a perfect square and 5 is not",
+        "Because 5 is prime, so no product of nonzero elements is divisible by 5, while 2 · 3 = 0 mod 6",
+        "Because the second set has an odd number of elements",
+        "Because multiplication mod 6 is not associative",
+      ],
+      correctIndex: 1,
+      explanation:
+        "With a prime modulus, a product of two elements not divisible by the modulus is never divisible by it, so closure holds and every element has an inverse. Mod 6, the product 2 · 3 = 6 ≡ 0 leaves the set immediately.",
+    },
+  ]}
+/>

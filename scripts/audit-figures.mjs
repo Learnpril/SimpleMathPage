@@ -6,6 +6,11 @@
  *   - reports text boxes crossed by a stroke, text boxes that overlap or nearly
  *     overlap another text box, and anything clipped by the viewBox
  *
+ * Known limitation: it does not model occlusion. A graph diagram that draws
+ * edges first and then paints filled node circles over them renders correctly,
+ * but the edge still counts as passing through the node's label. Trimming links
+ * back to the node boundary silences this and is the better fix anyway.
+ *
  * Usage: node scripts/audit-figures.mjs dist/statistics [padding]
  */
 import { readFileSync, readdirSync, statSync } from "node:fs";
@@ -175,8 +180,11 @@ for (const file of walk(root)) {
       .trim()
       .split(/[\s,]+/)
       .map(Number);
-    // Skip icons and KaTeX glyph sprites, which use enormous viewBoxes
+    // Skip icons and KaTeX glyph sprites. KaTeX emits path-only SVGs, sometimes
+    // with enormous viewBoxes and coordinates that overshoot by a pixel, while
+    // every hand-authored figure on the site labels its text.
     if (!vw || vw < 150 || vw > 2000) continue;
+    if (!/<text\b/.test(svg)) continue;
     const aria = decode(attr(open, "aria-label") || "");
     // De-dup figures reused across pages
     const key = `${vw}x${vh}|${aria.slice(0, 60)}|${svg.length}`;

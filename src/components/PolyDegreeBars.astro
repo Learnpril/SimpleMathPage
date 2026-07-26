@@ -1,0 +1,103 @@
+---
+/**
+ * PolyDegreeBars — degree bookkeeping in a polynomial ring. Degrees add under
+ * multiplication, and division leaves a remainder of strictly smaller degree
+ * than the divisor.
+ *
+ * Bar lengths are computed from the degrees, and the arithmetic in the labels is
+ * computed too, so the picture and the caption cannot disagree.
+ */
+const unit = 30;
+const barX = 140;
+const barH = 16;
+
+const degF = 3;
+const degG = 2;
+const degProduct = degF + degG;
+
+// Division of a degree-5 polynomial by a degree-2 one
+const degDividend = 5;
+const degDivisor = 2;
+const degQuotient = degDividend - degDivisor;
+const degRemainder = 1; // any value strictly below degDivisor
+
+const mult = [
+  { label: "f", deg: degF, cls: "blue" },
+  { label: "g", deg: degG, cls: "green" },
+  { label: "f g", deg: degProduct, cls: "purple" },
+];
+const div = [
+  { label: "f", deg: degDividend, cls: "blue" },
+  { label: "g", deg: degDivisor, cls: "green" },
+  { label: "q", deg: degQuotient, cls: "purple" },
+  { label: "r", deg: degRemainder, cls: "orange" },
+];
+
+const w = 540;
+const h = 300;
+const multY = [68, 94, 120];
+const divY = [178, 204, 230, 256];
+---
+
+<figure
+  class="pdb"
+  role="img"
+  aria-label={`Two bar diagrams about polynomial degrees. Multiplying a degree ${degF} polynomial by a degree ${degG} one gives degree ${degProduct}. Dividing a degree ${degDividend} polynomial by a degree ${degDivisor} one gives a degree ${degQuotient} quotient and a remainder of degree below ${degDivisor}.`}
+>
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    <text x="16" y="20" class="pdb-head" font-size="12.5" font-weight="bold">Degree is the ruler in a polynomial ring</text>
+
+    <text x="16" y="46" class="pdb-title" font-size="10.5" font-weight="bold">
+      {`Multiplying adds degrees: ${degF} + ${degG} = ${degProduct}`}
+    </text>
+
+    {mult.map((b, i) => (
+      <g>
+        <text x={barX - 12} y={multY[i] + 12} class="pdb-lbl" font-size="11" text-anchor="end" font-weight="bold">{b.label}</text>
+        <rect x={barX} y={multY[i]} width={b.deg * unit} height={barH} rx="3" class={`pdb-bar pdb-${b.cls}`} />
+        <text x={barX + b.deg * unit + 10} y={multY[i] + 12} class="pdb-deg" font-size="9.5">{`degree ${b.deg}`}</text>
+      </g>
+    ))}
+
+    <text x="16" y="156" class="pdb-title" font-size="10.5" font-weight="bold">
+      {`Dividing: f = q g + r, with deg r < deg g`}
+    </text>
+
+    {div.map((b, i) => (
+      <g>
+        <text x={barX - 12} y={divY[i] + 12} class="pdb-lbl" font-size="11" text-anchor="end" font-weight="bold">{b.label}</text>
+        <rect x={barX} y={divY[i]} width={b.deg * unit} height={barH} rx="3" class={`pdb-bar pdb-${b.cls}`} />
+        <text x={barX + b.deg * unit + 10} y={divY[i] + 12} class="pdb-deg" font-size="9.5">
+          {b.label === "r" ? `degree ${b.deg}, below ${degDivisor}` : `degree ${b.deg}`}
+        </text>
+      </g>
+    ))}
+
+    <text x={w / 2} y="288" class="pdb-foot" font-size="10.5" text-anchor="middle">
+      {`Because ${degQuotient} + ${degDivisor} = ${degDividend}, the quotient has degree ${degQuotient}, and the remainder must fall short of ${degDivisor}`}
+    </text>
+  </svg>
+</figure>
+
+<style>
+  .pdb { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .pdb svg { width:100%; max-width:100%; height:auto; }
+  .pdb-bar { fill-opacity:0.4; stroke-width:1.4; }
+  .pdb-blue { fill:#58a6ff; stroke:#58a6ff; }
+  .pdb-green { fill:#7ee787; stroke:#7ee787; }
+  .pdb-purple { fill:#d2a8ff; stroke:#d2a8ff; }
+  .pdb-orange { fill:#f0883e; stroke:#f0883e; }
+  .pdb-lbl { fill:#c9d1d9; font-family:'Libre Baskerville',Georgia,serif; }
+  .pdb-deg { fill:#9198a1; font-family:'Libre Baskerville',Georgia,serif; font-style:italic; }
+  .pdb-title { fill:#58a6ff; font-family:'Libre Baskerville',Georgia,serif; }
+  .pdb-head { fill:#eee; font-family:'Libre Baskerville',Georgia,serif; }
+  .pdb-foot { fill:#9198a1; font-family:'Libre Baskerville',Georgia,serif; font-style:italic; }
+  :global([data-theme="light"]) .pdb-blue { fill:#0550ae; stroke:#0550ae; }
+  :global([data-theme="light"]) .pdb-green { fill:#116329; stroke:#116329; }
+  :global([data-theme="light"]) .pdb-purple { fill:#6639ba; stroke:#6639ba; }
+  :global([data-theme="light"]) .pdb-orange { fill:#b35900; stroke:#b35900; }
+  :global([data-theme="light"]) .pdb-lbl { fill:#24292f; }
+  :global([data-theme="light"]) :is(.pdb-deg, .pdb-foot) { fill:#57606a; }
+  :global([data-theme="light"]) .pdb-title { fill:#0550ae; }
+  :global([data-theme="light"]) .pdb-head { fill:#24292f; }
+</style>

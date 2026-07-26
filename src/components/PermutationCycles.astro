@@ -1,0 +1,172 @@
+---
+/**
+ * PermutationCycles — one permutation of six objects shown twice: as two-row
+ * notation, and as its decomposition into disjoint cycles.
+ *
+ * The cycle decomposition, the cycle lengths and the order of the permutation
+ * are all computed from the image array, so the caption cannot contradict the
+ * picture.
+ */
+// images[i] is where i+1 goes, one-indexed values
+const images = [3, 4, 5, 2, 1, 6];
+const nEl = images.length;
+const sigma = (x: number) => images[x - 1];
+
+// Disjoint cycle decomposition, found by following each unvisited element
+const seen = new Set<number>();
+const cycles: number[][] = [];
+for (let start = 1; start <= nEl; start++) {
+  if (seen.has(start)) continue;
+  const cyc: number[] = [];
+  let x = start;
+  do {
+    cyc.push(x);
+    seen.add(x);
+    x = sigma(x);
+  } while (x !== start);
+  cycles.push(cyc);
+}
+
+const lcm = (a: number, b: number): number => {
+  const g = (p: number, q: number): number => (q === 0 ? p : g(q, p % q));
+  return (a * b) / g(a, b);
+};
+const order = cycles.reduce((acc, c) => lcm(acc, c.length), 1);
+const cycleText = cycles
+  .filter((c) => c.length > 1)
+  .map((c) => `(${c.join(" ")})`)
+  .join("");
+
+const w = 540;
+const h = 308;
+const colGap = 68;
+const startX = (w - (nEl - 1) * colGap) / 2;
+const colX = (i: number) => startX + i * colGap;
+
+// Layout for the cycle diagram: one cluster per cycle, spaced evenly
+const clusterY = 200;
+const clusterCx = [140, 300, 440];
+const ringR = 30;
+const dotR = 13;
+
+function dotPos(cyc: number[], idx: number, cx: number) {
+  if (cyc.length === 1) return { x: cx, y: clusterY };
+  if (cyc.length === 2) return { x: cx + (idx === 0 ? -30 : 30), y: clusterY };
+  const a = (-90 + idx * (360 / cyc.length)) * (Math.PI / 180);
+  return { x: cx + ringR * Math.cos(a), y: clusterY + ringR * Math.sin(a) };
+}
+
+/** Trim a dot-to-dot segment back to the circle edges so arrowheads show. */
+function link(a: { x: number; y: number }, b: { x: number; y: number }) {
+  const dx = b.x - a.x;
+  const dy = b.y - a.y;
+  const len = Math.hypot(dx, dy) || 1;
+  const ux = dx / len;
+  const uy = dy / len;
+  const pad = dotR + 3;
+  return { x1: a.x + ux * pad, y1: a.y + uy * pad, x2: b.x - ux * pad, y2: b.y - uy * pad };
+}
+---
+
+<figure
+  class="pcy"
+  role="img"
+  aria-label={`A permutation of six objects sending 1 to 3, 2 to 4, 3 to 5, 4 to 2, 5 to 1 and fixing 6. Its disjoint cycle form is ${cycleText}, and its order is ${order}.`}
+>
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    <text x="16" y="20" class="pcy-head" font-size="12.5" font-weight="bold">One permutation, two notations</text>
+
+    <text x={w / 2} y="44" class="pcy-sub" font-size="10.5" text-anchor="middle">Two-row notation: each element sits above where it goes</text>
+
+    {/* Row labels */}
+    <text x={startX - 26} y="80" class="pcy-rowlbl" font-size="10.5" text-anchor="end">i</text>
+    <text x={startX - 26} y="116" class="pcy-rowlbl" font-size="10.5" text-anchor="end">σ(i)</text>
+
+    {images.map((img, i) => (
+      <g>
+        <text x={colX(i)} y="80" class="pcy-num" font-size="12" text-anchor="middle" font-weight="bold">{i + 1}</text>
+        <line x1={colX(i)} y1="88" x2={colX(i)} y2="102" class="pcy-arrow" marker-end="url(#pcy-head)" />
+        <text x={colX(i)} y="116" class={img === i + 1 ? "pcy-num pcy-fixed" : "pcy-num pcy-moved"} font-size="12" text-anchor="middle">{img}</text>
+      </g>
+    ))}
+
+    <text x={w / 2} y="148" class="pcy-sub" font-size="10.5" text-anchor="middle">The same map as disjoint cycles: follow each element until it comes back</text>
+
+    {cycles.map((cyc, ci) => {
+      const cx = clusterCx[ci];
+      return (
+        <g>
+          {cyc.length > 1 &&
+            cyc.map((el, i) => {
+              const a = dotPos(cyc, i, cx);
+              const b = dotPos(cyc, (i + 1) % cyc.length, cx);
+              const l = link(a, b);
+              return <line x1={l.x1} y1={l.y1} x2={l.x2} y2={l.y2} class="pcy-cyclink" marker-end="url(#pcy-head-c)" />;
+            })}
+          {cyc.map((el, i) => {
+            const p = dotPos(cyc, i, cx);
+            return (
+              <g>
+                <circle cx={p.x} cy={p.y} r={dotR} class={cyc.length === 1 ? "pcy-dot pcy-dot-fixed" : "pcy-dot pcy-dot-move"} />
+                <text x={p.x} y={p.y + 4} class="pcy-el" font-size="11" text-anchor="middle">{el}</text>
+              </g>
+            );
+          })}
+          <text x={cx} y="256" class={cyc.length === 1 ? "pcy-cyclbl pcy-t-grey" : "pcy-cyclbl pcy-t-orange"} font-size="10.5" text-anchor="middle">
+            {cyc.length === 1 ? `${cyc[0]} is fixed` : `(${cyc.join(" ")})`}
+          </text>
+        </g>
+      );
+    })}
+
+    <text x={w / 2} y="282" class="pcy-foot" font-size="10.5" text-anchor="middle">
+      {`σ = ${cycleText}, a ${cycles.filter((c) => c.length > 1).map((c) => c.length).join("-cycle and a ")}-cycle`}
+    </text>
+    <text x={w / 2} y="298" class="pcy-sub" font-size="9.5" text-anchor="middle">
+      {`Disjoint cycles commute, and |σ| = lcm(${cycles.map((c) => c.length).join(", ")}) = ${order}`}
+    </text>
+
+    <defs>
+      <marker id="pcy-head" markerWidth="7" markerHeight="5" refX="7" refY="2.5" orient="auto">
+        <polygon points="0 0, 7 2.5, 0 5" class="pcy-head-fill" />
+      </marker>
+      <marker id="pcy-head-c" markerWidth="7" markerHeight="5" refX="7" refY="2.5" orient="auto">
+        <polygon points="0 0, 7 2.5, 0 5" class="pcy-head-c-fill" />
+      </marker>
+    </defs>
+  </svg>
+</figure>
+
+<style>
+  .pcy { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .pcy svg { width:100%; max-width:100%; height:auto; }
+  .pcy-num { fill:#c9d1d9; font-family:'Libre Baskerville',Georgia,serif; }
+  .pcy-moved { fill:#f0883e; }
+  .pcy-fixed { fill:#8b949e; }
+  .pcy-rowlbl { fill:#58a6ff; font-family:'Libre Baskerville',Georgia,serif; }
+  .pcy-arrow { stroke:#888; stroke-width:1.3; }
+  .pcy-head-fill { fill:#888; }
+  .pcy-cyclink { stroke:#f0883e; stroke-width:1.7; }
+  .pcy-head-c-fill { fill:#f0883e; }
+  .pcy-dot { stroke-width:1.8; fill-opacity:0.16; }
+  .pcy-dot-move { fill:#f0883e; stroke:#f0883e; }
+  .pcy-dot-fixed { fill:#8b949e; stroke:#8b949e; }
+  .pcy-el { fill:#eee; font-family:'Libre Baskerville',Georgia,serif; }
+  .pcy-cyclbl { font-family:'Libre Baskerville',Georgia,serif; font-weight:bold; }
+  .pcy-t-orange { fill:#f0883e; }
+  .pcy-t-grey { fill:#8b949e; }
+  .pcy-head { fill:#eee; font-family:'Libre Baskerville',Georgia,serif; }
+  .pcy-sub { fill:#9198a1; font-family:'Libre Baskerville',Georgia,serif; font-style:italic; }
+  .pcy-foot { fill:#58a6ff; font-family:'Libre Baskerville',Georgia,serif; }
+  :global([data-theme="light"]) .pcy-num, :global([data-theme="light"]) .pcy-el { fill:#24292f; }
+  :global([data-theme="light"]) .pcy-moved, :global([data-theme="light"]) .pcy-t-orange { fill:#b35900; }
+  :global([data-theme="light"]) .pcy-cyclink, :global([data-theme="light"]) .pcy-head-c-fill { stroke:#b35900; fill:#b35900; }
+  :global([data-theme="light"]) .pcy-dot-move { fill:#b35900; stroke:#b35900; }
+  :global([data-theme="light"]) .pcy-dot-fixed, :global([data-theme="light"]) .pcy-fixed, :global([data-theme="light"]) .pcy-t-grey { fill:#57606a; stroke:#57606a; }
+  :global([data-theme="light"]) .pcy-rowlbl { fill:#0550ae; }
+  :global([data-theme="light"]) .pcy-arrow { stroke:#555; }
+  :global([data-theme="light"]) .pcy-head-fill { fill:#555; }
+  :global([data-theme="light"]) .pcy-head { fill:#24292f; }
+  :global([data-theme="light"]) .pcy-sub { fill:#57606a; }
+  :global([data-theme="light"]) .pcy-foot { fill:#0550ae; }
+</style>

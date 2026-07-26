@@ -1,0 +1,109 @@
+---
+/**
+ * StructureAnalogy — three operations with nothing in common except their rules.
+ * Adding integers, rotating a square and composing shuffles all satisfy the same
+ * four conditions, which is why one theorem about groups covers all three.
+ */
+const bw = 164;
+const bh = 74;
+const gap = 18;
+const margin = 12;
+const w = margin * 2 + 3 * bw + 2 * gap;
+const h = 288;
+const rowY = 42;
+const colX = (i: number) => margin + i * (bw + gap);
+
+const boxW = 210;
+const boxX = (w - boxW) / 2;
+const boxY = 178;
+const boxCx = w / 2;
+
+const examples = [
+  { label: "Integers", op: "combine by adding", eg: "3 + 5 = 8", cls: "green" },
+  { label: "A square", op: "combine by rotating", eg: "90° then 180° = 270°", cls: "blue" },
+  { label: "Shuffles", op: "combine by doing both", eg: "cut then riffle", cls: "purple" },
+];
+---
+
+<figure
+  class="stan"
+  role="img"
+  aria-label="Three unrelated operations - adding integers, rotating a square, and composing card shuffles - all satisfying the same four conditions, which is the definition of a group"
+>
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    <text x="14" y="24" class="stan-head" font-size="12.5" font-weight="bold">Different objects, identical rules</text>
+
+    {/* Each example feeds into the same abstract definition */}
+    {examples.map((e, i) => (
+      <line
+        x1={colX(i) + bw / 2}
+        y1={rowY + bh}
+        x2={boxCx + (i - 1) * 60}
+        y2={boxY - 3}
+        class="stan-link"
+        marker-end="url(#stan-head)"
+      />
+    ))}
+
+    {examples.map((e, i) => (
+      <g>
+        <rect x={colX(i)} y={rowY} width={bw} height={bh} rx="8" class={`stan-box stan-${e.cls}`} />
+        <text x={colX(i) + bw / 2} y={rowY + 22} class={`stan-lbl stan-t-${e.cls}`} font-size="12.5" text-anchor="middle" font-weight="bold">{e.label}</text>
+        <text x={colX(i) + bw / 2} y={rowY + 41} class="stan-sub" font-size="9.5" text-anchor="middle">{e.op}</text>
+        <text x={colX(i) + bw / 2} y={rowY + 60} class="stan-eg" font-size="9.5" text-anchor="middle">{e.eg}</text>
+      </g>
+    ))}
+
+    {/* The shared definition */}
+    <rect x={boxX} y={boxY} width={boxW} height="52" rx="8" class="stan-box stan-orange" />
+    <text x={boxCx} y={boxY + 22} class="stan-lbl stan-t-orange" font-size="14" text-anchor="middle" font-weight="bold">Group</text>
+    <text x={boxCx} y={boxY + 40} class="stan-sub" font-size="9.5" text-anchor="middle">the rules they share</text>
+
+    <text x={boxCx} y="252" class="stan-axioms" font-size="11" text-anchor="middle" font-weight="bold">
+      closure · associativity · identity · inverses
+    </text>
+    <text x={boxCx} y="272" class="stan-sub" font-size="9.5" text-anchor="middle">
+      Prove a theorem for groups and you have proved it for all three at once
+    </text>
+
+    <defs>
+      <marker id="stan-head" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+        <polygon points="0 0, 8 3, 0 6" class="stan-head-fill" />
+      </marker>
+    </defs>
+  </svg>
+</figure>
+
+<style>
+  .stan { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .stan svg { width:100%; max-width:100%; height:auto; }
+  .stan-box { fill:none; stroke-width:2; }
+  .stan-green { stroke:#7ee787; }
+  .stan-blue { stroke:#58a6ff; }
+  .stan-purple { stroke:#d2a8ff; }
+  .stan-orange { stroke:#f0883e; }
+  .stan-lbl { font-family:'Libre Baskerville',Georgia,serif; }
+  .stan-t-green { fill:#7ee787; }
+  .stan-t-blue { fill:#58a6ff; }
+  .stan-t-purple { fill:#d2a8ff; }
+  .stan-t-orange { fill:#f0883e; }
+  .stan-sub { fill:#9198a1; font-family:'Libre Baskerville',Georgia,serif; font-style:italic; }
+  .stan-eg { fill:#c9d1d9; font-family:'Libre Baskerville',Georgia,serif; }
+  .stan-axioms { fill:#f0883e; font-family:'Libre Baskerville',Georgia,serif; }
+  .stan-head { fill:#eee; font-family:'Libre Baskerville',Georgia,serif; }
+  .stan-link { stroke:#888; stroke-width:1.4; }
+  .stan-head-fill { fill:#888; }
+  :global([data-theme="light"]) .stan-green { stroke:#116329; }
+  :global([data-theme="light"]) .stan-blue { stroke:#0550ae; }
+  :global([data-theme="light"]) .stan-purple { stroke:#6639ba; }
+  :global([data-theme="light"]) .stan-orange { stroke:#b35900; }
+  :global([data-theme="light"]) .stan-t-green { fill:#116329; }
+  :global([data-theme="light"]) .stan-t-blue { fill:#0550ae; }
+  :global([data-theme="light"]) .stan-t-purple { fill:#6639ba; }
+  :global([data-theme="light"]) .stan-t-orange, :global([data-theme="light"]) .stan-axioms { fill:#b35900; }
+  :global([data-theme="light"]) .stan-sub { fill:#57606a; }
+  :global([data-theme="light"]) .stan-eg { fill:#24292f; }
+  :global([data-theme="light"]) .stan-head { fill:#24292f; }
+  :global([data-theme="light"]) .stan-link { stroke:#555; }
+  :global([data-theme="light"]) .stan-head-fill { fill:#555; }
+</style>

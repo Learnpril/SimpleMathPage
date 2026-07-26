@@ -1,0 +1,125 @@
+---
+/**
+ * HomomorphismKernel — the map φ: ℤ₁₂ → ℤ₃ sending x to x mod 3.
+ *
+ * The fibres, the kernel and the image are computed from the map, so the counts
+ * quoted in the caption are derived. The picture shows why |ker φ| · |im φ| = |G|:
+ * the fibres are equal-sized blocks, and there is one per image element.
+ */
+const n = 12;
+const m = 3;
+const phi = (x: number) => x % m;
+
+// One fibre per image value
+const fibres = Array.from({ length: m }, (_, v) =>
+  Array.from({ length: n }, (_, x) => x).filter((x) => phi(x) === v),
+);
+const kernel = fibres[0];
+const image = Array.from({ length: m }, (_, v) => v);
+
+const w = 540;
+const h = 302;
+const rowY = [104, 158, 212];
+const dotR = 16;
+const domDotX = [64, 110, 156, 202];
+const codR = 17;
+const codX = 430;
+---
+
+<figure
+  class="hom"
+  role="img"
+  aria-label={`The homomorphism from the integers mod 12 to the integers mod 3 sending x to x mod 3. Its kernel is {${kernel.join(", ")}}, which has ${kernel.length} elements, its image is all ${image.length} elements of the target, and ${kernel.length} times ${image.length} equals 12.`}
+>
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    <text x="16" y="20" class="hom-head" font-size="12.5" font-weight="bold">A homomorphism collapses its kernel onto the identity</text>
+
+    <text x="150" y="56" class="hom-boxlbl hom-t-blue" font-size="11" text-anchor="middle" font-weight="bold">ℤ₁₂ (domain)</text>
+    <rect x="30" y="64" width="240" height="188" rx="10" class="hom-box hom-b-blue" />
+
+    <text x={codX} y="56" class="hom-boxlbl hom-t-purple" font-size="11" text-anchor="middle" font-weight="bold">ℤ₃ (image)</text>
+    <rect x="360" y="64" width="140" height="188" rx="10" class="hom-box hom-b-purple" />
+
+    <text x="315" y="88" class="hom-maplbl" font-size="9.5" text-anchor="middle">φ(x) = x mod 3</text>
+
+    {fibres.map((fib, i) => (
+      <g>
+        <line x1="278" y1={rowY[i]} x2="352" y2={rowY[i]} class="hom-arrow" marker-end="url(#hom-head)" />
+        {fib.map((el, j) => (
+          <g>
+            <circle
+              cx={domDotX[j]}
+              cy={rowY[i]}
+              r={dotR}
+              class={i === 0 ? "hom-dot hom-dot-ker" : "hom-dot hom-dot-plain"}
+            />
+            <text x={domDotX[j]} y={rowY[i] + 4} class="hom-el" font-size="10.5" text-anchor="middle">{el}</text>
+          </g>
+        ))}
+        <text x={244} y={rowY[i] + 4} class={i === 0 ? "hom-fiblbl hom-t-green" : "hom-fiblbl"} font-size="9" text-anchor="middle">
+          {i === 0 ? "ker φ" : `↦ ${i}`}
+        </text>
+      </g>
+    ))}
+
+    {image.map((v, i) => (
+      <g>
+        <circle cx={codX} cy={rowY[i]} r={codR} class={i === 0 ? "hom-cod hom-cod-id" : "hom-cod"} />
+        <text x={codX} y={rowY[i] + 4} class="hom-el" font-size="11" text-anchor="middle">{v}</text>
+      </g>
+    ))}
+    <text x={codX + codR + 6} y={rowY[0] + 4} class="hom-idlbl" font-size="9">identity</text>
+
+    <text x={w / 2} y="272" class="hom-foot" font-size="10.5" text-anchor="middle">
+      {`Every fibre has |ker φ| = ${kernel.length} elements, and ${kernel.length} × ${image.length} = ${kernel.length * image.length} = |ℤ₁₂|`}
+    </text>
+    <text x={w / 2} y="290" class="hom-sub" font-size="9.5" text-anchor="middle">
+      First isomorphism theorem: ℤ₁₂ / ker φ ≅ im φ
+    </text>
+
+    <defs>
+      <marker id="hom-head" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+        <polygon points="0 0, 8 3, 0 6" class="hom-head-fill" />
+      </marker>
+    </defs>
+  </svg>
+</figure>
+
+<style>
+  .hom { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .hom svg { width:100%; max-width:100%; height:auto; }
+  .hom-box { fill:none; stroke-width:1.6; }
+  .hom-b-blue { stroke:#58a6ff; }
+  .hom-b-purple { stroke:#d2a8ff; }
+  .hom-boxlbl { font-family:'Libre Baskerville',Georgia,serif; }
+  .hom-t-blue { fill:#58a6ff; }
+  .hom-t-purple { fill:#d2a8ff; }
+  .hom-t-green { fill:#7ee787; }
+  .hom-dot { stroke-width:1.6; fill-opacity:0.16; }
+  .hom-dot-ker { fill:#7ee787; stroke:#7ee787; }
+  .hom-dot-plain { fill:#58a6ff; stroke:#58a6ff; }
+  .hom-cod { fill:#d2a8ff; fill-opacity:0.2; stroke:#d2a8ff; stroke-width:1.8; }
+  .hom-cod-id { fill:#f0883e; fill-opacity:0.24; stroke:#f0883e; }
+  .hom-el { fill:#eee; font-family:'Libre Baskerville',Georgia,serif; }
+  .hom-fiblbl { fill:#9198a1; font-family:'Libre Baskerville',Georgia,serif; font-style:italic; }
+  .hom-idlbl { fill:#f0883e; font-family:'Libre Baskerville',Georgia,serif; font-style:italic; }
+  .hom-maplbl { fill:#c9d1d9; font-family:'Libre Baskerville',Georgia,serif; }
+  .hom-arrow { stroke:#888; stroke-width:1.5; }
+  .hom-head-fill { fill:#888; }
+  .hom-head { fill:#eee; font-family:'Libre Baskerville',Georgia,serif; }
+  .hom-foot { fill:#7ee787; font-family:'Libre Baskerville',Georgia,serif; }
+  .hom-sub { fill:#9198a1; font-family:'Libre Baskerville',Georgia,serif; font-style:italic; }
+  :global([data-theme="light"]) .hom-b-blue, :global([data-theme="light"]) .hom-t-blue { stroke:#0550ae; fill:#0550ae; }
+  :global([data-theme="light"]) .hom-b-blue { fill:none; }
+  :global([data-theme="light"]) .hom-b-purple, :global([data-theme="light"]) .hom-t-purple { stroke:#6639ba; fill:#6639ba; }
+  :global([data-theme="light"]) .hom-b-purple { fill:none; }
+  :global([data-theme="light"]) .hom-dot-ker, :global([data-theme="light"]) .hom-t-green, :global([data-theme="light"]) .hom-foot { fill:#116329; stroke:#116329; }
+  :global([data-theme="light"]) .hom-dot-plain { fill:#0550ae; stroke:#0550ae; }
+  :global([data-theme="light"]) .hom-cod { fill:#6639ba; stroke:#6639ba; }
+  :global([data-theme="light"]) .hom-cod-id, :global([data-theme="light"]) .hom-idlbl { fill:#b35900; stroke:#b35900; }
+  :global([data-theme="light"]) .hom-el, :global([data-theme="light"]) .hom-maplbl { fill:#24292f; }
+  :global([data-theme="light"]) :is(.hom-fiblbl, .hom-sub) { fill:#57606a; }
+  :global([data-theme="light"]) .hom-arrow { stroke:#555; }
+  :global([data-theme="light"]) .hom-head-fill { fill:#555; }
+  :global([data-theme="light"]) .hom-head { fill:#24292f; }
+</style>

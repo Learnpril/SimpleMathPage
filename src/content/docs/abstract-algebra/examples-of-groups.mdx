@@ -1,0 +1,261 @@
+---
+title: Examples of Groups
+description: The standard reference groups, and the two different groups of order four
+sidebar:
+  order: 4
+---
+
+import Quiz from "../../../components/Quiz.astro";
+import GroupZoo from "../../../components/GroupZoo.astro";
+import CayleyTable from "../../../components/CayleyTable.astro";
+
+## What You'll Learn
+
+In this lesson you'll build the small collection of groups that every later theorem gets tested against, learn to compute in $\mathbb{Z}_n$ and $U(n)$, and see the first genuine surprise: there are exactly two groups of order four, and they are not the same.
+
+## The Concept
+
+### A working zoo
+
+Abstract theorems are hard to believe until you can check them against something concrete. Six groups will carry you through the entire section.
+
+<GroupZoo />
+
+### The integers mod n
+
+$\mathbb{Z}_n = \{0, 1, 2, \dots, n-1\}$ with addition that wraps around at $n$. This is clock arithmetic, and it's the most useful finite group there is.
+
+<CayleyTable
+  labels={["0", "1", "2", "3", "4", "5"]}
+  op={(i, j) => (i + j) % 6}
+  opSymbol="+"
+  title="ℤ₆ under addition mod 6"
+  highlight={[0, 2, 4]}
+  highlightLabel="the even elements"
+  caption="Shading the even elements shows a smaller group living inside the larger one. Every row and column is a shifted copy of the element list, which is the signature of a group table."
+/>
+
+Every $\mathbb{Z}_n$ is a group: closure by construction, associativity inherited from $\mathbb{Z}$, identity $0$, and the inverse of $a$ is $n - a$ (with $0$ its own inverse). All are abelian.
+
+### The unit group U(n)
+
+Multiplication mod $n$ is not a group on all of $\mathbb{Z}_n$, because $0$ never has an inverse and other elements can fail too. Keep only the ones that work.
+
+$$
+U(n) = \{a \in \mathbb{Z}_n : \gcd(a, n) = 1\}
+$$
+
+**$a$ has a multiplicative inverse mod $n$ exactly when $\gcd(a,n) = 1$.** The reason is Bézout's identity: $\gcd(a,n)=1$ means there are integers $x, y$ with $ax + ny = 1$, and reading that mod $n$ gives $ax \equiv 1$, so $x$ is the inverse. Conversely if $\gcd(a,n) = d > 1$ then every multiple of $a$ is divisible by $d$, so it can never be $1$.
+
+$U(8) = \{1, 3, 5, 7\}$, and $|U(8)| = 4$.
+
+<CayleyTable
+  labels={["1", "3", "5", "7"]}
+  op={(i, j) => [1, 3, 5, 7].indexOf(([1, 3, 5, 7][i] * [1, 3, 5, 7][j]) % 8)}
+  opSymbol="×"
+  title="U(8) under multiplication mod 8"
+  caption="Every element is its own inverse, since the identity 1 fills the whole diagonal. That makes U(8) a Klein four-group rather than a cycle."
+/>
+
+The size of $U(n)$ is **Euler's totient** $\varphi(n)$, the count of integers below $n$ coprime to it. When $p$ is prime, $\varphi(p) = p - 1$, because every nonzero residue is coprime to a prime. That is why $U(5) = \{1,2,3,4\}$ has all four nonzero elements while $U(8)$ has only four of seven.
+
+### The two groups of order four
+
+Here is the first result that couldn't have been guessed. There are exactly **two** groups with four elements, and no more.
+
+<CayleyTable
+  labels={["0", "1", "2", "3"]}
+  op={(i, j) => (i + j) % 4}
+  opSymbol="+"
+  title="ℤ₄ — the cyclic group of order 4"
+  caption="Adding 1 repeatedly visits 1, 2, 3, 0, so a single element generates everything. The element 1 has order 4."
+/>
+
+<CayleyTable
+  labels={["e", "a", "b", "c"]}
+  op={(i, j) =>
+    [
+      [0, 1, 2, 3],
+      [1, 0, 3, 2],
+      [2, 3, 0, 1],
+      [3, 2, 1, 0],
+    ][i][j]
+  }
+  opSymbol="∗"
+  title="V — the Klein four-group"
+  caption="Here every non-identity element squares to e, so nothing generates the whole group. No relabelling can turn this table into the one above."
+/>
+
+Both are abelian, both have four elements, and they are genuinely different structures. The proof is short: in $\mathbb{Z}_4$ the element $1$ satisfies $1+1 = 2 \ne 0$, so some element does not square to the identity. In $V$, every element does. That property survives any relabelling, so no dictionary can translate one table into the other.
+
+This is the moment abstraction starts paying off. "How many elements" is not enough information to pin down a group.
+
+### Non-abelian examples
+
+Everything above commutes. Two families that don't:
+
+- **$S_n$**, the **symmetric group**, is all $n!$ ways to rearrange $n$ objects, combined by doing one rearrangement then another. $S_3$ has 6 elements and is the smallest non-abelian group.
+- **$D_n$**, the **dihedral group**, is the $2n$ symmetries of a regular $n$-gon: $n$ rotations and $n$ reflections. $D_4$, the symmetries of a square, has 8 elements.
+
+Both get their own lessons. For now, note that a reflection followed by a rotation is generally not the same as the rotation followed by the reflection, which you can verify with a physical square in about ten seconds.
+
+### Direct products
+
+Given groups $G$ and $H$, the **direct product** $G \times H$ consists of pairs $(g, h)$ combined componentwise:
+
+$$
+(g_1, h_1) * (g_2, h_2) = (g_1 g_2,\ h_1 h_2)
+$$
+
+Its order is $|G| \cdot |H|$. This is how new groups get built from old ones, and it turns out the Klein four-group is exactly $\mathbb{Z}_2 \times \mathbb{Z}_2$: the pairs $(0,0), (1,0), (0,1), (1,1)$, where adding any element to itself gives $(0,0)$.
+
+## Worked Examples
+
+**Example 1: Compute in $\mathbb{Z}_9$.**
+
+Find $7 + 5$, the inverse of $4$, and $6 + 6 + 6$.
+
+**Solution.**
+
+$7 + 5 = 12 \equiv \mathbf{3} \pmod 9$.
+
+The inverse of $4$ is $9 - 4 = \mathbf{5}$. Check: $4 + 5 = 9 \equiv 0$. ✓
+
+$6 + 6 + 6 = 18 \equiv \mathbf{0} \pmod 9$. So adding $6$ three times returns to the identity, meaning $6$ has order 3 in this group.
+
+**Example 2: Find $U(10)$ and the inverse of 3 in it.**
+
+**Solution.** Test each of $1$ through $9$ for $\gcd(a, 10) = 1$. Discard $2, 4, 5, 6, 8$ (sharing a factor 2 or 5).
+
+$$
+U(10) = \{1, 3, 7, 9\}, \qquad |U(10)| = \varphi(10) = 4
+$$
+
+For the inverse of $3$: $3 \cdot 7 = 21 \equiv 1 \pmod{10}$, so $3^{-1} = \mathbf{7}$.
+
+**Example 3: Is $\{1, 2, 3, 4, 5, 6\}$ a group under multiplication mod 7?**
+
+**Solution.** $7$ is prime, so every element from $1$ to $6$ is coprime to $7$, and this set is exactly $U(7)$.
+
+Inverses: $1^{-1}=1$, $2 \cdot 4 = 8 \equiv 1$ so $2^{-1}=4$, $3 \cdot 5 = 15 \equiv 1$ so $3^{-1}=5$, $6 \cdot 6 = 36 \equiv 1$ so $6^{-1}=6$.
+
+**Yes**, a group of order 6. It is abelian. Notably it is _not_ the same as $S_3$, which also has order 6 but is non-abelian, so again order alone doesn't determine the group.
+
+**Example 4: Show $U(8)$ is not cyclic.**
+
+**Solution.** Square each element mod 8.
+
+$$
+1^2 = 1, \quad 3^2 = 9 \equiv 1, \quad 5^2 = 25 \equiv 1, \quad 7^2 = 49 \equiv 1
+$$
+
+Every element squares to $1$. So repeatedly multiplying any single element only ever produces $\{1, a\}$, never all four.
+
+$U(8)$ is therefore a **Klein four-group**, not $\mathbb{Z}_4$. Compare $U(5) = \{1,2,3,4\}$, where $2^1=2$, $2^2=4$, $2^3 = 8 \equiv 3$, $2^4 = 16 \equiv 1$: powers of $2$ sweep out everything, so $U(5) \cong \mathbb{Z}_4$.
+
+**Example 5: The smallest non-abelian group.**
+
+Show $S_3$ is not abelian.
+
+**Solution.** Label positions 1, 2, 3. Let $\sigma$ swap positions 1 and 2, and let $\tau$ swap positions 2 and 3.
+
+Apply $\sigma$ then $\tau$ to the arrangement $(1,2,3)$: after $\sigma$ it is $(2,1,3)$; after $\tau$ swaps the contents of positions 2 and 3 it is $(2,3,1)$.
+
+Apply $\tau$ then $\sigma$: after $\tau$ it is $(1,3,2)$; after $\sigma$ it is $(3,1,2)$.
+
+$(2,3,1) \ne (3,1,2)$, so $\sigma\tau \ne \tau\sigma$. **Non-abelian.**
+
+No group of order 1, 2, 3, 4, or 5 is non-abelian, so $S_3$ at order 6 is genuinely the smallest.
+
+**Example 6: Build a group of order 6 as a product.**
+
+**Solution.** $\mathbb{Z}_2 \times \mathbb{Z}_3$ has $2 \times 3 = 6$ elements: $(0,0), (0,1), (0,2), (1,0), (1,1), (1,2)$.
+
+Consider $(1,1)$ and add it to itself repeatedly:
+
+$$
+(1,1), \ (0,2), \ (1,0), \ (0,1), \ (1,2), \ (0,0)
+$$
+
+Six distinct elements before returning to the identity, so $(1,1)$ generates the whole group and $\mathbb{Z}_2 \times \mathbb{Z}_3 \cong \mathbb{Z}_6$.
+
+Contrast $\mathbb{Z}_2 \times \mathbb{Z}_2$, where every element added to itself gives $(0,0)$, so nothing generates all four. The rule behind the difference: $\mathbb{Z}_m \times \mathbb{Z}_n \cong \mathbb{Z}_{mn}$ exactly when $\gcd(m,n) = 1$.
+
+## Real-World Applications
+
+**RSA encryption** lives in $U(n)$ for $n = pq$ a product of two large primes. The public exponent $e$ and private exponent $d$ are inverses modulo $\varphi(n)$, and the whole scheme works because $U(n)$ is a group of known order. Knowing $\varphi(n)$ requires knowing $p$ and $q$, which is the hard part an attacker faces.
+
+**Musical transposition** is $\mathbb{Z}_{12}$. The circle of fifths is repeated addition of 7, and it reaches all twelve pitch classes because $\gcd(7,12) = 1$. Adding 4 instead cycles only through three notes, giving an augmented triad, because $\gcd(4,12) = 4$.
+
+**Days of the week** are $\mathbb{Z}_7$, which is why "90 days from Tuesday" is a computation in a group of order 7: $90 \equiv 6 \pmod 7$, so six days past Tuesday, which is Monday.
+
+**Check digits.** ISBN-10 validation is arithmetic mod 11 and credit card numbers use the Luhn algorithm mod 10. Both catch single-digit errors because of the group structure; ISBN uses 11 rather than 10 precisely because 11 is prime and so every nonzero residue is invertible.
+
+**Crystallography.** Every crystal's symmetry is one of 230 space groups, and the classification is a result about which groups can act on a repeating lattice. Chemists identify a compound's group from its spectrum.
+
+:::note[You've Got This]
+The important takeaway is small but genuinely surprising: knowing how many elements a group has does not tell you which group it is. Order 4 admits two, order 6 admits two, and the number grows from there. That's why the section spends so much effort on structure rather than counting. Meanwhile, get comfortable with ℤₙ and U(n), because between them they supply the concrete test case for nearly every theorem ahead. If a general claim ever looks doubtful, try it in ℤ₆ first.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="abstract-examples-of-groups"
+  questions={[
+    {
+      id: "q1",
+      text: "What is U(12), the set of elements of ℤ₁₂ that have multiplicative inverses?",
+      options: [
+        "{1, 2, 3, 4, 6, 12}",
+        "{1, 5, 7, 11}",
+        "{1, 2, 3, 5, 7, 11}",
+        "{0, 1, 5, 7, 11}",
+      ],
+      correctIndex: 1,
+      explanation:
+        "An element is invertible mod n exactly when it is coprime to n. Of 1 through 11, only 1, 5, 7 and 11 share no factor with 12, so φ(12) = 4.",
+    },
+    {
+      id: "q2",
+      text: "How many distinct groups of order 4 exist?",
+      options: ["One", "Two", "Four", "Infinitely many"],
+      correctIndex: 1,
+      explanation:
+        "Exactly two: the cyclic group ℤ₄ and the Klein four-group. They differ because every non-identity element of the Klein group squares to the identity, while 1 + 1 = 2 in ℤ₄ does not.",
+    },
+    {
+      id: "q3",
+      text: "In ℤ₁₁ under addition, what is the inverse of 4?",
+      options: ["4", "7", "-4", "3"],
+      correctIndex: 1,
+      explanation:
+        "The inverse of a in ℤₙ under addition is n - a, so here it is 11 - 4 = 7. Checking, 4 + 7 = 11 ≡ 0, which is the identity.",
+    },
+    {
+      id: "q4",
+      text: "What is the smallest non-abelian group, and what is its order?",
+      options: [
+        "The Klein four-group, order 4",
+        "ℤ₆, order 6",
+        "S₃, order 6",
+        "D₄, order 8",
+      ],
+      correctIndex: 2,
+      explanation:
+        "S₃, the six rearrangements of three objects, is the smallest group where order of operations matters. Every group of order 5 or less is abelian, and ℤ₆ and the Klein group are both abelian.",
+    },
+    {
+      id: "q5",
+      text: "Why does U(8) fail to be cyclic?",
+      options: [
+        "Because 8 is not prime",
+        "Because it has only three elements",
+        "Because every element squares to 1, so no single element generates all four",
+        "Because multiplication mod 8 is not associative",
+      ],
+      correctIndex: 2,
+      explanation:
+        "Computing 1², 3², 5² and 7² mod 8 gives 1 every time, so the powers of any one element only reach that element and the identity. U(8) is therefore a Klein four-group rather than ℤ₄.",
+    },
+  ]}
+/>

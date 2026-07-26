@@ -1,0 +1,107 @@
+---
+/**
+ * DihedralSquare — all eight symmetries of a square, each drawn by applying the
+ * symmetry to the corner labels.
+ *
+ * Each symmetry is stored as a permutation of the four corner slots, and the
+ * diagram reads the labels out of that permutation. Corners that stay put are
+ * highlighted, so the fixed points of each reflection are visible rather than
+ * asserted.
+ */
+const w = 540;
+const h = 316;
+const half = 28;
+const labelOff = 18;
+const cols = [76, 194, 312, 430];
+const rowY = [96, 216];
+
+// Corner slots in order: top-left, top-right, bottom-right, bottom-left.
+// perm[k] is the corner label that ends up in slot k.
+const symmetries = [
+  { name: "e", desc: "identity", perm: [1, 2, 3, 4], kind: "rot" },
+  { name: "r", desc: "turn 90°", perm: [4, 1, 2, 3], kind: "rot" },
+  { name: "r²", desc: "turn 180°", perm: [3, 4, 1, 2], kind: "rot" },
+  { name: "r³", desc: "turn 270°", perm: [2, 3, 4, 1], kind: "rot" },
+  { name: "v", desc: "flip left–right", perm: [2, 1, 4, 3], kind: "ref" },
+  { name: "h", desc: "flip top–bottom", perm: [4, 3, 2, 1], kind: "ref" },
+  { name: "d", desc: "flip on ╲", perm: [1, 4, 3, 2], kind: "ref" },
+  { name: "d′", desc: "flip on ╱", perm: [3, 2, 1, 4], kind: "ref" },
+];
+
+const slotOffset = [
+  { x: -labelOff, y: -labelOff },
+  { x: labelOff, y: -labelOff },
+  { x: labelOff, y: labelOff },
+  { x: -labelOff, y: labelOff },
+];
+
+const rotations = symmetries.filter((s) => s.kind === "rot").length;
+const reflections = symmetries.filter((s) => s.kind === "ref").length;
+---
+
+<figure
+  class="dih"
+  role="img"
+  aria-label={`All eight symmetries of a square: ${rotations} rotations and ${reflections} reflections, forming the dihedral group D₄. Each square shows where the four corner labels end up, with corners that stay in place highlighted.`}
+>
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    <text x="16" y="20" class="dih-head" font-size="12.5" font-weight="bold">
+      {`D₄: the ${symmetries.length} symmetries of a square`}
+    </text>
+
+    {symmetries.map((s, i) => {
+      const cx = cols[i % 4];
+      const cy = rowY[Math.floor(i / 4)];
+      const cls = s.kind === "rot" ? "blue" : "orange";
+      return (
+        <g>
+          <text x={cx} y={cy - 42} class={`dih-name dih-t-${cls}`} font-size="12" text-anchor="middle" font-weight="bold">{s.name}</text>
+          <rect x={cx - half} y={cy - half} width={half * 2} height={half * 2} rx="3" class={`dih-sq dih-sq-${cls}`} />
+          {s.perm.map((label, slot) => (
+            <text
+              x={cx + slotOffset[slot].x}
+              y={cy + slotOffset[slot].y + 4}
+              class={label === slot + 1 ? "dih-corner dih-corner-fixed" : "dih-corner"}
+              font-size="11"
+              text-anchor="middle"
+            >{label}</text>
+          ))}
+          <text x={cx} y={cy + 46} class="dih-desc" font-size="9.5" text-anchor="middle">{s.desc}</text>
+        </g>
+      );
+    })}
+
+    <text x={w / 2} y="288" class="dih-foot" font-size="10.5" text-anchor="middle">
+      {`${rotations} rotations plus ${reflections} reflections gives |D₄| = ${symmetries.length}, and in general |Dₙ| = 2n`}
+    </text>
+    <text x={w / 2} y="304" class="dih-sub" font-size="9.5" text-anchor="middle">
+      Green corners stay put, which is why a reflection has fixed points and a rotation does not
+    </text>
+  </svg>
+</figure>
+
+<style>
+  .dih { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .dih svg { width:100%; max-width:100%; height:auto; }
+  .dih-sq { fill-opacity:0.08; stroke-width:1.8; }
+  .dih-sq-blue { fill:#58a6ff; stroke:#58a6ff; }
+  .dih-sq-orange { fill:#f0883e; stroke:#f0883e; }
+  .dih-name { font-family:'Libre Baskerville',Georgia,serif; }
+  .dih-t-blue { fill:#58a6ff; }
+  .dih-t-orange { fill:#f0883e; }
+  .dih-corner { fill:#c9d1d9; font-family:'Libre Baskerville',Georgia,serif; }
+  .dih-corner-fixed { fill:#7ee787; font-weight:bold; }
+  .dih-desc { fill:#9198a1; font-family:'Libre Baskerville',Georgia,serif; font-style:italic; }
+  .dih-head { fill:#eee; font-family:'Libre Baskerville',Georgia,serif; }
+  .dih-foot { fill:#58a6ff; font-family:'Libre Baskerville',Georgia,serif; }
+  .dih-sub { fill:#9198a1; font-family:'Libre Baskerville',Georgia,serif; font-style:italic; }
+  :global([data-theme="light"]) .dih-sq-blue { fill:#0550ae; stroke:#0550ae; }
+  :global([data-theme="light"]) .dih-sq-orange { fill:#b35900; stroke:#b35900; }
+  :global([data-theme="light"]) .dih-t-blue { fill:#0550ae; }
+  :global([data-theme="light"]) .dih-t-orange { fill:#b35900; }
+  :global([data-theme="light"]) .dih-corner { fill:#24292f; }
+  :global([data-theme="light"]) .dih-corner-fixed { fill:#116329; }
+  :global([data-theme="light"]) :is(.dih-desc, .dih-sub) { fill:#57606a; }
+  :global([data-theme="light"]) .dih-head { fill:#24292f; }
+  :global([data-theme="light"]) .dih-foot { fill:#0550ae; }
+</style>

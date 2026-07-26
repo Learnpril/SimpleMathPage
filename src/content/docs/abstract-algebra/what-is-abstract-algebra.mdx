@@ -1,0 +1,202 @@
+---
+title: What is Abstract Algebra?
+description: Why mathematicians study rules instead of objects, and what you gain by doing it
+sidebar:
+  order: 1
+---
+
+import Quiz from "../../../components/Quiz.astro";
+import StructureAnalogy from "../../../components/StructureAnalogy.astro";
+
+## What You'll Learn
+
+In this lesson you'll learn what makes algebra "abstract," why stripping away the objects is a gain rather than a loss, and the vocabulary the rest of the section is built on. No proofs yet, just the shift in viewpoint.
+
+## The Concept
+
+### Algebra you already know
+
+In earlier algebra, letters stood in for numbers. Writing $x + 3 = 7$ meant "some number, plus three, is seven." The letter was a placeholder; the answer was a number.
+
+Abstract algebra moves the placeholder one level up. Now the letters stand in for the **operation** and the **set**, and the answer is a theorem.
+
+### The observation that started everything
+
+Look at three operations that share nothing on the surface.
+
+**Adding integers.** Combine 3 and 5 to get 8.
+
+**Rotating a square.** Turn it 90°, then 180°, and you've turned it 270°.
+
+**Composing shuffles.** Cut a deck, then riffle it. The result is another rearrangement of the deck.
+
+Now check four properties for each.
+
+- **You stay inside.** Two integers add to an integer. Two rotations of the square give a rotation of the square. Two shuffles give a shuffle.
+- **Grouping doesn't matter.** $(2+3)+7 = 2+(3+7)$. Doing rotation $a$ then $(b$ then $c)$ is the same as doing $(a$ then $b)$ then $c$.
+- **There's a do-nothing option.** Add 0. Rotate 0°. Leave the deck alone.
+- **Everything can be undone.** Add $-5$ to cancel $+5$. Rotate 270° to cancel 90°. There's an unshuffle for every shuffle.
+
+<StructureAnalogy />
+
+Four properties, three completely unrelated situations, and a perfect match. That's not a coincidence worth noting and moving past. It's the entire subject.
+
+### What abstraction buys you
+
+Give the package a name. A set with an operation satisfying those four properties is a **group**.
+
+Now prove a theorem about groups. Say you prove that in any group, the identity element is unique. You have simultaneously proved:
+
+- 0 is the only additive identity for the integers.
+- Doing nothing is the only "do nothing" rotation of a square.
+- The unshuffled deck is the only neutral shuffle.
+
+And also the same fact about matrices, symmetries of a molecule, moves on a Rubik's cube, and every group anyone discovers in the future.
+
+**One proof, unlimited applications.** This is the trade: you give up knowing what the objects are, and you get results that don't care.
+
+If you write software, you've made this trade before. A function that sorts anything comparable doesn't know or care whether it's sorting integers or dates. You wrote it against an interface. Group theory is mathematics written against an interface.
+
+### The ladder of structures
+
+Different amounts of structure get different names. The section climbs this ladder.
+
+- **Group** - one operation, with all four properties. Symmetry lives here.
+- **Ring** - two operations, addition and multiplication. Addition is a full group; multiplication is weaker (you can multiply, but you may not be able to divide). The integers are the model.
+- **Field** - a ring where you can also divide by anything nonzero. The rationals, the reals, the complex numbers.
+
+Each rung adds a requirement. More requirements mean fewer examples, but stronger theorems. A group theorem applies to almost everything and says relatively little; a field theorem applies to far less and says much more.
+
+### What "abstract" does not mean
+
+It doesn't mean vague. The definitions in this section are more precise than anything you've met so far, because there's no familiar object to fall back on. When you check that something is a group, you check four specific things, in order, and either it passes or it doesn't.
+
+It also doesn't mean disconnected from computation. Modular arithmetic, polynomial division, and matrix multiplication all show up constantly. The difference is that the computations serve the argument instead of being the point.
+
+## Worked Examples
+
+**Example 1: Is subtraction of integers a group operation?**
+
+**Solution.** Check the four properties for $\mathbb{Z}$ under subtraction.
+
+- **Closure.** An integer minus an integer is an integer. Passes.
+- **Associativity.** Test it: $(8 - 3) - 2 = 3$, but $8 - (3 - 2) = 7$. **Fails.**
+
+So no. Subtraction is closed but not associative, and one failure is enough. This is worth remembering: closure alone is a low bar.
+
+**Example 2: Is $\{1, -1\}$ a group under multiplication?**
+
+**Solution.**
+
+- **Closure.** The products are $1 \cdot 1 = 1$, $1 \cdot (-1) = -1$, $(-1)(-1) = 1$. All land in the set. Passes.
+- **Associativity.** Inherited from ordinary multiplication. Passes.
+- **Identity.** $1$ works: $1 \cdot x = x$ for both elements. Passes.
+- **Inverses.** $1$ is its own inverse, and $(-1)(-1) = 1$ so $-1$ is its own inverse. Passes.
+
+**Yes**, a group with two elements. It is the smallest interesting group.
+
+**Example 3: Is $\mathbb{Z}$ a group under multiplication?**
+
+**Solution.** Closure passes, associativity passes, and $1$ is an identity. But inverses fail: there is no integer $n$ with $3n = 1$. Only $1$ and $-1$ have inverses in $\mathbb{Z}$.
+
+**No.** Note this is exactly why the integers are a _ring_ and not a _field_: multiplication has everything except inverses.
+
+**Example 4: The same group in two costumes.**
+
+Consider $\{0, 1\}$ under addition mod 2, and $\{1, -1\}$ under multiplication.
+
+**Solution.** Write out both operations.
+
+$$
+0+0 = 0, \quad 0+1 = 1, \quad 1+0 = 1, \quad 1+1 = 0
+$$
+
+$$
+1 \cdot 1 = 1, \quad 1 \cdot (-1) = -1, \quad (-1) \cdot 1 = -1, \quad (-1)(-1) = 1
+$$
+
+Match $0 \leftrightarrow 1$ and $1 \leftrightarrow -1$. Every line of the first list becomes the corresponding line of the second.
+
+These are **the same group wearing different labels**. Recognizing when two structures are secretly identical is what "isomorphism" will mean, and it's one of the section's central goals.
+
+**Example 5: Why order can matter.**
+
+Take a book on the table. Operation: rotate it. Do a 90° turn in the plane of the table, then flip it over left-to-right. Now do those in the opposite order.
+
+**Solution.** You get different results. The two moves don't commute.
+
+Groups where $ab = ba$ always holds are called **abelian**. Groups where it can fail are **non-abelian**, and they're the interesting ones. Number systems trained you to expect commutativity; physical symmetry does not provide it. Matrix multiplication and function composition are also non-commutative, and both will appear as groups later.
+
+## Real-World Applications
+
+**Cryptography** is the most consequential application. When you connect to a website over HTTPS, the key exchange runs in a group where computing $g^a$ is fast but recovering $a$ from $g^a$ is believed to be infeasible. The security argument is a statement about the structure of a group, not about any particular number.
+
+**Physics** is organized by symmetry groups. Noether's theorem states that every continuous symmetry of a physical system corresponds to a conserved quantity: time-translation symmetry gives conservation of energy, spatial symmetry gives conservation of momentum. The Standard Model of particle physics is specified by naming its symmetry group.
+
+**Chemistry** uses molecular symmetry groups to predict which vibrations show up in an infrared spectrum. Crystallography classifies every possible crystal into one of exactly 230 space groups, a result that is pure group theory.
+
+**Error-correcting codes** in QR codes, CDs, and deep-space transmissions are built from finite fields. A scratched disc still plays because the encoding has algebraic structure that lets a decoder reconstruct what was lost.
+
+**Rubik's cube** is a group with 43,252,003,274,489,856,000 elements. Every solving method is a sequence of moves chosen for its group-theoretic properties, particularly commutators, which change a small part of the cube while leaving the rest fixed.
+
+:::note[You've Got This]
+The hardest part of this lesson is that nothing was computed, and that can feel like nothing happened. What happened is a change of question. From here on, "what kind of thing is this?" matters more than "what's the answer?" If you can look at a set with an operation and ask, in order, whether it's closed, associative, has an identity, and has inverses, you already have the working method of the entire section. Everything else is consequences.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="abstract-what-is-abstract-algebra"
+  questions={[
+    {
+      id: "q1",
+      text: "What does abstract algebra study?",
+      options: [
+        "Equations that are too hard to solve exactly",
+        "Sets together with operations, described by the rules the operations obey",
+        "Algebra done without writing any numbers",
+        "The properties of very large numbers",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Abstract algebra fixes attention on a set plus one or more operations, and studies what follows from the rules those operations satisfy. The identity of the objects is deliberately left unspecified, which is what makes the results apply so widely.",
+    },
+    {
+      id: "q2",
+      text: "Which of the four group properties does subtraction of integers fail?",
+      options: ["Closure", "Associativity", "Identity", "Inverses"],
+      correctIndex: 1,
+      explanation:
+        "Subtraction is closed on the integers, but (8 - 3) - 2 = 3 while 8 - (3 - 2) = 7, so regrouping changes the answer. That is exactly a failure of associativity.",
+    },
+    {
+      id: "q3",
+      text: "A group in which a·b always equals b·a is called what?",
+      options: ["Cyclic", "Abelian", "Simple", "Normal"],
+      correctIndex: 1,
+      explanation:
+        "Such a group is abelian, named for Niels Henrik Abel. Groups where the order of operations can change the result are non-abelian, and function composition and matrix multiplication are the standard examples.",
+    },
+    {
+      id: "q4",
+      text: "Why is proving a theorem about groups more valuable than proving the same fact about the integers?",
+      options: [
+        "Group proofs are shorter than proofs about integers",
+        "The integers are not important in modern mathematics",
+        "The theorem then holds for every structure satisfying the group axioms, not just one",
+        "Groups are easier to work with than numbers",
+      ],
+      correctIndex: 2,
+      explanation:
+        "A proof that only uses the group axioms is valid in any structure satisfying them. One argument then covers integer addition, rotations of a shape, permutations, invertible matrices, and every group not yet discovered.",
+    },
+    {
+      id: "q5",
+      text: "Which structure requires that you can divide by any nonzero element?",
+      options: ["A group", "A ring", "A field", "A binary operation"],
+      correctIndex: 2,
+      explanation:
+        "A field is a ring in which every nonzero element has a multiplicative inverse, so division by anything except zero is available. The integers form a ring but not a field, because 3 has no integer reciprocal.",
+    },
+  ]}
+/>

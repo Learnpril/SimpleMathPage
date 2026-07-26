@@ -1,0 +1,295 @@
+---
+title: Integral Domains and Fields
+description: Rings where cancellation works, rings where division works, and the prime that decides
+sidebar:
+  order: 14
+---
+
+import Quiz from "../../../components/Quiz.astro";
+import CayleyTable from "../../../components/CayleyTable.astro";
+
+## What You'll Learn
+
+In this lesson you'll learn what an integral domain is, why zero divisors break cancellation, exactly when $\mathbb{Z}_n$ is a field, and the theorem that every finite integral domain is automatically a field.
+
+## The Concept
+
+### Integral domains
+
+An **integral domain** is a commutative ring with unity $1 \ne 0$ and **no zero divisors**:
+
+$$
+ab = 0 \implies a = 0 \text{ or } b = 0
+$$
+
+The name comes from $\mathbb{Z}$, the prototype. The condition is exactly what you assume every time you solve an equation by factoring: from $(x-2)(x-3) = 0$ you conclude $x = 2$ or $x = 3$, and that step is **only valid in an integral domain**.
+
+### Cancellation
+
+> In an integral domain, if $a \ne 0$ and $ab = ac$, then $b = c$.
+
+Proof: $ab - ac = 0$, so $a(b - c) = 0$. Since $a \ne 0$ and there are no zero divisors, $b - c = 0$. ∎
+
+This is the practical payoff. Cancellation is so familiar that its failure is genuinely disorienting.
+
+<CayleyTable
+  labels={["0", "1", "2", "3", "4", "5"]}
+  op={(i, j) => (i * j) % 6}
+  opSymbol="×"
+  title="Multiplication in ℤ₆ — not an integral domain"
+  caption="Zeros appear off the top row and left column: 2 × 3 = 0 and 3 × 4 = 0. Row 2 reads 0, 2, 4, 0, 2, 4, repeating, so 2x = 2y does not force x = y."
+/>
+
+Look at row 2: it reads $0, 2, 4, 0, 2, 4$. The value 2 appears twice, at $2 \cdot 1$ and $2 \cdot 4$. So $2 \cdot 1 = 2 \cdot 4$ while $1 \ne 4$: cancellation fails outright.
+
+Compare a prime modulus.
+
+<CayleyTable
+  labels={["0", "1", "2", "3", "4"]}
+  op={(i, j) => (i * j) % 5}
+  opSymbol="×"
+  title="Multiplication in ℤ₅ — a field"
+  caption="The only zeros sit in row 0 and column 0. Every other row is a rearrangement of 1, 2, 3, 4, so every nonzero element has an inverse."
+/>
+
+No stray zeros, and every nonzero row contains a 1. That's a field.
+
+### Fields
+
+A **field** is a commutative ring with unity in which **every nonzero element has a multiplicative inverse**.
+
+Equivalently: $(F, +)$ is an abelian group, $(F \setminus \{0\}, \times)$ is an abelian group, and multiplication distributes over addition. Two groups sharing a set, glued by distributivity.
+
+**Every field is an integral domain.** If $ab = 0$ with $a \ne 0$, multiply by $a^{-1}$:
+
+$$
+b = a^{-1}(ab) = a^{-1} \cdot 0 = 0
+$$
+
+So no zero divisors exist. The converse fails: $\mathbb{Z}$ is an integral domain and not a field, since 2 has no integer reciprocal.
+
+### When is $\mathbb{Z}_n$ a field?
+
+> $\mathbb{Z}_n$ is a field $\iff$ $n$ is prime.
+
+Both directions are short.
+
+**If $n$ is composite**, write $n = ab$ with $1 < a, b < n$. Then $a$ and $b$ are nonzero in $\mathbb{Z}_n$ but $ab = n \equiv 0$. Zero divisors exist, so it isn't even an integral domain.
+
+**If $n = p$ is prime** and $a \not\equiv 0$, then $\gcd(a,p) = 1$, so Bézout gives integers $x, y$ with $ax + py = 1$. Reducing mod $p$: $ax \equiv 1$, so $x = a^{-1}$.
+
+Because these fields are so important they get a name: $\mathbb{F}_p$, or $GF(p)$ for "Galois field."
+
+### Every finite integral domain is a field
+
+Here's a result with no analogue for infinite rings.
+
+> A finite integral domain is a field.
+
+Proof: let $D$ be a finite integral domain and $a \ne 0$. Consider the map $x \mapsto ax$ from $D$ to $D$. It's injective, because $ax = ay$ implies $x = y$ by cancellation. An injective map from a **finite** set to itself is surjective, so something maps to 1: there is an $x$ with $ax = 1$. ∎
+
+So $a$ is invertible. Finiteness is what forces it — the same argument fails for $\mathbb{Z}$, where $x \mapsto 2x$ is injective but misses 1 because the set is infinite.
+
+This is why the distinction between domain and field, which matters a great deal for $\mathbb{Z}$ and $\mathbb{R}[x]$, evaporates in the finite world.
+
+### Characteristic
+
+The **characteristic** of a ring with unity is the smallest positive $n$ with
+
+$$
+\underbrace{1 + 1 + \dots + 1}_{n \text{ times}} = 0
+$$
+
+and $0$ if no such $n$ exists.
+
+$\mathbb{Z}$, $\mathbb{Q}$, $\mathbb{R}$, $\mathbb{C}$ all have characteristic 0. $\mathbb{Z}_n$ has characteristic $n$.
+
+**The characteristic of an integral domain is 0 or prime.** Suppose it were composite, $n = ab$ with $1 < a,b < n$. Then in the ring, $(a \cdot 1)(b \cdot 1) = n \cdot 1 = 0$, and neither factor is 0 because $n$ is the _smallest_ such value. That's a zero divisor, contradiction. ∎
+
+In characteristic $p$, the identity $(x+y)^p = x^p + y^p$ holds, because all the middle binomial coefficients are divisible by $p$. Sometimes called the "freshman's dream," it's false over $\mathbb{R}$ and true in characteristic $p$, and it underlies a good deal of finite field theory.
+
+## Worked Examples
+
+**Example 1: Is $\mathbb{Z}_{15}$ an integral domain?**
+
+**Solution.** $15 = 3 \cdot 5$, so $3$ and $5$ are nonzero in $\mathbb{Z}_{15}$ but $3 \cdot 5 = 15 \equiv 0$.
+
+**No.** Zero divisors exist, so not a domain and certainly not a field.
+
+The units are $U(15) = \{1,2,4,7,8,11,13,14\}$, of size $\varphi(15) = 8$, and the other six nonzero elements are zero divisors.
+
+**Example 2: Solve $x^2 = 1$ in $\mathbb{Z}_8$.**
+
+**Solution.** Test all eight:
+
+$$
+0^2=0,\ 1^2=1,\ 2^2=4,\ 3^2=1,\ 4^2=0,\ 5^2=1,\ 6^2=4,\ 7^2=1
+$$
+
+Solutions: $x \in \{1, 3, 5, 7\}$ — **four** of them.
+
+Over a field, $x^2 = 1$ factors as $(x-1)(x+1) = 0$ and has at most two solutions. Here $\mathbb{Z}_8$ has zero divisors, the factoring argument fails, and a quadratic gets four roots.
+
+**A polynomial of degree $n$ over a field has at most $n$ roots.** That familiar fact needs the field hypothesis, and this example is what goes wrong without it.
+
+**Example 3: Find $7^{-1}$ in $\mathbb{Z}_{11}$.**
+
+**Solution.** $11$ is prime, so the inverse exists. Look for $x$ with $7x \equiv 1 \pmod{11}$.
+
+$$
+7 \cdot 1 = 7, \quad 7 \cdot 2 = 14 \equiv 3, \quad 7 \cdot 3 = 21 \equiv 10, \quad 7 \cdot 4 = 28 \equiv 6, \quad 7 \cdot 5 = 35 \equiv 2, \quad 7 \cdot 8 = 56 \equiv 1
+$$
+
+$$
+7^{-1} = 8
+$$
+
+For larger moduli, use the extended Euclidean algorithm rather than trial: it finds $x, y$ with $7x + 11y = 1$ in a handful of steps regardless of size.
+
+**Example 4: Is $\mathbb{Z}[x]$ an integral domain?**
+
+**Solution.** Commutative ✓, unity is the constant polynomial 1 ✓.
+
+Zero divisors: if $f$ and $g$ are nonzero with leading terms $a_mx^m$ and $b_nx^n$, then $fg$ has leading term $a_mb_nx^{m+n}$. Since $\mathbb{Z}$ has no zero divisors, $a_mb_n \ne 0$, so $fg \ne 0$.
+
+**Yes, an integral domain.** Not a field, since $x$ has no inverse: any $fg = 1$ forces $\deg f + \deg g = 0$, so both are constants, and $x$ is not.
+
+Generally, $R[x]$ is an integral domain exactly when $R$ is. The degree argument above is where the hypothesis gets used.
+
+**Example 5: A finite domain must be a field.**
+
+Verify the theorem on $\mathbb{Z}_7$ by exhibiting the inverses.
+
+**Solution.** $\mathbb{Z}_7$ is a finite integral domain, so the theorem promises a field.
+
+$$
+1^{-1}=1, \quad 2^{-1}=4, \quad 3^{-1}=5, \quad 4^{-1}=2, \quad 5^{-1}=3, \quad 6^{-1}=6
+$$
+
+Check a couple: $2 \cdot 4 = 8 \equiv 1$ ✓, $3 \cdot 5 = 15 \equiv 1$ ✓.
+
+Every nonzero element inverted, as promised.
+
+**Example 6: Characteristic of a product.**
+
+Find the characteristic of $\mathbb{Z}_4 \times \mathbb{Z}_6$.
+
+**Solution.** The unity is $(1,1)$. Adding it to itself $n$ times gives $(n \bmod 4, n \bmod 6)$, which is $(0,0)$ exactly when $4 \mid n$ and $6 \mid n$.
+
+$$
+\text{char} = \operatorname{lcm}(4,6) = 12
+$$
+
+Since 12 is composite, this ring cannot be an integral domain — and indeed $(2,0)(0,3) = (0,0)$ with both factors nonzero.
+
+**Example 7: The freshman's dream.**
+
+Verify $(x+y)^3 = x^3 + y^3$ in $\mathbb{Z}_3$.
+
+**Solution.** Expand normally:
+
+$$
+(x+y)^3 = x^3 + 3x^2y + 3xy^2 + y^3
+$$
+
+In characteristic 3, $3 = 0$, so both middle terms vanish:
+
+$$
+(x+y)^3 = x^3 + y^3
+$$
+
+Check with $x = y = 1$: left side $(1+1)^3 = 2^3 = 8 \equiv 2$; right side $1 + 1 = 2$ ✓.
+
+This map $x \mapsto x^p$ is the **Frobenius endomorphism**, and it is the engine of finite field theory.
+
+## Real-World Applications
+
+**Cryptography.** Elliptic-curve cryptography works over $\mathbb{F}_p$ for a large prime $p$, and needing a _field_ rather than just a ring is essential: the group law on the curve involves dividing by coordinate differences. Over $\mathbb{Z}_n$ with composite $n$ that division can fail, and the failure leaks a factor of $n$ — the basis of Lenstra's elliptic-curve factoring method.
+
+**Reed–Solomon codes.** QR codes, CDs, DVDs and spacecraft telemetry use codes over finite fields. Decoding solves linear systems, which requires inverting elements, which requires a field. The field is usually $GF(256)$, so one field element is exactly one byte.
+
+**Hash tables and pseudorandom generators.** Choosing a prime modulus makes the arithmetic happen in a field, so every nonzero multiplier is invertible and no probe sequence gets trapped in a short cycle. Composite moduli create zero divisors and, with them, degenerate behaviour.
+
+**Computer algebra.** Whether an algorithm applies depends on the ring type: Gaussian elimination needs a field, the Euclidean algorithm needs a Euclidean domain, factoring behaves differently over $\mathbb{Z}$ and $\mathbb{Q}$. Systems like SageMath dispatch on exactly the distinctions in this lesson.
+
+**Fixed-width integer bugs.** 32-bit arithmetic is $\mathbb{Z}_{2^{32}}$, which is riddled with zero divisors. Code assuming that `a * b == a * c` implies `b == c` is assuming an integral domain it does not have, and this is a genuine source of security vulnerabilities.
+
+:::note[You've Got This]
+Two headline facts. Zero divisors are what break cancellation, and cancellation is what makes "factor and set each piece to zero" legal — so ℤ₆ is a place where familiar algebra genuinely stops working. And ℤₙ is a field exactly when n is prime, which retroactively explains a lot of earlier lessons, including why U(p) has all p−1 nonzero elements. The finite-domain-implies-field theorem is worth admiring too: finiteness alone upgrades cancellation into division, and that's the sort of thing abstraction is good at finding.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="abstract-integral-domains-and-fields"
+  questions={[
+    {
+      id: "q1",
+      text: "For which n is ℤₙ a field?",
+      options: [
+        "For every n greater than 1",
+        "Exactly when n is prime",
+        "Exactly when n is even",
+        "Exactly when n is a perfect square",
+      ],
+      correctIndex: 1,
+      explanation:
+        "If n = ab is composite then a and b are nonzero with ab ≡ 0, giving zero divisors. If n is prime, Bézout's identity produces an inverse for every nonzero element.",
+    },
+    {
+      id: "q2",
+      text: "How many solutions does x² = 1 have in ℤ₈?",
+      options: ["One", "Two", "Four", "Eight"],
+      correctIndex: 2,
+      explanation:
+        "Testing all eight elements gives 1, 3, 5 and 7. A degree-2 polynomial can only be limited to two roots over a field, and ℤ₈ is not one because it has zero divisors.",
+    },
+    {
+      id: "q3",
+      text: "What is true of every finite integral domain?",
+      options: [
+        "It is infinite in disguise",
+        "It must be a field",
+        "It always has zero divisors",
+        "It cannot be commutative",
+      ],
+      correctIndex: 1,
+      explanation:
+        "The map x ↦ ax is injective by cancellation, and an injective map on a finite set is surjective, so something maps to 1. Finiteness is what turns cancellation into invertibility.",
+    },
+    {
+      id: "q4",
+      text: "Which ring is an integral domain but NOT a field?",
+      options: ["ℤ₇", "ℚ", "ℤ", "ℤ₆"],
+      correctIndex: 2,
+      explanation:
+        "ℤ has no zero divisors but 2 has no integer reciprocal, so it is a domain and not a field. ℤ₇ and ℚ are fields, and ℤ₆ is not even a domain since 2 × 3 = 0.",
+    },
+    {
+      id: "q5",
+      text: "What can the characteristic of an integral domain be?",
+      options: [
+        "Any positive integer",
+        "Only 0",
+        "Only 0 or a prime",
+        "Only an even number",
+      ],
+      correctIndex: 2,
+      explanation:
+        "A composite characteristic n = ab would make a·1 and b·1 nonzero elements whose product is n·1 = 0, contradicting the absence of zero divisors. So the characteristic is 0 or prime.",
+    },
+    {
+      id: "q6",
+      text: "In ℤ₆, why can you not cancel the 2 in the equation 2x = 2y?",
+      options: [
+        "Because 2 has no additive inverse",
+        "Because 2 is a zero divisor, so 2 · 1 = 2 · 4 while 1 ≠ 4",
+        "Because ℤ₆ is not commutative",
+        "Because 6 is even",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Cancellation requires the absence of zero divisors, and 2 × 3 = 0 in ℤ₆. Concretely 2 · 1 = 2 and 2 · 4 = 8 ≡ 2, so equal products do not force equal factors.",
+    },
+  ]}
+/>

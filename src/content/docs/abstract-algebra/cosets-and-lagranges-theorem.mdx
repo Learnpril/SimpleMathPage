@@ -1,0 +1,311 @@
+---
+title: Cosets and Lagrange's Theorem
+description: Slicing a group into equal blocks, and the counting theorem that follows
+sidebar:
+  order: 9
+---
+
+import Quiz from "../../../components/Quiz.astro";
+import SymbolKey from "../../../components/SymbolKey.astro";
+import CosetPartition from "../../../components/CosetPartition.astro";
+
+## What You'll Learn
+
+In this lesson you'll learn what a coset is, why cosets partition a group into equal-sized blocks, and how that single observation proves Lagrange's theorem, the most-used counting result in group theory.
+
+<SymbolKey
+  items={[
+    {
+      sym: "aH",
+      read: "the left coset of H by a",
+      note: "the set {ah : h ∈ H}, which is H shifted by a",
+    },
+    {
+      sym: "Ha",
+      read: "the right coset of H by a",
+      note: "the set {ha : h ∈ H}; in a non-abelian group this can differ from aH",
+    },
+    {
+      sym: "[G : H]",
+      read: "the index of H in G",
+      note: "how many distinct cosets there are",
+    },
+    {
+      sym: "|G|",
+      read: "the order of G",
+      note: "the number of elements",
+    },
+    {
+      sym: "a ≡ b (mod H)",
+      read: "a and b lie in the same coset of H",
+      note: "the same idea as congruence mod n, generalized",
+    },
+    {
+      sym: "⊔",
+      read: "disjoint union",
+      note: "a union of sets that do not overlap",
+    },
+  ]}
+/>
+
+## The Concept
+
+### Cosets
+
+Let $H \le G$ and $a \in G$. The **left coset** of $H$ by $a$ is
+
+$$
+aH = \{ah : h \in H\}
+$$
+
+Think of it as $H$ translated by $a$. There's a matching notion of **right coset** $Ha = \{ha : h \in H\}$.
+
+Cosets are almost never subgroups. $aH$ contains the identity only when $a \in H$, in which case $aH = H$ exactly. So among all the cosets of $H$, precisely one is a subgroup: $H$ itself.
+
+### Cosets partition the group
+
+Here's the key structural fact, and everything else in the lesson is a consequence.
+
+<CosetPartition />
+
+**The left cosets of $H$ partition $G$.** They cover everything and never overlap. Two things to prove.
+
+**Every element is in some coset.** For $a \in G$, we have $a = ae \in aH$ since $e \in H$.
+
+**Two cosets are either identical or disjoint.** Suppose $aH$ and $bH$ share an element $x$. Then $x = ah_1 = bh_2$ for some $h_1, h_2 \in H$, so $a = bh_2h_1^{-1}$. Since $h_2h_1^{-1} \in H$, every element $ah$ of $aH$ equals $b(h_2h_1^{-1}h) \in bH$, giving $aH \subseteq bH$. The same argument the other way gives $bH \subseteq aH$, so the two cosets are equal.
+
+So overlapping cosets coincide entirely. There's no partial overlap.
+
+### All cosets have the same size
+
+**$|aH| = |H|$ for every $a$.** The map $h \mapsto ah$ from $H$ to $aH$ is onto by definition, and it's injective by cancellation: $ah_1 = ah_2$ forces $h_1 = h_2$.
+
+So a coset is a perfect copy of $H$, just relocated. Combined with the partition property, this is a very rigid picture: $G$ is tiled by non-overlapping blocks all of size $|H|$.
+
+### Lagrange's theorem
+
+Count the elements two ways and you're done.
+
+> **Lagrange's theorem.** If $G$ is finite and $H \le G$, then
+>
+> $$
+> |G| = [G:H] \cdot |H|
+> $$
+>
+> In particular, **$|H|$ divides $|G|$.**
+
+Proof: the cosets partition $G$ into $[G:H]$ blocks, each of size $|H|$. ∎
+
+That's it. A two-line proof that constrains every finite group in existence.
+
+### What Lagrange gives you
+
+The divisibility statement is the workhorse.
+
+**The order of every element divides $|G|$.** Because $|a| = |\langle a \rangle|$, and $\langle a \rangle$ is a subgroup.
+
+**$a^{|G|} = e$ for every $a$.** Write $|G| = |a| \cdot k$; then $a^{|G|} = (a^{|a|})^k = e^k = e$.
+
+**Every group of prime order is cyclic.** Any $a \ne e$ generates a subgroup of order dividing $p$ and bigger than 1, hence order $p$, hence everything.
+
+**Groups of order 4 have no element of order 3.** Since 3 doesn't divide 4. This kind of instant elimination is what makes classification arguments possible.
+
+### The converse is false
+
+Lagrange says every subgroup's order divides $|G|$. It does **not** say that every divisor gives a subgroup.
+
+$A_4$ has order 12, and $4 \mid 12$... but $A_4$ has no subgroup of order 6. So a divisor can fail to be realized. Cyclic groups do have a subgroup for every divisor, which is a special property of theirs, not a general truth.
+
+Partial converses exist and are important. **Cauchy's theorem** says if a prime $p$ divides $|G|$ then $G$ has an element of order $p$. The **Sylow theorems** guarantee subgroups of prime-power order. But the naive converse is simply false.
+
+### Left versus right
+
+In an abelian group $aH = Ha$ always. In a non-abelian group they can differ.
+
+In $S_3$, take $H = \{e, s\}$ where $s$ is a transposition. Then $rH = \{r, rs\}$ while $Hr = \{r, sr\} = \{r, r^2s\}$. Different sets.
+
+The number of left cosets always equals the number of right cosets, so the index is unambiguous. But whether $aH = Ha$ for every $a$ is a special condition, and it's exactly the definition of a **normal** subgroup — the subject of the next lesson.
+
+## Worked Examples
+
+**Example 1: Find the cosets of $H = \{0, 3, 6, 9\}$ in $\mathbb{Z}_{12}$.**
+
+**Solution.** $H = \langle 3 \rangle$, of order 4.
+
+$$
+0 + H = \{0,3,6,9\} = H
+$$
+
+$$
+1 + H = \{1,4,7,10\}
+$$
+
+$$
+2 + H = \{2,5,8,11\}
+$$
+
+Now $3 + H = \{3,6,9,0\} = H$ again, so we're done. **Three cosets.**
+
+$$
+[G:H] = 3, \qquad |G| = 3 \cdot 4 = 12 \ \checkmark
+$$
+
+Notice these are exactly the residue classes mod 3, which is not a coincidence: cosets of $\langle 3 \rangle$ in $\mathbb{Z}_{12}$ record the remainder on division by 3.
+
+**Example 2: Cosets of $3\mathbb{Z}$ in $\mathbb{Z}$.**
+
+**Solution.** $H = 3\mathbb{Z} = \{\dots,-3,0,3,6,\dots\}$.
+
+$$
+0 + H = \{\dots, -3, 0, 3, \dots\}, \quad 1 + H = \{\dots, -2, 1, 4, \dots\}, \quad 2 + H = \{\dots, -1, 2, 5, \dots\}
+$$
+
+$3 + H = H$, so there are exactly three: $[\mathbb{Z} : 3\mathbb{Z}] = 3$.
+
+Both $|G|$ and $|H|$ are infinite here, so Lagrange's equation doesn't apply numerically, but the index is still a perfectly good finite number. **These three cosets are the congruence classes mod 3**, which is where the notation $\mathbb{Z}/3\mathbb{Z}$ comes from.
+
+**Example 3: Show left and right cosets can differ.**
+
+In $S_3 = \{e, r, r^2, s, rs, r^2s\}$ with $H = \{e, s\}$.
+
+**Solution.** Using $sr = r^2s$:
+
+$$
+rH = \{r \cdot e, r \cdot s\} = \{r, rs\}
+$$
+
+$$
+Hr = \{e \cdot r, s \cdot r\} = \{r, r^2 s\}
+$$
+
+$rH \ne Hr$ since $rs \ne r^2s$.
+
+So $H$ is **not normal** in $S_3$. By contrast the rotation subgroup $\{e, r, r^2\}$ _is_ normal, and having index 2 is the reason, as the next lesson explains.
+
+**Example 4: Use Lagrange to rule things out.**
+
+A group $G$ has order 15. What element orders are possible?
+
+**Solution.** Orders must divide 15, so they lie in $\{1, 3, 5, 15\}$.
+
+Order 1 belongs to the identity alone. So every non-identity element has order 3, 5, or 15. **No element of order 2**, and hence no element is its own inverse except $e$.
+
+A stronger conclusion is available: every group of order 15 is in fact cyclic, so there's exactly one. That needs the Sylow theorems, but Lagrange alone already eliminated most possibilities.
+
+**Example 5: Fermat's little theorem from Lagrange.**
+
+Prove that if $p$ is prime and $\gcd(a,p) = 1$ then $a^{p-1} \equiv 1 \pmod p$.
+
+**Solution.** Work in $U(p)$, the nonzero residues mod $p$ under multiplication. Since $p$ is prime, $|U(p)| = p - 1$.
+
+The condition $\gcd(a,p)=1$ says $a \in U(p)$. By the corollary of Lagrange that $x^{|G|} = e$ for all $x$:
+
+$$
+a^{p-1} \equiv 1 \pmod p
+$$
+
+∎
+
+A cornerstone of number theory, and it's a two-line consequence of counting cosets. The generalization to composite modulus, **Euler's theorem** $a^{\varphi(n)} \equiv 1 \pmod n$, is the same argument in $U(n)$, and it is what makes RSA decryption work.
+
+**Example 6: A group of order 12 with no subgroup of order 6.**
+
+**Solution.** Take $A_4$, the even permutations of four objects, $|A_4| = 12$.
+
+Suppose $H \le A_4$ with $|H| = 6$. Then $[A_4 : H] = 2$, and any index-2 subgroup is normal, with $A_4/H \cong \mathbb{Z}_2$. So $x^2 \in H$ for every $x \in A_4$.
+
+But $A_4$ contains eight 3-cycles, and for a 3-cycle $x$ we have $x^2 = x^{-1}$, also a 3-cycle. As $x$ ranges over all eight 3-cycles, $x^2$ does too, so $H$ would have to contain all eight of them plus the identity: at least 9 elements. That contradicts $|H| = 6$.
+
+**No subgroup of order 6 exists**, even though $6 \mid 12$. This is the standard counterexample to the converse of Lagrange.
+
+## Real-World Applications
+
+**Error-correcting codes.** A linear code $C$ is a subgroup of $(\mathbb{Z}_2^n, +)$, and the cosets of $C$ are the possible "error patterns." Decoding a received word means identifying which coset it lies in and correcting by that coset's most likely error, its **coset leader**. Standard-array decoding is literally a table of cosets, and Lagrange tells you how many rows it has.
+
+**RSA.** The key equation $ed \equiv 1 \pmod{\varphi(n)}$ and the decryption step both rest on Euler's theorem, which is Lagrange applied to $U(n)$. Security comes from $\varphi(n)$ being hard to compute without factoring $n$.
+
+**Rubik's cube.** God's number, the 20-move upper bound for solving any scramble, was proved in 2010 by partitioning the cube group into cosets of a large subgroup and searching each coset separately. Roughly two billion cosets were analysed; the coset decomposition is what made the problem finite enough to attack.
+
+**Crystallography.** A crystal is described by a lattice group, and the distinct atom positions correspond to cosets of the site's stabilizer. The count of symmetry-inequivalent positions is an index computation.
+
+**Balanced tournament design.** Scheduling round-robins and balanced incomplete block designs often uses cosets of a subgroup of $\mathbb{Z}_n$ to generate rounds, guaranteeing every pair meets exactly once.
+
+:::note[You've Got This]
+Lagrange's theorem does more work than any other result in this section, and the proof is just careful counting: equal blocks, no overlaps, so the sizes multiply. Keep the tiling picture in your head. The two things people trip over are worth naming: the converse is false, so a divisor need not give a subgroup, and left and right cosets can genuinely differ in a non-abelian group. That second point isn't a nuisance — it's the door into normal subgroups, which is the next lesson and the gateway to everything after it.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="abstract-cosets-and-lagranges-theorem"
+  questions={[
+    {
+      id: "q1",
+      text: "In ℤ₁₈, how many distinct cosets does the subgroup H = ⟨6⟩ = {0, 6, 12} have?",
+      options: ["3", "6", "9", "18"],
+      correctIndex: 1,
+      explanation:
+        "By Lagrange, [G:H] = |G|/|H| = 18/3 = 6. The cosets are 0+H through 5+H, and they are the residue classes modulo 6.",
+    },
+    {
+      id: "q2",
+      text: "What does Lagrange's theorem guarantee?",
+      options: [
+        "Every divisor of |G| is the order of some subgroup",
+        "The order of any subgroup divides the order of the group",
+        "Every group is cyclic",
+        "Left and right cosets are always equal",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Lagrange gives |G| = [G:H] · |H|, so subgroup orders divide the group order. The converse fails: A₄ has order 12 but no subgroup of order 6.",
+    },
+    {
+      id: "q3",
+      text: "A group has order 20. Which is NOT a possible order for one of its elements?",
+      options: ["4", "5", "8", "10"],
+      correctIndex: 2,
+      explanation:
+        "Element orders must divide the group order, and 8 does not divide 20. The divisors of 20 are 1, 2, 4, 5, 10 and 20, all of which are permitted.",
+    },
+    {
+      id: "q4",
+      text: "Why do two cosets of H that share a single element have to be identical?",
+      options: [
+        "Because cosets are subgroups",
+        "Because all cosets contain the identity",
+        "Because a shared element lets you rewrite one coset's representative in terms of the other's, giving containment both ways",
+        "Because H is always normal",
+      ],
+      correctIndex: 2,
+      explanation:
+        "If ah₁ = bh₂ then a = bh₂h₁⁻¹ with h₂h₁⁻¹ in H, so aH ⊆ bH, and the symmetric argument gives the reverse. That is why cosets never partially overlap.",
+    },
+    {
+      id: "q5",
+      text: "Which theorem follows from the fact that a^|G| = e in any finite group?",
+      options: [
+        "The Pythagorean theorem",
+        "Fermat's little theorem",
+        "Cayley's theorem",
+        "The fundamental theorem of algebra",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Applying it in U(p), which has order p − 1 when p is prime, gives a^(p−1) ≡ 1 mod p. The composite version, Euler's theorem, is the same argument and underpins RSA.",
+    },
+    {
+      id: "q6",
+      text: "In a non-abelian group, what can be said about aH and Ha?",
+      options: [
+        "They are always equal",
+        "They always differ",
+        "They may differ, and they coincide for every a exactly when H is normal",
+        "They always have different sizes",
+      ],
+      correctIndex: 2,
+      explanation:
+        "Both cosets have size |H|, but they need not be the same set. Requiring aH = Ha for every a is precisely the definition of a normal subgroup.",
+    },
+  ]}
+/>

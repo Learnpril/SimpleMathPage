@@ -1,0 +1,245 @@
+---
+/**
+ * CayleyTable — an operation table for a finite algebraic structure.
+ *
+ * The body is computed from the `op` callback rather than typed out, so the
+ * table can never disagree with the arithmetic it claims to show. Pass a set of
+ * element indices as `highlight` to shade a subgroup (or any closed subset) and
+ * the component checks that the subset really is closed, reporting the result in
+ * the caption instead of taking the claim on trust.
+ *
+ * Rendered as an HTML table rather than SVG so it reflows on narrow screens.
+ *
+ * Usage:
+ *   <CayleyTable
+ *     labels={["0","1","2","3"]}
+ *     op={(i, j) => (i + j) % 4}
+ *     opSymbol="+"
+ *     title="Z₄ under addition mod 4"
+ *     highlight={[0, 2]}
+ *   />
+ */
+interface Props {
+  labels: string[];
+  /** Returns the index of the element in `labels` that is row ∘ column. */
+  op: (row: number, col: number) => number;
+  opSymbol?: string;
+  title?: string;
+  caption?: string;
+  /** Indices of a subset to shade, e.g. a subgroup. */
+  highlight?: number[];
+  highlightLabel?: string;
+}
+
+const {
+  labels,
+  op,
+  opSymbol = "·",
+  title,
+  caption,
+  highlight = [],
+  highlightLabel,
+} = Astro.props;
+
+const n = labels.length;
+const grid = Array.from({ length: n }, (_, i) =>
+  Array.from({ length: n }, (_, j) => op(i, j)),
+);
+
+const hi = new Set(highlight);
+
+// Is the highlighted subset actually closed under the operation?
+let closed = true;
+for (const a of highlight) {
+  for (const b of highlight) {
+    if (!hi.has(grid[a][b])) closed = false;
+  }
+}
+
+// An identity is an element e with e ∘ x = x ∘ e = x for every x
+const identity = grid.findIndex(
+  (row, i) => row.every((v, j) => v === j) && grid.every((r, j) => r[i] === j),
+);
+---
+
+<figure class="cay">
+  {title && <figcaption class="cay-title">{title}</figcaption>}
+  <div class="cay-scroll">
+    <table class="cay-table">
+      <thead>
+        <tr>
+          <th scope="col" class="cay-corner">{opSymbol}</th>
+          {
+            labels.map((l, j) => (
+              <th scope="col" class={hi.has(j) ? "cay-hd cay-hd-hi" : "cay-hd"}>
+                {l}
+              </th>
+            ))
+          }
+        </tr>
+      </thead>
+      <tbody>
+        {
+          labels.map((rowLabel, i) => (
+            <tr>
+              <th scope="row" class={hi.has(i) ? "cay-hd cay-hd-hi" : "cay-hd"}>
+                {rowLabel}
+              </th>
+              {grid[i].map((v, j) => (
+                <td
+                  class={[
+                    "cay-cell",
+                    hi.has(i) && hi.has(j) ? "cay-cell-hi" : "",
+                    v === identity && identity >= 0 ? "cay-cell-id" : "",
+                  ]
+                    .filter(Boolean)
+                    .join(" ")}
+                >
+                  {labels[v]}
+                </td>
+              ))}
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </div>
+
+  {caption && <p class="cay-cap">{caption}</p>}
+
+  <p class="cay-notes">
+    {
+      identity >= 0 ? (
+        <span>
+          Identity: <strong>{labels[identity]}</strong>. Cells holding it mark
+          inverse pairs.
+        </span>
+      ) : (
+        <span>This table has no two-sided identity.</span>
+      )
+    }
+    {
+      highlight.length > 0 && (
+        <span class="cay-hi-note">
+          Shaded: {highlight.map((i) => labels[i]).join(", ")}
+          {highlightLabel ? ` (${highlightLabel})` : ""} —{" "}
+          {closed
+            ? "closed, every product stays inside"
+            : "not closed, some product escapes"}
+          .
+        </span>
+      )
+    }
+  </p>
+</figure>
+
+<style>
+  .cay {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 1.5rem 0;
+  }
+  .cay-title {
+    font-family: "Libre Baskerville", Georgia, serif;
+    font-size: 0.92rem;
+    font-weight: 700;
+    color: #eee;
+    margin-bottom: 0.6rem;
+    text-align: center;
+  }
+  .cay-scroll {
+    max-width: 100%;
+    overflow-x: auto;
+  }
+  .cay-table {
+    border-collapse: collapse;
+    font-family: "Libre Baskerville", Georgia, serif;
+    font-size: 0.9rem;
+    margin: 0;
+  }
+  .cay-table :is(th, td) {
+    border: 1px solid #30363d;
+    padding: 0.34rem 0.6rem;
+    text-align: center;
+    min-width: 2.3rem;
+  }
+  .cay-corner {
+    background: #1c2128;
+    color: #58a6ff;
+    font-weight: 700;
+  }
+  .cay-hd {
+    background: #1c2128;
+    color: #58a6ff;
+    font-weight: 700;
+  }
+  .cay-hd-hi {
+    color: #7ee787;
+  }
+  .cay-cell {
+    color: #c9d1d9;
+  }
+  .cay-cell-hi {
+    background: rgba(126, 231, 135, 0.16);
+    color: #7ee787;
+  }
+  .cay-cell-id {
+    font-weight: 700;
+    color: #f0883e;
+  }
+  .cay-cell-hi.cay-cell-id {
+    color: #f0883e;
+  }
+  .cay-cap,
+  .cay-notes {
+    font-family: "Libre Baskerville", Georgia, serif;
+    font-size: 0.82rem;
+    color: #9198a1;
+    font-style: italic;
+    text-align: center;
+    max-width: 34rem;
+    margin: 0.6rem 0 0;
+    line-height: 1.5;
+  }
+  .cay-notes {
+    font-style: normal;
+    font-size: 0.78rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+  }
+  .cay-hi-note {
+    color: #7ee787;
+  }
+
+  :global([data-theme="light"]) .cay-title {
+    color: #24292f;
+  }
+  :global([data-theme="light"]) .cay-table :is(th, td) {
+    border-color: #d0d7de;
+  }
+  :global([data-theme="light"]) :is(.cay-corner, .cay-hd) {
+    background: #f6f8fa;
+    color: #0550ae;
+  }
+  :global([data-theme="light"]) .cay-hd-hi {
+    color: #116329;
+  }
+  :global([data-theme="light"]) .cay-cell {
+    color: #24292f;
+  }
+  :global([data-theme="light"]) .cay-cell-hi {
+    background: rgba(17, 99, 41, 0.1);
+    color: #116329;
+  }
+  :global([data-theme="light"]) :is(.cay-cell-id, .cay-cell-hi.cay-cell-id) {
+    color: #b35900;
+  }
+  :global([data-theme="light"]) :is(.cay-cap, .cay-notes) {
+    color: #57606a;
+  }
+  :global([data-theme="light"]) .cay-hi-note {
+    color: #116329;
+  }
+</style>

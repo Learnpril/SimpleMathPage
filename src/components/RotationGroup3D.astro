@@ -1,0 +1,196 @@
+---
+/**
+ * RotationGroup3D — the rotation group of the cube, which has exactly 24
+ * elements. The 24 orientations are generated rather than listed: every signed
+ * permutation of the coordinate axes with determinant +1 is a rotation taking
+ * the cube onto itself, and there are 6 × 4 = 24 of them.
+ *
+ * The scene steps through all 24 in turn, so the count is demonstrated.
+ */
+---
+
+<figure
+  class="rg3"
+  role="img"
+  aria-label="Interactive 3D cube stepping through all 24 rotations that map the cube onto itself. Each rotation sends the coordinate axes to a signed permutation of themselves with determinant plus one."
+>
+  <div class="rg3-canvas" data-rg3d></div>
+  <div class="rg3-hint">Drag to rotate · Scroll/Pinch to zoom</div>
+  <figcaption class="rg3-cap">
+    The cube looks identical in <strong>24</strong> different orientations, and
+    those 24 rotations form a group. Pick a face to point up (6 ways), then spin
+    about that axis (4 ways): 6 × 4 = 24. This group is isomorphic to
+    <em>S₄</em>, because a rotation of the cube permutes its four long diagonals.
+  </figcaption>
+</figure>
+
+<script>
+  import * as THREE from "three";
+  import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+
+  /**
+   * All rotations mapping a cube onto itself: choose an image for the x axis
+   * (6 signed axes), then for the y axis (4 remaining perpendicular signed
+   * axes), and z is forced by the right-hand rule. That is 24 matrices.
+   */
+  function cubeRotations() {
+    const axes = [
+      new THREE.Vector3(1, 0, 0),
+      new THREE.Vector3(-1, 0, 0),
+      new THREE.Vector3(0, 1, 0),
+      new THREE.Vector3(0, -1, 0),
+      new THREE.Vector3(0, 0, 1),
+      new THREE.Vector3(0, 0, -1),
+    ];
+    const out: THREE.Quaternion[] = [];
+    for (const ex of axes) {
+      for (const ey of axes) {
+        if (Math.abs(ex.dot(ey)) > 1e-9) continue; // must be perpendicular
+        const ez = new THREE.Vector3().crossVectors(ex, ey);
+        const m = new THREE.Matrix4().makeBasis(ex, ey, ez);
+        out.push(new THREE.Quaternion().setFromRotationMatrix(m));
+      }
+    }
+    return out;
+  }
+
+  function initScene(container: HTMLElement) {
+    const width = Math.min(container.clientWidth, 480);
+    const height = 360;
+    const isDark = document.documentElement.dataset.theme !== "light";
+
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(isDark ? 0x121212 : 0xf8f9fa);
+
+    const camera = new THREE.PerspectiveCamera(40, width / height, 0.1, 200);
+    camera.position.set(3.6, 2.8, 4.2);
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(width, height);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    container.appendChild(renderer.domElement);
+
+    const group = new THREE.Group();
+    scene.add(group);
+
+    // Distinct colours per face, so a rotation is visibly a rearrangement
+    const faceColours = isDark
+      ? [0x58a6ff, 0x7ee787, 0xf0883e, 0xd2a8ff, 0xff7b72, 0xe3b341]
+      : [0x0550ae, 0x116329, 0xb35900, 0x6639ba, 0xa40e26, 0x7d4e00];
+    const materials = faceColours.map(
+      (c) => new THREE.MeshPhongMaterial({ color: c, shininess: 30 }),
+    );
+    const cube = new THREE.Mesh(new THREE.BoxGeometry(1.9, 1.9, 1.9), materials);
+    group.add(cube);
+
+    // Edges, for readability against the background
+    const edges = new THREE.LineSegments(
+      new THREE.EdgesGeometry(new THREE.BoxGeometry(1.9, 1.9, 1.9)),
+      new THREE.LineBasicMaterial({ color: isDark ? 0x0d1117 : 0xffffff }),
+    );
+    group.add(edges);
+
+    // The four long diagonals, which the rotation group permutes
+    const diagMat = new THREE.LineBasicMaterial({
+      color: isDark ? 0xffffff : 0x24292f,
+      transparent: true,
+      opacity: 0.35,
+    });
+    const s = 0.95;
+    const corners: [number, number, number][] = [
+      [s, s, s],
+      [s, -s, -s],
+      [-s, s, -s],
+      [-s, -s, s],
+    ];
+    for (const c of corners) {
+      const pts = [
+        new THREE.Vector3(...c),
+        new THREE.Vector3(-c[0], -c[1], -c[2]),
+      ];
+      group.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts), diagMat));
+    }
+
+    scene.add(new THREE.AmbientLight(0xffffff, 0.75));
+    const dl = new THREE.DirectionalLight(0xffffff, 0.6);
+    dl.position.set(4, 6, 5);
+    scene.add(dl);
+
+    const controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.08;
+    controls.minDistance = 3.4;
+    controls.maxDistance = 14;
+
+    const rotations = cubeRotations();
+    let index = 0;
+    let from = rotations[0].clone();
+    let to = rotations[0].clone();
+    let t = 1;
+    const holdFor = 0.85; // seconds paused on each orientation
+    let hold = 0;
+    const clock = new THREE.Clock();
+
+    let animId: number;
+    function animate() {
+      animId = requestAnimationFrame(animate);
+      const dt = clock.getDelta();
+
+      if (t >= 1) {
+        hold += dt;
+        if (hold >= holdFor) {
+          hold = 0;
+          t = 0;
+          from = group.quaternion.clone();
+          index = (index + 1) % rotations.length;
+          to = rotations[index].clone();
+        }
+      } else {
+        t = Math.min(1, t + dt * 1.6);
+        // Ease so each step reads as a deliberate move
+        const e = t * t * (3 - 2 * t);
+        group.quaternion.slerpQuaternions(from, to, e);
+      }
+
+      controls.update();
+      renderer.render(scene, camera);
+    }
+    animate();
+
+    return () => {
+      cancelAnimationFrame(animId);
+      renderer.dispose();
+    };
+  }
+
+  function setup() {
+    document.querySelectorAll<HTMLElement>("[data-rg3d]").forEach((el) => {
+      if (el.querySelector("canvas")) return;
+      const obs = new IntersectionObserver(
+        (entries) => {
+          if (entries[0].isIntersecting) {
+            obs.disconnect();
+            initScene(el);
+          }
+        },
+        { threshold: 0.05 },
+      );
+      obs.observe(el);
+    });
+  }
+
+  setup();
+  document.addEventListener("astro:page-load", setup);
+</script>
+
+<style>
+  .rg3 { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .rg3-canvas { width:100%; max-width:480px; min-height:360px; border-radius:8px; overflow:hidden; }
+  .rg3-canvas canvas { border-radius:8px; }
+  .rg3-hint { font-family:'Libre Baskerville',Georgia,serif; font-size:0.8rem; color:#9198a1; margin-top:0.4rem; }
+  .rg3-cap {
+    font-family:'Libre Baskerville',Georgia,serif; font-size:0.85rem; color:#9198a1;
+    font-style:italic; text-align:center; max-width:460px; margin-top:0.5rem; line-height:1.5;
+  }
+  :global([data-theme="light"]) .rg3-hint, :global([data-theme="light"]) .rg3-cap { color:#57606a; }
+</style>

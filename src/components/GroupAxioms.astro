@@ -1,0 +1,112 @@
+---
+/**
+ * GroupAxioms — the four conditions, each with its formula and a plain reading.
+ * Commutativity is shown separately below because it is deliberately not required.
+ */
+const bw = 248;
+const bh = 94;
+const gap = 20;
+const margin = 14;
+const w = margin * 2 + 2 * bw + gap;
+const h = 312;
+const rows = [44, 148];
+const colX = (i: number) => margin + i * (bw + gap);
+
+const axioms = [
+  {
+    n: "1. Closure",
+    formula: "a ∗ b ∈ G",
+    plain: "combining two members",
+    plain2: "gives another member",
+    cls: "green",
+  },
+  {
+    n: "2. Associativity",
+    formula: "(a ∗ b) ∗ c = a ∗ (b ∗ c)",
+    plain: "parentheses do not matter,",
+    plain2: "so chains are unambiguous",
+    cls: "blue",
+  },
+  {
+    n: "3. Identity",
+    formula: "e ∗ a = a ∗ e = a",
+    plain: "there is a do-nothing",
+    plain2: "element, and only one",
+    cls: "purple",
+  },
+  {
+    n: "4. Inverses",
+    formula: "a ∗ a⁻¹ = a⁻¹ ∗ a = e",
+    plain: "every move can be",
+    plain2: "undone, one way only",
+    cls: "orange",
+  },
+];
+---
+
+<figure
+  class="gax"
+  role="img"
+  aria-label="The four group axioms: closure, associativity, an identity element, and inverses for every element. Commutativity is not required, and groups that happen to have it are called abelian."
+>
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    <text x="16" y="24" class="gax-head" font-size="12.5" font-weight="bold">A group is a set G with an operation ∗ satisfying all four</text>
+
+    {axioms.map((a, i) => {
+      const x = colX(i % 2);
+      const y = rows[Math.floor(i / 2)];
+      return (
+        <g>
+          <rect x={x} y={y} width={bw} height={bh} rx="8" class={`gax-box gax-${a.cls}`} />
+          <text x={x + 16} y={y + 23} class={`gax-name gax-t-${a.cls}`} font-size="12.5" font-weight="bold">{a.n}</text>
+          <text x={x + 16} y={y + 46} class="gax-formula" font-size="11.5">{a.formula}</text>
+          <text x={x + 16} y={y + 67} class="gax-plain" font-size="9.5">{a.plain}</text>
+          <text x={x + 16} y={y + 82} class="gax-plain" font-size="9.5">{a.plain2}</text>
+        </g>
+      );
+    })}
+
+    <text x={w / 2} y="256" class="gax-foot" font-size="10" text-anchor="middle">
+      Check them in this order; the first failure settles the question
+    </text>
+
+    {/* Deliberately not an axiom */}
+    <rect x={margin} y="268" width={w - margin * 2} height="32" rx="6" class="gax-optional" />
+    <text x={margin + 14} y="288" class="gax-opt-lbl" font-size="10.5">
+      Not required: a ∗ b = b ∗ a. Groups that satisfy it anyway are called abelian.
+    </text>
+  </svg>
+</figure>
+
+<style>
+  .gax { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .gax svg { width:100%; max-width:100%; height:auto; }
+  .gax-box { fill:none; stroke-width:2; }
+  .gax-green { stroke:#7ee787; }
+  .gax-blue { stroke:#58a6ff; }
+  .gax-purple { stroke:#d2a8ff; }
+  .gax-orange { stroke:#f0883e; }
+  .gax-name { font-family:'Libre Baskerville',Georgia,serif; }
+  .gax-t-green { fill:#7ee787; }
+  .gax-t-blue { fill:#58a6ff; }
+  .gax-t-purple { fill:#d2a8ff; }
+  .gax-t-orange { fill:#f0883e; }
+  .gax-formula { fill:#c9d1d9; font-family:'Libre Baskerville',Georgia,serif; }
+  .gax-plain { fill:#9198a1; font-family:'Libre Baskerville',Georgia,serif; font-style:italic; }
+  .gax-head { fill:#eee; font-family:'Libre Baskerville',Georgia,serif; }
+  .gax-foot { fill:#9198a1; font-family:'Libre Baskerville',Georgia,serif; font-style:italic; }
+  .gax-optional { fill:none; stroke:#666; stroke-width:1.2; stroke-dasharray:5,4; }
+  .gax-opt-lbl { fill:#9198a1; font-family:'Libre Baskerville',Georgia,serif; }
+  :global([data-theme="light"]) .gax-green { stroke:#116329; }
+  :global([data-theme="light"]) .gax-blue { stroke:#0550ae; }
+  :global([data-theme="light"]) .gax-purple { stroke:#6639ba; }
+  :global([data-theme="light"]) .gax-orange { stroke:#b35900; }
+  :global([data-theme="light"]) .gax-t-green { fill:#116329; }
+  :global([data-theme="light"]) .gax-t-blue { fill:#0550ae; }
+  :global([data-theme="light"]) .gax-t-purple { fill:#6639ba; }
+  :global([data-theme="light"]) .gax-t-orange { fill:#b35900; }
+  :global([data-theme="light"]) .gax-formula { fill:#24292f; }
+  :global([data-theme="light"]) :is(.gax-plain, .gax-foot, .gax-opt-lbl) { fill:#57606a; }
+  :global([data-theme="light"]) .gax-head { fill:#24292f; }
+  :global([data-theme="light"]) .gax-optional { stroke:#ccc; }
+</style>

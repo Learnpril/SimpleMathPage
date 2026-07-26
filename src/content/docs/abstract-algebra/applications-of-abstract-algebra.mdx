@@ -1,0 +1,305 @@
+---
+title: Applications of Abstract Algebra
+description: Cryptography, error correction, and the unsolvability of the quintic
+sidebar:
+  order: 19
+---
+
+import Quiz from "../../../components/Quiz.astro";
+import DiffieHellman from "../../../components/DiffieHellman.astro";
+import CayleyTable from "../../../components/CayleyTable.astro";
+
+## What You'll Learn
+
+In this lesson you'll see the section's machinery put to work: how Diffie-Hellman and RSA rest on group theory, how error-correcting codes use cosets of a subgroup, and how a statement about one group of order 60 proves that no quintic formula can exist.
+
+## The Concept
+
+### Diffie-Hellman key exchange
+
+Two parties who have never met need a shared secret, over a channel someone is listening to. Published in 1976, this was the result that made public-key cryptography possible.
+
+<DiffieHellman />
+
+The group is $U(p)$ for a large prime $p$, which is cyclic of order $p-1$. The protocol:
+
+1. Agree publicly on $p$ and a generator $g$.
+2. Alice picks a secret $a$ and sends $g^a \bmod p$. Bob picks $b$ and sends $g^b \bmod p$.
+3. Alice computes $(g^b)^a$ and Bob computes $(g^a)^b$. Both equal $g^{ab}$.
+
+The shared secret is never transmitted. Correctness is just the exponent law $(g^b)^a = g^{ab} = (g^a)^b$, which holds because exponents add commutatively.
+
+Security rests on the **discrete logarithm problem**: given $g$ and $g^a$ in a large group, recover $a$. Computing $g^a$ takes about $\log a$ multiplications by repeated squaring, while the best known general attacks on the reverse direction take time exponential in the bit length. **The gap between those two costs is the entire security argument.**
+
+Two things must hold for the group to be usable. It must be cyclic with a known large prime order (otherwise the search space fractures into small pieces and the Pohlig–Hellman attack applies). And the group operation must be cheap. Using $(\mathbb{Z}_n, +)$ fails badly, because "discrete log" there is just division: from $a \cdot g \bmod n$ you recover $a$ by multiplying by $g^{-1}$. The group being isomorphic to a hard one is irrelevant if the isomorphism is easy to compute.
+
+### RSA
+
+RSA (1977) works in the ring $\mathbb{Z}_n$ with $n = pq$ for two large primes.
+
+1. Compute $\varphi(n) = (p-1)(q-1)$.
+2. Pick $e$ coprime to $\varphi(n)$; publish $(n, e)$.
+3. Compute $d$ with $ed \equiv 1 \pmod{\varphi(n)}$; keep $d$ secret.
+4. Encrypt with $c = m^e \bmod n$, decrypt with $m = c^d \bmod n$.
+
+Why decryption works: $ed = 1 + k\varphi(n)$, so
+
+$$
+c^d = m^{ed} = m^{1 + k\varphi(n)} = m \cdot \left(m^{\varphi(n)}\right)^k \equiv m \cdot 1^k = m
+$$
+
+using **Euler's theorem** $m^{\varphi(n)} \equiv 1 \pmod n$, which is Lagrange's theorem applied to the group $U(n)$.
+
+Security rests on factoring: knowing $\varphi(n)$ requires knowing $p$ and $q$. Note the whole thing runs inside the unit group $U(n)$, and the security hypothesis is about a computational problem, not about group structure.
+
+### Error-correcting codes
+
+A **linear code** of length $n$ over $\mathbb{F}_2$ is a subgroup $C \le (\mathbb{F}_2^n, +)$. Valid codewords are closed under bitwise XOR and include the all-zeros word — precisely the subgroup conditions.
+
+Transmission adds an error vector: you receive $r = c + e$. Since $r$ and $c$ differ by an element of... no, wait: $r - c = e$, and $r$ lies in the coset $c + C$ only if $e \in C$. In general $r$ lies in the coset $e + C$, and **the coset identifies the error pattern.**
+
+Decoding therefore means: find which coset of $C$ the received word lies in, then subtract that coset's most likely error, called the **coset leader**. This is standard-array decoding, and by Lagrange there are exactly $2^n / |C|$ cosets to distinguish.
+
+The **Hamming code** with $n = 7$ and $|C| = 16$ has $128/16 = 8$ cosets: one for "no error" and seven for "error in bit $i$." So it corrects any single-bit error, and the count of cosets is exactly why.
+
+Reed–Solomon codes push this further using finite fields. Data become coefficients of a polynomial over $GF(256)$, and the codeword is that polynomial evaluated at many points. Any sufficiently large subset of the values determines the polynomial, so lost values can be reconstructed. This is why a scratched CD still plays and why a partly obscured QR code still scans.
+
+### Why the quintic has no formula
+
+This is the question the whole subject grew from, and the answer is a group-theoretic one.
+
+Every polynomial has a **Galois group**: the automorphisms of its splitting field that fix the base field, which permute the roots. Solving by radicals means building the roots in a tower of extensions, each obtained by adjoining an $n$-th root.
+
+Galois's theorem translates that tower into a group condition. A polynomial is solvable by radicals exactly when its Galois group is **solvable**, meaning there is a chain
+
+$$
+\{e\} = G_0 \trianglelefteq G_1 \trianglelefteq \dots \trianglelefteq G_k = G
+$$
+
+with each quotient $G_{i+1}/G_i$ abelian. Adjoining a root corresponds to one abelian step.
+
+For degrees up to 4, the Galois groups are small enough that such chains always exist, which is why the quadratic, cubic and quartic formulas are possible.
+
+The generic quintic has Galois group $S_5$, of order 120. Inside it sits $A_5$, of order 60, and $A_5$ is **simple**: its only normal subgroups are the trivial ones. A simple non-abelian group admits no chain of abelian quotients, so $S_5$ is not solvable.
+
+**Therefore no formula in radicals can express the roots of a general quintic.** Not undiscovered — impossible.
+
+The specific polynomial $x^5 - x - 1$ has Galois group $S_5$, so its roots provably cannot be written with radicals, even though it plainly has five of them and they can be computed numerically to any precision you like.
+
+### Symmetry in physics
+
+Noether's theorem (1918) states that every continuous symmetry of a physical system corresponds to a conserved quantity:
+
+- Time-translation symmetry $\to$ conservation of energy
+- Space-translation symmetry $\to$ conservation of momentum
+- Rotational symmetry $\to$ conservation of angular momentum
+
+Conservation of energy is not a separate law of nature; it is a consequence of physics being the same today as yesterday. The Standard Model is specified by naming its symmetry group $SU(3) \times SU(2) \times U(1)$, and the particles are labels for how that group acts.
+
+## Worked Examples
+
+**Example 1: Run Diffie-Hellman by hand.**
+
+Use $p = 23$, $g = 5$, Alice's secret $a = 6$, Bob's $b = 15$.
+
+**Solution.** Repeated squaring keeps the numbers small.
+
+$5^2 = 25 \equiv 2$, so $5^3 \equiv 10$, and $5^6 = (5^3)^2 \equiv 100 \equiv 8$. Alice sends $A = 8$.
+
+$5^5 = 5^3 \cdot 5^2 \equiv 10 \cdot 2 = 20$; $5^{10} \equiv 20^2 = 400 \equiv 9$; $5^{15} \equiv 9 \cdot 20 = 180 \equiv 19$. Bob sends $B = 19$.
+
+Shared secret: $g^{ab} = 5^{90}$. Since $|U(23)| = 22$ and $5$ is a generator, $5^{22} \equiv 1$, and $90 \equiv 2 \pmod{22}$, so
+
+$$
+5^{90} \equiv 5^2 = 25 \equiv 2 \pmod{23}
+$$
+
+Both parties get **2**. Note the shortcut used Lagrange's theorem to reduce the exponent mod the group order.
+
+**Example 2: RSA with small numbers.**
+
+$p = 5$, $q = 11$, $e = 3$. Find $d$ and encrypt $m = 9$.
+
+**Solution.** $n = 55$ and $\varphi(n) = 4 \cdot 10 = 40$.
+
+$\gcd(3, 40) = 1$ ✓. Find $d$ with $3d \equiv 1 \pmod{40}$: $3 \cdot 27 = 81 = 2\cdot40 + 1$, so $d = 27$.
+
+Encrypt: $c = 9^3 = 729 \bmod 55$. Since $55 \cdot 13 = 715$, $c = 14$.
+
+Decrypt: $14^{27} \bmod 55$. Work smart — $14^2 = 196 \equiv 31$, $14^4 \equiv 31^2 = 961 \equiv 26$, $14^8 \equiv 26^2 = 676 \equiv 16$, $14^{16} \equiv 16^2 = 256 \equiv 36$.
+
+$27 = 16 + 8 + 2 + 1$:
+
+$$
+14^{27} \equiv 36 \cdot 16 \cdot 31 \cdot 14
+$$
+
+$36 \cdot 16 = 576 \equiv 26$; $26 \cdot 31 = 806 \equiv 36$ (since $55\cdot14 = 770$); $36 \cdot 14 = 504 \equiv 9$ (since $55 \cdot 9 = 495$).
+
+Recovered $m = 9$ ✓
+
+**Example 3: Why $(\mathbb{Z}_n, +)$ is useless for Diffie-Hellman.**
+
+**Solution.** In additive notation, "exponentiation" is $a \cdot g \bmod n$. Given $g$ and $h = ag$, an attacker with $\gcd(g,n)=1$ computes
+
+$$
+a \equiv h g^{-1} \pmod n
+$$
+
+using the extended Euclidean algorithm — a few dozen operations even for enormous $n$.
+
+So the discrete log is trivial here. **Being isomorphic to a group with a hard discrete log does not help**, because the isomorphism itself is easy to compute. This is the sharpest possible illustration that isomorphism preserves structure and not computational difficulty.
+
+**Example 4: Coset decoding.**
+
+A code $C \le \mathbb{F}_2^4$ is $\{0000, 1111\}$. Decode the received word $1101$.
+
+**Solution.** $|C| = 2$, so by Lagrange there are $16/2 = 8$ cosets, each of size 2.
+
+The coset of $1101$ is
+
+$$
+1101 + C = \{1101,\ 1101 + 1111\} = \{1101,\ 0010\}
+$$
+
+The coset leader is the lower-weight member, $0010$: a single bit flipped, in position 3.
+
+Correcting: $1101 - 0010 = 1101 + 0010 = 1111$.
+
+**Decoded as $1111$.** This is the repetition code, and it corrects any single error, because every weight-1 vector sits in a different coset.
+
+**Example 5: The order of $A_5$ and why it matters.**
+
+**Solution.** $|A_5| = 5!/2 = 60$.
+
+$A_5$ is simple: it has no normal subgroup other than $\{e\}$ and itself. One route to this is a conjugacy-class count — the class sizes in $A_5$ are 1, 15, 20, 12, 12, and any normal subgroup is a union of classes including the identity whose total divides 60. The only subsets of $\{1,15,20,12,12\}$ containing the 1 that sum to a divisor of 60 are $\{1\}$ and all of them.
+
+Since a solvable group needs a chain with abelian quotients, and a simple non-abelian group offers no proper normal subgroup to start such a chain, $A_5$ is not solvable. Neither is $S_5$, which contains it as a normal subgroup with quotient $\mathbb{Z}_2$.
+
+**Hence the general quintic is unsolvable by radicals.** ∎
+
+**Example 6: Arithmetic in the AES field.**
+
+<CayleyTable
+  labels={["0", "1", "a", "a+1"]}
+  op={(i, j) => {
+    const b1 = (i >> 1) & 1;
+    const b0 = i & 1;
+    const c1 = (j >> 1) & 1;
+    const c0 = j & 1;
+    const hi = (b1 * c1 + b1 * c0 + b0 * c1) % 2;
+    const lo = (b1 * c1 + b0 * c0) % 2;
+    return hi * 2 + lo;
+  }}
+  opSymbol="×"
+  title="GF(4) multiplication, a miniature of the GF(256) arithmetic inside AES"
+  caption="Every nonzero element has an inverse, which is what the AES S-box computes. Real AES uses GF(2⁸) so that one field element is exactly one byte."
+/>
+
+**Solution.** The AES S-box is essentially $x \mapsto x^{-1}$ in $GF(2^8)$, followed by an affine map. Inversion is chosen because it is highly nonlinear, which is what resists linear and differential cryptanalysis.
+
+In the miniature above, $a^{-1} = a+1$ and $(a+1)^{-1} = a$, while $1^{-1} = 1$ and $0$ has no inverse (the standard defines $0 \mapsto 0$ as a special case).
+
+## Real-World Applications
+
+**Every HTTPS connection.** The TLS handshake performs an elliptic-curve Diffie-Hellman exchange, so the group theory in this section runs billions of times a day. Perfect forward secrecy comes from using fresh secrets per session, meaning a later key compromise cannot decrypt past traffic.
+
+**QR codes and storage.** Reed–Solomon over $GF(256)$ lets a QR code survive roughly 30% damage, and the same codes protect CDs, DVDs, Blu-ray discs and RAID 6 arrays. The Voyager probes' images crossed the solar system inside these codes.
+
+**Cell networks and Wi-Fi.** LTE and 5G use LDPC and polar codes; Wi-Fi uses convolutional and LDPC codes. All are built on linear algebra over finite fields, and the coset picture is what decoders implement.
+
+**Bitcoin and blockchains.** Bitcoin signs transactions with ECDSA on the curve secp256k1 over a 256-bit prime field. An address is derived from a public key that is a point in a group of prime order; the security assumption is the elliptic-curve discrete logarithm.
+
+**Chemistry and drug design.** Molecular symmetry groups determine spectra and whether a molecule is chiral. Thalidomide's two mirror-image forms had drastically different effects, which is a group-theoretic distinction with serious consequences.
+
+**Rubik's cube.** God's number is 20, proved in 2010 by partitioning the cube group into about two billion cosets of a large subgroup and searching each. The coset decomposition made an otherwise impossible search tractable.
+
+:::note[You've Got This]
+It's worth stepping back at this point. The four group axioms you met in lesson three are, without exaggeration, what keeps your bank details private. Lagrange's theorem proves RSA decryption returns the right message. Cosets are how a scratched disc still plays. And a single fact about one group of order 60 settles a question that resisted for three centuries. That's an unusually direct line from abstraction to consequence, and it's the best argument for why anyone puts up with the definitions.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="abstract-applications-of-abstract-algebra"
+  questions={[
+    {
+      id: "q1",
+      text: "What problem must be hard for Diffie-Hellman to be secure?",
+      options: [
+        "Factoring large integers",
+        "The discrete logarithm problem",
+        "Computing modular exponentials",
+        "Finding a generator of the group",
+      ],
+      correctIndex: 1,
+      explanation:
+        "An eavesdropper sees g and g^a and must recover a, which is the discrete logarithm. Modular exponentiation must be easy, since both honest parties rely on it; factoring is what RSA depends on instead.",
+    },
+    {
+      id: "q2",
+      text: "Which theorem makes RSA decryption return the original message?",
+      options: [
+        "Lagrange's theorem, via Euler's theorem in U(n)",
+        "Cayley's theorem",
+        "The first isomorphism theorem",
+        "The fundamental theorem of finite abelian groups",
+      ],
+      correctIndex: 0,
+      explanation:
+        "Euler's theorem says m^φ(n) ≡ 1 mod n, which is Lagrange applied to the group U(n). Choosing ed ≡ 1 mod φ(n) then makes m^(ed) collapse back to m.",
+    },
+    {
+      id: "q3",
+      text: "In coding theory, what does a coset of the code represent?",
+      options: [
+        "A valid codeword",
+        "An error pattern, whose most likely representative is the coset leader",
+        "The number of bits transmitted",
+        "The code's generator matrix",
+      ],
+      correctIndex: 1,
+      explanation:
+        "A received word lies in the coset determined by the error added to it, so identifying the coset identifies the error class. Decoding subtracts the coset leader, the lowest-weight member.",
+    },
+    {
+      id: "q4",
+      text: "Why is there no general formula in radicals for the quintic?",
+      options: [
+        "Because quintics can have irrational roots",
+        "Because no one has managed to find one",
+        "Because the generic Galois group S₅ is not solvable, as it contains the simple non-abelian A₅",
+        "Because quintics may have complex roots",
+      ],
+      correctIndex: 2,
+      explanation:
+        "Solvability by radicals corresponds to the Galois group having a chain of abelian quotients. A₅ is simple and non-abelian, so no such chain exists and no formula can be written.",
+    },
+    {
+      id: "q5",
+      text: "Why is (ℤₙ, +) unsuitable for Diffie-Hellman, despite being a group?",
+      options: [
+        "It is not cyclic",
+        "Its discrete logarithm is easy: recovering a from a·g is just multiplying by g⁻¹",
+        "It is too small for any n",
+        "Addition is not associative",
+      ],
+      correctIndex: 1,
+      explanation:
+        "In additive notation the discrete log reduces to modular division, solvable in moments by the extended Euclidean algorithm. Isomorphism to a hard group does not help when the isomorphism itself is easy to compute.",
+    },
+    {
+      id: "q6",
+      text: "What does Noether's theorem connect?",
+      options: [
+        "Group order and subgroup order",
+        "Continuous symmetries and conserved quantities",
+        "Rings and fields",
+        "Kernels and quotient groups",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Each continuous symmetry of a physical system yields a conservation law: time-translation gives energy, spatial translation gives momentum, rotation gives angular momentum. Conservation of energy is a consequence of symmetry rather than an independent law.",
+    },
+  ]}
+/>
