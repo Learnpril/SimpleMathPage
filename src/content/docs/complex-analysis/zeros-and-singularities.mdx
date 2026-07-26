@@ -1,0 +1,326 @@
+---
+title: Zeros and Singularities
+description: Classifying the points where an analytic function vanishes or breaks down
+sidebar:
+  order: 13
+---
+
+import Quiz from "../../../components/Quiz.astro";
+import SymbolKey from "../../../components/SymbolKey.astro";
+import SingularityTypes from "../../../components/SingularityTypes.astro";
+
+## What You'll Learn
+
+In this lesson you'll classify isolated singularities into three types, learn several equivalent tests for each, determine the order of a pole quickly, and see the extraordinary behaviour near an essential singularity.
+
+<SymbolKey
+  title="Singularity vocabulary"
+  items={[
+    {
+      sym: "isolated singularity",
+      read: "a point where f fails to be analytic, but is analytic nearby",
+      note: "f is analytic on a punctured disc around it",
+    },
+    {
+      sym: "removable",
+      read: "the singularity can be filled in",
+      note: "|f| stays bounded; no principal part",
+    },
+    {
+      sym: "pole of order m",
+      read: "f behaves like 1/(z − z₀)^m",
+      note: "|f| → ∞; principal part has m terms",
+    },
+    {
+      sym: "simple pole",
+      read: "a pole of order 1",
+      note: "the easiest case for residues",
+    },
+    {
+      sym: "essential",
+      read: "neither of the above",
+      note: "infinite principal part; |f| has no limit at all",
+    },
+    {
+      sym: "order of a zero",
+      read: "the lowest power in the Taylor series",
+      note: "f = (z − z₀)^m g(z) with g(z₀) ≠ 0",
+    },
+  ]}
+/>
+
+## The Concept
+
+### Zeros first
+
+If $f$ is analytic at $z_0$ and $f(z_0)=0$, then near $z_0$
+
+$$
+f(z) = (z-z_0)^m g(z), \qquad g \text{ analytic}, \quad g(z_0)\ne0
+$$
+
+and $m$ is the **order** of the zero. Equivalently $m$ is the smallest index with $f^{(m)}(z_0)\ne0$, or the lowest power appearing in the Taylor series.
+
+Orders behave simply: they **add** under multiplication and **subtract** under division. That single rule handles most classification problems, as we will see.
+
+Zeros of a non-zero analytic function are isolated, which we saw last lesson.
+
+### The three types of isolated singularity
+
+Suppose $f$ is analytic on a punctured disc $0<|z-z_0|<R$. Exactly one of three things happens.
+
+**Removable.** $\lim_{z\to z_0}f(z)$ exists and is finite. Then defining $f(z_0)$ to be that limit makes $f$ analytic at $z_0$, and the Laurent series has **no** principal part. The classic case is $\frac{\sin z}{z}$ at 0, whose limit is 1.
+
+Riemann's theorem makes this remarkably cheap to check: **boundedness near $z_0$ is enough.** You do not need the limit to exist a priori; if $|f|$ is merely bounded on a punctured neighbourhood, the singularity is removable and the limit exists automatically.
+
+**Pole of order $m$.** $|f(z)|\to\infty$ as $z\to z_0$, and the principal part has exactly $m$ terms with lowest power $(z-z_0)^{-m}$. Equivalently $(z-z_0)^mf(z)$ has a removable singularity with nonzero limit, or
+
+$$
+f(z) = \frac{g(z)}{(z-z_0)^m}, \qquad g \text{ analytic}, \quad g(z_0)\ne0
+$$
+
+**Essential.** Neither of the above: $|f|$ has no limit, finite or infinite. The principal part has infinitely many terms. The standard example is $e^{1/z}$ at 0.
+
+<SingularityTypes />
+
+The figure separates the three by measurement. On a circle of radius $r$ about the origin, $\frac{\sin z}{z}$ keeps $|f|$ near 1, $\frac{1}{z^2}$ has $|f|$ exactly $1/r^2$ in every direction, and $e^{1/z}$ has $|f| = e^{\cos\theta/r}$, which is both enormous and minuscule on the _same_ circle. That last behaviour is what "essential" means in practice.
+
+### The quick way to classify a quotient
+
+For $f = \frac{p}{q}$ with $p,q$ analytic at $z_0$, let $a$ be the order of the zero of $p$ there and $b$ the order for $q$ (either may be 0). Then:
+
+- $a \ge b$: **removable**
+- $a < b$: **pole of order $b-a$**
+
+So classification is arithmetic on orders. This handles almost every example you will meet, and it explains cases that look surprising:
+
+$$
+\frac{\sin z}{z^3}: \ a=1,\ b=3 \implies \text{pole of order } 2, \text{ not } 3
+$$
+
+$$
+\frac{1-\cos z}{z^2}: \ a=2,\ b=2 \implies \text{removable}
+$$
+
+**Cancel before classifying.** Failing to notice the numerator's zero is the standard mistake here.
+
+### Behaviour near an essential singularity
+
+Essential singularities are genuinely strange, and two theorems say how strange.
+
+> **Casorati–Weierstrass.** In any punctured neighbourhood of an essential singularity, the image of $f$ is dense in $\mathbb{C}$: it comes arbitrarily close to **every** complex value.
+
+> **Picard's great theorem.** Stronger still: $f$ actually **attains** every complex value infinitely often in any punctured neighbourhood, with at most one exception.
+
+For $e^{1/z}$ near 0, the single exception is 0 itself, since the exponential is never zero. Every other complex number is hit infinitely many times in any disc around the origin, however small. That is worth pausing on: an arbitrarily small punctured disc maps onto essentially all of $\mathbb{C}$, infinitely many times over.
+
+### Singularities at infinity
+
+To classify behaviour at $\infty$, substitute $w = 1/z$ and examine $g(w) = f(1/w)$ at $w=0$.
+
+- Polynomial of degree $n$: pole of order $n$ at $\infty$
+- $e^z$: essential singularity at $\infty$
+- $1/z$: removable at $\infty$, with value 0
+- $\sin z$: essential at $\infty$
+
+A useful classification follows: a function analytic on all of $\hat{\mathbb{C}}$ is constant, and a function meromorphic on all of $\hat{\mathbb{C}}$ is **rational**. So rational functions are exactly the functions with no worse than poles anywhere on the sphere.
+
+## Worked Examples
+
+**Example 1: Classify the singularity of $\frac{\sin z}{z}$ at 0.**
+
+**Solution.** Numerator order 1, denominator order 1, so $a = b$ and the singularity is **removable**.
+
+Explicitly,
+
+$$
+\frac{\sin z}{z} = \frac{z-\frac{z^3}{6}+\cdots}{z} = 1-\frac{z^2}{6}+\cdots
+$$
+
+No principal part, and the limit is 1. Defining $f(0)=1$ gives an entire function. ∎
+
+**Example 2: Classify $\frac{\sin z}{z^3}$ at 0.**
+
+**Solution.** $a=1$, $b=3$, so a **pole of order 2**.
+
+$$
+\frac{\sin z}{z^3} = \frac{1}{z^2}-\frac16+\frac{z^2}{120}-\cdots
+$$
+
+Confirming: the lowest power is $z^{-2}$. Note the residue is **0** here, since there is no $\frac1z$ term. ∎
+
+**A pole of order 2 with zero residue** is a good reminder that order and residue are independent pieces of information.
+
+**Example 3: Classify $\frac{1-\cos z}{z^2}$ at 0.**
+
+**Solution.** Since $1-\cos z = \frac{z^2}{2}-\frac{z^4}{24}+\cdots$, the numerator has a zero of order 2. So $a=b=2$: **removable**, with limit
+
+$$
+\lim_{z\to0}\frac{1-\cos z}{z^2} = \frac12
+$$
+
+∎
+
+**Example 4: Classify the singularities of $\frac{z}{(z-1)^2(z+3)}$.**
+
+**Solution.** The numerator vanishes only at 0, which is not a singularity.
+
+At $z=1$: $a=0$, $b=2$, so a **pole of order 2**.
+
+At $z=-3$: $a=0$, $b=1$, so a **simple pole**.
+
+At $\infty$: substituting $w=1/z$, the function behaves like $\frac{1/w}{(1/w)^3} = w^2 \to 0$, so $\infty$ is a **removable** singularity with value 0. ∎
+
+**Example 5: Classify $e^{1/z}$ at 0 and demonstrate the essential behaviour.**
+
+**Solution.** Its Laurent series $\sum_{n\ge0}\frac{z^{-n}}{n!}$ has infinitely many negative powers, so the singularity is **essential**.
+
+Approach along the positive real axis, $z = t \to 0^+$: $e^{1/t}\to\infty$.
+
+Approach along the negative real axis, $z = -t$: $e^{-1/t}\to0$.
+
+Approach along the imaginary axis, $z = it$: $|e^{1/(it)}| = |e^{-i/t}| = 1$ for all $t$.
+
+**Three directions, three completely different behaviours.** No limit, finite or infinite, and by Picard every nonzero value is attained infinitely often in any disc about 0.
+
+**Example 6: Classify $\frac{1}{\sin z}$.**
+
+**Solution.** $\sin z$ has simple zeros exactly at $z = n\pi$ for $n\in\mathbb{Z}$, so $\frac{1}{\sin z}$ has **simple poles** at each $n\pi$.
+
+At $\infty$: the poles $n\pi$ accumulate there, so the singularity at $\infty$ is **not isolated** and the classification does not apply. ∎
+
+**This is why $\frac{1}{\sin z}$ is meromorphic on $\mathbb{C}$ but not on $\hat{\mathbb{C}}$**, and consequently not rational, even though it has only poles in the finite plane.
+
+**Example 7: Use Riemann's theorem.**
+
+$f$ is analytic on $0<|z|<1$ and $|f(z)|\le 7$ throughout. What kind of singularity is at 0?
+
+**Solution.** Bounded near the singularity, so by Riemann's theorem it is **removable**, and $\lim_{z\to0}f(z)$ exists.
+
+$$
+\text{removable}
+$$
+
+∎
+
+**Boundedness alone is enough**, which is much less than you would expect to need. It also gives the quickest proof that a pole cannot be bounded and an essential singularity cannot be either.
+
+## Real-World Applications
+
+**System poles.** The poles of a transfer function are the system's natural frequencies, and their order controls the response shape: a simple pole gives exponential decay, a double pole gives a $te^{\lambda t}$ term. Reading order off the denominator is routine engineering work.
+
+**Resonance strength.** The residue at a pole sets the amplitude of the corresponding resonance, and the order sets how sharply the response peaks. Both are used to fit measured frequency-response data.
+
+**Removable singularities in code.** Expressions like $\frac{\sin x}{x}$ and $\frac{1-\cos x}{x^2}$ appear constantly in graphics and numerics and must be special-cased near 0 to avoid dividing by zero. Knowing the limits, 1 and $\frac12$, is what the special case uses.
+
+**Stability boundaries.** A pole crossing from the left half plane to the right marks the onset of instability, so control design is largely the management of pole locations. The classification here is the mathematics behind the root-locus plot.
+
+**Renormalization in physics.** Divergences in quantum field theory are poles in a complex parameter, and their order determines how the divergence is subtracted. The vocabulary of simple and higher-order poles is used exactly as in this lesson.
+
+**Essential singularities in dynamics.** Points where a map has an essential singularity generate the most chaotic behaviour, and Picard's theorem is the formal reason: an arbitrarily small neighbourhood spreads over almost all of $\mathbb{C}$.
+
+:::note[You've Got This]
+The practical skill in this lesson is arithmetic on orders: count the zero of the numerator, count the zero of the denominator, subtract. That answers almost every classification question and it catches the cases people get wrong, like $\frac{\sin z}{z^3}$ having a pole of order 2 rather than 3. And keep Picard's theorem in mind as a curiosity worth remembering — an arbitrarily small punctured disc around an essential singularity covers nearly the whole plane infinitely often. Very little in mathematics is that extreme.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="complex-zeros-and-singularities"
+  questions={[
+    {
+      id: "q1",
+      text: "What are the three kinds of isolated singularity?",
+      options: [
+        "Simple, double and triple",
+        "Removable, pole, and essential",
+        "Bounded, unbounded and oscillating",
+        "Real, imaginary and complex",
+      ],
+      correctIndex: 1,
+      explanation:
+        "The trichotomy is complete: |f| is bounded, tends to infinity, or does neither. Equivalently the principal part is empty, finite, or infinite.",
+    },
+    {
+      id: "q2",
+      text: "How do you classify the singularity of p/q at z₀ from orders?",
+      options: [
+        "Always a pole of order b",
+        "Removable if a ≥ b, and a pole of order b − a if a < b, where a and b are the orders of the zeros of p and q",
+        "Always essential",
+        "Order does not determine the type",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Classification is arithmetic on orders. Forgetting the numerator's zero is the standard error, which is why sin z / z³ has a pole of order 2 rather than 3.",
+    },
+    {
+      id: "q3",
+      text: "What kind of singularity does sin z / z have at 0?",
+      options: ["Simple pole", "Removable", "Essential", "Pole of order 2"],
+      correctIndex: 1,
+      explanation:
+        "Numerator and denominator both have simple zeros, so they cancel and the limit is 1. Defining f(0) = 1 produces an entire function.",
+    },
+    {
+      id: "q4",
+      text: "What does Riemann's theorem on removable singularities say?",
+      options: [
+        "Every singularity is removable",
+        "If |f| is bounded on a punctured neighbourhood of z₀, the singularity is removable",
+        "A bounded function is constant",
+        "Poles are always simple",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Boundedness alone suffices; you do not need to know the limit exists in advance. It also gives the quickest proof that poles and essential singularities cannot be bounded.",
+    },
+    {
+      id: "q5",
+      text: "What is the residue of sin z / z³ at 0?",
+      options: ["1", "0", "−1/6", "1/2"],
+      correctIndex: 1,
+      explanation:
+        "The expansion is z^(−2) − 1/6 + ⋯, which has no 1/z term. A pole of order 2 with zero residue shows that order and residue are independent facts.",
+    },
+    {
+      id: "q6",
+      text: "Why is the singularity of e^(1/z) at 0 essential?",
+      options: [
+        "Because |f| → ∞",
+        "Because |f| has no limit: it tends to ∞ along one ray, to 0 along another, and stays 1 along a third",
+        "Because e^z is entire",
+        "Because it is removable",
+      ],
+      correctIndex: 1,
+      explanation:
+        "On the circle of radius r the modulus is e^(cos θ / r), which is enormous and minuscule at the same time. Its Laurent series correspondingly has infinitely many negative powers.",
+    },
+    {
+      id: "q7",
+      text: "What does Picard's great theorem say about an essential singularity?",
+      options: [
+        "f is bounded near it",
+        "In any punctured neighbourhood f attains every complex value infinitely often, with at most one exception",
+        "f has a limit along every ray",
+        "f has finitely many values",
+      ],
+      correctIndex: 1,
+      explanation:
+        "For e^(1/z) at the origin the single exception is 0, since the exponential never vanishes. An arbitrarily small punctured disc therefore covers nearly all of ℂ infinitely often.",
+    },
+    {
+      id: "q8",
+      text: "Which functions are meromorphic on the whole extended plane?",
+      options: [
+        "All entire functions",
+        "Exactly the rational functions",
+        "All analytic functions",
+        "Only polynomials",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Allowing only poles anywhere on the sphere forces the function to be a quotient of polynomials. This is why 1/sin z, whose poles accumulate at ∞, is meromorphic on ℂ but not on ℂ̂ and is not rational.",
+    },
+  ]}
+/>

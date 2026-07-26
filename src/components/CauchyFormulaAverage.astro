@@ -1,0 +1,138 @@
+---
+/**
+ * CauchyFormulaAverage — Cauchy's integral formula says the value at the centre
+ * is the average of f over any circle around it. Here f(z) = z³ − 2z + 4 is
+ * averaged numerically over three different circles about z₀ = 1 + i, and each
+ * average is compared against the directly evaluated f(z₀).
+ */
+const w = 540;
+const h = 300;
+
+type C = { re: number; im: number };
+const mul = (a: C, b: C): C => ({ re: a.re * b.re - a.im * b.im, im: a.re * b.im + a.im * b.re });
+const add = (a: C, b: C): C => ({ re: a.re + b.re, im: a.im + b.im });
+
+/** f(z) = z³ + 2z + 4 */
+const f = (z: C): C => {
+  const z2 = mul(z, z);
+  const z3 = mul(z2, z);
+  return { re: z3.re + 2 * z.re + 4, im: z3.im + 2 * z.im };
+};
+
+const z0: C = { re: 1, im: 1 };
+const exact = f(z0);
+
+/** Mean of f over the circle of radius r about z₀, which the formula predicts is f(z₀). */
+function meanOnCircle(r: number, n = 4000): C {
+  let sre = 0;
+  let sim = 0;
+  for (let k = 0; k < n; k++) {
+    const t = (2 * Math.PI * k) / n;
+    const v = f(add(z0, { re: r * Math.cos(t), im: r * Math.sin(t) }));
+    sre += v.re;
+    sim += v.im;
+  }
+  return { re: sre / n, im: sim / n };
+}
+
+const radii = [0.5, 1.1, 1.8];
+const rows = radii.map((r) => {
+  const m = meanOnCircle(r);
+  return { r, m, err: Math.hypot(m.re - exact.re, m.im - exact.im) };
+});
+
+const fmt = (v: C) => {
+  const rr = Math.abs(v.re) < 1e-9 ? 0 : v.re;
+  const ii = Math.abs(v.im) < 1e-9 ? 0 : v.im;
+  return `${rr.toFixed(3)} ${ii < 0 ? "−" : "+"} ${Math.abs(ii).toFixed(3)}i`;
+};
+
+// plane on the left
+const ox = 108;
+const oy = 152;
+const unit = 38;
+const px = (re: number) => ox + re * unit;
+const py = (im: number) => oy - im * unit;
+---
+
+<figure
+  class="cfa"
+  role="img"
+  aria-label={`A point z₀ at 1 plus i with three circles of radii ${radii.join(", ")} drawn around it. Averaging the polynomial z cubed plus 2z plus 4 over each circle gives ${fmt(exact)} every time, which is exactly the value at the centre.`}
+>
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    <text x="16" y="20" class="cfa-head" font-size="12.5" font-weight="bold">The boundary already knows the centre</text>
+    {/* f(z₀) is 4 + 4i here, which the three measured means must reproduce */}
+    <text x="16" y="38" class="cfa-sub" font-size="10.5">f(z) = z³ + 2z + 4 averaged over circles about z₀ = 1 + i</text>
+
+    <line x1="238" y1="52" x2="238" y2="238" class="cfa-divide" />
+
+    {/* ---------- left: the circles ---------- */}
+    <line x1={px(-0.7)} y1={oy} x2={px(2.9)} y2={oy} class="cfa-axis" />
+    <line x1={ox} y1={py(2.9)} x2={ox} y2={py(-0.9)} class="cfa-axis" />
+
+    {rows.map((row, i) => (
+      <circle cx={px(z0.re)} cy={py(z0.im)} r={row.r * unit} class={`cfa-ring cfa-r${i}`} />
+    ))}
+    <circle cx={px(z0.re)} cy={py(z0.im)} r="4" class="cfa-centre" />
+    <text x={px(z0.re)} y="214" class="cfa-clbl" font-size="9.5" text-anchor="middle">z₀ = 1 + i</text>
+
+    {/* ---------- right: the measured averages ---------- */}
+    <text x="262" y="72" class="cfa-panel" font-size="10" text-anchor="start">mean of f over each circle</text>
+    {rows.map((row, i) => (
+      <text x="262" y={98 + i * 22} class={`cfa-row cfa-t${i}`} font-size="10" text-anchor="start">
+        {`r = ${row.r.toFixed(1)}:   ${fmt(row.m)}`}
+      </text>
+    ))}
+    <text x="262" y="176" class="cfa-exact" font-size="10" text-anchor="start">{`f(z₀)     =   ${fmt(exact)}`}</text>
+    <text x="262" y="200" class="cfa-note" font-size="9.5" text-anchor="start">
+      {`largest discrepancy: ${Math.max(...rows.map((r) => r.err)).toExponential(1)}`}
+    </text>
+    <text x="262" y="220" class="cfa-note" font-size="9.5" text-anchor="start">The radius makes no difference at all</text>
+
+    <text x={w / 2} y="256" class="cfa-foot" font-size="10.5" text-anchor="middle">
+      f(z₀) = (1 ⁄ 2πi) ∮ f(z) ⁄ (z − z₀) dz, for any circle around z₀ inside the domain
+    </text>
+    <text x={w / 2} y="276" class="cfa-sub2" font-size="9.5" text-anchor="middle">
+      Nothing in real calculus recovers a function's value from a curve around it
+    </text>
+    <text x={w / 2} y="292" class="cfa-sub2" font-size="9.5" text-anchor="middle">
+      Differentiating the formula in z₀ gives every higher derivative as an integral too
+    </text>
+  </svg>
+</figure>
+
+<style>
+  .cfa { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .cfa svg { width:100%; max-width:100%; height:auto; }
+  .cfa-axis { stroke:#888; stroke-width:1.3; }
+  .cfa-divide { stroke:#3a3a3a; stroke-width:1; }
+  .cfa-ring { fill:none; stroke-width:1.7; }
+  .cfa-r0 { stroke:#7ee787; }
+  .cfa-r1 { stroke:#58a6ff; }
+  .cfa-r2 { stroke:#d2a8ff; }
+  .cfa-t0 { fill:#7ee787; }
+  .cfa-t1 { fill:#58a6ff; }
+  .cfa-t2 { fill:#d2a8ff; }
+  .cfa-centre { fill:#f0883e; stroke:#eee; stroke-width:1.2; }
+  .cfa-clbl { fill:#f0883e; font-family:'Libre Baskerville',Georgia,serif; }
+  .cfa-row, .cfa-exact { font-family:'Libre Baskerville',Georgia,serif; }
+  .cfa-exact { fill:#f0883e; font-weight:bold; }
+  .cfa-panel, .cfa-head { fill:#eee; font-family:'Libre Baskerville',Georgia,serif; }
+  .cfa-note { fill:#9198a1; font-family:'Libre Baskerville',Georgia,serif; }
+  .cfa-sub, .cfa-sub2 { fill:#9198a1; font-family:'Libre Baskerville',Georgia,serif; font-style:italic; }
+  .cfa-foot { fill:#58a6ff; font-family:'Libre Baskerville',Georgia,serif; }
+  :global([data-theme="light"]) .cfa-axis { stroke:#666; }
+  :global([data-theme="light"]) .cfa-divide { stroke:#d0d7de; }
+  :global([data-theme="light"]) .cfa-r0 { stroke:#116329; }
+  :global([data-theme="light"]) .cfa-t0 { fill:#116329; }
+  :global([data-theme="light"]) .cfa-r1 { stroke:#0550ae; }
+  :global([data-theme="light"]) .cfa-t1 { fill:#0550ae; }
+  :global([data-theme="light"]) .cfa-r2 { stroke:#6639ba; }
+  :global([data-theme="light"]) .cfa-t2 { fill:#6639ba; }
+  :global([data-theme="light"]) .cfa-centre { fill:#b35900; stroke:#fff; }
+  :global([data-theme="light"]) :is(.cfa-clbl, .cfa-exact) { fill:#b35900; }
+  :global([data-theme="light"]) .cfa-foot { fill:#0550ae; }
+  :global([data-theme="light"]) .cfa-panel, :global([data-theme="light"]) .cfa-head { fill:#24292f; }
+  :global([data-theme="light"]) :is(.cfa-note, .cfa-sub, .cfa-sub2) { fill:#57606a; }
+</style>

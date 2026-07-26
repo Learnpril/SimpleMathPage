@@ -89,6 +89,10 @@ export default defineConfig({
           label: "Real Analysis",
           autogenerate: { directory: "real-analysis" },
         },
+        {
+          label: "Complex Analysis",
+          autogenerate: { directory: "complex-analysis" },
+        },
       ],
       customCss: ["./src/styles/custom.css", "katex/dist/katex.min.css"],
       head: [
@@ -121,7 +125,8 @@ export default defineConfig({
                 'discrete-mathematics': 'Discrete Mathematics',
                 'statistics': 'Statistics',
                 'abstract-algebra': 'Abstract Algebra',
-                'real-analysis': 'Real Analysis'
+                'real-analysis': 'Real Analysis',
+                'complex-analysis': 'Complex Analysis'
               };
               var label = map[section];
               if (!label) return;
@@ -172,7 +177,8 @@ export default defineConfig({
                 {slug:'discrete-mathematics', label:'Discrete Mathematics', about:'about-discrete-mathematics'},
                 {slug:'statistics', label:'Statistics', about:'about-statistics'},
                 {slug:'abstract-algebra', label:'Abstract Algebra', about:'about-abstract-algebra'},
-                {slug:'real-analysis', label:'Real Analysis', about:'about-real-analysis'}
+                {slug:'real-analysis', label:'Real Analysis', about:'about-real-analysis'},
+                {slug:'complex-analysis', label:'Complex Analysis', about:'about-complex-analysis'}
               ];
               var path = window.location.pathname.replace(/^\\//, '').replace(/\\/$/, '');
               var currentSection = path.split('/')[0] || '';
@@ -412,7 +418,8 @@ export default defineConfig({
                 'discrete-mathematics': 'Discrete Mathematics',
                 'statistics': 'Statistics',
                 'abstract-algebra': 'Abstract Algebra',
-                'real-analysis': 'Real Analysis'
+                'real-analysis': 'Real Analysis',
+                'complex-analysis': 'Complex Analysis'
               };
               var subject = sectionMap[section];
               if (!subject) return;
@@ -468,7 +475,8 @@ export default defineConfig({
                         'discrete-mathematics': 'expert',
                         'statistics': 'expert',
                         'abstract-algebra': 'expert',
-                        'real-analysis': 'expert'
+                        'real-analysis': 'expert',
+                        'complex-analysis': 'expert'
                       };
                       var colorMap = {
                         'foundations': '#7ee787',

@@ -1,0 +1,128 @@
+---
+/**
+ * HarmonicMeanValue — a harmonic function's value at a point equals its average
+ * over any circle around it, while a non-harmonic function's does not. Both
+ * averages are computed by sampling, so the contrast is measured.
+ */
+const w = 540;
+const h = 300;
+
+const cy = 152;
+const unit = 26;
+
+const p0 = { x: 1, y: 0.5 };
+
+const cases = [
+  {
+    cx: 130,
+    title: "u = x² − y²",
+    kind: "harmonic",
+    cls: "ok",
+    u: (x: number, y: number) => x * x - y * y,
+    lap: "uₓₓ + u_yy = 2 − 2 = 0",
+  },
+  {
+    cx: 396,
+    title: "u = x² + y²",
+    kind: "not harmonic",
+    cls: "bad",
+    u: (x: number, y: number) => x * x + y * y,
+    lap: "uₓₓ + u_yy = 2 + 2 = 4",
+  },
+];
+
+/** Average of u over the circle of radius r about p₀. */
+function ring(u: (x: number, y: number) => number, r: number, n = 4000) {
+  let s = 0;
+  for (let k = 0; k < n; k++) {
+    const t = (2 * Math.PI * k) / n;
+    s += u(p0.x + r * Math.cos(t), p0.y + r * Math.sin(t));
+  }
+  return s / n;
+}
+
+const radii = [0.6, 1.2];
+const table = cases.map((c) => ({
+  ...c,
+  centre: c.u(p0.x, p0.y),
+  means: radii.map((r) => ({ r, m: ring(c.u, r) })),
+}));
+
+const fx = (c: number, x: number) => c + x * unit;
+const fy = (y: number) => cy - y * unit;
+const n4 = (v: number) => v.toFixed(4).replace("-", "−");
+---
+
+<figure
+  class="hmv"
+  role="img"
+  aria-label={`Two functions averaged over circles about the point 1 plus half i. For x squared minus y squared, which is harmonic, every circular average equals the centre value ${n4(table[0].centre)}. For x squared plus y squared, which is not harmonic, the averages exceed the centre value and grow with the radius.`}
+>
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    <text x="16" y="20" class="hmv-head" font-size="12.5" font-weight="bold">Harmonic means the centre equals the average</text>
+    <text x="16" y="38" class="hmv-sub" font-size="10.5">{`Circular averages about the point (${p0.x}, ${p0.y})`}</text>
+
+    <line x1="266" y1="52" x2="266" y2="248" class="hmv-divide" />
+
+    {table.map((c) => (
+      <g>
+        <text x={c.cx} y="58" class={`hmv-title hmv-${c.cls}`} font-size="11.5" text-anchor="middle" font-weight="bold">{c.title}</text>
+        <text x={c.cx} y="76" class="hmv-kind" font-size="9.5" text-anchor="middle">{c.kind}</text>
+
+        {/* the two sampling circles */}
+        <line x1={fx(c.cx, -1.7)} y1={cy} x2={fx(c.cx, 1.7)} y2={cy} class="hmv-axis" />
+        {c.means.map((m, i) => (
+          <circle cx={fx(c.cx, p0.x)} cy={fy(p0.y)} r={m.r * unit} class={`hmv-ring hmv-ring${i}`} />
+        ))}
+        <circle cx={fx(c.cx, p0.x)} cy={fy(p0.y)} r="3.4" class={`hmv-dot hmv-${c.cls}`} />
+
+        <text x={c.cx} y="182" class="hmv-row" font-size="9.5" text-anchor="middle">{`u at the centre:  ${n4(c.centre)}`}</text>
+        {c.means.map((m, i) => (
+          <text x={c.cx} y={200 + i * 17} class={`hmv-row hmv-mean${i}`} font-size="9.5" text-anchor="middle">
+            {`mean on r = ${m.r}:  ${n4(m.m)}`}
+          </text>
+        ))}
+        <text x={c.cx} y="244" class={`hmv-verdict hmv-${c.cls}`} font-size="10" text-anchor="middle">{c.lap}</text>
+      </g>
+    ))}
+
+    <text x={w / 2} y="272" class="hmv-foot" font-size="10.5" text-anchor="middle">
+      ∇²u = 0 ⟺ u equals its average on every small circle
+    </text>
+    <text x={w / 2} y="290" class="hmv-sub2" font-size="9.5" text-anchor="middle">
+      That is why a harmonic function has no interior maximum, and why boundary data determines it
+    </text>
+  </svg>
+</figure>
+
+<style>
+  .hmv { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .hmv svg { width:100%; max-width:100%; height:auto; }
+  .hmv-axis { stroke:#888; stroke-width:1.2; }
+  .hmv-divide { stroke:#3a3a3a; stroke-width:1; }
+  .hmv-ring { fill:none; stroke-width:1.6; stroke-dasharray:5,4; }
+  .hmv-ring0 { stroke:#58a6ff; }
+  .hmv-ring1 { stroke:#d2a8ff; }
+  .hmv-mean0 { fill:#58a6ff; }
+  .hmv-mean1 { fill:#d2a8ff; }
+  .hmv-title, .hmv-verdict { font-family:'Libre Baskerville',Georgia,serif; }
+  .hmv-ok { fill:#7ee787; }
+  .hmv-bad { fill:#ff7b72; }
+  .hmv-dot { stroke:#eee; stroke-width:1.1; }
+  .hmv-kind, .hmv-row { fill:#9198a1; font-family:'Libre Baskerville',Georgia,serif; }
+  .hmv-head { fill:#eee; font-family:'Libre Baskerville',Georgia,serif; }
+  .hmv-sub, .hmv-sub2 { fill:#9198a1; font-family:'Libre Baskerville',Georgia,serif; font-style:italic; }
+  .hmv-foot { fill:#58a6ff; font-family:'Libre Baskerville',Georgia,serif; }
+  :global([data-theme="light"]) .hmv-axis { stroke:#666; }
+  :global([data-theme="light"]) .hmv-divide { stroke:#d0d7de; }
+  :global([data-theme="light"]) .hmv-ring0 { stroke:#0550ae; }
+  :global([data-theme="light"]) .hmv-mean0 { fill:#0550ae; }
+  :global([data-theme="light"]) .hmv-ring1 { stroke:#6639ba; }
+  :global([data-theme="light"]) .hmv-mean1 { fill:#6639ba; }
+  :global([data-theme="light"]) .hmv-ok { fill:#116329; }
+  :global([data-theme="light"]) .hmv-bad { fill:#a40e26; }
+  :global([data-theme="light"]) .hmv-dot { stroke:#fff; }
+  :global([data-theme="light"]) .hmv-head { fill:#24292f; }
+  :global([data-theme="light"]) .hmv-foot { fill:#0550ae; }
+  :global([data-theme="light"]) :is(.hmv-kind, .hmv-row, .hmv-sub, .hmv-sub2) { fill:#57606a; }
+</style>

@@ -1,0 +1,306 @@
+---
+title: Analytic Functions
+description: Differentiability on an open set, and the rigidity that follows from it
+sidebar:
+  order: 6
+---
+
+import Quiz from "../../../components/Quiz.astro";
+import SymbolKey from "../../../components/SymbolKey.astro";
+import LevelCurvesOrthogonal from "../../../components/LevelCurvesOrthogonal.astro";
+
+## What You'll Learn
+
+In this lesson you'll learn why analyticity is defined on an open set rather than at a point, meet the properties that follow from it, and see the orthogonal level-curve structure that makes analytic functions the natural language of two-dimensional physics.
+
+<SymbolKey
+  title="The vocabulary of analyticity"
+  items={[
+    {
+      sym: "analytic (holomorphic) on D",
+      read: "differentiable at every point of the open set D",
+      note: "the two words mean the same thing in practice",
+    },
+    {
+      sym: "analytic at z₀",
+      read: "differentiable on some open disc around z₀",
+      note: "stronger than differentiable at z₀ alone",
+    },
+    {
+      sym: "entire",
+      read: "analytic on all of ℂ",
+      note: "polynomials, e^z, sin z, cos z",
+    },
+    {
+      sym: "meromorphic on D",
+      read: "analytic on D except for isolated poles",
+      note: "rational functions are the model case",
+    },
+    {
+      sym: "singularity",
+      read: "a point where f fails to be analytic",
+      note: "classified in a later lesson",
+    },
+  ]}
+/>
+
+## The Concept
+
+### The definition, and why the open set matters
+
+> $f$ is **analytic** on an open set $D$ if it is differentiable at every point of $D$. It is **analytic at $z_0$** if it is differentiable on some open disc containing $z_0$.
+
+The word _holomorphic_ means the same thing and is more common in research writing; the two are interchangeable here.
+
+Notice that "analytic at $z_0$" is deliberately not "differentiable at $z_0$." Last lesson we saw $|z|^2$ is differentiable at the origin and nowhere else. That function is analytic **nowhere**, and the distinction is not pedantry: every theorem in this section needs room to move around the point. Cauchy's integral formula integrates over a circle, power series converge on discs, and none of that survives if differentiability holds at one isolated point.
+
+**Differentiability is a pointwise condition; analyticity is a local one.** That upgrade is where the strength comes from.
+
+### What analyticity gives you
+
+Here is the list. Most of these are proved later in the section, but seeing them together now explains why the definition was set up this way.
+
+- **Infinite differentiability.** If $f$ is analytic then $f', f'', f''', \ldots$ all exist and are analytic. One derivative buys all of them.
+- **Power series.** $f$ equals its Taylor series on any disc inside its domain. So _analytic_ in the sense of "differentiable" coincides with _analytic_ in the sense of "locally a convergent power series." In real analysis these are genuinely different properties; here they are the same.
+- **The identity theorem.** If two analytic functions on a domain agree on a set with a limit point in the domain — a segment, an arc, a convergent sequence of points — they agree everywhere on the domain.
+- **The maximum modulus principle.** A non-constant analytic function on a domain has no interior maximum of $|f|$. The largest values are always on the boundary.
+- **Liouville's theorem.** A bounded entire function is constant.
+- **Open mapping.** A non-constant analytic function maps open sets to open sets.
+- **Conformality.** Where $f'\ne0$, the map preserves angles and orientation.
+
+The identity theorem deserves a second look because it is so much stronger than anything real. A real smooth function can be zero on $(-1,0)$ and positive on $(0,1)$; the $e^{-1/x^2}$ construction from real analysis does exactly that. **No analytic function can behave that way.** Knowing an analytic function on a tiny arc determines it everywhere, which is the sense in which these functions are rigid.
+
+### Rules, and how to recognise analyticity fast
+
+Sums, products, quotients (off the zeros of the denominator), and compositions of analytic functions are analytic. Combined with the elementary cases this settles most examples immediately.
+
+The practical test is the one from last lesson:
+
+> If you can write $f$ using only $z$, arithmetic, and the standard functions — no $\bar z$, no $|z|$, no $\operatorname{Re}$, no $\operatorname{Im}$ — then it is analytic wherever it is defined. If you cannot, it almost certainly is not analytic anywhere.
+
+So $\frac{z^3-1}{z^2+4}$ is analytic off $\pm2i$, $e^{z^2}$ is entire, and $\sin(1/z)$ is analytic off the origin. Meanwhile $z\bar z$, $\operatorname{Re}(z)^2$, and $|z|$ are analytic nowhere.
+
+### The geometry: orthogonal families
+
+Because $u$ and $v$ satisfy the Cauchy–Riemann equations, their gradients are perpendicular:
+
+$$
+\nabla u\cdot\nabla v = u_xv_x+u_yv_y = u_xv_x + (-v_x)(u_x) = 0
+$$
+
+using $u_y = -v_x$ and $v_y = u_x$. Since a gradient is normal to its own level curve, this says the level curves of $u$ and those of $v$ **cross at right angles** wherever $f' \ne 0$.
+
+<LevelCurvesOrthogonal />
+
+This is not decoration. In physics one family is the equipotentials and the other the field lines, or one is the isotherms and the other the heat-flow lines, or one is the streamlines and the other the equipotentials of a flow. **Every analytic function is a picture of a two-dimensional physical field**, and that is why the subject has the applications it does.
+
+### Conformality
+
+Where $f'(z_0)\ne0$, the map $f$ preserves the angle between any two curves through $z_0$, including their orientation. The reason is the Jacobian argument from last lesson: locally $f$ acts as multiplication by the complex number $f'(z_0)$, which is a rotation by $\arg f'(z_0)$ and a scaling by $|f'(z_0)|$. Rotating and scaling do not change angles.
+
+At a point where $f'(z_0)=0$ this fails. For $f(z)=z^2$ at the origin, $f'(0)=0$ and angles are doubled instead of preserved. Such points are called **critical points**, and a conformal map is required to avoid them.
+
+## Worked Examples
+
+**Example 1: Is $f(z) = \dfrac{z^2+1}{z^2-1}$ analytic, and where?**
+
+**Solution.** It is a rational function of $z$ with no conjugates, so it is analytic wherever the denominator is nonzero. Solving $z^2 = 1$ gives $z = \pm1$.
+
+$$
+\text{analytic on }\mathbb{C}\setminus\{1,-1\}
+$$
+
+It is **meromorphic** on $\mathbb{C}$, since the two bad points are isolated poles. ∎
+
+**Example 2: Show $f(z)=|z|^2$ is analytic nowhere despite being differentiable somewhere.**
+
+**Solution.** From the previous lesson it is differentiable only at $z=0$. Analyticity at 0 would require differentiability on an entire disc around 0, and every other point of that disc fails.
+
+$$
+\text{analytic nowhere}
+$$
+
+∎
+
+**This is the example that justifies the definition.** "Differentiable at a point" is too weak to build a theory on.
+
+**Example 3: Use the identity theorem.**
+
+Two functions are analytic on $\mathbb{C}$ and agree at every point of the real axis. What can you conclude?
+
+**Solution.** The real axis has limit points in $\mathbb{C}$, so the identity theorem applies: they agree on all of $\mathbb{C}$.
+
+**This is the principle behind analytic continuation.** It is why $e^z$, $\sin z$, and $\cos z$ have exactly one possible definition extending their real versions, and why any identity valid for real arguments — such as $\sin^2+\cos^2=1$ — automatically holds for complex ones.
+
+**Example 4: Apply the maximum modulus principle.**
+
+$f$ is analytic on $|z|\le1$ and $|f(z)| \le 5$ on the boundary circle. What is the best bound on $|f(0)|$?
+
+**Solution.** Since $|f|$ attains its maximum on the boundary,
+
+$$
+|f(0)| \le 5
+$$
+
+and this is best possible, attained by the constant $f \equiv 5$. ∎
+
+Note how unlike the real case this is. A real harmonic-looking function on an interval can perfectly well be larger in the middle than at the ends — but $|f|$ for analytic $f$ cannot.
+
+**Example 5: Use Liouville's theorem.**
+
+Show that a non-constant entire function must be unbounded.
+
+**Solution.** This is the contrapositive of Liouville: bounded and entire forces constant, so non-constant and entire forces unbounded. ∎
+
+$\sin z$ is the example worth remembering. On $\mathbb{R}$ it is bounded by 1; on $\mathbb{C}$,
+
+$$
+\sin(iy) = i\sinh y
+$$
+
+grows without bound as $y \to \infty$. **The familiar boundedness of sine is an artifact of restricting to the real line.**
+
+**Example 6: Find where $f(z) = z^2$ fails to be conformal.**
+
+**Solution.** $f'(z) = 2z$, which vanishes only at $z=0$. So $f$ is conformal on $\mathbb{C}\setminus\{0\}$ and fails at the origin, where it doubles angles rather than preserving them.
+
+That is visible in the sector picture from the mapping lesson: a wedge of angle $\alpha$ at the origin opens to $2\alpha$. ∎
+
+**Example 7: Verify the level curves of $\operatorname{Re}(1/z)$ and $\operatorname{Im}(1/z)$ are orthogonal circle families.**
+
+**Solution.** For $z = x+iy$,
+
+$$
+\frac1z = \frac{\bar z}{|z|^2} = \frac{x}{x^2+y^2} - i\frac{y}{x^2+y^2}
+$$
+
+Setting $u = c$ gives $x = c(x^2+y^2)$, which rearranges to a circle through the origin centred on the real axis. Setting $v = k$ gives a circle through the origin centred on the imaginary axis.
+
+Two families of circles, all through the origin, meeting at right angles. ∎
+
+**This is the field of a two-dimensional point charge or a point vortex**, and the picture is exactly what you see in a physics textbook for a dipole field.
+
+## Real-World Applications
+
+**Field visualization.** Any diagram showing equipotentials and field lines crossing at right angles is displaying the level curves of an analytic function's two parts. This is the standard picture in electrostatics, magnetostatics, and steady heat conduction.
+
+**Potential flow.** The complex potential $\Phi = \phi + i\psi$ has velocity potential and stream function as its parts. Streamlines are level curves of $\psi$, and the flow speed is $|\Phi'|$, which makes analytic functions the working tool of classical aerodynamics.
+
+**Analytic continuation in physics.** Because an analytic function is determined by its values on a small set, physical quantities measured over a limited range can be extended uniquely into the complex plane. This is how resonances are located in scattering theory and how dispersion relations are derived.
+
+**Filter design.** The maximum modulus principle bounds a filter's response inside a region by its behaviour on the boundary, which is why frequency-response specifications are given on a contour rather than over an area.
+
+**Numerical conformal mapping.** Grid generators avoid critical points where $f'=0$ precisely because conformality fails there and mesh cells degenerate. Detecting those points is a standard step in the algorithm.
+
+**Cryptography and coding, indirectly.** Generating-function arguments that require analyticity in a disc underpin asymptotic counting results used in algorithm analysis, where the radius of convergence gives the growth rate.
+
+:::note[You've Got This]
+The definition change in this lesson is small on the page and enormous in consequence: differentiable on an open set, not at a point. Everything that makes complex analysis feel like a superpower — infinite differentiability, power series, the identity theorem, Liouville — is downstream of that one word "open." And the orthogonal level curves are worth sitting with for a minute, because they are the reason a subject about abstract differentiability turns out to describe heat, electricity, and flowing water.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="complex-analytic-functions"
+  questions={[
+    {
+      id: "q1",
+      text: "What does it mean for f to be analytic at z₀?",
+      options: [
+        "f is differentiable at z₀",
+        "f is differentiable on some open disc containing z₀",
+        "f is continuous at z₀",
+        "f has a Taylor series at z₀ that may diverge",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Analyticity is a local rather than pointwise condition. |z|² is differentiable at the origin and analytic nowhere, which is exactly why the definition demands a disc.",
+    },
+    {
+      id: "q2",
+      text: "Which function is entire?",
+      options: ["1/z", "z̄", "e^(z²)", "|z|"],
+      correctIndex: 2,
+      explanation:
+        "It is a composition of entire functions, so it is analytic on all of ℂ. The first has a pole at 0, and the other two involve z̄ implicitly and are analytic nowhere.",
+    },
+    {
+      id: "q3",
+      text: "Why are the level curves of u and v orthogonal for analytic f?",
+      options: [
+        "Because u and v are both harmonic",
+        "Because ∇u · ∇v = 0 follows from the Cauchy–Riemann equations",
+        "Because they are both straight lines",
+        "They are not orthogonal in general",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Substituting u_y = −vₓ and v_y = uₓ into the dot product gives zero, and gradients are normal to level curves. It holds wherever f′ ≠ 0.",
+    },
+    {
+      id: "q4",
+      text: "What does the identity theorem say?",
+      options: [
+        "Every analytic function is a polynomial",
+        "Two analytic functions on a domain agreeing on a set with a limit point in the domain agree everywhere on it",
+        "Analytic functions have no zeros",
+        "|f| is constant",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Agreement on a short arc or a convergent sequence of points forces global agreement. Nothing like this holds for real smooth functions, which can be zero on one interval and positive on the next.",
+    },
+    {
+      id: "q5",
+      text: "Where does a non-constant analytic function attain the maximum of |f| on a closed bounded region?",
+      options: [
+        "At an interior critical point",
+        "On the boundary",
+        "At the centre",
+        "It has no maximum",
+      ],
+      correctIndex: 1,
+      explanation:
+        "The maximum modulus principle rules out interior maxima for non-constant analytic functions. This is why bounds are specified on boundary contours in applications.",
+    },
+    {
+      id: "q6",
+      text: "What does Liouville's theorem state?",
+      options: [
+        "Every entire function has a zero",
+        "A bounded entire function is constant",
+        "Analytic functions are unbounded",
+        "Every analytic function is entire",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Boundedness on all of ℂ is incompatible with being non-constant and entire. It is why sin z, bounded on ℝ, must be unbounded on ℂ, and indeed sin(iy) = i sinh y.",
+    },
+    {
+      id: "q7",
+      text: "Where does f(z) = z² fail to be conformal?",
+      options: [
+        "Nowhere",
+        "At z = 0, where f′ = 0",
+        "On the unit circle",
+        "Everywhere",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Conformality needs f′ ≠ 0, since locally the map acts as multiplication by f′(z₀). At the origin the derivative vanishes and angles are doubled rather than preserved.",
+    },
+    {
+      id: "q8",
+      text: "What is a meromorphic function?",
+      options: [
+        "One that is analytic everywhere",
+        "One that is analytic except at isolated poles",
+        "One with no derivative",
+        "One that is bounded",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Rational functions are the model case, analytic apart from the zeros of the denominator. The term is what lets us talk about functions with poles as respectable objects rather than failures.",
+    },
+  ]}
+/>

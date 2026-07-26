@@ -1,0 +1,306 @@
+---
+title: Power Series and Taylor Series
+description: Every analytic function is a power series, with radius set by the nearest singularity
+sidebar:
+  order: 11
+---
+
+import Quiz from "../../../components/Quiz.astro";
+import ConvergenceDiscs from "../../../components/ConvergenceDiscs.astro";
+
+## What You'll Learn
+
+In this lesson you'll learn that analyticity and having a convergent power series are the same thing over $\mathbb{C}$, that the radius of convergence is always the distance to the nearest singularity, and how to build new series from old ones quickly.
+
+## The Concept
+
+### Power series in $\mathbb{C}$
+
+A **power series** about $z_0$ is
+
+$$
+\sum_{n=0}^{\infty}a_n(z-z_0)^n
+$$
+
+Every such series has a **radius of convergence** $R \in [0,\infty]$ with the following behaviour:
+
+- Absolute convergence for $|z-z_0| < R$, and uniform convergence on any closed disc strictly inside.
+- Divergence for $|z-z_0| > R$.
+- Anything can happen on the circle $|z-z_0| = R$ itself.
+
+Note the shape of the convergence set: a **disc**, not an interval. In real analysis the interval of convergence had two endpoints to check separately; here the boundary is a whole circle, and boundary behaviour is genuinely subtle.
+
+Within the disc, a power series is analytic and may be differentiated and integrated term by term, with the derived series having the same radius.
+
+### The two-way theorem
+
+This is the result that makes the word _analytic_ unambiguous.
+
+> **Taylor's theorem for analytic functions.** If $f$ is analytic on the disc $|z-z_0|<R$, then
+>
+> $$
+> f(z) = \sum_{n=0}^{\infty}\frac{f^{(n)}(z_0)}{n!}(z-z_0)^n
+> $$
+>
+> for every $z$ in that disc. Conversely, any convergent power series defines an analytic function inside its disc.
+
+So _differentiable on an open set_ and _locally a convergent power series_ are **equivalent** conditions over $\mathbb{C}$.
+
+In real analysis these are different, and dramatically so: $e^{-1/x^2}$ is infinitely differentiable at 0 with every derivative zero, so its Taylor series is identically 0 and does not represent the function. **No complex analytic function can do that.** If you met that counterexample in real analysis, this is where it gets ruled out.
+
+The proof is Cauchy's integral formula plus a geometric series expansion of $\frac{1}{z-w}$, which is why this lesson comes after that one.
+
+### The radius is a distance
+
+> **The radius of convergence of the Taylor series of $f$ about $z_0$ equals the distance from $z_0$ to the nearest singularity of $f$.**
+
+This is the single most useful fact in the lesson. It means you can read off the radius by looking at a picture, without computing a single coefficient.
+
+<ConvergenceDiscs />
+
+It also resolves the puzzle from lesson 1. The function $\frac{1}{1+z^2}$ has poles at $\pm i$, so about 0 the radius is 1, about 1 it is $\sqrt2$, and about 2 it is $\sqrt5$. On the real line nothing distinguishes $x = \pm1$, and the real graph offers no explanation whatsoever.
+
+The classical tests still work when you want to verify:
+
+$$
+R = \lim_{n\to\infty}\left|\frac{a_n}{a_{n+1}}\right| \qquad\text{or}\qquad \frac1R = \limsup_{n\to\infty}|a_n|^{1/n}
+$$
+
+but the geometric statement is faster and explains _why_.
+
+### The series worth knowing
+
+Each of these is the real series with $x$ replaced by $z$, valid on the stated disc:
+
+$$
+e^z = \sum_{n=0}^\infty\frac{z^n}{n!}, \qquad R = \infty
+$$
+
+$$
+\sin z = \sum_{n=0}^\infty\frac{(-1)^nz^{2n+1}}{(2n+1)!}, \qquad \cos z = \sum_{n=0}^\infty\frac{(-1)^nz^{2n}}{(2n)!}, \qquad R = \infty
+$$
+
+$$
+\frac{1}{1-z} = \sum_{n=0}^\infty z^n, \qquad R = 1
+$$
+
+$$
+\operatorname{Log}(1+z) = \sum_{n=1}^\infty\frac{(-1)^{n+1}z^n}{n}, \qquad R = 1
+$$
+
+The three entire functions have $R=\infty$ because they have no singularities at all. The last two have $R=1$ because of a singularity at exactly distance 1: a pole at $z=1$ for the geometric series, and the branch point at $z=-1$ for the logarithm.
+
+**Substitution and algebra beat differentiation.** Almost no one computes Taylor coefficients from $f^{(n)}(z_0)/n!$ in practice; you manipulate known series instead.
+
+### Zeros and order
+
+If $f$ is analytic at $z_0$ with $f(z_0)=0$, the series there begins at some term:
+
+$$
+f(z) = a_m(z-z_0)^m + a_{m+1}(z-z_0)^{m+1}+\cdots, \qquad a_m \ne 0
+$$
+
+The integer $m$ is the **order** of the zero. Equivalently $f = (z-z_0)^mg(z)$ with $g$ analytic and $g(z_0)\ne0$.
+
+Two consequences: zeros of a non-zero analytic function are **isolated**, since $g$ stays nonzero nearby, and that isolation is what proves the identity theorem. The exception is the zero function, which is why the identity theorem's conclusion is "identically equal" rather than "equal somewhere."
+
+## Worked Examples
+
+**Example 1: Find the radius of convergence of the Taylor series of $\frac{1}{z-3}$ about $z_0=0$.**
+
+**Solution.** The only singularity is at $z=3$, at distance 3 from the origin.
+
+$$
+R = 3
+$$
+
+Verifying by expansion, $\frac{1}{z-3} = -\frac13\cdot\frac{1}{1-z/3} = -\frac13\sum(z/3)^n$, which converges for $|z/3|<1$. ✓
+
+**Example 2: Same function, about $z_0 = 1$.**
+
+**Solution.** The distance from 1 to 3 is 2, so $R = 2$. ∎
+
+**The function did not change; the centre did.** The radius is a property of the pair.
+
+**Example 3: Find the series for $\frac{1}{1+z^2}$ about 0 by substitution.**
+
+**Solution.** Start from the geometric series and substitute $-z^2$ for $z$:
+
+$$
+\frac{1}{1-(-z^2)} = \sum_{n=0}^\infty(-z^2)^n = 1-z^2+z^4-z^6+\cdots
+$$
+
+valid when $|-z^2|<1$, that is $|z|<1$, so $R=1$. Consistent with the poles at $\pm i$ being at distance 1. ✓
+
+**Example 4: Find the first few terms of the series for $\frac{e^z}{1-z}$ about 0.**
+
+**Solution.** Multiply the two known series:
+
+$$
+\left(1+z+\frac{z^2}{2}+\cdots\right)\left(1+z+z^2+\cdots\right)
+$$
+
+Collecting by degree:
+
+- constant: $1$
+- $z$: $1+1 = 2$
+- $z^2$: $\frac12+1+1 = \frac52$
+
+$$
+\frac{e^z}{1-z} = 1+2z+\frac52z^2+\cdots
+$$
+
+The radius is 1, set by the pole at $z=1$; the exponential factor contributes no singularity. ∎
+
+**Example 5: Find the order of the zero of $f(z)=z^2\sin z$ at 0.**
+
+**Solution.** Since $\sin z = z - \frac{z^3}{6}+\cdots$ has a simple zero at 0,
+
+$$
+z^2\sin z = z^3 - \frac{z^5}{6}+\cdots
+$$
+
+The first nonzero term is $z^3$, so the zero has order **3**. ∎
+
+**Orders add under multiplication**, which is the quick way to see this: order 2 from $z^2$ plus order 1 from $\sin z$.
+
+**Example 6: Explain why $e^{-1/x^2}$ has no complex analogue of its bad behaviour.**
+
+**Solution.** As a real function it is smooth at 0 with all derivatives 0, so its Taylor series is identically 0 while the function is not.
+
+Now consider $g(z)=e^{-1/z^2}$ in the plane. Along the imaginary axis, $z=iy$ gives $-1/z^2 = 1/y^2$, so
+
+$$
+|g(iy)| = e^{1/y^2}\to\infty \text{ as } y\to0
+$$
+
+So $g$ has a genuine **essential singularity** at 0 and is not analytic there. **The real function's strange behaviour was the shadow of a complex singularity**, and once you can see the singularity there is nothing left to explain.
+
+**Example 7: Use the identity theorem via zeros.**
+
+$f$ is analytic on $\mathbb{C}$ and $f(1/n)=0$ for every positive integer $n$. Show $f\equiv0$.
+
+**Solution.** The points $1/n$ accumulate at 0, which is in the domain. If $f$ were not identically zero, its zeros would be isolated, contradicting the accumulation.
+
+$$
+f\equiv0
+$$
+
+∎
+
+Compare $\sin(\pi/z)$, which vanishes at every $1/n$ and is **not** identically zero — but it is not analytic at 0, so there is no contradiction. **The hypothesis that the accumulation point is in the domain is essential.**
+
+## Real-World Applications
+
+**Function evaluation in software.** Library routines for $\exp$, $\sin$, and $\log$ reduce the argument to a small range and then sum a truncated series, with the truncation point chosen from a remainder bound. The radius of convergence is what tells you the reduction is necessary.
+
+**Generating functions.** In combinatorics and algorithm analysis, a counting sequence is packed into a power series, and the radius of convergence gives the exponential growth rate of the coefficients. Locating the nearest singularity is the standard technique for asymptotics.
+
+**Perturbation theory.** Physical quantities are expanded in a small parameter, and whether the expansion converges is a question about singularities in the complex parameter plane. Many important series in quantum field theory have zero radius of convergence, which is a fact about complex singularities.
+
+**Control system approximation.** Padé and Taylor approximations of transfer functions are valid inside a disc bounded by the nearest pole, which is why models degrade near resonance.
+
+**Numerical analysis of ODE solvers.** The stability region of a method is described by a power series in the step size, and its radius controls the maximum usable step.
+
+**Signal interpolation.** Analytic signals are reconstructed from samples using series expansions whose convergence depends on the location of singularities of the signal's analytic extension.
+
+:::note[You've Got This]
+The one-line summary of this lesson: over $\mathbb{C}$, analytic and "locally a power series" mean the same thing, and the radius is a distance you can measure on a picture. That second part is the practical skill — you should be able to answer "what is the radius?" by finding singularities and using Pythagoras, with no coefficients involved. And notice that the $e^{-1/x^2}$ mystery from real analysis has now been explained rather than merely accepted, which is a good example of what this subject does to things you already knew.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="complex-power-series-and-taylor-series"
+  questions={[
+    {
+      id: "q1",
+      text: "What is the relationship between being analytic and having a power series over ℂ?",
+      options: [
+        "Analytic is strictly stronger",
+        "They are equivalent: analytic on a disc means equal to its Taylor series there, and conversely",
+        "Power series are strictly stronger",
+        "They are unrelated",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Over ℂ the two notions coincide, which is not true over ℝ. The real function e^(−1/x²) is smooth with an identically zero Taylor series, and no complex analytic function can behave that way.",
+    },
+    {
+      id: "q2",
+      text: "What determines the radius of convergence of a Taylor series?",
+      options: [
+        "The size of the coefficients only",
+        "The distance from the centre to the nearest singularity of the function",
+        "The degree of the function",
+        "Whether the function is bounded",
+      ],
+      correctIndex: 1,
+      explanation:
+        "The radius is a geometric distance in the plane, which is why it can be read off a picture. The ratio and root tests confirm it but do not explain it.",
+    },
+    {
+      id: "q3",
+      text: "What is the radius of convergence of the Taylor series of 1/(1 + z²) about z₀ = 2?",
+      options: ["1", "2", "√5", "∞"],
+      correctIndex: 2,
+      explanation:
+        "The poles are at ±i, and |2 − i| = |2 + i| = √5. Moving the centre changes the radius even though the function is unchanged.",
+    },
+    {
+      id: "q4",
+      text: "Why is the radius of convergence of e^z infinite?",
+      options: [
+        "Because its coefficients are small",
+        "Because e^z is entire and has no singularities anywhere",
+        "Because e^z is bounded",
+        "Because e^z is periodic",
+      ],
+      correctIndex: 1,
+      explanation:
+        "With nothing to limit the reach, the disc is all of ℂ. The same reasoning gives infinite radius for sin z and cos z.",
+    },
+    {
+      id: "q5",
+      text: "What shape is the convergence set of a complex power series?",
+      options: ["An interval", "A disc", "A rectangle", "An annulus"],
+      correctIndex: 1,
+      explanation:
+        "Convergence holds inside a disc and fails outside it, with the boundary circle undetermined. Over ℝ there were only two endpoints to check; here the whole circle can be subtle.",
+    },
+    {
+      id: "q6",
+      text: "What is the order of the zero of z² sin z at the origin?",
+      options: ["1", "2", "3", "4"],
+      correctIndex: 2,
+      explanation:
+        "The expansion starts z³ − z⁵/6 + ⋯, so the order is 3. Orders add under multiplication: 2 from z² and 1 from sin z.",
+    },
+    {
+      id: "q7",
+      text: "Why are the zeros of a non-zero analytic function isolated?",
+      options: [
+        "Because analytic functions are polynomials",
+        "Because f = (z − z₀)^m g(z) with g analytic and g(z₀) ≠ 0, so g stays nonzero nearby",
+        "Because they are finite in number",
+        "They are not isolated in general",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Factoring out the leading power leaves a function that is nonzero in a neighbourhood. This isolation is exactly what proves the identity theorem.",
+    },
+    {
+      id: "q8",
+      text: "If f is entire and f(1/n) = 0 for every positive integer n, what follows?",
+      options: [
+        "f has infinitely many zeros but need not vanish",
+        "f is identically zero, since the zeros accumulate at 0 which is in the domain",
+        "f has a pole at 0",
+        "Nothing can be concluded",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Accumulating zeros contradict isolation unless f ≡ 0. Note sin(π/z) vanishes at every 1/n without being zero, but it is not analytic at the accumulation point.",
+    },
+  ]}
+/>

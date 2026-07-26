@@ -1,0 +1,329 @@
+---
+title: Conformal Mappings
+description: Angle-preserving maps, Möbius transformations, and solving problems by changing shape
+sidebar:
+  order: 16
+---
+
+import Quiz from "../../../components/Quiz.astro";
+import MobiusDiscMap from "../../../components/MobiusDiscMap.astro";
+
+## What You'll Learn
+
+In this lesson you'll learn what makes a map conformal, work with Möbius transformations and their circle-preserving property, meet the Riemann mapping theorem, and see how a change of shape solves boundary-value problems.
+
+## The Concept
+
+### Conformal means angle-preserving
+
+> A map is **conformal** at $z_0$ if it preserves angles between curves through $z_0$, including their sense of rotation.
+
+> An analytic function is conformal exactly where $f'(z_0)\ne0$.
+
+The reason is the local picture from lesson 5. Near $z_0$,
+
+$$
+f(z) \approx f(z_0) + f'(z_0)(z-z_0)
+$$
+
+so to first order the map is multiplication by the fixed complex number $f'(z_0)$: a **rotation** by $\arg f'(z_0)$ and a **scaling** by $|f'(z_0)|$. Both operations leave angles alone.
+
+Where $f'(z_0)=0$ conformality fails. For $f(z)=z^2$ at the origin, angles are doubled; in general, a zero of order $m$ in $f'$ multiplies angles by $m+1$. Such points are called **critical points**, and a conformal map must avoid them.
+
+Note the scaling factor $|f'|$ varies from point to point, so shapes are preserved only **infinitesimally**. A large square does not stay square; a tiny one does.
+
+### Möbius transformations
+
+The most useful family:
+
+$$
+w = \frac{az+b}{cz+d}, \qquad ad-bc\ne0
+$$
+
+Their properties are worth knowing in full because they do most of the work in applications.
+
+- **Bijections of $\hat{\mathbb{C}}$.** Every Möbius map is invertible on the Riemann sphere, with inverse $z = \frac{dw-b}{-cw+a}$.
+- **Group under composition**, isomorphic to $PGL_2(\mathbb{C})$. Composing two gives another.
+- **Built from four elementary pieces**: translation, rotation, scaling, and inversion. Every Möbius map factors into those.
+- **Conformal everywhere** on $\hat{\mathbb{C}}$, since $w' = \frac{ad-bc}{(cz+d)^2}$ never vanishes.
+- **Circles go to circles**, where a line counts as a circle through $\infty$. This is the single most useful property.
+- **Three points determine the map.** Given three distinct source points and three distinct targets, exactly one Möbius transformation does the job.
+
+That last fact is the practical construction tool: to map one region to another, pick three boundary points and their images, and the map is forced.
+
+<MobiusDiscMap />
+
+The figure shows the standard example,
+
+$$
+w = \frac{z-i}{z+i}
+$$
+
+which takes the upper half plane onto the unit disc. Checking with three points: $i\mapsto0$, $0\mapsto-1$, and $\infty\mapsto1$. Since the real axis is a "circle" through $\infty$ and it contains 0 and $\infty$, its image is a circle through $-1$ and $1$; a third real point pins it down as the unit circle.
+
+The figure also verifies the containment numerically: the largest modulus among all sampled image points is safely under 1.
+
+### The Riemann mapping theorem
+
+> **Riemann mapping theorem.** Any simply connected domain in $\mathbb{C}$ that is not all of $\mathbb{C}$ can be mapped conformally and bijectively onto the unit disc.
+
+This is one of the most remarkable existence theorems in mathematics. **Any** simply connected region — a square, a half plane, the interior of a fractal-looking curve, the complement of a slit — is conformally the same as a disc.
+
+Two caveats keep it honest. It is an **existence** theorem: it gives no formula, and finding an explicit map for a given region can be very hard or practically impossible. And the excluded case $\mathbb{C}$ itself is genuinely excluded, since a bijection from $\mathbb{C}$ onto the disc would be a bounded entire function, hence constant by Liouville.
+
+Multiply connected regions are not covered, and cannot be: an annulus is conformally equivalent only to annuli with the same ratio of radii, which is a genuine invariant.
+
+### The standard maps
+
+Worth having memorized, since most problems reduce to composing these:
+
+| Map                         | Effect                                                  |
+| --------------------------- | ------------------------------------------------------- |
+| $w = az+b$                  | translate, rotate, scale                                |
+| $w = 1/z$                   | invert; exchanges inside and outside of the unit circle |
+| $w = \frac{z-i}{z+i}$       | upper half plane $\to$ unit disc                        |
+| $w = z^2$                   | opens a quarter plane to a half plane                   |
+| $w = e^z$                   | horizontal strip of height $\pi$ $\to$ upper half plane |
+| $w = \operatorname{Log}z$   | upper half plane $\to$ horizontal strip                 |
+| $w = z+\frac1z$             | circle $\to$ segment; the Joukowski map                 |
+| $w = \frac{z-a}{1-\bar az}$ | disc $\to$ disc, moving $a$ to the centre               |
+
+The strategy for a hard region is to compose: get to a half plane, then to a disc.
+
+### Why it solves physics problems
+
+Here is the payoff. If $u$ is harmonic — satisfying $\nabla^2u=0$ — and $f$ is conformal, then $u\circ f$ is harmonic too. **Laplace's equation is preserved by conformal maps.**
+
+So to solve a boundary-value problem on an awkward region $D$:
+
+1. Find a conformal map $f$ from $D$ to the unit disc.
+2. Transport the boundary data along $f$.
+3. Solve on the disc, where the answer is a standard formula.
+4. Pull the solution back through $f^{-1}$.
+
+Since Laplace's equation governs steady-state temperature, electrostatic potential, and incompressible irrotational flow, this single technique addresses all three. Before numerical methods it was the _only_ way to handle non-trivial geometry, and it is still how the theory is organized.
+
+## Worked Examples
+
+**Example 1: Where is $f(z)=z^2+z$ conformal?**
+
+**Solution.** $f'(z) = 2z+1$, which vanishes at $z=-\frac12$.
+
+$$
+\text{conformal on } \mathbb{C}\setminus\{-\tfrac12\}
+$$
+
+At $z=-\frac12$ the derivative has a simple zero, so angles there are doubled. ∎
+
+**Example 2: Map the upper half plane to the unit disc.**
+
+**Solution.** Use $w = \frac{z-i}{z+i}$. Verify with the three-point method:
+
+$$
+i\mapsto\frac{0}{2i}=0, \qquad 0\mapsto\frac{-i}{i}=-1, \qquad \infty\mapsto1
+$$
+
+The real axis passes through 0 and $\infty$, so its image is a circle through $-1$ and 1. Testing $z=1$ gives $w = \frac{1-i}{1+i} = -i$, which is on the unit circle, so the image circle is $|w|=1$.
+
+Since $i$, an interior point, maps to the centre, the interior goes to the interior. ✓
+
+**Example 3: Map the first quadrant to the upper half plane.**
+
+**Solution.** The first quadrant is the sector $0<\arg z<\frac\pi2$. Squaring doubles arguments:
+
+$$
+w = z^2
+$$
+
+gives $0<\arg w<\pi$, the upper half plane. ∎
+
+Composing with Example 2 sends the first quadrant to the disc via $w = \frac{z^2-i}{z^2+i}$. **Composition is how every non-elementary region gets handled.**
+
+**Example 4: Map the strip $0<\operatorname{Im}z<\pi$ to the unit disc.**
+
+**Solution.** Two steps. First $\zeta = e^z$ takes the strip to the upper half plane, from the mapping lesson. Then $w = \frac{\zeta-i}{\zeta+i}$ takes that to the disc.
+
+$$
+w = \frac{e^z-i}{e^z+i}
+$$
+
+∎
+
+**Example 5: Build the Möbius map sending $1\mapsto0$, $i\mapsto1$, $-1\mapsto\infty$.**
+
+**Solution.** Reading off the requirements: a zero at $z=1$ means a factor $(z-1)$ on top; a pole at $z=-1$ means $(z+1)$ on the bottom. So
+
+$$
+w = k\cdot\frac{z-1}{z+1}
+$$
+
+Fix $k$ using $i\mapsto1$:
+
+$$
+1 = k\cdot\frac{i-1}{i+1}
+$$
+
+Now $\frac{i-1}{i+1} = \frac{(i-1)(1-i)}{(1+i)(1-i)} = \frac{i-i^2-1+i}{2} = \frac{2i}{2}=i$, so $k\cdot i = 1$ and $k = -i$.
+
+$$
+w = -i\cdot\frac{z-1}{z+1}
+$$
+
+∎
+
+**Zeros and poles are read straight off the requirements**, which makes these constructions quick once you see the pattern.
+
+**Example 6: Verify that a conformal map preserves harmonicity.**
+
+**Solution.** Let $u$ be harmonic on $D'$ and $f:D\to D'$ analytic. Locally $u = \operatorname{Re}F$ for some analytic $F$ on $D'$, since a harmonic function has a harmonic conjugate on a simply connected region.
+
+Then $F\circ f$ is analytic on $D$ as a composition of analytic functions, and
+
+$$
+u\circ f = \operatorname{Re}(F\circ f)
+$$
+
+is the real part of an analytic function, hence harmonic. ∎
+
+**The proof needs no computation with second derivatives.** Harmonic means "real part of analytic," and analyticity is obviously preserved by composition.
+
+**Example 7: The Joukowski map.**
+
+Describe what $w = z+\frac1z$ does to the unit circle.
+
+**Solution.** On $|z|=1$ write $z=e^{i\theta}$:
+
+$$
+w = e^{i\theta}+e^{-i\theta} = 2\cos\theta
+$$
+
+which is **real** and ranges over $[-2,2]$. So the unit circle collapses onto the segment $[-2,2]$, traversed twice.
+
+The map has critical points where $w' = 1-\frac{1}{z^2} = 0$, that is $z=\pm1$, and those map to $w=\pm2$, the endpoints of the segment. **The corners of the image are exactly the images of the critical points.**
+
+Applying the same map to a circle slightly offset from the unit circle produces a smooth curve with one sharp corner: an aerofoil. That is how the map earns its place in aerodynamics.
+
+## Real-World Applications
+
+**Aerofoil theory.** The Joukowski map turns the solvable flow around a cylinder into the flow around a wing, and the resulting Kutta–Joukowski theorem gives lift in closed form. It is the historical foundation of aerodynamics.
+
+**Electrostatics and capacitance.** Field configurations for awkward electrode shapes are computed by mapping to a parallel-plate or coaxial geometry. Handbook formulas for capacitance of odd-shaped conductors were obtained this way.
+
+**Heat sink and cooling design.** Steady temperature distributions in fins and irregular cross-sections were computed by conformal mapping long before finite-element analysis, and the mapped solutions remain useful as benchmarks.
+
+**Mesh generation.** Structured grids for computational fluid dynamics are often built by conformal maps, because the rotation-and-scaling property keeps cells well shaped and the numerics stable.
+
+**Map projections.** The Mercator projection is conformal, which is why straight lines on it are constant-bearing courses. Stereographic projection is conformal too, and is used in crystallography for pole figures.
+
+**Medical imaging and brain mapping.** Conformal flattening of curved cortical surfaces to a disc lets anatomical data from different subjects be compared in a common coordinate system, and the angle preservation is what keeps local structure recognizable.
+
+:::note[You've Got This]
+Two things carry the weight here. First, conformal means locally rotate-and-scale, which is why $f'\ne0$ is the condition — this is the geometry of complex differentiability from lesson 5 finally cashed out. Second, Möbius transformations plus a handful of standard maps, composed, handle most concrete regions you will meet, and the Riemann mapping theorem promises that a map always exists even when you cannot write it down. If a problem's region looks hopeless, the move is always the same: get to a half plane, then to a disc.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="complex-conformal-mappings"
+  questions={[
+    {
+      id: "q1",
+      text: "When is an analytic function conformal at z₀?",
+      options: [
+        "Always",
+        "Exactly when f′(z₀) ≠ 0",
+        "Only when f is a polynomial",
+        "Only on the unit disc",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Locally the map acts as multiplication by f′(z₀), which is a rotation and a scaling and so preserves angles. Where the derivative vanishes, angles are multiplied instead.",
+    },
+    {
+      id: "q2",
+      text: "What happens to angles at a point where f′ has a zero of order m?",
+      options: [
+        "They are preserved",
+        "They are multiplied by m + 1",
+        "They are halved",
+        "They become right angles",
+      ],
+      correctIndex: 1,
+      explanation:
+        "For z² at the origin, f′ has a simple zero and angles are doubled. Conformal maps must avoid such critical points.",
+    },
+    {
+      id: "q3",
+      text: "Which property makes Möbius transformations so useful?",
+      options: [
+        "They preserve area",
+        "They map circles and lines to circles and lines, and three points determine the map",
+        "They are linear",
+        "They fix the origin",
+      ],
+      correctIndex: 1,
+      explanation:
+        "On the Riemann sphere lines are circles through ∞, so the rule is simply that circles go to circles. Choosing three boundary points and their images then forces the map uniquely.",
+    },
+    {
+      id: "q4",
+      text: "What does w = (z − i)/(z + i) do?",
+      options: [
+        "Maps the unit disc to itself",
+        "Maps the upper half plane onto the unit disc, with i going to the centre",
+        "Maps the first quadrant to a strip",
+        "Maps ℂ to ℂ",
+      ],
+      correctIndex: 1,
+      explanation:
+        "The real axis, a circle through 0 and ∞, maps to the unit circle, and the interior point i maps to 0. This is the standard bridge between the two most-used model regions.",
+    },
+    {
+      id: "q5",
+      text: "What does the Riemann mapping theorem guarantee?",
+      options: [
+        "Every domain maps conformally to the disc",
+        "Every simply connected domain other than ℂ itself maps conformally and bijectively onto the unit disc",
+        "Every region maps to a half plane",
+        "Conformal maps are unique",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Simple connectivity is essential, and ℂ is excluded because such a map would be a bounded entire function and hence constant by Liouville. The theorem gives existence but no formula.",
+    },
+    {
+      id: "q6",
+      text: "Which map takes the first quadrant to the upper half plane?",
+      options: ["w = 1/z", "w = z²", "w = e^z", "w = z + 1/z"],
+      correctIndex: 1,
+      explanation:
+        "Squaring doubles arguments, so the sector of angle π/2 opens to one of angle π. Composing with (z − i)/(z + i) then reaches the disc.",
+    },
+    {
+      id: "q7",
+      text: "Why do conformal maps solve Laplace's equation problems?",
+      options: [
+        "Because they preserve area",
+        "Because harmonicity is preserved: u harmonic and f conformal makes u∘f harmonic",
+        "Because they are linear",
+        "Because they preserve boundary values",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Harmonic means the real part of an analytic function, and composing analytic functions stays analytic. That lets a problem be transported to a disc, solved there, and pulled back.",
+    },
+    {
+      id: "q8",
+      text: "What does the Joukowski map w = z + 1/z do to the unit circle?",
+      options: [
+        "Maps it to a larger circle",
+        "Collapses it onto the real segment [−2, 2], with the critical points z = ±1 giving the endpoints",
+        "Maps it to a parabola",
+        "Leaves it unchanged",
+      ],
+      correctIndex: 1,
+      explanation:
+        "On |z| = 1 the image is 2cos θ, which is real. Applying the map to a slightly offset circle produces an aerofoil, with a sharp trailing edge coming from the critical point.",
+    },
+  ]}
+/>

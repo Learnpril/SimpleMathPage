@@ -1,0 +1,106 @@
+---
+/**
+ * ConvergenceDiscs — the Taylor series of 1/(1+z²) about three different centres.
+ * Each radius of convergence is computed as the distance from that centre to the
+ * nearer of the two poles at ±i, and the drawn disc uses that computed radius, so
+ * the picture and the printed numbers cannot disagree.
+ */
+const w = 540;
+const h = 304;
+
+const ox = 190;
+const oy = 152;
+const unit = 38;
+const px = (re: number) => ox + re * unit;
+const py = (im: number) => oy - im * unit;
+
+// 1 + z² = 0 at z = ±i
+const poles = [
+  { re: 0, im: 1 },
+  { re: 0, im: -1 },
+];
+
+const centres = [0, 1, 2].map((c, i) => {
+  const R = Math.min(...poles.map((p) => Math.hypot(c - p.re, 0 - p.im)));
+  return { c, R, cls: ["green", "blue", "purple"][i] };
+});
+---
+
+<figure
+  class="cvd"
+  role="img"
+  aria-label={`Three discs of convergence for the Taylor series of one over one plus z squared. From the centre 0 the radius is ${centres[0].R.toFixed(3)}, from 1 it is ${centres[1].R.toFixed(3)}, and from 2 it is ${centres[2].R.toFixed(3)}. Each equals the distance from that centre to the nearer pole at i or minus i.`}
+>
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    <text x="16" y="20" class="cvd-head" font-size="12.5" font-weight="bold">The nearest singularity sets the reach</text>
+    <text x="16" y="38" class="cvd-sub" font-size="10.5">Taylor series of 1 ⁄ (1 + z²) about three different centres</text>
+
+    <line x1={px(-1.4)} y1={oy} x2={px(3.2)} y2={oy} class="cvd-axis" />
+    <line x1={ox} y1={py(1.6)} x2={ox} y2={py(-1.6)} class="cvd-axis" />
+
+    {centres.map((s) => (
+      <circle cx={px(s.c)} cy={oy} r={s.R * unit} class={`cvd-disc cvd-${s.cls}`} />
+    ))}
+
+    {poles.map((p) => (
+      <g>
+        <line x1={px(p.re) - 5.5} y1={py(p.im) - 5.5} x2={px(p.re) + 5.5} y2={py(p.im) + 5.5} class="cvd-pole" />
+        <line x1={px(p.re) - 5.5} y1={py(p.im) + 5.5} x2={px(p.re) + 5.5} y2={py(p.im) - 5.5} class="cvd-pole" />
+      </g>
+    ))}
+
+    {centres.map((s) => (
+      <circle cx={px(s.c)} cy={oy} r="4" class={`cvd-dot cvd-f-${s.cls}`} />
+    ))}
+
+    {/* legend, clear of every disc */}
+    <text x="372" y="72" class="cvd-panel" font-size="10" text-anchor="start">radius = distance to a pole</text>
+    {centres.map((s, i) => (
+      <text x="372" y={96 + i * 22} class={`cvd-key cvd-f-${s.cls}`} font-size="9.5" text-anchor="start">
+        {`centre ${s.c}:  R = ${s.R.toFixed(3)}`}
+      </text>
+    ))}
+    <text x="372" y="176" class="cvd-note" font-size="9.5" text-anchor="start">poles at i and −i</text>
+    <text x="372" y="194" class="cvd-note" font-size="9.5" text-anchor="start">marked with crosses</text>
+
+    <text x={w / 2} y="262" class="cvd-foot" font-size="10.5" text-anchor="middle">
+      R = min |z₀ − (singularity)|, so moving the centre changes the radius
+    </text>
+    <text x={w / 2} y="282" class="cvd-sub2" font-size="9.5" text-anchor="middle">
+      Inside its disc the series equals the function; outside it says nothing at all
+    </text>
+    <text x={w / 2} y="298" class="cvd-sub2" font-size="9.5" text-anchor="middle">
+      The function is smooth on the whole real line, so the real graph cannot explain any of this
+    </text>
+  </svg>
+</figure>
+
+<style>
+  .cvd { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .cvd svg { width:100%; max-width:100%; height:auto; }
+  .cvd-axis { stroke:#888; stroke-width:1.3; }
+  .cvd-disc { fill:none; stroke-width:1.7; stroke-dasharray:6,4; }
+  .cvd-green { stroke:#7ee787; }
+  .cvd-blue { stroke:#58a6ff; }
+  .cvd-purple { stroke:#d2a8ff; }
+  .cvd-f-green { fill:#7ee787; }
+  .cvd-f-blue { fill:#58a6ff; }
+  .cvd-f-purple { fill:#d2a8ff; }
+  .cvd-pole { stroke:#ff7b72; stroke-width:2.4; }
+  .cvd-key { font-family:'Libre Baskerville',Georgia,serif; }
+  .cvd-panel, .cvd-head { fill:#eee; font-family:'Libre Baskerville',Georgia,serif; }
+  .cvd-note { fill:#9198a1; font-family:'Libre Baskerville',Georgia,serif; }
+  .cvd-sub, .cvd-sub2 { fill:#9198a1; font-family:'Libre Baskerville',Georgia,serif; font-style:italic; }
+  .cvd-foot { fill:#58a6ff; font-family:'Libre Baskerville',Georgia,serif; }
+  :global([data-theme="light"]) .cvd-axis { stroke:#666; }
+  :global([data-theme="light"]) .cvd-green { stroke:#116329; }
+  :global([data-theme="light"]) .cvd-f-green { fill:#116329; }
+  :global([data-theme="light"]) .cvd-blue { stroke:#0550ae; }
+  :global([data-theme="light"]) .cvd-f-blue { fill:#0550ae; }
+  :global([data-theme="light"]) .cvd-purple { stroke:#6639ba; }
+  :global([data-theme="light"]) .cvd-f-purple { fill:#6639ba; }
+  :global([data-theme="light"]) .cvd-pole { stroke:#a40e26; }
+  :global([data-theme="light"]) .cvd-foot { fill:#0550ae; }
+  :global([data-theme="light"]) .cvd-panel, :global([data-theme="light"]) .cvd-head { fill:#24292f; }
+  :global([data-theme="light"]) :is(.cvd-note, .cvd-sub, .cvd-sub2) { fill:#57606a; }
+</style>

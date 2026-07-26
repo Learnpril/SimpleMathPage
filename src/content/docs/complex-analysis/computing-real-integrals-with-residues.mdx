@@ -1,0 +1,340 @@
+---
+title: Computing Real Integrals with Residues
+description: The contour tricks that evaluate integrals no real-variable method reaches
+sidebar:
+  order: 15
+---
+
+import Quiz from "../../../components/Quiz.astro";
+import SemicircleContour from "../../../components/SemicircleContour.astro";
+
+## What You'll Learn
+
+In this lesson you'll learn the four standard contour techniques for real integrals: the semicircle for rational functions, the semicircle with Jordan's lemma for oscillatory integrands, the unit circle for trigonometric integrals over a full period, and the keyhole for branch cuts.
+
+## The Concept
+
+### The strategy
+
+Every method in this lesson follows the same four steps.
+
+1. **Choose a contour** that includes the real integral you want as one of its pieces.
+2. **Apply the residue theorem** to get the total around the closed contour.
+3. **Show the unwanted pieces vanish**, usually by the ML inequality.
+4. **Solve** for the piece you wanted.
+
+The art is entirely in step 1. Steps 2 to 4 are mechanical.
+
+### Type 1: rational functions over $\mathbb{R}$
+
+For $\int_{-\infty}^\infty \frac{p(x)}{q(x)}dx$ with $q$ having no real zeros and $\deg q \ge \deg p + 2$, use the semicircular contour in the upper half plane:
+
+$$
+\int_{-\infty}^{\infty}\frac{p}{q}\,dx = 2\pi i\sum_{\text{poles in UHP}}\operatorname{Res}\frac{p}{q}
+$$
+
+<SemicircleContour />
+
+The degree condition is what makes the arc vanish. On $|z|=R$ the integrand is $O(R^{-2})$ while the arc length is $\pi R$, so the ML bound is $O(R^{-1})\to0$. With only one degree of decay the bound would be $O(1)$ and the method fails.
+
+The figure carries out the whole argument for $\int\frac{dx}{1+x^4}$, computing the residues, the numerical value of the real integral, and the ML bound on the arc at two radii. All three agree on $\frac{\pi}{\sqrt2}$.
+
+**You could close in the lower half plane instead**, picking up those residues with a sign flip from the reversed orientation. The answer is the same, which is a good consistency check.
+
+### Type 2: oscillatory integrands, with Jordan's lemma
+
+For $\int_{-\infty}^\infty f(x)\cos(ax)\,dx$ or with $\sin$, replace the trigonometric factor by $e^{iaz}$ and take the appropriate part at the end. The tool that makes the arc vanish is stronger than ML alone:
+
+> **Jordan's lemma.** If $|f(z)|\to0$ uniformly as $|z|\to\infty$ in the upper half plane, and $a>0$, then
+>
+> $$
+> \int_{\Gamma_R}f(z)e^{iaz}\,dz \to 0
+> $$
+>
+> on the semicircular arc $\Gamma_R$ in the upper half plane.
+
+The reason is that $|e^{iaz}| = e^{-a\operatorname{Im}z}$ is exponentially small over most of the upper arc. This buys you a full degree: only $f\to0$ is needed, rather than $O(R^{-2})$ decay.
+
+**The sign of $a$ decides the half plane.** For $a>0$ close upward, for $a<0$ close downward, because that is where $e^{iaz}$ decays.
+
+### Type 3: trigonometric integrals over a period
+
+For $\int_0^{2\pi}R(\cos\theta,\sin\theta)\,d\theta$, substitute $z=e^{i\theta}$ so the interval becomes the unit circle:
+
+$$
+\cos\theta = \frac{z+z^{-1}}{2}, \qquad \sin\theta = \frac{z-z^{-1}}{2i}, \qquad d\theta = \frac{dz}{iz}
+$$
+
+The integral becomes a contour integral of a rational function around $|z|=1$, evaluated by residues at whichever poles land inside. **A real trigonometric integral becomes rational algebra**, which is usually a large simplification.
+
+### Type 4: branch cuts and the keyhole
+
+Integrals like $\int_0^\infty \frac{x^{a-1}}{1+x}dx$ involve a non-integer power, so the integrand has a branch point at 0. The standard contour is the **keyhole**: out along one side of the positive real axis, around a large circle, back along the other side, and around a small circle at the origin.
+
+Because the two straight pieces sit on opposite sides of the cut, the multi-valued factor differs between them by $e^{2\pi ia}$, and they do **not** cancel. Instead they combine to give a multiple of the integral you want. That deliberate use of the branch jump is the whole trick.
+
+### Principal values and poles on the contour
+
+If the integrand has a pole **on** the real axis, the integral only exists as a Cauchy principal value, and the contour is indented with a small semicircle around the pole. A small semicircle over a simple pole contributes exactly $\pi i$ times the residue — half of the full $2\pi i$, as the half-turn suggests. This is how $\int_0^\infty\frac{\sin x}{x}dx = \frac{\pi}{2}$ is evaluated, and the $\frac12$ in the answer comes from precisely that half-loop.
+
+## Worked Examples
+
+**Example 1: Evaluate $\displaystyle\int_{-\infty}^{\infty}\frac{dx}{1+x^2}$.**
+
+**Solution.** Poles at $\pm i$; only $i$ is in the upper half plane. With $q = 1+z^2$ and $q'=2z$,
+
+$$
+\operatorname{Res}_{z=i} = \frac{1}{2i}
+$$
+
+$$
+\int_{-\infty}^\infty\frac{dx}{1+x^2} = 2\pi i\cdot\frac{1}{2i} = \pi
+$$
+
+✓ Consistent with $\arctan x$ evaluated from $-\infty$ to $\infty$.
+
+The degree condition holds since $\deg q = 2 = \deg p + 2$.
+
+**Example 2: Evaluate $\displaystyle\int_{-\infty}^{\infty}\frac{dx}{1+x^4}$.**
+
+**Solution.** The poles are the fourth roots of $-1$, namely $e^{i\pi/4}$, $e^{3i\pi/4}$, $e^{5i\pi/4}$, $e^{7i\pi/4}$. The first two are in the upper half plane.
+
+Since $q = 1+z^4$ has $q'=4z^3$, and $z^4=-1$ at each pole,
+
+$$
+\operatorname{Res} = \frac{1}{4z^3} = \frac{z}{4z^4} = \frac{z}{-4} = -\frac{z}{4}
+$$
+
+Summing over the two upper poles:
+
+$$
+-\frac14\left(e^{i\pi/4}+e^{3i\pi/4}\right) = -\frac14\left(\frac{\sqrt2}{2}+\frac{\sqrt2}{2}i-\frac{\sqrt2}{2}+\frac{\sqrt2}{2}i\right) = -\frac{i\sqrt2}{4}
+$$
+
+$$
+\int_{-\infty}^{\infty}\frac{dx}{1+x^4} = 2\pi i\left(-\frac{i\sqrt2}{4}\right) = \frac{\pi\sqrt2}{2} = \frac{\pi}{\sqrt2}\approx2.2214
+$$
+
+∎
+
+**Try this with real methods.** Partial fractions over $\mathbb{R}$ requires factoring $1+x^4$ into two irreducible quadratics with irrational coefficients, and the resulting integrals are unpleasant. The contour method does not care about the degree.
+
+**Example 3: Evaluate $\displaystyle\int_{-\infty}^{\infty}\frac{\cos x}{1+x^2}dx$.**
+
+**Solution.** Consider $\frac{e^{iz}}{1+z^2}$ on the upper semicircle. Since $a = 1 > 0$, Jordan's lemma applies and the arc vanishes.
+
+The only pole in the upper half plane is $z=i$, with
+
+$$
+\operatorname{Res}_{z=i}\frac{e^{iz}}{1+z^2} = \frac{e^{i\cdot i}}{2i} = \frac{e^{-1}}{2i}
+$$
+
+So
+
+$$
+\int_{-\infty}^\infty\frac{e^{ix}}{1+x^2}dx = 2\pi i\cdot\frac{e^{-1}}{2i} = \frac{\pi}{e}
+$$
+
+The result is real, so taking real parts,
+
+$$
+\int_{-\infty}^{\infty}\frac{\cos x}{1+x^2}dx = \frac{\pi}{e}\approx1.1557
+$$
+
+∎
+
+And as a bonus, the imaginary part gives $\int\frac{\sin x}{1+x^2}dx = 0$, which is also obvious by oddness. **Two integrals for the price of one** is typical of this method.
+
+**Example 4: Evaluate $\displaystyle\int_0^{2\pi}\frac{d\theta}{2+\cos\theta}$.**
+
+**Solution.** Substitute $z=e^{i\theta}$, so $\cos\theta = \frac{z+z^{-1}}{2}$ and $d\theta = \frac{dz}{iz}$:
+
+$$
+\oint_{|z|=1}\frac{1}{2+\frac{z+z^{-1}}{2}}\cdot\frac{dz}{iz} = \oint\frac{2}{4z+z^2+1}\cdot\frac{dz}{i}
+$$
+
+The denominator $z^2+4z+1$ has roots $z=-2\pm\sqrt3$. Only $-2+\sqrt3\approx-0.268$ is inside the unit circle.
+
+$$
+\operatorname{Res} = \frac{2}{i}\cdot\frac{1}{2z+4}\bigg|_{z=-2+\sqrt3} = \frac{2}{i}\cdot\frac{1}{2\sqrt3} = \frac{1}{i\sqrt3}
+$$
+
+$$
+\int_0^{2\pi}\frac{d\theta}{2+\cos\theta} = 2\pi i\cdot\frac{1}{i\sqrt3} = \frac{2\pi}{\sqrt3}\approx3.6276
+$$
+
+∎
+
+**Checking which root is inside is the crucial step**, and it is where most errors in this type occur.
+
+**Example 5: Evaluate $\displaystyle\int_0^\infty\frac{\sin x}{x}dx$.**
+
+**Solution.** Consider $\frac{e^{iz}}{z}$ on a contour indented by a small semicircle above the pole at 0. There are no poles enclosed, so the total is 0.
+
+The large arc vanishes by Jordan's lemma. The small semicircle above a simple pole, traversed clockwise, contributes $-\pi i\operatorname{Res} = -\pi i$.
+
+So the two straight pieces sum to $\pi i$, giving
+
+$$
+\text{P.V.}\int_{-\infty}^{\infty}\frac{e^{ix}}{x}dx = \pi i
+$$
+
+Taking imaginary parts, $\int_{-\infty}^\infty\frac{\sin x}{x}dx = \pi$, and by evenness of $\frac{\sin x}{x}$,
+
+$$
+\int_0^\infty\frac{\sin x}{x}dx = \frac{\pi}{2}
+$$
+
+∎
+
+**The $\frac12$ comes from the half-loop around the pole.** This integral, the Dirichlet integral, has no elementary antiderivative at all.
+
+**Example 6: Evaluate $\displaystyle\int_0^\infty\frac{dx}{1+x^3}$.**
+
+**Solution.** The integrand is not even, so a full-line contour will not work directly. Instead use a **sector** contour of angle $\frac{2\pi}{3}$, since $e^{2\pi i/3}$ maps the positive real axis to the other ray and multiplies the integrand in a controlled way.
+
+On the returning ray, substituting $z = e^{2\pi i/3}t$ gives $z^3=t^3$, so the integrand is unchanged while $dz$ picks up a factor $e^{2\pi i/3}$. The sector encloses the single pole $z=e^{i\pi/3}$, with residue $\frac{1}{3z^2}$ evaluated there.
+
+Carrying this out gives
+
+$$
+\int_0^\infty\frac{dx}{1+x^3} = \frac{2\pi}{3\sqrt3}\approx1.2092
+$$
+
+∎
+
+**Match the contour to the symmetry of the integrand.** A cube in the denominator suggests a $120°$ sector, just as a fourth power suggests $90°$.
+
+**Example 7: A keyhole integral.**
+
+Set up $\displaystyle\int_0^\infty\frac{x^{-1/2}}{1+x}dx$.
+
+**Solution.** The integrand has a branch point at 0 and a pole at $-1$. Use a keyhole around the positive real axis with the branch cut there.
+
+On the lower edge of the cut, $z^{-1/2}$ has picked up a factor $e^{-i\pi}= -1$ relative to the upper edge, so the two straight contributions **add** rather than cancel, giving $2I$ where $I$ is the wanted integral. The residue at $z=-1$, with the branch chosen so $\arg z\in(0,2\pi)$, is $e^{-i\pi/2} = -i$.
+
+$$
+2I = 2\pi i(-i) = 2\pi \quad\Longrightarrow\quad I = \pi
+$$
+
+Verification by real methods: substituting $x=u^2$ turns it into $2\int_0^\infty\frac{du}{1+u^4}$... which is Example 2's cousin, and indeed gives $\pi$. ✓
+
+## Real-World Applications
+
+**Fourier transforms.** Most transforms in a table were computed by contour integration, and the transform of $\frac{1}{1+x^2}$ being $\pi e^{-|k|}$ is Example 3 with a parameter. Every filter design that uses a closed-form transform relies on this.
+
+**Inverse Laplace transforms.** The Bromwich contour integral is evaluated by residues, with each pole contributing an exponential mode. This is the mathematics behind step and impulse responses in control theory.
+
+**Diffraction and scattering.** The Sommerfeld theory of diffraction, and optical propagation integrals, are evaluated by steepest-descent and residue methods along contours in the complex plane.
+
+**Dispersion relations.** The Kramers–Kronig relations connect the real and imaginary parts of a material's response, and they are derived by contour integration with a principal value exactly like Example 5. They are used to check the consistency of measured optical data.
+
+**Statistical mechanics.** Partition functions and their asymptotics are extracted by contour integration around singularities, which is how phase transitions show up as singularity locations.
+
+**Signal processing.** The $\operatorname{sinc}$ function's integral, Example 5, is the reason ideal low-pass filters have the impulse response they do, and its slow decay is why real filters must be windowed.
+
+:::note[You've Got This]
+This lesson is where complex analysis pays its way. The workflow never changes: pick a contour containing your integral, apply the residue theorem, kill the extra pieces, solve. Learning it is mostly learning which contour goes with which integrand — semicircle for rational, semicircle plus Jordan for oscillatory, unit circle for a full trig period, sector for symmetry, keyhole for branch points. Once that mapping is in place you can evaluate integrals that have no antiderivative at all, and that is a genuinely new ability rather than a faster old one.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="complex-computing-real-integrals-with-residues"
+  questions={[
+    {
+      id: "q1",
+      text: "What are the four steps of the contour method?",
+      options: [
+        "Differentiate, integrate, substitute, simplify",
+        "Choose a contour containing the integral, apply the residue theorem, show the extra pieces vanish, and solve",
+        "Factor, expand, cancel, evaluate",
+        "Guess, check, refine, verify",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Only the first step needs judgement; the rest is mechanical. Learning the method is largely learning which contour suits which integrand.",
+    },
+    {
+      id: "q2",
+      text: "For a rational function, what degree condition makes the semicircular arc vanish?",
+      options: [
+        "deg q ≥ deg p",
+        "deg q ≥ deg p + 2",
+        "deg q = deg p",
+        "No condition is needed",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Two degrees of decay make the integrand O(R^(−2)) against an arc of length πR, so the ML bound is O(R^(−1)). With only one degree the bound does not shrink.",
+    },
+    {
+      id: "q3",
+      text: "What is ∫_{−∞}^{∞} dx/(1 + x⁴)?",
+      options: ["π", "π/√2", "2π", "π/2"],
+      correctIndex: 1,
+      explanation:
+        "The two poles in the upper half plane have residues summing to −i√2/4, and 2πi times that is π/√2 ≈ 2.2214. Real partial fractions would need irrational quadratic factors.",
+    },
+    {
+      id: "q4",
+      text: "What does Jordan's lemma provide?",
+      options: [
+        "A way to compute residues",
+        "Vanishing of ∫ f(z)e^(iaz) dz on the upper arc when a > 0 and f → 0, needing only one degree of decay",
+        "A method for trigonometric integrals",
+        "A bound on the residue",
+      ],
+      correctIndex: 1,
+      explanation:
+        "The factor |e^(iaz)| = e^(−a Im z) is exponentially small over most of the upper arc. The sign of a decides which half plane to close in.",
+    },
+    {
+      id: "q5",
+      text: "For ∫₀^{2π} R(cos θ, sin θ) dθ, what substitution is used?",
+      options: [
+        "x = tan(θ/2)",
+        "z = e^(iθ), giving cos θ = (z + 1/z)/2 and dθ = dz/(iz) on the unit circle",
+        "z = θ + i",
+        "u = sin θ",
+      ],
+      correctIndex: 1,
+      explanation:
+        "The full period becomes exactly one loop of the unit circle and the integrand becomes rational in z. Then only the poles inside the circle matter.",
+    },
+    {
+      id: "q6",
+      text: "What is ∫₀^{2π} dθ/(2 + cos θ)?",
+      options: ["2π", "2π/√3", "π/√3", "π"],
+      correctIndex: 1,
+      explanation:
+        "After substituting z = e^(iθ) the denominator z² + 4z + 1 has roots −2 ± √3, and only −2 + √3 lies inside the unit circle. Its residue gives 2π/√3 ≈ 3.6276.",
+    },
+    {
+      id: "q7",
+      text: "A small semicircle indenting around a simple pole on the real axis contributes what?",
+      options: [
+        "2πi times the residue",
+        "πi times the residue, since it is a half turn",
+        "Nothing",
+        "The full integral",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Half a loop gives half the usual factor. This is exactly where the ½ in ∫₀^∞ (sin x)/x dx = π/2 comes from.",
+    },
+    {
+      id: "q8",
+      text: "Why is a keyhole contour used for ∫₀^∞ x^(a−1)/(1 + x) dx?",
+      options: [
+        "Because the integrand is even",
+        "Because the non-integer power has a branch point, and the two edges of the cut differ by a phase factor so they combine instead of cancelling",
+        "Because there are no poles",
+        "Because the integral diverges",
+      ],
+      correctIndex: 1,
+      explanation:
+        "The branch jump across the cut is deliberately exploited: the two straight pieces add to a multiple of the wanted integral. Without the multi-valuedness the contour would give nothing.",
+    },
+  ]}
+/>

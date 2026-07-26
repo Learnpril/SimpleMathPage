@@ -1,0 +1,395 @@
+---
+title: The Complex Plane
+description: Modulus, argument, polar form, and roots of unity as geometry
+sidebar:
+  order: 2
+---
+
+import Quiz from "../../../components/Quiz.astro";
+import SymbolKey from "../../../components/SymbolKey.astro";
+import PolarFormDiagram from "../../../components/PolarFormDiagram.astro";
+
+## What You'll Learn
+
+In this lesson you'll treat complex numbers as points in a plane, learn modulus and argument, convert to polar and exponential form, and use them to take powers and roots almost without calculation.
+
+<SymbolKey
+  title="Notation for complex numbers"
+  items={[
+    {
+      sym: "z = x + iy",
+      read: "the complex number with real part x and imaginary part y",
+      note: "the standard or Cartesian form",
+    },
+    {
+      sym: "Re z, Im z",
+      read: "the real and imaginary parts of z",
+      note: "both are real numbers; Im(3 + 4i) is 4, not 4i",
+    },
+    {
+      sym: "z̄",
+      read: "the conjugate of z",
+      note: "x − iy; reflection across the real axis",
+    },
+    {
+      sym: "|z|",
+      read: "the modulus of z",
+      note: "√(x² + y²), the distance from the origin",
+    },
+    {
+      sym: "arg z",
+      read: "the argument of z",
+      note: "the angle from the positive real axis; determined only up to 2πk",
+    },
+    {
+      sym: "Arg z",
+      read: "the principal argument",
+      note: "the one value in (−π, π]; the capital letter matters",
+    },
+    {
+      sym: "r e^(iθ)",
+      read: "the exponential form",
+      note: "r = |z| and θ = arg z; makes multiplication trivial",
+    },
+  ]}
+/>
+
+## The Concept
+
+### A complex number is a point
+
+Write $z = x + iy$ and plot it at $(x, y)$. That is the entire idea behind the **complex plane**, sometimes called the Argand diagram, and once you have it nothing about complex numbers is mysterious.
+
+- The **real axis** is the horizontal one, where $y = 0$.
+- The **imaginary axis** is the vertical one, where $x = 0$.
+- **Addition** is vector addition, exactly as in $\mathbb{R}^2$.
+- **Conjugation** $z \mapsto \bar z$ is reflection across the real axis.
+
+Multiplication is where $\mathbb{C}$ stops behaving like $\mathbb{R}^2$. There is no useful multiplication of plane vectors, but there is for complex numbers, and it has a clean geometric meaning we get to shortly.
+
+### Modulus and argument
+
+The **modulus** is the distance to the origin:
+
+$$
+|z| = \sqrt{x^2+y^2} = \sqrt{z\bar z}
+$$
+
+The **argument** is the angle from the positive real axis, measured counterclockwise. It is only defined up to multiples of $2\pi$, since rotating a full turn returns you to the same point. The **principal argument** $\operatorname{Arg} z$ is the unique choice in $(-\pi, \pi]$.
+
+<PolarFormDiagram />
+
+Useful properties, all worth knowing cold:
+
+- $|z_1z_2| = |z_1||z_2|$ and $\left|\frac{z_1}{z_2}\right| = \frac{|z_1|}{|z_2|}$
+- $\arg(z_1z_2) = \arg z_1 + \arg z_2$, and arguments subtract on division
+- $|z|^2 = z\bar z$, which is how you divide complex numbers
+- $\overline{z_1+z_2} = \bar z_1 + \bar z_2$ and $\overline{z_1z_2} = \bar z_1 \bar z_2$
+- $|z_1+z_2| \le |z_1|+|z_2|$, the triangle inequality, and it is genuinely the triangle inequality for the picture
+
+Note that $|z_1 + z_2|$ has **no** simple formula. Moduli behave well under multiplication and badly under addition, which is the reverse of what you might expect.
+
+### Polar and exponential form
+
+Reading the right triangle off the diagram,
+
+$$
+x = r\cos\theta, \qquad y = r\sin\theta, \qquad z = r(\cos\theta + i\sin\theta)
+$$
+
+**Euler's formula** compresses this to
+
+$$
+e^{i\theta} = \cos\theta + i\sin\theta, \qquad\text{so}\qquad z = re^{i\theta}
+$$
+
+This is the single most useful identity in the section. Setting $\theta = \pi$ gives $e^{i\pi} = -1$, usually written $e^{i\pi}+1=0$ and often called the most beautiful equation in mathematics. It is also just a statement that rotating 1 by half a turn lands on $-1$.
+
+**Multiplication becomes rotation and scaling.** If $z_1 = r_1e^{i\theta_1}$ and $z_2 = r_2e^{i\theta_2}$ then
+
+$$
+z_1z_2 = r_1r_2\,e^{i(\theta_1+\theta_2)}
+$$
+
+Multiply the lengths, add the angles. In particular multiplying by $i = e^{i\pi/2}$ is exactly a quarter-turn counterclockwise, which is the honest answer to "what does $i$ mean."
+
+### Powers and roots
+
+**De Moivre's theorem** is just the multiplication rule applied $n$ times:
+
+$$
+\big(re^{i\theta}\big)^n = r^ne^{in\theta}
+$$
+
+Roots run the same machinery backwards, and this is where polar form earns its place. The equation $z^n = w$ with $w = \rho e^{i\varphi}$ has exactly $n$ solutions:
+
+$$
+z_k = \rho^{1/n}\,e^{i(\varphi+2\pi k)/n}, \qquad k = 0, 1, \ldots, n-1
+$$
+
+All have the same modulus, so they sit on a circle, and their arguments differ by $\frac{2\pi}{n}$, so they are the vertices of a **regular $n$-gon**. The $n$th roots of unity are the case $w=1$.
+
+Two facts that follow immediately and are used constantly:
+
+- The $n$th roots of unity **sum to zero** for $n \ge 2$, by symmetry of the polygon.
+- They form a cyclic group of order $n$ under multiplication, which is the connection back to abstract algebra.
+
+### Regions in the plane
+
+Complex analysis is done on subsets of $\mathbb{C}$, so it helps to read set descriptions geometrically:
+
+- $|z - a| = r$ — the **circle** of radius $r$ centred at $a$
+- $|z - a| < r$ — the open **disc**
+- $|z - a_1| = |z - a_2|$ — the perpendicular bisector of the segment joining them
+- $\operatorname{Re} z > 0$ — the right half plane
+- $\alpha < \operatorname{Arg} z < \beta$ — a **sector**
+- $r_1 < |z-a| < r_2$ — an **annulus**, which is where Laurent series live
+
+## Worked Examples
+
+**Example 1: Put $z = -1 + i\sqrt{3}$ into exponential form.**
+
+**Solution.** Modulus:
+
+$$
+|z| = \sqrt{(-1)^2+(\sqrt3)^2} = \sqrt{4} = 2
+$$
+
+The point is in the second quadrant, so the reference angle $\arctan(\sqrt3/1) = 60°$ gives
+
+$$
+\operatorname{Arg} z = 180° - 60° = 120° = \frac{2\pi}{3}
+$$
+
+$$
+z = 2e^{2\pi i/3}
+$$
+
+**Always check the quadrant.** A calculator's $\arctan(y/x)$ returns $-60°$ here, which is the wrong point; the picture is what tells you to add $180°$.
+
+**Example 2: Compute $(1+i)^{10}$.**
+
+**Solution.** In Cartesian form this is a nightmare. In polar form, $|1+i| = \sqrt2$ and $\operatorname{Arg}(1+i) = \pi/4$, so
+
+$$
+(1+i)^{10} = \left(\sqrt2\right)^{10} e^{10i\pi/4} = 32\,e^{5i\pi/2}
+$$
+
+Reduce the angle mod $2\pi$: $\frac{5\pi}{2} - 2\pi = \frac{\pi}{2}$, so
+
+$$
+(1+i)^{10} = 32e^{i\pi/2} = 32i
+$$
+
+∎
+
+**This is the example that sells polar form.** Ten binomial expansions replaced by one multiplication and one angle reduction.
+
+**Example 3: Find all solutions of $z^3 = 8i$.**
+
+**Solution.** Write the right side in polar form: $|8i| = 8$ and $\operatorname{Arg}(8i) = \pi/2$, so $8i = 8e^{i\pi/2}$.
+
+The three cube roots have modulus $8^{1/3} = 2$ and arguments
+
+$$
+\frac{\pi/2 + 2\pi k}{3} = \frac{\pi}{6},\ \frac{5\pi}{6},\ \frac{3\pi}{2}
+$$
+
+for $k = 0,1,2$. So
+
+$$
+z = 2e^{i\pi/6},\quad 2e^{5i\pi/6},\quad 2e^{3i\pi/2}
+$$
+
+which in Cartesian form is $\sqrt3 + i$, $-\sqrt3+i$, and $-2i$.
+
+Check: the three are $120°$ apart on the circle of radius 2, and $(\sqrt3+i)^3 = 8i$. ✓
+
+**Example 4: Show the $n$th roots of unity sum to zero for $n\ge2$.**
+
+**Solution.** They are $1, \omega, \omega^2,\ldots,\omega^{n-1}$ where $\omega = e^{2\pi i/n}$. This is a geometric series:
+
+$$
+\sum_{k=0}^{n-1}\omega^k = \frac{\omega^n-1}{\omega-1} = \frac{1-1}{\omega-1} = 0
+$$
+
+valid because $\omega \ne 1$ when $n \ge 2$. ∎
+
+Geometrically these are the vertices of a regular polygon centred at the origin, and the centroid of a regular polygon is its centre. **Algebra and geometry give the same answer, which is the normal situation in this subject.**
+
+**Example 5: Divide $\frac{3+2i}{1-4i}$.**
+
+**Solution.** Multiply above and below by the conjugate of the denominator:
+
+$$
+\frac{3+2i}{1-4i}\cdot\frac{1+4i}{1+4i} = \frac{3+12i+2i+8i^2}{1+16} = \frac{-5+14i}{17}
+$$
+
+$$
+= -\frac{5}{17}+\frac{14}{17}i
+$$
+
+**The trick is that $z\bar z = |z|^2$ is real**, so conjugating the denominator clears the $i$ from it. This is the only division algorithm you need.
+
+**Example 6: Describe the set $|z-1| = 2|z+1|$.**
+
+**Solution.** Square both sides using $|w|^2 = w\bar w$, with $z = x+iy$:
+
+$$
+(x-1)^2+y^2 = 4\big[(x+1)^2+y^2\big]
+$$
+
+Expanding and collecting,
+
+$$
+3x^2+10x+3+3y^2 = 0 \quad\Longrightarrow\quad x^2+\tfrac{10}{3}x+y^2 = -1
+$$
+
+Completing the square:
+
+$$
+\left(x+\tfrac53\right)^2+y^2 = \tfrac{25}{9}-1 = \tfrac{16}{9}
+$$
+
+A **circle** centred at $-\frac53$ with radius $\frac43$. ∎
+
+Sets defined by a ratio of distances are circles, called Apollonius circles, and they reappear when we study Möbius transformations.
+
+**Example 7: Use polar form to derive a trig identity.**
+
+**Solution.** By De Moivre with $n=3$ and $r=1$,
+
+$$
+(\cos\theta+i\sin\theta)^3 = \cos3\theta+i\sin3\theta
+$$
+
+Expand the left side:
+
+$$
+\cos^3\theta + 3i\cos^2\theta\sin\theta - 3\cos\theta\sin^2\theta - i\sin^3\theta
+$$
+
+Match real parts:
+
+$$
+\cos3\theta = \cos^3\theta-3\cos\theta\sin^2\theta = 4\cos^3\theta-3\cos\theta
+$$
+
+∎
+
+**Multiple-angle formulas are a corollary of complex multiplication.** This is the cleanest way to generate them, and it is why trigonometry looks so much easier once you have $e^{i\theta}$.
+
+## Real-World Applications
+
+**Phasors in electrical engineering.** A sinusoidal voltage $V\cos(\omega t+\phi)$ is stored as the single complex number $Ve^{i\phi}$. Adding two sinusoids of the same frequency then becomes adding two complex numbers, which converts a trigonometry problem into arithmetic. This is the standard method in every power systems course.
+
+**Rotations in graphics.** Multiplying by $e^{i\theta}$ rotates a 2D point about the origin, which is cheaper and more numerically stable than a matrix multiply. The 3D generalization is the quaternion, used in essentially every game engine for smooth camera and character rotation.
+
+**Roots of unity and the FFT.** The fast Fourier transform is built on the algebraic relations among the $n$th roots of unity. It is arguably the most-executed nontrivial algorithm in the world, and it exists because those roots form a group.
+
+**Signal representation.** Amplitude and phase are precisely modulus and argument. Any tool that displays a spectrum is showing you $|z|$ and $\arg z$ for a family of complex numbers.
+
+**Impedance matching.** The Smith chart, standard in radio engineering, is a plot in the complex plane using a Möbius transformation, and the circles on it are Apollonius circles like the one in Example 6.
+
+**Crystallography and symmetry.** Regular polygons of roots of unity describe the rotational symmetries available to a crystal lattice, which is why fivefold symmetry was long thought impossible in crystals.
+
+:::note[You've Got This]
+Two things from this lesson do the most work later: polar form and the geometric reading of multiplication. If you can convert between $x+iy$ and $re^{i\theta}$ without thinking, and if "multiply by $i$" makes you picture a quarter turn rather than a symbol, you are set up for the rest of the section. Everything about roots, powers, and rotations is one identity applied repeatedly, and it is worth over-practising until it feels like arithmetic.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="complex-the-complex-plane"
+  questions={[
+    {
+      id: "q1",
+      text: "What is the modulus of z = −3 + 4i?",
+      options: ["1", "5", "7", "25"],
+      correctIndex: 1,
+      explanation:
+        "The modulus is √((−3)² + 4²) = √25 = 5. It measures distance from the origin, so the sign of the real part is irrelevant.",
+    },
+    {
+      id: "q2",
+      text: "What is the principal argument of z = −1 + i√3?",
+      options: ["−60°", "60°", "120°", "240°"],
+      correctIndex: 2,
+      explanation:
+        "The point lies in the second quadrant, so the reference angle of 60° gives 180° − 60° = 120°. A calculator's arctan would return −60°, which names the wrong point.",
+    },
+    {
+      id: "q3",
+      text: "Geometrically, what does multiplying by i do to a complex number?",
+      options: [
+        "Reflects it across the real axis",
+        "Rotates it 90° counterclockwise",
+        "Doubles its modulus",
+        "Negates it",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Since i = e^(iπ/2), multiplication adds π/2 to the argument and leaves the modulus unchanged. Reflection across the real axis is conjugation, which is a different operation.",
+    },
+    {
+      id: "q4",
+      text: "Using polar form, what is (1 + i)^10?",
+      options: ["32i", "1024", "−32", "32 + 32i"],
+      correctIndex: 0,
+      explanation:
+        "With modulus √2 and argument π/4, the tenth power has modulus 32 and argument 10π/4 = 5π/2, which reduces to π/2. That gives 32i.",
+    },
+    {
+      id: "q5",
+      text: "How many solutions does z⁵ = 32 have in ℂ, and where do they lie?",
+      options: [
+        "One, at z = 2",
+        "Five, equally spaced on the circle of radius 2",
+        "Five, all on the real axis",
+        "Infinitely many",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Every nonzero complex number has exactly n distinct nth roots. They share the modulus 32^(1/5) = 2 and their arguments differ by 72°, forming a regular pentagon.",
+    },
+    {
+      id: "q6",
+      text: "Which identity is used to divide complex numbers?",
+      options: [
+        "z + z̄ = 2 Re z",
+        "z z̄ = |z|²",
+        "|z₁ + z₂| = |z₁| + |z₂|",
+        "arg(z₁z₂) = arg z₁ · arg z₂",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Multiplying numerator and denominator by the conjugate makes the denominator real, since z z̄ = |z|². The third option is false in general and the fourth confuses adding arguments with multiplying them.",
+    },
+    {
+      id: "q7",
+      text: "What does the set |z − 2| = 3 describe?",
+      options: [
+        "A line through 2",
+        "The circle of radius 3 centred at 2",
+        "The disc of radius 2 centred at 3",
+        "A sector of angle 3",
+      ],
+      correctIndex: 1,
+      explanation:
+        "|z − a| is the distance from z to a, so setting it equal to a constant traces a circle. Replacing = with < would give the open disc instead.",
+    },
+    {
+      id: "q8",
+      text: "Why do the nth roots of unity sum to zero for n ≥ 2?",
+      options: [
+        "Because they are all zero",
+        "Because they form a geometric series summing to (ωⁿ − 1)/(ω − 1) = 0, and equivalently they are the vertices of a regular polygon centred at the origin",
+        "Because half of them are negative",
+        "They do not sum to zero",
+      ],
+      correctIndex: 1,
+      explanation:
+        "The algebraic argument uses ωⁿ = 1 with ω ≠ 1, and the geometric one notes that the centroid of a regular polygon is its centre. Both routes give the same answer.",
+    },
+  ]}
+/>

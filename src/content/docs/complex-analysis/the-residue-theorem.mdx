@@ -1,0 +1,299 @@
+---
+title: The Residue Theorem
+description: Contour integrals reduced to a finite sum of local coefficients
+sidebar:
+  order: 14
+---
+
+import Quiz from "../../../components/Quiz.astro";
+import ResidueSum from "../../../components/ResidueSum.astro";
+
+## What You'll Learn
+
+In this lesson you'll state the residue theorem, learn the formulas for computing residues at simple and higher-order poles, and use them to evaluate contour integrals that would be hopeless by parametrisation.
+
+## The Concept
+
+### The theorem
+
+> **Residue theorem.** Let $C$ be a positively oriented simple closed contour, and let $f$ be analytic on and inside $C$ except at finitely many isolated singularities $z_1,\ldots,z_n$ inside $C$. Then
+>
+> $$
+> \oint_C f(z)\,dz = 2\pi i\sum_{k=1}^{n}\operatorname{Res}_{z=z_k}f
+> $$
+
+The **residue** at $z_k$ is the Laurent coefficient $c_{-1}$ of the expansion about that point.
+
+This is the culmination of the section, and everything in it has been preparation. From Cauchy's theorem we know the contour can be shrunk onto small circles around each singularity. From Laurent series we know each such circle contributes $2\pi i c_{-1}$. Put those together and the theorem is immediate.
+
+**A global integral has become a finite sum of local data.** Note what has been discarded: the shape of the contour, the behaviour of $f$ away from the singularities, everything except one number per enclosed pole.
+
+<ResidueSum />
+
+The figure checks it. A circle of radius 2.4 encloses two of the three poles of $\frac{1}{(z-1)(z+1)(z-4)}$; the residues at those two are computed from the formula, and the contour integral is computed numerically. They agree to numerical precision, and the excluded pole contributes nothing.
+
+### Computing residues
+
+You almost never build the Laurent series. Use these instead.
+
+**Simple pole.**
+
+$$
+\operatorname{Res}_{z=z_0}f = \lim_{z\to z_0}(z-z_0)f(z)
+$$
+
+**Simple pole of a quotient.** If $f = \frac{p}{q}$ with $p(z_0)\ne0$ and $q$ having a simple zero at $z_0$, then
+
+$$
+\operatorname{Res}_{z=z_0}\frac{p}{q} = \frac{p(z_0)}{q'(z_0)}
+$$
+
+This is the most useful formula in the lesson. It avoids all factoring, and it works beautifully for things like $\frac{1}{\sin z}$ where you cannot factor at all.
+
+**Pole of order $m$.**
+
+$$
+\operatorname{Res}_{z=z_0}f = \frac{1}{(m-1)!}\lim_{z\to z_0}\frac{d^{m-1}}{dz^{m-1}}\Big[(z-z_0)^mf(z)\Big]
+$$
+
+The differentiation gets unpleasant for large $m$; for $m \ge 3$ it is often faster to expand the series directly.
+
+**Essential singularity.** No formula exists. Expand the Laurent series and read off $c_{-1}$.
+
+### Things worth noticing
+
+**Order and residue are independent.** A pole of order 5 can have residue 0, as $\frac{\sin z}{z^3}$ showed last lesson with order 2 and residue 0.
+
+**Removable singularities have residue 0**, so they can be ignored entirely.
+
+**Residues can cancel.** $\oint_{|z|=2}\frac{dz}{z^2-1} = 0$ because the two residues are $\frac12$ and $-\frac12$. Zero does not imply no poles.
+
+**Only enclosed singularities matter.** This bears repeating because it is the most common source of error: locate every singularity, then check each one against the contour.
+
+### The residue at infinity
+
+Sometimes it is faster to work from outside. Define
+
+$$
+\operatorname{Res}_{z=\infty}f = -\operatorname{Res}_{w=0}\left[\frac{1}{w^2}f\!\left(\frac1w\right)\right]
+$$
+
+Then the sum of **all** residues, including the one at infinity, is zero for any rational function. So a contour enclosing many poles can be evaluated by computing the single residue at infinity, which is often much less work.
+
+## Worked Examples
+
+**Example 1: Find the residue of $\frac{e^z}{z-2}$ at $z=2$.**
+
+**Solution.** Simple pole, so multiply and take the limit:
+
+$$
+\operatorname{Res} = \lim_{z\to2}(z-2)\cdot\frac{e^z}{z-2} = e^2
+$$
+
+∎
+
+**Example 2: Evaluate $\displaystyle\oint_{|z|=3}\frac{dz}{z^2+1}$.**
+
+**Solution.** Poles at $\pm i$, both inside $|z|=3$. Use the quotient formula with $p=1$, $q=z^2+1$, $q'=2z$:
+
+$$
+\operatorname{Res}_{z=i} = \frac{1}{2i}, \qquad \operatorname{Res}_{z=-i} = \frac{1}{-2i}
+$$
+
+Sum: $\frac{1}{2i}-\frac{1}{2i} = 0$, so
+
+$$
+\oint_{|z|=3}\frac{dz}{z^2+1} = 0
+$$
+
+∎
+
+**Zero by cancellation, not by absence of poles.**
+
+**Example 3: Evaluate $\displaystyle\oint_{|z-i|=1}\frac{dz}{z^2+1}$.**
+
+**Solution.** This contour is a small circle about $i$, so only that pole is enclosed — $-i$ is at distance 2 from the centre.
+
+$$
+2\pi i\cdot\frac{1}{2i} = \pi
+$$
+
+∎
+
+**Same integrand, different contour, different answer.** The contour is doing all the work.
+
+**Example 4: Find the residue of $\frac{e^z}{z^3}$ at 0.**
+
+**Solution.** Pole of order 3, so use $m=3$:
+
+$$
+\operatorname{Res} = \frac{1}{2!}\lim_{z\to0}\frac{d^2}{dz^2}\left[z^3\cdot\frac{e^z}{z^3}\right] = \frac{1}{2}\lim_{z\to0}\frac{d^2}{dz^2}e^z = \frac12
+$$
+
+Matching the series computation from the Laurent lesson. ✓
+
+**Example 5: Find the residue of $\frac{1}{\sin z}$ at $z=n\pi$.**
+
+**Solution.** Simple pole, so use the quotient formula with $p=1$ and $q=\sin z$, $q' = \cos z$:
+
+$$
+\operatorname{Res}_{z=n\pi}\frac{1}{\sin z} = \frac{1}{\cos(n\pi)} = (-1)^n
+$$
+
+∎
+
+**No factoring was possible here**, which is exactly why the $p/q'$ formula matters.
+
+**Example 6: Evaluate $\displaystyle\oint_{|z|=1}\frac{\cos z}{z^2(z-3)}\,dz$.**
+
+**Solution.** Singularities at $z=0$ (order 2) and $z=3$ (simple). Only 0 is inside.
+
+$$
+\operatorname{Res}_{z=0} = \lim_{z\to0}\frac{d}{dz}\left[\frac{\cos z}{z-3}\right]
+$$
+
+By the quotient rule,
+
+$$
+\frac{d}{dz}\frac{\cos z}{z-3} = \frac{-\sin z(z-3)-\cos z}{(z-3)^2}
+$$
+
+At $z=0$ this is $\frac{0-1}{9} = -\frac19$. So
+
+$$
+\oint = 2\pi i\left(-\frac19\right) = -\frac{2\pi i}{9}
+$$
+
+∎
+
+**Example 7: Evaluate $\displaystyle\oint_{|z|=1}z^3e^{1/z}\,dz$.**
+
+**Solution.** Essential singularity at 0, so no formula applies — expand instead:
+
+$$
+z^3e^{1/z} = z^3\left(1+\frac1z+\frac{1}{2z^2}+\frac{1}{6z^3}+\frac{1}{24z^4}+\cdots\right)
+$$
+
+$$
+= z^3+z^2+\frac{z}{2}+\frac16+\frac{1}{24z}+\cdots
+$$
+
+The coefficient of $\frac1z$ is $\frac{1}{24}$, so
+
+$$
+\oint_{|z|=1}z^3e^{1/z}\,dz = \frac{2\pi i}{24} = \frac{\pi i}{12}
+$$
+
+∎
+
+**You never had to understand the singularity**, only to locate one coefficient in the series. That is the practical power of the whole method.
+
+## Real-World Applications
+
+**Inverse Laplace transforms.** Recovering a time response from a transfer function is a contour integral evaluated by residues, with each pole contributing one exponential term. This is what produces the familiar sums of decaying exponentials in step responses.
+
+**Partial fraction expansion.** The coefficients in a partial fraction decomposition **are** residues, so every time an engineer expands a transfer function they are computing residues, usually without calling them that.
+
+**Summing series.** Sums like $\sum 1/n^2$ and $\sum 1/(n^2+a^2)$ are evaluated by applying the residue theorem to a function with poles at the integers, typically $\pi\cot(\pi z)$. This is a standard technique in analytic number theory.
+
+**Feynman integrals.** Loop integrals in quantum field theory are performed by closing a contour and summing residues, with each residue corresponding to a particle going on shell. The physics interpretation of a residue is standard vocabulary in the field.
+
+**Modal analysis.** In structural and acoustic engineering, a system's response is decomposed into modes, and each mode's contribution is the residue at the corresponding pole. Measured frequency-response data is fitted by estimating those residues.
+
+**Filter and antenna design.** Residues at poles determine the weight of each resonance in a network's response, so shaping a filter is largely choosing pole locations and residues.
+
+:::note[You've Got This]
+The residue theorem is the payoff for everything earlier in the section, and the workflow is always the same three steps: find the singularities, decide which are inside the contour, compute the residue at each. Of the formulas, the one to have at your fingertips is $\operatorname{Res} = p(z_0)/q'(z_0)$ for a simple pole of a quotient — it handles most cases and needs no factoring. Next lesson this machinery gets pointed at real integrals, which is where it stops being elegant and starts being useful.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="complex-the-residue-theorem"
+  questions={[
+    {
+      id: "q1",
+      text: "What does the residue theorem state?",
+      options: [
+        "∮ f dz = 0 for all f",
+        "∮_C f dz = 2πi times the sum of the residues at the singularities inside C",
+        "∮ f dz = 2πi f(z₀)",
+        "The residue equals the derivative",
+      ],
+      correctIndex: 1,
+      explanation:
+        "A global integral collapses to a finite sum of local coefficients. The contour's shape and the behaviour of f away from the singularities are both irrelevant.",
+    },
+    {
+      id: "q2",
+      text: "What is the residue at a simple pole z₀?",
+      options: [
+        "f(z₀)",
+        "lim (z − z₀) f(z) as z → z₀",
+        "f′(z₀)",
+        "The Taylor coefficient c₁",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Multiplying by (z − z₀) cancels the pole and leaves the coefficient c₋₁ in the limit. For a quotient p/q with a simple zero of q, the shortcut p(z₀)/q′(z₀) is usually faster.",
+    },
+    {
+      id: "q3",
+      text: "What is the residue of 1/sin z at z = nπ?",
+      options: ["1", "(−1)ⁿ", "0", "nπ"],
+      correctIndex: 1,
+      explanation:
+        "Using p/q′ gives 1/cos(nπ) = (−1)ⁿ. Since sin z cannot be factored, this is exactly the situation the quotient formula exists for.",
+    },
+    {
+      id: "q4",
+      text: "What is ∮_{|z|=3} dz/(z² + 1)?",
+      options: ["2πi", "0", "π", "−π"],
+      correctIndex: 1,
+      explanation:
+        "Both poles ±i are enclosed with residues 1/(2i) and −1/(2i), which cancel. A vanishing integral does not mean there were no poles inside.",
+    },
+    {
+      id: "q5",
+      text: "What is ∮_{|z−i|=1} dz/(z² + 1)?",
+      options: ["0", "π", "2πi", "πi"],
+      correctIndex: 1,
+      explanation:
+        "This small circle encloses only the pole at i, whose residue is 1/(2i), giving 2πi·1/(2i) = π. The pole at −i is at distance 2 from the centre and excluded.",
+    },
+    {
+      id: "q6",
+      text: "How do you compute the residue at a pole of order m?",
+      options: [
+        "Take the mth derivative of f",
+        "Compute the (m − 1)st derivative of (z − z₀)^m f(z), evaluate at z₀, and divide by (m − 1)!",
+        "Multiply f by m",
+        "There is no formula",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Multiplying by (z − z₀)^m removes the pole, and differentiating m − 1 times extracts the right coefficient. For m ≥ 3 expanding the series is often less work.",
+    },
+    {
+      id: "q7",
+      text: "What is the residue of z³e^(1/z) at 0?",
+      options: ["1/6", "1/24", "0", "1"],
+      correctIndex: 1,
+      explanation:
+        "Multiplying the series for e^(1/z) by z³ gives a 1/z term with coefficient 1/24. Essential singularities admit no formula, so the series is the only route.",
+    },
+    {
+      id: "q8",
+      text: "Which statement is true about poles and residues?",
+      options: [
+        "A higher-order pole always has a larger residue",
+        "A pole of any order can have residue 0",
+        "Removable singularities have nonzero residue",
+        "Every pole has residue 1",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Order and residue are independent: sin z / z³ has a pole of order 2 and residue 0. Removable singularities always have residue 0 and can be ignored.",
+    },
+  ]}
+/>

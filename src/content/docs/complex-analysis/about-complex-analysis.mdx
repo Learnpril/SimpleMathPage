@@ -1,0 +1,79 @@
+---
+title: About Complex Analysis
+description: Functions of a complex variable - analyticity, contour integration, residues, and conformal mapping
+sidebar:
+  order: 0
+---
+
+## What is Complex Analysis?
+
+Complex analysis is calculus over $\mathbb{C}$, and it is the rare case where making a subject more general makes it dramatically **easier**.
+
+That is not what you would expect. Adding a second dimension to the input usually costs you something. Here it gains you almost everything. A function differentiable once at every point of a disc is automatically differentiable infinitely often. Its values on a tiny circle determine its values everywhere inside. Its integral around any closed loop in a simply connected region is zero. None of these has a real-variable analogue that is remotely close to true.
+
+import ComplexAnalysisTopicMap from "../../../components/ComplexAnalysisTopicMap.astro";
+
+<ComplexAnalysisTopicMap />
+
+The reason is that complex differentiability is a much stronger demand than it looks. Requiring the limit
+
+$$
+f'(z) = \lim_{h \to 0}\frac{f(z+h)-f(z)}{h}
+$$
+
+to exist means it must give the same answer as $h$ approaches 0 from **every direction in the plane**, not just from the left and right. That single requirement is equivalent to a pair of partial differential equations, and it constrains the function so severely that everything else in the section follows.
+
+## A Brief History
+
+Complex numbers arrived unwanted. **Gerolamo Cardano** ran into square roots of negatives in 1545 while solving cubics and called the manipulation "as subtle as it is useless." The name **imaginary** is **Descartes**' and was meant dismissively.
+
+They earned their place because they were unavoidable. Cardano's formula for a cubic with three perfectly real roots routes through complex numbers to get there. You cannot avoid $\sqrt{-1}$ even when the question and the answer are entirely real, which is a hint about the subject's whole character.
+
+**Leonhard Euler** made them respectable in the 1700s, introduced the notation $i$, and found the identity $e^{i\theta} = \cos\theta + i\sin\theta$ that turns trigonometry into algebra. Geometric meaning came later: **Caspar Wessel** (1797), **Jean-Robert Argand** (1806), and **Carl Friedrich Gauss** all described complex numbers as points in a plane, which is why nothing about them is mysterious once you draw the picture.
+
+The subject proper is **Augustin-Louis Cauchy**'s, built through the 1820s and 30s: the integral theorem, the integral formula, and the residue calculus. **Bernhard Riemann** in 1851 supplied the geometric vision, including the mapping theorem and the surfaces named after him. **Karl Weierstrass** rebuilt the whole thing on power series, so there are two independent routes to the same theory.
+
+**Riemann**'s 1859 paper connecting the zeta function to the distribution of primes is the most consequential eight pages in the subject's history, and the hypothesis it states is still open.
+
+## Why We're Learning It
+
+Three reasons, in increasing order of importance.
+
+**It computes things nothing else can.** Real integrals that resist every technique in Calculus 2 fall in two lines to the residue theorem. Sums like $\sum 1/n^2$ come out of contour arguments. This is the immediately practical payoff.
+
+**It explains things you already saw.** Why does the Taylor series for $\frac{1}{1+x^2}$ have radius exactly 1 when the function is perfectly smooth on all of $\mathbb{R}$? Because there are poles at $\pm i$, invisible from the real line, and they set the radius. A surprising number of real-variable mysteries are complex-variable facts in disguise.
+
+**It is beautiful in a way that is hard to overstate.** The theorems are strong, the proofs are short, and the geometry is vivid. Most mathematicians name this as their favourite undergraduate course, and the reason is that after the rigour of real analysis, complex analysis feels like getting paid.
+
+## Why It Matters in Real Life
+
+- **Electrical engineering.** Impedance, phasors, and AC circuit analysis are complex arithmetic. The whole subject is taught with $j$ instead of $i$ because $i$ means current.
+- **Signal processing and control.** The Laplace and Fourier transforms are contour integrals. Pole locations in the complex plane decide whether a system is stable, and that is literally what a Bode plot or a root-locus diagram is showing you.
+- **Fluid dynamics and aerodynamics.** Two-dimensional potential flow is exactly the theory of analytic functions. The Joukowski map turns a circle into an aerofoil, which is how lift was first computed.
+- **Quantum mechanics.** The wavefunction is complex-valued, not as a computational convenience but as physics; interference is the addition of complex amplitudes.
+- **Heat, electrostatics, and elasticity.** Harmonic functions are the real parts of analytic functions, and conformal mapping solves boundary-value problems by transporting them to a shape you can handle.
+- **Number theory.** The prime number theorem is proved with contour integration. That a statement about counting primes needs complex analysis is one of the strangest facts in mathematics.
+
+## What You'll Learn in This Section
+
+- **The complex plane** - modulus, argument, polar form, roots of unity, and the geometry behind complex arithmetic.
+- **Analytic functions** - complex differentiability, the Cauchy–Riemann equations, harmonic conjugates, and the elementary functions with their branch cuts.
+- **Contour integration** - integrals along paths, Cauchy's theorem, the integral formula, and the consequences: Liouville's theorem, the maximum modulus principle, and the fundamental theorem of algebra.
+- **Series** - Taylor series with radius set by the nearest singularity, Laurent series in an annulus, and the classification of zeros, poles, and essential singularities.
+- **Residues and mapping** - the residue theorem, real integrals evaluated by contour, conformal maps, Möbius transformations, and the argument principle.
+
+Each lesson has worked examples, real-world connections, and a quiz.
+
+## How to Get the Most Out of This Section
+
+**Draw everything in the plane.** A complex number is a point, multiplication is rotate-and-scale, a contour is a curve you walk along. Nearly every definition in the section has a picture, and unlike real analysis the pictures are trustworthy.
+
+**Get fluent in polar form early.** $z = re^{i\theta}$ makes powers, roots, and rotations trivial and makes the rest of the section readable. If you can do $(1+i)^{10}$ in your head in polar form, you are ready.
+
+**Track branch cuts deliberately.** The complex logarithm is genuinely multi-valued, and most errors in the second half of the section come from being casual about which branch you are on.
+
+**When something surprises you, ask where the singularities are.** It is the single most useful reflex in the subject. Radius of convergence, whether a contour integral vanishes, how a function behaves at infinity — the answer is almost always about singularity locations.
+
+:::note[You've Got This]
+If you have come through real analysis, you have already done the hard part. Complex analysis asks for the same care about hypotheses but rewards it far more generously: the theorems here are strong enough that they feel like they are cheating. Expect one genuine conceptual hurdle, which is accepting that differentiability in the complex sense is a severe restriction rather than a mild one. Everything else in the section is a consequence of that, and once you see it that way the whole subject organizes itself around a single idea.
+:::

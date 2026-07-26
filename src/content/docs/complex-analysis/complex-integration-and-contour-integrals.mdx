@@ -1,0 +1,353 @@
+---
+title: Complex Integration and Contour Integrals
+description: Integrating along paths in the plane, and when the path stops mattering
+sidebar:
+  order: 8
+---
+
+import Quiz from "../../../components/Quiz.astro";
+import SymbolKey from "../../../components/SymbolKey.astro";
+import ContourPathCompare from "../../../components/ContourPathCompare.astro";
+
+## What You'll Learn
+
+In this lesson you'll define the contour integral, learn to evaluate it by parametrisation, meet the ML inequality for bounding integrals you cannot compute, and see the one integral that the rest of the section is built on.
+
+<SymbolKey
+  title="Contour notation"
+  items={[
+    {
+      sym: "γ(t), a ≤ t ≤ b",
+      read: "a parametrised curve in ℂ",
+      note: "the direction of increasing t is the orientation",
+    },
+    {
+      sym: "∫_γ f(z) dz",
+      read: "the integral of f along γ",
+      note: "reduces to an ordinary integral in t",
+    },
+    {
+      sym: "∮_C",
+      read: "the integral around a closed contour",
+      note: "positive orientation means counterclockwise",
+    },
+    {
+      sym: "−γ",
+      read: "the reversed contour",
+      note: "reversing negates the integral",
+    },
+    {
+      sym: "L(γ)",
+      read: "the length of γ",
+      note: "used in the ML bound",
+    },
+  ]}
+/>
+
+## The Concept
+
+### The definition
+
+A **contour** is a piecewise smooth curve $\gamma:[a,b]\to\mathbb{C}$ with an orientation. The integral of $f$ along it is defined by pulling back to a real parameter:
+
+$$
+\int_\gamma f(z)\,dz = \int_a^b f\big(\gamma(t)\big)\,\gamma'(t)\,dt
+$$
+
+The right-hand side is an ordinary integral of a complex-valued function of a real variable, which you handle by integrating real and imaginary parts separately. So the definition is not exotic — it is a line integral, exactly as in Calculus 3, with complex multiplication in place of a dot product.
+
+The mechanical recipe is short and worth internalizing:
+
+1. Parametrise the contour as $z = \gamma(t)$.
+2. Compute $dz = \gamma'(t)\,dt$.
+3. Substitute into $f$ and multiply.
+4. Integrate over $t$ from $a$ to $b$.
+
+Basic properties, all immediate from the definition:
+
+- **Linearity.** $\int_\gamma (\alpha f+\beta g) = \alpha\int_\gamma f + \beta\int_\gamma g$
+- **Reversal.** $\int_{-\gamma}f = -\int_\gamma f$
+- **Concatenation.** Splitting a contour splits the integral.
+- **Reparametrisation invariance.** Only the curve and its orientation matter, not the choice of parameter.
+
+### Path dependence, and when it goes away
+
+Here is the central question of the lesson: does $\int_\gamma f\,dz$ depend on the path, or only on the endpoints?
+
+<ContourPathCompare />
+
+For a general continuous $f$ it depends on the path. But:
+
+> **Fundamental theorem for contour integrals.** If $F$ is analytic on a domain containing $\gamma$ and $F' = f$, then
+>
+> $$
+> \int_\gamma f(z)\,dz = F\big(\gamma(b)\big) - F\big(\gamma(a)\big)
+> $$
+
+So if the integrand has an antiderivative, **only the endpoints matter** and the integral around any closed contour is 0.
+
+That explains both halves of the figure. The integrand $z$ has antiderivative $z^2/2$, so both routes to $1+i$ give the same answer $\frac{(1+i)^2}{2} = i$. The integrand $\bar z$ is analytic nowhere, has no antiderivative, and duly gives different answers on the two routes.
+
+Cauchy's theorem, next lesson, is the statement that analytic functions on a simply connected domain always have this property. This lesson is the groundwork for it.
+
+### The integral that everything rests on
+
+Compute $\oint_C \frac{dz}{z}$ where $C$ is the unit circle traversed counterclockwise. Parametrise $z = e^{it}$ for $t\in[0,2\pi]$, so $dz = ie^{it}dt$:
+
+$$
+\oint_C\frac{dz}{z} = \int_0^{2\pi}\frac{ie^{it}}{e^{it}}\,dt = \int_0^{2\pi} i\,dt = 2\pi i
+$$
+
+$$
+\boxed{\;\oint_{|z|=1}\frac{dz}{z} = 2\pi i\;}
+$$
+
+**Not zero.** This is the most important computation in the subject, and the reason is instructive: $1/z$ is analytic on the punctured plane, but the punctured plane is not simply connected, and $1/z$ has no single-valued antiderivative there. Its natural antiderivative is $\log z$, which gains $2\pi i$ each time you loop the origin — exactly the branch-cut behaviour from last lesson.
+
+Every $2\pi i$ you will meet for the rest of the section traces back to this one integral.
+
+By contrast $\oint_C z^n\,dz = 0$ for every integer $n \ne -1$, because $z^{n+1}/(n+1)$ is then a genuine single-valued antiderivative on a neighbourhood of the circle. **The exponent $-1$ is the unique exception**, which is why residues are about the coefficient of $\frac{1}{z-z_0}$ and nothing else.
+
+### The ML inequality
+
+Often you need to show an integral is small without evaluating it. The tool is:
+
+> If $|f(z)|\le M$ for all $z$ on $\gamma$, and $\gamma$ has length $L$, then
+>
+> $$
+> \left|\int_\gamma f(z)\,dz\right| \le ML
+> $$
+
+Sometimes called the estimation lemma. It is the workhorse for showing that a large semicircular arc contributes nothing in the limit, which is the step that makes real integrals computable by contour methods later.
+
+For a circle of radius $R$ the length is $2\pi R$, so the bound is $2\pi R M$. If $|f|$ decays faster than $1/R$, the contribution vanishes as $R\to\infty$.
+
+## Worked Examples
+
+**Example 1: Evaluate $\int_\gamma z\,dz$ along the straight line from 0 to $1+i$.**
+
+**Solution.** Parametrise $\gamma(t) = t(1+i)$ for $t\in[0,1]$, so $\gamma'(t) = 1+i$:
+
+$$
+\int_0^1 t(1+i)\cdot(1+i)\,dt = (1+i)^2\int_0^1 t\,dt = \frac{(1+i)^2}{2} = \frac{2i}{2} = i
+$$
+
+∎
+
+Or immediately: $z$ has antiderivative $z^2/2$, so the answer is $\frac{(1+i)^2}{2} - 0 = i$. **When an antiderivative exists, use it.**
+
+**Example 2: Same integrand, the L-shaped path.**
+
+**Solution.** First leg along the real axis, $\gamma_1(t)=t$ for $t\in[0,1]$:
+
+$$
+\int_0^1 t\,dt = \frac12
+$$
+
+Second leg upward, $\gamma_2(t) = 1+it$ for $t\in[0,1]$, with $dz = i\,dt$:
+
+$$
+\int_0^1 (1+it)\,i\,dt = i\int_0^1(1+it)\,dt = i\left(1+\frac i2\right) = i - \frac12
+$$
+
+Total: $\frac12 + i - \frac12 = i$. ✓ **Same as Example 1**, as the antiderivative guaranteed.
+
+**Example 3: $\int_\gamma \bar z\,dz$ on both paths.**
+
+**Solution.** Straight line, $\gamma(t)=t(1+i)$, $\bar\gamma(t) = t(1-i)$:
+
+$$
+\int_0^1 t(1-i)(1+i)\,dt = (1-i)(1+i)\cdot\frac12 = \frac{2}{2} = 1
+$$
+
+L-shaped path. First leg: $\int_0^1 t\,dt = \frac12$. Second leg, $z = 1+it$ so $\bar z = 1-it$:
+
+$$
+\int_0^1(1-it)i\,dt = i\left(1-\frac i2\right) = i+\frac12
+$$
+
+Total: $\frac12 + i + \frac12 = 1+i$.
+
+$$
+1 \ne 1+i
+$$
+
+**Path dependent.** ∎ And necessarily so: $\bar z$ is nowhere analytic, so it has no antiderivative.
+
+**Example 4: Evaluate $\oint \frac{dz}{z}$ on the circle $|z|=3$.**
+
+**Solution.** Parametrise $z = 3e^{it}$, $dz = 3ie^{it}dt$:
+
+$$
+\int_0^{2\pi}\frac{3ie^{it}}{3e^{it}}\,dt = \int_0^{2\pi}i\,dt = 2\pi i
+$$
+
+∎
+
+**The radius cancelled.** Any counterclockwise circle around the origin gives $2\pi i$, and later we will see any counterclockwise closed contour enclosing the origin once does too.
+
+**Example 5: Evaluate $\oint_{|z|=1} z^2\,dz$.**
+
+**Solution.** $z^2$ is entire with antiderivative $z^3/3$, so around a closed contour the integral is 0.
+
+Checking directly with $z=e^{it}$:
+
+$$
+\int_0^{2\pi}e^{2it}\cdot ie^{it}\,dt = i\int_0^{2\pi}e^{3it}\,dt = i\left[\frac{e^{3it}}{3i}\right]_0^{2\pi} = 0
+$$
+
+✓
+
+**Example 6: Use the ML inequality.**
+
+Show that $\displaystyle\left|\int_{C_R}\frac{dz}{z^2+1}\right| \to 0$ as $R\to\infty$, where $C_R$ is the semicircle $|z|=R$ in the upper half plane.
+
+**Solution.** On the contour, $|z| = R$, so by the reverse triangle inequality
+
+$$
+|z^2+1| \ge |z|^2-1 = R^2-1 \quad\Longrightarrow\quad \left|\frac{1}{z^2+1}\right| \le \frac{1}{R^2-1} = M
+$$
+
+The semicircle has length $L = \pi R$. So
+
+$$
+\left|\int_{C_R}\frac{dz}{z^2+1}\right| \le \frac{\pi R}{R^2-1} \to 0
+$$
+
+∎
+
+**This is the standard closing argument.** It is exactly the step that lets a real integral over $(-\infty,\infty)$ be replaced by a closed contour, which is how residues evaluate real integrals.
+
+**Example 7: An integral that is not zero despite an analytic integrand.**
+
+Explain why $\oint_{|z|=1}\frac{dz}{z} = 2\pi i$ does not contradict the fundamental theorem.
+
+**Solution.** The integrand is analytic on $\mathbb{C}\setminus\{0\}$, so it is analytic at every point of the contour. But the theorem needs an antiderivative on a domain containing the contour, and $1/z$ has none on any annulus around 0: its antiderivative $\log z$ is multi-valued there, gaining $2\pi i$ per loop.
+
+$$
+\text{no single-valued antiderivative} \implies \text{no vanishing}
+$$
+
+∎
+
+**The obstruction is topological, not analytic.** The punctured plane has a hole, and that hole is the entire source of the residue calculus.
+
+## Real-World Applications
+
+**Circulation and flux.** For a fluid flow with complex potential $\Phi$, the contour integral $\oint \Phi'(z)\,dz$ has real part the circulation and imaginary part the flux through the curve. The Kutta–Joukowski lift formula is a contour integral of exactly this kind.
+
+**Ampère's law.** Computing the magnetic field around a wire is a closed line integral, and the two-dimensional case is literally $\oint \frac{dz}{z}$ with the current at the origin. The nonzero answer is the physical statement that the field circulates.
+
+**Inverse Laplace transforms.** Recovering a time-domain signal from its transform is a contour integral, the Bromwich integral, evaluated by residues. Every step response computed symbolically goes through this.
+
+**Winding numbers in robotics and vision.** Counting how many times a path loops a point is $\frac{1}{2\pi i}\oint\frac{dz}{z-z_0}$, and it is used for point-in-polygon tests and for topological path planning.
+
+**Numerical differentiation.** Cauchy's integral formula turns derivatives into contour integrals, and evaluating those integrals with the trapezoid rule on a circle gives derivative estimates that are far more accurate than finite differences.
+
+**Phase unwrapping.** In interferometry and synthetic-aperture radar, accumulated phase around a loop is a contour integral whose nonzero value signals a defect or a residue in the data. The terminology is borrowed directly from this subject.
+
+:::note[You've Got This]
+One computation from this lesson is worth memorizing outright: $\oint_{|z|=1}\frac{dz}{z} = 2\pi i$, and the reason it is not zero. Everything else here is bookkeeping — parametrise, multiply by $\gamma'$, integrate — but that single result is the seed of Cauchy's integral formula, Laurent series, and the residue theorem. And keep the ML inequality nearby; it looks like a throwaway lemma and it turns out to be the tool that makes half the applications work.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="complex-complex-integration-and-contour-integrals"
+  questions={[
+    {
+      id: "q1",
+      text: "How is a contour integral evaluated in practice?",
+      options: [
+        "By antidifferentiating with respect to x and y separately",
+        "By parametrising z = γ(t), substituting dz = γ′(t) dt, and integrating over t",
+        "By taking the average of f on the contour",
+        "By computing the area enclosed",
+      ],
+      correctIndex: 1,
+      explanation:
+        "The definition reduces the complex integral to an ordinary integral of a complex-valued function of a real parameter. It is a line integral with complex multiplication in place of a dot product.",
+    },
+    {
+      id: "q2",
+      text: "What is ∮ dz/z around the unit circle traversed counterclockwise?",
+      options: ["0", "2πi", "πi", "1"],
+      correctIndex: 1,
+      explanation:
+        "Parametrising z = e^(it) gives an integrand of exactly i, so the answer is 2πi. This is the single most consequential computation in the subject.",
+    },
+    {
+      id: "q3",
+      text: "Why is ∮ dz/z nonzero even though 1/z is analytic on the contour?",
+      options: [
+        "Because 1/z is discontinuous",
+        "Because 1/z has no single-valued antiderivative on any annulus around 0, since log z gains 2πi per loop",
+        "Because the contour is not smooth",
+        "Because the modulus is not constant",
+      ],
+      correctIndex: 1,
+      explanation:
+        "The fundamental theorem needs an antiderivative on a domain containing the contour, and the punctured plane has a hole. The obstruction is topological rather than a failure of analyticity.",
+    },
+    {
+      id: "q4",
+      text: "For which integer n is ∮_{|z|=1} zⁿ dz nonzero?",
+      options: ["n = 0", "n = 1", "n = −1", "All n"],
+      correctIndex: 2,
+      explanation:
+        "For every other integer, z^(n+1)/(n+1) is a genuine single-valued antiderivative and the closed integral vanishes. That uniqueness of the exponent −1 is exactly why residues concern only the 1/(z − z₀) coefficient.",
+    },
+    {
+      id: "q5",
+      text: "When does a contour integral depend only on the endpoints?",
+      options: [
+        "Always",
+        "When the integrand has an analytic antiderivative on a domain containing the contour",
+        "When the contour is a straight line",
+        "When the integrand is continuous",
+      ],
+      correctIndex: 1,
+      explanation:
+        "The fundamental theorem for contour integrals gives F(end) − F(start). Continuity is not enough, as z̄ shows: it is continuous everywhere and its integral is path dependent.",
+    },
+    {
+      id: "q6",
+      text: "What does the ML inequality state?",
+      options: [
+        "The integral equals the maximum of |f| times the length",
+        "|∫_γ f dz| ≤ ML, where M bounds |f| on γ and L is the length of γ",
+        "The integral is always less than 1",
+        "|∫_γ f dz| ≥ ML",
+      ],
+      correctIndex: 1,
+      explanation:
+        "It bounds an integral without evaluating it. Its main use is showing that a large arc contributes nothing in the limit, which is the key step in evaluating real integrals by contour methods.",
+    },
+    {
+      id: "q7",
+      text: "Why is ∫ z̄ dz path dependent?",
+      options: [
+        "Because z̄ is discontinuous",
+        "Because z̄ is nowhere analytic, so it has no antiderivative",
+        "Because the paths have different lengths",
+        "Because z̄ is unbounded",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Path independence requires an antiderivative, and conjugation fails the Cauchy–Riemann equations everywhere. The diagonal gives 1 while the L-shaped route gives 1 + i.",
+    },
+    {
+      id: "q8",
+      text: "What happens to ∫_γ f dz when the orientation of γ is reversed?",
+      options: [
+        "It is unchanged",
+        "It changes sign",
+        "It becomes zero",
+        "It is conjugated",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Reversing the parametrisation negates γ′, so the integral negates. This is why every statement about closed contours specifies an orientation, with counterclockwise taken as positive.",
+    },
+  ]}
+/>

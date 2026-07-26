@@ -1,0 +1,289 @@
+---
+title: The Argument Principle and Rouché's Theorem
+description: Counting zeros and poles by watching an image curve wind around the origin
+sidebar:
+  order: 17
+---
+
+import Quiz from "../../../components/Quiz.astro";
+import ArgumentWinding from "../../../components/ArgumentWinding.astro";
+
+## What You'll Learn
+
+In this lesson you'll learn to count zeros and poles inside a contour with a single integral, use Rouché's theorem to locate roots by comparison, and see how both give stability criteria used in engineering.
+
+## The Concept
+
+### The argument principle
+
+> **Argument principle.** Let $f$ be meromorphic inside and on a positively oriented simple closed contour $C$, with no zeros or poles on $C$. Then
+>
+> $$
+> \frac{1}{2\pi i}\oint_C\frac{f'(z)}{f(z)}\,dz = Z - P
+> $$
+>
+> where $Z$ counts zeros and $P$ counts poles inside $C$, each with multiplicity.
+
+The name comes from what the integral measures. Since $\frac{f'}{f} = \frac{d}{dz}\log f$, integrating it accumulates the change in $\log f$ around the loop. The modulus part returns to its start, so all that survives is the change in **argument**:
+
+$$
+Z-P = \frac{1}{2\pi}\Big[\text{total change in } \arg f(z) \text{ around } C\Big]
+$$
+
+In other words: **follow $f(z)$ as $z$ goes once around $C$, and count how many times the image curve winds around the origin.** That is a picture you can look at.
+
+<ArgumentWinding />
+
+Both panels in the figure compute the winding by accumulating the change in argument along the image curve, and both match $Z-P$ exactly. For $z^3-1$ around $|z|=2$, the three cube roots of unity are inside and there are no poles, so the image loops three times forwards. For $\frac{1}{z^2+1/4}$ around the unit circle, there are two poles and no zeros, so the image loops twice **backwards**.
+
+The proof is a residue calculation. At a zero of order $m$, $f = (z-z_0)^mg$ with $g(z_0)\ne0$, so
+
+$$
+\frac{f'}{f} = \frac{m}{z-z_0}+\frac{g'}{g}
+$$
+
+which has a simple pole with residue $m$. At a pole of order $m$ the same computation gives residue $-m$. Summing residues gives $Z-P$. ∎
+
+**Multiplicity is counted automatically**, which is one of the nicest features: a double zero contributes 2 without any extra work.
+
+### Rouché's theorem
+
+> **Rouché's theorem.** If $f$ and $g$ are analytic inside and on a closed contour $C$, and
+>
+> $$
+> |g(z)| < |f(z)| \quad \text{for all } z \text{ on } C
+> $$
+>
+> then $f$ and $f+g$ have the **same number of zeros** inside $C$.
+
+The intuition is a walk on a leash. As $z$ traverses $C$, the point $f(z)$ walks some loop around the origin, and $f(z)+g(z)$ stays strictly closer to $f(z)$ than $f(z)$ is to the origin. A dog on a short enough leash circles the tree exactly as often as its owner does. So the two winding numbers agree, and by the argument principle so do the zero counts.
+
+The practical use: to count zeros of a complicated $h$, split $h = f+g$ with $f$ a **dominant, easily understood** part and $g$ the smaller remainder. Then count the zeros of $f$ instead.
+
+**Choosing the split is the whole skill**, and it usually means identifying which term is largest on the contour, which depends on the radius. A different radius may need a different split.
+
+### The fundamental theorem of algebra again
+
+Rouché gives another one-line proof. For $p(z) = z^n + a_{n-1}z^{n-1}+\cdots+a_0$, take $f = z^n$ and $g$ the rest. On a circle of radius $R$ large enough,
+
+$$
+|g(z)| \le |a_{n-1}|R^{n-1}+\cdots+|a_0| < R^n = |f(z)|
+$$
+
+since the left side grows more slowly. So $p$ has as many zeros as $z^n$ inside, which is $n$ counted with multiplicity. ∎
+
+**This proof gives more than existence: it gives the exact count.** That is a genuine improvement on the Liouville argument from lesson 10.
+
+### Consequences and relatives
+
+**Hurwitz's theorem.** If a sequence of analytic functions converges uniformly on compact sets and the limit is not identically zero, then eventually the zero counts in any fixed region agree with the limit's. Zeros cannot appear from nowhere or vanish under uniform limits.
+
+**Open mapping theorem.** A non-constant analytic function maps open sets to open sets, which follows from Rouché applied to $f(z)-w_0$ for $w$ near $w_0$.
+
+**Nyquist criterion.** For a feedback system with loop transfer function $L(s)$, count the encirclements of the point $-1$ by the image of the imaginary axis. The argument principle converts that count into the number of unstable closed-loop poles. **This is the argument principle used as an engineering tool**, taught in every control theory course, usually without proof.
+
+## Worked Examples
+
+**Example 1: How many zeros does $z^3-1$ have in $|z|<2$?**
+
+**Solution.** The zeros are the cube roots of unity, all of modulus 1, so all three are inside. There are no poles.
+
+$$
+Z-P = 3-0 = 3
+$$
+
+By the argument principle the image of $|z|=2$ under $z^3-1$ must wind three times around the origin, which the figure confirms by measurement. ✓
+
+**Example 2: Evaluate $\displaystyle\frac{1}{2\pi i}\oint_{|z|=1}\frac{f'}{f}dz$ for $f(z)=\frac{1}{z^2+\frac14}$.**
+
+**Solution.** No zeros inside; poles at $\pm\frac i2$, both inside and both simple, so $P=2$.
+
+$$
+Z-P = 0-2 = -2
+$$
+
+The image curve winds twice in the negative direction, again confirmed in the figure. ✓
+
+**Example 3: How many zeros does $z^4+z+1$ have in $|z|<2$?**
+
+**Solution.** Take $f=z^4$ and $g=z+1$. On $|z|=2$,
+
+$$
+|f| = 16, \qquad |g| \le |z|+1 = 3 < 16
+$$
+
+Rouché applies, so $z^4+z+1$ has the same number of zeros as $z^4$ inside, namely **4**. ∎
+
+Since a degree-4 polynomial has exactly 4 zeros in total, all of them lie in $|z|<2$.
+
+**Example 4: How many zeros does $z^4+z+1$ have in $|z|<\frac12$?**
+
+**Solution.** Now the dominant term is different. On $|z|=\frac12$,
+
+$$
+|z^4+z| \le \tfrac{1}{16}+\tfrac12 = 0.5625 < 1 = |1|
+$$
+
+So take $f=1$ and $g=z^4+z$. The constant $f=1$ has **no** zeros, so neither does $z^4+z+1$ in $|z|<\frac12$. ∎
+
+**The split changed with the radius**, which is the point of Examples 3 and 4 together: on a small circle the constant dominates, on a large one the leading term does.
+
+**Example 5: Show $z^5+3z+1$ has exactly one zero in $|z|<1$.**
+
+**Solution.** On $|z|=1$ take $f = 3z$ and $g = z^5+1$:
+
+$$
+|f| = 3, \qquad |g| \le 1+1 = 2 < 3
+$$
+
+So the count equals that of $3z$, which has exactly one zero (at the origin).
+
+$$
+\text{exactly one zero in } |z|<1
+$$
+
+∎
+
+Note $f=3z$ was chosen over $z^5$ because on the unit circle every term has modulus around 1 and the coefficient 3 is what breaks the tie. **On $|z|=1$ the coefficients decide dominance, not the degrees.**
+
+**Example 6: Count the zeros of $e^z - 4z$ in $|z|<1$.**
+
+**Solution.** Take $f = -4z$ and $g = e^z$. On $|z|=1$,
+
+$$
+|f| = 4, \qquad |g| = |e^z| = e^{\operatorname{Re}z}\le e^1\approx2.718 < 4
+$$
+
+So the count matches that of $-4z$: exactly **one** zero in the unit disc. ∎
+
+**Rouché handles transcendental functions just as easily as polynomials**, which is where it beats any algebraic method.
+
+**Example 7: Apply the Nyquist idea.**
+
+A loop transfer function $L(s)$ is analytic in the right half plane, and the image of the imaginary axis encircles $-1$ once clockwise. What does that mean?
+
+**Solution.** The encirclement count of $-1$ by $L$ equals the count of zeros minus poles of $1+L(s)$ in the enclosed region, by the argument principle. Zeros of $1+L$ are exactly the closed-loop poles.
+
+With $L$ having no right-half-plane poles, one clockwise encirclement means one closed-loop pole in the right half plane, so the system is **unstable**.
+
+**A plot of a curve, read as a count.** That is the argument principle doing engineering work, and it is why Nyquist plots are drawn at all.
+
+## Real-World Applications
+
+**Control system stability.** The Nyquist criterion decides closed-loop stability from an open-loop plot, and its justification is exactly the argument principle. Gain and phase margins are read off the same curve.
+
+**Root counting in numerical software.** Algorithms that count roots in a region before searching for them use the argument principle, since a contour integral is cheap and gives the count reliably. This is how root-finders decide where to subdivide.
+
+**Filter design.** Confirming that a designed filter has all its zeros inside the unit circle, which is minimum phase, is a Rouché or argument-principle check.
+
+**Structural stability.** Whether a mechanical system has oscillatory modes that grow is a question about zeros of a characteristic function in a half plane, counted this way.
+
+**Perturbation of eigenvalues.** Showing that a small change to a matrix moves eigenvalues only slightly, and does not create or destroy any, is Rouché applied to the characteristic polynomial. This is the basis of eigenvalue conditioning estimates.
+
+**Zeros of the Riemann zeta function.** Counting zeros in a rectangle of the critical strip is done with the argument principle, and it is how the Riemann hypothesis has been verified computationally for enormous numbers of zeros.
+
+:::note[You've Got This]
+The argument principle turns counting into looking: follow the image curve and see how many times it circles the origin. Rouché then lets you replace a hard function by an easy dominant one, and the only judgement needed is which term is biggest on your particular contour — a decision that changes with the radius, as Examples 3 and 4 show together. If you go on to control theory, you will meet all of this again under the name Nyquist, and you will already know why it works.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="complex-the-argument-principle-and-rouches-theorem"
+  questions={[
+    {
+      id: "q1",
+      text: "What does the argument principle compute?",
+      options: [
+        "The residue of f",
+        "(1/2πi)∮ f′/f dz = Z − P, the zeros minus poles inside the contour, with multiplicity",
+        "The maximum of |f|",
+        "The winding number of the contour itself",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Since f′/f is the derivative of log f, the integral measures the total change in arg f around the contour. Multiplicities are counted automatically.",
+    },
+    {
+      id: "q2",
+      text: "Geometrically, what does Z − P equal?",
+      options: [
+        "The area enclosed by C",
+        "The number of times the image curve f(C) winds around the origin",
+        "The length of f(C)",
+        "The number of critical points",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Zeros make the image loop forwards and poles make it loop backwards. This is what makes the principle a visual tool rather than only an algebraic one.",
+    },
+    {
+      id: "q3",
+      text: "What does Rouché's theorem state?",
+      options: [
+        "If |g| < |f| on C, then f and f + g have the same number of zeros inside C",
+        "If |g| < |f| then g has no zeros",
+        "f + g always has more zeros than f",
+        "f and g have the same poles",
+      ],
+      correctIndex: 0,
+      explanation:
+        "The dog-on-a-leash picture: if the perturbation is smaller than the dominant term everywhere on the contour, the winding numbers agree. Then the argument principle gives equal zero counts.",
+    },
+    {
+      id: "q4",
+      text: "How many zeros does z⁴ + z + 1 have in |z| < 2?",
+      options: ["1", "2", "4", "0"],
+      correctIndex: 2,
+      explanation:
+        "On |z| = 2 the dominant term is z⁴ with modulus 16, against |z + 1| ≤ 3. So the count matches z⁴, which is 4, and all roots of the polynomial lie in that disc.",
+    },
+    {
+      id: "q5",
+      text: "How many zeros does z⁴ + z + 1 have in |z| < 1/2?",
+      options: ["0", "1", "4", "2"],
+      correctIndex: 0,
+      explanation:
+        "On the small circle the constant 1 dominates, since |z⁴ + z| ≤ 0.5625. A nonzero constant has no zeros, so neither does the polynomial there. The split depends on the radius.",
+    },
+    {
+      id: "q6",
+      text: "For z⁵ + 3z + 1 on |z| = 1, which split works?",
+      options: [
+        "f = z⁵ and g = 3z + 1",
+        "f = 3z and g = z⁵ + 1, since |3z| = 3 exceeds |z⁵ + 1| ≤ 2",
+        "f = 1 and g = z⁵ + 3z",
+        "No split works",
+      ],
+      correctIndex: 1,
+      explanation:
+        "On the unit circle every power has modulus 1, so the coefficients decide dominance rather than the degrees. That gives exactly one zero in the disc.",
+    },
+    {
+      id: "q7",
+      text: "How does Rouché prove the fundamental theorem of algebra?",
+      options: [
+        "By factoring the polynomial",
+        "Taking f = zⁿ and g the lower-order terms on a large circle shows p has exactly n zeros",
+        "By showing p is bounded",
+        "It does not apply",
+      ],
+      correctIndex: 1,
+      explanation:
+        "For large R the leading term dominates the rest, so the count matches that of zⁿ. This is stronger than the Liouville proof, which gives existence but not the count.",
+    },
+    {
+      id: "q8",
+      text: "What engineering criterion is the argument principle behind?",
+      options: [
+        "The Routh–Hurwitz test",
+        "The Nyquist stability criterion, which counts encirclements of −1",
+        "The Bode gain formula",
+        "The Ziegler–Nichols method",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Encirclements of −1 by the open-loop plot are converted into a count of unstable closed-loop poles. It is taught in every control course, usually without the complex analysis justification.",
+    },
+  ]}
+/>

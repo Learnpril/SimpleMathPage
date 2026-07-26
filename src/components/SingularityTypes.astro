@@ -1,0 +1,152 @@
+---
+/**
+ * SingularityTypes — the three kinds of isolated singularity, told apart by
+ * measuring |f| on shrinking circles about the origin. Every number is sampled
+ * from the function itself, so the verdicts are earned rather than asserted.
+ */
+const w = 540;
+const h = 298;
+
+type C = { re: number; im: number };
+const mul = (a: C, b: C): C => ({ re: a.re * b.re - a.im * b.im, im: a.re * b.im + a.im * b.re });
+const abs = (a: C) => Math.hypot(a.re, a.im);
+
+const cSin = (z: C): C => ({
+  re: Math.sin(z.re) * Math.cosh(z.im),
+  im: Math.cos(z.re) * Math.sinh(z.im),
+});
+const cExp = (z: C): C => ({
+  re: Math.exp(z.re) * Math.cos(z.im),
+  im: Math.exp(z.re) * Math.sin(z.im),
+});
+const cInv = (a: C): C => {
+  const d = a.re * a.re + a.im * a.im;
+  return { re: a.re / d, im: -a.im / d };
+};
+
+const cases = [
+  {
+    cx: 106,
+    title: "sin z ⁄ z",
+    kind: "removable",
+    cls: "green",
+    f: (z: C): C => mul(cSin(z), cInv(z)),
+  },
+  {
+    cx: 270,
+    title: "1 ⁄ z²",
+    kind: "pole of order 2",
+    cls: "blue",
+    f: (z: C): C => cInv(mul(z, z)),
+  },
+  {
+    cx: 434,
+    title: "e^(1⁄z)",
+    kind: "essential",
+    cls: "pink",
+    f: (z: C): C => cExp(cInv(z)),
+  },
+];
+
+const radii = [0.5, 0.2, 0.1];
+
+/** Largest and smallest |f| found on the circle of radius r. */
+function scan(f: (z: C) => C, r: number, n = 720) {
+  let lo = Infinity;
+  let hi = 0;
+  for (let k = 0; k < n; k++) {
+    const t = (2 * Math.PI * k) / n;
+    const v = abs(f({ re: r * Math.cos(t), im: r * Math.sin(t) }));
+    if (Number.isFinite(v)) {
+      lo = Math.min(lo, v);
+      hi = Math.max(hi, v);
+    }
+  }
+  return { lo, hi };
+}
+
+const num = (v: number) => {
+  if (!Number.isFinite(v)) return "∞";
+  if (v !== 0 && (v >= 1e4 || v < 1e-3)) return v.toExponential(1).replace("-", "−").replace("e+", "e");
+  return v.toFixed(3);
+};
+
+const table = cases.map((c) => ({
+  ...c,
+  rows: radii.map((r) => ({ r, ...scan(c.f, r) })),
+}));
+
+const verdicts = [
+  "|f| stays bounded",
+  "|f| grows like 1⁄r²",
+  "|f| does both at once",
+];
+const notes = [
+  ["limit exists, equal to 1", "redefine f(0) = 1 and it is analytic"],
+  ["|f| → ∞ from every direction", "principal part has finitely many terms"],
+  ["huge and tiny on the same circle", "no limit, finite or infinite"],
+];
+---
+
+<figure
+  class="sgt"
+  role="img"
+  aria-label={`Three functions sampled on circles of radius 0.5, 0.2 and 0.1 about the origin. For sin z over z the modulus stays near 1. For 1 over z squared it grows to ${num(table[1].rows[2].hi)}. For e to the 1 over z the modulus ranges from ${num(table[2].rows[2].lo)} to ${num(table[2].rows[2].hi)} on the same circle, which is the signature of an essential singularity.`}
+>
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    <text x="16" y="20" class="sgt-head" font-size="12.5" font-weight="bold">Three kinds of singularity, told apart by measuring</text>
+    <text x="16" y="38" class="sgt-sub" font-size="10.5">Range of |f| on circles of shrinking radius about z = 0</text>
+
+    <line x1="188" y1="52" x2="188" y2="232" class="sgt-divide" />
+    <line x1="352" y1="52" x2="352" y2="232" class="sgt-divide" />
+
+    {table.map((c, k) => (
+      <g>
+        <text x={c.cx} y="68" class={`sgt-title sgt-t-${c.cls}`} font-size="11.5" text-anchor="middle" font-weight="bold">{c.title}</text>
+        <text x={c.cx} y="86" class="sgt-kind" font-size="9.5" text-anchor="middle">{c.kind}</text>
+
+        <text x={c.cx} y="110" class="sgt-hdr" font-size="9" text-anchor="middle">r      min |f|      max |f|</text>
+        {c.rows.map((row, i) => (
+          <text x={c.cx} y={128 + i * 18} class="sgt-row" font-size="9.5" text-anchor="middle">
+            {`${row.r.toFixed(1)}    ${num(row.lo)}    ${num(row.hi)}`}
+          </text>
+        ))}
+
+        <text x={c.cx} y="204" class={`sgt-verdict sgt-t-${c.cls}`} font-size="10" text-anchor="middle">{verdicts[k]}</text>
+        <text x={c.cx} y="222" class="sgt-note" font-size="9" text-anchor="middle">{notes[k][0]}</text>
+      </g>
+    ))}
+
+    <text x={w / 2} y="252" class="sgt-foot" font-size="10.5" text-anchor="middle">
+      Bounded means removable; tending to ∞ means a pole; neither means essential
+    </text>
+    <text x={w / 2} y="272" class="sgt-sub2" font-size="9.5" text-anchor="middle">
+      Equivalently: read the principal part — empty, finite, or infinite
+    </text>
+    <text x={w / 2} y="290" class="sgt-sub2" font-size="9.5" text-anchor="middle">
+      Near an essential singularity f comes arbitrarily close to every complex value
+    </text>
+  </svg>
+</figure>
+
+<style>
+  .sgt { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .sgt svg { width:100%; max-width:100%; height:auto; }
+  .sgt-divide { stroke:#3a3a3a; stroke-width:1; }
+  .sgt-title, .sgt-verdict { font-family:'Libre Baskerville',Georgia,serif; }
+  .sgt-t-green { fill:#7ee787; }
+  .sgt-t-blue { fill:#58a6ff; }
+  .sgt-t-pink { fill:#ff7b72; }
+  .sgt-kind, .sgt-hdr, .sgt-row, .sgt-note { fill:#9198a1; font-family:'Libre Baskerville',Georgia,serif; }
+  .sgt-hdr { font-style:italic; }
+  .sgt-head { fill:#eee; font-family:'Libre Baskerville',Georgia,serif; }
+  .sgt-sub, .sgt-sub2 { fill:#9198a1; font-family:'Libre Baskerville',Georgia,serif; font-style:italic; }
+  .sgt-foot { fill:#58a6ff; font-family:'Libre Baskerville',Georgia,serif; }
+  :global([data-theme="light"]) .sgt-divide { stroke:#d0d7de; }
+  :global([data-theme="light"]) .sgt-t-green { fill:#116329; }
+  :global([data-theme="light"]) .sgt-t-blue { fill:#0550ae; }
+  :global([data-theme="light"]) .sgt-t-pink { fill:#a40e26; }
+  :global([data-theme="light"]) .sgt-head { fill:#24292f; }
+  :global([data-theme="light"]) .sgt-foot { fill:#0550ae; }
+  :global([data-theme="light"]) :is(.sgt-kind, .sgt-hdr, .sgt-row, .sgt-note, .sgt-sub, .sgt-sub2) { fill:#57606a; }
+</style>

@@ -1,0 +1,263 @@
+---
+title: What is Complex Analysis?
+description: Why extending calculus to the complex plane makes it stronger, not harder
+sidebar:
+  order: 1
+---
+
+import Quiz from "../../../components/Quiz.astro";
+import WhyComplexHelps from "../../../components/WhyComplexHelps.astro";
+
+## What You'll Learn
+
+In this lesson you'll see what complex analysis is for, why complex differentiability is a far stronger condition than real differentiability, and three concrete problems that are unsolvable on the real line and routine in the plane.
+
+## The Concept
+
+Complex analysis studies functions $f : \mathbb{C} \to \mathbb{C}$ that are **differentiable in the complex sense**. That phrase carries almost all the weight, so it is worth seeing immediately why.
+
+### One definition, two very different meanings
+
+The definition of the derivative looks identical to the real one:
+
+$$
+f'(z_0) = \lim_{h \to 0}\frac{f(z_0+h)-f(z_0)}{h}
+$$
+
+But $h$ is now a complex number, so it can approach 0 along the real axis, along the imaginary axis, along a spiral, along any path at all. **The limit must come out the same every time.**
+
+For a real function, $h \to 0$ has two directions and you need one-sided limits to agree. In the plane there are infinitely many directions, and demanding they all agree is a genuinely severe constraint. It turns out to be equivalent to a pair of partial differential equations, and it forces consequences with no real-variable analogue:
+
+- Differentiable once on an open set $\implies$ differentiable infinitely often.
+- The values on any small circle determine the values everywhere inside it.
+- A bounded function differentiable on all of $\mathbb{C}$ must be constant.
+- If two analytic functions agree on a line segment, they agree everywhere they are both defined.
+
+Compare the real case, where $|x|$ is continuous but not differentiable, $x^{4/3}$ is differentiable once but not twice, and there are functions continuous everywhere and differentiable nowhere. **Real differentiability is cheap; complex differentiability is expensive and you get what you pay for.**
+
+### Why the plane explains the line
+
+Here is the cleanest illustration, and the one that converts most people.
+
+The function $f(x) = \frac{1}{1+x^2}$ is perfectly well behaved on all of $\mathbb{R}$: smooth, bounded, no asymptotes, nothing wrong with it anywhere. Its Taylor series about 0 is
+
+$$
+1 - x^2 + x^4 - x^6 + \cdots
+$$
+
+which **diverges for $|x| > 1$**. Why 1? Nothing on the real line is special at $x = \pm 1$.
+
+<WhyComplexHelps />
+
+Viewed in the plane, $\frac{1}{1+z^2}$ blows up at $z = \pm i$, since $1 + z^2 = 0$ exactly there. Those points sit at distance 1 from the origin, and the radius of convergence of a power series is precisely the distance from its centre to the nearest singularity. **The obstruction was always there; it was just off the real line.**
+
+This is the pattern of the entire subject. A question about real functions turns out to have a complex answer, and the complex answer is usually simpler than any real argument would be.
+
+### Three things it does that nothing else does
+
+**It evaluates real integrals.** Consider
+
+$$
+\int_{-\infty}^{\infty}\frac{dx}{1+x^4}
+$$
+
+No substitution, no partial-fraction trick, no integration by parts gets you there comfortably. With the residue theorem it is a few lines, and the answer is $\frac{\pi}{\sqrt2}$.
+
+**It proves the fundamental theorem of algebra.** Every non-constant polynomial with complex coefficients has a root. The standard proof is three lines of complex analysis via Liouville's theorem, and there is no comparably short algebraic proof.
+
+**It solves boundary-value problems by changing shape.** A conformal map deforms a difficult region into a disc while preserving the equation being solved. This is how heat flow and fluid flow around awkward shapes were handled before computers, and it is still how the theory is organized.
+
+### Where it sits
+
+You have met the ingredients already:
+
+- **Algebra 2** gave you complex arithmetic and the fact that $i^2 = -1$.
+- **Pre-Calculus** gave you polar form and De Moivre's theorem.
+- **Calculus 2** gave you power series and radius of convergence.
+- **Calculus 3** gave you line integrals and Green's theorem, and Cauchy's theorem is essentially Green's theorem with the Cauchy–Riemann equations substituted in.
+- **Real Analysis** gave you the standard of proof and the habit of asking what a hypothesis is for.
+
+What is new is the interaction. Complex analysis is where those five threads meet, which is why it reads as unexpectedly efficient: most of the machinery is already in place.
+
+## Worked Examples
+
+**Example 1: Show that $f(z) = \bar{z}$ is not complex differentiable anywhere.**
+
+**Solution.** With $f(z) = \bar z$ and $h$ complex,
+
+$$
+\frac{f(z+h)-f(z)}{h} = \frac{\overline{z+h}-\bar z}{h} = \frac{\bar h}{h}
+$$
+
+Take $h = t$ real: the quotient is $t/t = 1$.
+
+Take $h = it$ imaginary: the quotient is $\overline{it}/(it) = -it/(it) = -1$.
+
+Two directions, two different answers, so the limit does not exist — **at any point**. ∎
+
+Note how ordinary $\bar z$ looks. As a map $\mathbb{R}^2 \to \mathbb{R}^2$ it is $(x,y)\mapsto(x,-y)$, which is linear and as smooth as anything can be. It fails the complex test because reflection is not a rotation-and-scaling, and that is exactly what complex differentiability requires locally.
+
+**Example 2: Verify $f(z)=z^2$ is differentiable, directly from the definition.**
+
+**Solution.**
+
+$$
+\frac{(z+h)^2 - z^2}{h} = \frac{2zh + h^2}{h} = 2z + h
+$$
+
+As $h \to 0$ this tends to $2z$ regardless of the direction of approach, because the expression no longer contains $h$ in any direction-sensitive way. So $f'(z) = 2z$. ✓
+
+**The contrast with Example 1 is the whole point.** Polynomials in $z$ pass; anything built with $\bar z$, $\operatorname{Re} z$, $\operatorname{Im} z$, or $|z|$ generally fails.
+
+**Example 3: Find the radius of convergence of the Taylor series of $\frac{1}{z^2+4}$ about 0, without computing any coefficients.**
+
+**Solution.** Singularities occur where $z^2 + 4 = 0$, that is $z = \pm 2i$. Both lie at distance 2 from the origin.
+
+$$
+R = 2
+$$
+
+∎
+
+No differentiation, no ratio test. **Locate the singularities and measure.** For the real function $\frac{1}{x^2+4}$ this radius would be inexplicable.
+
+**Example 4: Where does the series for $\frac{1}{1+z^2}$ about $z_0 = 1$ converge?**
+
+**Solution.** Same poles, $\pm i$, but the centre has moved. Distances:
+
+$$
+|1 - i| = \sqrt{2}, \qquad |1 + i| = \sqrt{2}
+$$
+
+So $R = \sqrt2 \approx 1.414$. ∎
+
+The radius depends on the centre, which is the correct way to think about it: a power series knows only about the disc around its own centre, and the nearest obstruction sets its reach.
+
+**Example 5: Why is $e^z$ never zero?**
+
+**Solution.** Write $z = x+iy$. Then
+
+$$
+e^z = e^x(\cos y + i\sin y), \qquad |e^z| = e^x
+$$
+
+Since $e^x > 0$ for every real $x$, the modulus is never 0, so $e^z \ne 0$ for all $z$. ∎
+
+Worth noting that $e^z$ is nevertheless **not** injective: $e^{z+2\pi i} = e^z$, so the complex exponential is periodic with period $2\pi i$. That periodicity is why the complex logarithm is multi-valued, a theme that recurs throughout the section.
+
+**Example 6: A real integral that becomes routine.**
+
+State what complex analysis contributes to $\displaystyle\int_{-\infty}^{\infty}\frac{dx}{1+x^4}$.
+
+**Solution.** The integrand's denominator factors over $\mathbb{C}$ into four linear terms, with roots the fourth roots of $-1$:
+
+$$
+e^{i\pi/4},\quad e^{3i\pi/4},\quad e^{5i\pi/4},\quad e^{7i\pi/4}
+$$
+
+Two of these lie in the upper half plane. Closing the real line into a large semicircular contour and applying the residue theorem gives
+
+$$
+\int_{-\infty}^{\infty}\frac{dx}{1+x^4} = \frac{\pi}{\sqrt2} \approx 2.2214
+$$
+
+The details come later in the section; the point now is that the method exists and that its ingredients are the roots of the denominator in the plane. **The real integral was hard because the relevant structure was invisible from the real line.**
+
+## Real-World Applications
+
+**AC circuit analysis.** Voltage and current in a steady-state AC circuit are handled as complex amplitudes, and impedance is a complex number combining resistance and reactance. Series and parallel rules then become ordinary complex arithmetic instead of differential equations.
+
+**System stability.** A linear control system is stable exactly when the poles of its transfer function lie in the left half plane. Engineers read stability off the geometry of a set of points in $\mathbb{C}$, which is complex analysis used as a design tool.
+
+**Aerodynamics.** The flow around a cylinder is elementary; the flow around an aerofoil is not. The Joukowski transformation is a conformal map taking one to the other, and it is how lift was first calculated.
+
+**Quantum mechanics.** Amplitudes are complex, and interference is what happens when you add them. The complex structure is physical here rather than a bookkeeping convenience.
+
+**Signal processing.** The Fourier and Laplace transforms are integrals in the complex plane, and the location of poles determines filter behaviour. Every equalizer and every audio filter is designed by placing points in $\mathbb{C}$.
+
+**Prime numbers.** The prime number theorem, describing how primes thin out, is proved using contour integration applied to the Riemann zeta function. A counting problem about integers requires calculus in the plane, which remains one of the most surprising connections in mathematics.
+
+:::note[You've Got This]
+The one idea to carry into the next lesson: complex differentiability is a strong condition, not a mild generalization. Every theorem in this section is a dividend paid by that strength. And keep the $\frac{1}{1+x^2}$ example close — a completely real question whose only honest answer lives off the real line. That is what the subject does, over and over, and noticing it happen is most of the pleasure of learning it.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="complex-what-is-complex-analysis"
+  questions={[
+    {
+      id: "q1",
+      text: "What makes complex differentiability stronger than real differentiability?",
+      options: [
+        "The functions involved must be bounded",
+        "The limit of the difference quotient must be the same along every direction of approach in the plane",
+        "It requires the function to be a polynomial",
+        "It only applies on closed sets",
+      ],
+      correctIndex: 1,
+      explanation:
+        "In ℝ there are two directions of approach; in ℂ there are infinitely many, and all must agree. That requirement is equivalent to the Cauchy–Riemann equations and is what forces every strong theorem in the subject.",
+    },
+    {
+      id: "q2",
+      text: "Why is f(z) = z̄ not complex differentiable anywhere?",
+      options: [
+        "Because it is discontinuous",
+        "Because the difference quotient gives 1 along the real direction and −1 along the imaginary direction",
+        "Because it is unbounded",
+        "Because it has a pole at the origin",
+      ],
+      correctIndex: 1,
+      explanation:
+        "The quotient is h̄/h, which is 1 for real h and −1 for imaginary h. The function is perfectly smooth as a map of ℝ², but conjugation is a reflection rather than a rotation-and-scaling.",
+    },
+    {
+      id: "q3",
+      text: "Why does the Taylor series of 1/(1 + x²) about 0 have radius of convergence 1?",
+      options: [
+        "Because the function is undefined at x = ±1",
+        "Because the function has poles at ±i, each at distance 1 from the origin",
+        "Because the coefficients grow too fast",
+        "Because the function is bounded by 1",
+      ],
+      correctIndex: 1,
+      explanation:
+        "The radius equals the distance from the centre to the nearest singularity in the complex plane. The real graph shows nothing unusual at ±1, so the explanation is only visible off the real line.",
+    },
+    {
+      id: "q4",
+      text: "What is the radius of convergence of the Taylor series of 1/(z² + 4) about 0?",
+      options: ["1", "2", "4", "It diverges everywhere"],
+      correctIndex: 1,
+      explanation:
+        "The singularities are the roots of z² + 4 = 0, namely ±2i, both at distance 2 from the origin. Locating singularities gives the radius with no coefficient computation.",
+    },
+    {
+      id: "q5",
+      text: "Which statement about e^z is true?",
+      options: [
+        "It is never zero and it is periodic with period 2πi",
+        "It is zero when z = −∞",
+        "It is injective on all of ℂ",
+        "It is bounded on ℂ",
+      ],
+      correctIndex: 0,
+      explanation:
+        "Since |e^z| = e^x it can never vanish, and e^(z+2πi) = e^z makes it periodic. That periodicity is exactly why the complex logarithm ends up multi-valued.",
+    },
+    {
+      id: "q6",
+      text: "Which of these is a consequence of complex differentiability with no real-variable analogue?",
+      options: [
+        "A differentiable function is continuous",
+        "Differentiable once on an open set implies differentiable infinitely often",
+        "The derivative of a sum is the sum of the derivatives",
+        "The chain rule holds",
+      ],
+      correctIndex: 1,
+      explanation:
+        "In the real case x^(4/3) is differentiable once but not twice, so nothing like this holds. Over ℂ one derivative forces all of them, which is the source of the subject's rigidity.",
+    },
+  ]}
+/>

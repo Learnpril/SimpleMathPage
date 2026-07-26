@@ -1,0 +1,351 @@
+---
+title: Complex Differentiation and the Cauchy–Riemann Equations
+description: The derivative as a direction-independent limit, and the two PDEs it forces
+sidebar:
+  order: 5
+---
+
+import Quiz from "../../../components/Quiz.astro";
+import CauchyRiemannCheck from "../../../components/CauchyRiemannCheck.astro";
+
+## What You'll Learn
+
+In this lesson you'll derive the Cauchy–Riemann equations from the requirement that the derivative be direction-independent, learn exactly when they are sufficient as well as necessary, and use them as a fast test for differentiability.
+
+## The Concept
+
+### The derivative
+
+> $f$ is **differentiable at $z_0$** if
+>
+> $$
+> f'(z_0) = \lim_{h\to0}\frac{f(z_0+h)-f(z_0)}{h}
+> $$
+>
+> exists, with $h$ complex and the limit independent of how $h\to0$.
+
+The differentiation rules you know all hold with the same proofs: sum, product, quotient, chain, and $\frac{d}{dz}z^n = nz^{n-1}$. Differentiability implies continuity, again with the same argument.
+
+What is new is how few functions qualify.
+
+### Deriving the equations
+
+Write $f = u+iv$ and let $h$ approach 0 in two particular ways.
+
+**Along the real axis**, $h = t$ with $t$ real:
+
+$$
+f'(z_0) = \lim_{t\to0}\frac{u(x_0+t,y_0)-u(x_0,y_0) + i\big[v(x_0+t,y_0)-v(x_0,y_0)\big]}{t} = u_x + iv_x
+$$
+
+**Along the imaginary axis**, $h = it$:
+
+$$
+f'(z_0) = \lim_{t\to0}\frac{u(x_0,y_0+t)-u(x_0,y_0)+i\big[v(x_0,y_0+t)-v(x_0,y_0)\big]}{it} = \frac{u_y+iv_y}{i} = v_y - iu_y
+$$
+
+If $f$ is differentiable these two must be equal. Matching real and imaginary parts gives the **Cauchy–Riemann equations**:
+
+$$
+\boxed{\;u_x = v_y \qquad\text{and}\qquad u_y = -v_x\;}
+$$
+
+And the derivative itself has two equivalent formulas:
+
+$$
+f'(z) = u_x + iv_x = v_y - iu_y
+$$
+
+Note that we used only **two** directions. Every other direction imposes no new condition — that is a small miracle and the reason the theory is workable at all.
+
+<CauchyRiemannCheck />
+
+### Necessary, and when sufficient
+
+The derivation shows the equations are **necessary**. On their own they are not quite sufficient, and the standard counterexample is unpleasant enough that it is worth knowing the correct statement instead:
+
+> **Sufficiency.** If $u, v$ have continuous first partial derivatives on a neighbourhood of $z_0$ and satisfy the Cauchy–Riemann equations there, then $f$ is differentiable at $z_0$.
+
+In practice this is what you use. Both directions are needed for different purposes: necessity lets you rule functions out with a one-line check, sufficiency lets you rule them in.
+
+### What the equations mean
+
+Three readings, all worth carrying.
+
+**Rigidity.** The equations couple $u$ and $v$ tightly: you cannot choose the real and imaginary parts independently. Given $u$, the function $v$ is determined up to a constant. Half of an analytic function determines the other half.
+
+**No conjugates allowed.** Introduce the operator
+
+$$
+\frac{\partial f}{\partial\bar z} = \frac12\left(\frac{\partial f}{\partial x} + i\frac{\partial f}{\partial y}\right)
+$$
+
+The Cauchy–Riemann equations are exactly $\frac{\partial f}{\partial\bar z} = 0$, which says $f$ depends on $z$ but **not** on $\bar z$. That is the sharpest way to state the whole condition, and it instantly explains why $\bar z$, $|z|^2 = z\bar z$, $\operatorname{Re}z = \frac{z+\bar z}{2}$, and $\operatorname{Im}z$ all fail.
+
+**Geometric.** As a real map $\mathbb{R}^2\to\mathbb{R}^2$, the derivative of $f$ has Jacobian
+
+$$
+\begin{pmatrix} u_x & u_y \\ v_x & v_y\end{pmatrix} = \begin{pmatrix} a & -b \\ b & a\end{pmatrix}
+$$
+
+after substituting the equations. Matrices of that shape are exactly the rotation-and-scaling matrices. So **complex differentiability means the map is locally a rotation and a uniform scaling**, which is why analytic maps preserve angles. Conjugation's Jacobian is a reflection, which is why it fails.
+
+Also worth noting: the Jacobian determinant is $a^2+b^2 = |f'(z)|^2$, so $|f'|^2$ is the local area magnification factor.
+
+### The harmonic consequence
+
+Differentiate the first equation with respect to $x$ and the second with respect to $y$, then add. Assuming enough smoothness, which we will later prove is automatic,
+
+$$
+u_{xx}+u_{yy} = 0
+$$
+
+and the same for $v$. So the real and imaginary parts of an analytic function are **harmonic**: they satisfy Laplace's equation. This is the bridge to physics, since Laplace's equation governs steady-state heat, electrostatic potential, and incompressible irrotational flow. It gets a lesson of its own later.
+
+### Polar form of the equations
+
+For functions naturally written in polar coordinates, with $f = u(r,\theta)+iv(r,\theta)$:
+
+$$
+\frac{\partial u}{\partial r} = \frac1r\frac{\partial v}{\partial\theta}, \qquad \frac{\partial v}{\partial r} = -\frac1r\frac{\partial u}{\partial\theta}
+$$
+
+These are what you use for $\log z$ and for power functions with non-integer exponents.
+
+## Worked Examples
+
+**Example 1: Verify $f(z)=z^2$ is differentiable and find $f'$.**
+
+**Solution.** Here $u = x^2-y^2$ and $v = 2xy$, so
+
+$$
+u_x = 2x, \quad v_y = 2x, \quad u_y = -2y, \quad v_x = 2y
+$$
+
+Both equations hold: $u_x = v_y$ ✓ and $u_y = -v_x$ ✓. The partials are polynomials, hence continuous, so $f$ is differentiable everywhere.
+
+$$
+f' = u_x+iv_x = 2x+2iy = 2z
+$$
+
+✓ as expected.
+
+**Example 2: Show $f(z)=\bar z$ fails the test.**
+
+**Solution.** $u = x$ and $v = -y$, giving
+
+$$
+u_x = 1, \quad v_y = -1, \quad u_y = 0, \quad v_x = 0
+$$
+
+The second equation holds, since $0 = -0$. The first does not: $1 \ne -1$, and not at any point.
+
+$$
+\text{nowhere differentiable}
+$$
+
+∎
+
+**One failed equation is enough**, and here it fails by a constant amount everywhere, so there is not even a single exceptional point.
+
+**Example 3: Where is $f(z) = |z|^2$ differentiable?**
+
+**Solution.** $|z|^2 = x^2+y^2$, so $u = x^2+y^2$ and $v = 0$.
+
+$$
+u_x = 2x, \quad v_y = 0, \quad u_y = 2y, \quad v_x = 0
+$$
+
+The equations require $2x = 0$ and $2y = 0$, so both hold **only at the origin**. The partials are continuous, so $f$ is differentiable at $z=0$ and nowhere else, with $f'(0) = 0$.
+
+**Differentiable at a single point is useless**, because every strong theorem in this subject needs differentiability on an open set. This is exactly why the word _analytic_ is defined the way it is in the next lesson.
+
+**Example 4: Verify $f(z)=e^z$ is entire.**
+
+**Solution.** $e^z = e^x\cos y + ie^x\sin y$, so $u = e^x\cos y$ and $v = e^x\sin y$. Then
+
+$$
+u_x = e^x\cos y, \quad v_y = e^x\cos y, \quad u_y = -e^x\sin y, \quad v_x = e^x\sin y
+$$
+
+Both equations hold everywhere, and all partials are continuous. So $e^z$ is differentiable on all of $\mathbb{C}$, and
+
+$$
+f' = u_x+iv_x = e^x\cos y + ie^x\sin y = e^z
+$$
+
+**The exponential is its own derivative in $\mathbb{C}$ too.** ∎
+
+**Example 5: Find a harmonic conjugate.**
+
+Given $u(x,y) = x^2-y^2+3x$, find $v$ so that $u+iv$ is analytic.
+
+**Solution.** From the first equation, $v_y = u_x = 2x+3$, so integrating in $y$,
+
+$$
+v = 2xy+3y+g(x)
+$$
+
+for some function $g$ of $x$ alone. From the second equation, $v_x = -u_y = 2y$. But differentiating the expression above gives $v_x = 2y+g'(x)$, so $g'(x)=0$ and $g$ is a constant $C$.
+
+$$
+v = 2xy+3y+C
+$$
+
+Checking, $f = z^2+3z + iC$. ✓
+
+**The constant is the only freedom**, which is the rigidity from earlier made concrete: $u$ determines $v$ up to an additive constant.
+
+**Example 6: A function satisfying the equations at a point yet not differentiable there.**
+
+**Solution.** Let $f(z) = \frac{\bar z^2}{z}$ for $z \ne 0$ and $f(0)=0$. A computation shows $u$ and $v$ satisfy the Cauchy–Riemann equations at the origin, because all four partials there are 0.
+
+But along the ray $\arg z = \theta$,
+
+$$
+\frac{f(z)-f(0)}{z} = \frac{\bar z^2}{z^2} = e^{-4i\theta}
+$$
+
+which depends on $\theta$, so the limit does not exist and $f$ is not differentiable at 0.
+
+**This is why the sufficiency statement requires the partials to be continuous in a neighbourhood**, not merely to satisfy the equations at the one point. The partials here are not continuous at 0.
+
+**Example 7: Use the polar equations on $\log z$.**
+
+**Solution.** Take the principal branch $\log z = \ln r + i\theta$, so $u = \ln r$ and $v = \theta$. Then
+
+$$
+u_r = \frac1r, \qquad \frac1r v_\theta = \frac1r \cdot 1 = \frac1r \quad ✓
+$$
+
+$$
+v_r = 0, \qquad -\frac1r u_\theta = 0 \quad ✓
+$$
+
+Both hold for $r>0$, so $\log z$ is differentiable away from the origin and away from whatever ray we cut to make $\theta$ single-valued. And
+
+$$
+\frac{d}{dz}\log z = \frac1z
+$$
+
+∎
+
+## Real-World Applications
+
+**Fluid flow.** For a two-dimensional incompressible irrotational flow, the velocity potential and stream function are precisely a pair $u, v$ satisfying the Cauchy–Riemann equations. The complex function $u+iv$ is the complex potential, and its derivative gives the velocity field directly.
+
+**Electrostatics.** Potential and field lines form the same orthogonal pair. Field-line diagrams in textbooks are level curves of $u$ and $v$ for an analytic function, which is why they always cross at right angles.
+
+**Conformal meshing.** Grid generation for finite-element simulation often uses analytic maps because the Jacobian being a rotation-and-scaling means cells stay well shaped, which keeps the numerics stable.
+
+**Image processing.** The Wirtinger derivative $\partial/\partial\bar z$ is used in complex-valued signal and image processing, where a filter's dependence on $\bar z$ measures how far it is from being analytic.
+
+**Elasticity.** The Kolosov–Muskhelishvili approach solves plane elasticity problems using two analytic functions, turning a system of PDEs into complex function theory. It is standard in fracture mechanics.
+
+**Aerodynamics.** Circulation and lift are computed from a complex potential whose real and imaginary parts satisfy these equations, which is how the Kutta–Joukowski theorem is derived.
+
+:::note[You've Got This]
+The formula worth memorizing is short: $u_x = v_y$ and $u_y = -v_x$. But the reading that will serve you better is $\partial f/\partial\bar z = 0$ — an analytic function depends on $z$ and not on $\bar z$. With that in mind you can classify most functions at a glance: anything you can write in terms of $z$ alone is a candidate, and anything needing $\bar z$, $|z|$, $\operatorname{Re}$, or $\operatorname{Im}$ is not. That one heuristic will save you a lot of partial derivatives.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="complex-complex-differentiation-and-the-cauchy-riemann-equations"
+  questions={[
+    {
+      id: "q1",
+      text: "What are the Cauchy–Riemann equations?",
+      options: [
+        "uₓ = vₓ and u_y = v_y",
+        "uₓ = v_y and u_y = −vₓ",
+        "uₓ + u_y = 0 and vₓ + v_y = 0",
+        "uₓₓ + u_yy = 0",
+      ],
+      correctIndex: 1,
+      explanation:
+        "They come from equating the difference quotient computed along the real axis with the one computed along the imaginary axis. The last option is Laplace's equation, which is a consequence rather than the definition.",
+    },
+    {
+      id: "q2",
+      text: "How many directions of approach are needed to derive the Cauchy–Riemann equations?",
+      options: [
+        "All of them",
+        "Two: along the real and imaginary axes",
+        "Four",
+        "Infinitely many",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Two directions suffice to produce the equations, and remarkably no other direction adds a new condition. That is what makes the theory usable rather than hopeless.",
+    },
+    {
+      id: "q3",
+      text: "Are the Cauchy–Riemann equations sufficient for differentiability?",
+      options: [
+        "Yes, always",
+        "Only together with continuity of the first partial derivatives near the point",
+        "No, never",
+        "Only for polynomials",
+      ],
+      correctIndex: 1,
+      explanation:
+        "The equations alone can hold at an isolated point without differentiability, as z̄²/z at the origin shows. Adding continuity of the partials on a neighbourhood makes them sufficient.",
+    },
+    {
+      id: "q4",
+      text: "Where is f(z) = |z|² differentiable?",
+      options: ["Nowhere", "Only at z = 0", "Everywhere", "On the real axis"],
+      correctIndex: 1,
+      explanation:
+        "With u = x² + y² and v = 0, the equations force 2x = 0 and 2y = 0, which happens only at the origin. Differentiability at a single point is not enough for any of the section's theorems, which is why analyticity requires an open set.",
+    },
+    {
+      id: "q5",
+      text: "What does ∂f/∂z̄ = 0 express?",
+      options: [
+        "That f is constant",
+        "That f depends on z but not on z̄, which is exactly the Cauchy–Riemann condition",
+        "That f is bounded",
+        "That f has a pole",
+      ],
+      correctIndex: 1,
+      explanation:
+        "This is the compact form of the two equations. It immediately explains why z̄, |z|², Re z and Im z all fail, since each genuinely involves z̄.",
+    },
+    {
+      id: "q6",
+      text: "Geometrically, what does complex differentiability mean for the map as a transformation of ℝ²?",
+      options: [
+        "It is locally a reflection",
+        "It is locally a rotation combined with a uniform scaling",
+        "It is locally a shear",
+        "It preserves area",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Substituting the equations forces the Jacobian into the form [[a, −b], [b, a]], which is exactly rotation-and-scaling. This is why analytic maps preserve angles and why conjugation, a reflection, is excluded.",
+    },
+    {
+      id: "q7",
+      text: "If u(x, y) = x² − y² + 3x, what is a harmonic conjugate v?",
+      options: ["2xy + 3y + C", "2xy − 3y", "x² + y²", "3x + C"],
+      correctIndex: 0,
+      explanation:
+        "Integrating v_y = uₓ = 2x + 3 gives 2xy + 3y + g(x), and the second equation forces g′ = 0. The resulting function is z² + 3z up to an imaginary constant.",
+    },
+    {
+      id: "q8",
+      text: "Why must the real and imaginary parts of an analytic function be harmonic?",
+      options: [
+        "Because they are bounded",
+        "Because differentiating the Cauchy–Riemann equations and adding gives uₓₓ + u_yy = 0",
+        "Because they are polynomials",
+        "They are not harmonic in general",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Cross-differentiating the two equations and adding eliminates v and yields Laplace's equation for u, with the same argument for v. This is the bridge to electrostatics, heat flow, and fluid dynamics.",
+    },
+  ]}
+/>

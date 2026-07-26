@@ -1,0 +1,294 @@
+---
+title: Limits and Continuity in the Complex Plane
+description: Epsilon-delta in two dimensions, and why direction independence changes everything
+sidebar:
+  order: 4
+---
+
+import Quiz from "../../../components/Quiz.astro";
+import ComplexLimitPaths from "../../../components/ComplexLimitPaths.astro";
+
+## What You'll Learn
+
+In this lesson you'll state the epsilon-delta definition of a complex limit, see why "from every direction" is the phrase that matters, learn the path test for proving a limit does not exist, and check continuity by splitting into real and imaginary parts.
+
+## The Concept
+
+### The definition, which looks familiar
+
+> $\displaystyle\lim_{z\to z_0}f(z) = L$ means: for every $\varepsilon>0$ there is $\delta>0$ such that
+>
+> $$
+> 0 < |z-z_0| < \delta \quad\Longrightarrow\quad |f(z)-L| < \varepsilon
+> $$
+
+Word for word this is the real-analysis definition. Only the meaning of the absolute value has changed, and that change is the whole story.
+
+In $\mathbb{R}$, the set $|x - x_0| < \delta$ is an interval, and $x$ can approach $x_0$ from two sides. In $\mathbb{C}$, the set $|z-z_0|<\delta$ is a **disc**, and $z$ can approach $z_0$ along infinitely many paths: any ray, any spiral, any wiggling curve.
+
+**The limit must be the same along every one of them.** That is a much stronger requirement, and it makes limits easier to disprove and harder to satisfy.
+
+### The path test
+
+The practical consequence is a clean way to show a limit fails to exist:
+
+> If two paths approaching $z_0$ give different limiting values, then $\lim_{z\to z_0}f(z)$ does not exist.
+
+Rays are usually the easiest paths to try, because on a ray you can substitute $z = te^{i\theta}$ and let $t\to0^+$ with $\theta$ fixed. If the answer still mentions $\theta$, you are finished.
+
+<ComplexLimitPaths />
+
+The reference example is $f(z) = \bar z/z$. On the ray $\arg z = \theta$,
+
+$$
+\frac{\bar z}{z} = \frac{te^{-i\theta}}{te^{i\theta}} = e^{-2i\theta}
+$$
+
+which is constant along each ray and different on different rays. Along the real axis the value is 1; along the imaginary axis it is $-1$. **The limit at 0 does not exist**, even though $|f(z)| = 1$ everywhere, so the function is bounded and never wild.
+
+This is the same phenomenon as the multivariable limits you saw in Calculus 3, where $\frac{xy}{x^2+y^2}$ has no limit at the origin. Complex analysis inherits that difficulty and, remarkably, turns it into an advantage: the functions that survive the requirement are extremely well behaved.
+
+### Splitting into real and imaginary parts
+
+Since $|z| \le |{\operatorname{Re}z}| + |{\operatorname{Im}z}|$ and $|\operatorname{Re}z|, |\operatorname{Im}z| \le |z|$, closeness in $\mathbb{C}$ and closeness in both coordinates are the same thing. So:
+
+> With $f = u+iv$ and $L = a+ib$,
+>
+> $$
+> \lim_{z\to z_0}f(z) = L \iff \lim_{(x,y)\to(x_0,y_0)}u = a \ \text{ and } \ \lim_{(x,y)\to(x_0,y_0)}v = b
+> $$
+
+This is how you import everything you know about multivariable limits. It also means **continuity of $f$ is exactly continuity of $u$ and $v$** as functions of two real variables.
+
+### Limit laws, and continuity
+
+All the usual algebra survives, with the same proofs:
+
+- $\lim(f\pm g) = \lim f \pm \lim g$
+- $\lim(fg) = \lim f \cdot \lim g$
+- $\lim(f/g) = \lim f / \lim g$ provided $\lim g \ne 0$
+- Compositions of continuous functions are continuous
+
+$f$ is **continuous at $z_0$** if $z_0$ is in the domain and $\lim_{z\to z_0}f(z) = f(z_0)$. There is also a sequential criterion, exactly as in real analysis: $f$ is continuous at $z_0$ iff $f(z_n)\to f(z_0)$ for every sequence $z_n \to z_0$.
+
+Continuous functions include all polynomials in $z$, all rational functions away from the zeros of the denominator, $e^z$, $\sin z$, $\cos z$, and also $\bar z$, $|z|$, $\operatorname{Re}z$, $\operatorname{Im}z$. That last group is the important observation: **continuity is cheap, and none of those four is differentiable.** The interesting line in complex analysis is drawn at differentiability, not continuity.
+
+### Limits involving infinity
+
+Because complex analysis works on the extended plane, three more limit statements are standard:
+
+- $\lim_{z\to z_0}f(z) = \infty$ means $|f(z)|$ can be made arbitrarily large as $z\to z_0$. This is what having a **pole** at $z_0$ means.
+- $\lim_{z\to\infty}f(z) = L$ means $f(z)$ approaches $L$ as $|z|$ grows without bound.
+- $\lim_{z\to\infty}f(z) = \infty$, as for any non-constant polynomial.
+
+A useful reduction: behaviour at $\infty$ is studied by substituting $z = 1/\zeta$ and looking at $\zeta \to 0$. Note there is only **one** $\infty$ in $\hat{\mathbb{C}}$, unlike the real line's $\pm\infty$; on the Riemann sphere it is a single point, and every direction of escape heads for it.
+
+### Regions
+
+Two words used constantly from here on:
+
+- A set is **open** if every point has a disc around it inside the set, and **connected** if it is not split into two separated pieces. An open connected set is called a **domain**.
+- A domain is **simply connected** if it has no holes, meaning every loop in it can be shrunk to a point without leaving it.
+
+Simple connectivity is the hypothesis in Cauchy's theorem, and the annulus is the standard example of a domain that fails it. That failure is exactly what Laurent series and residues exist to handle.
+
+## Worked Examples
+
+**Example 1: Show $\lim_{z\to0}\frac{\bar z}{z}$ does not exist.**
+
+**Solution.** Put $z = te^{i\theta}$ with $t>0$:
+
+$$
+\frac{\bar z}{z} = e^{-2i\theta}
+$$
+
+Along $\theta = 0$ the value is 1 for every $t$, so that path gives 1.
+
+Along $\theta = \pi/2$ the value is $e^{-i\pi} = -1$.
+
+Two paths, two values, so the limit does not exist. ∎
+
+**The function is bounded and continuous away from 0**, which is a good reminder that failure of a limit need not involve anything blowing up.
+
+**Example 2: Show $\lim_{z\to0}\frac{\operatorname{Re}(z)}{|z|}$ does not exist.**
+
+**Solution.** On the ray at angle $\theta$, $\operatorname{Re}z = t\cos\theta$ and $|z| = t$, so the quotient is $\cos\theta$.
+
+Along the positive real axis it is 1; along the positive imaginary axis it is 0. ∎
+
+**Example 3: Evaluate $\lim_{z\to i}\frac{z^2+1}{z-i}$.**
+
+**Solution.** Factor, using $z^2+1 = (z-i)(z+i)$:
+
+$$
+\frac{(z-i)(z+i)}{z-i} = z+i \quad (z \ne i)
+$$
+
+So the limit is $i+i = 2i$. ∎
+
+**Removable singularities factor out, exactly as in real calculus.** Nothing about direction independence causes trouble here, because after cancelling, the expression is a polynomial.
+
+**Example 4: Is $f(z)=\dfrac{z^2+1}{z-i}$ continuous at $i$?**
+
+**Solution.** No, because $f(i)$ is undefined — the point is not in the domain, so continuity is not even a meaningful question there.
+
+However the limit exists and equals $2i$, so defining $f(i) = 2i$ makes the extended function continuous. **This is a removable singularity**, and it will turn out to be removable in a much stronger sense: the extended function is analytic, not merely continuous.
+
+**Example 5: Where is $f(z) = \dfrac{z}{z^2+4}$ continuous?**
+
+**Solution.** It is a rational function, so it is continuous wherever the denominator is nonzero. Solving $z^2+4=0$ gives $z = \pm2i$.
+
+$$
+\text{continuous on } \mathbb{C}\setminus\{2i,\,-2i\}
+$$
+
+At those two points $|f(z)|\to\infty$, so the function has poles there. ∎
+
+**Example 6: Verify continuity of $f(z) = z^2$ by splitting into $u$ and $v$.**
+
+**Solution.** We have $u(x,y) = x^2-y^2$ and $v(x,y) = 2xy$. Both are polynomials in two real variables, hence continuous everywhere on $\mathbb{R}^2$.
+
+Since $f$ is continuous iff both $u$ and $v$ are, $f$ is continuous on all of $\mathbb{C}$. ∎
+
+**This is the standard route for transferring real results.** Any statement about $f$ that is purely about closeness can be checked coordinatewise.
+
+**Example 7: An epsilon-delta proof.**
+
+Prove $\lim_{z\to z_0} z^2 = z_0^2$ directly.
+
+**Solution.** Estimate the target quantity:
+
+$$
+|z^2-z_0^2| = |z-z_0|\,|z+z_0|
+$$
+
+Restrict attention to $|z-z_0|<1$, which forces $|z| < |z_0|+1$ and hence
+
+$$
+|z+z_0| \le |z|+|z_0| < 2|z_0|+1
+$$
+
+Given $\varepsilon>0$, choose
+
+$$
+\delta = \min\left\{1,\ \frac{\varepsilon}{2|z_0|+1}\right\}
+$$
+
+Then $|z-z_0|<\delta$ gives $|z^2-z_0^2| < \delta(2|z_0|+1) \le \varepsilon$. ∎
+
+**The proof is character-for-character the real one.** That is worth noticing: the epsilon-delta machinery transfers unchanged, and the only new phenomenon is the extra freedom the approaching point has.
+
+## Real-World Applications
+
+**Numerical root-finding.** Newton's method in the complex plane converges to different roots depending on the starting point, and the boundaries between the basins are fractals. Whether the iteration has a limit, and which one, is exactly a question about limits of complex sequences.
+
+**Filter and system stability.** Whether a transfer function stays bounded as $z\to\infty$ or blows up at a pole determines whether an amplifier saturates or a control loop runs away. Engineers read off pole locations precisely because those are the points where the limit is $\infty$.
+
+**Fractals.** The Mandelbrot set is defined by whether the orbit of 0 under $z\mapsto z^2+c$ stays bounded. Every pixel is the answer to a boundedness question about a complex sequence.
+
+**Signal analysis near a resonance.** The gain of a resonant system approaches a pole as the driving frequency approaches the natural frequency, and how fast it grows is set by the distance to that pole in the plane.
+
+**Analytic continuation in physics.** Scattering amplitudes are continued from real energies into the complex plane, and the poles found there correspond to physical particles and resonances. The limiting behaviour on the way in is the whole content of the technique.
+
+**Computer graphics.** Conformal image warps must be continuous to avoid visible tearing, and continuity is checked coordinatewise on $u$ and $v$ exactly as in Example 6.
+
+:::note[You've Got This]
+Everything in this lesson is real analysis with one word changed, and that one word is doing a lot of work: "every direction." Keep the $\bar z/z$ example handy, because it is the shortest demonstration that a bounded, continuous, entirely reasonable-looking function can fail to have a limit. And note where the real dividing line in this subject sits: continuity is easy and includes $\bar z$ and $|z|$, while differentiability excludes them. That is the line the next lesson draws precisely.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="complex-limits-and-continuity-in-the-complex-plane"
+  questions={[
+    {
+      id: "q1",
+      text: "How does the definition of a complex limit differ from the real one?",
+      options: [
+        "It uses a different inequality",
+        "It is the same definition, but |z − z₀| < δ is a disc, so z may approach along infinitely many paths, all of which must agree",
+        "It requires the function to be bounded",
+        "It only applies at interior points",
+      ],
+      correctIndex: 1,
+      explanation:
+        "The epsilon-delta wording is identical; what changes is that the neighbourhood is two-dimensional. Direction independence is the extra demand and it is what makes complex limits restrictive.",
+    },
+    {
+      id: "q2",
+      text: "What is the value of z̄/z along the ray arg z = θ?",
+      options: ["1", "e^(−2iθ)", "e^(2iθ)", "0"],
+      correctIndex: 1,
+      explanation:
+        "Writing z = te^(iθ) gives te^(−iθ)/te^(iθ) = e^(−2iθ), which does not depend on t but does depend on θ. Constant on each ray and different between rays is exactly what kills the limit.",
+    },
+    {
+      id: "q3",
+      text: "Why does lim_{z→0} z̄/z fail to exist even though the function is bounded?",
+      options: [
+        "Because the function is unbounded near 0",
+        "Because different rays of approach give different values",
+        "Because the function is discontinuous everywhere",
+        "Because z̄ is not defined at 0",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Along the real axis the value is 1 and along the imaginary axis it is −1. Its modulus is 1 everywhere, so nothing is blowing up; the failure is purely about direction dependence.",
+    },
+    {
+      id: "q4",
+      text: "How does the limit of f = u + iv relate to limits of u and v?",
+      options: [
+        "The limit of f exists only if u and v are equal",
+        "The limit of f exists exactly when the limits of u and v both exist, and then it is their combination",
+        "u and v have nothing to do with the limit of f",
+        "Only u matters",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Closeness in ℂ is equivalent to closeness in both coordinates, so complex limits reduce to a pair of multivariable limits. This is also how continuity of f is checked in practice.",
+    },
+    {
+      id: "q5",
+      text: "What is lim_{z→i} (z² + 1)/(z − i)?",
+      options: ["0", "2i", "i", "The limit does not exist"],
+      correctIndex: 1,
+      explanation:
+        "Factoring z² + 1 = (z − i)(z + i) cancels the denominator, leaving z + i, which tends to 2i. This is a removable singularity and it behaves exactly as in real calculus.",
+    },
+    {
+      id: "q6",
+      text: "Which of these functions is continuous on ℂ but nowhere complex differentiable?",
+      options: ["z²", "e^z", "z̄", "1/z"],
+      correctIndex: 2,
+      explanation:
+        "Conjugation is continuous, since its u and v are polynomials, but its difference quotient depends on direction. Continuity is cheap in this subject; differentiability is where the real restriction lies.",
+    },
+    {
+      id: "q7",
+      text: "Where is f(z) = z/(z² + 4) continuous?",
+      options: [
+        "Everywhere on ℂ",
+        "On ℂ except z = ±2i",
+        "On ℂ except z = ±2",
+        "Only on the real axis",
+      ],
+      correctIndex: 1,
+      explanation:
+        "A rational function is continuous off the zeros of its denominator, and z² + 4 = 0 gives z = ±2i. At those points the modulus tends to infinity, so they are poles.",
+    },
+    {
+      id: "q8",
+      text: "What does it mean for a domain to be simply connected?",
+      options: [
+        "It is bounded",
+        "Every loop inside it can be shrunk to a point without leaving it",
+        "It contains the origin",
+        "It is a disc",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Informally it means the region has no holes. This is the hypothesis in Cauchy's theorem, and the annulus is the standard example that fails it, which is why Laurent series exist.",
+    },
+  ]}
+/>

@@ -1,0 +1,139 @@
+---
+/**
+ * LaurentAnnulus — the same function has three different series depending on
+ * which annulus you sit in. The Laurent coefficients for the middle annulus are
+ * computed by numerically evaluating the coefficient integral on a circle of
+ * radius 1.5, so the printed coefficients are measured, not quoted.
+ */
+const w = 540;
+const h = 314;
+
+const ox = 150;
+const oy = 156;
+const unit = 34;
+
+type C = { re: number; im: number };
+const mul = (a: C, b: C): C => ({ re: a.re * b.re - a.im * b.im, im: a.re * b.im + a.im * b.re });
+const inv = (a: C): C => {
+  const d = a.re * a.re + a.im * a.im;
+  return { re: a.re / d, im: -a.im / d };
+};
+
+/** f(z) = 1 / ((z − 1)(z − 2)), with poles at 1 and 2. */
+const f = (z: C): C =>
+  inv(mul({ re: z.re - 1, im: z.im }, { re: z.re - 2, im: z.im }));
+
+/** cₙ = (1/2πi) ∮ f(z) / z^(n+1) dz on the circle |z| = r, by the trapezoid rule. */
+function coeff(n: number, r: number, N = 8000): C {
+  let sre = 0;
+  let sim = 0;
+  for (let k = 0; k < N; k++) {
+    const t = (2 * Math.PI * k) / N;
+    const z: C = { re: r * Math.cos(t), im: r * Math.sin(t) };
+    // integrand f(z) z^(−n) / (2π), since dz = i z dt cancels the 1/(2πi z)
+    let pow: C = { re: 1, im: 0 };
+    const zi = n >= 0 ? inv(z) : z;
+    for (let j = 0; j < Math.abs(n); j++) pow = mul(pow, zi);
+    const v = mul(f(z), pow);
+    sre += v.re;
+    sim += v.im;
+  }
+  return { re: sre / N, im: sim / N };
+}
+
+const rMid = 1.5;
+const indices = [-3, -2, -1, 0, 1, 2];
+const coeffs = indices.map((n) => ({ n, c: coeff(n, rMid) }));
+
+const fmtC = (v: C) => {
+  const rr = Math.abs(v.re) < 5e-4 ? 0 : v.re;
+  return rr.toFixed(4).replace("-", "−");
+};
+
+const regions = [
+  { label: "|z| < 1", note: "ordinary Taylor series", cls: "green" },
+  { label: "1 < |z| < 2", note: "Laurent, both directions", cls: "blue" },
+  { label: "|z| > 2", note: "negative powers only", cls: "purple" },
+];
+---
+
+<figure
+  class="lau"
+  role="img"
+  aria-label={`Two circles of radius 1 and 2 through the poles at 1 and 2 divide the plane into three regions, each carrying a different series for the same function. On the middle annulus the measured Laurent coefficients are c₋₁ = ${fmtC(coeffs[2].c)}, c₀ = ${fmtC(coeffs[3].c)} and c₁ = ${fmtC(coeffs[4].c)}.`}
+>
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    <text x="16" y="20" class="lau-head" font-size="12.5" font-weight="bold">One function, three different series</text>
+    <text x="16" y="38" class="lau-sub" font-size="10.5">f(z) = 1 ⁄ ((z − 1)(z − 2)), expanded about 0</text>
+
+    <line x1="286" y1="52" x2="286" y2="258" class="lau-divide" />
+
+    {/* ---------- the three regions ---------- */}
+    <line x1={ox - 2.7 * unit} y1={oy} x2={ox + 2.7 * unit} y2={oy} class="lau-axis" />
+    <line x1={ox} y1={oy - 2.7 * unit} x2={ox} y2={oy + 2.7 * unit} class="lau-axis" />
+
+    <circle cx={ox} cy={oy} r={2 * unit} class="lau-ring lau-r2" />
+    <circle cx={ox} cy={oy} r={1 * unit} class="lau-ring lau-r1" />
+
+    {[1, 2].map((p) => (
+      <g>
+        <line x1={ox + p * unit - 5} y1={oy - 5} x2={ox + p * unit + 5} y2={oy + 5} class="lau-pole" />
+        <line x1={ox + p * unit - 5} y1={oy + 5} x2={ox + p * unit + 5} y2={oy - 5} class="lau-pole" />
+      </g>
+    ))}
+
+    {/* ---------- what each region gets ---------- */}
+    <text x="306" y="70" class="lau-panel" font-size="10" text-anchor="start">three regions, three series</text>
+    {regions.map((r, i) => (
+      <text x="306" y={92 + i * 20} class={`lau-key lau-t-${r.cls}`} font-size="9.5" text-anchor="start">
+        {`${r.label} — ${r.note}`}
+      </text>
+    ))}
+
+    <text x="306" y="154" class="lau-row" font-size="9.5" text-anchor="start">circles drawn at |z| = 1 and |z| = 2</text>
+
+    <text x="306" y="176" class="lau-panel" font-size="10" text-anchor="start">{`measured cₙ on |z| = ${rMid}`}</text>
+    {coeffs.slice(1, 5).map((row, i) => (
+      <text x="306" y={198 + i * 18} class="lau-row" font-size="9.5" text-anchor="start">
+        {`c(${row.n === 0 ? " 0" : row.n > 0 ? `+${row.n}` : row.n}) = ${fmtC(row.c)}`}
+      </text>
+    ))}
+
+    <text x={w / 2} y="288" class="lau-foot" font-size="10.5" text-anchor="middle">
+      cₙ = (1 ⁄ 2πi) ∮ f(z) ⁄ zⁿ⁺¹ dz, and negative n are allowed
+    </text>
+    <text x={w / 2} y="306" class="lau-sub2" font-size="9.5" text-anchor="middle">
+      The circles pass through the poles, so each region is a genuine annulus of analyticity
+    </text>
+  </svg>
+</figure>
+
+<style>
+  .lau { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .lau svg { width:100%; max-width:100%; height:auto; }
+  .lau-axis { stroke:#888; stroke-width:1.3; }
+  .lau-divide { stroke:#3a3a3a; stroke-width:1; }
+  .lau-ring { fill:none; stroke-width:1.7; stroke-dasharray:6,4; }
+  .lau-r1 { stroke:#7ee787; }
+  .lau-r2 { stroke:#58a6ff; }
+  .lau-pole { stroke:#ff7b72; stroke-width:2.4; }
+  .lau-zone, .lau-key { font-family:'Libre Baskerville',Georgia,serif; }
+  .lau-t-green { fill:#7ee787; }
+  .lau-t-blue { fill:#58a6ff; }
+  .lau-t-purple { fill:#d2a8ff; }
+  .lau-row { fill:#9198a1; font-family:'Libre Baskerville',Georgia,serif; }
+  .lau-panel, .lau-head { fill:#eee; font-family:'Libre Baskerville',Georgia,serif; }
+  .lau-sub, .lau-sub2 { fill:#9198a1; font-family:'Libre Baskerville',Georgia,serif; font-style:italic; }
+  .lau-foot { fill:#58a6ff; font-family:'Libre Baskerville',Georgia,serif; }
+  :global([data-theme="light"]) .lau-axis { stroke:#666; }
+  :global([data-theme="light"]) .lau-divide { stroke:#d0d7de; }
+  :global([data-theme="light"]) .lau-r1 { stroke:#116329; }
+  :global([data-theme="light"]) .lau-t-green { fill:#116329; }
+  :global([data-theme="light"]) .lau-r2 { stroke:#0550ae; }
+  :global([data-theme="light"]) .lau-t-blue { fill:#0550ae; }
+  :global([data-theme="light"]) .lau-t-purple { fill:#6639ba; }
+  :global([data-theme="light"]) .lau-pole { stroke:#a40e26; }
+  :global([data-theme="light"]) .lau-foot { fill:#0550ae; }
+  :global([data-theme="light"]) .lau-panel, :global([data-theme="light"]) .lau-head { fill:#24292f; }
+  :global([data-theme="light"]) :is(.lau-row, .lau-sub, .lau-sub2) { fill:#57606a; }
+</style>

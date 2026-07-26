@@ -1,0 +1,305 @@
+---
+title: Complex Functions and Mappings
+description: Why you cannot graph a complex function, and how to picture one instead
+sidebar:
+  order: 3
+---
+
+import Quiz from "../../../components/Quiz.astro";
+import SquareMapping from "../../../components/SquareMapping.astro";
+
+## What You'll Learn
+
+In this lesson you'll learn why a complex function has no graph in the usual sense, how to picture one as a map between two planes, how to split $f$ into real functions $u$ and $v$, and what the basic maps do geometrically.
+
+## The Concept
+
+### Why there is no graph
+
+A real function $f:\mathbb{R}\to\mathbb{R}$ has a graph in $\mathbb{R}^2$: one dimension of input, one of output. A complex function $f:\mathbb{C}\to\mathbb{C}$ has two real inputs and two real outputs, so its graph lives in $\mathbb{R}^4$. You cannot draw that.
+
+So we do something else. A complex function is treated as a **transformation of the plane**: draw the input region in one copy of $\mathbb{C}$, draw where it goes in another, and study how shapes are distorted. That shift in viewpoint is the main content of this lesson, and it is what makes conformal mapping possible later.
+
+There are three common pictures, and it is worth knowing all three:
+
+- **Two planes side by side** — draw a grid or region in the $z$-plane and its image in the $w$-plane. Best for understanding a specific map.
+- **Domain colouring** — colour each point $z$ according to $\arg f(z)$ and shade by $|f(z)|$. Best for spotting zeros and poles at a glance.
+- **Modulus surface** — plot $|f(z)|$ as a height over the plane. Poles become spikes, zeros become dimples.
+
+### The $u$ and $v$ decomposition
+
+Every complex function splits into two real functions of two real variables:
+
+$$
+f(z) = u(x,y) + i\,v(x,y)
+$$
+
+where $z = x+iy$. For example, with $f(z)=z^2$,
+
+$$
+(x+iy)^2 = x^2-y^2 + 2ixy \quad\Longrightarrow\quad u = x^2-y^2,\quad v = 2xy
+$$
+
+This decomposition is how complex analysis connects to the multivariable calculus you already know, and it is the form in which the Cauchy–Riemann equations get stated next lesson. It is also how the subject connects to physics: $u$ and $v$ turn out to be a potential and a stream function.
+
+### Squaring: the basic example
+
+The map $w = z^2$ is worth understanding completely, because most later examples are built from it.
+
+In polar form the effect is transparent:
+
+$$
+z = re^{i\theta} \quad\longmapsto\quad w = r^2e^{2i\theta}
+$$
+
+**Moduli square, arguments double.**
+
+<SquareMapping />
+
+Consequences worth reading off:
+
+- Circles $|z|=r$ go to circles $|w|=r^2$.
+- Rays $\arg z = \theta$ go to rays $\arg w = 2\theta$.
+- A sector of opening angle $\alpha$ becomes a sector of opening $2\alpha$. The upper half plane covers the whole plane.
+- The map is **two-to-one**: $z$ and $-z$ have the same square. That is why $\sqrt{w}$ cannot be defined single-valuedly on all of $\mathbb{C}$.
+- Angles between curves are preserved everywhere except at $z=0$, where $f'(0)=0$.
+
+In Cartesian coordinates the same map sends the grid line $x=c$ to a leftward-opening parabola and $y=c$ to a rightward-opening one, which is a good illustration of why polar form is usually the right tool.
+
+### The elementary maps and what they do
+
+Almost everything in the section is assembled from these four:
+
+**Translation** $w = z + b$. Slide the whole plane by the vector $b$. Nothing is distorted.
+
+**Rotation and scaling** $w = az$. Write $a = \rho e^{i\alpha}$: the plane rotates by $\alpha$ and scales by $\rho$ about the origin. Combined with translation, $w = az+b$ gives all **similarity transformations** — these preserve shape exactly.
+
+**Inversion** $w = 1/z$. In polar form $re^{i\theta}\mapsto \frac1r e^{-i\theta}$: invert the modulus and negate the argument. It exchanges the inside and outside of the unit circle, fixes $\pm1$, and sends 0 and $\infty$ to each other. It maps circles and lines to circles and lines, though it can turn one into the other.
+
+**Powers** $w = z^n$. Multiplies all arguments by $n$, so it is $n$-to-one and opens sectors by a factor of $n$.
+
+Compositions of the first three, $w = \frac{az+b}{cz+d}$ with $ad-bc\ne0$, are the **Möbius transformations**, and they get a lesson of their own later.
+
+### The extended plane
+
+Several statements above needed the point at infinity, and it pays to make that official. The **extended complex plane** or **Riemann sphere** is
+
+$$
+\hat{\mathbb{C}} = \mathbb{C}\cup\{\infty\}
+$$
+
+Geometrically, place a sphere touching the plane and project from the north pole; every point of the plane hits the sphere somewhere, and the north pole itself corresponds to $\infty$. This is **stereographic projection**.
+
+On the sphere, lines and circles are the same kind of object — a line is just a circle through the north pole. That is why "circles and lines map to circles and lines" is really the single statement "circles map to circles."
+
+## Worked Examples
+
+**Example 1: Find $u$ and $v$ for $f(z) = z^3$.**
+
+**Solution.** Expand $(x+iy)^3$:
+
+$$
+x^3+3ix^2y-3xy^2-iy^3
+$$
+
+Separating,
+
+$$
+u = x^3-3xy^2, \qquad v = 3x^2y-y^3
+$$
+
+Sanity check at $z = i$, that is $x=0,y=1$: $u = 0$, $v = -1$, so $f(i) = -i$. Directly, $i^3 = -i$. ✓
+
+**Example 2: Where does $w=z^2$ send the upper half plane?**
+
+**Solution.** The upper half plane is $0 < \arg z < \pi$. Doubling arguments gives $0 < \arg w < 2\pi$, which is the whole plane minus the positive real axis.
+
+**The map is a bijection here**, since the two preimages $\pm z$ of any $w$ lie in opposite half planes and only one is in the upper one. That makes the upper half plane a natural domain on which $\sqrt{\cdot}$ can be inverted, and it is the reason the principal square root is defined the way it is.
+
+**Example 3: What does $w = 1/z$ do to the circle $|z| = 2$?**
+
+**Solution.** If $|z|=2$ then $|w| = 1/|z| = 1/2$. The argument is negated, which reverses the direction of travel but does not change the set.
+
+So the image is the circle $|w| = \frac12$, traversed the other way round. ∎
+
+More generally inversion turns the exterior of the unit circle into the interior and vice versa, with the unit circle itself mapping to itself.
+
+**Example 4: Show $w=1/z$ maps the line $x = 1$ to a circle.**
+
+**Solution.** Write $z = 1/w$ with $w = s+it$. Then
+
+$$
+z = \frac{1}{s+it} = \frac{s-it}{s^2+t^2}
+$$
+
+so $x = \operatorname{Re} z = \frac{s}{s^2+t^2}$. The condition $x=1$ becomes
+
+$$
+s = s^2+t^2 \quad\Longrightarrow\quad \left(s-\tfrac12\right)^2+t^2 = \tfrac14
+$$
+
+The circle of radius $\frac12$ centred at $\frac12$, passing through the origin. ∎
+
+**A line not through the origin becomes a circle through the origin.** That is the general rule, and the origin appears in the image because the line passes through $\infty$, which inversion sends to 0.
+
+**Example 5: Build the map taking the disc $|z|<1$ to the disc $|w-3i|<2$.**
+
+**Solution.** Scale then translate:
+
+$$
+w = 2z + 3i
+$$
+
+Check: $|z|<1$ gives $|2z|<2$, so $|w-3i| = |2z| < 2$. ✓
+
+**Similarity transformations $az+b$ are the ones that preserve shape**, so any disc can be sent to any other disc this way. Sending a disc to a non-circular region requires something genuinely nonlinear.
+
+**Example 6: Find the image of the strip $0 < \operatorname{Im} z < \pi$ under $w = e^z$.**
+
+**Solution.** With $z = x+iy$,
+
+$$
+e^z = e^xe^{iy}, \qquad |w| = e^x, \qquad \arg w = y
+$$
+
+As $x$ ranges over $\mathbb{R}$, $|w|$ takes every positive value. As $y$ ranges over $(0,\pi)$, $\arg w$ does too.
+
+So the image is the **upper half plane**. ∎
+
+The exponential turns horizontal strips into sectors, and a strip of height exactly $2\pi$ covers the whole punctured plane once. This is the geometric content of $e^z$ being $2\pi i$-periodic.
+
+**Example 7: Why is $f(z) = |z|$ a poor complex function?**
+
+**Solution.** Its output is always real, so the image of the whole plane is the ray $[0,\infty)$. Every circle $|z|=r$ collapses to a single point.
+
+A map that crushes two dimensions down to one cannot be complex differentiable, and indeed $|z|$ fails the Cauchy–Riemann test everywhere except possibly the origin. **Complex differentiability essentially forces a map to be locally a rotation and a scaling**, and collapsing is the opposite of that.
+
+## Real-World Applications
+
+**Aerofoil design.** The Joukowski map $w = z + \frac1z$ takes a circle to a shape with a sharp trailing edge. Since flow around a circle is elementary and the map preserves the governing equation, this computes flow around a wing. It is how lift was first calculated, before wind tunnels.
+
+**Electrostatics and heat.** Laplace's equation is preserved by conformal maps, so a solution on a simple region transfers to any region you can map onto it. This was the standard method for capacitor and heat-sink geometry for a century.
+
+**Map projections.** The Mercator projection is conformal, which is exactly why it preserves bearings and made it the navigator's chart of choice despite the area distortion at high latitudes. Stereographic projection is likewise conformal and is used in crystallography and geology.
+
+**Image warping.** Conformal maps produce distortions that look natural because they preserve local angles, and they are used in texture mapping and in some medical image registration.
+
+**Antenna and transmission line design.** The Smith chart is a Möbius transformation of the impedance plane onto a disc, which turns the arithmetic of matching networks into a graphical construction.
+
+**Escher's prints.** _Print Gallery_ and _Circle Limit_ are built on explicit conformal maps, the first on an exponential-type spiral map that was reverse-engineered mathematically only in 2003.
+
+:::note[You've Got This]
+The mental shift in this lesson is the whole point: stop looking for a graph and start asking where regions go. Once "what does this function do to the unit circle" becomes your first question about a complex function, the rest of the section reads naturally. And keep $w=z^2$ in mind as the reference example — moduli square, arguments double — because a surprising amount of what follows is that one fact in disguise.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="complex-complex-functions-and-mappings"
+  questions={[
+    {
+      id: "q1",
+      text: "Why can a complex function not be graphed the way a real function can?",
+      options: [
+        "Because complex functions are discontinuous",
+        "Because two real inputs and two real outputs would need four dimensions",
+        "Because the output is always imaginary",
+        "Because complex functions are multi-valued",
+      ],
+      correctIndex: 1,
+      explanation:
+        "The graph would live in ℝ⁴. Instead we picture the function as a transformation from one copy of the plane to another and study how regions are distorted.",
+    },
+    {
+      id: "q2",
+      text: "For f(z) = z², what are u and v?",
+      options: [
+        "u = x², v = y²",
+        "u = x² − y², v = 2xy",
+        "u = 2xy, v = x² − y²",
+        "u = x² + y², v = 0",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Expanding (x + iy)² gives x² − y² + 2ixy, so the real part is x² − y² and the imaginary part is 2xy. This decomposition is what the Cauchy–Riemann equations are stated in terms of.",
+    },
+    {
+      id: "q3",
+      text: "In polar form, what does w = z² do?",
+      options: [
+        "Doubles the modulus and squares the argument",
+        "Squares the modulus and doubles the argument",
+        "Leaves the modulus and negates the argument",
+        "Squares both",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Since (re^(iθ))² = r²e^(2iθ), moduli are squared and arguments are doubled. That doubling is why a sector opens to twice its angle and why the map is two-to-one.",
+    },
+    {
+      id: "q4",
+      text: "What is the image of the upper half plane under w = z²?",
+      options: [
+        "The upper half plane again",
+        "The whole plane minus the positive real axis",
+        "The unit disc",
+        "The right half plane",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Arguments in (0, π) double to (0, 2π), which is everything except the positive real axis. On this domain the squaring map is one-to-one, which is why the principal square root is defined there.",
+    },
+    {
+      id: "q5",
+      text: "What does w = 1/z do to the circle |z| = 2?",
+      options: [
+        "Leaves it unchanged",
+        "Maps it to the circle |w| = 1/2, traversed in the opposite direction",
+        "Maps it to a line",
+        "Collapses it to a point",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Inversion replaces the modulus by its reciprocal and negates the argument. Only the unit circle is left setwise fixed by this map.",
+    },
+    {
+      id: "q6",
+      text: "Under w = 1/z, what is the image of a line not passing through the origin?",
+      options: [
+        "Another line not through the origin",
+        "A circle through the origin",
+        "A circle not through the origin",
+        "A parabola",
+      ],
+      correctIndex: 1,
+      explanation:
+        "The line passes through ∞, and inversion sends ∞ to 0, so the image circle must contain the origin. On the Riemann sphere lines and circles are the same kind of curve, which is why the rule is so clean.",
+    },
+    {
+      id: "q7",
+      text: "What is the image of the strip 0 < Im z < π under w = e^z?",
+      options: [
+        "The unit disc",
+        "The upper half plane",
+        "The whole plane",
+        "A horizontal strip",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Since |w| = e^x sweeps all of (0, ∞) and arg w = y sweeps (0, π), the image is the upper half plane. Strips of height 2π cover the punctured plane exactly once, which is the geometry of 2πi-periodicity.",
+    },
+    {
+      id: "q8",
+      text: "What is the point at infinity used for?",
+      options: [
+        "To make division by zero legal in ℂ",
+        "To form the extended plane, where lines are circles through the north pole and inversion becomes well behaved",
+        "To make every function bounded",
+        "To define the modulus",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Adjoining ∞ gives the Riemann sphere via stereographic projection, on which lines and circles are the same object. That is what lets 1/z be described as a map of circles to circles with no exceptions.",
+    },
+  ]}
+/>

@@ -1,0 +1,139 @@
+---
+/**
+ * ArgumentWinding — the argument principle made visible. The image of the contour
+ * under f is traced, and the number of times it winds around the origin is
+ * computed by accumulating the change in argument. That measured winding number is
+ * then compared with Z − P counted from the zeros and poles inside.
+ */
+const w = 540;
+const h = 312;
+
+type C = { re: number; im: number };
+const mul = (a: C, b: C): C => ({ re: a.re * b.re - a.im * b.im, im: a.re * b.im + a.im * b.re });
+const inv = (a: C): C => {
+  const d = a.re * a.re + a.im * a.im;
+  return { re: a.re / d, im: -a.im / d };
+};
+
+const cases = [
+  {
+    cx: 140,
+    title: "f(z) = z³ − 1 on |z| = 2",
+    R: 2,
+    scale: 7,
+    Z: 3,
+    P: 0,
+    zeroNote: "three cube roots of 1 inside",
+    f: (z: C): C => {
+      const z3 = mul(mul(z, z), z);
+      return { re: z3.re - 1, im: z3.im };
+    },
+  },
+  {
+    cx: 400,
+    title: "f(z) = 1 ⁄ (z² + ¼) on |z| = 1",
+    R: 1,
+    scale: 38,
+    Z: 0,
+    P: 2,
+    zeroNote: "two poles at ±i⁄2 inside",
+    f: (z: C): C => {
+      const z2 = mul(z, z);
+      return inv({ re: z2.re + 0.25, im: z2.im });
+    },
+  },
+];
+
+const cy = 160;
+
+/** Trace f around the circle |z| = R and accumulate the change in argument. */
+function analyse(c: (typeof cases)[number], n = 2400) {
+  const pts: C[] = [];
+  for (let k = 0; k <= n; k++) {
+    const t = (2 * Math.PI * k) / n;
+    pts.push(c.f({ re: c.R * Math.cos(t), im: c.R * Math.sin(t) }));
+  }
+  let total = 0;
+  for (let k = 1; k < pts.length; k++) {
+    let d = Math.atan2(pts[k].im, pts[k].re) - Math.atan2(pts[k - 1].im, pts[k - 1].re);
+    while (d > Math.PI) d -= 2 * Math.PI;
+    while (d < -Math.PI) d += 2 * Math.PI;
+    total += d;
+  }
+  return { pts, winding: total / (2 * Math.PI) };
+}
+
+const results = cases.map((c) => {
+  const a = analyse(c);
+  return {
+    ...c,
+    winding: a.winding,
+    path: a.pts
+      .map((p) => `${(c.cx + p.re * c.scale).toFixed(1)},${(cy - p.im * c.scale).toFixed(1)}`)
+      .join(" "),
+  };
+});
+---
+
+<figure
+  class="awn"
+  role="img"
+  aria-label={`Two image curves. For z cubed minus one around the circle of radius two, the image winds ${Math.round(results[0].winding)} times around the origin, matching three zeros and no poles inside. For one over z squared plus a quarter around the unit circle, the image winds ${Math.round(results[1].winding)} times, matching no zeros and two poles.`}
+>
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    <text x="16" y="20" class="awn-head" font-size="12.5" font-weight="bold">Count the loops, count the zeros and poles</text>
+    <text x="16" y="38" class="awn-sub" font-size="10.5">The image of the contour, and how often it circles the origin</text>
+
+    <line x1="270" y1="52" x2="270" y2="272" class="awn-divide" />
+
+    {results.map((c) => (
+      <g>
+        <text x={c.cx} y="56" class="awn-panel" font-size="10" text-anchor="middle">{c.title}</text>
+        <polyline points={c.path} class={`awn-curve awn-${c.winding > 0 ? "pos" : "neg"}`} fill="none" />
+        <line x1={c.cx - 7} y1={cy} x2={c.cx + 7} y2={cy} class="awn-origin" />
+        <line x1={c.cx} y1={cy - 7} x2={c.cx} y2={cy + 7} class="awn-origin" />
+        <text x={c.cx + 11} y={cy + 16} class="awn-orgn-lbl" font-size="9.5" text-anchor="start">0</text>
+
+        <text
+          x={c.cx}
+          y="246"
+          class={`awn-val awn-${c.winding > 0 ? "pos" : "neg"}`}
+          font-size="9.5"
+          text-anchor="middle">{`measured winding: ${c.winding.toFixed(3)}`}</text>
+        <text x={c.cx} y="262" class="awn-row" font-size="9.5" text-anchor="middle">{`Z = ${c.Z},  P = ${c.P},  Z − P = ${c.Z - c.P}`}</text>
+      </g>
+    ))}
+
+    <text x={w / 2} y="288" class="awn-foot" font-size="10.5" text-anchor="middle">
+      (1 ⁄ 2πi) ∮ f′ ⁄ f dz = Z − P, and that integral is the winding number of the image
+    </text>
+    <text x={w / 2} y="306" class="awn-sub2" font-size="9.5" text-anchor="middle">
+      Zeros make the image loop forwards; poles make it loop backwards
+    </text>
+  </svg>
+</figure>
+
+<style>
+  .awn { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .awn svg { width:100%; max-width:100%; height:auto; }
+  .awn-divide { stroke:#3a3a3a; stroke-width:1; }
+  .awn-curve { stroke-width:1.9; }
+  .awn-pos { stroke:#7ee787; fill:#7ee787; }
+  .awn-neg { stroke:#f0883e; fill:#f0883e; }
+  .awn-origin { stroke:#ff7b72; stroke-width:2.2; }
+  .awn-orgn-lbl { fill:#ff7b72; font-family:'Libre Baskerville',Georgia,serif; }
+  .awn-row { fill:#9198a1; font-family:'Libre Baskerville',Georgia,serif; }
+  .awn-val { font-family:'Libre Baskerville',Georgia,serif; }
+  .awn-panel, .awn-head { fill:#eee; font-family:'Libre Baskerville',Georgia,serif; }
+  .awn-sub, .awn-sub2 { fill:#9198a1; font-family:'Libre Baskerville',Georgia,serif; font-style:italic; }
+  .awn-foot { fill:#58a6ff; font-family:'Libre Baskerville',Georgia,serif; }
+  :global([data-theme="light"]) .awn-divide { stroke:#d0d7de; }
+  :global([data-theme="light"]) .awn-pos { stroke:#116329; fill:#116329; }
+  :global([data-theme="light"]) .awn-neg { stroke:#b35900; fill:#b35900; }
+  :global([data-theme="light"]) .awn-origin { stroke:#a40e26; }
+  :global([data-theme="light"]) .awn-orgn-lbl { fill:#a40e26; }
+  :global([data-theme="light"]) .awn-head { fill:#24292f; }
+  :global([data-theme="light"]) .awn-panel { fill:#24292f; }
+  :global([data-theme="light"]) .awn-foot { fill:#0550ae; }
+  :global([data-theme="light"]) :is(.awn-row, .awn-sub, .awn-sub2) { fill:#57606a; }
+</style>

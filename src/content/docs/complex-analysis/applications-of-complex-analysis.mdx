@@ -1,0 +1,341 @@
+---
+title: Applications of Complex Analysis
+description: Where the theory actually gets used - circuits, flight, signals, and prime numbers
+sidebar:
+  order: 19
+---
+
+import Quiz from "../../../components/Quiz.astro";
+import ModulusSurface3D from "../../../components/ModulusSurface3D.astro";
+
+## What You'll Learn
+
+In this lesson you'll see the theory applied: AC circuits and phasors, system stability from pole locations, aerodynamic lift, transforms in signal processing, and the appearance of contour integration in the theory of prime numbers.
+
+## The Concept
+
+### Reading a function from its poles and zeros
+
+Most applications amount to the same move: encode a physical system as an analytic or meromorphic function, then read the physics off the locations of its poles and zeros.
+
+<ModulusSurface3D />
+
+The surface plots $|f(z)|$ as a height. Poles are spikes, zeros are points touching the floor. Engineers work with exactly this picture, usually looking at it from directly above as a pole-zero plot, and the intuition transfers directly: a pole near the region you care about produces a large response, a zero near it produces a small one.
+
+### AC circuits and phasors
+
+A sinusoidal voltage $V\cos(\omega t+\phi)$ is represented by the single complex number $\tilde V = Ve^{i\phi}$, its **phasor**. Differentiation in time becomes multiplication by $i\omega$, so the differential equations of a circuit become linear algebra over $\mathbb{C}$.
+
+**Impedance** then combines resistance and reactance in one complex number:
+
+$$
+Z_R = R, \qquad Z_L = i\omega L, \qquad Z_C = \frac{1}{i\omega C}
+$$
+
+and Ohm's law $\tilde V = Z\tilde I$ holds with complex quantities. Series and parallel combinations use the same rules as resistors. The modulus $|Z|$ gives the amplitude ratio and $\arg Z$ gives the phase shift, so both pieces of physical information sit in one number.
+
+This is why electrical engineers write $j$ rather than $i$: the symbol $i$ is already taken by current.
+
+### Stability from pole locations
+
+A linear system is described by a transfer function $H(s)$, a rational function of the complex variable $s$. The poles are the natural frequencies, and a pole at $s = \sigma+i\omega$ contributes a term behaving like $e^{\sigma t}\cos(\omega t)$.
+
+The consequence is a clean geometric criterion:
+
+$$
+\text{stable} \iff \text{every pole has } \operatorname{Re}s < 0
+$$
+
+Poles in the left half plane decay, poles on the imaginary axis oscillate forever, and poles in the right half plane blow up. **Design becomes the placement of points in $\mathbb{C}$**, and the root-locus and Nyquist plots from the argument principle lesson are the tools for doing it.
+
+For digital systems the same story holds with the unit circle in place of the imaginary axis: stability means all poles inside $|z|<1$.
+
+### Aerodynamics and potential flow
+
+Two-dimensional incompressible irrotational flow has a **complex potential** $\Phi = \phi+i\psi$, with $\phi$ the velocity potential and $\psi$ the stream function. Streamlines are level curves of $\psi$, and the velocity field is recovered from $\overline{\Phi'(z)}$.
+
+Flow past a cylinder is elementary. Flow past a wing is not — but the **Joukowski map** $w = z+\frac1z$ carries a suitable circle to an aerofoil shape, and because conformal maps preserve the governing equation, the mapped flow solves the wing problem. The result is the **Kutta–Joukowski theorem**:
+
+$$
+L = \rho U\Gamma
+$$
+
+lift per unit span equals density times speed times circulation. The circulation $\Gamma$ is a contour integral, so lift is literally computed by an integral around a closed curve.
+
+That the region outside the wing is **not** simply connected is essential; on a simply connected region Cauchy's theorem would force $\Gamma=0$ and there would be no lift. The topology is doing physical work.
+
+### Transforms in signal processing
+
+The **Fourier transform**, **Laplace transform**, and **$z$-transform** are all integrals with complex exponentials, and their inverses are contour integrals evaluated by residues.
+
+- Inverting a Laplace transform means summing residues along the Bromwich contour, with each pole contributing one exponential mode. This is why step responses are sums of decaying exponentials.
+- A filter's frequency response is its transfer function evaluated on a contour: the imaginary axis for analog, the unit circle for digital.
+- The region of convergence of a $z$-transform is an annulus, and whether the annulus contains the unit circle decides stability and causality.
+
+**Every filter design tool is a complex analysis tool with an engineering interface.**
+
+### Prime numbers
+
+The most surprising application. The **Riemann zeta function**
+
+$$
+\zeta(s) = \sum_{n=1}^{\infty}\frac{1}{n^s}
+$$
+
+converges for $\operatorname{Re}s>1$ and continues analytically to the rest of the plane, with a single simple pole at $s=1$. Euler's product formula
+
+$$
+\zeta(s) = \prod_{p \text{ prime}}\frac{1}{1-p^{-s}}
+$$
+
+ties it to the primes.
+
+The **prime number theorem** — that the number of primes below $x$ is asymptotically $\frac{x}{\ln x}$ — is proved by contour integration, using the fact that $\zeta$ has no zeros on the line $\operatorname{Re}s=1$. The **Riemann hypothesis**, that all non-trivial zeros lie on $\operatorname{Re}s = \frac12$, would sharpen the error term to essentially the best possible, and it remains open.
+
+**A counting problem about integers is settled by contour integration.** That connection is one of the strangest and most productive in mathematics.
+
+### Elsewhere
+
+**Quantum mechanics.** Amplitudes are complex, and interference is their addition. Time evolution is multiplication by $e^{-iEt/\hbar}$, and resonances appear as poles in the complex energy plane.
+
+**Fractals.** The Mandelbrot and Julia sets are defined by the boundedness of orbits under $z\mapsto z^2+c$. Newton's method in $\mathbb{C}$ has fractal basin boundaries.
+
+**Numerical linear algebra.** Matrix functions such as $e^A$ are defined and computed by the Cauchy integral formula around a contour enclosing the spectrum, and contour-based eigensolvers count eigenvalues in a region by the argument principle.
+
+## Worked Examples
+
+**Example 1: Compute an impedance.**
+
+Find the impedance of a $100\,\Omega$ resistor in series with a $50\text{ mH}$ inductor at $\omega = 1000$ rad/s.
+
+**Solution.**
+
+$$
+Z = R+i\omega L = 100 + i(1000)(0.05) = 100+50i
+$$
+
+$$
+|Z| = \sqrt{100^2+50^2}\approx111.8\,\Omega, \qquad \arg Z = \arctan\frac{50}{100}\approx26.57°
+$$
+
+So the current lags the voltage by about $26.6°$ and the amplitude ratio is $111.8$. **Two physical facts, one complex number.**
+
+**Example 2: Decide stability.**
+
+$H(s) = \dfrac{s+2}{(s+1)(s-3)}$. Is the system stable?
+
+**Solution.** Poles at $s=-1$ and $s=3$. Since $\operatorname{Re}(3) = 3 > 0$,
+
+$$
+\text{unstable}
+$$
+
+The pole at 3 contributes a term growing like $e^{3t}$. The zero at $-2$ shapes the response but has no bearing on stability. ∎
+
+**Example 3: Interpret a complex pole pair.**
+
+A system has poles at $s = -2\pm3i$. Describe its response.
+
+**Solution.** The real part $-2$ gives a decay envelope $e^{-2t}$, and the imaginary part gives oscillation at 3 rad/s:
+
+$$
+\text{response} \sim e^{-2t}\cos(3t+\varphi)
+$$
+
+A damped oscillation, stable, ringing at 3 rad/s and settling on a timescale of about $\frac12$ s. **Real part is decay, imaginary part is frequency**, and that reading is used constantly in design.
+
+**Example 4: Verify the cylinder is a streamline.**
+
+For $\Phi(z) = U\left(z+\frac{a^2}{z}\right)$, show $|z|=a$ is a streamline and find the stagnation points.
+
+**Solution.** With $z=re^{i\theta}$,
+
+$$
+\psi = \operatorname{Im}\Phi = U\left(r-\frac{a^2}{r}\right)\sin\theta
+$$
+
+At $r=a$ the bracket vanishes, so $\psi\equiv0$ there: a level curve of $\psi$, hence a streamline. ✓
+
+Stagnation points occur where the velocity vanishes:
+
+$$
+\Phi'(z) = U\left(1-\frac{a^2}{z^2}\right) = 0 \implies z=\pm a
+$$
+
+the front and rear of the cylinder, as observed physically. ∎
+
+**Example 5: Invert a Laplace transform by residues.**
+
+Find the inverse transform of $F(s) = \dfrac{1}{(s+1)(s+2)}$.
+
+**Solution.** The inverse is $\frac{1}{2\pi i}\int F(s)e^{st}ds$ along the Bromwich contour, evaluated as the sum of residues at the poles.
+
+At $s=-1$: $\operatorname{Res} = \frac{e^{-t}}{-1+2} = e^{-t}$.
+
+At $s=-2$: $\operatorname{Res} = \frac{e^{-2t}}{-2+1} = -e^{-2t}$.
+
+$$
+f(t) = e^{-t}-e^{-2t}
+$$
+
+∎
+
+**Each pole gave one exponential mode**, which is the general pattern and the reason step responses look the way they do.
+
+**Example 6: A digital filter's stability.**
+
+A filter has transfer function $H(z) = \dfrac{1}{1-1.5z^{-1}}$. Is it stable?
+
+**Solution.** Rewrite as $\frac{z}{z-1.5}$, so the pole is at $z=1.5$.
+
+$$
+|1.5| > 1 \implies \text{unstable}
+$$
+
+For digital systems stability requires all poles strictly inside the unit circle, and this one is outside. ∎
+
+**Example 7: Sum a series with residues.**
+
+Sketch how $\sum_{n=1}^{\infty}\frac{1}{n^2} = \frac{\pi^2}{6}$ is obtained by contour methods.
+
+**Solution.** The function $\pi\cot(\pi z)$ has simple poles at every integer with residue 1, which makes it the standard tool for turning sums into integrals.
+
+Integrating $\frac{\pi\cot(\pi z)}{z^2}$ around a large contour, the residues at the nonzero integers give $2\sum_{n\ge1}\frac{1}{n^2}$, while the residue at the triple pole $z=0$ contributes $-\frac{\pi^2}{3}$. Since the large-contour integral tends to 0,
+
+$$
+2\sum_{n\ge1}\frac{1}{n^2} = \frac{\pi^2}{3} \quad\Longrightarrow\quad \sum_{n\ge1}\frac{1}{n^2} = \frac{\pi^2}{6}
+$$
+
+∎
+
+**A sum over the integers became a residue calculation.** Euler found this value by other means, but the contour method generalizes to sums where nothing else works.
+
+## Real-World Applications
+
+**Power systems.** Load flow, fault analysis, and transformer modelling are all phasor computations, and the entire grid is analysed with complex arithmetic.
+
+**Aircraft and turbine design.** Potential flow with conformal mapping gives fast preliminary aerofoil and blade designs, still used to seed the expensive numerical simulations that follow.
+
+**Audio and image filtering.** Every equalizer, reverb, and sharpening filter is specified by pole and zero placement in the complex plane, then realized as difference equations.
+
+**Control of vehicles and robots.** Loop shaping is the deliberate relocation of poles, and stability margins are distances measured in the complex plane.
+
+**Medical imaging.** MRI acquires data in a complex-valued frequency space and reconstructs images by Fourier transform, with phase carrying essential information.
+
+**Cryptography and computation.** Fast multiplication via the FFT depends on roots of unity, making complex analysis part of the arithmetic in large-integer libraries.
+
+:::note[You've Got This]
+The pattern running through all of these is worth stating plainly: encode the system as a complex function, then read the physics off where its poles and zeros sit. Circuits, filters, control loops, aerofoils, and even the distribution of primes all follow that shape. If you go on to engineering, you will use the phasor and pole-location material constantly, most likely without anyone mentioning Cauchy. Knowing where it comes from means you can reason about the edge cases rather than only applying the recipe.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="complex-applications-of-complex-analysis"
+  questions={[
+    {
+      id: "q1",
+      text: "What is the impedance of a 100 Ω resistor in series with an inductor giving 50 Ω of reactance?",
+      options: [
+        "150 Ω",
+        "100 + 50i Ω, with magnitude about 111.8 Ω",
+        "50 Ω",
+        "100i Ω",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Impedances add in series as complex numbers. The modulus gives the amplitude ratio and the argument, about 26.6°, gives the phase shift.",
+    },
+    {
+      id: "q2",
+      text: "For a continuous-time system, what is the stability condition on the poles?",
+      options: [
+        "All poles must be real",
+        "All poles must have negative real part",
+        "All poles must lie inside the unit circle",
+        "There must be no poles",
+      ],
+      correctIndex: 1,
+      explanation:
+        "A pole at σ + iω contributes e^(σt)cos(ωt), so decay requires σ < 0. The unit-circle condition is the discrete-time analogue.",
+    },
+    {
+      id: "q3",
+      text: "A system has poles at s = −2 ± 3i. What is its response?",
+      options: [
+        "Pure oscillation at 2 rad/s",
+        "A damped oscillation, decaying like e^(−2t) and ringing at 3 rad/s",
+        "Exponential growth",
+        "A constant",
+      ],
+      correctIndex: 1,
+      explanation:
+        "The real part sets the decay envelope and the imaginary part sets the frequency. Reading a pole location this way is routine in control design.",
+    },
+    {
+      id: "q4",
+      text: "Why is the circulation around an aerofoil able to be nonzero?",
+      options: [
+        "Because the flow is compressible",
+        "Because the region outside the wing is not simply connected, so Cauchy's theorem does not force the integral to vanish",
+        "Because the potential is not analytic",
+        "Because the wing has a sharp edge",
+      ],
+      correctIndex: 1,
+      explanation:
+        "On a simply connected region the closed integral would be zero and there would be no lift. The topology of the exterior region is doing genuine physical work.",
+    },
+    {
+      id: "q5",
+      text: "How is an inverse Laplace transform computed by residues?",
+      options: [
+        "By differentiating F(s)",
+        "By summing the residues of F(s)e^(st) at the poles, each pole giving one exponential mode",
+        "By evaluating F at s = 0",
+        "By integrating along the real axis",
+      ],
+      correctIndex: 1,
+      explanation:
+        "The Bromwich contour integral collapses to a sum of residues. For 1/((s+1)(s+2)) this gives e^(−t) − e^(−2t).",
+    },
+    {
+      id: "q6",
+      text: "For a digital filter, where must the poles lie for stability?",
+      options: [
+        "In the left half plane",
+        "Strictly inside the unit circle",
+        "On the unit circle",
+        "Anywhere",
+      ],
+      correctIndex: 1,
+      explanation:
+        "H(z) = 1/(1 − 1.5z⁻¹) has its pole at z = 1.5, outside the circle, so it is unstable. The unit circle plays the role that the imaginary axis plays for analog systems.",
+    },
+    {
+      id: "q7",
+      text: "What connects the Riemann zeta function to prime numbers?",
+      options: [
+        "Nothing; the connection is coincidental",
+        "Euler's product formula expresses ζ(s) as a product over primes, and contour integration then yields the prime number theorem",
+        "Zeta counts primes directly",
+        "The zeros of zeta are the primes",
+      ],
+      correctIndex: 1,
+      explanation:
+        "The product formula ties the analytic object to the primes, and the absence of zeros on Re s = 1 is what the proof needs. The Riemann hypothesis concerns where the other zeros lie.",
+    },
+    {
+      id: "q8",
+      text: "On a plot of |f(z)| as a height over the plane, what do spikes and floor-touching points represent?",
+      options: [
+        "Maxima and minima of the real part",
+        "Poles and zeros respectively",
+        "Branch cuts",
+        "Critical points",
+      ],
+      correctIndex: 1,
+      explanation:
+        "The modulus grows without bound at a pole and vanishes at a zero. Viewed from above this is exactly the pole-zero plot engineers use.",
+    },
+  ]}
+/>

@@ -1,0 +1,336 @@
+---
+title: Elementary Complex Functions
+description: Exponential, logarithm, trigonometric and power functions, and the branch cuts they need
+sidebar:
+  order: 7
+---
+
+import Quiz from "../../../components/Quiz.astro";
+import LogBranchCut from "../../../components/LogBranchCut.astro";
+
+## What You'll Learn
+
+In this lesson you'll extend the exponential, logarithm, trigonometric, hyperbolic and power functions to $\mathbb{C}$, see which familiar properties survive and which break, and learn to handle multi-valuedness with branches and cuts.
+
+## The Concept
+
+### The exponential
+
+Define
+
+$$
+e^z = e^{x+iy} = e^x(\cos y + i\sin y)
+$$
+
+This is forced, not chosen: it is the only definition that is analytic and agrees with $e^x$ on the real axis, by the identity theorem.
+
+Properties that survive:
+
+- $e^{z_1+z_2} = e^{z_1}e^{z_2}$
+- $\frac{d}{dz}e^z = e^z$
+- $e^z \ne 0$ for all $z$, since $|e^z| = e^x > 0$
+- $e^z$ is entire
+
+The property that breaks, and it is a big one:
+
+$$
+e^{z+2\pi i} = e^z
+$$
+
+**The complex exponential is periodic**, with period $2\pi i$. On $\mathbb{R}$ the exponential is injective; on $\mathbb{C}$ it is infinitely many-to-one. Every consequence in this lesson traces back to that.
+
+Geometrically $|e^z| = e^{\operatorname{Re}z}$ and $\arg e^z = \operatorname{Im}z$, so horizontal lines map to rays and vertical lines to circles. A horizontal strip of height $2\pi$ covers $\mathbb{C}\setminus\{0\}$ exactly once.
+
+### The logarithm, and multi-valuedness
+
+We want $\log z$ to invert $e^z$. Since the exponential is not injective, there is no single answer:
+
+$$
+\log z = \ln|z| + i\arg z = \ln|z| + i(\operatorname{Arg}z + 2\pi k), \quad k\in\mathbb{Z}
+$$
+
+**The complex logarithm is genuinely multi-valued**, taking infinitely many values differing by $2\pi i$. This is not a defect to be patched but a real feature, and it is the reason the subject has branch cuts, Riemann surfaces, and — much later — the residue theorem's factor of $2\pi i$.
+
+The **principal logarithm** picks $\operatorname{Arg}z\in(-\pi,\pi]$:
+
+$$
+\operatorname{Log} z = \ln|z| + i\operatorname{Arg}z
+$$
+
+<LogBranchCut />
+
+To make it continuous we must delete a ray from 0 to $\infty$. The conventional choice is the negative real axis, called the **principal branch cut**, and on $\mathbb{C}$ minus that cut, $\operatorname{Log}$ is analytic with
+
+$$
+\frac{d}{dz}\operatorname{Log}z = \frac1z
+$$
+
+Two points of care that cause most of the errors in this material:
+
+- $\log(z_1z_2) = \log z_1 + \log z_2$ holds **as sets** of values, but can fail for principal values. For instance with $z_1=z_2=-1$, $\operatorname{Log}(z_1z_2)=\operatorname{Log}(1)=0$, while $\operatorname{Log}(-1)+\operatorname{Log}(-1)=2\pi i$.
+- $\log$ of a negative number now exists. $\operatorname{Log}(-1) = i\pi$, which is the honest answer to a question you were told had none.
+
+### Trigonometric functions
+
+Rearranging Euler's formula gives the definitions:
+
+$$
+\cos z = \frac{e^{iz}+e^{-iz}}{2}, \qquad \sin z = \frac{e^{iz}-e^{-iz}}{2i}
+$$
+
+Both are entire, both have the expected derivatives, and every algebraic identity — $\sin^2 z+\cos^2 z=1$, the addition formulas, the double-angle formulas — carries over unchanged, because the identity theorem says an identity valid on $\mathbb{R}$ must persist.
+
+The property that breaks is boundedness:
+
+$$
+\sin(iy) = i\sinh y, \qquad \cos(iy) = \cosh y
+$$
+
+both of which grow without bound. **Complex sine and cosine are unbounded**, and they must be, by Liouville's theorem: a bounded entire function is constant. The familiar bound $|\sin x|\le1$ is a fact about the real axis only.
+
+Zeros are unchanged, though: $\sin z = 0$ exactly at $z = n\pi$, and $\cos z = 0$ exactly at $z = \frac{\pi}{2}+n\pi$, all real. Extending to $\mathbb{C}$ adds no new zeros.
+
+The hyperbolic functions are the same objects rotated:
+
+$$
+\sinh z = \frac{e^z-e^{-z}}{2}, \qquad \sin(iz) = i\sinh z, \qquad \cos(iz)=\cosh z
+$$
+
+In $\mathbb{C}$ the distinction between trigonometric and hyperbolic functions essentially disappears, which retrospectively explains why their identities look so similar.
+
+### Powers
+
+For general complex $a$ and $z\ne0$, define
+
+$$
+z^a = e^{a\log z}
+$$
+
+Because $\log$ is multi-valued, so is $z^a$ in general. The number of distinct values depends on $a$:
+
+- $a$ an **integer**: one value. Nothing new.
+- $a = p/q$ in lowest terms: exactly $q$ values, the $q$th roots we already know.
+- $a$ **irrational or complex**: infinitely many values.
+
+The famous example is
+
+$$
+i^i = e^{i\log i} = e^{i(i\pi/2 + 2\pi ik)} = e^{-\pi/2 - 2\pi k}
+$$
+
+Every value is **real**, and the principal one is $e^{-\pi/2}\approx0.2079$. That an imaginary number to an imaginary power is real is a good illustration of how much the exponential definition buys.
+
+Also worth flagging: $(z^a)^b = z^{ab}$ can fail with principal branches, for the same reason as the logarithm identity. When in doubt, go back to $e^{a\log z}$ and track the branch.
+
+### Inverse trigonometric functions
+
+These are logarithms in disguise. For instance
+
+$$
+\arcsin z = -i\log\left(iz+\sqrt{1-z^2}\right)
+$$
+
+so they are multi-valued too, and need cuts. This is the cleanest explanation of why real inverse trig functions have such awkward restricted domains: those restrictions are branch choices.
+
+## Worked Examples
+
+**Example 1: Compute $e^{1+i\pi/2}$.**
+
+**Solution.**
+
+$$
+e^{1+i\pi/2} = e^1\left(\cos\tfrac\pi2 + i\sin\tfrac\pi2\right) = e(0+i) = ei
+$$
+
+So the answer is $ei \approx 2.718i$. Note $|e^z| = e^1 = e$ and $\arg = \pi/2$, matching. ✓
+
+**Example 2: Find all solutions of $e^z = 1$.**
+
+**Solution.** We need $|e^z| = e^x = 1$, so $x=0$, and $\arg e^z = y \equiv 0 \pmod{2\pi}$.
+
+$$
+z = 2\pi i k, \quad k \in \mathbb{Z}
+$$
+
+∎
+
+**Infinitely many solutions, where the real equation $e^x=1$ had one.** That is periodicity showing up in the simplest possible way.
+
+**Example 3: Compute all values of $\log(-1)$ and the principal one.**
+
+**Solution.** $|-1| = 1$ so $\ln|z| = 0$, and $\arg(-1) = \pi + 2\pi k$.
+
+$$
+\log(-1) = i(\pi+2\pi k), \quad k\in\mathbb{Z}
+$$
+
+The principal value is $\operatorname{Log}(-1) = i\pi$.
+
+Check: $e^{i\pi} = -1$ ✓, and also $e^{3i\pi} = -1$ ✓. **Both are correct logarithms**, which is exactly the point.
+
+**Example 4: Compute $\operatorname{Log}(1+i)$.**
+
+**Solution.** $|1+i| = \sqrt2$ and $\operatorname{Arg}(1+i) = \pi/4$, so
+
+$$
+\operatorname{Log}(1+i) = \ln\sqrt2 + i\frac\pi4 = \frac{\ln2}{2}+\frac{i\pi}{4} \approx 0.3466+0.7854i
+$$
+
+∎
+
+**Example 5: Solve $\sin z = 2$.**
+
+**Solution.** No real solution exists, but a complex one does. Write $w = e^{iz}$; then $\sin z = \frac{w - w^{-1}}{2i} = 2$ becomes
+
+$$
+w^2 - 4iw - 1 = 0 \quad\Longrightarrow\quad w = 2i \pm i\sqrt3 = i(2\pm\sqrt3)
+$$
+
+Then $iz = \log\big(i(2\pm\sqrt3)\big)$, giving
+
+$$
+z = \frac\pi2 + 2\pi k - i\ln(2\pm\sqrt3)
+$$
+
+Taking $k=0$ and the plus sign, $z \approx \frac\pi2 - 1.317i$.
+
+Check: $\sin(\frac\pi2 - 1.317i) = \cos(1.317i)\cdot 1 = \cosh(1.317) \approx 2.0$ ✓
+
+**Complex sine takes every complex value**, which is Liouville's theorem made concrete.
+
+**Example 6: Find all values of $i^i$.**
+
+**Solution.** $\log i = i\left(\frac\pi2+2\pi k\right)$, so
+
+$$
+i^i = e^{i\log i} = e^{i\cdot i(\pi/2+2\pi k)} = e^{-\pi/2-2\pi k}
+$$
+
+Every value is a positive real number, and the principal one is $e^{-\pi/2}\approx0.2079$. ∎
+
+**Example 7: Show $\log(z_1z_2) = \log z_1+\log z_2$ can fail for principal values.**
+
+**Solution.** Take $z_1 = z_2 = -1$. Then $z_1z_2 = 1$ and
+
+$$
+\operatorname{Log}(1) = 0, \qquad \operatorname{Log}(-1)+\operatorname{Log}(-1) = i\pi+i\pi = 2\pi i
+$$
+
+These differ by $2\pi i$. ∎
+
+The rule holds as an equality of value **sets**, and $2\pi i$ is a member of the set $\log 1 = 2\pi i k$. **The identity is true; it is the principal-value bookkeeping that fails**, and that is the standard trap in this material.
+
+## Real-World Applications
+
+**AC steady state.** The complex exponential $e^{i\omega t}$ replaces sines and cosines throughout electrical engineering, turning differential equations into algebra. Every phasor calculation is $e^z$ used deliberately.
+
+**Damped oscillation.** A solution $e^{(-\alpha+i\omega)t}$ combines decay and oscillation in one expression, with $\operatorname{Re}$ giving the decay rate and $\operatorname{Im}$ the frequency. Reading behaviour off the position of an exponent in $\mathbb{C}$ is standard in vibration and control analysis.
+
+**Quantum phases.** A wavefunction's time evolution is multiplication by $e^{-iEt/\hbar}$, a pure phase of modulus 1. That the modulus is exactly 1 is conservation of probability.
+
+**Branch cuts in physics.** In scattering theory and in Feynman propagators the choice of branch cut for a square root or logarithm encodes physical boundary conditions, and choosing wrongly gives an unphysical answer.
+
+**Digital signal processing.** The $z$-transform uses complex powers $z^{-n}$, and the unit circle in the $z$-plane is the frequency axis. Evaluating a transfer function on that circle is what a frequency response is.
+
+**Logarithmic spirals.** The curve $z(t)=e^{(a+ib)t}$ is a logarithmic spiral, the shape of nautilus shells, spiral galaxy arms, and hurricane bands. It is the orbit of a point under repeated multiplication by a fixed complex number.
+
+:::note[You've Got This]
+The single fact that organizes this whole lesson is that $e^z$ is periodic. Multi-valued logarithms, branch cuts, infinitely many powers, and unbounded sine all follow from it. So when something here seems strange, trace it back to periodicity and it will stop being strange. The one habit worth building deliberately: whenever you write $\log$ or a fractional power, say out loud which branch you are on. It costs nothing now and prevents most of the errors in the second half of the section.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="complex-elementary-complex-functions"
+  questions={[
+    {
+      id: "q1",
+      text: "What property does e^z have in ℂ that e^x does not have in ℝ?",
+      options: [
+        "It can be zero",
+        "It is periodic, with period 2πi",
+        "It is not differentiable",
+        "It is bounded",
+      ],
+      correctIndex: 1,
+      explanation:
+        "e^(z+2πi) = e^z makes it infinitely many-to-one, whereas the real exponential is injective. Multi-valued logarithms and branch cuts are all consequences of this periodicity.",
+    },
+    {
+      id: "q2",
+      text: "What are all the solutions of e^z = 1?",
+      options: [
+        "z = 0 only",
+        "z = 2πik for every integer k",
+        "z = πik",
+        "There are none",
+      ],
+      correctIndex: 1,
+      explanation:
+        "The modulus condition forces Re z = 0 and the argument condition makes Im z a multiple of 2π. The real equation had a unique solution; the complex one has infinitely many.",
+    },
+    {
+      id: "q3",
+      text: "What is the principal value of Log(−1)?",
+      options: ["Undefined", "0", "iπ", "−iπ"],
+      correctIndex: 2,
+      explanation:
+        "The modulus is 1 so the real part vanishes, and Arg(−1) = π. Logarithms of negative numbers exist in ℂ, which is one of the first dividends of the extension.",
+    },
+    {
+      id: "q4",
+      text: "Why does the principal logarithm need a branch cut?",
+      options: [
+        "Because log 0 is undefined",
+        "Because forcing Arg into (−π, π] creates a jump of 2π across some ray from 0 to ∞",
+        "Because the logarithm is unbounded",
+        "Because ℂ is not simply connected",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Any single-valued choice of argument must jump somewhere, and the cut is where we put the jump. The negative real axis is convention, not necessity.",
+    },
+    {
+      id: "q5",
+      text: "Which statement about sin z on ℂ is true?",
+      options: [
+        "It is bounded by 1",
+        "It is unbounded, since sin(iy) = i sinh y",
+        "It has no zeros",
+        "It is not analytic",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Growth along the imaginary axis is forced by Liouville's theorem, since a bounded entire function must be constant. Its zeros remain exactly the real points nπ.",
+    },
+    {
+      id: "q6",
+      text: "How many values does z^(1/3) have for z ≠ 0?",
+      options: ["One", "Three", "Infinitely many", "Two"],
+      correctIndex: 1,
+      explanation:
+        "For a rational exponent p/q in lowest terms there are exactly q values. Irrational or complex exponents give infinitely many, because the 2πik in the logarithm no longer cycles.",
+    },
+    {
+      id: "q7",
+      text: "What is the principal value of i^i?",
+      options: ["i", "−1", "e^(−π/2) ≈ 0.2079", "It is undefined"],
+      correctIndex: 2,
+      explanation:
+        "Using i^i = e^(i log i) with log i = iπ/2 gives e^(−π/2). Every branch gives a positive real value, differing by factors of e^(−2π).",
+    },
+    {
+      id: "q8",
+      text: "Why can Log(z₁z₂) = Log z₁ + Log z₂ fail?",
+      options: [
+        "Because the logarithm is not analytic",
+        "Because principal arguments may sum to a value outside (−π, π], so the two sides can differ by 2πi",
+        "Because moduli do not multiply",
+        "It never fails",
+      ],
+      correctIndex: 1,
+      explanation:
+        "With z₁ = z₂ = −1 the left side is 0 and the right side is 2πi. The identity is true as an equality of value sets; it is the principal-value bookkeeping that breaks.",
+    },
+  ]}
+/>

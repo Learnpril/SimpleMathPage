@@ -1,0 +1,315 @@
+---
+title: Cauchy's Integral Formula
+description: Recovering a function inside a contour from its values on the contour
+sidebar:
+  order: 10
+---
+
+import Quiz from "../../../components/Quiz.astro";
+import CauchyFormulaAverage from "../../../components/CauchyFormulaAverage.astro";
+
+## What You'll Learn
+
+In this lesson you'll meet the formula that reconstructs an analytic function from its boundary values, use it to evaluate contour integrals immediately, and see the four major theorems that fall out of it.
+
+## The Concept
+
+### The formula
+
+> **Cauchy's integral formula.** If $f$ is analytic on and inside a positively oriented simple closed contour $C$, and $z_0$ is inside $C$, then
+>
+> $$
+> f(z_0) = \frac{1}{2\pi i}\oint_C\frac{f(z)}{z-z_0}\,dz
+> $$
+
+Read that again in words: **the values of $f$ on the contour determine its value at every interior point.** Nothing in real analysis resembles this. A real function on $[a,b]$ can be anything at all in the middle regardless of its endpoint values.
+
+<CauchyFormulaAverage />
+
+Taking $C$ to be a circle of radius $r$ centred at $z_0$ and parametrising, the $\frac{1}{z-z_0}$ and the $dz$ combine to leave
+
+$$
+f(z_0) = \frac{1}{2\pi}\int_0^{2\pi}f\big(z_0+re^{it}\big)\,dt
+$$
+
+which is the **mean value property**: $f(z_0)$ is the plain average of $f$ over any circle around it. The figure checks this numerically for $f(z)=z^3+2z+4$ at $z_0=1+i$, where $f(z_0)=4+4i$, and all three radii reproduce it to numerical precision.
+
+### Why it works
+
+Deform $C$ to a small circle $C_\rho$ of radius $\rho$ about $z_0$; the deformation is legitimate because the integrand is analytic between the two contours. Then split:
+
+$$
+\oint_{C_\rho}\frac{f(z)}{z-z_0}dz = f(z_0)\oint_{C_\rho}\frac{dz}{z-z_0} + \oint_{C_\rho}\frac{f(z)-f(z_0)}{z-z_0}dz
+$$
+
+The first integral is $2\pi i$, the computation from lesson 8. For the second, continuity of $f$ makes $|f(z)-f(z_0)|$ small on a small circle, and the ML inequality bounds the whole integral by roughly $2\pi\rho\cdot\frac{\varepsilon}{\rho} = 2\pi\varepsilon$, which tends to 0. So the second term vanishes and the first gives the formula. ∎
+
+**The $2\pi i$ came from $\oint\frac{dz}{z}$**, as promised.
+
+### The formula for derivatives
+
+Differentiating with respect to $z_0$ under the integral sign gives an infinite family of formulas:
+
+$$
+f^{(n)}(z_0) = \frac{n!}{2\pi i}\oint_C\frac{f(z)}{(z-z_0)^{n+1}}\,dz
+$$
+
+This is where the section's most surprising fact comes from. The right-hand side makes sense for **every** $n$ as soon as $f$ is analytic, so:
+
+> If $f$ is analytic on a domain, then $f$ has derivatives of all orders there, and each is analytic.
+
+**One derivative gives you all of them.** Compare the real case, where $x^{4/3}$ has one derivative and not two. This single consequence is why complex analysis is so much stronger than real analysis, and it all comes from being able to write derivatives as integrals.
+
+### The four theorems that follow
+
+**Liouville's theorem.** A bounded entire function is constant.
+
+_Proof._ Apply the $n=1$ formula on a circle of radius $R$ about any $z_0$. If $|f|\le M$ everywhere, the ML inequality gives
+
+$$
+|f'(z_0)| \le \frac{1}{2\pi}\cdot\frac{M}{R^2}\cdot 2\pi R = \frac{M}{R}
+$$
+
+Let $R\to\infty$: $f'(z_0) = 0$ for every $z_0$, so $f$ is constant. ∎
+
+**Fundamental theorem of algebra.** Every non-constant polynomial has a complex root.
+
+_Proof._ If $p$ had no root, $1/p$ would be entire. Since $|p(z)|\to\infty$ as $|z|\to\infty$, the function $1/p$ is bounded, hence constant by Liouville, hence $p$ is constant. Contradiction. ∎
+
+**Three lines**, for a theorem that resisted algebraic proof for centuries. Every proof of it uses some analysis or topology; this is the shortest.
+
+**Maximum modulus principle.** If $f$ is analytic and non-constant on a domain, $|f|$ has no interior maximum. It follows from the mean value property: a value that was strictly largest could not equal the average of the surrounding values.
+
+**Morera's theorem.** The converse of Cauchy's theorem. If $f$ is continuous on a domain and $\oint_C f\,dz=0$ for every closed contour, then $f$ is analytic. So vanishing integrals are not just a consequence of analyticity, they characterize it.
+
+### Using it in reverse
+
+In practice the formula is most often read from right to left, as a way to evaluate integrals:
+
+$$
+\oint_C\frac{f(z)}{z-z_0}\,dz = 2\pi i\,f(z_0), \qquad \oint_C\frac{f(z)}{(z-z_0)^{n+1}}\,dz = \frac{2\pi i}{n!}f^{(n)}(z_0)
+$$
+
+Given an integral, factor the denominator, check which zeros are inside $C$, and identify what plays the role of $f$. That recipe handles most contour integrals you will meet before residues arrive.
+
+## Worked Examples
+
+**Example 1: Evaluate $\displaystyle\oint_{|z|=2}\frac{e^z}{z}\,dz$.**
+
+**Solution.** Write the integrand as $\frac{f(z)}{z-0}$ with $f(z)=e^z$, which is entire, and $z_0=0$ is inside the contour.
+
+$$
+\oint_{|z|=2}\frac{e^z}{z}\,dz = 2\pi i\,f(0) = 2\pi i\,e^0 = 2\pi i
+$$
+
+∎
+
+**Example 2: Evaluate $\displaystyle\oint_{|z|=3}\frac{z^2}{z-1}\,dz$.**
+
+**Solution.** Here $f(z)=z^2$ and $z_0=1$, which is inside $|z|=3$.
+
+$$
+2\pi i\,f(1) = 2\pi i\cdot 1 = 2\pi i
+$$
+
+∎
+
+Around $|z|=\frac12$ instead, the point 1 would be outside and the answer would be 0 by Cauchy's theorem. **Always check whether the singularity is enclosed.**
+
+**Example 3: Evaluate $\displaystyle\oint_{|z|=1}\frac{\cos z}{z^3}\,dz$.**
+
+**Solution.** Match $\frac{f(z)}{(z-z_0)^{n+1}}$ with $n+1=3$, so $n=2$, $z_0=0$, $f(z)=\cos z$.
+
+$$
+\oint\frac{\cos z}{z^3}dz = \frac{2\pi i}{2!}f''(0)
+$$
+
+Since $f''(z) = -\cos z$, we get $f''(0)=-1$, so the integral is
+
+$$
+\frac{2\pi i}{2}(-1) = -\pi i
+$$
+
+∎
+
+**Example 4: Evaluate $\displaystyle\oint_{|z|=3}\frac{dz}{(z-1)(z-2)}$.**
+
+**Solution.** Both poles are inside. Split by partial fractions:
+
+$$
+\frac{1}{(z-1)(z-2)} = \frac{-1}{z-1}+\frac{1}{z-2}
+$$
+
+Each piece is handled by the formula with $f\equiv1$:
+
+$$
+-2\pi i + 2\pi i = 0
+$$
+
+∎
+
+**Example 5: Evaluate $\displaystyle\oint_{|z-1|=\frac12}\frac{dz}{(z-1)(z-2)}$.**
+
+**Solution.** This contour is a small circle about 1, so only the pole at 1 is enclosed. Write the integrand as $\frac{f(z)}{z-1}$ with
+
+$$
+f(z) = \frac{1}{z-2}
+$$
+
+which is analytic on and inside this contour, since 2 is outside. Then
+
+$$
+2\pi i\,f(1) = 2\pi i\cdot\frac{1}{1-2} = -2\pi i
+$$
+
+∎
+
+**Absorbing the other factor into $f$** is the standard trick, and it works exactly when the other singularity is outside the contour.
+
+**Example 6: Apply the mean value property.**
+
+$f$ is entire and $f(z) = 3+4i$ at every point of the circle $|z-2|=1$. What is $f(2)$?
+
+**Solution.** By the mean value property, $f(2)$ is the average of $f$ over that circle, and the average of a constant is that constant:
+
+$$
+f(2) = 3+4i
+$$
+
+∎
+
+In fact the identity theorem then forces $f \equiv 3+4i$ everywhere. **Constant on a circle means constant, period.**
+
+**Example 7: Use Liouville's theorem.**
+
+Show that if $f$ is entire and $|f(z)|\le 5|z|$ for all $z$, then $f(z)=cz$ for some constant $c$ with $|c| \le 5$.
+
+**Solution.** The bound gives $f(0)=0$, so $g(z) = f(z)/z$ has a removable singularity at 0 and extends to an entire function. On $\mathbb{C}$,
+
+$$
+|g(z)| = \frac{|f(z)|}{|z|}\le 5
+$$
+
+so $g$ is bounded and entire, hence constant by Liouville. Writing $g\equiv c$ gives $f(z)=cz$, and $|c|\le5$. ∎
+
+**Growth bounds pin down entire functions completely**, and this style of argument generalizes: $|f(z)| \le M|z|^n$ forces $f$ to be a polynomial of degree at most $n$.
+
+## Real-World Applications
+
+**Numerical differentiation.** Computing $f^{(n)}$ by the integral formula, with the circle discretized by the trapezoid rule, is far more accurate than finite differences and does not suffer catastrophic cancellation. It is the standard method for high-order derivatives of analytic functions.
+
+**Matrix functions.** Defining $e^A$, $\log A$, or $\sqrt{A}$ for a matrix $A$ is done by the Cauchy integral formula with $A$ in place of $z_0$, integrating around a contour enclosing the spectrum. This is how modern libraries compute matrix exponentials for stiff differential equations.
+
+**Boundary element methods.** Solving a PDE from boundary data alone is possible because the solution inside is determined by the boundary, which for Laplace's equation is exactly this formula. It reduces a 2D problem to a 1D one.
+
+**Eigenvalue counting.** Contour-integral eigensolvers count and locate eigenvalues in a region by integrating a resolvent around its boundary. Large-scale electronic structure calculations use this.
+
+**Filter reconstruction.** Recovering a system's response inside a region of the complex plane from measurements on a contour is the same reconstruction problem, used in system identification.
+
+**Tomography, by analogy.** The idea that interior values are determined by boundary measurements is the organizing principle of imaging, and complex analysis provides the cleanest exact instance of it.
+
+:::note[You've Got This]
+This is the lesson where complex analysis stops seeming like a variation on calculus. A function's interior values are locked in by its boundary values, and one derivative implies infinitely many. Both facts come from a single formula, and that formula came from the one integral $\oint dz/z = 2\pi i$. For working problems, the practical version is what to drill: identify $f$, identify $z_0$, check it is inside, and write down $2\pi i f(z_0)$.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="complex-cauchys-integral-formula"
+  questions={[
+    {
+      id: "q1",
+      text: "What does Cauchy's integral formula say?",
+      options: [
+        "∮ f dz = 0 for analytic f",
+        "f(z₀) = (1/2πi) ∮ f(z)/(z − z₀) dz for z₀ inside the contour",
+        "f′(z₀) = ∮ f(z) dz",
+        "|f| attains its maximum on the boundary",
+      ],
+      correctIndex: 1,
+      explanation:
+        "The values on the contour determine every interior value. Nothing comparable is true for real functions on an interval.",
+    },
+    {
+      id: "q2",
+      text: "What is ∮_{|z|=2} e^z/z dz?",
+      options: ["0", "2πi", "2πie", "πi"],
+      correctIndex: 1,
+      explanation:
+        "Taking f(z) = e^z and z₀ = 0, the formula gives 2πi·f(0) = 2πi·1. The enclosed singularity is what makes it nonzero.",
+    },
+    {
+      id: "q3",
+      text: "What is the mean value property?",
+      options: [
+        "f(z₀) is the average of f over any circle centred at z₀ inside the domain",
+        "f is constant on circles",
+        "|f| is constant on circles",
+        "The integral of f over a circle is zero",
+      ],
+      correctIndex: 0,
+      explanation:
+        "Parametrising the integral formula on a circle leaves a plain average with no weighting. It is also the quickest route to the maximum modulus principle.",
+    },
+    {
+      id: "q4",
+      text: "Why does analyticity imply infinite differentiability?",
+      options: [
+        "Because analytic functions are polynomials",
+        "Because the derivative formula f⁽ⁿ⁾(z₀) = (n!/2πi)∮ f(z)/(z − z₀)^(n+1) dz makes sense for every n",
+        "Because derivatives are continuous",
+        "Because f is bounded",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Writing derivatives as integrals means their existence needs nothing beyond analyticity of f. In the real case x^(4/3) is differentiable once and not twice, so this is genuinely a complex phenomenon.",
+    },
+    {
+      id: "q5",
+      text: "What is ∮_{|z|=1} cos z / z³ dz?",
+      options: ["0", "−πi", "2πi", "πi"],
+      correctIndex: 1,
+      explanation:
+        "Matching n + 1 = 3 gives n = 2, so the integral is (2πi/2!)·f″(0) with f = cos. Since f″(0) = −1, the value is −πi.",
+    },
+    {
+      id: "q6",
+      text: "How does Liouville's theorem follow from the integral formula?",
+      options: [
+        "By setting z₀ = 0",
+        "By bounding |f′(z₀)| ≤ M/R using the derivative formula on a circle of radius R and letting R → ∞",
+        "By integrating twice",
+        "It does not follow from it",
+      ],
+      correctIndex: 1,
+      explanation:
+        "A bounded f makes the derivative bound shrink to zero as the radius grows, so f′ vanishes identically. The fundamental theorem of algebra then follows in three more lines.",
+    },
+    {
+      id: "q7",
+      text: "How is the fundamental theorem of algebra proved here?",
+      options: [
+        "By factoring the polynomial",
+        "If p had no root then 1/p would be bounded and entire, hence constant by Liouville, forcing p constant",
+        "By induction on the degree",
+        "By the maximum modulus principle",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Since |p| → ∞ at infinity, the reciprocal is bounded, and Liouville then contradicts non-constancy. Every known proof uses analysis or topology, and this is the shortest.",
+    },
+    {
+      id: "q8",
+      text: "What does Morera's theorem state?",
+      options: [
+        "Analytic functions have vanishing closed integrals",
+        "A continuous function whose closed contour integrals all vanish is analytic",
+        "Every continuous function is analytic",
+        "Analytic functions are bounded",
+      ],
+      correctIndex: 1,
+      explanation:
+        "It is the converse of Cauchy's theorem, so vanishing integrals characterize analyticity rather than merely following from it. That makes it useful for proving limits of analytic functions are analytic.",
+    },
+  ]}
+/>

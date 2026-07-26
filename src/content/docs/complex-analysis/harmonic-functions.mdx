@@ -1,0 +1,327 @@
+---
+title: Harmonic Functions
+description: Laplace's equation, harmonic conjugates, and the physics behind analytic functions
+sidebar:
+  order: 18
+---
+
+import Quiz from "../../../components/Quiz.astro";
+import HarmonicMeanValue from "../../../components/HarmonicMeanValue.astro";
+
+## What You'll Learn
+
+In this lesson you'll learn what harmonic means, how every harmonic function is the real part of an analytic one, how to construct harmonic conjugates, and how the Dirichlet problem is solved on a disc and transported everywhere else.
+
+## The Concept
+
+### The definition
+
+> A real function $u(x,y)$ with continuous second partials is **harmonic** on a domain if it satisfies **Laplace's equation**
+>
+> $$
+> \nabla^2u = u_{xx}+u_{yy} = 0
+> $$
+
+Laplace's equation is arguably the most important PDE in physics. It governs steady-state temperature, electrostatic and gravitational potential in empty space, incompressible irrotational fluid flow, and the equilibrium shape of a stretched membrane. All of those are the same equation, so all of them are the same mathematics.
+
+### The connection to analyticity
+
+Two facts, and they run in both directions.
+
+> If $f = u+iv$ is analytic, then $u$ and $v$ are both harmonic.
+
+This came out of the Cauchy–Riemann equations in lesson 5: differentiate $u_x=v_y$ with respect to $x$, differentiate $u_y=-v_x$ with respect to $y$, and add.
+
+> Conversely, if $u$ is harmonic on a **simply connected** domain, there is a harmonic $v$, unique up to a constant, with $u+iv$ analytic. That $v$ is the **harmonic conjugate** of $u$.
+
+Together these say that harmonic functions and analytic functions are two views of the same objects. **Real two-dimensional potential theory is complex analysis in different clothing**, which is why every result in this section has a physical reading.
+
+The simple connectivity matters. On an annulus, $u = \ln|z|$ is harmonic but its conjugate would have to be $\arg z$, which cannot be made single-valued there. That is the same obstruction as the branch cut for the logarithm.
+
+### Properties inherited from analyticity
+
+Because they are real parts of analytic functions, harmonic functions inherit the strong behaviour of the section.
+
+**Mean value property.** The value at a point is the average over any circle about it inside the domain:
+
+$$
+u(z_0) = \frac{1}{2\pi}\int_0^{2\pi}u\big(z_0+re^{i\theta}\big)\,d\theta
+$$
+
+<HarmonicMeanValue />
+
+The figure tests this. For $u = x^2-y^2$, the real part of $z^2$, every circular average equals the centre value exactly. For $u = x^2+y^2 = |z|^2$, which has $\nabla^2u = 4 \ne 0$, the averages exceed the centre value and grow with the radius — in fact by exactly $r^2$, which is the Laplacian times $r^2/4$.
+
+**Maximum principle.** A harmonic function on a bounded domain attains its maximum and minimum on the boundary, and if an interior maximum is attained the function is constant. This is immediate from the mean value property: a strict interior maximum could not equal the average of its neighbours.
+
+**Uniqueness.** Two harmonic functions with the same boundary values are identical, since their difference is harmonic with zero boundary values, hence zero by the maximum principle. **This is what makes physics well posed:** specify the temperature on the boundary and the interior temperature is determined.
+
+**Smoothness.** Harmonic functions are automatically infinitely differentiable, and even real-analytic, inherited from the corresponding property of analytic functions.
+
+**Liouville.** A harmonic function bounded on all of $\mathbb{R}^2$ is constant.
+
+### The Dirichlet problem
+
+> **Dirichlet problem.** Given a domain $D$ and a continuous function on its boundary, find the harmonic function on $D$ matching those boundary values.
+
+On the unit disc there is an explicit answer, the **Poisson integral formula**:
+
+$$
+u(re^{i\theta}) = \frac{1}{2\pi}\int_0^{2\pi}\frac{1-r^2}{1-2r\cos(\theta-\varphi)+r^2}\,u(e^{i\varphi})\,d\varphi
+$$
+
+The kernel is a weighted average that concentrates near the nearest boundary point as $r\to1$. Setting $r=0$ recovers the mean value property, so the formula is its refinement to off-centre points.
+
+For any other simply connected region the strategy is the one from the conformal mapping lesson:
+
+1. Map the region conformally to the disc.
+2. Carry the boundary data along.
+3. Apply the Poisson formula.
+4. Pull back.
+
+Because harmonicity survives conformal maps, this solves the problem on every region you can map — and by the Riemann mapping theorem, that is every simply connected region.
+
+### Level curves and the physical picture
+
+For $f=u+iv$ analytic, the level curves of $u$ and $v$ are orthogonal, which we saw in lesson 6. Physically:
+
+| $u$                | $v$             | Setting        |
+| ------------------ | --------------- | -------------- |
+| equipotentials     | field lines     | electrostatics |
+| isotherms          | heat flow lines | conduction     |
+| velocity potential | streamlines     | fluid flow     |
+
+The pair $f = u+iv$ is called the **complex potential**, and $f'(z) = u_x + iv_x$ gives the field directly: in fluid dynamics $\overline{f'(z)}$ is the velocity vector. **One analytic function encodes an entire two-dimensional field**, which is the compression that makes the method powerful.
+
+## Worked Examples
+
+**Example 1: Verify $u = x^2-y^2$ is harmonic and find its conjugate.**
+
+**Solution.** $u_{xx}=2$ and $u_{yy}=-2$, so $u_{xx}+u_{yy}=0$ ✓
+
+For the conjugate, use $v_y = u_x = 2x$, so $v = 2xy+g(x)$. Then $v_x = 2y+g'(x)$, and this must equal $-u_y = 2y$, forcing $g'=0$.
+
+$$
+v = 2xy+C, \qquad f = z^2 + iC
+$$
+
+∎
+
+**Example 2: Show $u = x^2+y^2$ is not harmonic.**
+
+**Solution.** $u_{xx}+u_{yy} = 2+2 = 4 \ne 0$.
+
+$$
+\text{not harmonic}
+$$
+
+Consequently it has no harmonic conjugate, and indeed $|z|^2 = z\bar z$ involves $\bar z$ and is not analytic. The figure shows the failure quantitatively: circular averages exceed the centre value. ∎
+
+**Example 3: Verify $u = \ln|z|$ is harmonic away from 0.**
+
+**Solution.** With $r = \sqrt{x^2+y^2}$, $u = \frac12\ln(x^2+y^2)$. Then
+
+$$
+u_x = \frac{x}{x^2+y^2}, \qquad u_{xx} = \frac{y^2-x^2}{(x^2+y^2)^2}
+$$
+
+and by symmetry $u_{yy} = \frac{x^2-y^2}{(x^2+y^2)^2}$. They cancel, so $\nabla^2u=0$ on $\mathbb{C}\setminus\{0\}$. ∎
+
+Its conjugate is $\arg z$, and $\operatorname{Log}z = \ln|z|+i\arg z$. **On any annulus around 0 the conjugate cannot be single-valued**, which shows the simple connectivity hypothesis is not removable. Physically this $u$ is the potential of a point charge, whose field lines wind around the charge and never close.
+
+**Example 4: Find the harmonic conjugate of $u = e^x\cos y$.**
+
+**Solution.** Check first: $u_{xx} = e^x\cos y$ and $u_{yy} = -e^x\cos y$, which sum to 0 ✓
+
+From $v_y = u_x = e^x\cos y$, integrate in $y$:
+
+$$
+v = e^x\sin y + g(x)
+$$
+
+Then $v_x = e^x\sin y+g'(x)$ must equal $-u_y = e^x\sin y$, so $g'=0$.
+
+$$
+v = e^x\sin y+C, \qquad f = e^z+iC
+$$
+
+∎
+
+**Example 5: Use the maximum principle.**
+
+$u$ is harmonic on $|z|\le1$ with $u = 3$ on the boundary circle. What is $u$ inside?
+
+**Solution.** The constant function 3 is harmonic and matches the boundary data. By uniqueness there is only one such function, so
+
+$$
+u \equiv 3
+$$
+
+∎
+
+**Example 6: Solve a Dirichlet problem on the disc.**
+
+$u$ is harmonic on $|z|<1$ with boundary values $u(e^{i\theta}) = \cos\theta$. Find $u$.
+
+**Solution.** Guess a low-order candidate: $\operatorname{Re}(z) = x = r\cos\theta$ is harmonic and equals $\cos\theta$ when $r=1$.
+
+$$
+u = x = r\cos\theta
+$$
+
+By uniqueness this is the answer, with no integration needed. ✓
+
+At the centre, $u(0)=0$, which is the average of $\cos\theta$ over the circle. **Consistent with the mean value property**, and a good check to run on any such solution.
+
+**Example 7: Use the complex potential.**
+
+The complex potential of uniform flow past a cylinder of radius $a$ is $f(z) = U\left(z+\frac{a^2}{z}\right)$. Find the streamlines and the velocity.
+
+**Solution.** With $z = re^{i\theta}$,
+
+$$
+f = U\left(re^{i\theta}+\frac{a^2}{r}e^{-i\theta}\right)
+$$
+
+so the stream function is
+
+$$
+\psi = \operatorname{Im}f = U\left(r-\frac{a^2}{r}\right)\sin\theta
+$$
+
+On $r=a$ this is identically 0, so the circle **is** a streamline — the flow does not cross the cylinder, which is exactly the physical boundary condition.
+
+The velocity comes from the derivative:
+
+$$
+f'(z) = U\left(1-\frac{a^2}{z^2}\right)
+$$
+
+which vanishes at $z=\pm a$, the two **stagnation points** at the front and back of the cylinder, and tends to $U$ far away as it should. ∎
+
+**One analytic function delivered the entire flow field**, boundary condition included.
+
+## Real-World Applications
+
+**Steady heat conduction.** Temperature in a body with fixed boundary temperatures and no internal sources is harmonic. Solving for it is the Dirichlet problem, and conformal mapping handles awkward cross-sections.
+
+**Electrostatics.** Potential in a charge-free region is harmonic, and field lines are the conjugate's level curves. Capacitance calculations for irregular electrodes were built on this before numerical solvers.
+
+**Groundwater and porous flow.** Darcy flow has a harmonic pressure head, so aquifer models and seepage under dams are solved as Dirichlet problems. Flow nets drawn by hand in civil engineering are exactly these orthogonal families.
+
+**Aerodynamics.** Potential flow around bodies is the complex potential of Example 7, and adding circulation gives lift. The stagnation points are physically observable.
+
+**Membrane deflection.** A stretched membrane with a fixed boundary takes a harmonic shape under small deflection, which is why soap-film experiments were once used as analog computers for Laplace's equation.
+
+**Image processing.** Harmonic inpainting fills a missing region by solving Laplace's equation with the surrounding pixels as boundary data. The maximum principle guarantees no new extremes appear inside the patch, which is why the result looks smooth.
+
+:::note[You've Got This]
+The idea to keep is that harmonic and analytic are the same subject seen twice. Every result about analytic functions has a harmonic reading, and every physical field in two dimensions is the real part of some analytic function. That is why this section, which began as an abstract question about differentiability, ends up describing heat, electricity, and flowing water. The one hypothesis to stay alert to is simple connectivity, since $\ln|z|$ on an annulus is the standing reminder that a conjugate need not exist globally.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="complex-harmonic-functions"
+  questions={[
+    {
+      id: "q1",
+      text: "What does it mean for u to be harmonic?",
+      options: [
+        "u is bounded",
+        "uₓₓ + u_yy = 0",
+        "u is the modulus of an analytic function",
+        "u is periodic",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Laplace's equation governs steady heat, electrostatic potential, and incompressible irrotational flow, so all three are the same mathematics.",
+    },
+    {
+      id: "q2",
+      text: "What is the relationship between harmonic and analytic functions?",
+      options: [
+        "They are unrelated",
+        "The real and imaginary parts of an analytic function are harmonic, and on a simply connected domain every harmonic function is the real part of an analytic one",
+        "Harmonic functions are always analytic",
+        "Only the imaginary part is harmonic",
+      ],
+      correctIndex: 1,
+      explanation:
+        "The two notions are equivalent views of the same objects. This is why every theorem about analytic functions has a physical reading in potential theory.",
+    },
+    {
+      id: "q3",
+      text: "What is the mean value property for harmonic functions?",
+      options: [
+        "u is constant on circles",
+        "u(z₀) equals the average of u over any circle about z₀ inside the domain",
+        "The integral of u over a circle is zero",
+        "u attains its maximum at the centre",
+      ],
+      correctIndex: 1,
+      explanation:
+        "It is inherited from the corresponding property of analytic functions. It also gives the quickest proof of the maximum principle, since a strict interior maximum cannot equal the average of its neighbours.",
+    },
+    {
+      id: "q4",
+      text: "Why is u = x² + y² not harmonic?",
+      options: [
+        "Because it is unbounded",
+        "Because uₓₓ + u_yy = 4 ≠ 0",
+        "Because it is not continuous",
+        "It is harmonic",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Its circular averages exceed the centre value and grow with the radius, which is the measurable symptom. Equivalently |z|² = z z̄ involves z̄ and is not analytic.",
+    },
+    {
+      id: "q5",
+      text: "What is the harmonic conjugate of u = e^x cos y?",
+      options: ["e^x sin y + C", "−e^x sin y", "e^x cos y", "There is none"],
+      correctIndex: 0,
+      explanation:
+        "Integrating v_y = uₓ and matching the second equation forces v = e^x sin y up to a constant, giving f = e^z. The constant is the only freedom.",
+    },
+    {
+      id: "q6",
+      text: "Why does ln|z| have no single-valued harmonic conjugate on an annulus around 0?",
+      options: [
+        "Because it is not harmonic there",
+        "Because the conjugate would have to be arg z, which cannot be made single-valued on a region enclosing the origin",
+        "Because the annulus is unbounded",
+        "Because it is discontinuous",
+      ],
+      correctIndex: 1,
+      explanation:
+        "This is why the conjugate theorem needs simple connectivity, and it is the same obstruction as the branch cut for the logarithm. Physically it is the potential of a point charge.",
+    },
+    {
+      id: "q7",
+      text: "What does the Poisson integral formula do?",
+      options: [
+        "Computes residues",
+        "Solves the Dirichlet problem on the unit disc from the boundary values",
+        "Gives the maximum of u",
+        "Finds harmonic conjugates",
+      ],
+      correctIndex: 1,
+      explanation:
+        "It is a weighted average of the boundary data that concentrates near the nearest boundary point. Setting r = 0 recovers the mean value property.",
+    },
+    {
+      id: "q8",
+      text: "For the flow potential f(z) = U(z + a²/z), why is the circle |z| = a a streamline?",
+      options: [
+        "Because f is analytic there",
+        "Because the stream function Im f = U(r − a²/r) sin θ vanishes identically when r = a",
+        "Because |f| is constant there",
+        "Because f′ = 0 there",
+      ],
+      correctIndex: 1,
+      explanation:
+        "A constant value of the stream function is precisely a streamline, so the flow does not cross the cylinder. The derivative vanishing at z = ±a marks the two stagnation points instead.",
+    },
+  ]}
+/>

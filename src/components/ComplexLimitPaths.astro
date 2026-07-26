@@ -1,0 +1,158 @@
+---
+/**
+ * ComplexLimitPaths — the limit of conj(z)/z at 0 does not exist, because the
+ * value is constant along each ray but different from ray to ray. Each limit
+ * value is evaluated from the function at a small radius, not asserted, and the
+ * image points are plotted where that evaluation puts them.
+ */
+const w = 540;
+const h = 306;
+
+const lcx = 128;
+const rcx = 398;
+const cy = 158;
+const unit = 58;
+
+/** f(z) = conj(z) / z, evaluated in Cartesian components. */
+function f(re: number, im: number) {
+  const den = re * re + im * im;
+  // conj(z)/z = (x − iy)(x − iy) / (x² + y²) = (x² − y² − 2ixy) / (x² + y²)
+  return { re: (re * re - im * im) / den, im: (-2 * re * im) / den };
+}
+
+const probeR = 0.08; // sample close to the origin
+const rays = [
+  { deg: 0, cls: "green" },
+  { deg: 45, cls: "blue" },
+  { deg: 90, cls: "orange" },
+  { deg: 135, cls: "pink" },
+].map((ray) => {
+  const t = (ray.deg * Math.PI) / 180;
+  const v = f(probeR * Math.cos(t), probeR * Math.sin(t));
+  return { ...ray, t, v };
+});
+
+/** Tidy a computed value like 1, −1, i, −i, or a + bi. */
+function fmt(v: { re: number; im: number }) {
+  const r = Math.abs(v.re) < 1e-9 ? 0 : v.re;
+  const i = Math.abs(v.im) < 1e-9 ? 0 : v.im;
+  const rs = Number.isInteger(r) ? String(r) : r.toFixed(2);
+  const is = Number.isInteger(i) ? String(Math.abs(i)) : Math.abs(i).toFixed(2);
+  if (i === 0) return rs.replace("-", "−");
+  if (r === 0) return `${i < 0 ? "−" : ""}${is === "1" ? "" : is}i`;
+  return `${rs.replace("-", "−")} ${i < 0 ? "−" : "+"} ${is === "1" ? "" : is}i`;
+}
+
+const distinct = new Set(rays.map((r) => `${r.v.re.toFixed(4)},${r.v.im.toFixed(4)}`)).size;
+
+const lx = (re: number) => lcx + re * unit;
+const rx = (re: number) => rcx + re * unit;
+const py = (im: number) => cy - im * unit;
+---
+
+<figure
+  class="clp"
+  role="img"
+  aria-label={`On the left, four rays approaching the origin at 0, 45, 90 and 135 degrees. On the right, the values of conj z over z along those rays land on ${distinct} different points of the unit circle, so the limit at the origin does not exist.`}
+>
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    <text x="16" y="20" class="clp-head" font-size="12.5" font-weight="bold">Every direction must agree, and here they do not</text>
+    <text x="16" y="38" class="clp-sub" font-size="10.5">f(z) = z̄ ⁄ z as z → 0, sampled along four rays</text>
+
+    <line x1="262" y1="52" x2="262" y2="240" class="clp-divide" />
+
+    {/* ---------- left: approach paths ---------- */}
+    <text x={lcx} y="56" class="clp-panel" font-size="10" text-anchor="middle">along different rays</text>
+    <line x1={lx(-1.05)} y1={cy} x2={lx(1.05)} y2={cy} class="clp-axis" />
+    <line x1={lcx} y1={py(1.05)} x2={lcx} y2={py(-1.05)} class="clp-axis" />
+
+    {rays.map((ray) => (
+      <g>
+        <line
+          x1={lx(0.14 * Math.cos(ray.t))}
+          y1={py(0.14 * Math.sin(ray.t))}
+          x2={lx(Math.cos(ray.t))}
+          y2={py(Math.sin(ray.t))}
+          class={`clp-ray clp-s-${ray.cls}`}
+        />
+        {[0.32, 0.56, 0.86].map((rr) => (
+          <circle cx={lx(rr * Math.cos(ray.t))} cy={py(rr * Math.sin(ray.t))} r="2.6" class={`clp-dot clp-f-${ray.cls}`} />
+        ))}
+        <text
+          x={lx(1.32 * Math.cos(ray.t))}
+          y={py(1.32 * Math.sin(ray.t)) + 3.4}
+          class={`clp-lbl clp-f-${ray.cls}`}
+          font-size="9.5"
+          text-anchor="middle">{`${ray.deg}°`}</text>
+      </g>
+    ))}
+    <circle cx={lcx} cy={cy} r="4" class="clp-target" />
+
+    {/* ---------- right: where the values land ---------- */}
+    <text x={rcx} y="56" class="clp-panel" font-size="10" text-anchor="middle">the values approached</text>
+    <circle cx={rcx} cy={cy} r={unit} class="clp-circle" />
+    <line x1={rx(-1.05)} y1={cy} x2={rx(1.05)} y2={cy} class="clp-axis" />
+    <line x1={rcx} y1={py(1.05)} x2={rcx} y2={py(-1.05)} class="clp-axis" />
+
+    {rays.map((ray) => (
+      <g>
+        <circle cx={rx(ray.v.re)} cy={py(ray.v.im)} r="4.4" class={`clp-dot clp-f-${ray.cls}`} />
+        <text
+          x={rx(1.32 * ray.v.re)}
+          y={py(1.32 * ray.v.im) + 3.4}
+          class={`clp-lbl clp-f-${ray.cls}`}
+          font-size="9.5"
+          text-anchor="middle">{fmt(ray.v)}</text>
+      </g>
+    ))}
+
+    <text x={lcx} y="256" class="clp-val" font-size="9.5" text-anchor="middle">All four paths reach the same point</text>
+    <text x={rcx} y="256" class="clp-val" font-size="9.5" text-anchor="middle">{`but they carry ${distinct} different values`}</text>
+
+    <text x={w / 2} y="280" class="clp-foot" font-size="10.5" text-anchor="middle">
+      Along arg z = θ the value is e^(−2iθ), constant on the ray and depending on θ
+    </text>
+    <text x={w / 2} y="298" class="clp-sub2" font-size="9.5" text-anchor="middle">
+      A complex limit must be direction-independent, so this limit does not exist
+    </text>
+  </svg>
+</figure>
+
+<style>
+  .clp { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .clp svg { width:100%; max-width:100%; height:auto; }
+  .clp-axis { stroke:#888; stroke-width:1.3; }
+  .clp-divide { stroke:#3a3a3a; stroke-width:1; }
+  .clp-circle { fill:none; stroke:#6e7681; stroke-width:1.3; stroke-dasharray:5,4; }
+  .clp-ray { stroke-width:1.8; }
+  .clp-s-green { stroke:#7ee787; }
+  .clp-s-blue { stroke:#58a6ff; }
+  .clp-s-orange { stroke:#f0883e; }
+  .clp-s-pink { stroke:#ff7b72; }
+  .clp-f-green { fill:#7ee787; }
+  .clp-f-blue { fill:#58a6ff; }
+  .clp-f-orange { fill:#f0883e; }
+  .clp-f-pink { fill:#ff7b72; }
+  .clp-dot { stroke:none; }
+  .clp-target { fill:none; stroke:#eee; stroke-width:1.6; }
+  .clp-lbl { font-family:'Libre Baskerville',Georgia,serif; }
+  .clp-val { fill:#9198a1; font-family:'Libre Baskerville',Georgia,serif; }
+  .clp-panel, .clp-head { fill:#eee; font-family:'Libre Baskerville',Georgia,serif; }
+  .clp-sub, .clp-sub2 { fill:#9198a1; font-family:'Libre Baskerville',Georgia,serif; font-style:italic; }
+  .clp-foot { fill:#58a6ff; font-family:'Libre Baskerville',Georgia,serif; }
+  :global([data-theme="light"]) .clp-axis { stroke:#666; }
+  :global([data-theme="light"]) .clp-divide { stroke:#d0d7de; }
+  :global([data-theme="light"]) .clp-circle { stroke:#8c959f; }
+  :global([data-theme="light"]) .clp-target { stroke:#24292f; }
+  :global([data-theme="light"]) .clp-s-green { stroke:#116329; }
+  :global([data-theme="light"]) .clp-s-blue { stroke:#0550ae; }
+  :global([data-theme="light"]) .clp-s-orange { stroke:#b35900; }
+  :global([data-theme="light"]) .clp-s-pink { stroke:#a40e26; }
+  :global([data-theme="light"]) .clp-f-green { fill:#116329; }
+  :global([data-theme="light"]) .clp-f-blue { fill:#0550ae; }
+  :global([data-theme="light"]) .clp-f-orange { fill:#b35900; }
+  :global([data-theme="light"]) .clp-f-pink { fill:#a40e26; }
+  :global([data-theme="light"]) .clp-foot { fill:#0550ae; }
+  :global([data-theme="light"]) .clp-panel, :global([data-theme="light"]) .clp-head { fill:#24292f; }
+  :global([data-theme="light"]) :is(.clp-val, .clp-sub, .clp-sub2) { fill:#57606a; }
+</style>

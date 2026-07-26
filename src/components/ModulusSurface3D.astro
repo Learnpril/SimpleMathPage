@@ -1,0 +1,180 @@
+---
+/**
+ * ModulusSurface3D — the modulus of a rational function drawn as a height over the
+ * complex plane. Poles become spikes, zeros become dimples touching the floor, and
+ * the four features are generated from the function's own zeros and poles rather
+ * than placed by hand.
+ */
+---
+
+<figure
+  class="ms3"
+  role="img"
+  aria-label="Interactive 3D surface showing the modulus of the function z squared minus one over z squared plus one as a height above the complex plane. Two spikes rise at the poles i and minus i, and two dimples touch the floor at the zeros 1 and minus 1."
+>
+  <div class="ms3-canvas" data-ms3d></div>
+  <div class="ms3-hint">Drag to rotate · Scroll/Pinch to zoom</div>
+  <figcaption class="ms3-cap">
+    Height is <strong>|f(z)|</strong> for f(z) = (z² − 1)⁄(z² + 1). The two spikes
+    sit exactly at the poles <em>±i</em> and the two dimples touch zero at the
+    zeros <em>±1</em>. A complex function has no graph, but its modulus does, and
+    this is the quickest way to see where the interesting points are.
+  </figcaption>
+</figure>
+
+<script>
+  import * as THREE from "three";
+  import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+
+  const EXTENT = 2.4; // half-width of the sampled square in the plane
+  const CAP = 2.6; // heights are clipped here so the poles stay on screen
+
+  /** |f(z)| for f(z) = (z² − 1)/(z² + 1), computed from real components. */
+  function modulus(x: number, y: number) {
+    const z2re = x * x - y * y;
+    const z2im = 2 * x * y;
+    const nRe = z2re - 1;
+    const nIm = z2im;
+    const dRe = z2re + 1;
+    const dIm = z2im;
+    const den = dRe * dRe + dIm * dIm;
+    if (den < 1e-9) return CAP;
+    const re = (nRe * dRe + nIm * dIm) / den;
+    const im = (nIm * dRe - nRe * dIm) / den;
+    return Math.min(Math.hypot(re, im), CAP);
+  }
+
+  function initScene(container: HTMLElement) {
+    const width = Math.min(container.clientWidth, 480);
+    const height = 380;
+    const isDark = document.documentElement.dataset.theme !== "light";
+
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(isDark ? 0x121212 : 0xf8f9fa);
+
+    const camera = new THREE.PerspectiveCamera(42, width / height, 0.1, 200);
+    camera.position.set(4.2, 3.4, 4.6);
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(width, height);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    container.appendChild(renderer.domElement);
+
+    const group = new THREE.Group();
+    scene.add(group);
+
+    // Surface: a plane whose vertices are displaced by |f|
+    const segs = 150;
+    const geo = new THREE.PlaneGeometry(2 * EXTENT, 2 * EXTENT, segs, segs);
+    const pos = geo.attributes.position;
+    for (let i = 0; i < pos.count; i++) {
+      pos.setZ(i, modulus(pos.getX(i), pos.getY(i)));
+    }
+    geo.computeVertexNormals();
+    geo.rotateX(-Math.PI / 2);
+
+    const surface = new THREE.Mesh(
+      geo,
+      new THREE.MeshPhongMaterial({
+        color: isDark ? 0x58a6ff : 0x0550ae,
+        shininess: 22,
+        side: THREE.DoubleSide,
+        transparent: true,
+        opacity: 0.92,
+      }),
+    );
+    group.add(surface);
+
+    const wire = new THREE.Mesh(
+      geo.clone(),
+      new THREE.MeshBasicMaterial({
+        color: isDark ? 0x0d1117 : 0xffffff,
+        wireframe: true,
+        transparent: true,
+        opacity: 0.14,
+      }),
+    );
+    group.add(wire);
+
+    /** A vertical stalk marking a feature of the function at (x, y). */
+    function marker(x: number, y: number, top: number, colour: number) {
+      const pts = [new THREE.Vector3(x, 0, -y), new THREE.Vector3(x, top, -y)];
+      return new THREE.Line(
+        new THREE.BufferGeometry().setFromPoints(pts),
+        new THREE.LineBasicMaterial({ color: colour }),
+      );
+    }
+    const poleColour = isDark ? 0xff7b72 : 0xa40e26;
+    const zeroColour = isDark ? 0x7ee787 : 0x116329;
+    // poles of (z² − 1)/(z² + 1) are the roots of z² + 1
+    group.add(marker(0, 1, CAP, poleColour));
+    group.add(marker(0, -1, CAP, poleColour));
+    // zeros are the roots of z² − 1
+    group.add(marker(1, 0, 0.5, zeroColour));
+    group.add(marker(-1, 0, 0.5, zeroColour));
+
+    const grid = new THREE.GridHelper(
+      2 * EXTENT,
+      12,
+      isDark ? 0x444444 : 0xcccccc,
+      isDark ? 0x2a2a2a : 0xe4e4e4,
+    );
+    group.add(grid);
+
+    scene.add(new THREE.AmbientLight(0xffffff, 0.8));
+    const dl = new THREE.DirectionalLight(0xffffff, 0.55);
+    dl.position.set(4, 7, 5);
+    scene.add(dl);
+
+    const controls = new OrbitControls(camera, renderer.domElement);
+    controls.target.set(0, 0.7, 0);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.08;
+    controls.minDistance = 3.2;
+    controls.maxDistance = 14;
+
+    let animId: number;
+    function animate() {
+      animId = requestAnimationFrame(animate);
+      controls.update();
+      renderer.render(scene, camera);
+    }
+    animate();
+
+    return () => {
+      cancelAnimationFrame(animId);
+      renderer.dispose();
+    };
+  }
+
+  function setup() {
+    document.querySelectorAll<HTMLElement>("[data-ms3d]").forEach((el) => {
+      if (el.querySelector("canvas")) return;
+      const obs = new IntersectionObserver(
+        (entries) => {
+          if (entries[0].isIntersecting) {
+            obs.disconnect();
+            initScene(el);
+          }
+        },
+        { threshold: 0.05 },
+      );
+      obs.observe(el);
+    });
+  }
+
+  setup();
+  document.addEventListener("astro:page-load", setup);
+</script>
+
+<style>
+  .ms3 { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .ms3-canvas { width:100%; max-width:480px; min-height:380px; border-radius:8px; overflow:hidden; }
+  .ms3-canvas canvas { border-radius:8px; }
+  .ms3-hint { font-family:'Libre Baskerville',Georgia,serif; font-size:0.8rem; color:#9198a1; margin-top:0.4rem; }
+  .ms3-cap {
+    font-family:'Libre Baskerville',Georgia,serif; font-size:0.85rem; color:#9198a1;
+    font-style:italic; text-align:center; max-width:460px; margin-top:0.5rem; line-height:1.5;
+  }
+  :global([data-theme="light"]) .ms3-hint, :global([data-theme="light"]) .ms3-cap { color:#57606a; }
+</style>

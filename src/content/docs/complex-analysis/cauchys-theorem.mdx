@@ -1,0 +1,301 @@
+---
+title: Cauchy's Theorem
+description: Closed contour integrals of analytic functions vanish, and what that buys you
+sidebar:
+  order: 9
+---
+
+import Quiz from "../../../components/Quiz.astro";
+import CauchyDeformation from "../../../components/CauchyDeformation.astro";
+
+## What You'll Learn
+
+In this lesson you'll state Cauchy's theorem, see why it is Green's theorem plus the Cauchy–Riemann equations, learn contour deformation as a computational tool, and handle domains with holes.
+
+## The Concept
+
+### The theorem
+
+> **Cauchy's theorem.** If $f$ is analytic on a simply connected domain $D$, then for every closed contour $C$ in $D$
+>
+> $$
+> \oint_C f(z)\,dz = 0
+> $$
+
+Two hypotheses are doing work. **Analytic** is expected. **Simply connected** is the one people forget, and forgetting it produces wrong answers immediately: $\oint_{|z|=1}\frac{dz}{z} = 2\pi i \ne 0$, and $1/z$ is analytic on its contour. What fails there is not analyticity but the topology of the domain.
+
+The commonly used version, sometimes called the Cauchy–Goursat theorem, requires only analyticity — no assumption that $f'$ is continuous, which Goursat showed is unnecessary.
+
+### Why it is true
+
+The quickest route uses Green's theorem from Calculus 3. Write $f = u+iv$ and $dz = dx+i\,dy$, so
+
+$$
+\oint_C f\,dz = \oint_C (u\,dx - v\,dy) + i\oint_C(v\,dx+u\,dy)
+$$
+
+Green's theorem converts each to a double integral over the enclosed region $R$:
+
+$$
+= \iint_R\left(-v_x-u_y\right)dA + i\iint_R\left(u_x-v_y\right)dA
+$$
+
+Now apply the **Cauchy–Riemann equations**: $u_x = v_y$ makes the second integrand vanish, and $u_y = -v_x$ makes the first vanish. Both integrals are zero. ∎
+
+That is the whole proof, and it is worth appreciating what it says: **Cauchy's theorem is the Cauchy–Riemann equations integrated**. The differential condition from lesson 5 and this global statement are the same fact seen at two scales.
+
+The proof as given assumes continuous partials so Green's theorem applies. Goursat's refinement removes that, at the cost of a longer argument by subdivision of triangles.
+
+### Consequences
+
+**Path independence.** If $\gamma_1$ and $\gamma_2$ share endpoints and lie in a simply connected domain where $f$ is analytic, then $\int_{\gamma_1}f = \int_{\gamma_2}f$. Traverse one forward and the other backward to make a closed contour, apply the theorem, and rearrange.
+
+**Antiderivatives exist.** On a simply connected domain an analytic $f$ has an analytic antiderivative $F(z) = \int_{z_0}^z f(w)\,dw$, well defined precisely because the integral does not depend on the path.
+
+**Deformation invariance.** A closed contour can be continuously deformed without changing the integral, provided it never crosses a singularity.
+
+<CauchyDeformation />
+
+This last one is the practical tool. It means you may replace an awkward contour with a convenient circle, which is how essentially every contour integral in the rest of the section gets evaluated.
+
+### Domains with holes
+
+When the domain is not simply connected, the theorem is replaced by a bookkeeping statement.
+
+> **Deformation / multiply connected form.** Let $C$ be a closed contour and $C_1,\ldots,C_n$ be disjoint closed contours inside $C$, all positively oriented, with $f$ analytic on the region between them. Then
+>
+> $$
+> \oint_C f\,dz = \sum_{k=1}^n\oint_{C_k}f\,dz
+> $$
+
+In words: an outer contour equals the sum of small contours around each hole. Shrink each $C_k$ to a tiny circle around its singularity and you have the residue theorem in embryo. The whole of the second half of this section is that idea made systematic.
+
+### Winding number
+
+Deformation invariance means the integral only depends on how the contour sits relative to the singularities, and the precise measure of that is the **winding number**:
+
+$$
+n(C, z_0) = \frac{1}{2\pi i}\oint_C\frac{dz}{z-z_0}
+$$
+
+an integer counting signed loops of $C$ around $z_0$. Counterclockwise once gives 1, clockwise once gives $-1$, twice around gives 2, and a contour not enclosing $z_0$ gives 0. So the general statement is
+
+$$
+\oint_C\frac{dz}{z-z_0} = 2\pi i\, n(C,z_0)
+$$
+
+**The integral counts topology.** That an analytic computation returns an integer is the first hint that complex analysis and topology are closely tied.
+
+## Worked Examples
+
+**Example 1: Evaluate $\oint_{|z|=1}e^z\,dz$.**
+
+**Solution.** $e^z$ is entire, and the unit disc is simply connected, so Cauchy's theorem applies directly:
+
+$$
+\oint_{|z|=1}e^z\,dz = 0
+$$
+
+∎
+
+**Example 2: Evaluate $\oint_C \frac{dz}{z-3}$ where $C$ is the unit circle.**
+
+**Solution.** The only singularity is at $z=3$, which is **outside** $|z|=1$. So the integrand is analytic on a disc of radius, say, 2 containing the contour, and that disc is simply connected.
+
+$$
+\oint_C\frac{dz}{z-3} = 0
+$$
+
+∎
+
+**Location of the singularity relative to the contour is the whole question.** Same integrand around $|z|=4$ would give $2\pi i$.
+
+**Example 3: Evaluate $\oint_C\frac{dz}{z}$ where $C$ is the square with vertices $\pm1\pm i$, counterclockwise.**
+
+**Solution.** The integrand is singular only at 0, which is inside. Deform the square to the unit circle — no singularity is crossed during the deformation — and use the standard computation:
+
+$$
+\oint_C\frac{dz}{z} = \oint_{|z|=1}\frac{dz}{z} = 2\pi i
+$$
+
+∎
+
+**Nobody parametrises the square.** Deformation is the point of the theorem.
+
+**Example 4: Evaluate $\oint_C\frac{dz}{z^2-1}$ where $C$ is the circle $|z|=2$.**
+
+**Solution.** Poles at $z = \pm1$, both inside. Split by partial fractions:
+
+$$
+\frac{1}{z^2-1} = \frac{1}{2}\left(\frac{1}{z-1}-\frac{1}{z+1}\right)
+$$
+
+Each term is $2\pi i$ times the winding number, which is 1 for both poles:
+
+$$
+\frac12\left(2\pi i - 2\pi i\right) = 0
+$$
+
+∎
+
+**Zero, but not because Cauchy's theorem applies** — it does not, since there are poles inside. The two contributions cancel, which is a genuinely different reason and worth distinguishing.
+
+**Example 5: Use the multiply connected form.**
+
+$f$ is analytic on the annulus $1<|z|<5$ and $\oint_{|z|=2}f\,dz = 7i$. Find $\oint_{|z|=4}f\,dz$.
+
+**Solution.** The two circles bound an annulus on which $f$ is analytic, so the outer integral equals the inner one:
+
+$$
+\oint_{|z|=4}f\,dz = 7i
+$$
+
+∎
+
+Nothing about $f$ beyond analyticity in the annulus was needed. **The value is a property of the hole, not of the radius.**
+
+**Example 6: Compute a winding number.**
+
+A contour winds three times counterclockwise around $z_0=2$. Evaluate $\oint_C\frac{dz}{z-2}$.
+
+**Solution.** The winding number is 3, so
+
+$$
+\oint_C\frac{dz}{z-2} = 2\pi i\cdot 3 = 6\pi i
+$$
+
+∎
+
+**Example 7: Show path independence explicitly.**
+
+Evaluate $\int_\gamma e^z\,dz$ from 0 to $i\pi$ along (a) the straight segment and (b) a path through 1.
+
+**Solution.** $e^z$ is entire, so we may just use the antiderivative:
+
+$$
+\int_\gamma e^z\,dz = e^{i\pi}-e^0 = -1-1 = -2
+$$
+
+for **both** paths, and indeed for any path from 0 to $i\pi$. ∎
+
+**When Cauchy's theorem applies, the contour is irrelevant** and only the endpoints survive. Compare the $\bar z$ example from last lesson, where no such simplification exists.
+
+## Real-World Applications
+
+**Conservative fields.** A force field derived from a potential does zero net work around any closed loop, and in two dimensions that statement is Cauchy's theorem. Whether a field is conservative is the same question as whether the domain has holes.
+
+**Circulation around obstacles.** The lift on an aerofoil comes from a nonzero circulation integral, which is possible only because the region outside the wing is not simply connected. The topology is doing real physical work here.
+
+**Electromagnetic induction.** The line integral of the electric field around a loop is zero in electrostatics and nonzero when flux changes through the loop. The distinction is exactly the simply-connected hypothesis.
+
+**Numerical contour integration.** Deformation invariance lets an algorithm move a contour onto a circle where the trapezoid rule converges exponentially fast. This is the basis of modern contour-integral methods for eigenvalue problems and matrix functions.
+
+**Winding numbers in algorithms.** Point-in-polygon tests, mesh validity checks, and topological path planning all compute a winding number, which is this lesson's integral evaluated discretely.
+
+**Phase and vortices.** In superconductors and superfluids, the phase change around a loop must be an integer multiple of $2\pi$, giving quantized flux and quantized circulation. That quantization is the winding number being an integer.
+
+:::note[You've Got This]
+Cauchy's theorem is short to state and it is really the Cauchy–Riemann equations integrated over a region, so if lesson 5 made sense this one should feel inevitable. The habit worth forming: before writing anything, locate the singularities and ask which ones the contour encloses. That single question answers most problems in the rest of the section, and it is also the question the winding number makes precise.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="complex-cauchys-theorem"
+  questions={[
+    {
+      id: "q1",
+      text: "What does Cauchy's theorem state?",
+      options: [
+        "Every closed contour integral is zero",
+        "If f is analytic on a simply connected domain, then ∮_C f dz = 0 for every closed contour C in it",
+        "Analytic functions have no singularities",
+        "∮ f dz equals 2πi times f at the centre",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Both hypotheses matter, and simple connectivity is the one usually forgotten. ∮ dz/z = 2πi is analytic on its contour and nonzero precisely because the punctured plane has a hole.",
+    },
+    {
+      id: "q2",
+      text: "Which two ingredients combine to prove Cauchy's theorem?",
+      options: [
+        "The chain rule and the product rule",
+        "Green's theorem and the Cauchy–Riemann equations",
+        "The ML inequality and the triangle inequality",
+        "Liouville's theorem and the maximum modulus principle",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Green's theorem turns the contour integral into a double integral whose two integrands vanish by the Cauchy–Riemann equations. In effect the theorem is those equations integrated over a region.",
+    },
+    {
+      id: "q3",
+      text: "What is ∮_{|z|=1} dz/(z − 3)?",
+      options: ["2πi", "0", "−2πi", "6πi"],
+      correctIndex: 1,
+      explanation:
+        "The pole at 3 lies outside the unit circle, so the integrand is analytic on a simply connected region containing the contour. Around |z| = 4 the same integrand would give 2πi.",
+    },
+    {
+      id: "q4",
+      text: "What does deformation invariance let you do?",
+      options: [
+        "Move a contour across a pole without changing the integral",
+        "Continuously reshape a contour without changing the integral, provided it never crosses a singularity",
+        "Replace f by its derivative",
+        "Ignore orientation",
+      ],
+      correctIndex: 1,
+      explanation:
+        "This is what makes contour integration practical: an awkward square or ellipse can be replaced by a convenient circle. Crossing a singularity is exactly what is forbidden.",
+    },
+    {
+      id: "q5",
+      text: "For a multiply connected region, what replaces Cauchy's theorem?",
+      options: [
+        "Nothing; the theorem simply fails",
+        "The outer contour integral equals the sum of the integrals around the inner contours",
+        "The integral is always 2πi",
+        "The integral equals the area enclosed",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Each hole contributes separately. Shrinking each inner contour to a small circle around its singularity is precisely how the residue theorem arises.",
+    },
+    {
+      id: "q6",
+      text: "What does the winding number n(C, z₀) measure?",
+      options: [
+        "The length of C",
+        "The signed number of times C loops around z₀, computed as (1/2πi)∮ dz/(z − z₀)",
+        "The area enclosed by C",
+        "The number of singularities of f",
+      ],
+      correctIndex: 1,
+      explanation:
+        "It is always an integer: 1 for one counterclockwise loop, −1 for clockwise, 0 if z₀ is outside. An analytic integral returning an integer is the first sign of the link to topology.",
+    },
+    {
+      id: "q7",
+      text: "Why is ∮_{|z|=2} dz/(z² − 1) equal to zero?",
+      options: [
+        "Because Cauchy's theorem applies",
+        "Because the residues at the two enclosed poles are equal and opposite, so the contributions cancel",
+        "Because the integrand is analytic inside",
+        "Because the contour is a circle",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Both poles ±1 lie inside, so Cauchy's theorem does not apply. Partial fractions gives ½(2πi − 2πi) = 0, which is cancellation rather than vanishing.",
+    },
+    {
+      id: "q8",
+      text: "If f is analytic on the annulus 1 < |z| < 5 and ∮_{|z|=2} f dz = 7i, what is ∮_{|z|=4} f dz?",
+      options: ["0", "7i", "14i", "It cannot be determined"],
+      correctIndex: 1,
+      explanation:
+        "The two circles bound a region where f is analytic, so the values agree by the deformation form of the theorem. The value depends on the hole, not the radius.",
+    },
+  ]}
+/>

@@ -1,0 +1,336 @@
+---
+title: Laurent Series
+description: Series with negative powers, valid on annuli, and the coefficient that matters most
+sidebar:
+  order: 12
+---
+
+import Quiz from "../../../components/Quiz.astro";
+import LaurentAnnulus from "../../../components/LaurentAnnulus.astro";
+
+## What You'll Learn
+
+In this lesson you'll extend power series to allow negative exponents, learn that the region of validity is an annulus rather than a disc, see that one function can have several different Laurent series, and meet the coefficient $c_{-1}$ that the rest of the section revolves around.
+
+## The Concept
+
+### The idea
+
+Taylor series need the function to be analytic on a whole disc. That rules out any expansion around a singularity, which is exactly where the interesting behaviour is. Laurent's fix is to allow negative powers and to shrink the region to an annulus that excludes the bad point.
+
+> **Laurent's theorem.** If $f$ is analytic on the annulus $r < |z-z_0| < R$, then
+>
+> $$
+> f(z) = \sum_{n=-\infty}^{\infty}c_n(z-z_0)^n
+> $$
+>
+> converging on that annulus, with
+>
+> $$
+> c_n = \frac{1}{2\pi i}\oint_C\frac{f(z)}{(z-z_0)^{n+1}}\,dz
+> $$
+>
+> for any circle $C$ in the annulus. The expansion is unique.
+
+Notice the coefficient formula is the same one as in Cauchy's integral formula for derivatives, now allowed to run over negative $n$ as well. For $n \ge 0$ and $f$ analytic on the full disc, $c_n = f^{(n)}(z_0)/n!$ and the negative coefficients all vanish, recovering the Taylor series. **Laurent series generalize Taylor series rather than replacing them.**
+
+The two halves have names:
+
+- $\sum_{n\ge0}c_n(z-z_0)^n$ — the **analytic part**, converging for $|z-z_0|<R$
+- $\sum_{n<0}c_n(z-z_0)^n$ — the **principal part**, converging for $|z-z_0|>r$
+
+Both conditions together give the annulus. The principal part is the new object and it is what encodes the singularity.
+
+### One function, several series
+
+Because the region is an annulus and a function can have several, the expansion is not unique to the function — only to the function **together with the annulus**.
+
+<LaurentAnnulus />
+
+Take $f(z) = \frac{1}{(z-1)(z-2)}$ expanded about 0. The poles at 1 and 2 cut the plane into three regions, and each gets its own series:
+
+- $|z|<1$: analytic here, so an ordinary Taylor series with only non-negative powers.
+- $1<|z|<2$: negative powers from the pole at 1, positive powers from the pole at 2.
+- $|z|>2$: both poles are "inside," so only negative powers appear.
+
+The figure computes the middle annulus's coefficients directly from the integral formula on the circle $|z|=1.5$. Using partial fractions, that series should be
+
+$$
+f(z) = -\sum_{k\ge1}z^{-k} - \sum_{k\ge0}\frac{z^k}{2^{k+1}}
+$$
+
+so $c_{-1}=c_{-2}=\cdots=-1$ and $c_k = -1/2^{k+1}$ for $k \ge 0$, giving $c_0=-0.5$ and $c_1=-0.25$. Those are the numbers the figure measures.
+
+**Asking "what is the Laurent series of $f$?" is incomplete.** You must say where.
+
+### How to actually compute one
+
+Almost never from the integral. The three usable techniques:
+
+**Partial fractions plus geometric series.** Split into terms $\frac{A}{z-a}$, then expand each in the form appropriate to the region. Inside, write $\frac{1}{z-a} = -\frac1a\cdot\frac{1}{1-z/a}$ and expand in $z/a$. Outside, write $\frac{1}{z-a} = \frac1z\cdot\frac{1}{1-a/z}$ and expand in $a/z$. **Which factor you pull out is the whole decision**, and it is decided by which quantity is less than 1 in your region.
+
+**Multiply a known series by a power.** For $\frac{\sin z}{z^4}$, take the series for $\sin z$ and divide term by term.
+
+**Substitute into a known series.** For $e^{1/z}$, put $1/z$ into the exponential series to get $\sum_{n\ge0}\frac{z^{-n}}{n!}$, an infinite principal part.
+
+### Why $c_{-1}$ is special
+
+Integrate the series term by term around a circle in the annulus. From lesson 8, $\oint (z-z_0)^n dz = 0$ for every integer $n$ except $n=-1$, where it is $2\pi i$. So every term dies except one:
+
+$$
+\oint_C f(z)\,dz = 2\pi i\,c_{-1}
+$$
+
+**That is the residue theorem in one line.** The number $c_{-1}$ gets the name **residue** of $f$ at $z_0$, and computing contour integrals reduces entirely to finding it. Everything in the next three lessons is about extracting $c_{-1}$ efficiently.
+
+### Classifying singularities by the principal part
+
+The principal part also tells you what kind of singularity you have, which is the subject of the next lesson:
+
+- **No principal part** — removable singularity.
+- **Finitely many terms**, lowest power $(z-z_0)^{-m}$ — pole of order $m$.
+- **Infinitely many terms** — essential singularity.
+
+This is the cleanest of the several equivalent definitions, and it is why Laurent series come before the classification.
+
+## Worked Examples
+
+**Example 1: Find the Laurent series of $\frac{e^z}{z^3}$ about 0.**
+
+**Solution.** Divide the exponential series by $z^3$:
+
+$$
+\frac{1}{z^3}\left(1+z+\frac{z^2}{2}+\frac{z^3}{6}+\frac{z^4}{24}+\cdots\right)
+$$
+
+$$
+= \frac{1}{z^3}+\frac{1}{z^2}+\frac{1}{2z}+\frac16+\frac{z}{24}+\cdots
+$$
+
+Valid on $0<|z|<\infty$. The principal part has three terms, so this is a **pole of order 3**, and
+
+$$
+\operatorname{Res} = c_{-1} = \frac12
+$$
+
+∎
+
+**Example 2: Find the Laurent series of $e^{1/z}$ about 0.**
+
+**Solution.** Substitute $1/z$ into the exponential series:
+
+$$
+e^{1/z} = \sum_{n=0}^{\infty}\frac{1}{n!z^n} = 1+\frac1z+\frac{1}{2z^2}+\frac{1}{6z^3}+\cdots
+$$
+
+Infinitely many negative powers, so this is an **essential singularity**, and $c_{-1}=1$. ∎
+
+**Example 3: Expand $\frac{1}{(z-1)(z-2)}$ on $|z|<1$.**
+
+**Solution.** Partial fractions:
+
+$$
+\frac{1}{(z-1)(z-2)} = \frac{-1}{z-1}+\frac{1}{z-2}
+$$
+
+Here $|z|<1<2$, so expand both in powers of $z$:
+
+$$
+\frac{-1}{z-1} = \frac{1}{1-z} = \sum_{n\ge0}z^n
+$$
+
+$$
+\frac{1}{z-2} = \frac{-1}{2}\cdot\frac{1}{1-z/2} = -\sum_{n\ge0}\frac{z^n}{2^{n+1}}
+$$
+
+$$
+f(z) = \sum_{n\ge0}\left(1-\frac{1}{2^{n+1}}\right)z^n = \frac12 + \frac34z+\frac78z^2+\cdots
+$$
+
+No negative powers, as expected on a disc where $f$ is analytic. ∎
+
+**Example 4: Same function on $1<|z|<2$.**
+
+**Solution.** Now $|1/z|<1$ and $|z/2|<1$, so pull out different factors:
+
+$$
+\frac{-1}{z-1} = \frac{-1}{z}\cdot\frac{1}{1-1/z} = -\sum_{n\ge0}\frac{1}{z^{n+1}}
+$$
+
+$$
+\frac{1}{z-2} = -\sum_{n\ge0}\frac{z^n}{2^{n+1}} \quad\text{(unchanged)}
+$$
+
+$$
+f(z) = -\sum_{n\ge1}z^{-n} - \sum_{n\ge0}\frac{z^n}{2^{n+1}}
+$$
+
+So $c_{-1}=-1$, $c_0=-\frac12$, $c_1=-\frac14$, matching the figure's measured values. ✓
+
+**Same function, same centre, completely different series.**
+
+**Example 5: Same function on $|z|>2$.**
+
+**Solution.** Now both $|1/z|<1$ and $|2/z|<1$:
+
+$$
+\frac{-1}{z-1} = -\sum_{n\ge0}\frac{1}{z^{n+1}}, \qquad \frac{1}{z-2} = \frac1z\cdot\frac{1}{1-2/z} = \sum_{n\ge0}\frac{2^n}{z^{n+1}}
+$$
+
+$$
+f(z) = \sum_{n\ge0}\frac{2^n-1}{z^{n+1}} = \frac{0}{z}+\frac{1}{z^2}+\frac{3}{z^3}+\cdots
+$$
+
+Note $c_{-1}=0$ here, which is consistent: a large circle encloses both poles, whose residues $-1$ and $+1$ cancel, exactly as computed in the Cauchy's theorem lesson. ✓
+
+**Example 6: Find the residue of $\frac{\sin z}{z^4}$ at 0.**
+
+**Solution.**
+
+$$
+\frac{1}{z^4}\left(z-\frac{z^3}{6}+\frac{z^5}{120}-\cdots\right) = \frac{1}{z^3}-\frac{1}{6z}+\frac{z}{120}-\cdots
+$$
+
+The coefficient of $\frac1z$ is $-\frac16$, so
+
+$$
+\operatorname{Res}_{z=0}\frac{\sin z}{z^4} = -\frac16
+$$
+
+∎
+
+Note the pole has order 3, not 4, because $\sin z$ contributes a zero of order 1 at the origin.
+
+**Example 7: Evaluate a contour integral from the series.**
+
+Compute $\displaystyle\oint_{|z|=1}e^{1/z}\,dz$.
+
+**Solution.** From Example 2, $c_{-1}=1$. Integrating the series term by term, only that coefficient survives:
+
+$$
+\oint_{|z|=1}e^{1/z}\,dz = 2\pi i\cdot1 = 2\pi i
+$$
+
+∎
+
+**An essential singularity is no obstacle to integration.** You do not need to understand the singularity, only to read off one coefficient — which is the practical power of Laurent series.
+
+## Real-World Applications
+
+**System response near a resonance.** Expanding a transfer function in a Laurent series about a pole separates the resonant behaviour, which is the principal part, from the smooth background. Engineers use the leading coefficient to characterize a resonance's strength.
+
+**Partial fraction expansion in circuit analysis.** Decomposing a transfer function into pole terms is the first step in inverting a Laplace transform, and each term is a one-term Laurent series about its pole.
+
+**Asymptotic expansions.** Behaviour of a function for large argument is a Laurent series in $1/z$ about infinity, which is how the growth of special functions and the tails of distributions are described.
+
+**Multipole expansions.** In electrostatics and gravitation, the field far from a charge distribution is expanded in inverse powers of distance, with monopole, dipole and quadrupole terms. It is a Laurent series with physical names for the coefficients.
+
+**Digital filter design.** The $z$-transform of a causal filter is a Laurent series, and the region of convergence — an annulus — determines whether the filter is stable and causal. Signal processing texts state stability directly in terms of that annulus.
+
+**Perturbation near a singular limit.** Problems with a small parameter appearing in a denominator are handled by Laurent expansion in that parameter, standard in fluid dynamics and in quantum field theory regularization.
+
+:::note[You've Got This]
+Two things to take from this lesson. First, a Laurent series belongs to a function **and an annulus**, so always say which region you are in; the three-region example is worth working through by hand once. Second, and more important: $\oint f\,dz = 2\pi i\,c_{-1}$. Every contour integral in the rest of the section is an exercise in finding one coefficient. That is a remarkable reduction, and it came from the fact that $z^{-1}$ is the only power whose loop integral survives.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="complex-laurent-series"
+  questions={[
+    {
+      id: "q1",
+      text: "How does a Laurent series differ from a Taylor series?",
+      options: [
+        "It converges faster",
+        "It allows negative powers and is valid on an annulus rather than a disc",
+        "It requires the function to be entire",
+        "It has finitely many terms",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Allowing negative exponents lets you expand around a singularity, with the region shrinking to an annulus that excludes it. Taylor series are the special case where all negative coefficients vanish.",
+    },
+    {
+      id: "q2",
+      text: "What is the principal part of a Laurent series?",
+      options: [
+        "The constant term",
+        "The terms with negative powers",
+        "The terms with positive powers",
+        "The largest term",
+      ],
+      correctIndex: 1,
+      explanation:
+        "It converges outside the inner radius and encodes the singularity. Its shape is exactly what classifies the singularity as removable, a pole, or essential.",
+    },
+    {
+      id: "q3",
+      text: "Why does f(z) = 1/((z − 1)(z − 2)) have three different Laurent series about 0?",
+      options: [
+        "Because the expansion is not unique",
+        "Because the poles at 1 and 2 divide the plane into three annuli, and each has its own unique expansion",
+        "Because the function is multi-valued",
+        "Because the coefficients can be chosen freely",
+      ],
+      correctIndex: 1,
+      explanation:
+        "The expansion is unique for a given annulus, but the function has three annuli of analyticity about 0. Asking for the Laurent series without naming the region is an incomplete question.",
+    },
+    {
+      id: "q4",
+      text: "What is ∮_C f(z) dz in terms of the Laurent coefficients?",
+      options: ["2πi·c₀", "2πi·c₋₁", "2πi·c₁", "0 always"],
+      correctIndex: 1,
+      explanation:
+        "Integrating term by term kills every power except z^(−1), which contributes 2πi. That coefficient is called the residue and it reduces contour integration to reading off one number.",
+    },
+    {
+      id: "q5",
+      text: "What is the Laurent series of e^(1/z) about 0?",
+      options: [
+        "It has no Laurent series",
+        "Σ z^(−n)/n! for n ≥ 0, with infinitely many negative powers",
+        "A finite principal part of three terms",
+        "The same as e^z",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Substituting 1/z into the exponential series gives infinitely many negative powers, which means an essential singularity. Its residue is 1, so ∮ over the unit circle is 2πi.",
+    },
+    {
+      id: "q6",
+      text: "What is the residue of e^z/z³ at 0?",
+      options: ["1", "1/2", "1/6", "0"],
+      correctIndex: 1,
+      explanation:
+        "Dividing the exponential series by z³ gives z^(−3) + z^(−2) + 1/(2z) + ⋯, so the coefficient of 1/z is 1/2. The principal part has three terms, so this is a pole of order 3.",
+    },
+    {
+      id: "q7",
+      text: "When expanding 1/(z − a) in a region where |z| > |a|, which factor should be pulled out?",
+      options: [
+        "1/(−a), expanding in powers of z/a",
+        "1/z, expanding in powers of a/z",
+        "Neither; use the integral formula",
+        "Either works equally",
+      ],
+      correctIndex: 1,
+      explanation:
+        "The geometric series needs its ratio to have modulus below 1, and here that quantity is a/z. Choosing which factor to extract is the entire decision in these computations.",
+    },
+    {
+      id: "q8",
+      text: "How does the principal part classify singularities?",
+      options: [
+        "Empty means a pole, finite means essential",
+        "Empty means removable, finitely many terms means a pole, infinitely many means essential",
+        "It does not classify them",
+        "Only the constant term matters",
+      ],
+      correctIndex: 1,
+      explanation:
+        "The lowest surviving power gives the order of a pole. This is the cleanest of the equivalent definitions, which is why Laurent series precede the classification.",
+    },
+  ]}
+/>

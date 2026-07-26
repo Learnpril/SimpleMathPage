@@ -1,0 +1,564 @@
+---
+title: Complex Analysis Review
+description: Every definition, theorem, technique, and notation from the section in one place
+sidebar:
+  order: 20
+---
+
+import Quiz from "../../../components/Quiz.astro";
+import SymbolKey from "../../../components/SymbolKey.astro";
+import ComplexAnalysisTopicMap from "../../../components/ComplexAnalysisTopicMap.astro";
+
+## What You'll Review
+
+Everything from the section, arranged for lookup: the definitions, the named theorems, the standard maps, the contour recipes, and the notation. Use it as a reference rather than reading straight through.
+
+<ComplexAnalysisTopicMap />
+
+## Notation Reference
+
+<SymbolKey
+  title="Numbers and the plane"
+  items={[
+    {
+      sym: "z = x + iy",
+      read: "a complex number",
+      note: "plotted at the point (x, y)",
+    },
+    {
+      sym: "z̄",
+      read: "the conjugate",
+      note: "reflection across the real axis; its presence blocks analyticity",
+    },
+    {
+      sym: "|z|",
+      read: "the modulus",
+      note: "√(x² + y²); multiplicative, not additive",
+    },
+    {
+      sym: "Arg z",
+      read: "the principal argument",
+      note: "the value in (−π, π]; the capital letter matters",
+    },
+    {
+      sym: "r e^(iθ)",
+      read: "exponential form",
+      note: "makes powers and roots trivial",
+    },
+    {
+      sym: "ℂ̂",
+      read: "the extended plane",
+      note: "ℂ ∪ {∞}, the Riemann sphere",
+    },
+  ]}
+/>
+
+<SymbolKey
+  title="Functions and derivatives"
+  items={[
+    {
+      sym: "f = u + iv",
+      read: "real and imaginary parts",
+      note: "both functions of x and y",
+    },
+    {
+      sym: "uₓ = v_y, u_y = −vₓ",
+      read: "the Cauchy–Riemann equations",
+      note: "necessary always; sufficient with continuous partials",
+    },
+    {
+      sym: "∂f/∂z̄ = 0",
+      read: "f does not depend on z̄",
+      note: "the compact form of the same condition",
+    },
+    {
+      sym: "analytic / holomorphic",
+      read: "differentiable on an open set",
+      note: "the two words are interchangeable",
+    },
+    {
+      sym: "entire",
+      read: "analytic on all of ℂ",
+      note: "polynomials, e^z, sin z, cos z",
+    },
+    {
+      sym: "meromorphic",
+      read: "analytic except for isolated poles",
+      note: "rational functions are the model",
+    },
+  ]}
+/>
+
+<SymbolKey
+  title="Integration and series"
+  items={[
+    {
+      sym: "∮_C",
+      read: "integral around a closed contour",
+      note: "counterclockwise is positive",
+    },
+    {
+      sym: "n(C, z₀)",
+      read: "the winding number",
+      note: "(1/2πi)∮ dz/(z − z₀); always an integer",
+    },
+    {
+      sym: "cₙ",
+      read: "a Laurent coefficient",
+      note: "(1/2πi)∮ f/(z − z₀)ⁿ⁺¹ dz, with n allowed negative",
+    },
+    {
+      sym: "Res f",
+      read: "the residue",
+      note: "the coefficient c₋₁; the only one that survives integration",
+    },
+    {
+      sym: "principal part",
+      read: "the negative-power terms",
+      note: "empty, finite, or infinite classifies the singularity",
+    },
+    {
+      sym: "R",
+      read: "radius of convergence",
+      note: "the distance to the nearest singularity",
+    },
+  ]}
+/>
+
+## The Complex Plane
+
+Arithmetic in polar form is the working skill:
+
+$$
+z_1z_2 = r_1r_2e^{i(\theta_1+\theta_2)}, \qquad z^n = r^ne^{in\theta}
+$$
+
+**Multiply the moduli, add the arguments.** Multiplication by $i$ is a quarter turn.
+
+- $|z_1z_2| = |z_1||z_2|$, but $|z_1+z_2|$ has no formula, only the triangle inequality.
+- $z\bar z = |z|^2$, which is how division is done.
+- $z^n = w$ has exactly $n$ solutions, forming a regular $n$-gon.
+- The $n$th roots of unity sum to 0 and form a cyclic group of order $n$.
+
+Set descriptions: $|z-a|=r$ is a circle, $|z-a|<r$ a disc, $r_1<|z-a|<r_2$ an annulus, $\alpha<\operatorname{Arg}z<\beta$ a sector.
+
+## Analytic Functions
+
+### The condition
+
+Complex differentiability requires the difference quotient's limit to be the same from **every** direction. That forces the Cauchy–Riemann equations, and geometrically it forces the map to be locally a rotation and a uniform scaling.
+
+Fails everywhere: $\bar z$, $|z|$, $\operatorname{Re}z$, $\operatorname{Im}z$. Fails except at one point, hence analytic nowhere: $|z|^2$.
+
+**Analytic** means differentiable on an **open set**, not at a point. Everything below needs the open set.
+
+### What analyticity gives
+
+- Infinite differentiability, and each derivative analytic
+- Equality with the Taylor series on any disc in the domain
+- The identity theorem: agreement on a set with a limit point forces global agreement
+- The maximum modulus principle: no interior maximum of $|f|$
+- Liouville: bounded plus entire implies constant
+- Open mapping, and conformality where $f'\ne0$
+- $u$ and $v$ harmonic, with orthogonal level curves
+
+### Elementary functions
+
+$$
+e^z = e^x(\cos y+i\sin y), \qquad e^{z+2\pi i}=e^z, \qquad e^z \ne 0
+$$
+
+Periodicity is the source of everything awkward. It makes $\log$ multi-valued:
+
+$$
+\log z = \ln|z|+i(\operatorname{Arg}z+2\pi k), \qquad \operatorname{Log}(-1)=i\pi
+$$
+
+which needs a **branch cut**, conventionally the negative real axis. $\operatorname{Log}(z_1z_2) = \operatorname{Log}z_1+\operatorname{Log}z_2$ can fail by $2\pi i$.
+
+$\sin z$ and $\cos z$ are entire and **unbounded**, since $\sin(iy)=i\sinh y$; Liouville requires it. Their zeros stay real. Powers $z^a = e^{a\log z}$ give one value for integer $a$, $q$ values for $a=p/q$, and infinitely many otherwise; $i^i = e^{-\pi/2-2\pi k}$ is always real.
+
+## Integration
+
+$$
+\int_\gamma f\,dz = \int_a^b f(\gamma(t))\gamma'(t)\,dt
+$$
+
+The one computation to memorize:
+
+$$
+\oint_{|z|=1}\frac{dz}{z} = 2\pi i, \qquad \oint_{|z|=1}z^n\,dz = 0 \ (n\ne-1)
+$$
+
+The exponent $-1$ being the sole exception is why residues exist.
+
+**ML inequality:** $\left|\int_\gamma f\right|\le ML$. Used to kill large arcs.
+
+### The Cauchy theorems
+
+| Theorem             | Statement                                                             |
+| ------------------- | --------------------------------------------------------------------- |
+| Cauchy's theorem    | $f$ analytic on a simply connected domain $\Rightarrow \oint_C f = 0$ |
+| Deformation         | Reshaping a contour changes nothing unless it crosses a singularity   |
+| Multiply connected  | An outer contour equals the sum of contours around the holes          |
+| Integral formula    | $f(z_0) = \frac{1}{2\pi i}\oint_C\frac{f(z)}{z-z_0}dz$                |
+| Derivative formula  | $f^{(n)}(z_0) = \frac{n!}{2\pi i}\oint_C\frac{f(z)}{(z-z_0)^{n+1}}dz$ |
+| Mean value property | $f(z_0)$ is the average of $f$ over any circle about it               |
+| Morera              | Vanishing closed integrals plus continuity implies analytic           |
+
+Cauchy's theorem is the Cauchy–Riemann equations integrated, via Green's theorem. The integral formula is where infinite differentiability comes from, and it gives Liouville, then the fundamental theorem of algebra, in a few lines each.
+
+## Series
+
+**Taylor.** Analytic on a disc means equal to the Taylor series there. Over $\mathbb{C}$, _analytic_ and _locally a power series_ coincide, unlike over $\mathbb{R}$.
+
+$$
+R = \text{distance from the centre to the nearest singularity}
+$$
+
+**Laurent.** On an annulus $r<|z-z_0|<R$,
+
+$$
+f(z) = \sum_{n=-\infty}^{\infty}c_n(z-z_0)^n
+$$
+
+unique for that annulus. One function can have several Laurent series about the same centre, one per annulus of analyticity. Compute them with partial fractions plus geometric series, deciding which factor to pull out by which ratio has modulus below 1.
+
+The consequence that matters:
+
+$$
+\oint_C f\,dz = 2\pi i\,c_{-1}
+$$
+
+## Singularities and Residues
+
+| Type              | Limit behaviour                        | Principal part |
+| ----------------- | -------------------------------------- | -------------- |
+| Removable         | $\lim f$ exists (boundedness suffices) | empty          |
+| Pole of order $m$ | $\lvert f\rvert\to\infty$              | $m$ terms      |
+| Essential         | no limit at all                        | infinite       |
+
+For $f=p/q$ with zero orders $a$ and $b$: removable if $a\ge b$, pole of order $b-a$ if $a<b$. **Cancel before classifying.**
+
+Near an essential singularity, **Casorati–Weierstrass** gives a dense image and **Picard** gives every value infinitely often with at most one exception.
+
+Residue formulas:
+
+$$
+\text{simple: } \lim_{z\to z_0}(z-z_0)f(z), \qquad \frac{p(z_0)}{q'(z_0)}
+$$
+
+$$
+\text{order } m: \ \frac{1}{(m-1)!}\lim_{z\to z_0}\frac{d^{m-1}}{dz^{m-1}}\big[(z-z_0)^mf(z)\big]
+$$
+
+Essential singularities have no formula; expand the series.
+
+**Residue theorem:** $\oint_C f = 2\pi i\sum\operatorname{Res}$ over enclosed singularities only.
+
+## Contour Recipes for Real Integrals
+
+| Integral                                                 | Contour                      | Extra tool                                |
+| -------------------------------------------------------- | ---------------------------- | ----------------------------------------- |
+| $\int_{-\infty}^\infty \frac{p}{q}$, $\deg q\ge\deg p+2$ | upper semicircle             | ML on the arc                             |
+| $\int_{-\infty}^\infty f(x)e^{iax}dx$, $a>0$             | upper semicircle             | Jordan's lemma                            |
+| $\int_0^{2\pi}R(\cos\theta,\sin\theta)d\theta$           | unit circle, $z=e^{i\theta}$ | $d\theta = dz/(iz)$                       |
+| $\int_0^\infty$ with $x^n$ symmetry                      | sector of angle $2\pi/n$     | match the symmetry                        |
+| $\int_0^\infty x^{a-1}f(x)dx$                            | keyhole                      | the branch jump                           |
+| pole on the real axis                                    | indented contour             | half-loop gives $\pi i\operatorname{Res}$ |
+
+Reference values: $\int\frac{dx}{1+x^2}=\pi$, $\int\frac{dx}{1+x^4}=\frac{\pi}{\sqrt2}$, $\int\frac{\cos x}{1+x^2}dx=\frac{\pi}{e}$, $\int_0^\infty\frac{\sin x}{x}dx=\frac{\pi}{2}$.
+
+## Mapping and Counting
+
+**Conformal** means angle-preserving, and an analytic $f$ is conformal exactly where $f'\ne0$. At a zero of order $m$ in $f'$, angles are multiplied by $m+1$.
+
+**Möbius maps** $\frac{az+b}{cz+d}$ with $ad-bc\ne0$ are bijections of $\hat{\mathbb{C}}$, form a group, send circles and lines to circles and lines, and are determined by three points.
+
+| Map               | Effect                                 |
+| ----------------- | -------------------------------------- |
+| $az+b$            | similarity                             |
+| $1/z$             | inversion                              |
+| $\frac{z-i}{z+i}$ | upper half plane $\to$ disc            |
+| $z^2$             | quarter plane $\to$ half plane         |
+| $e^z$             | strip of height $\pi$ $\to$ half plane |
+| $z+\frac1z$       | circle $\to$ segment (Joukowski)       |
+
+**Riemann mapping theorem:** every simply connected domain other than $\mathbb{C}$ maps conformally onto the disc. Existence only, no formula.
+
+**Argument principle:** $\frac{1}{2\pi i}\oint\frac{f'}{f} = Z-P$, equal to the winding number of the image around 0.
+
+**Rouché:** $|g|<|f|$ on $C$ implies $f$ and $f+g$ have the same zero count inside. Gives the fundamental theorem of algebra with the exact count.
+
+## Harmonic Functions
+
+$\nabla^2u=0$. The real and imaginary parts of an analytic function are harmonic, and on a simply connected domain every harmonic function has a harmonic conjugate, unique up to a constant. On an annulus $\ln|z|$ shows the conjugate can fail to exist globally.
+
+Inherited properties: mean value, maximum principle, uniqueness from boundary data, infinite smoothness, Liouville.
+
+The **Dirichlet problem** is solved on the disc by the Poisson integral formula and elsewhere by conformal mapping. Level curves of $u$ and $v$ are the equipotentials and field lines, or isotherms and heat flow, or velocity potential and streamlines.
+
+## The Named Theorems
+
+| Theorem                        | Statement                                                     |
+| ------------------------------ | ------------------------------------------------------------- |
+| Cauchy–Riemann                 | $u_x=v_y$ and $u_y=-v_x$ characterize differentiability       |
+| Cauchy's theorem               | $\oint_C f = 0$ on a simply connected domain                  |
+| Cauchy's integral formula      | Boundary values determine interior values                     |
+| Morera                         | Converse of Cauchy's theorem                                  |
+| Liouville                      | Bounded plus entire implies constant                          |
+| Fundamental theorem of algebra | Every non-constant polynomial has a root                      |
+| Maximum modulus                | No interior maximum of $\lvert f\rvert$                       |
+| Identity theorem               | Agreement on a set with a limit point forces global agreement |
+| Taylor                         | Analytic on a disc means equal to the power series            |
+| Laurent                        | Analytic on an annulus means a two-sided series               |
+| Riemann (removable)            | Bounded near a singularity implies removable                  |
+| Casorati–Weierstrass           | Dense image near an essential singularity                     |
+| Picard                         | Every value, infinitely often, at most one exception          |
+| Residue theorem                | $\oint_C f = 2\pi i\sum\operatorname{Res}$                    |
+| Argument principle             | $\frac{1}{2\pi i}\oint\frac{f'}{f}=Z-P$                       |
+| Rouché                         | $\lvert g\rvert<\lvert f\rvert$ preserves the zero count      |
+| Riemann mapping                | Simply connected, not $\mathbb{C}$, maps onto the disc        |
+| Jordan's lemma                 | Oscillatory arcs vanish with only $f\to0$                     |
+
+## Common Mistakes
+
+- **Forgetting simple connectivity** in Cauchy's theorem. $\oint\frac{dz}{z}=2\pi i$ is the standing counterexample.
+- **Confusing $\arg$ with $\operatorname{Arg}$**, or ignoring the quadrant when computing an argument.
+- **Applying $\operatorname{Log}(z_1z_2)=\operatorname{Log}z_1+\operatorname{Log}z_2$** to principal values.
+- **Assuming $\lvert\sin z\rvert\le1$.** True on $\mathbb{R}$ only.
+- **Saying "differentiable at a point" when analyticity is needed.** $\lvert z\rvert^2$ is the reminder.
+- **Not cancelling before classifying a singularity.** $\frac{\sin z}{z^3}$ has a pole of order 2, not 3.
+- **Assuming residue and order are linked.** A high-order pole can have residue 0.
+- **Including residues of poles outside the contour.**
+- **Reading a Laurent series as belonging to a function alone.** It belongs to a function and an annulus.
+- **Forgetting to check the arc vanishes** before equating a real integral with $2\pi i\sum\operatorname{Res}$.
+- **Using a conformal map through a critical point**, where $f'=0$ and angles are not preserved.
+- **Expecting a harmonic conjugate on a region with a hole.**
+
+:::note[You've Got This]
+Look at what this section actually rested on: one condition, that the derivative exists as a complex limit. From it came infinite differentiability, power series, rigidity, a working integral calculus, and a method for real integrals that no real-variable technique reaches. Almost every question in the section is answered by locating singularities and asking which the contour encloses, so if you have that reflex you have the subject. And you now know why $\frac{1}{1+x^2}$ has a Taylor radius of 1, why sine is bounded only on the real line, and why the primes need contour integration — three things that looked like unrelated curiosities and turned out to be the same idea.
+:::
+
+## Section Quiz
+
+<Quiz
+  quizId="complex-analysis-review"
+  questions={[
+    {
+      id: "q1",
+      text: "What makes complex differentiability much stronger than real differentiability?",
+      options: [
+        "It requires boundedness",
+        "The limit must agree along every direction of approach in the plane",
+        "It requires the function to be entire",
+        "It only applies to polynomials",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Infinitely many directions must give the same answer, which forces the Cauchy–Riemann equations. Every strong theorem in the section is a dividend of that one requirement.",
+    },
+    {
+      id: "q2",
+      text: "What is (1 + i)^8 in polar form?",
+      options: ["16", "16i", "−16", "8"],
+      correctIndex: 0,
+      explanation:
+        "The modulus √2 raised to the 8th power is 16, and the argument 8·π/4 = 2π returns to 0. Polar form turns eight binomial expansions into one multiplication.",
+    },
+    {
+      id: "q3",
+      text: "Where is f(z) = |z|² differentiable, and where is it analytic?",
+      options: [
+        "Differentiable and analytic everywhere",
+        "Differentiable only at 0, and analytic nowhere",
+        "Analytic everywhere but not differentiable",
+        "Neither anywhere",
+      ],
+      correctIndex: 1,
+      explanation:
+        "The Cauchy–Riemann equations hold only at the origin, and analyticity needs a whole disc. This is exactly why the definition of analytic requires an open set.",
+    },
+    {
+      id: "q4",
+      text: "What is Log(−i)?",
+      options: ["iπ/2", "−iπ/2", "iπ", "Undefined"],
+      correctIndex: 1,
+      explanation:
+        "The modulus is 1 so the real part is 0, and Arg(−i) = −π/2. Other branches differ by multiples of 2πi.",
+    },
+    {
+      id: "q5",
+      text: "Why is ∮_{|z|=1} dz/z equal to 2πi rather than 0?",
+      options: [
+        "Because 1/z is not analytic on the contour",
+        "Because the punctured plane is not simply connected, so 1/z has no single-valued antiderivative there",
+        "Because the contour is not smooth",
+        "Because the modulus is 1",
+      ],
+      correctIndex: 1,
+      explanation:
+        "The obstruction is topological: log z gains 2πi per loop. This single computation is where every 2πi in the section comes from.",
+    },
+    {
+      id: "q6",
+      text: "What is ∮_{|z|=2} e^z/(z − 1) dz?",
+      options: ["0", "2πie", "2πi", "πie"],
+      correctIndex: 1,
+      explanation:
+        "Cauchy's integral formula with f = e^z and z₀ = 1, which is inside the contour, gives 2πi·e¹. Around |z| = ½ the answer would be 0 instead.",
+    },
+    {
+      id: "q7",
+      text: "Why does e^z fail to be injective on ℂ?",
+      options: [
+        "Because it has a zero",
+        "Because it is periodic with period 2πi",
+        "Because it is unbounded",
+        "It is injective",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Periodicity makes it infinitely many-to-one, which is what forces the logarithm to be multi-valued and to need a branch cut.",
+    },
+    {
+      id: "q8",
+      text: "What is the radius of convergence of the Taylor series of 1/(z² + 9) about 0?",
+      options: ["3", "9", "1", "∞"],
+      correctIndex: 0,
+      explanation:
+        "The poles are at ±3i, both at distance 3 from the origin. The radius is always the distance to the nearest singularity.",
+    },
+    {
+      id: "q9",
+      text: "How many Laurent series does 1/((z − 1)(z − 3)) have about 0?",
+      options: [
+        "One",
+        "Two",
+        "Three, one for each annulus of analyticity",
+        "Infinitely many",
+      ],
+      correctIndex: 2,
+      explanation:
+        "The regions are |z| < 1, 1 < |z| < 3, and |z| > 3. The expansion is unique for each annulus but not for the function alone.",
+    },
+    {
+      id: "q10",
+      text: "What kind of singularity does sin z / z⁴ have at 0?",
+      options: ["Removable", "Pole of order 3", "Pole of order 4", "Essential"],
+      correctIndex: 1,
+      explanation:
+        "The numerator has a simple zero, so the order is 4 − 1 = 3. Failing to cancel is the standard error in these classifications.",
+    },
+    {
+      id: "q11",
+      text: "What is the residue of 1/(z² + 1) at z = i?",
+      options: ["1/2", "1/(2i)", "i", "0"],
+      correctIndex: 1,
+      explanation:
+        "Using p/q′ with q = z² + 1 gives 1/(2i). Adding the residue at −i gives zero, which is why the integral around a large circle vanishes.",
+    },
+    {
+      id: "q12",
+      text: "What is ∫_{−∞}^{∞} dx/(1 + x⁴)?",
+      options: ["π", "π/√2", "π/2", "2π"],
+      correctIndex: 1,
+      explanation:
+        "The two poles in the upper half plane have residues summing to −i√2/4, and 2πi times that gives π/√2. The arc vanishes because the denominator has two more degrees than the numerator.",
+    },
+    {
+      id: "q13",
+      text: "What does Jordan's lemma add to the ML inequality?",
+      options: [
+        "It bounds the residue",
+        "For integrands with a factor e^(iaz), a > 0, only f → 0 is needed for the upper arc to vanish",
+        "It computes the integral exactly",
+        "It applies only to polynomials",
+      ],
+      correctIndex: 1,
+      explanation:
+        "The factor |e^(iaz)| = e^(−a Im z) is exponentially small over most of the upper arc, buying a full degree of decay. The sign of a decides the half plane.",
+    },
+    {
+      id: "q14",
+      text: "Where is an analytic function conformal?",
+      options: [
+        "Everywhere it is defined",
+        "Exactly where f′ ≠ 0",
+        "Only on the unit disc",
+        "Only where f is injective",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Locally the map acts as multiplication by f′, a rotation and a scaling. Where f′ vanishes angles are multiplied instead, as z² does at the origin.",
+    },
+    {
+      id: "q15",
+      text: "What is the key property of Möbius transformations?",
+      options: [
+        "They preserve area",
+        "They map circles and lines to circles and lines, and three points determine one uniquely",
+        "They fix the origin",
+        "They are their own inverses",
+      ],
+      correctIndex: 1,
+      explanation:
+        "On the Riemann sphere a line is a circle through ∞, so the rule is simply circles to circles. Specifying three boundary points and their images is the standard construction.",
+    },
+    {
+      id: "q16",
+      text: "How many zeros does z⁵ + 3z + 1 have in |z| < 1?",
+      options: ["0", "1", "5", "3"],
+      correctIndex: 1,
+      explanation:
+        "Rouché with f = 3z and g = z⁵ + 1 works since |3z| = 3 > |z⁵ + 1| ≤ 2 on the circle. On |z| = 1 the coefficients rather than the degrees decide dominance.",
+    },
+    {
+      id: "q17",
+      text: "What does the argument principle count?",
+      options: [
+        "The number of critical points",
+        "Z − P inside the contour, equal to the winding number of the image around the origin",
+        "The residue sum",
+        "The length of the image curve",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Zeros make the image loop forwards and poles backwards, with multiplicity counted automatically. It is the mathematics behind the Nyquist stability criterion.",
+    },
+    {
+      id: "q18",
+      text: "Which function is harmonic?",
+      options: ["x² + y²", "x² − y²", "|z|", "e^(x²)"],
+      correctIndex: 1,
+      explanation:
+        "x² − y² is the real part of z², and its second partials are 2 and −2, summing to zero. For x² + y² the Laplacian is 4.",
+    },
+    {
+      id: "q19",
+      text: "For a continuous-time system, what does a pole at s = −2 + 3i produce?",
+      options: [
+        "Growth at 2 per second",
+        "A damped oscillation decaying like e^(−2t) and ringing at 3 rad/s",
+        "A pure constant",
+        "Instability",
+      ],
+      correctIndex: 1,
+      explanation:
+        "The real part gives the decay envelope and the imaginary part the frequency. Since the real part is negative the mode decays, so this pole is stable.",
+    },
+    {
+      id: "q20",
+      text: "Why can a bounded entire function only be constant?",
+      options: [
+        "Because entire functions are polynomials",
+        "By Liouville's theorem, proved from the derivative formula by letting the circle's radius grow",
+        "Because |f| has no interior maximum",
+        "It can be non-constant",
+      ],
+      correctIndex: 1,
+      explanation:
+        "The bound |f′(z₀)| ≤ M/R goes to zero as R grows, forcing f′ ≡ 0. It also yields the fundamental theorem of algebra in three more lines.",
+    },
+  ]}
+/>

@@ -1,0 +1,127 @@
+---
+/**
+ * SquareMapping — the map w = z² shown as a picture of two planes. A polar grid
+ * sector in the z-plane is carried to the w-plane by squaring each sampled
+ * point, so the image curves are computed rather than drawn by hand. The
+ * doubling of the sector angle is measured from the sampled image.
+ */
+const w = 540;
+const h = 312;
+
+const planeTop = 74;
+const planeBottom = 214;
+
+// z-plane: a sector of the annulus, 0 ≤ θ ≤ 45°, 0.35 ≤ r ≤ 1.15
+const thLo = 0;
+const thHi = Math.PI / 4;
+const rLo = 0.35;
+const rHi = 1.15;
+
+const zc = { x: 128, y: 190 }; // origin of the z-plane, scaled to fit the sector
+const zu = 118;
+const wc = { x: 366, y: 190 }; // origin of the w-plane
+const wu = 100;
+
+const zx = (re: number) => zc.x + re * zu;
+const zy = (im: number) => zc.y - im * zu;
+const wx = (re: number) => wc.x + re * wu;
+const wy = (im: number) => wc.y - im * wu;
+
+/** Square a complex number given in polar form, returning polar form. */
+const sq = (r: number, t: number) => ({ r: r * r, t: 2 * t });
+
+/** An arc of constant r in the z-plane, and its image under squaring. */
+function arcPair(r: number) {
+  const src: string[] = [];
+  const img: string[] = [];
+  for (let i = 0; i <= 40; i++) {
+    const t = thLo + (i / 40) * (thHi - thLo);
+    src.push(`${zx(r * Math.cos(t)).toFixed(1)},${zy(r * Math.sin(t)).toFixed(1)}`);
+    const s = sq(r, t);
+    img.push(`${wx(s.r * Math.cos(s.t)).toFixed(1)},${wy(s.r * Math.sin(s.t)).toFixed(1)}`);
+  }
+  return { src: src.join(" "), img: img.join(" ") };
+}
+
+/** A ray of constant θ in the z-plane, and its image under squaring. */
+function rayPair(t: number) {
+  const src: string[] = [];
+  const img: string[] = [];
+  for (let i = 0; i <= 24; i++) {
+    const r = rLo + (i / 24) * (rHi - rLo);
+    src.push(`${zx(r * Math.cos(t)).toFixed(1)},${zy(r * Math.sin(t)).toFixed(1)}`);
+    const s = sq(r, t);
+    img.push(`${wx(s.r * Math.cos(s.t)).toFixed(1)},${wy(s.r * Math.sin(s.t)).toFixed(1)}`);
+  }
+  return { src: src.join(" "), img: img.join(" ") };
+}
+
+const arcs = [0.35, 0.6, 0.85, 1.15].map(arcPair);
+const rays = [0, Math.PI / 12, Math.PI / 6, Math.PI / 4].map(rayPair);
+
+// Measured, not asserted: the opening angle of the source and of the image
+const srcAngle = ((thHi - thLo) * 180) / Math.PI;
+const imgAngle = ((2 * thHi - 2 * thLo) * 180) / Math.PI;
+const srcRadii = `${rLo} to ${rHi}`;
+const imgRadii = `${(rLo * rLo).toFixed(2)} to ${(rHi * rHi).toFixed(2)}`;
+---
+
+<figure
+  class="sqm"
+  role="img"
+  aria-label={`Two copies of the complex plane. A sector opening ${srcAngle} degrees with radii from ${srcRadii} in the z-plane is carried by squaring to a sector opening ${imgAngle} degrees with radii from ${imgRadii}. Arguments double and moduli are squared, so the wedge opens twice as wide.`}
+>
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    <text x="16" y="20" class="sqm-head" font-size="12.5" font-weight="bold">w = z² doubles every angle</text>
+    <text x="16" y="38" class="sqm-sub" font-size="10.5">A complex function is a map between two planes, not a graph</text>
+
+    <line x1="252" y1="52" x2="252" y2="232" class="sqm-divide" />
+
+    {/* ---------- z-plane ---------- */}
+    <text x="128" y="62" class="sqm-panel" font-size="10" text-anchor="middle">z-plane</text>
+    <line x1={zc.x - 10} y1={zc.y} x2={zc.x + 116} y2={zc.y} class="sqm-axis" />
+    <line x1={zc.x} y1={zc.y + 10} x2={zc.x} y2={planeTop + 4} class="sqm-axis" />
+    {arcs.map((p) => <polyline points={p.src} class="sqm-arc" fill="none" />)}
+    {rays.map((p) => <polyline points={p.src} class="sqm-ray" fill="none" />)}
+
+    {/* ---------- w-plane ---------- */}
+    <text x={wc.x + 62} y="62" class="sqm-panel" font-size="10" text-anchor="middle">w-plane</text>
+    <line x1={wc.x - 10} y1={wc.y} x2={wc.x + 152} y2={wc.y} class="sqm-axis" />
+    <line x1={wc.x} y1={wc.y + 10} x2={wc.x} y2={planeTop + 4} class="sqm-axis" />
+    {arcs.map((p) => <polyline points={p.img} class="sqm-arc" fill="none" />)}
+    {rays.map((p) => <polyline points={p.img} class="sqm-ray" fill="none" />)}
+
+    <text x="128" y="238" class="sqm-val" font-size="9.5" text-anchor="middle">{`opens ${srcAngle.toFixed(0)}°,  r from ${srcRadii}`}</text>
+    <text x={wc.x + 62} y="238" class="sqm-val" font-size="9.5" text-anchor="middle">{`opens ${imgAngle.toFixed(0)}°,  r from ${imgRadii}`}</text>
+
+    <text x={w / 2} y="266" class="sqm-foot" font-size="10.5" text-anchor="middle">
+      z = re^(iθ) ⟼ r²e^(2iθ): moduli square, arguments double
+    </text>
+    <text x={w / 2} y="286" class="sqm-sub2" font-size="9.5" text-anchor="middle">
+      Right angles between the arcs and rays survive the map — squaring is conformal away from 0
+    </text>
+    <text x={w / 2} y="302" class="sqm-sub2" font-size="9.5" text-anchor="middle">
+      At z = 0 the derivative vanishes and angles are not preserved; that is the one exception
+    </text>
+  </svg>
+</figure>
+
+<style>
+  .sqm { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .sqm svg { width:100%; max-width:100%; height:auto; }
+  .sqm-axis { stroke:#888; stroke-width:1.3; }
+  .sqm-divide { stroke:#3a3a3a; stroke-width:1; }
+  .sqm-arc { stroke:#58a6ff; stroke-width:1.7; }
+  .sqm-ray { stroke:#f0883e; stroke-width:1.7; }
+  .sqm-val { fill:#9198a1; font-family:'Libre Baskerville',Georgia,serif; }
+  .sqm-panel, .sqm-head { fill:#eee; font-family:'Libre Baskerville',Georgia,serif; }
+  .sqm-sub, .sqm-sub2 { fill:#9198a1; font-family:'Libre Baskerville',Georgia,serif; font-style:italic; }
+  .sqm-foot { fill:#58a6ff; font-family:'Libre Baskerville',Georgia,serif; }
+  :global([data-theme="light"]) .sqm-axis { stroke:#666; }
+  :global([data-theme="light"]) .sqm-divide { stroke:#d0d7de; }
+  :global([data-theme="light"]) .sqm-arc { stroke:#0550ae; }
+  :global([data-theme="light"]) .sqm-foot { fill:#0550ae; }
+  :global([data-theme="light"]) .sqm-ray { stroke:#b35900; }
+  :global([data-theme="light"]) .sqm-panel, :global([data-theme="light"]) .sqm-head { fill:#24292f; }
+  :global([data-theme="light"]) :is(.sqm-val, .sqm-sub, .sqm-sub2) { fill:#57606a; }
+</style>

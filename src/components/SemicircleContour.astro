@@ -1,0 +1,143 @@
+---
+/**
+ * SemicircleContour — the standard closing argument for a real integral. The
+ * residue prediction is computed from the poles in the upper half plane, the real
+ * integral is computed independently by numerical quadrature, and the ML bound on
+ * the arc is evaluated at two radii to show it dies.
+ */
+const w = 540;
+const h = 306;
+
+const ox = 140;
+const oy = 190;
+const unit = 46;
+const px = (re: number) => ox + re * unit;
+const py = (im: number) => oy - im * unit;
+
+type C = { re: number; im: number };
+
+// f(z) = 1/(1 + z⁴): poles are the fourth roots of −1
+const poles = [1, 3, 5, 7].map((k) => {
+  const t = (k * Math.PI) / 4;
+  return { re: Math.cos(t), im: Math.sin(t), upper: Math.sin(t) > 0 };
+});
+
+/** For a simple pole of 1/q, Res = 1/q′ = 1/(4z³) = −z/4, since z⁴ = −1. */
+const residue = (z: C): C => ({ re: -z.re / 4, im: -z.im / 4 });
+const upper = poles.filter((p) => p.upper);
+const sumRes = upper.reduce(
+  (s, p) => {
+    const r = residue(p);
+    return { re: s.re + r.re, im: s.im + r.im };
+  },
+  { re: 0, im: 0 },
+);
+// 2πi × sum: multiplying by i turns (a + bi) into (−b + ai)
+const predicted = 2 * Math.PI * -sumRes.im;
+
+/** ∫_{−∞}^{∞} dx/(1+x⁴) by the substitution x = tan u, midpoint rule. */
+function quadrature(n = 400000) {
+  let s = 0;
+  const a = -Math.PI / 2;
+  const b = Math.PI / 2;
+  const dU = (b - a) / n;
+  for (let i = 0; i < n; i++) {
+    const u = a + (i + 0.5) * dU;
+    const x = Math.tan(u);
+    const sec2 = 1 / (Math.cos(u) * Math.cos(u));
+    s += (sec2 / (1 + x * x * x * x)) * dU;
+  }
+  return s;
+}
+const measured = quadrature();
+
+const arcBound = (R: number) => (Math.PI * R) / (R ** 4 - 1);
+
+const Rdraw = 1.7;
+const arc = Array.from({ length: 61 }, (_, i) => {
+  const t = (i / 60) * Math.PI;
+  return `${px(Rdraw * Math.cos(t)).toFixed(1)},${py(Rdraw * Math.sin(t)).toFixed(1)}`;
+}).join(" ");
+---
+
+<figure
+  class="smc"
+  role="img"
+  aria-label={`A semicircular contour in the upper half plane enclosing the two poles of one over one plus z to the fourth that lie there. The residue calculation predicts ${predicted.toFixed(4)}, numerical quadrature of the real integral gives ${measured.toFixed(4)}, and the bound on the arc falls from ${arcBound(10).toExponential(1)} at radius 10 to ${arcBound(100).toExponential(1)} at radius 100.`}
+>
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    <text x="16" y="20" class="smc-head" font-size="12.5" font-weight="bold">Close the real line into a loop</text>
+    <text x="16" y="38" class="smc-sub" font-size="10.5">∫ dx ⁄ (1 + x⁴) over all of ℝ, by residues in the upper half plane</text>
+
+    <line x1="256" y1="52" x2="256" y2="244" class="smc-divide" />
+
+    {/* ---------- the contour ---------- */}
+    <text x={ox} y="70" class="smc-panel" font-size="10" text-anchor="middle">the contour, and the poles</text>
+    <line x1={px(-1.95)} y1={oy} x2={px(1.95)} y2={oy} class="smc-axis" />
+    <line x1={ox} y1={py(2.05)} x2={ox} y2={py(-0.95)} class="smc-axis" />
+
+    <polyline points={arc} class="smc-contour" fill="none" />
+    <line x1={px(-Rdraw)} y1={oy} x2={px(Rdraw)} y2={oy} class="smc-contour" />
+    <polygon points={`${px(0.1)},${oy - 4.6} ${px(0.32)},${oy} ${px(0.1)},${oy + 4.6}`} class="smc-arrow" />
+
+    {poles.map((p) => (
+      <g>
+        <line x1={px(p.re) - 5} y1={py(p.im) - 5} x2={px(p.re) + 5} y2={py(p.im) + 5} class={`smc-pole smc-${p.upper ? "in" : "out"}`} />
+        <line x1={px(p.re) - 5} y1={py(p.im) + 5} x2={px(p.re) + 5} y2={py(p.im) - 5} class={`smc-pole smc-${p.upper ? "in" : "out"}`} />
+      </g>
+    ))}
+
+    <text x={ox} y="248" class="smc-out-lbl" font-size="9.5" text-anchor="middle">two poles below, both excluded</text>
+
+    {/* ---------- the arithmetic ---------- */}
+    <text x="274" y="70" class="smc-panel" font-size="10" text-anchor="start">the two enclosed poles</text>
+    {upper.map((p, i) => (
+      <text x="274" y={92 + i * 18} class="smc-row" font-size="9.5" text-anchor="start">
+        {`z = e^(i${i === 0 ? "π/4" : "3π/4"}),  Res = ${residue(p).re.toFixed(4)} ${residue(p).im < 0 ? "−" : "+"} ${Math.abs(residue(p).im).toFixed(4)}i`}
+      </text>
+    ))}
+    <text x="274" y="140" class="smc-in-lbl" font-size="9.5" text-anchor="start">{`2πi × Σ Res = ${predicted.toFixed(4)}`}</text>
+    <text x="274" y="160" class="smc-in-lbl" font-size="9.5" text-anchor="start">{`quadrature   = ${measured.toFixed(4)}`}</text>
+    <text x="274" y="180" class="smc-row" font-size="9.5" text-anchor="start">{`π ⁄ √2        = ${(Math.PI / Math.SQRT2).toFixed(4)}`}</text>
+
+    <text x="274" y="208" class="smc-panel" font-size="10" text-anchor="start">the arc contributes nothing</text>
+    <text x="274" y="228" class="smc-row" font-size="9.5" text-anchor="start">{`ML bound: ${arcBound(10).toExponential(1)} at R = 10`}</text>
+    <text x="274" y="244" class="smc-row" font-size="9.5" text-anchor="start">{`          ${arcBound(100).toExponential(1)} at R = 100`}</text>
+
+    <text x={w / 2} y="272" class="smc-foot" font-size="10.5" text-anchor="middle">
+      Segment + arc = 2πi Σ Res, and the arc → 0, so the segment carries all of it
+    </text>
+    <text x={w / 2} y="292" class="smc-sub2" font-size="9.5" text-anchor="middle">
+      Three independent routes to the same number, and no antiderivative anywhere in sight
+    </text>
+  </svg>
+</figure>
+
+<style>
+  .smc { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .smc svg { width:100%; max-width:100%; height:auto; }
+  .smc-axis { stroke:#888; stroke-width:1.3; }
+  .smc-divide { stroke:#3a3a3a; stroke-width:1; }
+  .smc-contour { stroke:#58a6ff; stroke-width:2.4; fill:none; }
+  .smc-arrow { fill:#58a6ff; }
+  .smc-pole { stroke-width:2.4; }
+  .smc-in { stroke:#7ee787; }
+  .smc-out { stroke:#ff7b72; }
+  .smc-in-lbl { fill:#7ee787; font-family:'Libre Baskerville',Georgia,serif; }
+  .smc-out-lbl { fill:#ff7b72; font-family:'Libre Baskerville',Georgia,serif; }
+  .smc-row { fill:#9198a1; font-family:'Libre Baskerville',Georgia,serif; }
+  .smc-panel, .smc-head { fill:#eee; font-family:'Libre Baskerville',Georgia,serif; }
+  .smc-sub, .smc-sub2 { fill:#9198a1; font-family:'Libre Baskerville',Georgia,serif; font-style:italic; }
+  .smc-foot { fill:#58a6ff; font-family:'Libre Baskerville',Georgia,serif; }
+  :global([data-theme="light"]) .smc-axis { stroke:#666; }
+  :global([data-theme="light"]) .smc-divide { stroke:#d0d7de; }
+  :global([data-theme="light"]) .smc-contour { stroke:#0550ae; }
+  :global([data-theme="light"]) .smc-arrow { fill:#0550ae; }
+  :global([data-theme="light"]) .smc-foot { fill:#0550ae; }
+  :global([data-theme="light"]) .smc-in { stroke:#116329; }
+  :global([data-theme="light"]) .smc-in-lbl { fill:#116329; }
+  :global([data-theme="light"]) .smc-out { stroke:#a40e26; }
+  :global([data-theme="light"]) .smc-out-lbl { fill:#a40e26; }
+  :global([data-theme="light"]) .smc-panel, :global([data-theme="light"]) .smc-head { fill:#24292f; }
+  :global([data-theme="light"]) :is(.smc-row, .smc-sub, .smc-sub2) { fill:#57606a; }
+</style>
