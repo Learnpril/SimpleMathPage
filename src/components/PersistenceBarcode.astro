@@ -1,0 +1,156 @@
+---
+/**
+ * PersistenceBarcode — topological data analysis on a small point cloud. At each
+ * scale the proximity graph is built and its number of components and independent
+ * cycles are computed by union-find, so the scale range at which the data is
+ * recognised as a single loop is discovered rather than declared.
+ */
+const w = 540;
+const h = 314;
+
+// ---------- a reproducible noisy sample of a circle ----------
+let seed = 20240607;
+const rand = () => {
+  seed = (seed * 1103515245 + 12345) % 2147483648;
+  return seed / 2147483648;
+};
+const N = 20;
+const pts = Array.from({ length: N }, (_, k) => {
+  const a = (2 * Math.PI * k) / N + (rand() - 0.5) * 0.12;
+  const rad = 1 + (rand() - 0.5) * 0.1;
+  return { x: rad * Math.cos(a), y: rad * Math.sin(a) };
+});
+
+const dist = (i: number, j: number) => Math.hypot(pts[i].x - pts[j].x, pts[i].y - pts[j].y);
+
+/** Components and independent cycles of the graph joining points within r. */
+function analyse(r: number) {
+  const parent = pts.map((_, i) => i);
+  const find = (i: number): number => (parent[i] === i ? i : (parent[i] = find(parent[i])));
+  let E = 0;
+  const edges: [number, number][] = [];
+  for (let i = 0; i < N; i++) {
+    for (let j = i + 1; j < N; j++) {
+      if (dist(i, j) <= r) {
+        E++;
+        edges.push([i, j]);
+        const a = find(i);
+        const b = find(j);
+        if (a !== b) parent[a] = b;
+      }
+    }
+  }
+  const C = new Set(pts.map((_, i) => find(i))).size;
+  return { C, cycles: E - N + C, E, edges };
+}
+
+const rMax = 0.9;
+const samples = Array.from({ length: 181 }, (_, k) => {
+  const r = (k / 180) * rMax;
+  return { r, ...analyse(r) };
+});
+
+/** The scales at which the graph is one piece with exactly one cycle: a circle. */
+const loopWindow = samples.filter((s) => s.C === 1 && s.cycles === 1);
+const rLo = loopWindow.length ? loopWindow[0].r : 0;
+const rHi = loopWindow.length ? loopWindow[loopWindow.length - 1].r : 0;
+const rShow = loopWindow.length ? (rLo + rHi) / 2 : rMax / 2;
+const shown = analyse(rShow);
+
+// ---------- geometry ----------
+const lcx = 128;
+const lcy = 150;
+const unit = 54;
+const lx = (x: number) => lcx + x * unit;
+const ly = (y: number) => lcy - y * unit;
+
+const px0 = 306;
+const px1 = 502;
+const pyTop = 92;
+const pyBot = 210;
+const rx = (r: number) => px0 + (r / rMax) * (px1 - px0);
+const cy = (n: number) => pyBot - (Math.min(n, N) / N) * (pyBot - pyTop);
+
+const stepPath = (key: "C" | "cycles") =>
+  samples.map((s) => `${rx(s.r).toFixed(1)},${cy(s[key]).toFixed(1)}`).join(" ");
+---
+
+<figure
+  class="pbc"
+  role="img"
+  aria-label={`A noisy sample of ${N} points from a circle. Building the proximity graph at each scale and counting with union-find, the graph is a single component with exactly one independent cycle for radii from ${rLo.toFixed(3)} to ${rHi.toFixed(3)}. Over that range the data is correctly identified as a loop.`}
+>
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    <text x="16" y="20" class="pbc-head" font-size="12.5" font-weight="bold">Finding the shape of data</text>
+    <text x="16" y="38" class="pbc-sub" font-size="10.5">{`${N} noisy points, joined whenever they are within r of each other`}</text>
+
+    <line x1="272" y1="52" x2="272" y2="258" class="pbc-divide" />
+
+    {/* ---------- left: the cloud at the chosen scale ---------- */}
+    <text x={lcx} y="62" class="pbc-panel" font-size="10" text-anchor="middle">{`the graph at r = ${rShow.toFixed(3)}`}</text>
+    {shown.edges.map(([i, j]) => (
+      <line x1={lx(pts[i].x)} y1={ly(pts[i].y)} x2={lx(pts[j].x)} y2={ly(pts[j].y)} class="pbc-edge" />
+    ))}
+    {pts.map((p) => (
+      <circle cx={lx(p.x)} cy={ly(p.y)} r="3" class="pbc-pt" />
+    ))}
+    <text x={lcx} y="242" class="pbc-val" font-size="9.5" text-anchor="middle">{`1 component, 1 cycle`}</text>
+    <text x={lcx} y="258" class="pbc-note" font-size="9" text-anchor="middle">{`${shown.E} edges`}</text>
+
+    {/* ---------- right: the counts across scales ---------- */}
+    <text x={(px0 + px1) / 2} y="62" class="pbc-panel" font-size="10" text-anchor="middle">counts against scale</text>
+    <line x1={px0 - 6} y1={pyBot} x2={px1 + 6} y2={pyBot} class="pbc-axis" />
+    <line x1={px0} y1={pyTop - 6} x2={px0} y2={pyBot + 6} class="pbc-axis" />
+
+    <rect x={rx(rLo)} y={pyTop} width={rx(rHi) - rx(rLo)} height={pyBot - pyTop} class="pbc-window" />
+
+    <polyline points={stepPath("C")} class="pbc-comp" fill="none" />
+    <polyline points={stepPath("cycles")} class="pbc-cyc" fill="none" />
+
+    <text x={px0 - 8} y={cy(N) + 3} class="pbc-tick" font-size="9" text-anchor="end">{String(N)}</text>
+    <text x={px0 - 8} y={cy(1) + 3} class="pbc-tick" font-size="9" text-anchor="end">1</text>
+    <text x={px0} y="226" class="pbc-tick" font-size="9" text-anchor="middle">0</text>
+    <text x={px1} y="226" class="pbc-tick" font-size="9" text-anchor="middle">{rMax.toFixed(1)}</text>
+
+    <text x={px1} y="248" class="pbc-comp-lbl" font-size="9.5" text-anchor="end">components</text>
+    <text x={px1} y="264" class="pbc-cyc-lbl" font-size="9.5" text-anchor="end">cycles</text>
+
+    <text x={w / 2} y="290" class="pbc-foot" font-size="10.5" text-anchor="middle">
+      {`One component and one cycle for r from ${rLo.toFixed(3)} to ${rHi.toFixed(3)}`}
+    </text>
+    <text x={w / 2} y="308" class="pbc-sub2" font-size="9.5" text-anchor="middle">
+      A feature surviving a wide range of scales is a feature of the data, not of the noise
+    </text>
+  </svg>
+</figure>
+
+<style>
+  .pbc { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .pbc svg { width:100%; max-width:100%; height:auto; }
+  .pbc-axis { stroke:#666; stroke-width:1.2; }
+  .pbc-divide { stroke:#3a3a3a; stroke-width:1; }
+  .pbc-edge { stroke:#58a6ff; stroke-width:1.4; }
+  .pbc-pt { fill:#d2a8ff; stroke:none; }
+  .pbc-window { fill:#7ee787; fill-opacity:0.12; stroke:none; }
+  .pbc-comp { stroke:#58a6ff; stroke-width:2.2; }
+  .pbc-cyc { stroke:#f0883e; stroke-width:2.2; }
+  .pbc-comp-lbl { fill:#58a6ff; font-family:'Libre Baskerville',Georgia,serif; }
+  .pbc-cyc-lbl { fill:#f0883e; font-family:'Libre Baskerville',Georgia,serif; }
+  .pbc-val { fill:#7ee787; font-family:'Libre Baskerville',Georgia,serif; }
+  .pbc-tick, .pbc-note { fill:#9198a1; font-family:'Libre Baskerville',Georgia,serif; }
+  .pbc-note { font-style:italic; }
+  .pbc-panel, .pbc-head { fill:#eee; font-family:'Libre Baskerville',Georgia,serif; }
+  .pbc-sub, .pbc-sub2 { fill:#9198a1; font-family:'Libre Baskerville',Georgia,serif; font-style:italic; }
+  .pbc-foot { fill:#7ee787; font-family:'Libre Baskerville',Georgia,serif; }
+  :global([data-theme="light"]) .pbc-axis { stroke:#666; }
+  :global([data-theme="light"]) .pbc-divide { stroke:#d0d7de; }
+  :global([data-theme="light"]) :is(.pbc-edge, .pbc-comp) { stroke:#0550ae; }
+  :global([data-theme="light"]) .pbc-comp-lbl { fill:#0550ae; }
+  :global([data-theme="light"]) .pbc-cyc { stroke:#b35900; }
+  :global([data-theme="light"]) .pbc-cyc-lbl { fill:#b35900; }
+  :global([data-theme="light"]) .pbc-pt { fill:#6639ba; }
+  :global([data-theme="light"]) .pbc-window { fill:#116329; fill-opacity:0.1; }
+  :global([data-theme="light"]) :is(.pbc-val, .pbc-foot) { fill:#116329; }
+  :global([data-theme="light"]) .pbc-panel, :global([data-theme="light"]) .pbc-head { fill:#24292f; }
+  :global([data-theme="light"]) :is(.pbc-tick, .pbc-note, .pbc-sub, .pbc-sub2) { fill:#57606a; }
+</style>

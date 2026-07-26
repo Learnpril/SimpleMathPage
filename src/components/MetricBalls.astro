@@ -1,0 +1,133 @@
+---
+/**
+ * MetricBalls — the unit ball of three different metrics on the plane. Each
+ * boundary is traced by solving ‖r·direction‖ = 1 for r at many angles, so the
+ * shapes are computed from the metric formulas. The measured ranges at the bottom
+ * are the comparison constants that prove the three metrics give the same topology.
+ */
+const w = 540;
+const h = 300;
+
+const cy = 140;
+const unit = 46;
+
+const metrics = [
+  {
+    cx: 96,
+    name: "Euclidean  d₂",
+    formula: "√((Δx)² + (Δy)²)",
+    shape: "a round disc",
+    cls: "blue",
+    norm: (x: number, y: number) => Math.hypot(x, y),
+  },
+  {
+    cx: 270,
+    name: "taxicab  d₁",
+    formula: "|Δx| + |Δy|",
+    shape: "a diamond",
+    cls: "orange",
+    norm: (x: number, y: number) => Math.abs(x) + Math.abs(y),
+  },
+  {
+    cx: 444,
+    name: "maximum  d∞",
+    formula: "max(|Δx|, |Δy|)",
+    shape: "a square",
+    cls: "purple",
+    norm: (x: number, y: number) => Math.max(Math.abs(x), Math.abs(y)),
+  },
+];
+
+/** The set where the norm equals 1, found by scaling each direction. */
+function ball(norm: (x: number, y: number) => number, cx: number) {
+  const pts: string[] = [];
+  for (let k = 0; k <= 360; k++) {
+    const a = (k * Math.PI) / 180;
+    const dx = Math.cos(a);
+    const dy = Math.sin(a);
+    const r = 1 / norm(dx, dy);
+    pts.push(`${(cx + r * dx * unit).toFixed(1)},${(cy - r * dy * unit).toFixed(1)}`);
+  }
+  return pts.join(" ");
+}
+
+/** Range of one norm over the Euclidean unit circle — the comparison constants. */
+function rangeOverCircle(norm: (x: number, y: number) => number) {
+  let lo = Infinity;
+  let hi = 0;
+  for (let k = 0; k < 720; k++) {
+    const a = (k * Math.PI) / 360;
+    const v = norm(Math.cos(a), Math.sin(a));
+    lo = Math.min(lo, v);
+    hi = Math.max(hi, v);
+  }
+  return { lo, hi };
+}
+const r1 = rangeOverCircle(metrics[1].norm);
+const rInf = rangeOverCircle(metrics[2].norm);
+---
+
+<figure
+  class="mbl"
+  role="img"
+  aria-label={`Unit balls of three metrics on the plane: the Euclidean metric gives a round disc, the taxicab metric a diamond, and the maximum metric a square. Over the Euclidean unit circle the taxicab distance ranges from ${r1.lo.toFixed(3)} to ${r1.hi.toFixed(3)} and the maximum distance from ${rInf.lo.toFixed(3)} to ${rInf.hi.toFixed(3)}, so all three metrics define the same open sets.`}
+>
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    <text x="16" y="20" class="mbl-head" font-size="12.5" font-weight="bold">Different distances, different balls, same topology</text>
+    <text x="16" y="38" class="mbl-sub" font-size="10.5">The set of points at distance exactly 1 from the centre</text>
+
+    <line x1="183" y1="52" x2="183" y2="252" class="mbl-divide" />
+    <line x1="357" y1="52" x2="357" y2="252" class="mbl-divide" />
+
+    {metrics.map((m) => (
+      <g>
+        <text x={m.cx} y="62" class={`mbl-name mbl-t-${m.cls}`} font-size="10.5" text-anchor="middle" font-weight="bold">{m.name}</text>
+        <line x1={m.cx - 1.55 * unit} y1={cy} x2={m.cx + 1.55 * unit} y2={cy} class="mbl-axis" />
+        <line x1={m.cx} y1={cy - 1.55 * unit} x2={m.cx} y2={cy + 1.55 * unit} class="mbl-axis" />
+        <polyline points={ball(m.norm, m.cx)} class={`mbl-ball mbl-${m.cls}`} fill="none" />
+        <circle cx={m.cx} cy={cy} r="3.2" class={`mbl-dot mbl-f-${m.cls}`} />
+
+        <text x={m.cx} y="228" class="mbl-formula" font-size="9.5" text-anchor="middle">{m.formula}</text>
+        <text x={m.cx} y="246" class="mbl-note" font-size="9.5" text-anchor="middle">{m.shape}</text>
+      </g>
+    ))}
+
+    <text x={w / 2} y="272" class="mbl-foot" font-size="10.5" text-anchor="middle">
+      {`On the Euclidean unit circle, d₁ runs ${r1.lo.toFixed(3)}–${r1.hi.toFixed(3)} and d∞ runs ${rInf.lo.toFixed(3)}–${rInf.hi.toFixed(3)}`}
+    </text>
+    <text x={w / 2} y="290" class="mbl-sub2" font-size="9.5" text-anchor="middle">
+      Each ball fits inside a scaled copy of the others, so the three agree on every open set
+    </text>
+  </svg>
+</figure>
+
+<style>
+  .mbl { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .mbl svg { width:100%; max-width:100%; height:auto; }
+  .mbl-axis { stroke:#888; stroke-width:1.2; }
+  .mbl-divide { stroke:#3a3a3a; stroke-width:1; }
+  .mbl-ball { stroke-width:2.4; }
+  .mbl-blue { stroke:#58a6ff; }
+  .mbl-orange { stroke:#f0883e; }
+  .mbl-purple { stroke:#d2a8ff; }
+  .mbl-t-blue, .mbl-f-blue { fill:#58a6ff; }
+  .mbl-t-orange, .mbl-f-orange { fill:#f0883e; }
+  .mbl-t-purple, .mbl-f-purple { fill:#d2a8ff; }
+  .mbl-name { font-family:'Libre Baskerville',Georgia,serif; }
+  .mbl-formula, .mbl-note { fill:#9198a1; font-family:'Libre Baskerville',Georgia,serif; }
+  .mbl-note { font-style:italic; }
+  .mbl-head { fill:#eee; font-family:'Libre Baskerville',Georgia,serif; }
+  .mbl-sub, .mbl-sub2 { fill:#9198a1; font-family:'Libre Baskerville',Georgia,serif; font-style:italic; }
+  .mbl-foot { fill:#7ee787; font-family:'Libre Baskerville',Georgia,serif; }
+  :global([data-theme="light"]) .mbl-axis { stroke:#666; }
+  :global([data-theme="light"]) .mbl-divide { stroke:#d0d7de; }
+  :global([data-theme="light"]) .mbl-blue { stroke:#0550ae; }
+  :global([data-theme="light"]) :is(.mbl-t-blue, .mbl-f-blue) { fill:#0550ae; }
+  :global([data-theme="light"]) .mbl-orange { stroke:#b35900; }
+  :global([data-theme="light"]) :is(.mbl-t-orange, .mbl-f-orange) { fill:#b35900; }
+  :global([data-theme="light"]) .mbl-purple { stroke:#6639ba; }
+  :global([data-theme="light"]) :is(.mbl-t-purple, .mbl-f-purple) { fill:#6639ba; }
+  :global([data-theme="light"]) .mbl-head { fill:#24292f; }
+  :global([data-theme="light"]) .mbl-foot { fill:#116329; }
+  :global([data-theme="light"]) :is(.mbl-formula, .mbl-note, .mbl-sub, .mbl-sub2) { fill:#57606a; }
+</style>

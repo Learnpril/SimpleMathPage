@@ -1,0 +1,341 @@
+---
+title: Separation Axioms
+description: The hierarchy from T0 to T4, and why Hausdorff is the usual dividing line
+sidebar:
+  order: 13
+---
+
+import Quiz from "../../../components/Quiz.astro";
+import SymbolKey from "../../../components/SymbolKey.astro";
+import SeparationCheck from "../../../components/SeparationCheck.astro";
+
+## What You'll Learn
+
+In this lesson you'll learn the separation axioms in order, see what each one buys, understand why Hausdorff is the standard assumption, and meet the counterexamples showing the hierarchy is strict.
+
+<SymbolKey
+  title="The hierarchy"
+  items={[
+    {
+      sym: "T₀  Kolmogorov",
+      read: "distinct points are topologically distinguishable",
+      note: "some open set contains one and not the other",
+    },
+    {
+      sym: "T₁  Fréchet",
+      read: "each point can be separated from each other point",
+      note: "equivalently every singleton is closed",
+    },
+    {
+      sym: "T₂  Hausdorff",
+      read: "distinct points have disjoint neighbourhoods",
+      note: "the usual working assumption; makes limits unique",
+    },
+    {
+      sym: "T₃  regular Hausdorff",
+      read: "a point and a closed set can be separated",
+      note: "T₂ plus regularity",
+    },
+    {
+      sym: "T₄  normal Hausdorff",
+      read: "two disjoint closed sets can be separated",
+      note: "what Urysohn's lemma needs",
+    },
+  ]}
+/>
+
+## The Concept
+
+### The problem being solved
+
+The three topology axioms are so weak that nothing stops a space from being useless. In the trivial topology on $\{a,b\}$, the only open sets are $\varnothing$ and the whole space, so the two points cannot be told apart by any open set, and a sequence can converge to both of them at once.
+
+The separation axioms are increasingly strong guarantees that the topology has enough open sets to keep points and sets apart. They are numbered $T_0$ through $T_4$, and each implies the previous ones.
+
+<SeparationCheck />
+
+The figure tests three topologies on a three-point set by brute-force search over point pairs and open sets. The trivial topology fails everything, the chain topology $\{\varnothing,\{a\},\{a,b\},X\}$ satisfies $T_0$ and nothing more, and the discrete topology satisfies all three.
+
+### The axioms
+
+**$T_0$.** For distinct $x,y$ there is an open set containing exactly one of them. The weakest useful condition: it says the topology can at least tell points apart. Failing it means two points are genuinely interchangeable, which is why $T_0$ is assumed almost always.
+
+**$T_1$.** For distinct $x,y$ there is an open set containing $x$ but not $y$, **and** one containing $y$ but not $x$. Equivalently:
+
+$$
+T_1 \iff \text{every singleton } \{x\} \text{ is closed}
+$$
+
+That reformulation is the useful one. The cofinite topology on an infinite set is $T_1$, since finite sets are exactly the closed sets.
+
+**$T_2$, Hausdorff.** For distinct $x,y$ there are **disjoint** open sets $U\ni x$ and $V\ni y$. This is the workhorse, and three properties come with it:
+
+- **Limits are unique.** Two different limits would need disjoint neighbourhoods that a convergent sequence would have to be in simultaneously.
+- **Compact sets are closed**, as proved in lesson 10.
+- **The diagonal** $\{(x,x)\}$ is closed in $X\times X$, which is the slick formulation.
+
+**$T_3$, regular Hausdorff.** A point and a disjoint closed set can be separated by disjoint open sets. **$T_4$, normal Hausdorff.** Two disjoint closed sets can be. Normality is what **Urysohn's lemma** needs:
+
+> In a normal space, for disjoint closed $A,B$ there is a continuous $f:X\to[0,1]$ with $f\equiv0$ on $A$ and $f\equiv1$ on $B$.
+
+That lemma is the source of continuous functions in abstract settings, and it is why normality matters: without it you may have a topology with almost no continuous real-valued functions on it.
+
+### The hierarchy is strict
+
+$$
+T_4\implies T_3\implies T_2\implies T_1\implies T_0
+$$
+
+and each implication is strict. The counterexamples worth knowing:
+
+| Space                                       | Satisfies | Fails |
+| ------------------------------------------- | --------- | ----- |
+| Trivial topology on $\ge2$ points           | nothing   | $T_0$ |
+| Sierpiński space $\{\varnothing,\{a\},X\}$  | $T_0$     | $T_1$ |
+| Cofinite topology on an infinite set        | $T_1$     | $T_2$ |
+| Various line-with-two-origins constructions | $T_2$     | $T_3$ |
+| The Sorgenfrey plane                        | $T_3$     | $T_4$ |
+
+The cofinite example is the most instructive. Any two nonempty open sets there intersect, as proved in lesson 3, so no two points can be separated by disjoint sets — yet every singleton is closed. So $T_1$ and $T_2$ are genuinely different conditions.
+
+### Where metric spaces sit
+
+> Every metric space is $T_4$, hence $T_3$, $T_2$, $T_1$ and $T_0$.
+
+The proof of Hausdorff is one line: for $x\ne y$ take $r=\frac{d(x,y)}{2}$ and the balls $B(x,r)$, $B(y,r)$ are disjoint by the triangle inequality.
+
+The contrapositive is the practical use: **a space failing any $T_i$ cannot be metrizable.** That is how the cofinite topology on $\mathbb{Z}$ is shown to be non-metric, without constructing anything.
+
+Full metrizability needs more, and the **Urysohn metrization theorem** supplies it:
+
+> A regular Hausdorff space with a countable basis is metrizable.
+
+### Compactness and separation together
+
+The two families interact, and the combinations are why "compact Hausdorff" appears so often:
+
+- Compact + Hausdorff $\implies$ normal, so $T_4$ comes free.
+- Compact Hausdorff spaces are exactly the ones where a continuous bijection is automatically a homeomorphism.
+- A compact Hausdorff space is metrizable exactly when it is second countable.
+
+**Compact Hausdorff is the sweet spot** of general topology: strong enough for the theorems, general enough to include all the standard examples.
+
+## Worked Examples
+
+**Example 1: Show every metric space is Hausdorff.**
+
+**Solution.** Let $x\ne y$ and set $r = \frac{d(x,y)}{2}>0$.
+
+If some $z$ lay in both $B(x,r)$ and $B(y,r)$ then
+
+$$
+d(x,y)\le d(x,z)+d(z,y) < r+r = d(x,y)
+$$
+
+a contradiction. So the balls are disjoint.
+
+$$
+\text{Hausdorff}
+$$
+
+∎
+
+**Example 2: Show the cofinite topology on $\mathbb{Z}$ is $T_1$ but not $T_2$.**
+
+**Solution.** $T_1$: for $m\ne n$, the set $\mathbb{Z}\setminus\{n\}$ is open, contains $m$, and excludes $n$; symmetrically for the other direction. Equivalently, each singleton has cofinite complement, so singletons are closed ✓
+
+Not $T_2$: any two nonempty open sets have finite complements, so the complement of their intersection is finite and the intersection is infinite, hence nonempty. No disjoint pair exists ✗
+
+$$
+T_1 \text{ but not } T_2
+$$
+
+∎
+
+**Consequently it is not metrizable**, since every metric space is Hausdorff.
+
+**Example 3: Show limits are unique in a Hausdorff space.**
+
+**Solution.** Suppose $x_n\to a$ and $x_n\to b$ with $a\ne b$. Choose disjoint open $U\ni a$ and $V\ni b$.
+
+Convergence gives $N_1$ with $x_n\in U$ for $n\ge N_1$, and $N_2$ with $x_n\in V$ for $n\ge N_2$. For $n\ge\max(N_1,N_2)$ the term $x_n$ lies in both, contradicting disjointness.
+
+$$
+a = b
+$$
+
+∎
+
+**In the trivial topology every sequence converges to every point**, which is exactly what Hausdorff rules out.
+
+**Example 4: Show the Sierpiński space is $T_0$ but not $T_1$.**
+
+**Solution.** Let $X=\{a,b\}$ with $\tau=\{\varnothing,\{a\},X\}$.
+
+$T_0$: the open set $\{a\}$ contains $a$ and not $b$ ✓
+
+$T_1$: every open set containing $b$ is $X$, which also contains $a$. So $b$ cannot be separated from $a$ ✗. Equivalently, $\{a\}$ is not closed since its complement $\{b\}$ is not open.
+
+$$
+T_0 \text{ but not } T_1
+$$
+
+∎
+
+This space is not a curiosity: it is fundamental in domain theory, where the two points represent "terminated" and "still running."
+
+**Example 5: Show a compact Hausdorff space is normal.**
+
+**Solution sketch.** In a Hausdorff space, a compact set and a point outside it can be separated — the argument from lesson 10, Example 5. That gives regularity, since closed subsets of a compact space are compact.
+
+Applying the same finite-subcover argument again, now with a compact set on each side, separates two disjoint closed sets.
+
+$$
+\text{normal}
+$$
+
+∎
+
+**Both steps are the same trick**: cover, take a finite subcover, intersect the finitely many neighbourhoods.
+
+**Example 6: Show $T_1$ is equivalent to all singletons being closed.**
+
+**Solution.** Suppose $T_1$ holds and fix $x$. For each $y\ne x$ there is an open $U_y\ni y$ with $x\notin U_y$. Then
+
+$$
+X\setminus\{x\} = \bigcup_{y\ne x}U_y
+$$
+
+is open, so $\{x\}$ is closed.
+
+Conversely, if all singletons are closed then for $x\ne y$ the set $X\setminus\{y\}$ is open, contains $x$, and excludes $y$. ∎
+
+**Example 7: Use Urysohn's lemma.**
+
+Show that in a normal space, disjoint closed sets can be separated by a continuous function.
+
+**Solution.** That is exactly the statement of the lemma: there is continuous $f:X\to[0,1]$ with $f\equiv0$ on $A$ and $f\equiv1$ on $B$.
+
+The separating open sets follow: take $U = f^{-1}\left(\left[0,\frac13\right)\right)$ and $V = f^{-1}\left(\left(\frac23,1\right]\right)$, which are open by continuity, contain $A$ and $B$, and are disjoint. ∎
+
+**Normality is what guarantees non-trivial continuous functions exist.** Without it, a space can be perfectly good topologically and admit only constant maps to $\mathbb{R}$, which would make analysis on it impossible.
+
+## Real-World Applications
+
+**Domain theory and program semantics.** The Sierpiński space and its relatives model observable properties of computations, where "terminates" is open and "runs forever" is not. These spaces are deliberately non-Hausdorff, and the whole theory is built on $T_0$.
+
+**Algebraic geometry.** The Zariski topology is $T_1$ on a curve but not Hausdorff, so the standard analytic intuitions fail and different tools are needed. Knowing which axiom holds tells you which theorems are available.
+
+**Numerical uniqueness.** A limit being unique is what lets an algorithm report "the" answer. The Hausdorff property is the abstract version of that guarantee, and non-Hausdorff quotients in optimization are a sign the model is under-specified.
+
+**Data clustering.** Whether two data points can be separated by a neighbourhood is the abstract form of whether they are distinguishable by measurement. Points that cannot be separated indicate insufficient features rather than genuine identity.
+
+**Sensor resolution.** A sensor grid induces a topology in which points inside the same cell are indistinguishable, so it is $T_0$ at best. Refining the grid strengthens the separation, which is exactly what increasing resolution means.
+
+**Function existence in modelling.** Urysohn's lemma is why smooth bump functions and partitions of unity exist, and those are the basic tools of differential geometry, finite element methods, and computer graphics blending.
+
+:::note[You've Got This]
+Five axioms, but in practice one matters most: Hausdorff. It is the condition that makes limits unique and compact sets closed, and it is why "compact Hausdorff" is the standard setting for general topology. The other high-value fact is the contrapositive — since every metric space satisfies all of these, a space failing any of them is not metrizable, and that is the cheapest way to prove non-metrizability. The cofinite topology is the example to keep, since it separates $T_1$ from $T_2$ cleanly.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="topology-separation-axioms"
+  questions={[
+    {
+      id: "q1",
+      text: "What does T₁ mean, and what is it equivalent to?",
+      options: [
+        "Points have disjoint neighbourhoods; equivalent to Hausdorff",
+        "Each point can be separated from each other point; equivalent to every singleton being closed",
+        "The space is metrizable",
+        "Every open cover reduces",
+      ],
+      correctIndex: 1,
+      explanation:
+        "The closed-singleton reformulation is the useful one. The cofinite topology on an infinite set is T₁ because the closed sets are exactly the finite ones.",
+    },
+    {
+      id: "q2",
+      text: "What does the Hausdorff condition guarantee?",
+      options: [
+        "The space is compact",
+        "Limits are unique and compact subsets are closed",
+        "Every subset is open",
+        "The space is connected",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Two different limits would require a sequence to sit in disjoint neighbourhoods at once. It is also the hypothesis behind compact sets being closed.",
+    },
+    {
+      id: "q3",
+      text: "Which space is T₁ but not T₂?",
+      options: [
+        "The trivial topology",
+        "The cofinite topology on an infinite set",
+        "Any metric space",
+        "The Sierpiński space",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Singletons are closed there, yet any two nonempty open sets intersect, so no disjoint pair exists. This shows T₁ and T₂ are genuinely different.",
+    },
+    {
+      id: "q4",
+      text: "Why is every metric space Hausdorff?",
+      options: [
+        "Because metrics are continuous",
+        "Because the balls of radius d(x,y)/2 about x and y are disjoint by the triangle inequality",
+        "Because metric spaces are complete",
+        "Because balls are convex",
+      ],
+      correctIndex: 1,
+      explanation:
+        "A common point would violate the triangle inequality. The contrapositive is the practical tool: failing any separation axiom rules out metrizability.",
+    },
+    {
+      id: "q5",
+      text: "Which axiom does Urysohn's lemma require?",
+      options: ["T₀", "T₁", "T₂", "T₄, normality"],
+      correctIndex: 3,
+      explanation:
+        "Normality gives a continuous function that is 0 on one closed set and 1 on the other. That is what guarantees non-trivial continuous real-valued functions exist at all.",
+    },
+    {
+      id: "q6",
+      text: "What does the Sierpiński space {∅, {a}, X} on two points satisfy?",
+      options: ["Nothing", "T₀ but not T₁", "T₁ but not T₂", "All the axioms"],
+      correctIndex: 1,
+      explanation:
+        "The set {a} distinguishes the points, but every open set containing b also contains a. It is fundamental in domain theory, where the points model termination and non-termination.",
+    },
+    {
+      id: "q7",
+      text: "Why is 'compact Hausdorff' such a common hypothesis?",
+      options: [
+        "Because it forces the space to be finite",
+        "Because it implies normality, makes continuous bijections into homeomorphisms, and is general enough for the standard examples",
+        "Because it implies connectedness",
+        "Because it is the weakest possible assumption",
+      ],
+      correctIndex: 1,
+      explanation:
+        "It sits at the point where the theorems become strong without excluding the spaces people care about. Second countability then upgrades it to metrizable.",
+    },
+    {
+      id: "q8",
+      text: "What does the Urysohn metrization theorem say?",
+      options: [
+        "Every Hausdorff space is metrizable",
+        "A regular Hausdorff space with a countable basis is metrizable",
+        "Every compact space is metrizable",
+        "Every T₀ space is metrizable",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Separation alone is not enough; a countable basis is also needed. It explains precisely what has to be added to the separation axioms to recover a metric.",
+    },
+  ]}
+/>

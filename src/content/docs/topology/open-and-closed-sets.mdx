@@ -1,0 +1,300 @@
+---
+title: Open and Closed Sets
+description: Working with the two families, and why neither is the negation of the other
+sidebar:
+  order: 4
+---
+
+import Quiz from "../../../components/Quiz.astro";
+import SetClassification from "../../../components/SetClassification.astro";
+
+## What You'll Learn
+
+In this lesson you'll get fluent with open and closed sets, learn the dual axioms, meet limit points and the sequence criterion, and see why the four combinations of open and closed all actually occur.
+
+## The Concept
+
+### The two families
+
+Open sets are given by the topology. Closed sets are defined from them:
+
+> $C$ is **closed** if $X\setminus C$ is open.
+
+Applying De Morgan's laws to the topology axioms gives the dual list, and the reversal of "arbitrary" and "finite" is the thing to remember:
+
+| Open sets                         | Closed sets                            |
+| --------------------------------- | -------------------------------------- |
+| $\varnothing$ and $X$ are open    | $\varnothing$ and $X$ are closed       |
+| **arbitrary** unions are open     | **arbitrary** intersections are closed |
+| **finite** intersections are open | **finite** unions are closed           |
+
+The counterexample for the closed side mirrors the open one:
+
+$$
+\bigcup_{n=1}^{\infty}\left[\tfrac1n,\ 1\right] = (0,1]
+$$
+
+Each set in the union is closed, and the union is not. So infinite unions of closed sets need not be closed, which is exactly dual to infinite intersections of open sets.
+
+### All four combinations occur
+
+<SetClassification />
+
+The figure tests seven subsets of $\mathbb{R}$ endpoint by endpoint. Reading off the results:
+
+- **Open, not closed:** $(0,1)$ and $(0,1)\cup(2,3)$
+- **Closed, not open:** $[0,1]$ and $\{0\}$
+- **Both (clopen):** $\varnothing$ and $\mathbb{R}$
+- **Neither:** $[0,1)$
+
+So "not open" carries no information about closedness. This is the single most common early error in the subject, and the half-open interval is the standing cure for it.
+
+### Limit points and closure
+
+> $x$ is a **limit point** of $A$ if every open set containing $x$ meets $A$ in some point other than $x$ itself.
+
+Note that a limit point need not belong to $A$, and a point of $A$ need not be a limit point of it. A point of $A$ that is not a limit point is called **isolated**.
+
+The characterization that makes closedness workable:
+
+> $A$ is closed if and only if $A$ contains all of its limit points.
+
+For example the limit points of $(0,1)$ are $[0,1]$, so $(0,1)$ misses two of them and is not closed. The set $\{1/n : n\ge1\}$ has exactly one limit point, 0, which it does not contain — adding it produces a closed set.
+
+### Sequences, with a warning
+
+In a **metric** space there is a clean sequential test:
+
+> $A$ is closed if and only if every convergent sequence of points of $A$ has its limit in $A$.
+
+This is the version most people carry from real analysis, and it is exactly right there. In a general topological space the criterion is only one-directional: limits of sequences in $A$ do lie in the closure, but there are spaces where closure cannot be detected by sequences at all. Nets or filters are the general replacement.
+
+**So sequences are a metric tool.** Keep the open-set definitions as primary and use sequences when a metric is available.
+
+### Interior, exterior, boundary
+
+Three derived notions, taken up properly in lesson 7 but worth naming now:
+
+- **Interior** $\operatorname{int}A$ — the largest open set inside $A$
+- **Closure** $\bar A$ — the smallest closed set containing $A$
+- **Boundary** $\partial A = \bar A\setminus\operatorname{int}A$
+
+Immediately: $A$ is open iff $A = \operatorname{int}A$, and closed iff $A = \bar A$. A set is clopen precisely when its boundary is empty.
+
+### The subtleties worth pre-empting
+
+**Openness depends on the ambient space.** The interval $[0,\frac12)$ is not open in $\mathbb{R}$, but it **is** open in the space $[0,1]$ with the subspace topology. Openness is never a property of a set alone; it is a property of a set inside a space.
+
+**Openness depends on the topology.** In the discrete topology on $\mathbb{R}$, every set is open. In the trivial topology, only two are.
+
+**Infinite operations break things.** Both counterexamples above are worth memorizing, since they are the boundary cases the axioms were designed around.
+
+## Worked Examples
+
+**Example 1: Show $[0,1)$ is neither open nor closed in $\mathbb{R}$.**
+
+**Solution.** Not open: any interval around 0 contains negative numbers, which are outside the set.
+
+Not closed: its complement is $(-\infty,0)\cup[1,\infty)$, and any interval around 1 contains points just below 1, which lie in $[0,1)$. So the complement is not open.
+
+$$
+\text{neither}
+$$
+
+∎
+
+**Example 2: Find the limit points of $A = \{1/n : n\in\mathbb{N}\}$ in $\mathbb{R}$.**
+
+**Solution.** Every interval around 0 contains $1/n$ for large $n$, so 0 is a limit point.
+
+No other point qualifies. Each $1/n$ has a small interval around it containing no other member of $A$, so all points of $A$ are **isolated**.
+
+$$
+\text{limit points} = \{0\}
+$$
+
+Since $0\notin A$, the set $A$ is not closed, while $A\cup\{0\}$ is. ∎
+
+**Example 3: Show an infinite union of closed sets need not be closed.**
+
+**Solution.** Each $\left[\frac1n,1\right]$ is closed, and
+
+$$
+\bigcup_{n=1}^{\infty}\left[\tfrac1n,1\right] = (0,1]
+$$
+
+because every $x\in(0,1]$ satisfies $x\ge\frac1n$ for some $n$, while 0 never does. The result is not closed. ∎
+
+**This is the exact dual** of the shrinking-open-intervals example, and together they justify both halves of the axioms.
+
+**Example 4: Which sets are closed in the cofinite topology on $\mathbb{Z}$?**
+
+**Solution.** Open sets are $\varnothing$ and the cofinite sets, so complements of open sets are $\mathbb{Z}$ and the finite sets.
+
+$$
+\text{closed sets} = \{\mathbb{Z}\}\cup\{\text{finite subsets}\}
+$$
+
+So $\{5\}$ is closed, and $\{n : n \ge 0\}$ is neither open nor closed, since it is infinite with infinite complement. ∎
+
+**Example 5: In the discrete topology, which sets are closed?**
+
+**Solution.** Every set is open, so every complement is open too, so every set is closed.
+
+$$
+\text{every subset is clopen}
+$$
+
+∎
+
+This makes the discrete space maximally disconnected, which is the content of lesson 8.
+
+**Example 6: Show $\mathbb{Q}$ is neither open nor closed in $\mathbb{R}$.**
+
+**Solution.** Not open: every interval around a rational contains irrationals, so no interval fits inside $\mathbb{Q}$.
+
+Not closed: $\sqrt2$ is a limit point of $\mathbb{Q}$, since rationals are dense, and it is not rational.
+
+$$
+\text{neither}
+$$
+
+∎
+
+In fact $\bar{\mathbb{Q}} = \mathbb{R}$ and $\operatorname{int}\mathbb{Q} = \varnothing$, so $\partial\mathbb{Q} = \mathbb{R}$. **A set can have all of $\mathbb{R}$ as its boundary**, which is a good sign that boundary is not an intuitive notion.
+
+**Example 7: Is $[0,\frac12)$ open in the space $[0,1]$?**
+
+**Solution.** Yes. The subspace topology declares $U\subseteq[0,1]$ open when $U = V\cap[0,1]$ for some $V$ open in $\mathbb{R}$. Take $V = (-\frac12,\frac12)$:
+
+$$
+\left(-\tfrac12,\tfrac12\right)\cap[0,1] = \left[0,\tfrac12\right)
+$$
+
+$$
+\text{open in } [0,1]
+$$
+
+∎
+
+**Openness is relative to the ambient space**, and this example is the one to remember. The same set is not open in $\mathbb{R}$.
+
+## Real-World Applications
+
+**Numerical tolerance.** An open condition like $|x - x_0| < \varepsilon$ is robust to small perturbations, while a closed condition such as an equality is not. Specifying feasible regions as open or closed determines whether a solver can hit the boundary.
+
+**Optimization feasibility.** A maximum is guaranteed on a closed bounded region and can fail on an open one, which is why constraint sets in optimization are written with $\le$ rather than $<$. The theorem behind that choice is in lesson 10.
+
+**Control safety envelopes.** Safe operating regions are specified as closed sets so that boundary states are included and provably safe, rather than being ambiguous limits.
+
+**Computational geometry.** Point-in-polygon tests must decide boundary cases explicitly, which is a choice between the open and closed versions of a region. Inconsistent choices cause the classic cracks in rendered meshes.
+
+**Type theory and program analysis.** Observable properties of programs correspond to open sets, because they can be confirmed in finite time; their negations generally cannot, which is why the open sets are not closed under complement.
+
+**Image segmentation.** Morphological opening and closing operations are named after these notions and behave analogously, removing small protrusions or filling small gaps.
+
+:::note[You've Got This]
+The one thing to over-learn here is that open and closed are not opposites. Four combinations exist and all of them occur in $\mathbb{R}$: $(0,1)$, $[0,1]$, $\varnothing$, and $[0,1)$. Keep those four examples to hand. The other habit worth building early is asking "open in what?" — since $[0,\frac12)$ is open in $[0,1]$ and not in $\mathbb{R}$, the ambient space is part of the question every time.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="topology-open-and-closed-sets"
+  questions={[
+    {
+      id: "q1",
+      text: "How is a closed set defined?",
+      options: [
+        "A set that is not open",
+        "A set whose complement is open",
+        "A set containing its endpoints",
+        "A bounded set",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Closedness is defined by complementation, not by negating openness. A set can be both, neither, or exactly one of the two.",
+    },
+    {
+      id: "q2",
+      text: "Closed sets are closed under which operations?",
+      options: [
+        "Arbitrary unions and finite intersections",
+        "Arbitrary intersections and finite unions",
+        "All unions and all intersections",
+        "Complements only",
+      ],
+      correctIndex: 1,
+      explanation:
+        "De Morgan reverses the roles of union and intersection. The union of all [1/n, 1] is (0,1], which shows infinite unions of closed sets can fail to be closed.",
+    },
+    {
+      id: "q3",
+      text: "Which subset of ℝ is neither open nor closed?",
+      options: ["(0, 1)", "[0, 1]", "[0, 1)", "ℝ"],
+      correctIndex: 2,
+      explanation:
+        "No interval around 0 fits inside it, and 1 is a limit point it does not contain. It is the standard cure for thinking open and closed are opposites.",
+    },
+    {
+      id: "q4",
+      text: "What are the limit points of {1/n : n ∈ ℕ} in ℝ?",
+      options: ["All of [0, 1]", "Just {0}", "Every 1/n", "There are none"],
+      correctIndex: 1,
+      explanation:
+        "Every interval around 0 contains infinitely many terms, while each 1/n has a neighbourhood containing no other member and so is isolated. Adding 0 makes the set closed.",
+    },
+    {
+      id: "q5",
+      text: "Which sets are closed in the cofinite topology on ℤ?",
+      options: [
+        "Only ℤ",
+        "ℤ together with all finite subsets",
+        "All subsets",
+        "Only the empty set",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Complements of the cofinite open sets are exactly the finite sets, plus ℤ itself as the complement of ∅. So {5} is closed while the non-negative integers are neither open nor closed.",
+    },
+    {
+      id: "q6",
+      text: "Why is ℚ neither open nor closed in ℝ?",
+      options: [
+        "Because it is countable",
+        "Because every interval around a rational contains irrationals, and √2 is a limit point not in ℚ",
+        "Because it is unbounded",
+        "It is actually closed",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Density in both directions is the cause. In fact the closure is ℝ and the interior is empty, so the boundary of ℚ is all of ℝ.",
+    },
+    {
+      id: "q7",
+      text: "Is [0, ½) open in the space [0, 1] with the subspace topology?",
+      options: [
+        "No, it is never open",
+        "Yes, since it equals (−½, ½) ∩ [0, 1]",
+        "Only if [0,1] is given the discrete topology",
+        "Only in ℝ",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Subspace-open means the intersection of an ambient open set with the subspace. Openness is therefore always relative to the ambient space.",
+    },
+    {
+      id: "q8",
+      text: "Why is the sequential criterion for closedness a metric tool rather than a general one?",
+      options: [
+        "Because sequences do not exist in general spaces",
+        "Because in general spaces sequences can fail to detect the closure, so nets or filters are needed",
+        "Because limits are not unique",
+        "It works in every topological space",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Limits of sequences from A always lie in the closure, but the converse can fail without a metric. This is why the open-set definitions stay primary.",
+    },
+  ]}
+/>

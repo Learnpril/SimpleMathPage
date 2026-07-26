@@ -1,0 +1,134 @@
+---
+/**
+ * SequentialCompactness — extracting a convergent subsequence by bisection. The
+ * sequence is generated, and at each level the half containing more of the surviving
+ * terms is kept, so the nested intervals and the limit found are the output of an
+ * actual search. On the right, the same sequence idea fails on (0,1] because the
+ * only candidate limit is missing from the space.
+ */
+const w = 540;
+const h = 306;
+
+const lx0 = 40;
+const lx1 = 250;
+const rx0 = 300;
+const rx1 = 510;
+const lLo = -0.06;
+const lHi = 1.06;
+const lpx = (v: number) => lx0 + ((v - lLo) / (lHi - lLo)) * (lx1 - lx0);
+const rpx = (v: number) => rx0 + ((v - lLo) / (lHi - lLo)) * (rx1 - rx0);
+
+// An equidistributed sequence in [0,1]: no limit, but subsequences abound.
+const seq = Array.from({ length: 1500 }, (_, k) => ((k + 1) * Math.SQRT2) % 1);
+
+/** Bisect, always keeping the half holding more of the surviving terms. */
+function bisect(levels: number) {
+  let alive = seq.map((v, i) => ({ v, i }));
+  let a = 0;
+  let b = 1;
+  const steps: { a: number; b: number; count: number }[] = [{ a, b, count: alive.length }];
+  for (let L = 0; L < levels; L++) {
+    const mid = (a + b) / 2;
+    const left = alive.filter((p) => p.v <= mid);
+    const right = alive.filter((p) => p.v > mid);
+    if (left.length >= right.length) {
+      b = mid;
+      alive = left;
+    } else {
+      a = mid;
+      alive = right;
+    }
+    steps.push({ a, b, count: alive.length });
+  }
+  return { steps, a, b, alive };
+}
+const levels = 8;
+const found = bisect(levels);
+const limit = (found.a + found.b) / 2;
+const width = found.b - found.a;
+const firstIndices = found.alive.slice(0, 3).map((p) => p.i + 1);
+
+// right panel: 1/n in (0,1]
+const tail = Array.from({ length: 14 }, (_, k) => 1 / (k + 1));
+
+const barY = (k: number) => 104 + k * 12;
+---
+
+<figure
+  class="sqc"
+  role="img"
+  aria-label={`On the left, a sequence in the closed unit interval is narrowed by ${levels} bisections, each keeping the half with more surviving terms, ending in an interval of width ${width.toExponential(2)} about ${limit.toFixed(4)} that still contains infinitely many terms. On the right, the sequence one over n in the half-open interval has every subsequence tending to zero, which is not a point of that space.`}
+>
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    <text x="16" y="20" class="sqc-head" font-size="12.5" font-weight="bold">Every sequence has a convergent subsequence — or not</text>
+    <text x="16" y="38" class="sqc-sub" font-size="10.5">Bisection finds the limit point; a missing endpoint destroys it</text>
+
+    <line x1="276" y1="52" x2="276" y2="252" class="sqc-divide" />
+
+    {/* ---------- left: [0,1] ---------- */}
+    <text x={(lx0 + lx1) / 2} y="62" class="sqc-title sqc-ok" font-size="10.5" text-anchor="middle" font-weight="bold">[0, 1]: it works</text>
+    <line x1={lx0 - 6} y1="88" x2={lx1 + 6} y2="88" class="sqc-axis" />
+    {seq.slice(0, 120).map((v) => (
+      <circle cx={lpx(v)} cy="88" r="1.5" class="sqc-pt" />
+    ))}
+
+    {found.steps.map((s, k) => (
+      <line x1={lpx(s.a)} y1={barY(k)} x2={lpx(s.b)} y2={barY(k)} class="sqc-bar" />
+    ))}
+
+    <text x={(lx0 + lx1) / 2} y="218" class="sqc-val sqc-ok" font-size="9.5" text-anchor="middle">{`limit point ≈ ${limit.toFixed(4)}`}</text>
+    <text x={(lx0 + lx1) / 2} y="234" class="sqc-note" font-size="9" text-anchor="middle">{`final width ${width.toExponential(1)}, still infinitely many terms`}</text>
+
+    {/* ---------- right: (0,1] ---------- */}
+    <text x={(rx0 + rx1) / 2} y="62" class="sqc-title sqc-bad" font-size="10.5" text-anchor="middle" font-weight="bold">(0, 1]: it fails</text>
+    <line x1={rx0 - 6} y1="88" x2={rx1 + 6} y2="88" class="sqc-axis" />
+    {tail.map((v) => (
+      <circle cx={rpx(v)} cy="88" r="2.6" class="sqc-pt2" />
+    ))}
+    <circle cx={rpx(0)} cy="88" r="3.6" class="sqc-hollow" />
+    <text x={rpx(0) + 10} y="108" class="sqc-note" font-size="9" text-anchor="start">0 is not in the space</text>
+
+    <text x={(rx0 + rx1) / 2} y="140" class="sqc-row" font-size="9.5" text-anchor="middle">the sequence 1⁄n</text>
+    <text x={(rx0 + rx1) / 2} y="158" class="sqc-row" font-size="9.5" text-anchor="middle">every subsequence tends to 0</text>
+    <text x={(rx0 + rx1) / 2} y="176" class="sqc-val sqc-bad" font-size="9.5" text-anchor="middle">no limit inside (0, 1]</text>
+    <text x={(rx0 + rx1) / 2} y="200" class="sqc-note" font-size="9" text-anchor="middle">so not sequentially compact</text>
+    <text x={(rx0 + rx1) / 2} y="216" class="sqc-note" font-size="9" text-anchor="middle">and not compact either</text>
+
+    <text x={w / 2} y="268" class="sqc-foot" font-size="10.5" text-anchor="middle">
+      In a metric space, compact and sequentially compact are the same condition
+    </text>
+    <text x={w / 2} y="288" class="sqc-sub2" font-size="9.5" text-anchor="middle">
+      {`Bisection kept the fuller half each time, reaching terms number ${firstIndices.join(", ")} and beyond`}
+    </text>
+  </svg>
+</figure>
+
+<style>
+  .sqc { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .sqc svg { width:100%; max-width:100%; height:auto; }
+  .sqc-axis { stroke:#555; stroke-width:1; }
+  .sqc-divide { stroke:#3a3a3a; stroke-width:1; }
+  .sqc-pt { fill:#58a6ff; }
+  .sqc-pt2 { fill:#d2a8ff; }
+  .sqc-hollow { fill:#121212; stroke:#ff7b72; stroke-width:1.8; }
+  .sqc-bar { stroke:#7ee787; stroke-width:3; }
+  .sqc-title, .sqc-val { font-family:'Libre Baskerville',Georgia,serif; }
+  .sqc-ok { fill:#7ee787; }
+  .sqc-bad { fill:#ff7b72; }
+  .sqc-row { fill:#9198a1; font-family:'Libre Baskerville',Georgia,serif; }
+  .sqc-note { fill:#9198a1; font-family:'Libre Baskerville',Georgia,serif; font-style:italic; }
+  .sqc-head { fill:#eee; font-family:'Libre Baskerville',Georgia,serif; }
+  .sqc-sub, .sqc-sub2 { fill:#9198a1; font-family:'Libre Baskerville',Georgia,serif; font-style:italic; }
+  .sqc-foot { fill:#58a6ff; font-family:'Libre Baskerville',Georgia,serif; }
+  :global([data-theme="light"]) .sqc-axis { stroke:#8c959f; }
+  :global([data-theme="light"]) .sqc-divide { stroke:#d0d7de; }
+  :global([data-theme="light"]) .sqc-pt { fill:#0550ae; }
+  :global([data-theme="light"]) .sqc-pt2 { fill:#6639ba; }
+  :global([data-theme="light"]) .sqc-hollow { fill:#ffffff; stroke:#a40e26; }
+  :global([data-theme="light"]) .sqc-bar { stroke:#116329; }
+  :global([data-theme="light"]) .sqc-ok { fill:#116329; }
+  :global([data-theme="light"]) .sqc-bad { fill:#a40e26; }
+  :global([data-theme="light"]) .sqc-head { fill:#24292f; }
+  :global([data-theme="light"]) .sqc-foot { fill:#0550ae; }
+  :global([data-theme="light"]) :is(.sqc-row, .sqc-note, .sqc-sub, .sqc-sub2) { fill:#57606a; }
+</style>

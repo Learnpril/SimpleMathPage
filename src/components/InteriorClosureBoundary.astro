@@ -1,0 +1,132 @@
+---
+/**
+ * InteriorClosureBoundary — a set made of an open disc, one isolated point, and a
+ * segment. Five test points are classified as interior, boundary or exterior by
+ * sampling a small ring around each and checking what it meets, so the verdicts are
+ * computed from the set's own definition.
+ */
+const w = 540;
+const h = 302;
+
+const ox = 150;
+const oy = 150;
+const unit = 38;
+const px = (x: number) => ox + x * unit;
+const py = (y: number) => oy - y * unit;
+
+// ---- the set S ----
+const isolated = { x: 2, y: 0 };
+const seg = { x0: -2, x1: -0.8, y: 1.2 };
+
+const onSegment = (x: number, y: number) =>
+  Math.abs(y - seg.y) < 5e-3 && x >= seg.x0 - 5e-3 && x <= seg.x1 + 5e-3;
+
+/** S = open unit disc ∪ {the isolated point} ∪ the segment. */
+const inS = (x: number, y: number) =>
+  Math.hypot(x, y) < 1 ||
+  Math.hypot(x - isolated.x, y - isolated.y) < 5e-3 ||
+  onSegment(x, y);
+
+/** Classify by sampling a ring of radius eps about the point. */
+function classify(x: number, y: number, eps = 0.03) {
+  const here = inS(x, y);
+  let ringIn = false;
+  let ringOut = false;
+  for (let k = 0; k < 96; k++) {
+    const a = (2 * Math.PI * k) / 96;
+    if (inS(x + eps * Math.cos(a), y + eps * Math.sin(a))) ringIn = true;
+    else ringOut = true;
+  }
+  if (here && !ringOut) return "interior";
+  if (!here && !ringIn) return "exterior";
+  return "boundary";
+}
+
+const tests = [
+  { x: 0, y: 0, name: "(0, 0)" },
+  { x: 1, y: 0, name: "(1, 0)" },
+  { x: isolated.x, y: isolated.y, name: "(2, 0)" },
+  { x: -1.4, y: seg.y, name: "(−1.4, 1.2)" },
+  { x: 2.3, y: 1.1, name: "(2.3, 1.1)" },
+].map((t) => ({ ...t, kind: classify(t.x, t.y) }));
+
+const nInterior = tests.filter((t) => t.kind === "interior").length;
+const nBoundary = tests.filter((t) => t.kind === "boundary").length;
+const cls = (k: string) => (k === "interior" ? "in" : k === "boundary" ? "bd" : "ex");
+---
+
+<figure
+  class="icb"
+  role="img"
+  aria-label={`A set consisting of an open unit disc, an isolated point at 2 comma 0, and a horizontal segment. Of five test points, ${nInterior} is interior and ${nBoundary} are boundary points. The isolated point and every point of the segment are boundary points, so they contribute nothing to the interior.`}
+>
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    <text x="16" y="20" class="icb-head" font-size="12.5" font-weight="bold">Interior, boundary, exterior</text>
+    <text x="16" y="38" class="icb-sub" font-size="10.5">S = open unit disc ∪ one isolated point ∪ a segment</text>
+
+    <line x1="272" y1="52" x2="272" y2="256" class="icb-divide" />
+
+    {/* ---------- the set ---------- */}
+    <line x1={px(-2.7)} y1={oy} x2={px(2.7)} y2={oy} class="icb-axis" />
+    <line x1={ox} y1={py(1.9)} x2={ox} y2={py(-1.9)} class="icb-axis" />
+
+    <circle cx={ox} cy={oy} r={unit} class="icb-disc" />
+    <line x1={px(seg.x0)} y1={py(seg.y)} x2={px(seg.x1)} y2={py(seg.y)} class="icb-seg" />
+    <circle cx={px(isolated.x)} cy={py(isolated.y)} r="3.4" class="icb-pt" />
+
+    {tests.map((t) => (
+      <circle cx={px(t.x)} cy={py(t.y)} r="4.4" class={`icb-test icb-${cls(t.kind)}`} />
+    ))}
+
+    <text x={ox} y="242" class="icb-note" font-size="9" text-anchor="middle">dashed edge is not part of S</text>
+
+    {/* ---------- the classification ---------- */}
+    <text x="292" y="70" class="icb-panel" font-size="10" text-anchor="start">test points, classified</text>
+    {tests.map((t, i) => (
+      <text x="292" y={94 + i * 19} class={`icb-row icb-${cls(t.kind)}`} font-size="9.5" text-anchor="start">
+        {`${t.name}  →  ${t.kind}`}
+      </text>
+    ))}
+
+    <text x="292" y="212" class="icb-note2" font-size="9" text-anchor="start">int S = the open disc only</text>
+    <text x="292" y="228" class="icb-note2" font-size="9" text-anchor="start">∂S = circle ∪ point ∪ segment</text>
+    <text x="292" y="244" class="icb-note2" font-size="9" text-anchor="start">cl S = int S ∪ ∂S</text>
+
+    <text x={w / 2} y="272" class="icb-foot" font-size="10.5" text-anchor="middle">
+      A point of S can still be a boundary point, contributing nothing to the interior
+    </text>
+    <text x={w / 2} y="292" class="icb-sub2" font-size="9.5" text-anchor="middle">
+      The isolated point and the whole segment are like that here
+    </text>
+  </svg>
+</figure>
+
+<style>
+  .icb { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .icb svg { width:100%; max-width:100%; height:auto; }
+  .icb-axis { stroke:#666; stroke-width:1.2; }
+  .icb-divide { stroke:#3a3a3a; stroke-width:1; }
+  .icb-disc { fill:#7ee787; fill-opacity:0.18; stroke:#7ee787; stroke-width:1.8; stroke-dasharray:6,4; }
+  .icb-seg { stroke:#f0883e; stroke-width:3; }
+  .icb-pt { fill:#f0883e; stroke:none; }
+  .icb-test { stroke:#eee; stroke-width:1.2; }
+  .icb-in { fill:#7ee787; }
+  .icb-bd { fill:#f0883e; }
+  .icb-ex { fill:#9198a1; }
+  .icb-row { font-family:'Libre Baskerville',Georgia,serif; }
+  .icb-panel, .icb-head { fill:#eee; font-family:'Libre Baskerville',Georgia,serif; }
+  .icb-note, .icb-note2 { fill:#9198a1; font-family:'Libre Baskerville',Georgia,serif; font-style:italic; }
+  .icb-sub, .icb-sub2 { fill:#9198a1; font-family:'Libre Baskerville',Georgia,serif; font-style:italic; }
+  .icb-foot { fill:#58a6ff; font-family:'Libre Baskerville',Georgia,serif; }
+  :global([data-theme="light"]) .icb-axis { stroke:#666; }
+  :global([data-theme="light"]) .icb-divide { stroke:#d0d7de; }
+  :global([data-theme="light"]) .icb-disc { fill:#116329; stroke:#116329; fill-opacity:0.14; }
+  :global([data-theme="light"]) .icb-in { fill:#116329; }
+  :global([data-theme="light"]) .icb-seg, :global([data-theme="light"]) .icb-pt { stroke:#b35900; fill:#b35900; }
+  :global([data-theme="light"]) .icb-bd { fill:#b35900; }
+  :global([data-theme="light"]) .icb-ex { fill:#57606a; }
+  :global([data-theme="light"]) .icb-test { stroke:#fff; }
+  :global([data-theme="light"]) .icb-panel, :global([data-theme="light"]) .icb-head { fill:#24292f; }
+  :global([data-theme="light"]) .icb-foot { fill:#0550ae; }
+  :global([data-theme="light"]) :is(.icb-note, .icb-note2, .icb-sub, .icb-sub2) { fill:#57606a; }
+</style>

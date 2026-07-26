@@ -1,0 +1,365 @@
+---
+title: The Fundamental Group
+description: Turning loops into a group, and the invariant that finally distinguishes surfaces
+sidebar:
+  order: 17
+---
+
+import Quiz from "../../../components/Quiz.astro";
+import SymbolKey from "../../../components/SymbolKey.astro";
+import LoopWinding from "../../../components/LoopWinding.astro";
+
+## What You'll Learn
+
+In this lesson you'll build the fundamental group from path-homotopy classes of loops, compute it for the circle, torus and sphere, learn what simply connected means, and see the invariant do work that no earlier one could.
+
+<SymbolKey
+  title="Fundamental group notation"
+  items={[
+    {
+      sym: "π₁(X, x₀)",
+      read: "the fundamental group of X based at x₀",
+      note: "path-homotopy classes of loops at x₀",
+    },
+    {
+      sym: "[γ]",
+      read: "the class of the loop γ",
+      note: "two loops share a class iff they are path-homotopic",
+    },
+    {
+      sym: "γ₁ · γ₂",
+      read: "concatenation",
+      note: "traverse γ₁ then γ₂; this is the group operation",
+    },
+    {
+      sym: "simply connected",
+      read: "path-connected with trivial π₁",
+      note: "every loop contracts",
+    },
+    {
+      sym: "0 or 1 (trivial group)",
+      read: "the group with one element",
+      note: "written 0, 1, or {e} depending on the source",
+    },
+  ]}
+/>
+
+## The Concept
+
+### The construction
+
+Fix a **base point** $x_0\in X$ and consider all loops at $x_0$, that is paths starting and ending there. Declare two of them equivalent when they are path-homotopic, keeping the base point fixed throughout.
+
+> $\pi_1(X,x_0)$ is the set of path-homotopy classes of loops at $x_0$, with the operation
+>
+> $$
+> [\gamma_1]\cdot[\gamma_2] = [\gamma_1\cdot\gamma_2]
+> $$
+>
+> given by traversing one loop then the other.
+
+This really is a group:
+
+- **Identity** — the constant loop at $x_0$.
+- **Inverse** — the same loop traversed backwards, $t\mapsto\gamma(1-t)$.
+- **Associativity** — up to homotopy. The two ways of bracketing three loops differ only in the timing, and a reparametrisation homotopy fixes that.
+
+The reliance on homotopy rather than equality is essential. Concatenation is genuinely not associative on the nose, and it becomes associative exactly at the level of classes.
+
+For a path-connected space, changing the base point gives an isomorphic group, so one usually writes $\pi_1(X)$ and omits it.
+
+### The circle
+
+> $$
+> \pi_1(S^1)\cong\mathbb{Z}
+> $$
+
+The isomorphism sends a loop to its **winding number**: how many times, with sign, it goes around.
+
+<LoopWinding />
+
+The figure draws three loops in the punctured plane, which is homotopy equivalent to the circle, and measures each winding number by accumulating the change in angle along the curve. The values come out as integers, and the labels are the measurements rather than assertions.
+
+Why $\mathbb{Z}$ and not something smaller: concatenating loops **adds** winding numbers, so the group structure is addition on the integers. And why not something larger: two loops with the same winding number can be deformed into each other. Proving this properly uses the covering space $\mathbb{R}\to S^1$, and it is the first real theorem of algebraic topology.
+
+**This one computation is what makes the fundamental group useful.** It gives a nontrivial group for a space with a hole, which finally distinguishes such spaces from contractible ones.
+
+### The standard values
+
+| Space                                                      | $\pi_1$                               |
+| ---------------------------------------------------------- | ------------------------------------- |
+| Point, disc, $\mathbb{R}^n$                                | trivial                               |
+| $S^1$, annulus, punctured plane, solid torus, Möbius strip | $\mathbb{Z}$                          |
+| $S^n$ for $n\ge2$                                          | trivial                               |
+| Torus $T^2$                                                | $\mathbb{Z}\times\mathbb{Z}$          |
+| Figure eight                                               | free group on 2 generators            |
+| $\mathbb{RP}^2$                                            | $\mathbb{Z}/2$                        |
+| Klein bottle                                               | a non-abelian group of order infinity |
+| Genus $g$ surface                                          | $2g$ generators with one relation     |
+
+Three of those deserve comment.
+
+**$S^2$ is simply connected.** Any loop on a sphere can be slid off to one side and contracted. So the sphere has a hole in a different sense — one detected by the _second_ homotopy group, not the first.
+
+**The torus gives $\mathbb{Z}\times\mathbb{Z}$**, abelian, with one generator going around the tube and one through the hole. The two commute because the surface is a product.
+
+**The figure eight gives a free group**, which is **non-abelian**: going round the left loop then the right is not homotopic to the reverse. This is where the fundamental group starts recording more than counting.
+
+### Simply connected
+
+> $X$ is **simply connected** if it is path-connected and $\pi_1(X)$ is trivial.
+
+Informally, no holes that a loop can detect. Simply connected examples: $\mathbb{R}^n$, discs, balls, spheres $S^n$ for $n\ge2$, and any convex or star-shaped set. Not simply connected: the circle, annulus, torus, punctured plane.
+
+This is the same condition that appeared as a hypothesis in Cauchy's theorem in complex analysis, and now it has a precise meaning: $\pi_1$ of the domain is trivial. The reason $\oint\frac{dz}{z}=2\pi i$ on a punctured plane is that $\pi_1$ there is $\mathbb{Z}$, and the integral is reading the winding number.
+
+### Functoriality
+
+> A continuous $f:X\to Y$ with $f(x_0)=y_0$ induces a group homomorphism
+>
+> $$
+> f_*:\pi_1(X,x_0)\to\pi_1(Y,y_0), \qquad f_*[\gamma] = [f\circ\gamma]
+> $$
+
+Two consequences: homeomorphic spaces have isomorphic fundamental groups, and so do homotopy equivalent ones. That makes $\pi_1$ a homotopy invariant, and it is far sharper than the ones before it.
+
+Useful computational tools:
+
+- **Products.** $\pi_1(X\times Y)\cong\pi_1(X)\times\pi_1(Y)$, which gives the torus immediately.
+- **Retractions.** A deformation retract has the same $\pi_1$, which handles the annulus, solid torus and Möbius strip.
+- **Van Kampen's theorem** computes $\pi_1$ of a union from the pieces and their overlap, which is how the figure eight and all surfaces are handled.
+
+### What it proves
+
+**The circle is not contractible**, since $\mathbb{Z}$ is not trivial. This finally settles what earlier lessons could only assert.
+
+**$S^2\not\cong T^2$**, since trivial is not $\mathbb{Z}\times\mathbb{Z}$. The Euler characteristic also distinguishes these, but $\pi_1$ does it in cases where $\chi$ fails.
+
+**The torus and the Klein bottle are not homeomorphic**, since one has an abelian $\pi_1$ and the other does not. Recall both have $\chi=0$, so this is a case where the earlier invariant was silent.
+
+**No retraction of the disc onto its boundary circle exists**, which is the key step in the proof of Brouwer's fixed point theorem next lesson.
+
+## Worked Examples
+
+**Example 1: Show $\pi_1$ of a convex set is trivial.**
+
+**Solution.** Let $C$ be convex and $\gamma$ a loop at $x_0$. The straight-line homotopy
+
+$$
+H(t,s) = (1-s)\gamma(t)+sx_0
+$$
+
+stays in $C$ by convexity, fixes the base point at every $s$, and contracts $\gamma$ to the constant loop.
+
+$$
+\pi_1(C) = \text{trivial}
+$$
+
+∎
+
+**Example 2: Compute $\pi_1$ of the annulus.**
+
+**Solution.** The annulus deformation retracts to its core circle, and homotopy equivalent spaces have isomorphic fundamental groups.
+
+$$
+\pi_1(\text{annulus})\cong\pi_1(S^1)\cong\mathbb{Z}
+$$
+
+∎
+
+The same argument gives $\mathbb{Z}$ for the punctured plane, the solid torus, and the Möbius strip.
+
+**Example 3: Compute $\pi_1$ of the torus.**
+
+**Solution.** Since $T^2 = S^1\times S^1$ and $\pi_1$ of a product is the product of the groups,
+
+$$
+\pi_1(T^2)\cong\mathbb{Z}\times\mathbb{Z}
+$$
+
+The two generators are the loop around the tube and the loop through the hole. They commute, which reflects the product structure. ∎
+
+**Example 4: Show the torus and Klein bottle are not homeomorphic.**
+
+**Solution.** $\pi_1(T^2)=\mathbb{Z}\times\mathbb{Z}$ is abelian. The Klein bottle's fundamental group has presentation $\langle a,b \mid abab^{-1}\rangle$, in which $ab\ne ba$, so it is **not** abelian.
+
+Since $\pi_1$ is a topological invariant and the groups are not isomorphic, the spaces are not homeomorphic.
+
+$$
+T^2\not\cong K
+$$
+
+∎
+
+**Both have $\chi=0$**, so the Euler characteristic could not decide this. That is the fundamental group earning its place.
+
+**Example 5: Show $S^2$ is simply connected.**
+
+**Solution.** Any loop on the sphere can be pushed off a point not on it, by a small perturbation if the loop is space-filling. The sphere minus a point is homeomorphic to $\mathbb{R}^2$ by stereographic projection, which is convex, so the loop contracts there.
+
+$$
+\pi_1(S^2) = \text{trivial}
+$$
+
+∎
+
+**Simply connected does not mean contractible.** The sphere is simply connected and not contractible, and detecting that needs $\pi_2$, which is $\mathbb{Z}$.
+
+**Example 6: Show no continuous retraction $D^2\to S^1$ exists.**
+
+**Solution.** Suppose $r:D^2\to S^1$ were continuous with $r$ restricted to $S^1$ the identity. Let $i:S^1\to D^2$ be the inclusion, so $r\circ i=\operatorname{id}_{S^1}$.
+
+Applying $\pi_1$ and using functoriality,
+
+$$
+r_*\circ i_* = \operatorname{id} \text{ on } \pi_1(S^1)=\mathbb{Z}
+$$
+
+But $i_*$ factors through $\pi_1(D^2)$, which is trivial, so the composite is the zero map — not the identity on $\mathbb{Z}$.
+
+$$
+\text{contradiction, so no such } r
+$$
+
+∎
+
+**This is the key lemma for Brouwer's theorem**, and it is a pure algebra argument once $\pi_1$ is available.
+
+**Example 7: Compute $\pi_1$ of the figure eight.**
+
+**Solution.** By van Kampen's theorem applied to the two circles glued at a point, with contractible overlap,
+
+$$
+\pi_1(S^1\vee S^1)\cong F_2
+$$
+
+the free group on two generators $a$ and $b$, with no relations.
+
+It is non-abelian: the loop $ab$ is not homotopic to $ba$, since going round the left circle then the right cannot be deformed into the reverse order. ∎
+
+**Non-abelian fundamental groups are the normal case.** The abelian examples earlier were special.
+
+## Real-World Applications
+
+**Complex analysis.** Simple connectivity is the hypothesis of Cauchy's theorem, and $\pi_1(\mathbb{C}\setminus\{0\})=\mathbb{Z}$ is why the contour integral of $1/z$ counts loops. The winding number in that subject is literally an element of this group.
+
+**Path planning with obstacles.** Homotopy classes of routes are elements of the fundamental group of the free space, so a planner can enumerate qualitatively distinct paths by enumerating group elements rather than searching blindly.
+
+**Cable and tether management.** Whether a tethered robot can return to base without tangling is a question about which class its path lies in. Tracking the group element is how tangle-free operation is guaranteed.
+
+**Physics: Aharonov–Bohm effect.** An electron's phase shift around a solenoid depends on the loop's homotopy class, not on the local field it passes through. The observable effect is a fundamental group measurement.
+
+**Topological defects.** Vortices in superfluids and defects in liquid crystals are classified by fundamental group elements of the order-parameter space, and the group tells you which defects can annihilate.
+
+**Robotic arm winding.** A revolute joint's configuration space is a circle, so the total rotation is an integer winding number. Joint limit management is bookkeeping in $\mathbb{Z}$.
+
+:::note[You've Got This]
+This is the sharpest tool in the section, and the one computation to hold onto is $\pi_1(S^1)=\mathbb{Z}$ via winding number, because everything else is built from it by products, retractions and van Kampen. Notice what it can do that nothing earlier could: the torus and Klein bottle share an Euler characteristic and are separated here by abelian versus non-abelian. And take the terminology seriously — simply connected means loops contract, which is not the same as contractible, and $S^2$ is the example that keeps the two apart.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="topology-the-fundamental-group"
+  questions={[
+    {
+      id: "q1",
+      text: "What are the elements of π₁(X, x₀)?",
+      options: [
+        "All loops at x₀",
+        "Path-homotopy classes of loops at x₀",
+        "All paths in X",
+        "The connected components of X",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Working with classes rather than loops is what makes concatenation associative, since it is not associative on the nose. The base point must stay fixed throughout each homotopy.",
+    },
+    {
+      id: "q2",
+      text: "What is π₁(S¹) and what is the isomorphism?",
+      options: [
+        "Trivial",
+        "ℤ, with the winding number as the isomorphism",
+        "ℤ × ℤ",
+        "ℤ/2",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Concatenating loops adds winding numbers, giving addition on ℤ. This is the first real theorem of algebraic topology and everything else is built from it.",
+    },
+    {
+      id: "q3",
+      text: "What is π₁(S²)?",
+      options: ["ℤ", "Trivial", "ℤ × ℤ", "ℤ/2"],
+      correctIndex: 1,
+      explanation:
+        "Every loop can be slid off a point and contracted in the resulting copy of ℝ². The sphere's higher-dimensional hole is detected by π₂, which is ℤ.",
+    },
+    {
+      id: "q4",
+      text: "What is π₁ of the torus, and why?",
+      options: [
+        "ℤ, since it has one hole",
+        "ℤ × ℤ, since the torus is S¹ × S¹ and π₁ of a product is the product of the groups",
+        "Trivial",
+        "A free group on two generators",
+      ],
+      correctIndex: 1,
+      explanation:
+        "The two generators go around the tube and through the hole, and they commute because of the product structure. The figure eight, by contrast, gives a non-abelian free group.",
+    },
+    {
+      id: "q5",
+      text: "How does π₁ distinguish the torus from the Klein bottle?",
+      options: [
+        "By their Euler characteristics",
+        "The torus has abelian π₁ while the Klein bottle's is non-abelian",
+        "They have the same π₁",
+        "By counting boundary circles",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Both have χ = 0, so the Euler characteristic is silent here. The Klein bottle's group ⟨a, b | abab⁻¹⟩ has ab ≠ ba.",
+    },
+    {
+      id: "q6",
+      text: "What does simply connected mean?",
+      options: [
+        "The space is contractible",
+        "Path-connected with trivial fundamental group",
+        "The space has one component",
+        "The space is convex",
+      ],
+      correctIndex: 1,
+      explanation:
+        "It means loops contract, which is weaker than contractibility. S² is simply connected and not contractible, which keeps the two notions apart.",
+    },
+    {
+      id: "q7",
+      text: "Why is there no continuous retraction from the disc onto its boundary circle?",
+      options: [
+        "Because the disc is compact",
+        "Because it would give maps composing to the identity on π₁(S¹) = ℤ while factoring through the trivial π₁(D²)",
+        "Because the boundary is not open",
+        "Such a retraction does exist",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Functoriality turns the geometric claim into an impossible factorization of the identity on ℤ. This is the key lemma behind Brouwer's fixed point theorem.",
+    },
+    {
+      id: "q8",
+      text: "Which spaces have π₁ ≅ ℤ?",
+      options: [
+        "Only the circle",
+        "The circle, annulus, punctured plane, solid torus and Möbius strip",
+        "The sphere and the torus",
+        "Only contractible spaces",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Each deformation retracts to a circle, and π₁ is a homotopy invariant. That includes the Möbius strip, which shows π₁ does not see orientability.",
+    },
+  ]}
+/>

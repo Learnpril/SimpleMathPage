@@ -1,0 +1,311 @@
+---
+title: Compactness in Metric Spaces
+description: Where compact, sequentially compact, and complete-plus-bounded all coincide
+sidebar:
+  order: 11
+---
+
+import Quiz from "../../../components/Quiz.astro";
+import SequentialCompactness from "../../../components/SequentialCompactness.astro";
+
+## What You'll Learn
+
+In this lesson you'll see the three notions of compactness collapse into one for metric spaces, learn what total boundedness adds to boundedness, and get the extra theorems that metric compactness supports.
+
+## The Concept
+
+### The equivalences
+
+In a general topological space, several distinct conditions compete for the name "compact." In a **metric** space they all agree, and this is the theorem that makes the notion so usable in analysis.
+
+> For a metric space $X$, the following are equivalent:
+>
+> 1. **Compact** — every open cover has a finite subcover.
+> 2. **Sequentially compact** — every sequence has a convergent subsequence with limit in $X$.
+> 3. **Complete and totally bounded**.
+> 4. **Limit point compact** — every infinite subset has a limit point in $X$.
+
+None of these equivalences holds in general topological spaces. There are compact spaces that are not sequentially compact and vice versa, so the metric setting is genuinely special.
+
+<SequentialCompactness />
+
+The figure demonstrates the sequential form. On $[0,1]$, bisection extracts a convergent subsequence from an equidistributed sequence that itself has no limit: at each level the half containing more of the surviving terms is kept, and after eight halvings the interval has width under $0.004$ while still containing infinitely many terms. That construction is Bolzano–Weierstrass, and the figure runs it rather than describing it.
+
+On $(0,1]$ the same idea fails. The sequence $\frac1n$ has every subsequence tending to 0, and 0 is not a point of the space, so no subsequence converges **in $X$**. The interval is therefore not sequentially compact, and by the equivalence not compact — matching the open-cover argument from the previous lesson.
+
+### Total boundedness
+
+> $X$ is **totally bounded** if for every $\varepsilon>0$ it can be covered by finitely many balls of radius $\varepsilon$.
+
+This is strictly stronger than bounded, and the difference is exactly what goes wrong in infinite dimensions.
+
+In $\mathbb{R}^n$ they coincide: a bounded set sits in a large box, which can be chopped into finitely many small boxes. In $\ell^2$ they do not. The set of standard basis vectors $\{e_n\}$ is bounded — every element has norm 1 — but the points are pairwise at distance $\sqrt2$, so a ball of radius $\frac12$ contains at most one of them and no finite family of such balls covers an infinite set.
+
+**That is why Heine–Borel is a theorem about $\mathbb{R}^n$.** The correct general statement replaces "bounded" with "totally bounded" and adds completeness:
+
+$$
+\text{compact} \iff \text{complete} + \text{totally bounded}
+$$
+
+### Completeness is not enough, and neither is boundedness
+
+Both halves are needed, and each has a clean counterexample.
+
+- $\mathbb{R}$ is **complete** but not totally bounded, and not compact.
+- $(0,1)$ is **totally bounded** but not complete, and not compact.
+- $\ell^2$'s closed unit ball is complete and bounded but not totally bounded, and not compact.
+
+Note also that completeness is a metric property rather than a topological one: $(0,1)\cong\mathbb{R}$ as topological spaces, yet one is complete and one is not. Compactness, being a combination that happens to be topological, is the invariant.
+
+### What metric compactness gives you
+
+Beyond the general results from the last lesson, a compact metric space supports:
+
+> **Uniform continuity.** Every continuous function on a compact metric space is uniformly continuous.
+
+This is the theorem quoted in the real analysis section, and it is what makes continuous functions Riemann integrable.
+
+> **Bounded diameter.** A compact metric space is bounded, and its diameter is attained by some pair of points.
+
+> **Separability.** Every compact metric space is separable and second countable.
+
+> **The Lebesgue number lemma.** For any open cover of a compact metric space there is a $\delta>0$ such that every set of diameter less than $\delta$ lies inside some single member of the cover.
+
+The Lebesgue number lemma is the technical workhorse behind subdivision arguments, and it is how uniform continuity and many results in algebraic topology are actually proved.
+
+> **Nested sets.** A decreasing sequence of nonempty closed sets in a compact space has nonempty intersection. This is the finite intersection property specialized, and it is how existence proofs by successive approximation are closed out.
+
+### The Cantor set
+
+The standard example worth having: the Cantor set $C$ is
+
+- **compact** — closed and bounded in $\mathbb{R}$
+- **totally disconnected** — every component is a single point
+- **uncountable** — it has the cardinality of $\mathbb{R}$
+- **nowhere dense** — its interior is empty
+- **perfect** — every point is a limit point
+
+That combination sounds contradictory and is not. $C$ is the canonical example showing that compactness says nothing about connectedness, and that topological smallness has nothing to do with cardinality.
+
+## Worked Examples
+
+**Example 1: Show $[0,1]$ is sequentially compact.**
+
+**Solution.** Given any sequence in $[0,1]$, bisect. One of the halves contains infinitely many terms; keep it and repeat.
+
+This produces nested intervals of width $2^{-n}$, each containing infinitely many terms. Choosing one term from each level with increasing index gives a subsequence, and by completeness the nested intervals shrink to a single point, which is the limit.
+
+$$
+\text{sequentially compact}
+$$
+
+∎
+
+**This is exactly the computation in the figure**, run to eight levels there.
+
+**Example 2: Show $(0,1]$ is not sequentially compact.**
+
+**Solution.** Take $x_n = \frac1n$. Every subsequence also tends to 0.
+
+Since $0\notin(0,1]$, no subsequence converges to a point of the space.
+
+$$
+\text{not sequentially compact}
+$$
+
+∎
+
+**Example 3: Show $\{e_n\}\subseteq\ell^2$ is bounded but not totally bounded.**
+
+**Solution.** Each $e_n$ has norm 1, so the set is bounded.
+
+For $m\ne n$,
+
+$$
+\|e_m-e_n\| = \sqrt{1^2+1^2} = \sqrt2
+$$
+
+So a ball of radius $\frac{\sqrt2}{2}$ contains at most one basis vector, and no finite collection of such balls covers infinitely many.
+
+$$
+\text{bounded, not totally bounded}
+$$
+
+∎
+
+**Example 4: Show $\mathbb{R}$ is complete but not compact.**
+
+**Solution.** Completeness is the standard fact that Cauchy sequences of reals converge.
+
+$\mathbb{R}$ is not totally bounded, since no finite family of balls of radius 1 covers it. By the equivalence it is not compact, and directly the cover $\{(-n,n)\}$ has no finite subcover.
+
+$$
+\text{complete, not compact}
+$$
+
+∎
+
+**Example 5: Prove uniform continuity on a compact metric space.**
+
+**Solution.** Let $f:K\to\mathbb{R}$ be continuous with $K$ compact, and fix $\varepsilon>0$.
+
+For each $x$, continuity gives $\delta_x>0$ with $|f(y)-f(x)|<\frac\varepsilon2$ whenever $d(y,x)<\delta_x$. The balls $B\left(x,\frac{\delta_x}{2}\right)$ cover $K$, so finitely many do, say for $x_1,\ldots,x_n$. Put
+
+$$
+\delta = \min_i\frac{\delta_{x_i}}{2} > 0
+$$
+
+which is positive precisely because the collection is **finite**. Any two points within $\delta$ then lie in a common ball, and the triangle inequality gives $|f(y)-f(z)|<\varepsilon$. ∎
+
+**Compactness is what makes the minimum positive.** On a non-compact domain the infimum of the $\delta_x$ can be 0, which is exactly how $\sin(1/x)$ on $(0,1]$ escapes uniform continuity.
+
+**Example 6: Show a compact metric space has a largest distance.**
+
+**Solution.** The map $d:K\times K\to\mathbb{R}$ is continuous, and $K\times K$ is compact as a finite product of compact spaces.
+
+By the extreme value theorem $d$ attains a maximum, so there are points $p,q$ with $d(p,q) = \operatorname{diam}K$.
+
+$$
+\text{the diameter is attained}
+$$
+
+∎
+
+Contrast $(0,1)$, whose diameter is 1 and is attained by no pair.
+
+**Example 7: Show the Cantor set is compact and totally disconnected.**
+
+**Solution.** $C = \bigcap_n C_n$ where each $C_n$ is a finite union of closed intervals, so $C$ is closed as an intersection of closed sets, and bounded inside $[0,1]$. By Heine–Borel it is compact.
+
+For total disconnectedness, take $x\ne y$ in $C$. At stage $n$ with $2^{-n}$... more precisely once $3^{-n}<|x-y|$, the two points lie in different intervals of $C_n$, and the removed middle third between them separates $C$ into two relatively open pieces.
+
+$$
+\text{compact and totally disconnected}
+$$
+
+∎
+
+## Real-World Applications
+
+**Numerical convergence.** Extracting a convergent subsequence is the standard way to prove an iterative method has a limit point, and it requires the iterates to live in a compact set. That is why algorithms are analysed on bounded closed parameter regions.
+
+**Uniform error bounds.** Uniform continuity on a compact domain is what lets a single step size guarantee accuracy across the whole domain. Without it, a mesh fine enough in one region can be too coarse in another.
+
+**Optimization existence.** Compactness plus continuity gives existence of a minimizer, which is the first thing any convergence proof establishes. In infinite-dimensional problems, total boundedness failing is why weak topologies are introduced.
+
+**Approximation theory.** Total boundedness of a function class is exactly what makes finite approximation possible, and covering numbers — the count of $\varepsilon$-balls needed — are the quantitative version used in statistical learning bounds.
+
+**Signal quantization.** Covering a signal space with finitely many balls is quantization, and the number needed at a given resolution is the covering number. Total boundedness is the condition for a finite codebook to exist.
+
+**Data compactness assumptions.** Machine learning guarantees typically assume the data lies in a compact set, which is what allows a finite sample to control behaviour everywhere.
+
+:::note[You've Got This]
+The headline is that in a metric space the competing definitions of compactness are all the same condition, so you can use whichever is convenient — covers for topological arguments, sequences for analytic ones. The one distinction worth keeping sharp is bounded versus totally bounded. In $\mathbb{R}^n$ they coincide and Heine–Borel works; in $\ell^2$ they part company, and that split is the reason infinite-dimensional analysis needs different tools.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="topology-compactness-in-metric-spaces"
+  questions={[
+    {
+      id: "q1",
+      text: "In a metric space, which conditions are equivalent to compactness?",
+      options: [
+        "Only closed and bounded",
+        "Sequentially compact, and complete plus totally bounded",
+        "Only sequentially compact",
+        "None; they are all different",
+      ],
+      correctIndex: 1,
+      explanation:
+        "All four standard notions collapse into one for metric spaces. In general topological spaces they genuinely differ.",
+    },
+    {
+      id: "q2",
+      text: "How does bisection extract a convergent subsequence from a sequence in [0,1]?",
+      options: [
+        "By sorting the terms",
+        "By repeatedly keeping a half that contains infinitely many terms, giving nested intervals shrinking to the limit",
+        "By taking every second term",
+        "By taking the supremum",
+      ],
+      correctIndex: 1,
+      explanation:
+        "The nested intervals have width 2⁻ⁿ and completeness pins down a single point. This is the Bolzano–Weierstrass argument.",
+    },
+    {
+      id: "q3",
+      text: "Why is (0,1] not sequentially compact?",
+      options: [
+        "Because it is unbounded",
+        "Because 1/n has every subsequence tending to 0, which is not in the space",
+        "Because it is not connected",
+        "It is sequentially compact",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Convergence must be to a point of the space. The same failure appears as a cover with no finite subcover.",
+    },
+    {
+      id: "q4",
+      text: "What does totally bounded mean?",
+      options: [
+        "The space has finite diameter",
+        "For every ε > 0 the space is covered by finitely many balls of radius ε",
+        "Every sequence is bounded",
+        "The space is contained in a box",
+      ],
+      correctIndex: 1,
+      explanation:
+        "It is strictly stronger than bounded. In ℝⁿ the two coincide, which is why Heine–Borel works there and not in general.",
+    },
+    {
+      id: "q5",
+      text: "Why is the set of standard basis vectors in ℓ² not totally bounded?",
+      options: [
+        "Because it is unbounded",
+        "Because the vectors are pairwise at distance √2, so a small ball holds at most one of them",
+        "Because it is not closed",
+        "Because ℓ² is not complete",
+      ],
+      correctIndex: 1,
+      explanation:
+        "No finite family of balls of radius below √2⁄2 can cover infinitely many isolated points. This is the standard failure of Heine–Borel in infinite dimensions.",
+    },
+    {
+      id: "q6",
+      text: "Which space is complete but not compact?",
+      options: ["(0,1)", "ℝ", "[0,1]", "The Cantor set"],
+      correctIndex: 1,
+      explanation:
+        "ℝ is complete but not totally bounded. Conversely (0,1) is totally bounded but not complete, so both halves of the criterion are needed.",
+    },
+    {
+      id: "q7",
+      text: "Why does compactness make every continuous function uniformly continuous?",
+      options: [
+        "Because compact spaces are finite",
+        "Because finitely many local δ's can be taken as a minimum, which stays positive",
+        "Because continuous functions are bounded",
+        "It does not",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Finiteness of the subcover is exactly what keeps the minimum away from zero. On (0,1] the infimum of the local δ's is 0, which is how sin(1/x) escapes.",
+    },
+    {
+      id: "q8",
+      text: "Which combination of properties does the Cantor set have?",
+      options: [
+        "Compact, connected and countable",
+        "Compact, totally disconnected, uncountable and nowhere dense",
+        "Non-compact and countable",
+        "Compact and open",
+      ],
+      correctIndex: 1,
+      explanation:
+        "It is the canonical example that compactness says nothing about connectedness and that topological smallness is unrelated to cardinality.",
+    },
+  ]}
+/>

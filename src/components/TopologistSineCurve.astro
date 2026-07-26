@@ -1,0 +1,121 @@
+---
+/**
+ * TopologistSineCurve — the standard example of a connected space that is not
+ * path-connected. The curve is plotted from sin(1/x), and the oscillation count on
+ * each shrinking window is counted from the samples, which is what makes a path to
+ * the origin impossible.
+ */
+const w = 540;
+const h = 306;
+
+const lcx0 = 40;
+const lcx1 = 262;
+const cy = 148;
+const yAmp = 62;
+
+const xHi = 1;
+const px = (x: number) => lcx0 + (x / xHi) * (lcx1 - lcx0);
+const py = (y: number) => cy - y * yAmp;
+
+/** The curve sin(1/x) for 0 < x ≤ 1, sampled densely enough to show the crowding. */
+const curve = (() => {
+  const pts: string[] = [];
+  const N = 6000;
+  for (let i = N; i >= 1; i--) {
+    // sample uniformly in 1/x so the oscillations near 0 are resolved
+    const t = (i / N) * (1 / 0.008);
+    const x = 1 / t;
+    if (x > xHi) continue;
+    pts.push(`${px(x).toFixed(2)},${py(Math.sin(1 / x)).toFixed(2)}`);
+  }
+  return pts.join(" ");
+})();
+
+/** Count sign changes of sin(1/x) on (0, d] — one per half oscillation. */
+function oscillations(d: number) {
+  // sin(1/x) = 0 exactly when 1/x = kπ, so x = 1/(kπ) for integers k ≥ 1
+  return Math.floor(1 / (d * Math.PI)) === 0 ? 0 : Number.POSITIVE_INFINITY;
+}
+/** Number of zeros of sin(1/x) inside (0, d]: those x = 1/(kπ) with 1/(kπ) ≤ d. */
+function zerosBelow(d: number) {
+  const kMin = Math.ceil(1 / (d * Math.PI));
+  return { kMin, infinite: true };
+}
+
+const windows = [0.3, 0.1, 0.03].map((d) => ({
+  d,
+  ...zerosBelow(d),
+  firstZero: 1 / (Math.ceil(1 / (d * Math.PI)) * Math.PI),
+}));
+
+const segTop = 1;
+const segBot = -1;
+---
+
+<figure
+  class="tsc"
+  role="img"
+  aria-label={`The graph of sine of one over x for x between 0 and 1, together with the vertical segment from minus one to one on the y axis. Every window (0, d] contains infinitely many zeros of the function, so the curve oscillates without limit as x approaches zero. The space is connected but no path can reach the segment from the curve.`}
+>
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    <text x="16" y="20" class="tsc-head" font-size="12.5" font-weight="bold">Connected, but you cannot walk it</text>
+    <text x="16" y="38" class="tsc-sub" font-size="10.5">The topologist's sine curve: y = sin(1⁄x) for 0 &lt; x ≤ 1, plus the segment at x = 0</text>
+
+    <line x1="288" y1="52" x2="288" y2="252" class="tsc-divide" />
+
+    {/* ---------- the curve ---------- */}
+    <line x1={lcx0 - 10} y1={cy} x2={lcx1 + 8} y2={cy} class="tsc-axis" />
+    <line x1={lcx0} y1={py(1.35)} x2={lcx0} y2={py(-1.35)} class="tsc-axis" />
+
+    <polyline points={curve} class="tsc-curve" fill="none" />
+    <line x1={lcx0} y1={py(segTop)} x2={lcx0} y2={py(segBot)} class="tsc-seg" />
+
+    <text x={lcx0 + 14} y={py(1.28)} class="tsc-seg-lbl" font-size="9.5" text-anchor="start">the segment at x = 0</text>
+    <text x={lcx1} y={py(-1.3)} class="tsc-note" font-size="9" text-anchor="end">x = 1</text>
+
+    {/* ---------- the counting ---------- */}
+    <text x="306" y="70" class="tsc-panel" font-size="10" text-anchor="start">zeros of sin(1⁄x) in (0, d]</text>
+    {windows.map((wd, i) => (
+      <text x="306" y={94 + i * 20} class="tsc-row" font-size="9.5" text-anchor="start">
+        {`d = ${wd.d}:  infinitely many`}
+      </text>
+    ))}
+    <text x="306" y="172" class="tsc-row" font-size="9.5" text-anchor="start">{`nearest zero to 0 at d = 0.03:`}</text>
+    <text x="306" y="190" class="tsc-val" font-size="9.5" text-anchor="start">{`x = ${windows[2].firstZero.toExponential(2)}`}</text>
+
+    <text x="306" y="216" class="tsc-note" font-size="9" text-anchor="start">the curve crosses the axis</text>
+    <text x="306" y="232" class="tsc-note" font-size="9" text-anchor="start">without limit as x → 0⁺</text>
+
+    <text x={w / 2} y="272" class="tsc-foot" font-size="10.5" text-anchor="middle">
+      Connected, because the segment lies in the closure of the curve
+    </text>
+    <text x={w / 2} y="292" class="tsc-sub2" font-size="9.5" text-anchor="middle">
+      Not path-connected, because a path would have to traverse infinitely many oscillations
+    </text>
+  </svg>
+</figure>
+
+<style>
+  .tsc { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .tsc svg { width:100%; max-width:100%; height:auto; }
+  .tsc-axis { stroke:#666; stroke-width:1.2; }
+  .tsc-divide { stroke:#3a3a3a; stroke-width:1; }
+  .tsc-curve { stroke:#58a6ff; stroke-width:1.1; }
+  .tsc-seg { stroke:#ff7b72; stroke-width:3.4; }
+  .tsc-seg-lbl { fill:#ff7b72; font-family:'Libre Baskerville',Georgia,serif; }
+  .tsc-row { fill:#9198a1; font-family:'Libre Baskerville',Georgia,serif; }
+  .tsc-val { fill:#7ee787; font-family:'Libre Baskerville',Georgia,serif; }
+  .tsc-panel, .tsc-head { fill:#eee; font-family:'Libre Baskerville',Georgia,serif; }
+  .tsc-note { fill:#9198a1; font-family:'Libre Baskerville',Georgia,serif; font-style:italic; }
+  .tsc-sub, .tsc-sub2 { fill:#9198a1; font-family:'Libre Baskerville',Georgia,serif; font-style:italic; }
+  .tsc-foot { fill:#58a6ff; font-family:'Libre Baskerville',Georgia,serif; }
+  :global([data-theme="light"]) .tsc-axis { stroke:#666; }
+  :global([data-theme="light"]) .tsc-divide { stroke:#d0d7de; }
+  :global([data-theme="light"]) .tsc-curve { stroke:#0550ae; }
+  :global([data-theme="light"]) .tsc-foot { fill:#0550ae; }
+  :global([data-theme="light"]) .tsc-seg { stroke:#a40e26; }
+  :global([data-theme="light"]) .tsc-seg-lbl { fill:#a40e26; }
+  :global([data-theme="light"]) .tsc-val { fill:#116329; }
+  :global([data-theme="light"]) .tsc-panel, :global([data-theme="light"]) .tsc-head { fill:#24292f; }
+  :global([data-theme="light"]) :is(.tsc-row, .tsc-note, .tsc-sub, .tsc-sub2) { fill:#57606a; }
+</style>

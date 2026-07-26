@@ -1,0 +1,323 @@
+---
+title: Metric Spaces
+description: Distance axiomatized, open balls, and why several metrics can mean the same thing
+sidebar:
+  order: 2
+---
+
+import Quiz from "../../../components/Quiz.astro";
+import SymbolKey from "../../../components/SymbolKey.astro";
+import MetricBalls from "../../../components/MetricBalls.astro";
+
+## What You'll Learn
+
+In this lesson you'll see distance reduced to four axioms, meet examples ranging from the familiar to the strange, define open sets from open balls, and discover that different metrics can produce identical topologies.
+
+<SymbolKey
+  title="Metric space notation"
+  items={[
+    {
+      sym: "(X, d)",
+      read: "the set X with metric d",
+      note: "the metric is part of the data, not an afterthought",
+    },
+    {
+      sym: "d(x, y)",
+      read: "the distance from x to y",
+      note: "a non-negative real number",
+    },
+    {
+      sym: "B(x, r)",
+      read: "the open ball of radius r about x",
+      note: "all points strictly within r of x",
+    },
+    {
+      sym: "B̄(x, r)",
+      read: "the closed ball",
+      note: "distance ≤ r; not always the closure of the open ball",
+    },
+    {
+      sym: "d₁, d₂, d∞",
+      read: "taxicab, Euclidean and maximum metrics",
+      note: "different distances, same topology on ℝⁿ",
+    },
+  ]}
+/>
+
+## The Concept
+
+### The axioms
+
+> A **metric** on a set $X$ is a function $d: X\times X\to\mathbb{R}$ satisfying, for all $x,y,z$:
+>
+> 1. **Non-negativity.** $d(x,y)\ge0$
+> 2. **Identity of indiscernibles.** $d(x,y)=0$ if and only if $x=y$
+> 3. **Symmetry.** $d(x,y)=d(y,x)$
+> 4. **Triangle inequality.** $d(x,z)\le d(x,y)+d(y,z)$
+
+The pair $(X,d)$ is a **metric space**. That is the entire definition, and it is worth appreciating how little it demands: no coordinates, no algebra, no dimension.
+
+The fourth axiom does almost all the work. The triangle inequality is what makes limits behave and what every convergence proof in analysis eventually appeals to. Without it, "close to $x$" and "close to $y$" would carry no information about each other.
+
+Note the "only if" in axiom 2. Dropping it gives a **pseudometric**, where distinct points can be at distance 0. Dropping symmetry gives a quasimetric, which is how one-way street distances are modelled.
+
+### Examples
+
+**Euclidean, on $\mathbb{R}^n$.** $d_2(x,y) = \sqrt{\sum(x_i-y_i)^2}$. The default.
+
+**Taxicab, on $\mathbb{R}^n$.** $d_1(x,y) = \sum|x_i-y_i|$. The distance a car drives on a rectangular street grid, hence the name.
+
+**Maximum, on $\mathbb{R}^n$.** $d_\infty(x,y) = \max_i|x_i-y_i|$. Also called the Chebyshev distance; it is the number of moves a chess king needs.
+
+**Discrete.** $d(x,y)=1$ for $x\ne y$ and 0 otherwise. Valid on any set at all, and it makes every subset open.
+
+**Supremum metric on functions.** $d(f,g) = \sup_x|f(x)-g(x)|$ on the continuous functions on $[a,b]$. Convergence in this metric is exactly uniform convergence, which is the link back to real analysis.
+
+**Hamming distance.** On strings of fixed length, the number of positions where they differ. This is the metric coding theory is built on.
+
+**The $p$-adic metric.** On $\mathbb{Q}$, two numbers are close when their difference is divisible by a high power of $p$. It satisfies a stronger inequality, $d(x,z)\le\max(d(x,y),d(y,z))$, and it is the foundation of a large part of modern number theory.
+
+### Open balls and open sets
+
+> The **open ball** is $B(x,r) = \{y \in X : d(x,y)<r\}$.
+
+> A set $U\subseteq X$ is **open** if every point of $U$ has some ball around it contained in $U$.
+
+That second definition is the bridge to the rest of the section. It converts a numerical notion, distance, into a purely set-theoretic one, openness — and openness is all the next lesson will keep.
+
+**Open balls need not look round.** The shape depends entirely on the metric.
+
+<MetricBalls />
+
+In the figure, the same "unit ball" is a disc, a diamond, and a square for the three standard metrics on $\mathbb{R}^2$. Each boundary is computed by scaling directions until the norm equals 1, so the shapes come out of the formulas rather than being drawn by hand.
+
+### Equivalent metrics
+
+Here is the observation that motivates the whole abstraction.
+
+> Two metrics on the same set are **topologically equivalent** if they produce exactly the same open sets.
+
+For $\mathbb{R}^n$, the metrics $d_1$, $d_2$, and $d_\infty$ are all equivalent. The reason is that each ball fits inside a scaled copy of the others:
+
+$$
+d_\infty \le d_2 \le d_1 \le n\,d_\infty
+$$
+
+The figure measures the relevant constants on $\mathbb{R}^2$: over the Euclidean unit circle, $d_1$ ranges between 1 and $\sqrt2$, and $d_\infty$ between $\frac{1}{\sqrt2}$ and 1. Since each is bounded above and below by a multiple of the other, any ball of one metric contains a ball of the other, so the open sets coincide.
+
+**Consequence:** every topological statement about $\mathbb{R}^2$ — continuity, convergence, connectedness, compactness — gives the same answer for all three. Proving a theorem once topologically covers all of them.
+
+The discrete metric on $\mathbb{R}$ is **not** equivalent to the usual one, since it makes every singleton open. That is a genuinely different topology.
+
+### What metrics still give you that topology does not
+
+Not everything survives the abstraction, and it is worth knowing what is lost:
+
+- **Cauchy sequences and completeness** need actual distances.
+- **Uniform continuity** and **Lipschitz** conditions are metric notions, not topological ones.
+- **Boundedness** is metric; the topological substitute is compactness.
+- **Diameter** and any quantitative estimate.
+
+So metric spaces are not superseded. Analysis needs them, and lesson 11 returns to them for the extra results they support.
+
+## Worked Examples
+
+**Example 1: Verify the discrete metric is a metric.**
+
+**Solution.** Non-negativity and symmetry are clear from the definition. Axiom 2 holds because $d(x,y)=0$ precisely when $x=y$.
+
+For the triangle inequality, take any $x,y,z$. If $x=z$ then the left side is 0 and there is nothing to prove. If $x\ne z$ then the left side is 1, and at least one of $y\ne x$ or $y\ne z$ must hold, so the right side is at least 1. ✓
+
+In this space $B(x,\frac12) = \{x\}$, so every singleton is open, hence **every** subset is open. ∎
+
+**Example 2: Show $d(x,y)=|x-y|^2$ is not a metric on $\mathbb{R}$.**
+
+**Solution.** The triangle inequality fails. Take $x=0$, $y=1$, $z=2$:
+
+$$
+d(0,2) = 4, \qquad d(0,1)+d(1,2) = 1+1 = 2
+$$
+
+and $4 > 2$. ∎
+
+**Squaring breaks the triangle inequality**, while square-rooting does not: $\sqrt{|x-y|}$ _is_ a metric.
+
+**Example 3: Describe the unit ball of $d_1$ in $\mathbb{R}^2$.**
+
+**Solution.** The condition $|x|+|y|<1$ describes the open **diamond** with vertices at $(\pm1,0)$ and $(0,\pm1)$.
+
+It is inscribed in the Euclidean unit disc, touching it only at those four vertices. ∎
+
+**Example 4: Show $d_\infty \le d_2 \le \sqrt2\,d_\infty$ in $\mathbb{R}^2$.**
+
+**Solution.** Write $a = |\Delta x|$ and $b=|\Delta y|$, and suppose without loss of generality $a\ge b$, so $d_\infty = a$.
+
+Lower bound: $d_2 = \sqrt{a^2+b^2}\ge\sqrt{a^2} = a = d_\infty$ ✓
+
+Upper bound: $d_2 = \sqrt{a^2+b^2}\le\sqrt{a^2+a^2} = a\sqrt2 = \sqrt2\,d_\infty$ ✓
+
+So each metric is bounded by a constant times the other, which is exactly what makes the balls nest and the topologies agree. ∎
+
+**Example 5: Is $(0,1)$ open in $\mathbb{R}$ with the usual metric?**
+
+**Solution.** Yes. Given $x\in(0,1)$, set $r = \min(x, 1-x) > 0$. Then $B(x,r) = (x-r,x+r)\subseteq(0,1)$.
+
+$$
+\text{open}
+$$
+
+∎
+
+Note $[0,1)$ is **not** open, because no ball around 0 stays inside: every $B(0,r)$ contains negative numbers.
+
+**Example 6: Show the closed ball need not be the closure of the open ball.**
+
+**Solution.** Use the discrete metric on a set with at least two points, and take $r=1$.
+
+$$
+B(x,1) = \{x\}, \qquad \bar B(x,1) = X
+$$
+
+The open ball is already closed, since every set is, so its closure is $\{x\}$, not $X$. ∎
+
+**In $\mathbb{R}^n$ they do agree**, which is why this trap is easy to walk into. The general statement is only that the closure of the open ball is contained in the closed ball.
+
+**Example 7: Interpret the supremum metric.**
+
+What does $d(f,g) = \sup_{x\in[0,1]}|f(x)-g(x)| < \varepsilon$ mean?
+
+**Solution.** It says the graphs of $f$ and $g$ stay within vertical distance $\varepsilon$ of each other at **every** point of $[0,1]$ — the entire graph of $g$ lies in an $\varepsilon$-tube around $f$.
+
+Convergence in this metric is therefore **uniform convergence**, exactly the notion from real analysis, and a ball in this metric is the tube. ∎
+
+**The tube picture from uniform convergence was a metric ball all along**, which is a good example of topology retroactively explaining an earlier definition.
+
+## Real-World Applications
+
+**Route planning.** Taxicab distance models grid-based city travel, and real navigation uses graph metrics on road networks. The choice of metric changes which route is optimal but not which places are near each other in the topological sense.
+
+**Error-correcting codes.** Hamming distance turns strings into a metric space, and a code corrects $t$ errors exactly when its codewords are more than $2t$ apart. Every disk drive and network protocol depends on this.
+
+**Machine learning.** Nearest-neighbour classification, clustering, and embeddings all require choosing a metric, and the choice determines the results far more than the algorithm does. Cosine, Euclidean and Manhattan distances give different answers on the same data.
+
+**Text and DNA comparison.** Edit distance is a metric on strings, and it drives spell checkers, plagiarism detection, and sequence alignment in bioinformatics.
+
+**Function approximation.** The supremum metric measures worst-case error, which is the guarantee engineering needs, while the $L^2$ metric measures average error. Choosing between them is choosing what "close enough" means.
+
+**Number theory.** The $p$-adic metrics give a completely different notion of nearness on $\mathbb{Q}$ and are central to modern arithmetic geometry, including the proof of Fermat's Last Theorem.
+
+:::note[You've Got This]
+Metric spaces should feel comfortable, since they are just distance with the rules written down. The one idea to take forward is the last one: several different metrics can define exactly the same open sets, which means the open sets, not the distances, are what topological questions actually depend on. That observation is the reason the next lesson throws the metric away entirely, and it is worth being convinced by it before you get there.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="topology-metric-spaces"
+  questions={[
+    {
+      id: "q1",
+      text: "Which axiom of a metric does most of the work in analysis?",
+      options: [
+        "Non-negativity",
+        "The triangle inequality",
+        "Symmetry",
+        "That d(x, x) = 0",
+      ],
+      correctIndex: 1,
+      explanation:
+        "It is what lets closeness to one point say something about closeness to another, and every convergence proof appeals to it. Without it the other axioms carry almost no information.",
+    },
+    {
+      id: "q2",
+      text: "Why is d(x, y) = |x − y|² not a metric on ℝ?",
+      options: [
+        "It can be negative",
+        "The triangle inequality fails, since d(0, 2) = 4 exceeds d(0, 1) + d(1, 2) = 2",
+        "It is not symmetric",
+        "It is a metric",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Squaring destroys the triangle inequality. Taking a square root instead preserves it, so √|x − y| is a genuine metric.",
+    },
+    {
+      id: "q3",
+      text: "What shape is the unit ball of the taxicab metric in ℝ²?",
+      options: [
+        "A disc",
+        "A diamond with vertices at (±1, 0) and (0, ±1)",
+        "A square with horizontal sides",
+        "A triangle",
+      ],
+      correctIndex: 1,
+      explanation:
+        "The condition |x| + |y| < 1 cuts out a diamond inscribed in the Euclidean unit disc. Balls are only round when the metric is Euclidean.",
+    },
+    {
+      id: "q4",
+      text: "What does it mean for two metrics to be topologically equivalent?",
+      options: [
+        "They give the same distances",
+        "They produce exactly the same collection of open sets",
+        "They have the same unit ball",
+        "One is a multiple of the other",
+      ],
+      correctIndex: 1,
+      explanation:
+        "d₁, d₂ and d∞ on ℝⁿ have visibly different unit balls yet identical open sets. Each is bounded by a constant multiple of the others, which makes the balls nest.",
+    },
+    {
+      id: "q5",
+      text: "In the discrete metric, which subsets are open?",
+      options: [
+        "Only the empty set and X",
+        "Only finite sets",
+        "Every subset",
+        "Only the balls",
+      ],
+      correctIndex: 2,
+      explanation:
+        "Since B(x, ½) = {x}, every singleton is open, and unions of singletons give everything. This topology is genuinely different from the usual one on ℝ.",
+    },
+    {
+      id: "q6",
+      text: "Is the closed ball always the closure of the open ball of the same radius?",
+      options: [
+        "Yes, always",
+        "No; in the discrete metric B(x, 1) = {x} is already closed while the closed ball is all of X",
+        "Only in ℝⁿ it fails",
+        "Only for r = 1",
+      ],
+      correctIndex: 1,
+      explanation:
+        "In general only the containment closure(B) ⊆ closed ball holds. They coincide in ℝⁿ, which is why the mistake is easy to make.",
+    },
+    {
+      id: "q7",
+      text: "What does convergence in the supremum metric d(f, g) = sup|f − g| mean?",
+      options: [
+        "Pointwise convergence",
+        "Uniform convergence, with the whole graph inside an ε-tube",
+        "Convergence in average",
+        "Convergence of the derivatives",
+      ],
+      correctIndex: 1,
+      explanation:
+        "A ball in this metric is exactly the ε-tube from the uniform convergence lesson in real analysis. The metric formalizes the picture you already had.",
+    },
+    {
+      id: "q8",
+      text: "Which of these is a metric notion rather than a topological one?",
+      options: [
+        "Connectedness",
+        "Continuity",
+        "Uniform continuity",
+        "Compactness",
+      ],
+      correctIndex: 2,
+      explanation:
+        "Uniform continuity compares distances across the whole domain, so it needs the metric itself. Continuity, connectedness and compactness can all be stated with open sets alone.",
+    },
+  ]}
+/>

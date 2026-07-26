@@ -1,0 +1,137 @@
+---
+/**
+ * OpenCoverFinite — compactness as the finite subcover property. Left: a cover of
+ * [0,1] and a finite subcover extracted by a greedy sweep, so the number of sets
+ * needed is computed. Right: a cover of (0,1] where every finite subfamily provably
+ * misses an initial piece, whose length is computed from the subfamily.
+ */
+const w = 540;
+const h = 310;
+
+// ---------- left: [0,1] is compact ----------
+const lx0 = 40;
+const lx1 = 250;
+const lLo = -0.14;
+const lHi = 1.14;
+const lpx = (v: number) => lx0 + ((v - lLo) / (lHi - lLo)) * (lx1 - lx0);
+
+const radius = 0.13;
+const centres = Array.from({ length: 27 }, (_, j) => -0.1 + j * 0.05);
+const cover = centres.map((c) => ({ a: c - radius, b: c + radius }));
+
+/** Sweep left to right, each time taking the member reaching furthest right. */
+function greedySubcover() {
+  const chosen: { a: number; b: number }[] = [];
+  let reach = 0;
+  let guard = 0;
+  while (reach <= 1 && guard++ < 50) {
+    let best: { a: number; b: number } | null = null;
+    for (const c of cover) {
+      if (c.a < reach + 1e-12 && (best === null || c.b > best.b)) best = c;
+    }
+    if (!best || best.b <= reach) break;
+    chosen.push(best);
+    reach = best.b;
+  }
+  return chosen;
+}
+const sub = greedySubcover();
+
+// ---------- right: (0,1] is not compact ----------
+const rx0 = 300;
+const rx1 = 510;
+const rpx = (v: number) => rx0 + ((v - lLo) / (lHi - lLo)) * (rx1 - rx0);
+
+const shown = 4;
+const family = Array.from({ length: shown }, (_, k) => ({ n: k + 1, a: 1 / (k + 1), b: 1.14 }));
+const largestN = Math.max(...family.map((f) => f.n));
+const missed = 1 / largestN;
+
+const laneY = (k: number) => 122 + k * 15;
+---
+
+<figure
+  class="ocf"
+  role="img"
+  aria-label={`On the left, a cover of the closed interval from 0 to 1 from which a finite subcover of ${sub.length} sets is extracted, so the interval is compact. On the right, the cover of the half-open interval by sets from 1 over n to 2, where any finite subfamily leaves the initial piece of length ${missed} uncovered, so that interval is not compact.`}
+>
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    <text x="16" y="20" class="ocf-head" font-size="12.5" font-weight="bold">Every cover must reduce to a finite one</text>
+    <text x="16" y="38" class="ocf-sub" font-size="10.5">Compactness, tested on two intervals that differ by a single point</text>
+
+    <line x1="276" y1="52" x2="276" y2="256" class="ocf-divide" />
+
+    {/* ---------- left panel ---------- */}
+    <text x={(lx0 + lx1) / 2} y="62" class="ocf-title ocf-ok" font-size="10.5" text-anchor="middle" font-weight="bold">[0, 1] is compact</text>
+    <line x1={lx0 - 6} y1="92" x2={lx1 + 6} y2="92" class="ocf-axis" />
+    <line x1={lpx(0)} y1="92" x2={lpx(1)} y2="92" class="ocf-target" />
+    <circle cx={lpx(0)} cy="92" r="3.4" class="ocf-solid-b" />
+    <circle cx={lpx(1)} cy="92" r="3.4" class="ocf-solid-b" />
+    <text x={(lx0 + lx1) / 2} y="108" class="ocf-note" font-size="9" text-anchor="middle">both endpoints included</text>
+
+    {sub.map((s, k) => (
+      <line x1={lpx(Math.max(s.a, lLo))} y1={laneY(k)} x2={lpx(Math.min(s.b, lHi))} y2={laneY(k)} class="ocf-chosen" />
+    ))}
+
+    <text x={(lx0 + lx1) / 2} y={laneY(sub.length) + 12} class="ocf-val ocf-ok" font-size="9.5" text-anchor="middle">
+      {`${sub.length} sets suffice`}
+    </text>
+    <text x={(lx0 + lx1) / 2} y={laneY(sub.length) + 30} class="ocf-note" font-size="9" text-anchor="middle">and this works for every cover</text>
+
+    {/* ---------- right panel ---------- */}
+    <text x={(rx0 + rx1) / 2} y="62" class="ocf-title ocf-bad" font-size="10.5" text-anchor="middle" font-weight="bold">(0, 1] is not compact</text>
+    <line x1={rx0 - 6} y1="92" x2={rx1 + 6} y2="92" class="ocf-axis" />
+    <line x1={rpx(0)} y1="92" x2={rpx(1)} y2="92" class="ocf-target" />
+    <circle cx={rpx(0)} cy="92" r="3.4" class="ocf-hollow" />
+    <circle cx={rpx(1)} cy="92" r="3.4" class="ocf-solid-b" />
+    <text x={(rx0 + rx1) / 2} y="108" class="ocf-note" font-size="9" text-anchor="middle">0 is excluded</text>
+
+    {family.map((f, k) => (
+      <line x1={rpx(f.a)} y1={laneY(k)} x2={rpx(Math.min(f.b, lHi))} y2={laneY(k)} class="ocf-chosen" />
+    ))}
+
+    <line x1={rpx(0)} y1={laneY(shown) + 6} x2={rpx(missed)} y2={laneY(shown) + 6} class="ocf-missed" />
+    <text x={(rx0 + rx1) / 2} y={laneY(shown) + 24} class="ocf-val ocf-bad" font-size="9.5" text-anchor="middle">
+      {`${shown} sets leave (0, ${missed}] uncovered`}
+    </text>
+    <text x={(rx0 + rx1) / 2} y={laneY(shown) + 42} class="ocf-note" font-size="9" text-anchor="middle">and any finite choice leaves some gap</text>
+
+    <text x={w / 2} y="272" class="ocf-foot" font-size="10.5" text-anchor="middle">
+      Compact means every open cover has a finite subcover — for every cover, no exceptions
+    </text>
+    <text x={w / 2} y="292" class="ocf-sub2" font-size="9.5" text-anchor="middle">
+      The two intervals differ by one point, and that point is what makes the difference
+    </text>
+  </svg>
+</figure>
+
+<style>
+  .ocf { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .ocf svg { width:100%; max-width:100%; height:auto; }
+  .ocf-axis { stroke:#555; stroke-width:1; }
+  .ocf-divide { stroke:#3a3a3a; stroke-width:1; }
+  .ocf-target { stroke:#58a6ff; stroke-width:4; }
+  .ocf-chosen { stroke:#7ee787; stroke-width:2.6; }
+  .ocf-missed { stroke:#ff7b72; stroke-width:4; }
+  .ocf-solid-b { fill:#58a6ff; stroke:none; }
+  .ocf-hollow { fill:#121212; stroke:#58a6ff; stroke-width:1.6; }
+  .ocf-title, .ocf-val { font-family:'Libre Baskerville',Georgia,serif; }
+  .ocf-ok { fill:#7ee787; }
+  .ocf-bad { fill:#ff7b72; }
+  .ocf-note { fill:#9198a1; font-family:'Libre Baskerville',Georgia,serif; font-style:italic; }
+  .ocf-head { fill:#eee; font-family:'Libre Baskerville',Georgia,serif; }
+  .ocf-sub, .ocf-sub2 { fill:#9198a1; font-family:'Libre Baskerville',Georgia,serif; font-style:italic; }
+  .ocf-foot { fill:#58a6ff; font-family:'Libre Baskerville',Georgia,serif; }
+  :global([data-theme="light"]) .ocf-axis { stroke:#8c959f; }
+  :global([data-theme="light"]) .ocf-divide { stroke:#d0d7de; }
+  :global([data-theme="light"]) .ocf-target { stroke:#0550ae; }
+  :global([data-theme="light"]) .ocf-solid-b { fill:#0550ae; }
+  :global([data-theme="light"]) .ocf-hollow { fill:#ffffff; stroke:#0550ae; }
+  :global([data-theme="light"]) .ocf-chosen { stroke:#116329; }
+  :global([data-theme="light"]) .ocf-ok { fill:#116329; }
+  :global([data-theme="light"]) .ocf-missed { stroke:#a40e26; }
+  :global([data-theme="light"]) .ocf-bad { fill:#a40e26; }
+  :global([data-theme="light"]) .ocf-head { fill:#24292f; }
+  :global([data-theme="light"]) .ocf-foot { fill:#0550ae; }
+  :global([data-theme="light"]) :is(.ocf-note, .ocf-sub, .ocf-sub2) { fill:#57606a; }
+</style>

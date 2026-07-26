@@ -1,0 +1,159 @@
+---
+/**
+ * HoleClassification — shapes sorted into homeomorphism classes by counting holes.
+ * Each shape carries its number of boundary loops; the hole count is derived from
+ * that, and the grouping into classes is produced by the derived count.
+ *
+ * All geometry is emitted in absolute coordinates, with no transforms, so the
+ * drawn positions are exactly the numbers written here.
+ */
+const w = 540;
+const h = 300;
+
+type Draw = "letterC" | "letterA" | "letterB" | "disc" | "annulus" | "eight";
+type Shape = { name: string; loops: number; draw: Draw };
+
+const shapes: Shape[] = [
+  { name: "C", loops: 1, draw: "letterC" },
+  { name: "disc", loops: 1, draw: "disc" },
+  { name: "A", loops: 2, draw: "letterA" },
+  { name: "annulus", loops: 2, draw: "annulus" },
+  { name: "B", loops: 3, draw: "letterB" },
+  { name: "figure 8", loops: 3, draw: "eight" },
+];
+
+/** Holes = boundary loops − 1, since exactly one loop is the outer edge. */
+const withHoles = shapes.map((s) => ({ ...s, holes: s.loops - 1 }));
+const classes = [...new Set(withHoles.map((s) => s.holes))].sort((a, b) => a - b);
+const grouped = classes.map((k) => ({
+  holes: k,
+  members: withHoles.filter((s) => s.holes === k),
+}));
+
+const colX = (i: number) => 96 + i * 168;
+const iconY = 116;
+
+/** An arc of a circle, sampled as a polyline in absolute coordinates. */
+const arc = (cx: number, cy: number, r: number, aFrom: number, aTo: number) =>
+  Array.from({ length: 49 }, (_, k) => {
+    const a = ((aFrom + (k / 48) * (aTo - aFrom)) * Math.PI) / 180;
+    return `${(cx + r * Math.cos(a)).toFixed(1)},${(cy + r * Math.sin(a)).toFixed(1)}`;
+  }).join(" ");
+---
+
+<figure
+  class="hcl"
+  role="img"
+  aria-label={`Six shapes sorted into ${classes.length} classes by hole count. ${grouped
+    .map((g) => `${g.holes} hole${g.holes === 1 ? "" : "s"}: ${g.members.map((m) => m.name).join(" and ")}`)
+    .join("; ")}. Shapes in the same class can be deformed into one another.`}
+>
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    <text x="16" y="20" class="hcl-head" font-size="12.5" font-weight="bold">Same number of holes, same shape</text>
+    <text x="16" y="38" class="hcl-sub" font-size="10.5">Bending and stretching are allowed; cutting and gluing are not</text>
+
+    <line x1="180" y1="52" x2="180" y2="200" class="hcl-divide" />
+    <line x1="348" y1="52" x2="348" y2="200" class="hcl-divide" />
+
+    {grouped.map((g, i) => {
+      const L = colX(i) - 44;
+      const R = colX(i) + 40;
+      return (
+        <g>
+          <text x={colX(i)} y="64" class={`hcl-cls hcl-c${i}`} font-size="11" text-anchor="middle" font-weight="bold">
+            {`${g.holes} hole${g.holes === 1 ? "" : "s"}`}
+          </text>
+
+          {/* left member */}
+          {g.members[0].draw === "letterC" && (
+            <polyline points={arc(L, iconY, 24, 55, 305)} class={`hcl-ink hcl-s${i}`} fill="none" />
+          )}
+          {g.members[0].draw === "letterA" && (
+            <g>
+              <line x1={L - 15} y1={iconY + 26} x2={L} y2={iconY - 26} class={`hcl-ink hcl-s${i}`} />
+              <line x1={L} y1={iconY - 26} x2={L + 15} y2={iconY + 26} class={`hcl-ink hcl-s${i}`} />
+              <line x1={L - 7.5} y1={iconY + 6} x2={L + 7.5} y2={iconY + 6} class={`hcl-ink hcl-s${i}`} />
+            </g>
+          )}
+          {g.members[0].draw === "letterB" && (
+            /* drawn as a glyph: its two counters are the two holes, and nothing else */
+            <text x={L} y={iconY + 21} class={`hcl-glyph hcl-c${i}`} font-size="58" text-anchor="middle" font-weight="bold">B</text>
+          )}
+
+          {/* right member */}
+          {g.members[1].draw === "disc" && (
+            <circle cx={R} cy={iconY} r="23" class={`hcl-fill hcl-f${i}`} />
+          )}
+          {g.members[1].draw === "annulus" && (
+            <g>
+              <circle cx={R} cy={iconY} r="25" class={`hcl-ink hcl-s${i}`} fill="none" />
+              <circle cx={R} cy={iconY} r="11" class={`hcl-ink hcl-s${i}`} fill="none" />
+            </g>
+          )}
+          {g.members[1].draw === "eight" && (
+            <g>
+              <circle cx={R} cy={iconY - 13} r="12.5" class={`hcl-ink hcl-s${i}`} fill="none" />
+              <circle cx={R} cy={iconY + 13} r="12.5" class={`hcl-ink hcl-s${i}`} fill="none" />
+            </g>
+          )}
+
+          <text x={colX(i)} y="172" class="hcl-names" font-size="9.5" text-anchor="middle">
+            {g.members.map((m) => m.name).join("  ≅  ")}
+          </text>
+          <text x={colX(i)} y="190" class="hcl-note" font-size="9" text-anchor="middle">
+            {`${g.members[0].loops} boundary loop${g.members[0].loops === 1 ? "" : "s"}`}
+          </text>
+        </g>
+      );
+    })}
+
+    <text x={w / 2} y="228" class="hcl-foot" font-size="10.5" text-anchor="middle">
+      Hole count is an invariant, so it can only tell shapes apart, never together
+    </text>
+    <text x={w / 2} y="252" class="hcl-sub2" font-size="9.5" text-anchor="middle">
+      A matching invariant is evidence; a differing one proves they are not homeomorphic
+    </text>
+    <text x={w / 2} y="270" class="hcl-sub2" font-size="9.5" text-anchor="middle">
+      Letters are drawn plainly; serifs and stroke weight change nothing here
+    </text>
+    <text x={w / 2} y="288" class="hcl-sub2" font-size="9.5" text-anchor="middle">
+      This is why a coffee mug and a doughnut are the same object
+    </text>
+  </svg>
+</figure>
+
+<style>
+  .hcl { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .hcl svg { width:100%; max-width:100%; height:auto; }
+  .hcl-divide { stroke:#3a3a3a; stroke-width:1; }
+  .hcl-ink { stroke-width:2.6; stroke-linecap:round; }
+  .hcl-fill { stroke-width:2.6; }
+  .hcl-s0 { stroke:#7ee787; }
+  .hcl-s1 { stroke:#58a6ff; }
+  .hcl-s2 { stroke:#d2a8ff; }
+  .hcl-c0 { fill:#7ee787; }
+  .hcl-c1 { fill:#58a6ff; }
+  .hcl-c2 { fill:#d2a8ff; }
+  .hcl-f0 { fill:#7ee787; fill-opacity:0.25; stroke:#7ee787; }
+  .hcl-f1 { fill:#58a6ff; fill-opacity:0.25; stroke:#58a6ff; }
+  .hcl-f2 { fill:#d2a8ff; fill-opacity:0.25; stroke:#d2a8ff; }
+  .hcl-cls, .hcl-glyph { font-family:'Libre Baskerville',Georgia,serif; }
+  .hcl-names, .hcl-note { fill:#9198a1; font-family:'Libre Baskerville',Georgia,serif; }
+  .hcl-note { font-style:italic; }
+  .hcl-head { fill:#eee; font-family:'Libre Baskerville',Georgia,serif; }
+  .hcl-sub, .hcl-sub2 { fill:#9198a1; font-family:'Libre Baskerville',Georgia,serif; font-style:italic; }
+  .hcl-foot { fill:#58a6ff; font-family:'Libre Baskerville',Georgia,serif; }
+  :global([data-theme="light"]) .hcl-divide { stroke:#d0d7de; }
+  :global([data-theme="light"]) .hcl-s0 { stroke:#116329; }
+  :global([data-theme="light"]) .hcl-c0 { fill:#116329; }
+  :global([data-theme="light"]) .hcl-f0 { stroke:#116329; fill:#116329; }
+  :global([data-theme="light"]) .hcl-s1 { stroke:#0550ae; }
+  :global([data-theme="light"]) .hcl-c1 { fill:#0550ae; }
+  :global([data-theme="light"]) .hcl-f1 { stroke:#0550ae; fill:#0550ae; }
+  :global([data-theme="light"]) .hcl-s2 { stroke:#6639ba; }
+  :global([data-theme="light"]) .hcl-c2 { fill:#6639ba; }
+  :global([data-theme="light"]) .hcl-f2 { stroke:#6639ba; fill:#6639ba; }
+  :global([data-theme="light"]) .hcl-head { fill:#24292f; }
+  :global([data-theme="light"]) .hcl-foot { fill:#0550ae; }
+  :global([data-theme="light"]) :is(.hcl-names, .hcl-note, .hcl-sub, .hcl-sub2) { fill:#57606a; }
+</style>

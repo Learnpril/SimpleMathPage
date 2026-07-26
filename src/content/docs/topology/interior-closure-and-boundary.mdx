@@ -1,0 +1,336 @@
+---
+title: Interior, Closure, and Boundary
+description: The three operations that extract the open part, the closed hull, and the edge
+sidebar:
+  order: 7
+---
+
+import Quiz from "../../../components/Quiz.astro";
+import SymbolKey from "../../../components/SymbolKey.astro";
+import InteriorClosureBoundary from "../../../components/InteriorClosureBoundary.astro";
+
+## What You'll Learn
+
+In this lesson you'll define interior, closure and boundary, learn their identities and the ones that fail, meet density and nowhere-density, and work through the examples where intuition breaks.
+
+<SymbolKey
+  title="Derived-set notation"
+  items={[
+    {
+      sym: "int A  or  A°",
+      read: "the interior of A",
+      note: "the largest open set contained in A",
+    },
+    {
+      sym: "cl A  or  Ā",
+      read: "the closure of A",
+      note: "the smallest closed set containing A",
+    },
+    {
+      sym: "∂A",
+      read: "the boundary of A",
+      note: "cl A minus int A; always closed",
+    },
+    {
+      sym: "ext A",
+      read: "the exterior of A",
+      note: "the interior of the complement",
+    },
+    {
+      sym: "A′",
+      read: "the derived set of A",
+      note: "the set of limit points",
+    },
+    {
+      sym: "A dense in X",
+      read: "cl A = X",
+      note: "every nonempty open set meets A",
+    },
+  ]}
+/>
+
+## The Concept
+
+### The three operations
+
+> **Interior.** $\operatorname{int}A$ is the union of all open sets contained in $A$ — equivalently the largest such set. A point is interior when some neighbourhood of it lies entirely inside $A$.
+
+> **Closure.** $\bar A$ is the intersection of all closed sets containing $A$ — equivalently the smallest such set. Also $\bar A = A\cup A'$, the set together with its limit points.
+
+> **Boundary.** $\partial A = \bar A\setminus\operatorname{int}A$. A point is on the boundary when every neighbourhood meets both $A$ and its complement.
+
+Every point of the space falls into exactly one of three classes relative to $A$: interior, boundary, or exterior. That trichotomy is the cleanest way to think about all three notions at once.
+
+<InteriorClosureBoundary />
+
+The figure classifies five test points against a set built from an open disc, one isolated point, and a segment. The classification is computed by sampling a small ring about each point and seeing what it meets. Two results are worth dwelling on: the isolated point **belongs to $S$** and is a boundary point, and every point of the segment is likewise. So $S$ has a nonempty part that contributes nothing at all to its interior.
+
+**Being in $A$ does not make you interior to $A$.** That is the single most useful correction in this lesson.
+
+### The basic identities
+
+- $\operatorname{int}A\subseteq A\subseteq\bar A$
+- $A$ is open $\iff A = \operatorname{int}A$
+- $A$ is closed $\iff A = \bar A$
+- $A$ is clopen $\iff \partial A = \varnothing$
+- $\partial A = \partial(X\setminus A)$ — a set and its complement share a boundary
+- $\bar A = A\cup\partial A$ and $X = \operatorname{int}A \sqcup \partial A \sqcup \operatorname{ext}A$
+- Both operations are **idempotent**: $\operatorname{int}(\operatorname{int}A) = \operatorname{int}A$ and $\overline{\bar A} = \bar A$
+- **Duality:** $\operatorname{int}(X\setminus A) = X\setminus\bar A$
+
+### Which identities fail
+
+This is where care is needed. Closure behaves well with unions and badly with intersections; interior is the reverse.
+
+$$
+\overline{A\cup B} = \bar A\cup\bar B \qquad\text{always}
+$$
+
+$$
+\overline{A\cap B} \subseteq \bar A\cap\bar B \qquad\text{containment only}
+$$
+
+$$
+\operatorname{int}(A\cap B) = \operatorname{int}A\cap\operatorname{int}B \qquad\text{always}
+$$
+
+$$
+\operatorname{int}(A\cup B) \supseteq \operatorname{int}A\cup\operatorname{int}B \qquad\text{containment only}
+$$
+
+The counterexamples are short. For closure of an intersection, take $A=(0,1)$ and $B=(1,2)$ in $\mathbb{R}$: the intersection is empty so its closure is empty, while $\bar A\cap\bar B = \{1\}$. For interior of a union, take $A=[0,1]$ and $B=[1,2]$: the union has interior $(0,2)$, but neither part's interior contains 1.
+
+Also note the union rule for closure holds only for **finitely** many sets. For infinitely many it degrades to a containment, as $\bigcup\{q\}$ over the rationals shows: each singleton is closed, the union is $\mathbb{Q}$, and its closure is all of $\mathbb{R}$.
+
+### Density
+
+> $A$ is **dense** in $X$ if $\bar A = X$, equivalently if every nonempty open set meets $A$.
+
+$\mathbb{Q}$ is dense in $\mathbb{R}$, and so are the irrationals. A space with a countable dense subset is called **separable**, which is why $\mathbb{R}$ is separable and why so many analysis arguments can be run over a countable set.
+
+The opposite extreme:
+
+> $A$ is **nowhere dense** if $\operatorname{int}\bar A = \varnothing$.
+
+$\mathbb{Z}$ is nowhere dense in $\mathbb{R}$; so is the Cantor set, despite being uncountable. Nowhere-dense sets are the "small" sets of topology, and the Baire category theorem — that a countable union of nowhere dense sets cannot fill a complete metric space — is the engine behind many existence proofs.
+
+### The examples that break intuition
+
+**$\mathbb{Q}$ in $\mathbb{R}$.** $\operatorname{int}\mathbb{Q} = \varnothing$, $\bar{\mathbb{Q}} = \mathbb{R}$, so $\partial\mathbb{Q} = \mathbb{R}$. **A set whose boundary is the whole space.**
+
+**A punctured disc.** For $A$ the closed unit disc minus its centre, $\partial A$ is the unit circle together with the centre point. Boundaries do not have to look like edges.
+
+**In the discrete topology.** Every set is clopen, so $\operatorname{int}A = \bar A = A$ and $\partial A=\varnothing$ for every $A$.
+
+**In the trivial topology.** For any nonempty proper $A$: $\operatorname{int}A = \varnothing$, $\bar A = X$, and $\partial A = X$.
+
+**Boundary of a boundary.** $\partial(\partial A)\subseteq\partial A$, and equality can fail. For $A=\mathbb{Q}$, $\partial A = \mathbb{R}$ and $\partial(\partial A) = \varnothing$.
+
+## Worked Examples
+
+**Example 1: Find the interior, closure and boundary of $[0,1)$ in $\mathbb{R}$.**
+
+**Solution.** The largest open set inside is $(0,1)$, since no interval around 0 fits. The smallest closed set containing it is $[0,1]$, adding the limit point 1.
+
+$$
+\operatorname{int} = (0,1), \qquad \bar{} = [0,1], \qquad \partial = \{0,1\}
+$$
+
+∎
+
+**Example 2: Find all three for $\mathbb{Q}$ in $\mathbb{R}$.**
+
+**Solution.** No interval consists only of rationals, so the interior is empty. Every real is a limit of rationals, so the closure is $\mathbb{R}$.
+
+$$
+\operatorname{int}\mathbb{Q} = \varnothing, \qquad \bar{\mathbb{Q}} = \mathbb{R}, \qquad \partial\mathbb{Q} = \mathbb{R}
+$$
+
+∎
+
+**The boundary is the entire space.** Worth sitting with, because it shows "boundary" is not a geometric edge.
+
+**Example 3: Find all three for $\mathbb{Z}$ in $\mathbb{R}$.**
+
+**Solution.** No interval fits inside $\mathbb{Z}$, so the interior is empty. $\mathbb{Z}$ has no limit points at all — each integer is isolated — so it is already closed.
+
+$$
+\operatorname{int} = \varnothing, \qquad \bar{\mathbb{Z}} = \mathbb{Z}, \qquad \partial\mathbb{Z} = \mathbb{Z}
+$$
+
+Since $\operatorname{int}\bar{\mathbb{Z}} = \varnothing$, the set is **nowhere dense**. ∎
+
+**Example 4: Show $\overline{A\cap B}$ can be strictly smaller than $\bar A\cap\bar B$.**
+
+**Solution.** Take $A=(0,1)$ and $B=(1,2)$ in $\mathbb{R}$. Then $A\cap B=\varnothing$, so
+
+$$
+\overline{A\cap B} = \varnothing
+$$
+
+But $\bar A = [0,1]$ and $\bar B=[1,2]$, so $\bar A\cap\bar B = \{1\}$.
+
+$$
+\varnothing \subsetneq \{1\}
+$$
+
+∎
+
+**Example 5: Show $\operatorname{int}(A\cup B)$ can be strictly larger than $\operatorname{int}A\cup\operatorname{int}B$.**
+
+**Solution.** Take $A=[0,1]$ and $B=[1,2]$. Then $A\cup B=[0,2]$ with interior $(0,2)$.
+
+But $\operatorname{int}A\cup\operatorname{int}B = (0,1)\cup(1,2)$, which misses the point 1.
+
+$$
+(0,1)\cup(1,2) \subsetneq (0,2)
+$$
+
+∎
+
+**The gap is exactly the shared boundary point**, which becomes interior only after the union.
+
+**Example 6: Find the boundary of the punctured closed disc.**
+
+**Solution.** Let $A = \{x : |x|\le1, x\ne0\}$ in $\mathbb{R}^2$.
+
+The interior is the punctured **open** disc, since points of the unit circle have no neighbourhood inside $A$ and the origin is not in $A$.
+
+The closure is the full closed disc: the origin is a limit point of $A$, so it gets added back.
+
+$$
+\partial A = \{|x|=1\}\cup\{0\}
+$$
+
+∎
+
+**A boundary can include a point in the middle.** This is the clearest example that boundary is not the same as visible edge.
+
+**Example 7: Show the Cantor set is nowhere dense.**
+
+**Solution.** The Cantor set $C$ is closed, being an intersection of closed sets, so $\bar C = C$.
+
+It contains no interval: after $n$ steps of the construction every remaining piece has length $3^{-n}$, so any interval of positive length is eventually cut. Hence $\operatorname{int}C=\varnothing$.
+
+$$
+\operatorname{int}\bar C = \varnothing \implies \text{nowhere dense}
+$$
+
+∎
+
+And yet $C$ is uncountable. **Nowhere dense does not mean small in cardinality**, only topologically thin.
+
+## Real-World Applications
+
+**Image processing.** Morphological erosion and dilation are the interior and closure operations applied to pixel sets, and boundary extraction is literally $\bar A\setminus\operatorname{int}A$. Edge detection and noise removal are built from them.
+
+**Computational geometry.** Robust point-in-polygon and boolean operations on solids must handle boundary cases explicitly, and the regularized set operations used in CAD are defined as the closure of the interior in order to eliminate degenerate slivers.
+
+**Feasible regions in optimization.** Interior-point methods work strictly inside the feasible set, which is why the interior being nonempty is a stated assumption. When the interior is empty, the problem needs a different method entirely.
+
+**Physical boundaries.** A boundary condition in a PDE is imposed on $\partial\Omega$, and getting the topological boundary right matters when the domain has cracks or interior holes, where the boundary includes surfaces that are not the outer edge.
+
+**Numerical analysis of sets.** Approximating a region by a grid amounts to computing an interior approximation and a closure approximation, and the difference between them is the discretization error.
+
+**Sampling and density.** That a countable set can be dense justifies approximating continuous problems on a countable grid, and separability of the underlying space is the precise hypothesis those approximations need.
+
+:::note[You've Got This]
+Three operations, and the useful mental model is the trichotomy: every point of the space is interior, boundary, or exterior relative to your set. From that, the identities become obvious and the failures become memorable. The two facts most worth keeping are that membership in $A$ does not imply interiority — the isolated point in the figure — and that $\mathbb{Q}$ has all of $\mathbb{R}$ as its boundary. Both are cures for treating "boundary" as a picture of an edge.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="topology-interior-closure-and-boundary"
+  questions={[
+    {
+      id: "q1",
+      text: "What is the interior of A?",
+      options: [
+        "A minus its boundary points",
+        "The largest open set contained in A",
+        "The set of limit points of A",
+        "The complement of the closure",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Equivalently, the points having some neighbourhood entirely inside A. The first option happens to be true in ℝⁿ but the definition is the one to use.",
+    },
+    {
+      id: "q2",
+      text: "For A = [0, 1) in ℝ, what are int A, cl A and ∂A?",
+      options: [
+        "(0,1), [0,1], {0,1}",
+        "[0,1), [0,1), ∅",
+        "(0,1), (0,1), {0,1}",
+        "[0,1], [0,1], ∅",
+      ],
+      correctIndex: 0,
+      explanation:
+        "No interval around 0 fits inside the set, so 0 is not interior, and 1 is a limit point that must be added for the closure. The boundary is the two endpoints.",
+    },
+    {
+      id: "q3",
+      text: "What is the boundary of ℚ in ℝ?",
+      options: ["∅", "ℚ", "All of ℝ", "The irrationals"],
+      correctIndex: 2,
+      explanation:
+        "The interior is empty and the closure is ℝ, so the boundary is everything. This is the clearest sign that boundary is not a geometric edge.",
+    },
+    {
+      id: "q4",
+      text: "Which identity always holds?",
+      options: [
+        "cl(A ∩ B) = cl A ∩ cl B",
+        "cl(A ∪ B) = cl A ∪ cl B, for finitely many sets",
+        "int(A ∪ B) = int A ∪ int B",
+        "∂(A ∪ B) = ∂A ∪ ∂B",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Closure distributes over finite unions and interior over finite intersections; the other two directions are containments only. Even the union rule fails for infinitely many sets, as the rationals show.",
+    },
+    {
+      id: "q5",
+      text: "Why is int(A ∪ B) sometimes larger than int A ∪ int B?",
+      options: [
+        "Because interiors are always empty",
+        "Because a shared boundary point can become interior after the union, as with [0,1] and [1,2]",
+        "Because unions are not open",
+        "It is never larger",
+      ],
+      correctIndex: 1,
+      explanation:
+        "The union is [0,2] with interior (0,2), while the separate interiors miss the point 1. That gap is exactly the shared boundary point.",
+    },
+    {
+      id: "q6",
+      text: "What does it mean for A to be nowhere dense in X?",
+      options: ["A is empty", "int(cl A) = ∅", "cl A = X", "A is countable"],
+      correctIndex: 1,
+      explanation:
+        "ℤ and the Cantor set are both nowhere dense in ℝ, and the Cantor set is uncountable. Nowhere dense means topologically thin, not small in cardinality.",
+    },
+    {
+      id: "q7",
+      text: "For the closed unit disc with its centre removed, what is the boundary?",
+      options: [
+        "Just the unit circle",
+        "The unit circle together with the centre point",
+        "The whole disc",
+        "Empty",
+      ],
+      correctIndex: 1,
+      explanation:
+        "The centre is a limit point of the set, so the closure fills it in, while it is not in the interior. Boundaries can include points in the middle of a region.",
+    },
+    {
+      id: "q8",
+      text: "In the discrete topology, what is ∂A for any set A?",
+      options: ["A", "X", "∅", "The complement of A"],
+      correctIndex: 2,
+      explanation:
+        "Every set is clopen, so the interior and closure both equal A. A set is clopen exactly when its boundary is empty.",
+    },
+  ]}
+/>

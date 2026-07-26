@@ -1,0 +1,282 @@
+---
+title: What is Topology?
+description: The properties of shape that survive stretching, and why they are worth isolating
+sidebar:
+  order: 1
+---
+
+import Quiz from "../../../components/Quiz.astro";
+import HoleClassification from "../../../components/HoleClassification.astro";
+
+## What You'll Learn
+
+In this lesson you'll learn what topology keeps and what it discards, meet the idea of a topological invariant, see why "the same shape" needs a careful definition, and get the list of standard examples the rest of the section uses.
+
+## The Concept
+
+### What gets thrown away
+
+Geometry cares about length, angle, area, and curvature. Topology discards all of them and keeps only what survives **continuous deformation**: stretching, bending, twisting, and shrinking.
+
+Two operations are forbidden, and they are the entire content of the restriction:
+
+- **Cutting** — you may not tear the object apart.
+- **Gluing** — you may not join points that were separate.
+
+Everything else is allowed. So a circle and a square are the same, an interval and a line segment of any length are the same, and a coffee mug and a doughnut are the same because the handle can be fattened into the doughnut's body without cutting.
+
+**A sphere and a doughnut are not the same**, and the reason is that getting from one to the other requires punching a hole, which is cutting.
+
+### Homeomorphism
+
+The precise notion of sameness is the **homeomorphism**, and it will be defined properly in lesson 6. Informally:
+
+> Two spaces are **homeomorphic** if there is a continuous bijection between them whose inverse is also continuous.
+
+The requirement that the inverse be continuous is what forbids gluing: a map can be continuous and still crush a segment into a circle by joining the endpoints, but that map's inverse tears, so it does not count.
+
+Homeomorphism is an equivalence relation, so it sorts all spaces into classes. Much of topology is the project of telling those classes apart.
+
+### Invariants
+
+You cannot prove two spaces are different by failing to find a deformation. You need a property that is preserved by all homeomorphisms — a **topological invariant** — and then exhibit a difference.
+
+<HoleClassification />
+
+The simplest invariant is the number of holes. In the figure, six shapes sort into three classes, and shapes in the same class really can be deformed into one another. The letters C and the filled disc both have none; A and an annulus both have one; B and a figure eight both have two.
+
+An **annulus** is a flat ring — the region between two concentric circles, like a washer or a CD. It appears throughout this section as the standard example of a shape with exactly one hole, and as the standard region that is _not_ simply connected.
+
+The letter B is worth a second look, since it is the one case where counting is easy to get wrong. Its outline consists of **three** closed loops: the outer boundary plus the two counters, the enclosed white spaces in the upper and lower bowls. One of those loops is the outside edge, so the hole count is $3-1=2$. The figure applies that same rule to every shape, which is why the caption under each column reports boundary loops rather than holes directly.
+
+The logic runs one way only, and this is worth being precise about:
+
+- **Different invariants $\implies$ not homeomorphic.** This is a proof.
+- **Same invariants $\implies$ nothing.** This is only evidence.
+
+Every invariant in the section works this way. The major ones ahead are the number of connected components, compactness, dimension, the Euler characteristic, and the fundamental group.
+
+### Invariants we will build
+
+| Invariant                    | What it detects                                     |
+| ---------------------------- | --------------------------------------------------- |
+| Number of components         | how many separate pieces                            |
+| Compactness                  | whether the space is "closed and bounded" in spirit |
+| Connectedness                | whether it splits into open pieces                  |
+| Euler characteristic $V-E+F$ | the shape of a surface                              |
+| Genus                        | how many holes a surface has                        |
+| Fundamental group            | how loops can and cannot be contracted              |
+
+A single one of these is often enough. The interval $[0,1]$ is not homeomorphic to the circle because removing one interior point disconnects the interval and never disconnects the circle. That is a complete proof, and it takes one sentence.
+
+### The standard examples
+
+Keep this list; nearly every question in the section can be tested against it first.
+
+- $\mathbb{R}$, $\mathbb{R}^n$, and intervals of all four kinds
+- $S^1$ the circle, $S^2$ the sphere, $T^2$ the torus
+- The **Möbius strip**, one-sided with a single boundary circle
+- The **Klein bottle**, which needs four dimensions to embed without self-intersection
+- The **Cantor set**, uncountable, compact, and totally disconnected
+- The **topologist's sine curve**, connected but not path-connected
+- $\mathbb{Q}$ sitting inside $\mathbb{R}$
+- The **discrete** topology (every set open) and the **trivial** topology (only $\varnothing$ and $X$)
+
+### Why bother abstracting
+
+A fair question at this stage is why not simply work with distances. Three answers.
+
+**Distance is more than you need.** Continuity, convergence, and connectedness never mention a specific distance, only which sets are near which points. Isolating that makes the theorems apply more widely.
+
+**Some important spaces have no natural metric.** The Zariski topology in algebraic geometry, the space of all functions with pointwise convergence, and the quotient spaces that build surfaces are all topological without being metric.
+
+**Different metrics can give the same topology.** In $\mathbb{R}^2$ the straight-line distance, the taxicab distance, and the maximum-coordinate distance all define the _same_ open sets, so they agree about every topological question. The topology is what those three metrics have in common, and working with it directly avoids proving the same theorem three times.
+
+## Worked Examples
+
+**Example 1: Is a circle homeomorphic to a line segment?**
+
+**Solution.** No. Remove one interior point from the segment and it falls into two pieces; remove any single point from the circle and what remains is still connected.
+
+Since homeomorphisms preserve connectedness, and this behaviour under point removal is preserved too, the two cannot be homeomorphic. ∎
+
+**One well-chosen invariant settles it**, with no attempt to describe a deformation.
+
+**Example 2: Is a sphere homeomorphic to a torus?**
+
+**Solution.** No. On the sphere, every closed loop can be shrunk to a point without leaving the surface. On the torus, a loop going around the hole cannot.
+
+Formally the sphere has trivial fundamental group and the torus has $\mathbb{Z}\times\mathbb{Z}$, and their Euler characteristics are 2 and 0. Any one of these differences is a proof. ∎
+
+**Example 3: Which capital letters are homeomorphic to each other?**
+
+**Solution.** Sorting by hole count and by the number of junction points, in a plain sans-serif font:
+
+- **No holes, no junctions:** C, I, J, L, M, N, S, U, V, W, Z — all homeomorphic to a segment
+- **No holes, one junction:** E, F, T, Y
+- **One hole:** A, D, O, P, Q, R
+- **Two holes:** B
+
+So C is homeomorphic to S but not to A, and B stands alone. ∎
+
+**The font matters**, which is a good reminder that topology classifies the actual shape drawn, not the abstract letter.
+
+**Example 4: Is $[0,1]$ homeomorphic to $[0,1)$?**
+
+**Solution.** No. Removing a point from $[0,1]$ can leave it connected only if you remove an endpoint, and there are two such points. In $[0,1)$ there is exactly one.
+
+"Number of points whose removal leaves the space connected" is preserved by homeomorphism, and it is 2 versus 1. ∎
+
+Alternatively, $[0,1]$ is compact and $[0,1)$ is not, which we prove in lesson 10.
+
+**Example 5: Why is the Möbius strip not homeomorphic to a cylinder?**
+
+**Solution.** The cylinder has **two** boundary circles; the Möbius strip has **one**. Cutting a Möbius strip along its centre line yields a single connected band, whereas cutting a cylinder that way yields two.
+
+The number of boundary components is a topological invariant, so 2 versus 1 settles it. ∎
+
+The Möbius strip is also **non-orientable**, which is the deeper distinction and gets its own treatment later.
+
+**Example 6: Does stretching a rubber band change it topologically?**
+
+**Solution.** No. Stretching, bending, and knotting a closed rubber band in space are all continuous deformations without cutting, so the band remains a circle $S^1$ throughout.
+
+**A knotted loop is homeomorphic to an unknotted one.** Knot theory studies something subtler — how the loop sits _inside_ $\mathbb{R}^3$ — which is an embedding question rather than a question about the loop itself.
+
+**Example 7: How many holes does a T-shirt have?**
+
+**Solution.** Counting the openings: neck, two sleeves, and the waist, so **four**. Topologically a T-shirt is a sphere with four discs removed, or equivalently a disc with three holes.
+
+∎
+
+Silly-sounding, but it is exactly the reasoning used for classifying surfaces in lesson 14, and getting the count right is the whole exercise.
+
+## Real-World Applications
+
+**Topological data analysis.** Persistent homology finds the number of components and holes in a point cloud across scales, revealing structure that clustering misses. It is used in cancer genomics, protein folding, and neuroscience.
+
+**Topological materials.** The quantum Hall conductance is an integer invariant, so it is immune to impurities and disorder. That robustness is the whole point, and it earned the 2016 Nobel Prize in Physics.
+
+**Robot motion planning.** A robot's configuration space is a topological space, often a torus or something more complicated, and asking whether one configuration can reach another is asking whether they are in the same path component.
+
+**DNA topology.** Circular DNA can be knotted and supercoiled, and the enzymes that manage this are studied with knot invariants. Which reconnections are chemically possible is constrained by topology.
+
+**Sensor coverage.** Whether a network of sensors leaves a gap is a question about holes in the union of their ranges, computed with homology rather than geometry.
+
+**Mesh processing.** Graphics pipelines track the genus of a surface and repair meshes that violate it, since texture mapping and subdivision both assume a valid topology.
+
+:::note[You've Got This]
+The one habit to build in this lesson is reaching for an invariant. When you want to show two spaces differ, do not try to argue that no deformation exists — find a property one has and the other lacks, and you are done in a sentence. And note the asymmetry carefully, because it catches people out: matching invariants prove nothing at all. Everything else in the section is the construction of better invariants, culminating in the fundamental group.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="topology-what-is-topology"
+  questions={[
+    {
+      id: "q1",
+      text: "Which operations are forbidden in a topological deformation?",
+      options: [
+        "Stretching and bending",
+        "Cutting and gluing",
+        "Rotating and reflecting",
+        "Shrinking and twisting",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Everything continuous is allowed, including stretching, bending, twisting, and shrinking. Tearing the object apart or joining separate points is what changes the topology.",
+    },
+    {
+      id: "q2",
+      text: "Why is a coffee mug homeomorphic to a doughnut?",
+      options: [
+        "Because both are round",
+        "Because both have exactly one hole, and the handle can be deformed into the doughnut's body without cutting",
+        "Because both can hold liquid",
+        "They are not homeomorphic",
+      ],
+      correctIndex: 1,
+      explanation:
+        "The hole through the handle is the only topologically relevant feature. The bowl can be flattened continuously into part of the ring.",
+    },
+    {
+      id: "q3",
+      text: "What can you conclude when two spaces have the same value of a topological invariant?",
+      options: [
+        "They are homeomorphic",
+        "Nothing; matching invariants are only evidence",
+        "They are not homeomorphic",
+        "They have the same dimension",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Invariants can only distinguish spaces, never identify them. A differing invariant is a proof of non-homeomorphism, but agreement proves nothing.",
+    },
+    {
+      id: "q4",
+      text: "Why is a circle not homeomorphic to a line segment?",
+      options: [
+        "Because the circle is curved",
+        "Because removing an interior point disconnects the segment but never disconnects the circle",
+        "Because they have different lengths",
+        "Because the circle has no endpoints",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Behaviour under point removal is preserved by homeomorphism, so the difference is a complete proof. Curvature and length are not topological properties at all.",
+    },
+    {
+      id: "q5",
+      text: "How many holes does the capital letter B have, and which letters share its class?",
+      options: [
+        "One, shared with A and D",
+        "Two, and no other capital letter shares its class",
+        "Zero, shared with C",
+        "Three",
+      ],
+      correctIndex: 1,
+      explanation:
+        "B is the only capital with two holes, so it is alone in its class. A, D, O, P, Q and R form the one-hole class.",
+    },
+    {
+      id: "q6",
+      text: "Why is the Möbius strip not homeomorphic to a cylinder?",
+      options: [
+        "Because it is twisted",
+        "Because the cylinder has two boundary circles and the Möbius strip has one",
+        "Because it is shorter",
+        "Because it cannot be embedded in ℝ³",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Counting boundary components is a topological invariant, and 2 differs from 1. The twist itself is not an invariant, since the embedding can be changed.",
+    },
+    {
+      id: "q7",
+      text: "Is a knotted closed loop homeomorphic to an unknotted one?",
+      options: [
+        "No, the knot is a topological difference",
+        "Yes, both are circles; knotting concerns how the loop sits inside ℝ³",
+        "Only if the knot can be untied",
+        "It depends on the length",
+      ],
+      correctIndex: 1,
+      explanation:
+        "As spaces in their own right both are S¹. Knot theory studies the embedding into ℝ³, which is a finer question than homeomorphism of the loop.",
+    },
+    {
+      id: "q8",
+      text: "Why abstract away from metric spaces to topological spaces?",
+      options: [
+        "Because metrics are hard to compute",
+        "Because continuity and connectedness need only which sets are open, and different metrics can give the same open sets",
+        "Because distances do not exist in higher dimensions",
+        "There is no good reason",
+      ],
+      correctIndex: 1,
+      explanation:
+        "The Euclidean, taxicab and maximum metrics on ℝ² all produce the same topology, so a theorem proved topologically covers all three at once. Some important spaces also have no natural metric.",
+    },
+  ]}
+/>

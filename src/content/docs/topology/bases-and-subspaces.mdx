@@ -1,0 +1,303 @@
+---
+title: Bases and Subspaces
+description: Specifying a topology by a small family, and inheriting one from a larger space
+sidebar:
+  order: 5
+---
+
+import Quiz from "../../../components/Quiz.astro";
+import BasisSubspace from "../../../components/BasisSubspace.astro";
+
+## What You'll Learn
+
+In this lesson you'll learn to define a topology by a basis instead of listing every open set, check the two conditions a basis must satisfy, and work with the subspace topology, where the ambient space is always part of the question.
+
+## The Concept
+
+### Why a basis
+
+Listing every open set of $\mathbb{R}$ is hopeless: there are uncountably many. But every one of them is a union of open intervals, so the intervals determine the whole topology. That is the idea.
+
+> A **basis** for a topology $\tau$ on $X$ is a collection $\mathcal{B}\subseteq\tau$ such that every open set is a union of members of $\mathcal{B}$.
+
+Equivalently, and more usefully in practice: for every open $U$ and every $x\in U$, there is a basis element $B$ with $x\in B\subseteq U$.
+
+<BasisSubspace />
+
+The left panel builds a two-piece open set as a union of overlapping intervals, with the covering computed rather than drawn. Every open subset of $\mathbb{R}$ can be produced this way, which is what makes the intervals a basis.
+
+### Going the other way
+
+Usually you have a candidate family and want a topology from it.
+
+> A collection $\mathcal{B}$ of subsets of $X$ is a basis for **some** topology if
+>
+> 1. $\mathcal{B}$ covers $X$: every point lies in some basis element.
+> 2. For $B_1,B_2\in\mathcal{B}$ and $x\in B_1\cap B_2$, there is $B_3\in\mathcal{B}$ with $x\in B_3\subseteq B_1\cap B_2$.
+
+Then the topology generated is all unions of basis elements. Condition 2 is weaker than requiring $B_1\cap B_2$ itself to be in $\mathcal{B}$, and that flexibility is what makes bases convenient: open intervals satisfy it because the intersection of two intervals is an interval, while open discs in the plane satisfy it even though the intersection of two discs is not a disc.
+
+### The standard bases
+
+| Space                              | Basis                             |
+| ---------------------------------- | --------------------------------- |
+| $\mathbb{R}$, standard             | open intervals $(a,b)$            |
+| $\mathbb{R}$, standard (countable) | intervals with rational endpoints |
+| $\mathbb{R}^n$                     | open balls, or open boxes         |
+| Metric space                       | open balls $B(x,r)$               |
+| Discrete                           | singletons $\{x\}$                |
+| $\mathbb{R}$, lower limit          | half-open intervals $[a,b)$       |
+| Product $X\times Y$                | products $U\times V$ of open sets |
+
+The rational-endpoint basis is worth noticing: it is **countable**, which makes $\mathbb{R}$ second countable and is what lets many analysis arguments enumerate cases.
+
+A related notion: a **local basis** at $x$ is a family of neighbourhoods of $x$ such that every neighbourhood of $x$ contains one of them. In a metric space the balls $B(x,1/n)$ form a countable local basis, and that is precisely why sequences work so well in metric spaces.
+
+### Comparing topologies via bases
+
+A convenient test: $\tau_1\subseteq\tau_2$ if and only if for every $x$ and every basis element $B_1\in\mathcal{B}_1$ containing $x$, there is $B_2\in\mathcal{B}_2$ with $x\in B_2\subseteq B_1$.
+
+This is how the lower limit topology is shown to be strictly finer than the standard one: inside any $(a,b)$ containing $x$ you can fit $[x, b)$, but inside $[0,1)$ there is no open interval containing 0.
+
+### The subspace topology
+
+> If $A\subseteq X$, the **subspace topology** on $A$ is
+>
+> $$
+> \tau_A = \{\,U\cap A \ :\ U\in\tau_X\,\}
+> $$
+
+So the open sets of $A$ are exactly the traces of the open sets of $X$. This is the only sensible choice, and it is why a subset of a space is automatically a space.
+
+The right panel of the figure shows the consequence that surprises people: intersecting the ambient open interval with $[0,1]$ produces a half-open set, which is **open in $[0,1]$** and not open in $\mathbb{R}$.
+
+**"Open" is never a property of a set by itself.** It always means open in a particular space, and forgetting to say which is the most common source of confusion in this material.
+
+### What behaves well and what does not
+
+Some properties pass to subspaces automatically, and some do not.
+
+| Property          | Inherited by every subspace?  |
+| ----------------- | ----------------------------- |
+| Hausdorff         | yes                           |
+| Metrizable        | yes                           |
+| Second countable  | yes                           |
+| Compact           | no — only by closed subspaces |
+| Connected         | no                            |
+| Complete (metric) | no — only by closed subspaces |
+
+A property inherited by all subspaces is called **hereditary**. Compactness and connectedness are not hereditary, which is why $[0,1]$ is compact and connected while its subspace $\{0\}\cup(\frac12,1)$ is neither.
+
+Closed subspaces are the well-behaved case, and that pattern recurs: a closed subspace of a compact space is compact, and a closed subspace of a complete metric space is complete.
+
+## Worked Examples
+
+**Example 1: Verify that open intervals form a basis for $\mathbb{R}$.**
+
+**Solution.** Condition 1: every real number lies in some interval, for instance $(x-1,x+1)$ ✓
+
+Condition 2: the intersection of two open intervals is either empty or an open interval, so it is itself a basis element and serves as $B_3$ ✓
+
+$$
+\text{a basis}
+$$
+
+∎
+
+**Example 2: Verify that open discs form a basis for $\mathbb{R}^2$.**
+
+**Solution.** Condition 1 is clear. For condition 2, let $x\in D_1\cap D_2$. Each disc contains a small disc about $x$, say of radii $r_1$ and $r_2$, so the disc about $x$ of radius $\min(r_1,r_2)$ lies inside both.
+
+$$
+\text{a basis}
+$$
+
+∎
+
+**Note the intersection of two discs is not a disc**, which is exactly why condition 2 is stated with a containment rather than membership.
+
+**Example 3: Show the intervals with rational endpoints form a basis for $\mathbb{R}$.**
+
+**Solution.** Given open $U$ and $x\in U$, there is $(a,b)\subseteq U$ containing $x$. By density of $\mathbb{Q}$, choose rationals $p\in(a,x)$ and $q\in(x,b)$. Then
+
+$$
+x\in(p,q)\subseteq(a,b)\subseteq U
+$$
+
+$$
+\text{a basis, and a countable one}
+$$
+
+∎
+
+**A countable basis for an uncountable space.** This is what second countability means, and it is used constantly in analysis.
+
+**Example 4: Find the subspace topology on $\{0\}\cup(1,2)$ inside $\mathbb{R}$.**
+
+**Solution.** Open sets are intersections with ambient open sets. Taking $V=(-\frac12,\frac12)$ gives $\{0\}$, so the singleton $\{0\}$ is **open** in this subspace.
+
+The subspace is therefore disconnected, splitting into the clopen pieces $\{0\}$ and $(1,2)$. ∎
+
+**A singleton can be open in a subspace** without being open in $\mathbb{R}$, which is worth internalizing.
+
+**Example 5: Is $[0,1)$ open in $[0,2]$?**
+
+**Solution.** Yes: $[0,1) = (-1,1)\cap[0,2]$, an ambient open set intersected with the subspace.
+
+Is it closed in $[0,2]$? Its complement in $[0,2]$ is $[1,2]$, which equals $[1,3]\cap[0,2]$ and is the intersection with a closed set, hence closed. So $[0,1)$ is open and not closed in $[0,2]$.
+
+$$
+\text{open in } [0,2]
+$$
+
+∎
+
+**Example 6: Show the subspace topology on $\mathbb{Z}\subseteq\mathbb{R}$ is discrete.**
+
+**Solution.** For any integer $n$,
+
+$$
+\left(n-\tfrac12,\ n+\tfrac12\right)\cap\mathbb{Z} = \{n\}
+$$
+
+so every singleton is open in the subspace, and therefore every subset is.
+
+$$
+\text{discrete}
+$$
+
+∎
+
+**A discrete subspace of a non-discrete space.** The subspace topology can look nothing like the ambient one.
+
+**Example 7: Show compactness is not hereditary.**
+
+**Solution.** $[0,1]$ is compact, as we prove in lesson 10. Its subspace $(0,1)$ is not: the cover by $\left(\frac1n,1\right)$ for $n\ge2$ has no finite subcover, since any finite collection has a smallest $\frac1n$ and misses everything below it.
+
+$$
+\text{compact space, non-compact subspace}
+$$
+
+∎
+
+**Closed subspaces are the exception**: a closed subspace of a compact space is always compact, and $(0,1)$ is not closed in $[0,1]$.
+
+## Real-World Applications
+
+**Constraint surfaces in robotics.** A robot arm's reachable set is a subspace of its full configuration space, and it inherits its topology. Path planning happens in that subspace, where openness and connectedness may differ from the ambient space.
+
+**Manifolds and data.** The manifold hypothesis in machine learning says high-dimensional data lies near a low-dimensional subspace, and the subspace topology is what makes local charts and dimensionality reduction meaningful.
+
+**Level sets in simulation.** A constraint surface such as an isosurface of temperature is studied with its subspace topology, and whether it is connected determines whether a physical region is isolated.
+
+**Sampling and second countability.** A countable basis is what justifies approximating a continuous space by a countable grid, which every numerical method relies on. Without it, discretization has no guarantee of capturing the topology.
+
+**Digital signal spaces.** The set of realizable filter coefficients is a subspace of a parameter space, and the design problem is constrained to it. Boundary behaviour differs between the two spaces, which is where marginal stability lives.
+
+**Geographic information systems.** A region's boundary is treated differently depending on whether you work in the plane or in the region as its own space, and inconsistent choices produce the classic sliver-polygon errors.
+
+:::note[You've Got This]
+Two practical takeaways. A basis lets you specify a topology with a small, understandable family instead of an unmanageable list, and the two conditions to check are short. And the subspace topology is where the phrase "open in what?" earns its keep: $[0,\frac12)$ is open in $[0,1]$, $\{0\}$ can be open in a subspace, and $\mathbb{Z}$ sitting in $\mathbb{R}$ is discrete. If you always name the ambient space, most of the confusion in this material disappears.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="topology-bases-and-subspaces"
+  questions={[
+    {
+      id: "q1",
+      text: "What is a basis for a topology?",
+      options: [
+        "A minimal collection of closed sets",
+        "A collection of open sets such that every open set is a union of members",
+        "A set of generators under intersection",
+        "The set of all singletons",
+      ],
+      correctIndex: 1,
+      explanation:
+        "It lets you describe a topology by a manageable family, such as the open intervals for ℝ. Equivalently, every point of every open set has a basis element around it inside that set.",
+    },
+    {
+      id: "q2",
+      text: "Which two conditions make a collection ℬ a basis for some topology on X?",
+      options: [
+        "ℬ is finite and covers X",
+        "ℬ covers X, and for x in B₁ ∩ B₂ there is B₃ ∈ ℬ with x ∈ B₃ ⊆ B₁ ∩ B₂",
+        "ℬ is closed under intersections",
+        "ℬ contains ∅ and X",
+      ],
+      correctIndex: 1,
+      explanation:
+        "The second condition uses containment rather than membership, which is why open discs qualify even though the intersection of two discs is not a disc.",
+    },
+    {
+      id: "q3",
+      text: "Why is the basis of rational-endpoint intervals significant?",
+      options: [
+        "It is finite",
+        "It is countable, making ℝ second countable",
+        "It generates a finer topology",
+        "It contains no irrational numbers",
+      ],
+      correctIndex: 1,
+      explanation:
+        "A countable basis for an uncountable space is what lets analysis arguments enumerate cases. Density of ℚ is what makes it work.",
+    },
+    {
+      id: "q4",
+      text: "What is the subspace topology on A ⊆ X?",
+      options: [
+        "The discrete topology on A",
+        "All sets of the form U ∩ A with U open in X",
+        "All subsets of A that are open in X",
+        "The trivial topology",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Open sets of A are the traces of the open sets of X. This is why a subset of a space is automatically a space in its own right.",
+    },
+    {
+      id: "q5",
+      text: "Is [0, ½) open in [0, 1]?",
+      options: [
+        "No, since it is not open in ℝ",
+        "Yes, because it is (−½, ½) ∩ [0, 1]",
+        "Only if [0,1] is discrete",
+        "It is closed but not open",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Openness is relative to the ambient space, and here the ambient space is [0,1]. The same set is not open in ℝ.",
+    },
+    {
+      id: "q6",
+      text: "What is the subspace topology on ℤ inside ℝ?",
+      options: ["Trivial", "Discrete", "Cofinite", "The same as on ℝ"],
+      correctIndex: 1,
+      explanation:
+        "Each interval (n − ½, n + ½) meets ℤ in the single point n, so every singleton is open. A subspace can look nothing like the space containing it.",
+    },
+    {
+      id: "q7",
+      text: "Which property is NOT inherited by every subspace?",
+      options: ["Hausdorff", "Metrizable", "Compactness", "Second countable"],
+      correctIndex: 2,
+      explanation:
+        "The subspace (0,1) of the compact space [0,1] is not compact, since the cover by (1/n, 1) has no finite subcover. Closed subspaces of compact spaces, however, are compact.",
+    },
+    {
+      id: "q8",
+      text: "Why is the lower limit topology strictly finer than the standard one on ℝ?",
+      options: [
+        "Because [a,b) is smaller than (a,b)",
+        "Because every (a,b) containing x contains some [x,b), but no open interval containing 0 fits inside [0,1)",
+        "Because it has fewer open sets",
+        "They are actually equal",
+      ],
+      correctIndex: 1,
+      explanation:
+        "The basis comparison test gives one containment and the half-open interval shows it is strict. This is the standard way bases are used to compare topologies.",
+    },
+  ]}
+/>

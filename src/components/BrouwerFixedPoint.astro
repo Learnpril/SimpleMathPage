@@ -1,0 +1,139 @@
+---
+/**
+ * BrouwerFixedPoint — the one-dimensional case of Brouwer's theorem. A continuous
+ * self-map of [0,1] is plotted against the diagonal, and the fixed point is located
+ * by bisection on f(x) − x, so the marked crossing is computed. The right panel shows
+ * a rotation of the disc, whose only fixed point is the centre.
+ */
+const w = 540;
+const h = 306;
+
+// ---------- left: f : [0,1] → [0,1] ----------
+const lx0 = 44;
+const lx1 = 244;
+const ly0 = 216; // x = 0 axis position (bottom)
+const ly1 = 66; // top
+const lpx = (x: number) => lx0 + x * (lx1 - lx0);
+const lpy = (y: number) => ly0 - y * (ly0 - ly1);
+
+/** A continuous self-map of [0,1] with a single crossing of the diagonal. */
+const f = (x: number) => 0.18 + 0.62 * x + 0.22 * Math.sin(3.4 * x);
+
+/** Solve f(x) = x by bisection on g(x) = f(x) − x. */
+function fixedPoint() {
+  const g = (x: number) => f(x) - x;
+  let lo = 0;
+  let hi = 1;
+  for (let i = 0; i < 80; i++) {
+    const mid = (lo + hi) / 2;
+    if (g(lo) * g(mid) <= 0) hi = mid;
+    else lo = mid;
+  }
+  return (lo + hi) / 2;
+}
+const p = fixedPoint();
+const residual = Math.abs(f(p) - p);
+
+// endpoint values, which are what force a crossing
+const g0 = f(0) - 0;
+const g1 = f(1) - 1;
+
+const curve = Array.from({ length: 201 }, (_, i) => {
+  const x = i / 200;
+  return `${lpx(x).toFixed(1)},${lpy(Math.min(1, Math.max(0, f(x)))).toFixed(1)}`;
+}).join(" ");
+
+// ---------- right: a rotation of the disc ----------
+const rcx = 400;
+const rcy = 142;
+const R = 62;
+const theta = (50 * Math.PI) / 180;
+const sample = Array.from({ length: 6 }, (_, k) => {
+  const a = (2 * Math.PI * k) / 6;
+  const r = 0.72;
+  return {
+    from: { x: r * Math.cos(a), y: r * Math.sin(a) },
+    to: { x: r * Math.cos(a + theta), y: r * Math.sin(a + theta) },
+  };
+});
+---
+
+<figure
+  class="bfp"
+  role="img"
+  aria-label={`On the left, a continuous self-map of the unit interval crosses the diagonal at ${p.toFixed(4)}, found by bisection, with residual ${residual.toExponential(1)}. The endpoint differences are ${g0.toFixed(3)} and ${g1.toFixed(3)}, of opposite sign, which forces the crossing. On the right, a rotation of the disc by 50 degrees moves every point except the centre, which is its unique fixed point.`}
+>
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    <text x="16" y="20" class="bfp-head" font-size="12.5" font-weight="bold">Every continuous self-map has a fixed point</text>
+    <text x="16" y="38" class="bfp-sub" font-size="10.5">Brouwer's theorem, in one dimension and in two</text>
+
+    <line x1="276" y1="52" x2="276" y2="248" class="bfp-divide" />
+
+    {/* ---------- left panel ---------- */}
+    <text x={(lx0 + lx1) / 2} y="58" class="bfp-panel" font-size="10" text-anchor="middle">f : [0, 1] → [0, 1]</text>
+    <line x1={lx0 - 6} y1={ly0} x2={lx1 + 6} y2={ly0} class="bfp-axis" />
+    <line x1={lx0} y1={ly1 - 6} x2={lx0} y2={ly0 + 6} class="bfp-axis" />
+    <line x1={lpx(0)} y1={lpy(0)} x2={lpx(1)} y2={lpy(1)} class="bfp-diag" />
+    <polyline points={curve} class="bfp-curve" fill="none" />
+
+    <circle cx={lpx(p)} cy={lpy(p)} r="4.4" class="bfp-fix" />
+    <text x={lx0 + 16} y="80" class="bfp-fix-lbl" font-size="9.5" text-anchor="start">{`fixed point x = ${p.toFixed(3)}`}</text>
+
+    <text x={(lx0 + lx1) / 2} y="238" class="bfp-row" font-size="9.5" text-anchor="middle">{`f(0) − 0 = ${g0.toFixed(3)},  f(1) − 1 = ${g1.toFixed(3)}`}</text>
+
+    {/* ---------- right panel ---------- */}
+    <text x={rcx} y="58" class="bfp-panel" font-size="10" text-anchor="middle">a rotation of the disc</text>
+    <circle cx={rcx} cy={rcy} r={R} class="bfp-disc" />
+    {sample.map((s) => (
+      <g>
+        <line
+          x1={rcx + s.from.x * R}
+          y1={rcy - s.from.y * R}
+          x2={rcx + s.to.x * R}
+          y2={rcy - s.to.y * R}
+          class="bfp-arrow"
+        />
+        <circle cx={rcx + s.from.x * R} cy={rcy - s.from.y * R} r="2.4" class="bfp-src" />
+      </g>
+    ))}
+    <circle cx={rcx} cy={rcy} r="4.4" class="bfp-fix" />
+    <text x={rcx} y="222" class="bfp-fix-lbl" font-size="9.5" text-anchor="middle">the centre is fixed</text>
+    <text x={rcx} y="238" class="bfp-row" font-size="9.5" text-anchor="middle">every other point moves</text>
+
+    <text x={w / 2} y="268" class="bfp-foot" font-size="10.5" text-anchor="middle">
+      A continuous map from a closed ball to itself always fixes some point
+    </text>
+    <text x={w / 2} y="288" class="bfp-sub2" font-size="9.5" text-anchor="middle">
+      In 1D it is the intermediate value theorem; in higher dimensions it needs topology
+    </text>
+  </svg>
+</figure>
+
+<style>
+  .bfp { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .bfp svg { width:100%; max-width:100%; height:auto; }
+  .bfp-axis { stroke:#666; stroke-width:1.2; }
+  .bfp-divide { stroke:#3a3a3a; stroke-width:1; }
+  .bfp-diag { stroke:#6e7681; stroke-width:1.4; stroke-dasharray:5,4; }
+  .bfp-curve { stroke:#58a6ff; stroke-width:2.4; }
+  .bfp-disc { fill:#58a6ff; fill-opacity:0.1; stroke:#58a6ff; stroke-width:1.8; }
+  .bfp-arrow { stroke:#f0883e; stroke-width:1.8; }
+  .bfp-src { fill:#f0883e; stroke:none; }
+  .bfp-fix { fill:#7ee787; stroke:#eee; stroke-width:1.2; }
+  .bfp-fix-lbl { fill:#7ee787; font-family:'Libre Baskerville',Georgia,serif; }
+  .bfp-row { fill:#9198a1; font-family:'Libre Baskerville',Georgia,serif; }
+  .bfp-panel, .bfp-head { fill:#eee; font-family:'Libre Baskerville',Georgia,serif; }
+  .bfp-sub, .bfp-sub2 { fill:#9198a1; font-family:'Libre Baskerville',Georgia,serif; font-style:italic; }
+  .bfp-foot { fill:#58a6ff; font-family:'Libre Baskerville',Georgia,serif; }
+  :global([data-theme="light"]) .bfp-axis { stroke:#666; }
+  :global([data-theme="light"]) .bfp-divide { stroke:#d0d7de; }
+  :global([data-theme="light"]) .bfp-diag { stroke:#8c959f; }
+  :global([data-theme="light"]) .bfp-curve { stroke:#0550ae; }
+  :global([data-theme="light"]) .bfp-disc { stroke:#0550ae; fill:#0550ae; fill-opacity:0.08; }
+  :global([data-theme="light"]) .bfp-foot { fill:#0550ae; }
+  :global([data-theme="light"]) :is(.bfp-arrow, .bfp-src) { stroke:#b35900; fill:#b35900; }
+  :global([data-theme="light"]) .bfp-fix { fill:#116329; stroke:#fff; }
+  :global([data-theme="light"]) .bfp-fix-lbl { fill:#116329; }
+  :global([data-theme="light"]) .bfp-panel, :global([data-theme="light"]) .bfp-head { fill:#24292f; }
+  :global([data-theme="light"]) :is(.bfp-row, .bfp-sub, .bfp-sub2) { fill:#57606a; }
+</style>

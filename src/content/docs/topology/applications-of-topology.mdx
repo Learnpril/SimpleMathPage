@@ -1,0 +1,308 @@
+---
+title: Applications of Topology
+description: Where invariants get used - data analysis, physics, robotics, and knots
+sidebar:
+  order: 19
+---
+
+import Quiz from "../../../components/Quiz.astro";
+import PersistenceBarcode from "../../../components/PersistenceBarcode.astro";
+
+## What You'll Learn
+
+In this lesson you'll see the section's invariants applied: persistent homology on data, topological phases in physics, configuration spaces in robotics, knot invariants in biology, and the recurring theme of robustness.
+
+## The Concept
+
+### Why topology gets applied at all
+
+The reason is one word: **robustness**. A topological invariant cannot change under continuous deformation, so it cannot change under small perturbations either. When your data is noisy, your measurements are imprecise, or your material has impurities, a topological quantity is one of the few things you can still trust.
+
+That is the thread through everything below.
+
+### Topological data analysis
+
+The idea is to find the shape of a point cloud rather than only its clusters.
+
+<PersistenceBarcode />
+
+Given points, join any two that are within distance $r$ and study the resulting complex as $r$ grows. The figure does exactly this for a noisy circle of 20 points, computing at each scale the number of connected components and the number of independent cycles by union-find.
+
+The output is the important part. For small $r$ the points are 20 separate pieces with no cycles. For large $r$ everything is joined and cycles proliferate as the graph fills in. But over a **wide middle range** there is exactly one component and exactly one cycle, and the figure computes the endpoints of that range.
+
+**A feature that survives many scales is a feature of the data; one that appears at a single scale is noise.** That principle is **persistent homology**, and the interval over which a feature survives is its persistence.
+
+Uses in practice:
+
+- **Genomics** — detecting recombination structure in viral evolution, where a loop in the data indicates horizontal gene transfer.
+- **Neuroscience** — the shape of neural activity spaces, where a torus in grid-cell recordings was found this way.
+- **Materials science** — pore structure in amorphous solids, characterized by counting holes across scales.
+- **Time series** — periodicity shows up as a persistent loop in a delay embedding.
+
+### Topological phases of matter
+
+The quantum Hall conductance is quantized in integer multiples of $e^2/h$, and it is measured to about one part in $10^9$ despite the sample being full of impurities. The reason is topological: the conductance is an integer invariant, a **Chern number**, of the electronic band structure. An integer cannot change continuously, so disorder cannot move it.
+
+**Topological insulators** are materials that conduct on their surface and insulate inside, and the surface conduction is protected by an invariant. That protection is why the states are robust in a way ordinary conductors are not.
+
+The 2016 Nobel Prize in Physics went to Thouless, Haldane and Kosterlitz for this circle of ideas.
+
+Related: **topological quantum computing** proposes storing information in the braiding of quasiparticles, so that the stored state is a topological property and local noise cannot corrupt it.
+
+### Configuration spaces and robotics
+
+A mechanism's set of possible states is a topological space, and its shape decides what motions exist.
+
+- A single revolute joint gives $S^1$. Two give the torus $T^2$.
+- A rigid body in the plane gives $\mathbb{R}^2\times S^1$; in space it gives $\mathbb{R}^3\times SO(3)$.
+- Adding obstacles removes points, and the **path components** of what remains are the mutually reachable sets.
+
+Two consequences that matter in engineering. If two configurations lie in different components, **no** planner can connect them. And the fundamental group of the free space enumerates the qualitatively distinct routes, so a planner can search one representative per class instead of exploring blindly.
+
+There is also an impossibility result of practical importance: on some configuration spaces no single continuous feedback controller can stabilize every state, and the obstruction is topological. That is why real systems switch between controllers.
+
+### Knots and molecules
+
+A knot is an embedding of $S^1$ into $\mathbb{R}^3$. As a space every knot is just a circle, so the interesting question is about the embedding, and it is answered with invariants: the Jones polynomial, the Alexander polynomial, and knot group among them.
+
+**DNA is knotted**, and enzymes called topoisomerases cut, pass, and rejoin strands to manage it. Which transformations are chemically achievable is constrained by knot invariants, and gel electrophoresis separates knotted forms by their topology. Predicting the products of a recombination reaction is a knot-theory calculation.
+
+**Protein folding** likewise has topological constraints: some folds are knotted, and the knot type restricts the folding pathway.
+
+### Networks and coverage
+
+Whether a sensor network covers a region without gaps is a question about holes in the union of the sensor ranges, and it can be answered from **connectivity data alone** — which sensors can hear each other — without any coordinates. That is valuable precisely when positions are unknown.
+
+The same tools give:
+
+- **Evasion problems** — whether an intruder can move through a region avoiding all sensors, decided by a homological criterion.
+- **Network reliability** — components after failures, as in lesson 8.
+- **Circuit planarity** — whether a board needs multiple layers, as in lesson 15.
+
+### The classics, restated
+
+Three results from earlier lessons that are genuinely about the physical world:
+
+- **Hairy ball.** There is always a point on Earth with zero horizontal wind, so there is always a cyclonic centre somewhere.
+- **Borsuk–Ulam.** At any moment there are two antipodal points on Earth with the same temperature and pressure.
+- **Brouwer.** Stir a cup of coffee gently and continuously, and when you stop, some point of the liquid has returned to where it began.
+
+None of these is a curiosity dressed up. Each is a theorem whose hypotheses the physical situation genuinely satisfies.
+
+## Worked Examples
+
+**Example 1: Interpret a persistence result.**
+
+A point cloud yields one component and one cycle over $r\in[0.410,0.515]$ and many cycles beyond. What is the data's shape?
+
+**Solution.** A single long-lived cycle means a **loop**: the points sample a circle. The many cycles at large $r$ are artefacts of the graph filling in, and they persist over a short range each.
+
+$$
+\text{the data lies on a loop}
+$$
+
+∎
+
+**Persistence length is the signal.** Short-lived features are discarded, which is what makes the method noise-tolerant.
+
+**Example 2: Determine a robot's configuration space.**
+
+A planar arm has two revolute joints, each freely rotating. What is the configuration space?
+
+**Solution.** Each joint angle lives on a circle, and the angles are independent, so
+
+$$
+C = S^1\times S^1 = T^2
+$$
+
+A torus. Its fundamental group is $\mathbb{Z}\times\mathbb{Z}$, so there are two independent ways for a motion to wrap. ∎
+
+**Example 3: Explain quantized conductance.**
+
+Why is the quantum Hall conductance so insensitive to impurities?
+
+**Solution.** The conductance equals an integer times $e^2/h$, and that integer is a Chern number of the band structure — a topological invariant.
+
+Impurities deform the system continuously. An invariant cannot change under continuous deformation, and an integer cannot change a little.
+
+$$
+\text{quantization is protected}
+$$
+
+∎
+
+**Example 4: Decide reachability.**
+
+A robot's free configuration space has three path components. The robot starts in one and the goal is in another. What can be said?
+
+**Solution.** Path components are exactly the mutually reachable sets, so no continuous motion joins them.
+
+$$
+\text{the goal is unreachable, for any planner}
+$$
+
+∎
+
+**This is an impossibility result, not a planning failure.** It means the mechanism or the environment has to change.
+
+**Example 5: Use knot invariants.**
+
+Two DNA loops are extracted and found to have different Jones polynomials. What follows?
+
+**Solution.** The Jones polynomial is a knot invariant, so equal knots give equal polynomials. Different polynomials therefore mean the two loops are **not** the same knot, and no sequence of deformations without cutting turns one into the other.
+
+$$
+\text{genuinely different knots}
+$$
+
+∎
+
+Note the asymmetry familiar from lesson 1: equal polynomials would **not** prove the knots are the same, since the Jones polynomial is not a complete invariant.
+
+**Example 6: Apply the hairy ball theorem.**
+
+Why must there always be a cyclone somewhere on Earth?
+
+**Solution.** Horizontal wind is a continuous tangent vector field on the sphere. Since $\chi(S^2)=2\ne0$, the field must vanish somewhere.
+
+A zero of the wind field with circulation around it is a cyclonic or anticyclonic centre.
+
+$$
+\text{always at least one}
+$$
+
+∎
+
+**Example 7: Detect coverage gaps without coordinates.**
+
+Sensors report which other sensors they can hear, and nothing about position. How can a coverage hole be found?
+
+**Solution.** Build the complex whose vertices are sensors and whose simplices record mutual communication. Compute its first homology; a nontrivial class corresponds to a loop of sensors with no coverage inside — a hole.
+
+$$
+\text{holes found from connectivity alone}
+$$
+
+∎
+
+**No geometry was used**, which is exactly why the method works when positions are unknown or unreliable.
+
+## Real-World Applications
+
+**Drug discovery.** Persistent homology characterizes binding pocket shapes and protein cavity structure, and the features are stable against the conformational noise that defeats geometric descriptors.
+
+**Cosmology.** The large-scale structure of the universe — voids, filaments, walls — is quantified with topological measures, since the arrangement of holes is more robust than any particular density threshold.
+
+**Medical imaging.** Cortical surfaces are topologically spheres, and topology correction is a routine step in brain segmentation pipelines because a genus error indicates a reconstruction fault.
+
+**Manufacturing and 3D printing.** Slicers require closed orientable manifolds, so mesh topology is validated before printing. Genus and orientability checks are what the error messages are reporting.
+
+**Robotics.** Motion planners use homotopy classes to enumerate distinct routes, and topological obstructions explain why some systems provably need switching controllers.
+
+**Materials.** Topological insulators and Weyl semimetals are engineered by designing band structures with prescribed invariants, and the robustness of the resulting surface states is the commercial motivation.
+
+:::note[You've Got This]
+The unifying idea across all of these is worth stating once more: an invariant cannot change a little. That is why topology is the right tool when the data is noisy, the material is dirty, or the measurement is imprecise — it is measuring something that discretely refuses to budge. The persistence figure is the cleanest illustration, since it turns a vague question about the shape of a point cloud into an exact computation with a definite answer, and the answer survives the noise.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="topology-applications-of-topology"
+  questions={[
+    {
+      id: "q1",
+      text: "Why is topology useful for noisy real-world data?",
+      options: [
+        "Because it is easy to compute",
+        "Because invariants cannot change under continuous deformation, so small perturbations cannot change them",
+        "Because it ignores the data",
+        "Because it requires no measurements",
+      ],
+      correctIndex: 1,
+      explanation:
+        "An integer invariant cannot change a little. That robustness is the single reason topology gets applied across data analysis, physics and engineering.",
+    },
+    {
+      id: "q2",
+      text: "In persistent homology, what distinguishes a real feature from noise?",
+      options: [
+        "Its size",
+        "How wide a range of scales it survives",
+        "Its position in the data",
+        "The number of points involved",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Persistence length is the signal. A cycle present across a broad interval of radii reflects the data's shape; one appearing at a single scale does not.",
+    },
+    {
+      id: "q3",
+      text: "A point cloud shows one component and one long-lived cycle. What shape is it sampling?",
+      options: ["A disc", "A loop", "Two clusters", "A sphere"],
+      correctIndex: 1,
+      explanation:
+        "One component means one piece and one persistent cycle means one hole, which is a circle. Cycles that appear only at large radii are artefacts of the graph filling in.",
+    },
+    {
+      id: "q4",
+      text: "Why is the quantum Hall conductance so precisely quantized?",
+      options: [
+        "Because the samples are extremely pure",
+        "Because it equals an integer Chern number times e²/h, and an invariant cannot change under continuous deformation",
+        "Because the measurement is averaged",
+        "Because temperature is controlled",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Impurities deform the system continuously and an integer cannot shift slightly. This robustness is what earned the 2016 Nobel Prize in Physics.",
+    },
+    {
+      id: "q5",
+      text: "What is the configuration space of a planar arm with two freely rotating revolute joints?",
+      options: ["ℝ²", "S¹", "The torus S¹ × S¹", "The sphere S²"],
+      correctIndex: 2,
+      explanation:
+        "Each angle lives on a circle and they are independent. Its fundamental group ℤ × ℤ records the two independent ways a motion can wrap.",
+    },
+    {
+      id: "q6",
+      text: "Two robot configurations lie in different path components of the free space. What follows?",
+      options: [
+        "A longer search will find a path",
+        "No continuous motion connects them, for any planner",
+        "The planner needs a finer grid",
+        "They are reachable but slowly",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Path components are exactly the mutually reachable sets. This is an impossibility result about the mechanism or environment, not a planning failure.",
+    },
+    {
+      id: "q7",
+      text: "Two DNA loops have different Jones polynomials. What can you conclude?",
+      options: [
+        "They are the same knot",
+        "They are different knots, since equal knots must give equal invariants",
+        "Nothing at all",
+        "One is unknotted",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Differing invariants prove the knots differ. Equal polynomials would prove nothing, since the Jones polynomial is not a complete invariant.",
+    },
+    {
+      id: "q8",
+      text: "How can coverage holes in a sensor network be found without position data?",
+      options: [
+        "By estimating coordinates first",
+        "By building a complex from which sensors can communicate and computing its homology",
+        "By measuring signal strength only",
+        "It cannot be done",
+      ],
+      correctIndex: 1,
+      explanation:
+        "A nontrivial first homology class corresponds to a loop of sensors with uncovered area inside. Using no geometry is exactly why the method works when positions are unknown.",
+    },
+  ]}
+/>

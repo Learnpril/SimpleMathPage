@@ -1,0 +1,135 @@
+---
+/**
+ * SetClassification — subsets of ℝ tested for openness and closedness. Each set is
+ * stored as a union of intervals with a flag per endpoint, and both verdicts are
+ * derived from those flags, so the ticks and crosses follow from the data.
+ */
+const w = 540;
+const h = 316;
+
+type Iv = { a: number; aIn: boolean; b: number; bIn: boolean };
+type Row = { name: string; ivs: Iv[] };
+
+const NEG = Number.NEGATIVE_INFINITY;
+const POS = Number.POSITIVE_INFINITY;
+
+const rows: Row[] = [
+  { name: "∅", ivs: [] },
+  { name: "ℝ", ivs: [{ a: NEG, aIn: false, b: POS, bIn: false }] },
+  { name: "(0, 1)", ivs: [{ a: 0, aIn: false, b: 1, bIn: false }] },
+  { name: "[0, 1]", ivs: [{ a: 0, aIn: true, b: 1, bIn: true }] },
+  { name: "[0, 1)", ivs: [{ a: 0, aIn: true, b: 1, bIn: false }] },
+  { name: "{0}", ivs: [{ a: 0, aIn: true, b: 0, bIn: true }] },
+  {
+    name: "(0,1) ∪ (2,3)",
+    ivs: [
+      { a: 0, aIn: false, b: 1, bIn: false },
+      { a: 2, aIn: false, b: 3, bIn: false },
+    ],
+  },
+];
+
+/** Open needs every finite endpoint excluded; closed needs every finite one included. */
+const classify = (r: Row) => ({
+  open: r.ivs.every((i) => (i.a === NEG || !i.aIn) && (i.b === POS || !i.bIn)),
+  closed: r.ivs.every((i) => (i.a === NEG || i.aIn) && (i.b === POS || i.bIn)),
+});
+const table = rows.map((r) => ({ ...r, ...classify(r) }));
+const bothCount = table.filter((r) => r.open && r.closed).length;
+const neitherCount = table.filter((r) => !r.open && !r.closed).length;
+
+// number line geometry
+const lo = -0.8;
+const hi = 3.8;
+const pxL = 132;
+const pxR = 322;
+const px = (v: number) => {
+  if (v === NEG) return pxL - 4;
+  if (v === POS) return pxR + 4;
+  return pxL + ((v - lo) / (hi - lo)) * (pxR - pxL);
+};
+const rowY = (i: number) => 100 + i * 26;
+---
+
+<figure
+  class="scl"
+  role="img"
+  aria-label={`Seven subsets of the real line tested for openness and closedness. ${bothCount} of them are both open and closed, ${neitherCount} is neither, and the rest are exactly one. Open and closed are not opposites.`}
+>
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    <text x="16" y="20" class="scl-head" font-size="12.5" font-weight="bold">Open and closed are not opposites</text>
+    <text x="16" y="38" class="scl-sub" font-size="10.5">Subsets of ℝ with the standard topology, tested endpoint by endpoint</text>
+
+    <text x="24" y="64" class="scl-hdr" font-size="9.5" text-anchor="start">set</text>
+    <text x="227" y="64" class="scl-hdr" font-size="9.5" text-anchor="middle">as a subset of the line</text>
+    <text x="392" y="64" class="scl-hdr" font-size="9.5" text-anchor="middle">open</text>
+    <text x="470" y="64" class="scl-hdr" font-size="9.5" text-anchor="middle">closed</text>
+
+    {[0, 1, 2, 3].map((t) => (
+      <text x={px(t)} y="82" class="scl-tick" font-size="9" text-anchor="middle">{String(t)}</text>
+    ))}
+
+    {table.map((r, i) => (
+      <g>
+        <line x1={pxL - 6} y1={rowY(i)} x2={pxR + 6} y2={rowY(i)} class="scl-axis" />
+        {r.ivs.map((iv) => (
+          <g>
+            <line x1={px(iv.a)} y1={rowY(i)} x2={px(iv.b)} y2={rowY(i)} class={`scl-seg scl-${r.open ? "o" : r.closed ? "c" : "n"}`} />
+            {iv.a !== NEG && (
+              <circle cx={px(iv.a)} cy={rowY(i)} r="3.4" class={`scl-end scl-${iv.aIn ? "in" : "out"} scl-${r.open ? "o" : r.closed ? "c" : "n"}`} />
+            )}
+            {iv.b !== POS && iv.b !== iv.a && (
+              <circle cx={px(iv.b)} cy={rowY(i)} r="3.4" class={`scl-end scl-${iv.bIn ? "in" : "out"} scl-${r.open ? "o" : r.closed ? "c" : "n"}`} />
+            )}
+          </g>
+        ))}
+        <text x="24" y={rowY(i) + 3.6} class="scl-name" font-size="10" text-anchor="start">{r.name}</text>
+        <text x="392" y={rowY(i) + 3.6} class={`scl-mark scl-${r.open ? "yes" : "no"}`} font-size="10.5" text-anchor="middle">{r.open ? "✓" : "✗"}</text>
+        <text x="470" y={rowY(i) + 3.6} class={`scl-mark scl-${r.closed ? "yes" : "no"}`} font-size="10.5" text-anchor="middle">{r.closed ? "✓" : "✗"}</text>
+      </g>
+    ))}
+
+    <text x={w / 2} y="290" class="scl-foot" font-size="10.5" text-anchor="middle">
+      {`${bothCount} sets are clopen, ${neitherCount} is neither, and "not open" never means closed`}
+    </text>
+    <text x={w / 2} y="308" class="scl-sub2" font-size="9.5" text-anchor="middle">
+      Filled endpoints are included in the set; hollow endpoints are not
+    </text>
+  </svg>
+</figure>
+
+<style>
+  .scl { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .scl svg { width:100%; max-width:100%; height:auto; }
+  .scl-axis { stroke:#555; stroke-width:1; }
+  .scl-seg { stroke-width:3.4; }
+  .scl-o { stroke:#7ee787; }
+  .scl-c { stroke:#58a6ff; }
+  .scl-n { stroke:#f0883e; }
+  .scl-end { stroke-width:2; }
+  .scl-in.scl-o { fill:#7ee787; }
+  .scl-in.scl-c { fill:#58a6ff; }
+  .scl-in.scl-n { fill:#f0883e; }
+  .scl-out { fill:#121212; }
+  .scl-hdr { fill:#9198a1; font-family:'Libre Baskerville',Georgia,serif; font-style:italic; }
+  .scl-name, .scl-tick { fill:#9198a1; font-family:'Libre Baskerville',Georgia,serif; }
+  .scl-mark { font-family:'Libre Baskerville',Georgia,serif; }
+  .scl-yes { fill:#7ee787; }
+  .scl-no { fill:#ff7b72; }
+  .scl-head { fill:#eee; font-family:'Libre Baskerville',Georgia,serif; }
+  .scl-sub, .scl-sub2 { fill:#9198a1; font-family:'Libre Baskerville',Georgia,serif; font-style:italic; }
+  .scl-foot { fill:#58a6ff; font-family:'Libre Baskerville',Georgia,serif; }
+  :global([data-theme="light"]) .scl-axis { stroke:#8c959f; }
+  :global([data-theme="light"]) .scl-o { stroke:#116329; }
+  :global([data-theme="light"]) .scl-in.scl-o { fill:#116329; }
+  :global([data-theme="light"]) .scl-c { stroke:#0550ae; }
+  :global([data-theme="light"]) .scl-in.scl-c { fill:#0550ae; }
+  :global([data-theme="light"]) .scl-n { stroke:#b35900; }
+  :global([data-theme="light"]) .scl-in.scl-n { fill:#b35900; }
+  :global([data-theme="light"]) .scl-out { fill:#ffffff; }
+  :global([data-theme="light"]) .scl-yes { fill:#116329; }
+  :global([data-theme="light"]) .scl-no { fill:#a40e26; }
+  :global([data-theme="light"]) .scl-head { fill:#24292f; }
+  :global([data-theme="light"]) .scl-foot { fill:#0550ae; }
+  :global([data-theme="light"]) :is(.scl-hdr, .scl-name, .scl-tick, .scl-sub, .scl-sub2) { fill:#57606a; }
+</style>

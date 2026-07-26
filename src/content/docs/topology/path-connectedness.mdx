@@ -1,0 +1,313 @@
+---
+title: Path-Connectedness
+description: Joining points by paths, and the space where that is impossible despite being connected
+sidebar:
+  order: 9
+---
+
+import Quiz from "../../../components/Quiz.astro";
+import TopologistSineCurve from "../../../components/TopologistSineCurve.astro";
+
+## What You'll Learn
+
+In this lesson you'll define paths and path-connectedness, see that it implies connectedness but not conversely, work through the topologist's sine curve, and meet local path-connectedness, which is the condition that makes the two notions agree.
+
+## The Concept
+
+### Paths
+
+> A **path** in $X$ from $a$ to $b$ is a continuous map $\gamma:[0,1]\to X$ with $\gamma(0)=a$ and $\gamma(1)=b$.
+
+> $X$ is **path-connected** if every pair of points is joined by a path.
+
+This is closer to intuition than connectedness: it says you can walk from anywhere to anywhere. Note that a path is a **map**, not just its image, and that it may retrace itself, stop, or be nowhere injective.
+
+Paths compose. If $\gamma_1$ runs $a\to b$ and $\gamma_2$ runs $b\to c$, then the concatenation
+
+$$
+\gamma(t) = \begin{cases}\gamma_1(2t) & 0\le t\le\tfrac12\\ \gamma_2(2t-1) & \tfrac12\le t\le1\end{cases}
+$$
+
+is continuous by the pasting lemma, and runs $a\to c$. That gives transitivity, and with the constant path and the reversal $t\mapsto\gamma(1-t)$, being joinable by a path is an **equivalence relation**. Its classes are the **path components**.
+
+### One direction only
+
+> Path-connected $\implies$ connected.
+
+_Proof._ Suppose $X$ is path-connected and $X = U\sqcup V$ were a separation. Pick $a\in U$ and $b\in V$ and a path $\gamma$ joining them. Then $\gamma^{-1}(U)$ and $\gamma^{-1}(V)$ separate $[0,1]$, contradicting connectedness of the interval. ∎
+
+The converse fails, and the counterexample is the standard one in all of topology.
+
+### The topologist's sine curve
+
+Let
+
+$$
+S = \left\{\left(x,\sin\tfrac1x\right) : 0<x\le1\right\}, \qquad T = S\cup\big(\{0\}\times[-1,1]\big)
+$$
+
+<TopologistSineCurve />
+
+**$T$ is connected.** $S$ is a continuous image of $(0,1]$, hence connected. As $x\to0^+$ the function $\sin\frac1x$ passes through every value in $[-1,1]$ infinitely often, so every point of the vertical segment is a limit point of $S$. Therefore $S\subseteq T\subseteq\bar S$, and anything between a connected set and its closure is connected.
+
+**$T$ is not path-connected.** Suppose a path $\gamma$ started on the segment at $(0,y_0)$ and reached a point of $S$. Consider the last time $t^*$ at which $\gamma$ is on the segment. Just after $t^*$ the path is in $S$ with $x$-coordinate positive but arbitrarily small, and on any such interval the second coordinate oscillates through the whole of $[-1,1]$. So $\gamma$ cannot be continuous at $t^*$: its values fail to settle near $\gamma(t^*)$.
+
+The figure makes the obstruction concrete. Every window $(0,d]$ contains infinitely many zeros of $\sin\frac1x$, at the points $x = \frac{1}{k\pi}$, so there is no scale at which the oscillation calms down. A path has to cross all of them in finite time, and continuity forbids it.
+
+$$
+T \text{ has 2 path components and 1 connected component}
+$$
+
+**Those two counts differing is exactly the point.** They are different invariants, and both are worth having.
+
+### When the two agree
+
+> $X$ is **locally path-connected** if every point has arbitrarily small path-connected neighbourhoods.
+
+> **Theorem.** A connected and locally path-connected space is path-connected.
+
+This is why the distinction almost never matters in practice. Open subsets of $\mathbb{R}^n$, manifolds, and CW-complexes are all locally path-connected, so for them connected and path-connected coincide. The topologist's sine curve fails local path-connectedness at every point of the segment, which is precisely where it goes wrong.
+
+A useful special case:
+
+> An **open connected** subset of $\mathbb{R}^n$ is path-connected, and in fact any two points can be joined by a polygonal path.
+
+### Convexity, and a stronger notion
+
+Convex sets are trivially path-connected: use the straight segment. Slightly weaker and often enough:
+
+> $X\subseteq\mathbb{R}^n$ is **star-shaped** about $c$ if the segment from $c$ to any point of $X$ stays in $X$.
+
+Star-shaped implies path-connected, and it also implies the stronger property of being **simply connected**, which lesson 17 needs. The chain to remember is
+
+$$
+\text{convex} \implies \text{star-shaped} \implies \text{path-connected} \implies \text{connected}
+$$
+
+with every implication strict.
+
+## Worked Examples
+
+**Example 1: Show $\mathbb{R}^n$ is path-connected.**
+
+**Solution.** For $a,b\in\mathbb{R}^n$ the straight-line path
+
+$$
+\gamma(t) = (1-t)a+tb
+$$
+
+is continuous and joins them.
+
+$$
+\text{path-connected, hence connected}
+$$
+
+∎
+
+**Example 2: Show the circle $S^1$ is path-connected.**
+
+**Solution.** Given two points at angles $\theta_1$ and $\theta_2$, the path
+
+$$
+\gamma(t) = \big(\cos((1-t)\theta_1+t\theta_2),\ \sin((1-t)\theta_1+t\theta_2)\big)
+$$
+
+travels along the circle from one to the other.
+
+$$
+\text{path-connected}
+$$
+
+∎
+
+Note the circle is path-connected but not simply connected; the loop around it cannot be contracted. Those are different questions.
+
+**Example 3: Show $\mathbb{R}^2\setminus\{0\}$ is path-connected.**
+
+**Solution.** For any two nonzero points, if the straight segment between them misses the origin, use it. If it passes through the origin, the two points are antipodal in direction; go via a third point off that line, using two segments.
+
+$$
+\text{path-connected}
+$$
+
+∎
+
+Contrast $\mathbb{R}\setminus\{0\}$, which is **not** connected. Removing a point from the plane leaves room to go around; removing one from the line does not.
+
+**Example 4: Count the components and path components of the topologist's sine curve.**
+
+**Solution.** Connected components: **1**, since $T$ is connected.
+
+Path components: **2**, namely the segment $\{0\}\times[-1,1]$ and the curve $S$. No path crosses between them, and each piece is separately path-connected — the segment because it is convex, the curve because it is a continuous injective image of an interval.
+
+$$
+1 \text{ component}, \quad 2 \text{ path components}
+$$
+
+∎
+
+**Example 5: Show path components need not be open.**
+
+**Solution.** In the topologist's sine curve, the path component $\{0\}\times[-1,1]$ is not open in $T$: every neighbourhood of a point on the segment contains points of the oscillating curve.
+
+**Connected components are always closed; path components need not be either open or closed.** In a locally path-connected space path components are open, which is how the agreement theorem is proved. ∎
+
+**Example 6: Show an open connected subset of $\mathbb{R}^n$ is path-connected.**
+
+**Solution.** Fix $a\in U$ and let $A$ be the set of points reachable from $a$ by a path in $U$.
+
+$A$ is open: if $x\in A$, some ball $B(x,r)\subseteq U$, and every point of that ball is reachable by appending a straight segment.
+
+$U\setminus A$ is open by the same argument: if $y$ were reachable from a point of the ball around it, then $y$ would be reachable.
+
+Both are open, they are disjoint, and $A\ne\varnothing$. Connectedness forces $U\setminus A=\varnothing$.
+
+$$
+U = A, \text{ so } U \text{ is path-connected}
+$$
+
+∎
+
+**This is the standard open-and-closed argument**, and it is worth recognizing because the same shape of proof appears throughout topology.
+
+**Example 7: Give a star-shaped set that is not convex.**
+
+**Solution.** Take a plus sign, the union of a horizontal and a vertical bar crossing at the origin. Every point sees the origin along a straight segment inside the set, so it is star-shaped about 0.
+
+It is not convex: the segment joining the tip of the top arm to the tip of the right arm leaves the set.
+
+$$
+\text{star-shaped, not convex}
+$$
+
+∎
+
+## Real-World Applications
+
+**Motion planning.** Two robot configurations are mutually achievable exactly when they lie in the same path component of the free configuration space, and the path itself is the motion. Connectedness alone would not be enough, since it does not produce a route.
+
+**Continuous deformation in manufacturing.** Whether a part can be moved into place without collision is a path-connectedness question in configuration space, and it is why some assemblies are impossible despite fitting geometrically.
+
+**Homotopy in animation.** Interpolating between two poses requires a path in the space of poses, and it fails when the space is disconnected — which is why some character rigs pop instead of blending.
+
+**Phase spaces in physics.** Whether a system can evolve continuously from one state to another is a path question, and disconnected phase space means a transition is forbidden without a discontinuous event.
+
+**Network routing.** A route is a path in the graph, and graph connectivity is the discrete analogue. Reachability queries in a network are path-component computations.
+
+**Molecular conformation.** Whether a molecule can pass between two shapes without breaking bonds is a path-connectedness question in conformation space, and energy barriers are what make some paths practically unavailable even when they exist.
+
+:::note[You've Got This]
+The two notions differ, and the topologist's sine curve is the example that proves it: one connected component, two path components. Keep it. But also keep the reassurance that follows it — in every space you are likely to work with, open subsets of $\mathbb{R}^n$ and manifolds included, local path-connectedness holds and the two notions coincide. So the distinction is a real one that you can usually forget about, provided you know when you cannot.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="topology-path-connectedness"
+  questions={[
+    {
+      id: "q1",
+      text: "What is a path in X from a to b?",
+      options: [
+        "A straight line from a to b",
+        "A continuous map γ from [0,1] to X with γ(0) = a and γ(1) = b",
+        "Any subset containing a and b",
+        "An injective curve",
+      ],
+      correctIndex: 1,
+      explanation:
+        "A path is the map, not its image, and it may retrace itself or fail to be injective. Continuity on the closed interval is the whole requirement.",
+    },
+    {
+      id: "q2",
+      text: "What is the relationship between path-connected and connected?",
+      options: [
+        "They are equivalent",
+        "Path-connected implies connected, but not conversely",
+        "Connected implies path-connected",
+        "Neither implies the other",
+      ],
+      correctIndex: 1,
+      explanation:
+        "A separation would pull back along a path to a separation of [0,1]. The converse fails, and the topologist's sine curve is the standard counterexample.",
+    },
+    {
+      id: "q3",
+      text: "Why is the topologist's sine curve connected?",
+      options: [
+        "Because it is path-connected",
+        "Because the segment lies in the closure of the oscillating curve, and anything between a connected set and its closure is connected",
+        "Because it is bounded",
+        "Because sin is continuous",
+      ],
+      correctIndex: 1,
+      explanation:
+        "The curve is a continuous image of (0,1], hence connected, and every point of the segment is one of its limit points. That containment is what forces connectedness.",
+    },
+    {
+      id: "q4",
+      text: "Why is the topologist's sine curve NOT path-connected?",
+      options: [
+        "Because it is disconnected",
+        "Because a path leaving the segment would have to traverse infinitely many oscillations, breaking continuity",
+        "Because sin(1/x) is undefined at 0",
+        "Because the segment is closed",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Every window (0, d] contains infinitely many zeros at x = 1/(kπ), so the values never settle. Continuity at the last moment on the segment is impossible.",
+    },
+    {
+      id: "q5",
+      text: "How many connected components and path components does the topologist's sine curve have?",
+      options: [
+        "1 and 1",
+        "2 and 2",
+        "1 component and 2 path components",
+        "2 components and 1 path component",
+      ],
+      correctIndex: 2,
+      explanation:
+        "The counts differing is precisely the point of the example. They are genuinely different invariants.",
+    },
+    {
+      id: "q6",
+      text: "When do connectedness and path-connectedness coincide?",
+      options: [
+        "Always",
+        "When the space is locally path-connected",
+        "When the space is compact",
+        "When the space is metric",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Open subsets of ℝⁿ, manifolds and CW-complexes are all locally path-connected, so the distinction rarely matters in practice. The sine curve fails this condition on the segment.",
+    },
+    {
+      id: "q7",
+      text: "Is ℝ² minus the origin path-connected?",
+      options: [
+        "No, removing a point disconnects it",
+        "Yes; any two points can be joined by one or two straight segments avoiding the origin",
+        "Only if the points are on the same ray",
+        "Only for closed subsets",
+      ],
+      correctIndex: 1,
+      explanation:
+        "There is room to go around the puncture in the plane. Contrast ℝ minus a point, which is not even connected.",
+    },
+    {
+      id: "q8",
+      text: "Which chain of implications is correct?",
+      options: [
+        "connected ⟹ path-connected ⟹ star-shaped ⟹ convex",
+        "convex ⟹ star-shaped ⟹ path-connected ⟹ connected",
+        "star-shaped ⟹ convex ⟹ connected",
+        "They are all equivalent",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Every implication is strict. A plus sign is star-shaped without being convex, and the sine curve is connected without being path-connected.",
+    },
+  ]}
+/>

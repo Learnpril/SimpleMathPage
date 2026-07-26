@@ -1,0 +1,128 @@
+---
+/**
+ * HomotopyDeformation — a homotopy shown as intermediate stages. Left: a loop in the
+ * plane contracted to a point by the straight-line homotopy, with each stage computed
+ * by interpolation. Right: the same interpolation attempted around a puncture, where
+ * a computed stage passes through the removed point, so the contraction is blocked.
+ */
+const w = 540;
+const h = 306;
+
+const lcx = 136;
+const rcx = 402;
+const cy = 150;
+const unit = 56;
+
+type P = { x: number; y: number };
+
+/** The loop being deformed: the unit circle about the centre. */
+const loopPt = (t: number): P => ({ x: Math.cos(2 * Math.PI * t), y: Math.sin(2 * Math.PI * t) });
+
+/** Straight-line homotopy toward the origin: H(t, s) = (1 − s)·γ(t). */
+const stage = (s: number, t: number): P => {
+  const p = loopPt(t);
+  return { x: (1 - s) * p.x, y: (1 - s) * p.y };
+};
+
+const stages = [0, 0.3, 0.6, 0.85];
+
+const trace = (cx: number, s: number) =>
+  Array.from({ length: 121 }, (_, i) => {
+    const p = stage(s, i / 120);
+    return `${(cx + p.x * unit).toFixed(1)},${(cy - p.y * unit).toFixed(1)}`;
+  }).join(" ");
+
+/** Smallest distance from the removed point to each stage, computed by sampling. */
+function clearance(s: number) {
+  let m = Infinity;
+  for (let i = 0; i <= 720; i++) {
+    const p = stage(s, i / 720);
+    m = Math.min(m, Math.hypot(p.x, p.y));
+  }
+  return m;
+}
+const clearances = stages.map((s) => ({ s, d: clearance(s) }));
+const blockedAt = clearances.find((c) => c.d < 0.35);
+---
+
+<figure
+  class="hmd"
+  role="img"
+  aria-label={`On the left, a loop in the plane shrinks to a point through the stages ${stages.join(", ")} of the straight-line homotopy. On the right, the same stages are drawn around a removed point; the clearance from the puncture falls from ${clearances[0].d.toFixed(2)} to ${clearances[3].d.toFixed(2)}, so a later stage would have to cross the missing point and the contraction is impossible.`}
+>
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    <text x="16" y="20" class="hmd-head" font-size="12.5" font-weight="bold">Deforming a loop, and being stopped</text>
+    <text x="16" y="38" class="hmd-sub" font-size="10.5">The straight-line homotopy H(t, s) = (1 − s)·γ(t), drawn at four stages</text>
+
+    <line x1="268" y1="52" x2="268" y2="248" class="hmd-divide" />
+
+    {/* ---------- left: the plane, contraction succeeds ---------- */}
+    <text x={lcx} y="62" class="hmd-panel hmd-ok" font-size="10.5" text-anchor="middle" font-weight="bold">in ℝ²: it contracts</text>
+    <line x1={lcx - 1.4 * unit} y1={cy} x2={lcx + 1.4 * unit} y2={cy} class="hmd-axis" />
+    <line x1={lcx} y1={cy - 1.06 * unit} x2={lcx} y2={cy + 1.06 * unit} class="hmd-axis" />
+    {stages.map((s, k) => (
+      <polyline points={trace(lcx, s)} class={`hmd-loop hmd-l${k}`} fill="none" />
+    ))}
+    <circle cx={lcx} cy={cy} r="3.2" class="hmd-dot" />
+    <text x={lcx} y="238" class="hmd-note" font-size="9" text-anchor="middle">the loop shrinks to a point</text>
+
+    {/* ---------- right: punctured plane, contraction blocked ---------- */}
+    <text x={rcx} y="62" class="hmd-panel hmd-bad" font-size="10.5" text-anchor="middle" font-weight="bold">in ℝ² minus a point: blocked</text>
+    <line x1={rcx - 1.4 * unit} y1={cy} x2={rcx + 1.4 * unit} y2={cy} class="hmd-axis" />
+    <line x1={rcx} y1={cy - 1.06 * unit} x2={rcx} y2={cy + 1.06 * unit} class="hmd-axis" />
+    {stages.map((s, k) => (
+      <polyline points={trace(rcx, s)} class={`hmd-loop hmd-l${k}`} fill="none" />
+    ))}
+    <line x1={rcx - 6} y1={cy - 6} x2={rcx + 6} y2={cy + 6} class="hmd-hole" />
+    <line x1={rcx - 6} y1={cy + 6} x2={rcx + 6} y2={cy - 6} class="hmd-hole" />
+
+    <text x={rcx} y="226" class="hmd-val hmd-bad" font-size="9.5" text-anchor="middle">
+      {`clearance falls ${clearances[0].d.toFixed(2)} → ${clearances[3].d.toFixed(2)}`}
+    </text>
+    <text x={rcx} y="242" class="hmd-note" font-size="9" text-anchor="middle">and must reach 0 to finish</text>
+
+    <text x={w / 2} y="266" class="hmd-foot" font-size="10.5" text-anchor="middle">
+      A homotopy is a continuous family of maps, indexed by s from 0 to 1
+    </text>
+    <text x={w / 2} y="286" class="hmd-sub2" font-size="9.5" text-anchor="middle">
+      The plane is contractible; the punctured plane is not, and the hole is the obstruction
+    </text>
+    <text x={w / 2} y="302" class="hmd-sub2" font-size="9.5" text-anchor="middle">
+      That difference is what the fundamental group will measure
+    </text>
+  </svg>
+</figure>
+
+<style>
+  .hmd { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .hmd svg { width:100%; max-width:100%; height:auto; }
+  .hmd-axis { stroke:#555; stroke-width:1.1; }
+  .hmd-divide { stroke:#3a3a3a; stroke-width:1; }
+  .hmd-loop { stroke-width:2.2; }
+  .hmd-l0 { stroke:#58a6ff; }
+  .hmd-l1 { stroke:#7ee787; }
+  .hmd-l2 { stroke:#f0883e; }
+  .hmd-l3 { stroke:#d2a8ff; }
+  .hmd-dot { fill:#d2a8ff; stroke:none; }
+  .hmd-hole { stroke:#ff7b72; stroke-width:2.6; }
+  .hmd-panel, .hmd-val { font-family:'Libre Baskerville',Georgia,serif; }
+  .hmd-ok { fill:#7ee787; }
+  .hmd-bad { fill:#ff7b72; }
+  .hmd-note { fill:#9198a1; font-family:'Libre Baskerville',Georgia,serif; font-style:italic; }
+  .hmd-head { fill:#eee; font-family:'Libre Baskerville',Georgia,serif; }
+  .hmd-sub, .hmd-sub2 { fill:#9198a1; font-family:'Libre Baskerville',Georgia,serif; font-style:italic; }
+  .hmd-foot { fill:#58a6ff; font-family:'Libre Baskerville',Georgia,serif; }
+  :global([data-theme="light"]) .hmd-axis { stroke:#8c959f; }
+  :global([data-theme="light"]) .hmd-divide { stroke:#d0d7de; }
+  :global([data-theme="light"]) .hmd-l0 { stroke:#0550ae; }
+  :global([data-theme="light"]) .hmd-l1 { stroke:#116329; }
+  :global([data-theme="light"]) .hmd-l2 { stroke:#b35900; }
+  :global([data-theme="light"]) .hmd-l3 { stroke:#6639ba; }
+  :global([data-theme="light"]) .hmd-dot { fill:#6639ba; }
+  :global([data-theme="light"]) .hmd-hole { stroke:#a40e26; }
+  :global([data-theme="light"]) .hmd-ok { fill:#116329; }
+  :global([data-theme="light"]) .hmd-bad { fill:#a40e26; }
+  :global([data-theme="light"]) .hmd-head { fill:#24292f; }
+  :global([data-theme="light"]) .hmd-foot { fill:#0550ae; }
+  :global([data-theme="light"]) :is(.hmd-note, .hmd-sub, .hmd-sub2) { fill:#57606a; }
+</style>

@@ -1,0 +1,332 @@
+---
+title: Fixed Point Theorems
+description: Brouwer, Banach, and the topological guarantees that something stays put
+sidebar:
+  order: 18
+---
+
+import Quiz from "../../../components/Quiz.astro";
+import BrouwerFixedPoint from "../../../components/BrouwerFixedPoint.astro";
+
+## What You'll Learn
+
+In this lesson you'll meet Brouwer's fixed point theorem and its proof by the fundamental group, contrast it with the Banach fixed point theorem, and see the consequences from the hairy ball theorem to Nash equilibria.
+
+## The Concept
+
+### Brouwer's theorem
+
+> **Brouwer fixed point theorem.** Every continuous map $f:D^n\to D^n$ from a closed ball to itself has a fixed point, a $p$ with $f(p)=p$.
+
+More generally the same holds for any compact convex subset of $\mathbb{R}^n$, and more generally still for any space homeomorphic to a ball.
+
+<BrouwerFixedPoint />
+
+The figure shows both low-dimensional cases. On the left, a continuous self-map of $[0,1]$ is plotted against the diagonal and the crossing is located by bisection on $f(x)-x$; the figure also reports the endpoint differences $f(0)-0$ and $f(1)-1$, which have opposite signs and are what force the crossing. On the right, a rotation of the disc moves every point except one, illustrating that the fixed point can be unique and that the theorem promises existence only.
+
+### The one-dimensional case
+
+For $n=1$ the theorem is the intermediate value theorem in disguise.
+
+Let $f:[0,1]\to[0,1]$ be continuous and set $g(x) = f(x)-x$. Then
+
+$$
+g(0) = f(0)\ge0, \qquad g(1) = f(1)-1\le0
+$$
+
+because $f$ takes values in $[0,1]$. A continuous $g$ with $g(0)\ge0$ and $g(1)\le0$ must vanish somewhere, and there $f(p)=p$. ∎
+
+**Connectedness of the interval is doing the work.** The higher-dimensional cases have no such elementary argument, and that is what makes the theorem a topological result rather than a calculus one.
+
+### The proof by fundamental group
+
+For $n=2$, here is the standard argument, and it uses exactly the lemma from the last lesson.
+
+Suppose $f:D^2\to D^2$ had **no** fixed point. Then $f(x)\ne x$ for every $x$, so the direction from $f(x)$ to $x$ is well defined. Follow the ray from $f(x)$ through $x$ until it meets the boundary circle, and call that point $r(x)$.
+
+This $r:D^2\to S^1$ is continuous, since $f$ is and the construction never divides by zero. And for $x$ already on the boundary, the ray from $f(x)$ through $x$ hits the circle at $x$ itself, so $r$ restricted to $S^1$ is the identity.
+
+That makes $r$ a **retraction of the disc onto its boundary**, which we proved impossible: applying $\pi_1$ would factor the identity on $\mathbb{Z}$ through the trivial group.
+
+$$
+\text{contradiction, so } f \text{ has a fixed point}
+$$
+
+∎
+
+**The whole theorem rests on $\pi_1(S^1)=\mathbb{Z}$.** That is why the fundamental group had to come first.
+
+### Why the hypotheses matter
+
+Each condition can be dropped to produce a counterexample.
+
+**Not convex, or the wrong shape.** On the annulus $\{1\le|x|\le2\}$, rotation by any nonzero angle has no fixed point. The annulus is compact but has a hole, and the hole is exactly what breaks the argument.
+
+**Not compact.** On the open disc, the map $x\mapsto\frac{x+e_1}{2}$ pushes points toward a boundary point that is not in the space. On $\mathbb{R}$, $x\mapsto x+1$ has no fixed point.
+
+**Not continuous.** Any swap of two points with a jump avoids fixed points trivially.
+
+**Not into itself.** Needed by definition; a map out of the space cannot fix anything in it.
+
+### Banach's theorem, for contrast
+
+> **Banach fixed point theorem.** If $(X,d)$ is a **complete** metric space and $f:X\to X$ satisfies
+>
+> $$
+> d(f(x),f(y))\le k\,d(x,y) \quad\text{for some } k<1
+> $$
+>
+> then $f$ has a **unique** fixed point, and iterating $f$ from any starting point converges to it.
+
+The two theorems trade different things.
+
+|                     | Brouwer               | Banach                       |
+| ------------------- | --------------------- | ---------------------------- |
+| Needs               | compact convex domain | complete space, contraction  |
+| Continuity required | continuous only       | Lipschitz with $k<1$         |
+| Conclusion          | existence             | existence **and** uniqueness |
+| Constructive        | no                    | yes — just iterate           |
+
+**Brouwer is topological and non-constructive; Banach is metric and gives you an algorithm.** Brouwer tells you a solution exists without any way to find it, which is why it is used for existence proofs in economics; Banach is what numerical methods actually run.
+
+### Consequences of Brouwer
+
+**The hairy ball theorem.** No nowhere-zero continuous tangent field on $S^2$, as in the Euler characteristic lesson. Equivalently there is always a point of zero horizontal wind on Earth.
+
+**Borsuk–Ulam.** Any continuous $f:S^n\to\mathbb{R}^n$ takes the same value at some pair of antipodal points. On Earth: at any moment there are two antipodal points with the same temperature **and** pressure.
+
+**The ham sandwich theorem.** Any $n$ measurable sets in $\mathbb{R}^n$ can be simultaneously bisected by a single hyperplane. In three dimensions, one cut halves the bread, the ham, and the cheese at once.
+
+**Nash's theorem.** Every finite game has a mixed-strategy equilibrium, proved by applying Brouwer — or its generalization, Kakutani's theorem — to the best-response map. This is the result that won Nash the Nobel Prize in Economics.
+
+**Perron–Frobenius.** A positive matrix has a positive eigenvector, proved by applying Brouwer to the induced map on the simplex. This is the mathematics behind PageRank.
+
+**The stirring fact.** Stir a cup of coffee continuously and gently, and at the moment you stop, some point of the liquid is where it started.
+
+## Worked Examples
+
+**Example 1: Prove the one-dimensional case.**
+
+**Solution.** Let $f:[0,1]\to[0,1]$ be continuous and $g(x)=f(x)-x$.
+
+Since $f(0)\in[0,1]$ we have $g(0)=f(0)\ge0$, and since $f(1)\in[0,1]$ we have $g(1)=f(1)-1\le0$.
+
+By the intermediate value theorem, $g(p)=0$ for some $p$, so $f(p)=p$. ∎
+
+**Example 2: Show the annulus fails Brouwer.**
+
+**Solution.** On $A=\{x\in\mathbb{R}^2 : 1\le|x|\le2\}$, rotation by $\theta\ne0$ is continuous and maps $A$ into itself.
+
+It moves every point, since rotation fixes only the origin and $0\notin A$.
+
+$$
+\text{no fixed point}
+$$
+
+∎
+
+$A$ is compact but not convex, and its $\pi_1$ is $\mathbb{Z}$ rather than trivial. **The hole is what breaks the retraction argument.**
+
+**Example 3: Show the open disc fails Brouwer.**
+
+**Solution.** On the open unit disc take
+
+$$
+f(x) = \frac{x+e_1}{2}
+$$
+
+where $e_1=(1,0)$. This maps the open disc into itself, since the midpoint of two points of modulus below 1 has modulus below 1.
+
+A fixed point would satisfy $x = \frac{x+e_1}{2}$, hence $x=e_1$, which is on the boundary and not in the space.
+
+$$
+\text{no fixed point}
+$$
+
+∎
+
+**Compactness is not optional.**
+
+**Example 4: Apply Banach's theorem.**
+
+**Solution.** Let $f(x) = \frac{x}{2}+1$ on $\mathbb{R}$, which is complete. Then
+
+$$
+|f(x)-f(y)| = \tfrac12|x-y|
+$$
+
+so $f$ is a contraction with $k=\frac12$.
+
+The unique fixed point solves $p = \frac p2+1$, giving $p=2$. Iterating from $x_0=0$: $1, 1.5, 1.75, 1.875,\ldots\to2$ ✓ ∎
+
+**Note the domain is not compact**, so Brouwer does not apply. Banach needs completeness instead, and it delivers uniqueness and a method.
+
+**Example 5: Show Brouwer gives no uniqueness.**
+
+**Solution.** The identity map on $D^2$ is continuous and maps the disc to itself. **Every** point is fixed.
+
+Meanwhile a rotation about the centre fixes exactly one point.
+
+$$
+\text{existence only; the count varies}
+$$
+
+∎
+
+Uniqueness requires the contraction condition, and the identity map is emphatically not a contraction.
+
+**Example 6: Use Borsuk–Ulam on Earth.**
+
+**Solution.** Define $f:S^2\to\mathbb{R}^2$ by sending each point to its (temperature, pressure) pair. Assuming these vary continuously, Borsuk–Ulam gives antipodal $x$ and $-x$ with $f(x)=f(-x)$.
+
+$$
+\text{two antipodal points agree in both quantities}
+$$
+
+∎
+
+**Two quantities, two dimensions.** With three quantities the conclusion would fail, which is a good check that the dimension count in the statement is doing real work.
+
+**Example 7: Sketch the retraction argument.**
+
+**Solution.** Suppose $f:D^2\to D^2$ has no fixed point. Since $f(x)\ne x$ always, define $r(x)$ as the point where the ray from $f(x)$ through $x$ exits the disc.
+
+$r$ is continuous, and $r(x)=x$ for $x\in S^1$, so $r$ is a retraction $D^2\to S^1$.
+
+Applying $\pi_1$: the composite $S^1\hookrightarrow D^2\xrightarrow{r}S^1$ is the identity, so the induced maps compose to the identity on $\mathbb{Z}$. But they factor through $\pi_1(D^2)=0$.
+
+$$
+\text{impossible, so a fixed point exists}
+$$
+
+∎
+
+## Real-World Applications
+
+**Economics.** Existence of a Nash equilibrium and of Walrasian market equilibrium are both Brouwer-type results. The proofs are non-constructive, which is a substantive limitation: they say a price vector exists without telling you how a market would find it.
+
+**PageRank.** Google's original algorithm computes the Perron–Frobenius eigenvector of a stochastic matrix, whose existence is a Brouwer consequence, and computes it by iteration in the Banach style.
+
+**Numerical solvers.** Newton's method and fixed-point iteration converge by Banach's theorem when the map is contractive, and the contraction constant gives the convergence rate directly.
+
+**Differential equations.** The Picard–Lindelöf existence theorem is Banach's theorem applied to an integral operator on a space of functions, so every ODE existence guarantee you have used is a fixed point argument.
+
+**Game AI and equilibrium computation.** Finding equilibria in practice needs constructive methods precisely because Brouwer offers none, which is why algorithms like Lemke–Howson exist.
+
+**Meteorology and geodesy.** The hairy ball and Borsuk–Ulam consequences are literally true statements about the atmosphere, and they are sometimes used as sanity checks on global model outputs.
+
+:::note[You've Got This]
+Two theorems with the same name and quite different characters. Brouwer is topological, needs only continuity on a compact convex domain, and gives existence with no construction; Banach is metric, needs a contraction, and hands you an algorithm plus uniqueness. Knowing which you have is the practical skill. And the proof of Brouwer is worth appreciating as the payoff of the last two lessons: the entire argument reduces to the fact that you cannot retract a disc onto its boundary, which reduces to $\pi_1(S^1)=\mathbb{Z}$.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="topology-fixed-point-theorems"
+  questions={[
+    {
+      id: "q1",
+      text: "What does Brouwer's fixed point theorem state?",
+      options: [
+        "Every continuous map has a unique fixed point",
+        "Every continuous map from a closed ball to itself has at least one fixed point",
+        "Every map on a compact space has a fixed point",
+        "Every contraction has a fixed point",
+      ],
+      correctIndex: 1,
+      explanation:
+        "It extends to any compact convex set and to anything homeomorphic to a ball. It gives existence only, never uniqueness.",
+    },
+    {
+      id: "q2",
+      text: "How is the one-dimensional case proved?",
+      options: [
+        "By the fundamental group",
+        "By applying the intermediate value theorem to g(x) = f(x) − x, since g(0) ≥ 0 and g(1) ≤ 0",
+        "By compactness",
+        "By contraction",
+      ],
+      correctIndex: 1,
+      explanation:
+        "The endpoint signs are forced by f mapping into [0,1]. Connectedness of the interval is what does the work, and higher dimensions have no such elementary argument.",
+    },
+    {
+      id: "q3",
+      text: "What is the key step in the two-dimensional proof?",
+      options: [
+        "Constructing a contraction",
+        "Showing that a fixed-point-free map would produce a retraction of the disc onto its boundary, which π₁ forbids",
+        "Using compactness of the disc",
+        "Using the Euler characteristic",
+      ],
+      correctIndex: 1,
+      explanation:
+        "The retraction would factor the identity on ℤ through the trivial group π₁(D²). The whole theorem rests on π₁(S¹) = ℤ.",
+    },
+    {
+      id: "q4",
+      text: "Why does Brouwer's theorem fail on the annulus?",
+      options: [
+        "The annulus is not compact",
+        "It is not convex and has a hole, and rotation by any nonzero angle moves every point",
+        "Rotation is not continuous",
+        "It does not fail",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Rotation fixes only the origin, which is not in the annulus. Its fundamental group is ℤ rather than trivial, which is what breaks the retraction argument.",
+    },
+    {
+      id: "q5",
+      text: "What are the hypotheses and conclusion of Banach's fixed point theorem?",
+      options: [
+        "Compactness, giving existence",
+        "A complete metric space and a contraction with k < 1, giving a unique fixed point reachable by iteration",
+        "Continuity alone, giving uniqueness",
+        "Convexity, giving existence",
+      ],
+      correctIndex: 1,
+      explanation:
+        "It is constructive: iterating from any starting point converges, and the constant k gives the rate. Compactness is not required.",
+    },
+    {
+      id: "q6",
+      text: "What is the main practical difference between Brouwer and Banach?",
+      options: [
+        "Brouwer is constructive, Banach is not",
+        "Brouwer gives existence non-constructively; Banach gives existence, uniqueness, and an algorithm",
+        "They are equivalent",
+        "Banach requires compactness",
+      ],
+      correctIndex: 1,
+      explanation:
+        "This is why economics uses Brouwer for existence proofs while numerical analysis runs Banach iterations. The identity map shows Brouwer cannot give uniqueness.",
+    },
+    {
+      id: "q7",
+      text: "What does the Borsuk–Ulam theorem imply about the Earth?",
+      options: [
+        "There is always a point with no wind",
+        "There are always two antipodal points with the same temperature and pressure",
+        "Temperature is constant somewhere",
+        "The Earth has a fixed point",
+      ],
+      correctIndex: 1,
+      explanation:
+        "A continuous map from S² to ℝ² agrees at some antipodal pair, and two quantities is exactly two dimensions. The no-wind statement is the hairy ball theorem instead.",
+    },
+    {
+      id: "q8",
+      text: "Which famous economics result is proved with a fixed point theorem?",
+      options: [
+        "The law of supply and demand",
+        "Existence of Nash equilibria, via Brouwer or Kakutani applied to the best-response map",
+        "The efficient market hypothesis",
+        "Comparative advantage",
+      ],
+      correctIndex: 1,
+      explanation:
+        "The proof is topological rather than economic, and it is non-constructive, which is why separate algorithms are needed to compute equilibria.",
+    },
+  ]}
+/>

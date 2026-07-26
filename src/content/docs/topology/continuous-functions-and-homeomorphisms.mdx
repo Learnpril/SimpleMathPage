@@ -1,0 +1,323 @@
+---
+title: Continuous Functions and Homeomorphisms
+description: Continuity without epsilons, and the precise meaning of "the same shape"
+sidebar:
+  order: 6
+---
+
+import Quiz from "../../../components/Quiz.astro";
+import PreimageContinuity from "../../../components/PreimageContinuity.astro";
+
+## What You'll Learn
+
+In this lesson you'll meet the preimage definition of continuity, check that it agrees with epsilon-delta, learn what a homeomorphism is and why the inverse must also be continuous, and see how to prove two spaces are not homeomorphic.
+
+## The Concept
+
+### Continuity, restated
+
+> $f:X\to Y$ is **continuous** if $f^{-1}(V)$ is open in $X$ for every open $V\subseteq Y$.
+
+That is the whole definition. No epsilons, no distances, no sequences — and it works in any topological space.
+
+<PreimageContinuity />
+
+The figure pulls an open band back through two functions. For $x^2$, the band $(1,4)$ pulls back to $(-2,-1)\cup(1,2)$, an open set. For the step function, the band $(0.5,1.5)$ pulls back to a set containing its own left boundary point, which is not open. The figure decides openness by checking whether the function value at a run boundary lands strictly inside the band, so the verdict is computed rather than asserted.
+
+Notice the direction. Continuity is about **preimages**, not images. A continuous function can easily map an open set to a non-open one: $f(x)=x^2$ sends the open set $(-1,1)$ to $[0,1)$, which is not open. Maps that do send open sets to open sets are called **open maps**, and that is a separate property.
+
+### Why this matches epsilon-delta
+
+For metric spaces the two definitions agree, and seeing why explains where the epsilons came from.
+
+Suppose $f^{-1}(V)$ is always open, and fix $x_0$ and $\varepsilon>0$. The ball $B(f(x_0),\varepsilon)$ is open, so $f^{-1}(B(f(x_0),\varepsilon))$ is open and contains $x_0$. Being open, it contains a ball $B(x_0,\delta)$. That $\delta$ is exactly the one epsilon-delta asks for.
+
+Running the argument backwards gives the converse. **The epsilon-delta definition is the preimage definition with the balls written out.**
+
+### Equivalent formulations
+
+All of these are the same condition, and different ones are convenient in different proofs:
+
+- $f^{-1}(V)$ is open for every open $V$
+- $f^{-1}(C)$ is closed for every closed $C$
+- $f^{-1}(B)$ is open for every $B$ in a **basis** of $Y$ — usually the cheapest to check
+- $f(\bar A)\subseteq\overline{f(A)}$ for every $A\subseteq X$
+- For every $x$ and every neighbourhood $V$ of $f(x)$, there is a neighbourhood $U$ of $x$ with $f(U)\subseteq V$
+
+The basis version is worth remembering: to show a map into $\mathbb{R}$ is continuous you need only check preimages of open intervals.
+
+### Standard facts
+
+- **Compositions** of continuous maps are continuous, immediately from $(g\circ f)^{-1}(V) = f^{-1}(g^{-1}(V))$.
+- **Constant maps** are continuous: the preimage is $\varnothing$ or $X$.
+- **The identity** is continuous.
+- **Restrictions** of continuous maps to subspaces are continuous.
+- **Any map from a discrete space** is continuous, since every preimage is open.
+- **Any map into a trivial space** is continuous, since the only open sets to pull back are $\varnothing$ and $Y$.
+
+Those last two are worth pausing on. They say that continuity depends on the topologies as much as on the function — the same function can be continuous or not depending on which topologies you place on the two sets.
+
+### Homeomorphism
+
+> $f:X\to Y$ is a **homeomorphism** if $f$ is a bijection, $f$ is continuous, and $f^{-1}$ is continuous.
+
+Equivalently, $f$ is a continuous bijection that is also an **open map**. Spaces related by a homeomorphism are **homeomorphic**, written $X\cong Y$, and they are indistinguishable by any topological property.
+
+**The inverse condition is not redundant.** Consider
+
+$$
+f:[0,2\pi)\to S^1, \qquad f(t) = (\cos t,\sin t)
+$$
+
+This is a continuous bijection. Its inverse is not continuous: points on either side of $(1,0)$ on the circle are close to each other, but their preimages, near 0 and near $2\pi$, are far apart. The map glues the two ends of the interval together, and the inverse has to tear them.
+
+So $[0,2\pi)$ and $S^1$ are **not** homeomorphic, which we can confirm independently: removing one point disconnects the circle never, and disconnects the interval sometimes.
+
+There is one important case where the condition comes free:
+
+> A continuous bijection from a **compact** space to a **Hausdorff** space is automatically a homeomorphism.
+
+That saves a great deal of work later, and it is why so many theorems specify compact and Hausdorff.
+
+### Proving two spaces are not homeomorphic
+
+You cannot do it by failing to find a map. You exhibit a topological property one has and the other lacks:
+
+| Invariant                            | Distinguishes                 |
+| ------------------------------------ | ----------------------------- |
+| Cardinality                          | trivially different sizes     |
+| Number of components                 | $(0,1)$ from $(0,1)\cup(2,3)$ |
+| Compactness                          | $[0,1]$ from $(0,1)$          |
+| Connectedness after removing a point | $[0,1]$ from $S^1$            |
+| Number of non-cut points             | $[0,1]$ from $[0,1)$          |
+| Fundamental group                    | $S^2$ from the torus          |
+
+The cut-point technique deserves highlighting because it is so cheap: if $X\cong Y$ then removing corresponding points must leave homeomorphic spaces, so any difference in what removal does is a proof.
+
+### Embeddings
+
+> An **embedding** is a map that is a homeomorphism onto its image.
+
+This is the right notion when you care how a space sits inside another. A knotted circle and an unknotted circle in $\mathbb{R}^3$ are homeomorphic as spaces but are not equivalent embeddings, and knot theory studies exactly that difference.
+
+## Worked Examples
+
+**Example 1: Show $f(x)=x^2$ is continuous using preimages.**
+
+**Solution.** By the basis criterion it suffices to check preimages of open intervals $(c,d)$.
+
+If $d\le0$ the preimage is empty. If $c<0<d$ it is $(-\sqrt d,\sqrt d)$. If $0\le c<d$ it is
+
+$$
+(-\sqrt d,-\sqrt c)\cup(\sqrt c,\sqrt d)
+$$
+
+Every case is open, so $f$ is continuous ✓
+
+For $(1,4)$ specifically this gives $(-2,-1)\cup(1,2)$, matching the figure. ∎
+
+**Example 2: Show a continuous map need not send open sets to open sets.**
+
+**Solution.** With $f(x)=x^2$, the image of the open set $(-1,1)$ is $[0,1)$, which is not open, since 0 has no interval around it inside the image.
+
+**Continuity constrains preimages only.** ∎
+
+**Example 3: Show the step function is not continuous by a preimage.**
+
+**Solution.** Let $g(x)=0$ for $x<0$ and $g(x)=1$ for $x\ge0$. Then
+
+$$
+g^{-1}\big((0.5,1.5)\big) = [0,\infty)
+$$
+
+which is not open, since no interval around 0 stays inside it.
+
+$$
+\text{not continuous}
+$$
+
+∎
+
+**Example 4: Show any map from a discrete space is continuous.**
+
+**Solution.** Let $X$ carry the discrete topology and let $f:X\to Y$ be arbitrary. For any open $V\subseteq Y$, the set $f^{-1}(V)$ is a subset of $X$, and every subset of a discrete space is open.
+
+$$
+\text{continuous}
+$$
+
+∎
+
+**Continuity is a statement about the topologies**, not only the formula. The same function becomes discontinuous if $X$ is given a coarser topology.
+
+**Example 5: Exhibit a continuous bijection that is not a homeomorphism.**
+
+**Solution.** $f:[0,2\pi)\to S^1$ with $f(t)=(\cos t,\sin t)$ is a continuous bijection.
+
+The inverse fails continuity at $(1,0)$. Take the open set $[0,1)\subseteq[0,2\pi)$, which is open in the subspace. Its image is an arc containing the point $(1,0)$ but no full neighbourhood of it in $S^1$, so the image is not open — meaning $f$ is not an open map and $f^{-1}$ is not continuous.
+
+$$
+\text{not a homeomorphism}
+$$
+
+∎
+
+**Example 6: Show $(0,1)\cong\mathbb{R}$.**
+
+**Solution.** The map
+
+$$
+f(x) = \tan\left(\pi x - \frac{\pi}{2}\right)
+$$
+
+is a continuous bijection from $(0,1)$ to $\mathbb{R}$, and its inverse $f^{-1}(y) = \frac{1}{\pi}\arctan y+\frac12$ is continuous too.
+
+$$
+(0,1)\cong\mathbb{R}
+$$
+
+∎
+
+**Boundedness is not topological.** A bounded space and an unbounded one can be homeomorphic, which is exactly why compactness rather than boundedness is the topological notion.
+
+**Example 7: Show $[0,1]\not\cong[0,1)$ by cut points.**
+
+**Solution.** Call $p$ a non-cut point if $X\setminus\{p\}$ is still connected. In $[0,1]$ the non-cut points are 0 and 1, so there are **two**. In $[0,1)$ only 0 qualifies, so there is **one**.
+
+A homeomorphism would carry non-cut points to non-cut points, so the counts would have to agree.
+
+$$
+[0,1]\not\cong[0,1)
+$$
+
+∎
+
+## Real-World Applications
+
+**Coordinate charts.** A manifold is defined by homeomorphisms from patches of it onto open subsets of $\mathbb{R}^n$. Map projections are exactly such charts for the Earth, and the fact that no single chart covers the sphere is a topological statement.
+
+**Data embedding.** Dimensionality reduction methods aim to embed data homeomorphically into a low-dimensional space. When the method distorts the topology — merging separate clusters, or tearing a loop — the failure is a failure of homeomorphism.
+
+**Mesh parameterization.** Flattening a 3D surface patch for texturing requires a homeomorphism onto a planar region, and it is impossible without cutting when the patch has the wrong topology. Graphics tools detect this and introduce seams.
+
+**Robot workspace equivalence.** Two mechanisms with homeomorphic configuration spaces admit the same motion-planning strategies, even if the machines look nothing alike. Recognizing the equivalence saves reimplementation.
+
+**Circuit layout.** Whether a circuit can be drawn on a plane without crossings is a topological question about the graph, and it determines whether a single-layer board suffices.
+
+**Protein structure.** Comparing folds uses topological equivalence rather than exact geometry, because the same functional shape appears with quite different coordinates.
+
+:::note[You've Got This]
+The preimage definition is shorter than epsilon-delta and stronger, in the sense that it works everywhere, so it is worth making it your default. Two things to keep straight: continuity restricts preimages and says nothing about images, and a homeomorphism needs the inverse to be continuous too — the interval wrapping onto the circle is the example that shows why. When you want to prove two spaces differ, reach for an invariant, and the cut-point trick is usually the cheapest one available.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="topology-continuous-functions-and-homeomorphisms"
+  questions={[
+    {
+      id: "q1",
+      text: "What is the topological definition of continuity?",
+      options: [
+        "Images of open sets are open",
+        "Preimages of open sets are open",
+        "The function preserves limits of sequences",
+        "The function is bounded",
+      ],
+      correctIndex: 1,
+      explanation:
+        "It is stated with preimages and needs no metric. The image version is a different property, called being an open map.",
+    },
+    {
+      id: "q2",
+      text: "Does a continuous function have to send open sets to open sets?",
+      options: [
+        "Yes, that is what continuity means",
+        "No; f(x) = x² sends (−1, 1) to [0, 1), which is not open",
+        "Only on ℝ",
+        "Only if it is a bijection",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Continuity constrains preimages only. Maps that also send open sets to open sets are called open maps, and that is an extra condition.",
+    },
+    {
+      id: "q3",
+      text: "Why is the preimage definition equivalent to epsilon-delta in metric spaces?",
+      options: [
+        "They are not equivalent",
+        "Because the preimage of the ball B(f(x₀), ε) is open and therefore contains a ball B(x₀, δ)",
+        "Because balls are convex",
+        "Because metrics are continuous",
+      ],
+      correctIndex: 1,
+      explanation:
+        "The δ produced by openness of the preimage is exactly what epsilon-delta demands, and the argument reverses. Epsilon-delta is the preimage definition with the balls written out.",
+    },
+    {
+      id: "q4",
+      text: "Which formulation of continuity is usually cheapest to verify?",
+      options: [
+        "Preimages of all open sets",
+        "Preimages of basis elements of the target",
+        "Preimages of all closed sets",
+        "Images of closed sets",
+      ],
+      correctIndex: 1,
+      explanation:
+        "For maps into ℝ this means only preimages of open intervals need checking. Any basis works, and choosing a small one saves effort.",
+    },
+    {
+      id: "q5",
+      text: "What three conditions define a homeomorphism?",
+      options: [
+        "Continuous and surjective",
+        "Bijective, continuous, and with continuous inverse",
+        "Bijective and bounded",
+        "Continuous and injective",
+      ],
+      correctIndex: 1,
+      explanation:
+        "The inverse condition is essential: the map from [0, 2π) onto the circle is a continuous bijection whose inverse tears the circle apart.",
+    },
+    {
+      id: "q6",
+      text: "Why is [0, 2π) → S¹ given by t ↦ (cos t, sin t) not a homeomorphism?",
+      options: [
+        "It is not injective",
+        "It is not continuous",
+        "Its inverse is not continuous, since it must separate points glued together at (1, 0)",
+        "It is not surjective",
+      ],
+      correctIndex: 2,
+      explanation:
+        "Points on either side of (1,0) are close on the circle while their preimages near 0 and 2π are far apart. Independently, removing a point disconnects the interval but never the circle.",
+    },
+    {
+      id: "q7",
+      text: "Are (0, 1) and ℝ homeomorphic?",
+      options: [
+        "No, one is bounded",
+        "Yes, via a tangent-based bijection with continuous inverse",
+        "No, they have different cardinalities",
+        "Only as metric spaces",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Boundedness is a metric property, not a topological one. This is precisely why compactness, not boundedness, is the topological notion.",
+    },
+    {
+      id: "q8",
+      text: "When is a continuous bijection automatically a homeomorphism?",
+      options: [
+        "Always",
+        "When the domain is compact and the target is Hausdorff",
+        "When both spaces are metric",
+        "When the map is monotone",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Compactness of the domain plus the Hausdorff property of the target forces the inverse to be continuous. This is why so many theorems carry those two hypotheses.",
+    },
+  ]}
+/>

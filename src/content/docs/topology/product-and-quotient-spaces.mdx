@@ -1,0 +1,287 @@
+---
+title: Product and Quotient Spaces
+description: Building new spaces by multiplying and by gluing
+sidebar:
+  order: 12
+---
+
+import Quiz from "../../../components/Quiz.astro";
+import QuotientGluing from "../../../components/QuotientGluing.astro";
+
+## What You'll Learn
+
+In this lesson you'll learn the product topology and why it is defined with a basis rather than by naming all open sets, then the quotient topology, and you'll build the cylinder, torus, Möbius strip and Klein bottle by gluing a square.
+
+## The Concept
+
+### The product topology
+
+> For spaces $X$ and $Y$, the **product topology** on $X\times Y$ has as a **basis** the sets $U\times V$ with $U$ open in $X$ and $V$ open in $Y$.
+
+The word basis matters. The products $U\times V$ are not themselves closed under unions, so they cannot be the whole topology — an open disc in $\mathbb{R}^2$ is not a product of intervals, though it is a union of such products. Boxes generate; they do not exhaust.
+
+The product topology is exactly the topology making both projections $\pi_X$ and $\pi_Y$ continuous, and it is the coarsest one doing so. That is its real characterization:
+
+> A map $f:Z\to X\times Y$ is continuous if and only if both components $\pi_X\circ f$ and $\pi_Y\circ f$ are continuous.
+
+**A map into a product is continuous iff its components are.** This is the property you actually use, and it is why the product topology is the right definition rather than some finer alternative.
+
+Standard products:
+
+$$
+\mathbb{R}\times\mathbb{R} = \mathbb{R}^2, \qquad S^1\times[0,1] = \text{cylinder}, \qquad S^1\times S^1 = \text{torus}
+$$
+
+What products preserve: connectedness, path-connectedness, compactness, Hausdorff, and metrizability for finitely or countably many factors. For infinitely many factors compactness still holds, which is **Tychonoff's theorem**, and it is equivalent to the axiom of choice.
+
+### The quotient topology
+
+Products build up; quotients collapse.
+
+> Given a surjection $q:X\to Y$, the **quotient topology** on $Y$ declares $V\subseteq Y$ open exactly when $q^{-1}(V)$ is open in $X$.
+
+This is the **finest** topology making $q$ continuous, and it is the mirror image of the product's characterization:
+
+> A map $g:Y\to Z$ is continuous if and only if $g\circ q$ is continuous.
+
+In practice you specify an equivalence relation on $X$ and take $Y = X/\!\sim$, the set of equivalence classes. Gluing points together is exactly forming such a quotient.
+
+Two warnings. Quotients can destroy good behaviour: a quotient of a Hausdorff space need not be Hausdorff, and a quotient of a metric space need not be metrizable. And a quotient map need not be open — the map $\mathbb{R}\to\mathbb{R}/\mathbb{Z} = S^1$ is a quotient map, and it is open, but that is a fact to check rather than assume.
+
+### Gluing a square
+
+The most productive use of quotients is building surfaces by identifying edges of a polygon.
+
+<QuotientGluing />
+
+Each panel identifies edges of a square according to matching arrows. The figure computes, by union-find on the corners and edges, how many vertices and edges survive, hence the Euler characteristic $V-E+F$, whether the result is orientable, and how many boundary circles remain.
+
+Reading off the four cases:
+
+- **Cylinder** — glue left to right preserving direction. Orientable, two boundary circles.
+- **Torus** — glue both pairs preserving direction. Orientable, no boundary. Equals $S^1\times S^1$, so here product and quotient constructions agree.
+- **Möbius strip** — glue left to right with a **flip**. One-sided, and its two edges merge into a **single** boundary circle.
+- **Klein bottle** — glue one pair straight and one flipped. One-sided, no boundary, and it cannot be embedded in $\mathbb{R}^3$ without self-intersection.
+
+A fifth standard case is the **real projective plane** $\mathbb{RP}^2$, obtained by flipping both pairs, equivalently by identifying antipodal points of a sphere. It is one-sided with no boundary and has Euler characteristic 1.
+
+**One reversed arrow is the whole difference** between the cylinder and the Möbius strip, and between the torus and the Klein bottle. Orientability is that sensitive.
+
+### Cones, suspensions, and wedges
+
+Three more quotient constructions used constantly in algebraic topology:
+
+- **Cone** $CX = (X\times[0,1])/(X\times\{1\})$ — crush one end to a point. Always contractible.
+- **Suspension** $\Sigma X$ — crush both ends to separate points. Notably $\Sigma S^n = S^{n+1}$.
+- **Wedge** $X\vee Y$ — glue the two spaces at a single point. A figure eight is $S^1\vee S^1$.
+
+Collapsing a subspace, written $X/A$, is the general pattern all three follow.
+
+### Why quotients matter
+
+Almost every interesting space is presented as a quotient. Surfaces come from polygons, $\mathbb{RP}^n$ from spheres, and CW-complexes — the standard objects of algebraic topology — are built by successively gluing discs along their boundaries. The quotient topology is the mechanism that makes any of it well defined.
+
+## Worked Examples
+
+**Example 1: Show an open disc in $\mathbb{R}^2$ is open in the product topology.**
+
+**Solution.** The disc is not a product of intervals, but around each point $p$ inside it there is a small open box $U\times V$ contained in the disc.
+
+The disc is therefore a union of basis elements, hence open. ∎
+
+**This is why boxes form a basis rather than the whole topology.**
+
+**Example 2: Show $S^1\times S^1$ is the torus.**
+
+**Solution.** Parametrise each circle by an angle, so a point of the product is a pair $(\theta,\varphi)$ with each taken mod $2\pi$.
+
+That is exactly the square $[0,2\pi]^2$ with left glued to right and top glued to bottom, both preserving direction — the torus gluing in the figure. ∎
+
+**Example 3: Compute the Euler characteristic of the torus from the square.**
+
+**Solution.** Identifying both pairs of edges without flips merges all four corners into one class, so $V=1$. The two glued pairs give $E=2$, and there is one face, so
+
+$$
+\chi = 1-2+1 = 0
+$$
+
+matching the figure's computed value, and matching the known $\chi(T^2)=0$. ∎
+
+**Example 4: Show the Möbius strip has one boundary circle.**
+
+**Solution.** Glue left to right with a flip, so $TL\sim BR$ and $BL\sim TR$.
+
+The unglued edges are the top, from $TL$ to $TR$, and the bottom, from $BL$ to $BR$. After identification the top runs between the classes $\{TL,BR\}$ and $\{BL,TR\}$, and so does the bottom. The two edges therefore form a single closed loop.
+
+$$
+1 \text{ boundary circle}
+$$
+
+∎
+
+That is the familiar experiment: trace the edge of a paper Möbius band with a pencil and you return to the start having covered the whole edge.
+
+**Example 5: Show $\mathbb{R}/\mathbb{Z}\cong S^1$.**
+
+**Solution.** Identify $x\sim y$ when $x-y\in\mathbb{Z}$ and define
+
+$$
+q(x) = \big(\cos2\pi x,\ \sin2\pi x\big)
+$$
+
+This is well defined on classes and surjective onto $S^1$. It induces a continuous bijection from $\mathbb{R}/\mathbb{Z}$ to $S^1$, and since $\mathbb{R}/\mathbb{Z}$ is compact — being the image of $[0,1]$ — and $S^1$ is Hausdorff, the map is a homeomorphism.
+
+$$
+\mathbb{R}/\mathbb{Z}\cong S^1
+$$
+
+∎
+
+**The compact-to-Hausdorff shortcut** from lesson 6 does the work here, and it is the standard way quotient identifications are confirmed.
+
+**Example 6: Show a quotient of a Hausdorff space need not be Hausdorff.**
+
+**Solution.** Take $\mathbb{R}$, which is Hausdorff, and identify all nonzero reals to a single point, leaving the two-point space $\{[0],[*]\}$.
+
+Any open set containing $[0]$ must have open preimage containing 0, hence containing nonzero reals, hence containing $[*]$. So $[0]$ and $[*]$ cannot be separated.
+
+$$
+\text{not Hausdorff}
+$$
+
+∎
+
+**Quotients can destroy separation properties**, which is why lesson 13's axioms are usually imposed as hypotheses rather than assumed.
+
+**Example 7: Show the cone on any space is contractible.**
+
+**Solution.** In $CX = (X\times[0,1])/(X\times\{1\})$, define
+
+$$
+H\big([x,t],s\big) = [x,\ t+s(1-t)]
+$$
+
+At $s=0$ this is the identity, and at $s=1$ every point maps to the collapsed tip. The map is continuous and well defined on classes.
+
+$$
+\text{contractible}
+$$
+
+∎
+
+So a cone always has trivial topology in the homotopy sense, which is why suspensions rather than cones are used to build interesting spaces.
+
+## Real-World Applications
+
+**Configuration spaces.** A robot arm with two revolute joints has configuration space $S^1\times S^1$, a torus. Recognizing the product structure tells you immediately what motions are possible and that the space has two independent loops.
+
+**Periodic boundary conditions.** Simulations of crystals and fluids often use a box with opposite faces identified, which is literally a torus quotient. It removes edge effects and is standard in molecular dynamics.
+
+**Texture wrapping.** A tiling texture in graphics is a function on a torus, since the image's left edge is glued to its right. Getting the gluing wrong produces visible seams.
+
+**Video game worlds.** Wrap-around maps in games such as Asteroids are toroidal, and a Möbius-style flip would reverse the player's orientation, which is why it is almost never used.
+
+**Data quotients.** Identifying points that are equivalent under a symmetry — rotations of a molecule, relabelling of graph nodes — produces a quotient space, and analysis is done there rather than on the redundant original.
+
+**Orientation in manufacturing.** Whether a surface is one-sided determines whether it can be painted, coated, or printed on one face. Möbius-like belts are used deliberately in conveyor systems to wear both sides evenly.
+
+:::note[You've Got This]
+Two constructions, and they pull in opposite directions: products build bigger spaces and are characterized by their projections, quotients collapse spaces and are characterized by maps out of them. The gluing figure is the one to keep, because it shows that the entire difference between a cylinder and a Möbius strip, or a torus and a Klein bottle, is one reversed arrow. Almost every space in the rest of the section arrives as a quotient of something simple.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="topology-product-and-quotient-spaces"
+  questions={[
+    {
+      id: "q1",
+      text: "Why are products U × V described as a basis rather than as all the open sets?",
+      options: [
+        "Because they are not open",
+        "Because they are not closed under unions; an open disc in ℝ² is a union of boxes but not a box",
+        "Because there are too many of them",
+        "They are all the open sets",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Boxes generate the topology by union. The disc is the standard example of an open set that is not itself a product.",
+    },
+    {
+      id: "q2",
+      text: "What characterizes the product topology?",
+      options: [
+        "It is the finest topology making the projections continuous",
+        "It is the coarsest topology making the projections continuous, so a map into the product is continuous exactly when its components are",
+        "It is the discrete topology",
+        "It is defined by a metric",
+      ],
+      correctIndex: 1,
+      explanation:
+        "The componentwise criterion is the property you actually use. It is what makes this the right choice among candidate topologies.",
+    },
+    {
+      id: "q3",
+      text: "What is the quotient topology on Y induced by a surjection q : X → Y?",
+      options: [
+        "V is open iff q(V) is open",
+        "V is open iff q⁻¹(V) is open in X",
+        "The discrete topology",
+        "The subspace topology",
+      ],
+      correctIndex: 1,
+      explanation:
+        "It is the finest topology making q continuous, and dually a map out of Y is continuous exactly when its composite with q is.",
+    },
+    {
+      id: "q4",
+      text: "What surface results from gluing left to right with a flip and leaving the other edges free?",
+      options: ["Cylinder", "Möbius strip", "Torus", "Klein bottle"],
+      correctIndex: 1,
+      explanation:
+        "The flip makes the result one-sided, and the two free edges merge into a single boundary circle. Without the flip you get the cylinder, with two boundary circles.",
+    },
+    {
+      id: "q5",
+      text: "What is the Euler characteristic of the torus computed from the square?",
+      options: ["2", "1", "0", "−2"],
+      correctIndex: 2,
+      explanation:
+        "All four corners merge to one vertex and the two glued pairs give two edges, so 1 − 2 + 1 = 0. That matches the known value for the torus.",
+    },
+    {
+      id: "q6",
+      text: "How many boundary circles does the Möbius strip have?",
+      options: ["0", "1", "2", "4"],
+      correctIndex: 1,
+      explanation:
+        "The corner identifications make the top and bottom edges join into a single loop. Tracing the edge of a paper band with a pencil confirms it.",
+    },
+    {
+      id: "q7",
+      text: "Is a quotient of a Hausdorff space always Hausdorff?",
+      options: [
+        "Yes",
+        "No; collapsing all nonzero reals to a point gives a two-point space that is not Hausdorff",
+        "Only for compact spaces",
+        "Only for metric spaces",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Every open set containing the class of 0 must also contain the collapsed point. Quotients can destroy separation properties, which is why those are imposed as hypotheses.",
+    },
+    {
+      id: "q8",
+      text: "Why is the cone CX always contractible?",
+      options: [
+        "Because X is contractible",
+        "Because the explicit homotopy sliding every point toward the collapsed tip is continuous",
+        "Because cones are convex",
+        "It is not contractible",
+      ],
+      correctIndex: 1,
+      explanation:
+        "The map [x, t] ↦ [x, t + s(1 − t)] deforms the identity to the constant at the tip. That is why suspensions, not cones, are used to build interesting spaces.",
+    },
+  ]}
+/>

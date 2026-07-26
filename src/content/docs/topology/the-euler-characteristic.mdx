@@ -1,0 +1,316 @@
+---
+title: The Euler Characteristic
+description: One integer that survives every subdivision, and what it can prove
+sidebar:
+  order: 15
+---
+
+import Quiz from "../../../components/Quiz.astro";
+import EulerCharacteristic from "../../../components/EulerCharacteristic.astro";
+
+## What You'll Learn
+
+In this lesson you'll compute $V-E+F$, see why it is independent of the subdivision, use it to prove there are exactly five Platonic solids, and meet its consequences from graph planarity to the hairy ball theorem.
+
+## The Concept
+
+### The definition
+
+> For a surface cut into vertices, edges and faces,
+>
+> $$
+> \chi = V - E + F
+> $$
+
+The remarkable fact is that the answer depends only on the **surface**, not on how you cut it up.
+
+<EulerCharacteristic />
+
+The figure computes $\chi$ for four polyhedra and two triangulations of the torus. The four polyhedra have wildly different counts — the tetrahedron has 4 vertices, the icosahedron has 12 — and every one gives 2. The two torus triangulations likewise give 0 with different counts.
+
+**That invariance is the entire content.** The individual numbers are accidents of the subdivision; the alternating sum is a property of the space.
+
+### Why it is invariant
+
+Any two subdivisions of a surface have a common refinement, so it suffices to check that refining does not change $\chi$. There are two elementary moves:
+
+- **Split an edge** by adding a vertex in the middle. Then $V$ increases by 1 and $E$ increases by 1, so $V-E+F$ is unchanged.
+- **Split a face** by adding an edge across it. Then $E$ increases by 1 and $F$ increases by 1, so again nothing changes.
+
+Every refinement is a sequence of these, so $\chi$ survives all of them. ∎
+
+More generally $\chi$ is a **homotopy invariant**, which is much stronger than being a homeomorphism invariant: spaces that can be continuously deformed into each other share it.
+
+### The values
+
+| Space                        | $\chi$     |
+| ---------------------------- | ---------- |
+| Point                        | 1          |
+| Interval, disc               | 1          |
+| Circle                       | 0          |
+| Sphere $S^2$                 | 2          |
+| Torus                        | 0          |
+| Genus $g$ orientable surface | $2-2g$     |
+| Klein bottle                 | 0          |
+| $\mathbb{RP}^2$              | 1          |
+| $S^n$                        | $1+(-1)^n$ |
+
+Note that the disc and the point share $\chi=1$: they are homotopy equivalent, since a disc contracts to its centre. So $\chi$ cannot tell them apart, and that is a feature of it being a homotopy invariant rather than a defect.
+
+### The five Platonic solids
+
+Here is the classical application, and it is a genuine impossibility proof.
+
+Suppose a convex polyhedron has all faces regular $p$-gons with $q$ meeting at each vertex. Counting each edge twice, once from each of its two faces, and each edge twice again from its two endpoints:
+
+$$
+pF = 2E, \qquad qV = 2E
+$$
+
+Substituting into $V-E+F=2$:
+
+$$
+\frac{2E}{q}-E+\frac{2E}{p} = 2 \quad\Longrightarrow\quad \frac1p+\frac1q = \frac12+\frac1E
+$$
+
+Since $E>0$ we need $\frac1p+\frac1q>\frac12$, and both $p,q\ge3$. Enumerating:
+
+| $(p,q)$ | Solid        |
+| ------- | ------------ |
+| $(3,3)$ | tetrahedron  |
+| $(4,3)$ | cube         |
+| $(3,4)$ | octahedron   |
+| $(5,3)$ | dodecahedron |
+| $(3,5)$ | icosahedron  |
+
+Any other pair fails the inequality: $(4,4)$ gives exactly $\frac12$, and anything larger gives less. **Exactly five, and Euler's formula is why.** Nothing about angles or lengths was used.
+
+### Graph planarity
+
+For a connected planar graph drawn without crossings, $V-E+F=2$ where the outer region counts as a face. Two corollaries:
+
+- A simple planar graph satisfies $E\le3V-6$.
+- $K_5$, the complete graph on 5 vertices, has $V=5$ and $E=10>3(5)-6=9$, so it is **not planar**.
+- $K_{3,3}$ is not planar either, by a similar count using that its shortest cycle has length 4.
+
+Those two graphs are exactly the obstructions, by **Kuratowski's theorem**: a graph is planar iff it contains neither as a subdivision.
+
+This is where the Königsberg bridges lead: circuit board layout, and whether a network can be drawn on a single layer, is decided by these counts.
+
+### The hairy ball theorem
+
+> **Poincaré–Hopf theorem.** For a smooth vector field on a closed surface with isolated zeros, the sum of the indices of the zeros equals $\chi$.
+
+Since $\chi(S^2)=2\ne0$, a vector field on the sphere **must** have a zero:
+
+> **Hairy ball theorem.** There is no nowhere-zero continuous tangent vector field on $S^2$.
+
+You cannot comb a sphere flat. On the torus, where $\chi=0$, you can — comb it around the hole. The reason one is possible and the other is not is a single integer.
+
+The meteorological consequence is real: at any moment there is a point on Earth with zero horizontal wind, which is why there is always a cyclone or an eye somewhere.
+
+## Worked Examples
+
+**Example 1: Verify $\chi=2$ for the cube and the icosahedron.**
+
+**Solution.** Cube: $V=8$, $E=12$, $F=6$, so $8-12+6=2$ ✓
+
+Icosahedron: $V=12$, $E=30$, $F=20$, so $12-30+20=2$ ✓
+
+**Completely different counts, same answer**, because both are subdivisions of a sphere. ∎
+
+**Example 2: Compute $\chi$ for a triangulated torus and confirm it is 0.**
+
+**Solution.** Take a $3\times3$ grid on the square with opposite edges identified. The 9 grid squares each split into 2 triangles, giving $F=18$.
+
+After identification, the grid has $V=9$ vertices. Each vertex has degree 6 in the triangulated grid, and counting each edge from both ends gives $E = \frac{9\cdot6}{2}=27$.
+
+$$
+\chi = 9-27+18 = 0
+$$
+
+matching the figure's first torus row ✓ ∎
+
+**Example 3: Find the genus of a surface with $\chi=-6$.**
+
+**Solution.** For an orientable closed surface, $\chi=2-2g$:
+
+$$
+-6 = 2-2g \implies g=4
+$$
+
+A four-holed torus. ∎
+
+**Example 4: Prove there are at most five Platonic solids.**
+
+**Solution.** As derived above, regularity forces
+
+$$
+\frac1p+\frac1q > \frac12, \qquad p,q\ge3
+$$
+
+If $p=3$ then $\frac1q>\frac16$, so $q\in\{3,4,5\}$. If $p=4$ then $\frac1q>\frac14$, so $q=3$. If $p=5$ then $\frac1q>\frac{3}{10}$, so $q=3$. If $p\ge6$ then $\frac1p\le\frac16$ and $\frac1q\le\frac13$, giving a sum of at most $\frac12$ — not enough.
+
+$$
+\text{five possibilities, and all five are realized}
+$$
+
+∎
+
+**Example 5: Show $K_5$ is not planar.**
+
+**Solution.** $K_5$ has $V=5$ and $E=\binom52=10$.
+
+A simple planar graph must satisfy $E\le3V-6$, which here gives $E\le9$.
+
+$$
+10>9, \text{ so } K_5 \text{ is not planar}
+$$
+
+∎
+
+**A counting argument settles a drawing question**, with no attempt to try layouts.
+
+**Example 6: Explain the hairy ball theorem via $\chi$.**
+
+**Solution.** By Poincaré–Hopf, the indices of the zeros of any smooth tangent vector field on a closed surface sum to $\chi$.
+
+On $S^2$ that sum must be 2. A nowhere-zero field has no zeros, so its index sum is 0.
+
+$$
+0\ne2, \text{ so no such field exists}
+$$
+
+∎
+
+On the torus $\chi=0$, so a nowhere-zero field is not obstructed, and indeed the field pointing around the hole works.
+
+**Example 7: Compute $\chi$ of a disc with three holes.**
+
+**Solution.** Start with a disc, $\chi=1$. Removing an open disc from a surface lowers $\chi$ by 1, since it deletes one face.
+
+$$
+\chi = 1-3 = -2
+$$
+
+This is a "pair of pants" with an extra leg, and it has 4 boundary circles. ∎
+
+## Real-World Applications
+
+**Circuit board design.** Planarity decides whether a circuit fits on one layer, and the $E\le3V-6$ bound gives a quick impossibility test before any layout is attempted.
+
+**Mesh validation.** Graphics and CAD software computes $\chi$ from a mesh's vertex, edge and face counts to detect holes, cracks and duplicated geometry. An unexpected value means the mesh is broken.
+
+**Molecular topology.** Counting atoms, bonds and rings gives an Euler-type relation, and it is used to determine the number of independent rings in a molecular structure.
+
+**Meteorology.** The hairy ball theorem guarantees a point of zero horizontal wind on Earth at all times, so there is always at least one cyclonic centre.
+
+**Antenna and sensor arrays.** Vector field constraints from Poincaré–Hopf limit how field patterns can be arranged over a closed surface, which constrains conformal antenna designs.
+
+**Robotics and control.** Obstructions to globally continuous control laws on a configuration space are often Euler characteristic obstructions, which is why some systems provably require switching between controllers.
+
+:::note[You've Got This]
+One integer, and it does an astonishing amount of work: it identifies which surface you are on, proves there are exactly five Platonic solids, decides graph planarity, and shows you cannot comb a sphere. The invariance argument is worth understanding rather than memorizing, because it is short — refining a subdivision adds a vertex and an edge, or an edge and a face, and either way the alternating sum is untouched. Everything else in the lesson follows from that stability.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="topology-the-euler-characteristic"
+  questions={[
+    {
+      id: "q1",
+      text: "Why is V − E + F independent of the subdivision?",
+      options: [
+        "Because all subdivisions have the same counts",
+        "Because refining either adds a vertex and an edge, or an edge and a face, leaving the alternating sum unchanged",
+        "Because faces are always triangles",
+        "It is not independent",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Any two subdivisions share a common refinement, and each elementary refinement move cancels in the alternating sum. The individual counts are accidents of the cutting.",
+    },
+    {
+      id: "q2",
+      text: "What is χ for the icosahedron?",
+      options: ["0", "2", "12", "−2"],
+      correctIndex: 1,
+      explanation:
+        "With V = 12, E = 30 and F = 20 the value is 2, the same as for the tetrahedron and cube. All convex polyhedra are subdivisions of a sphere.",
+    },
+    {
+      id: "q3",
+      text: "What is χ for a genus-g orientable closed surface?",
+      options: ["2 − g", "2 − 2g", "g", "2g − 2"],
+      correctIndex: 1,
+      explanation:
+        "The sphere gives 2 and each additional hole subtracts 2. So χ = −6 corresponds to genus 4.",
+    },
+    {
+      id: "q4",
+      text: "How does Euler's formula prove there are exactly five Platonic solids?",
+      options: [
+        "By measuring angles",
+        "Substituting pF = 2E and qV = 2E into V − E + F = 2 forces 1/p + 1/q > 1/2, which has only five integer solutions with p, q ≥ 3",
+        "By trying all constructions",
+        "It does not prove this",
+      ],
+      correctIndex: 1,
+      explanation:
+        "The inequality admits exactly the pairs (3,3), (4,3), (3,4), (5,3) and (3,5). No geometry beyond the counting is needed.",
+    },
+    {
+      id: "q5",
+      text: "Why is K₅ not planar?",
+      options: [
+        "Because it has 5 vertices",
+        "Because a simple planar graph needs E ≤ 3V − 6, and K₅ has E = 10 > 9",
+        "Because it is not connected",
+        "It is planar",
+      ],
+      correctIndex: 1,
+      explanation:
+        "The bound follows from Euler's formula for planar graphs. Together with K₃,₃ this gives Kuratowski's characterization of planarity.",
+    },
+    {
+      id: "q6",
+      text: "What does the hairy ball theorem state, and why is it true?",
+      options: [
+        "Every sphere has a flat spot",
+        "There is no nowhere-zero continuous tangent field on S², because index sums must equal χ(S²) = 2",
+        "Every vector field on a torus has a zero",
+        "Vector fields cannot exist on surfaces",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Poincaré–Hopf forces the index sum to be χ, and a nowhere-zero field would give 0. On the torus χ = 0, so combing is possible there.",
+    },
+    {
+      id: "q7",
+      text: "Why do a disc and a single point have the same Euler characteristic?",
+      options: [
+        "Because both are compact",
+        "Because χ is a homotopy invariant and a disc contracts to its centre",
+        "Because both have one face",
+        "It is a coincidence",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Homotopy invariance is stronger than homeomorphism invariance, so χ cannot distinguish homotopy equivalent spaces. Both have χ = 1.",
+    },
+    {
+      id: "q8",
+      text: "What happens to χ when you remove an open disc from a surface?",
+      options: [
+        "It increases by 1",
+        "It decreases by 1",
+        "It doubles",
+        "It is unchanged",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Deleting the disc removes one face from a subdivision. So a disc with three holes has χ = 1 − 3 = −2.",
+    },
+  ]}
+/>

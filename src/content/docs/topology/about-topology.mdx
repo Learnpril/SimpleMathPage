@@ -1,0 +1,74 @@
+---
+title: About Topology
+description: Shape without distance - open sets, continuity, connectedness, compactness, surfaces, and the fundamental group
+sidebar:
+  order: 0
+---
+
+## What is Topology?
+
+Topology is geometry with distance thrown away.
+
+That sounds like it should leave nothing behind. Instead it leaves the properties that survive stretching, bending, and twisting — anything that does not tear or glue. A coffee mug and a doughnut are the same object to a topologist, because one can be deformed into the other without cutting. A sphere and a doughnut are genuinely different, and topology can prove it.
+
+import TopologyTopicMap from "../../../components/TopologyTopicMap.astro";
+
+<TopologyTopicMap />
+
+The whole subject is built from one primitive. Rather than measuring distances, you declare which subsets count as **open**, subject to three short rules. Everything else — continuity, connectedness, compactness, dimension, holes — is defined from that single choice. It is the most economical starting point in mathematics, and the range of what follows from it is out of all proportion to how little you assume.
+
+## A Brief History
+
+The subject's founding problem is a puzzle. In 1736 **Leonhard Euler** settled whether one could cross all seven bridges of Königsberg exactly once, and his argument used only how the land masses were connected, not distances or shapes. That is now recognized as the first topological theorem, and it started graph theory as a side effect.
+
+Euler also found the formula $V - E + F = 2$ for polyhedra, which turns out to detect the shape of the sphere and nothing else about the polyhedron. It is the first **topological invariant**.
+
+**Bernhard Riemann** in the 1850s needed to think about surfaces in order to handle multi-valued complex functions, and his Riemann surfaces made shape itself an object of study. **Johann Listing** coined _Topologie_ in 1847, and both he and **August Möbius** described the one-sided strip in 1858, independently.
+
+The field became rigorous with **Henri Poincaré**, whose 1895 _Analysis Situs_ introduced homology and the fundamental group and effectively founded algebraic topology. His 1904 conjecture about characterizing the 3-sphere stood for 99 years until **Grigori Perelman** proved it in 2003, declining both the Fields Medal and a million-dollar prize.
+
+Point-set topology in the modern axiomatic form is **Felix Hausdorff**'s, from 1914. **L. E. J. Brouwer** proved his fixed-point theorem around 1910, and **Emmy Noether**'s influence in the 1920s turned the subject's algebra into the language it uses today.
+
+## Why We're Learning It
+
+Three reasons.
+
+**It is the language the rest of mathematics is written in.** Once you have seen open sets, the definitions in real analysis and complex analysis stop looking arbitrary. Continuity as "preimages of open sets are open" is shorter and more useful than epsilon-delta, and it explains why the epsilon-delta version looks the way it does.
+
+**It proves impossibility.** Most mathematics shows that something can be done. Topology specializes in showing that something cannot: you cannot comb a sphere without a cowlick, you cannot untie a knot, you cannot deform a sphere into a torus. Invariants are the tool, and they give the cleanest impossibility proofs in mathematics.
+
+**It is genuinely surprising and genuinely visual.** The Möbius strip, the Klein bottle, the ham sandwich theorem, the hairy ball theorem — the subject is full of results that are easy to state, hard to believe, and provable.
+
+## Why It Matters in Real Life
+
+- **Data analysis.** Topological data analysis uses persistent homology to find the shape of high-dimensional data, and it is used in genomics, neuroscience, and materials science where clustering alone misses structure.
+- **Physics.** Topological insulators and the quantum Hall effect are described by integer invariants that cannot change under smooth deformation, which is exactly why they are robust. The 2016 Nobel Prize in Physics went to this work.
+- **Robotics.** A robot's set of possible configurations is a topological space, and motion planning is the search for a path in it. Whether two configurations can be connected at all is a connectedness question.
+- **Molecular biology.** DNA knotting and the enzymes that resolve it are studied with knot theory, and the invariants predict which reactions are possible.
+- **Networks.** Coverage in a sensor network, and whether there are gaps, is computed with homology. The same tools detect holes in wireless coverage maps.
+- **Computer graphics.** Mesh repair, surface parameterization, and texture mapping all depend on the genus of a surface and on maintaining a valid topology under editing.
+- **Economics.** Existence of market equilibria is proved with fixed-point theorems, Brouwer's and its relatives. The proof is topological, not economic.
+
+## What You'll Learn in This Section
+
+- **Metric and topological spaces** - distance first, then the abstraction that drops it; open sets, closed sets, bases, and subspaces.
+- **Continuity** - the preimage definition, homeomorphisms, and what it means for two spaces to be the same.
+- **The core invariants** - interior, closure and boundary; connectedness and path-connectedness; compactness in general spaces and in metric spaces.
+- **Constructions** - product spaces, quotient spaces and gluing, and the separation axioms that keep pathological examples out.
+- **Surfaces and algebraic topology** - the classification of surfaces, the Euler characteristic, homotopy, the fundamental group, fixed-point theorems, and applications.
+
+Each lesson has worked examples, real-world connections, and a quiz.
+
+## How to Get the Most Out of This Section
+
+**Draw everything, then check the definition anyway.** Topology is the most visual subject in mathematics and also the one where pictures mislead most badly. The topologist's sine curve and the long line exist to punish trust in diagrams. Use pictures to find the argument and definitions to verify it.
+
+**Collect the standard examples.** A small stock does most of the work: $\mathbb{R}$ with the usual topology, the discrete and trivial topologies, the cofinite topology, $\mathbb{Q}$ inside $\mathbb{R}$, the topologist's sine curve, the Cantor set, the sphere, torus, Möbius strip, and Klein bottle. Nearly every question can be tested against that list first.
+
+**Prove things by invariant, not by inspection.** To show two spaces are not homeomorphic, name a property one has and the other lacks: number of components, compactness, a fundamental group, an Euler characteristic. "I cannot see how to deform it" is not an argument.
+
+**Expect the definitions to feel unmotivated for a week.** Open sets, bases, and the separation axioms look like arbitrary bookkeeping right up to the point where continuity and compactness make them obviously right. That turn happens; give it time.
+
+:::note[You've Got This]
+Topology asks you to accept an unusually small amount of structure and then be surprised by how much follows. If the axioms feel thin at first, that is the correct reaction — the payoff comes when connectedness proves the intermediate value theorem in one line, or when a single integer tells you a sphere cannot be a doughnut. And this section is the one where the visual and the rigorous sit closest together: almost everything has a picture you can draw, and almost every picture has a definition that either confirms or refutes it.
+:::

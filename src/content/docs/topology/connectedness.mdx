@@ -1,0 +1,302 @@
+---
+title: Connectedness
+description: When a space refuses to split, and the theorems that follow from it
+sidebar:
+  order: 8
+---
+
+import Quiz from "../../../components/Quiz.astro";
+import ConnectedComponents from "../../../components/ConnectedComponents.astro";
+
+## What You'll Learn
+
+In this lesson you'll define connectedness through separations, identify the connected subsets of $\mathbb{R}$, learn that continuous images of connected sets are connected, and use that to prove the intermediate value theorem in one line.
+
+## The Concept
+
+### The definition
+
+> A **separation** of $X$ is a pair of nonempty disjoint open sets $U,V$ with $U\cup V = X$.
+>
+> $X$ is **connected** if no separation exists. Otherwise it is **disconnected**.
+
+The definition is stated negatively, which is normal here: connectedness is the absence of a way to split the space.
+
+Two equivalent formulations, both useful:
+
+- $X$ is connected iff its only clopen subsets are $\varnothing$ and $X$.
+- $X$ is connected iff every continuous map $X\to\{0,1\}$, with $\{0,1\}$ discrete, is constant.
+
+The second is the slickest for proofs. If the space cannot be split then a two-valued continuous function has nowhere to put the split, so it must be constant.
+
+For a **subset** $A\subseteq X$, connectedness is taken in the subspace topology. This is why $\{0\}\cup(1,2)$ is disconnected even though $\{0\}$ is not open in $\mathbb{R}$: it _is_ open in the subspace.
+
+### The connected subsets of $\mathbb{R}$
+
+> A subset of $\mathbb{R}$ is connected if and only if it is an **interval**, where the term includes rays, single points, $\varnothing$, and $\mathbb{R}$ itself.
+
+This is the base case everything else builds on, and it is exactly where completeness of $\mathbb{R}$ enters topology. The proof that intervals are connected uses the supremum, and the statement is false over $\mathbb{Q}$: the set $\{x\in\mathbb{Q} : x^2<2\}$ and its complement in $\mathbb{Q}$ separate $\mathbb{Q}$, so $\mathbb{Q}$ is **totally disconnected**.
+
+<ConnectedComponents />
+
+The figure decomposes several subsets by merging intervals wherever there is no gap. The instructive pair is the third and fourth rows: $(0,1]\cup(1,3)$ is a single component because the point 1 is present to bridge them, while $(0,1)\cup(1,3)$ has two because it is missing. **One point decides it.**
+
+### Components
+
+> A **connected component** is a maximal connected subset.
+
+Components partition the space, each one is closed, and they are open too when there are finitely many or when the space is nice enough. The number of components is a topological invariant, and it is usually the first one to try.
+
+At the opposite end:
+
+> $X$ is **totally disconnected** if every component is a single point.
+
+Examples: $\mathbb{Q}$, the irrationals, any discrete space, and the Cantor set. The Cantor set is the interesting one — compact, uncountable, and totally disconnected all at once.
+
+### The theorems
+
+> **Continuous images.** If $f:X\to Y$ is continuous and $X$ is connected, then $f(X)$ is connected.
+
+_Proof._ If $f(X) = U\sqcup V$ were a separation, then $f^{-1}(U)$ and $f^{-1}(V)$ would be nonempty, open, disjoint, and cover $X$ — a separation of $X$. ∎
+
+**This is the workhorse.** It says connectedness is preserved by continuous maps, which immediately makes it a topological invariant and gives the next result for free.
+
+> **Intermediate value theorem.** If $f:[a,b]\to\mathbb{R}$ is continuous and $y$ lies between $f(a)$ and $f(b)$, then $f(c)=y$ for some $c\in[a,b]$.
+
+_Proof._ $[a,b]$ is connected, so $f([a,b])$ is a connected subset of $\mathbb{R}$, hence an interval. An interval containing $f(a)$ and $f(b)$ contains everything between them, so it contains $y$. ∎
+
+That is the whole proof. Compare the real-analysis version, which needs a bisection argument or a supremum construction. **The topological proof is shorter because it uses the right invariant.**
+
+> **Unions.** A union of connected sets sharing a common point is connected. More generally, if any two of them intersect pairwise through a chain, the union is connected.
+
+> **Closure.** If $A$ is connected then $\bar A$ is connected. Anything between $A$ and $\bar A$ is connected too.
+
+> **Products.** A product of connected spaces is connected. So $\mathbb{R}^n$, the torus, and the cylinder are all connected.
+
+### Why not hereditary
+
+Connectedness is emphatically not inherited by subspaces. $\mathbb{R}$ is connected and $\mathbb{R}\setminus\{0\}$ is not. This is what makes cut-point arguments work: if $X\cong Y$ then removing corresponding points must leave homeomorphic — hence equally connected — spaces.
+
+That single observation distinguishes $[0,1]$ from $S^1$, distinguishes $\mathbb{R}$ from $\mathbb{R}^2$ (removing a point disconnects the line and not the plane), and distinguishes a letter Y from a letter I.
+
+## Worked Examples
+
+**Example 1: Show $\{0\}\cup(1,2)$ is disconnected.**
+
+**Solution.** In the subspace topology, $\{0\} = (-\frac12,\frac12)\cap A$ is open, and $(1,2) = (\frac12,3)\cap A$ is open. They are nonempty, disjoint, and cover $A$.
+
+$$
+\text{a separation exists, so disconnected}
+$$
+
+∎
+
+**Openness is relative to the subspace**, which is what makes this work even though $\{0\}$ is not open in $\mathbb{R}$.
+
+**Example 2: Show $(0,1]\cup(1,3)$ is connected.**
+
+**Solution.** The union is simply $(0,3)$, an interval, hence connected.
+
+Contrast $(0,1)\cup(1,3)$, which is $(0,3)\setminus\{1\}$. The two pieces are each open in the subspace and separate it, so it has **two** components. ∎
+
+**Example 3: Prove the intermediate value theorem.**
+
+**Solution.** Suppose $f:[a,b]\to\mathbb{R}$ is continuous and $y$ lies between $f(a)$ and $f(b)$.
+
+$[a,b]$ is an interval, hence connected. Continuous images of connected sets are connected, so $f([a,b])$ is a connected subset of $\mathbb{R}$, hence an interval.
+
+An interval containing both $f(a)$ and $f(b)$ contains $y$, so $y=f(c)$ for some $c$. ∎
+
+**Example 4: Show $\mathbb{Q}$ is totally disconnected.**
+
+**Solution.** Take any two rationals $p<q$ and pick an irrational $\alpha$ between them. Then
+
+$$
+U = \{x\in\mathbb{Q}: x<\alpha\}, \qquad V = \{x\in\mathbb{Q}: x>\alpha\}
+$$
+
+are open in $\mathbb{Q}$, disjoint, nonempty, and cover $\mathbb{Q}$ since no rational equals $\alpha$.
+
+So no subset with two points can be connected, meaning every component is a single point.
+
+$$
+\text{totally disconnected}
+$$
+
+∎
+
+**The irrationals do the cutting.** This is exactly the failure of completeness showing up as a topological property.
+
+**Example 5: Show $\mathbb{R}\not\cong\mathbb{R}^2$.**
+
+**Solution.** Removing any point from $\mathbb{R}$ leaves two components. Removing any point from $\mathbb{R}^2$ leaves a connected space, since any two remaining points can be joined by a path going around the puncture.
+
+A homeomorphism would have to preserve this behaviour.
+
+$$
+\mathbb{R}\not\cong\mathbb{R}^2
+$$
+
+∎
+
+For general $m\ne n$, proving $\mathbb{R}^m\not\cong\mathbb{R}^n$ needs more machinery, and homology is the standard tool.
+
+**Example 6: Show a continuous map from a connected space to a discrete space is constant.**
+
+**Solution.** Let $f:X\to D$ be continuous with $X$ connected and $D$ discrete, and suppose $f$ takes two values $d_1\ne d_2$.
+
+Every subset of $D$ is open, so $U = f^{-1}(\{d_1\})$ and $V = f^{-1}(D\setminus\{d_1\})$ are open, nonempty, disjoint, and cover $X$ — a separation.
+
+$$
+\text{contradiction, so } f \text{ is constant}
+$$
+
+∎
+
+This is the criterion in its most usable form, and it is how connectedness is applied in practice.
+
+**Example 7: Show the topologist's sine curve is connected.**
+
+**Solution.** Let $S = \{(x,\sin(1/x)) : 0<x\le1\}$ and $T = S\cup(\{0\}\times[-1,1])$.
+
+$S$ is a continuous image of the connected interval $(0,1]$, so $S$ is connected. Every point of the added segment is a limit point of $S$, because $\sin(1/x)$ oscillates through every value in $[-1,1]$ infinitely often as $x\to0^+$. Hence $T\subseteq\bar S$.
+
+Since anything between a connected set and its closure is connected,
+
+$$
+T \text{ is connected}
+$$
+
+∎
+
+**But $T$ is not path-connected**, which is the subject of the next lesson and the reason both notions are needed.
+
+## Real-World Applications
+
+**Network reliability.** Whether a communication network stays connected after failures is exactly a components question, and the components after a cut are the surviving sub-networks. Minimum cut algorithms compute how fragile the connection is.
+
+**Image segmentation.** Connected component labelling is a standard first pass in computer vision, identifying distinct objects in a binary image. The 4-connected and 8-connected conventions are two different topologies on the pixel grid.
+
+**Robot motion planning.** Two configurations are reachable from each other precisely when they lie in the same path component of the free configuration space. If the space is disconnected, no amount of clever planning helps.
+
+**Circuit analysis.** A circuit's connected components are its independent sub-circuits, and netlist tools compute them to detect floating nodes and unconnected pins.
+
+**Materials and percolation.** Whether a porous material conducts is a question about whether a connected path spans it, and the percolation threshold is where the giant component appears.
+
+**Root-finding.** Every bisection method is the intermediate value theorem in action, so every numerical solver that brackets a root is relying on connectedness of the interval.
+
+:::note[You've Got This]
+Connectedness is defined by what cannot happen, which takes getting used to, but the payoff is immediate: the intermediate value theorem drops out in one line once you know that continuous images of connected sets are connected. The two facts to keep are that the connected subsets of $\mathbb{R}$ are exactly the intervals, and that connectedness is not hereditary — which is what makes removing a point such a cheap and effective way to tell spaces apart.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="topology-connectedness"
+  questions={[
+    {
+      id: "q1",
+      text: "What does it mean for X to be connected?",
+      options: [
+        "Any two points can be joined by a path",
+        "There is no pair of nonempty disjoint open sets covering X",
+        "X is an interval",
+        "X has no holes",
+      ],
+      correctIndex: 1,
+      explanation:
+        "The definition is the absence of a separation. Path-joining is a different, strictly stronger condition, covered in the next lesson.",
+    },
+    {
+      id: "q2",
+      text: "Which subsets of ℝ are connected?",
+      options: [
+        "Only closed intervals",
+        "Exactly the intervals, including rays, single points and ∅",
+        "Only open sets",
+        "All subsets",
+      ],
+      correctIndex: 1,
+      explanation:
+        "The proof uses the supremum, so this is where completeness of ℝ enters topology. Over ℚ the statement fails and the space is totally disconnected.",
+    },
+    {
+      id: "q3",
+      text: "Why is (0,1] ∪ (1,3) connected while (0,1) ∪ (1,3) is not?",
+      options: [
+        "Because the first is longer",
+        "Because the first equals the interval (0,3), while the second is missing the bridging point 1",
+        "Because the first is closed",
+        "Both are connected",
+      ],
+      correctIndex: 1,
+      explanation:
+        "A single point decides it. Without 1, the two pieces are each open in the subspace and form a separation.",
+    },
+    {
+      id: "q4",
+      text: "What happens to connectedness under a continuous map?",
+      options: [
+        "It can be destroyed",
+        "The image of a connected space is connected",
+        "The preimage of a connected set is connected",
+        "Nothing is preserved",
+      ],
+      correctIndex: 1,
+      explanation:
+        "A separation of the image would pull back to a separation of the domain. The preimage version is false, which is worth noting.",
+    },
+    {
+      id: "q5",
+      text: "How does connectedness prove the intermediate value theorem?",
+      options: [
+        "By bisection",
+        "f([a,b]) is a connected subset of ℝ, hence an interval, so it contains everything between f(a) and f(b)",
+        "By the supremum property directly",
+        "It does not prove it",
+      ],
+      correctIndex: 1,
+      explanation:
+        "The whole proof is two facts: intervals are connected, and continuous images of connected sets are connected. It is much shorter than the real-analysis argument.",
+    },
+    {
+      id: "q6",
+      text: "Why is ℚ totally disconnected?",
+      options: [
+        "Because it is countable",
+        "Because any irrational α splits ℚ into two nonempty open pieces, so no two-point subset is connected",
+        "Because it is dense in ℝ",
+        "Because it has no maximum",
+      ],
+      correctIndex: 1,
+      explanation:
+        "The cutting is done by the missing irrationals, so this is incompleteness appearing as a topological property. Every component is a single point.",
+    },
+    {
+      id: "q7",
+      text: "Which of these is a valid criterion for connectedness?",
+      options: [
+        "Every continuous map to a discrete space is constant",
+        "Every continuous map to ℝ is bounded",
+        "The space is compact",
+        "The space has a countable basis",
+      ],
+      correctIndex: 0,
+      explanation:
+        "A non-constant map to a discrete space would split the domain into two open preimages. This is the most usable form of the definition in proofs.",
+    },
+    {
+      id: "q8",
+      text: "Why does removing a point distinguish ℝ from ℝ²?",
+      options: [
+        "It does not distinguish them",
+        "ℝ minus a point has two components while ℝ² minus a point stays connected",
+        "Because ℝ² is larger",
+        "Because ℝ is compact",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Connectedness is not hereditary, which is exactly what makes the cut-point technique work. For general dimensions the argument needs homology instead.",
+    },
+  ]}
+/>

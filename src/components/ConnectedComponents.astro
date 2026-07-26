@@ -1,0 +1,150 @@
+---
+/**
+ * ConnectedComponents — subsets of ℝ decomposed into connected components. The
+ * components are computed by merging the given intervals wherever they overlap or
+ * abut across a shared point, so the count reported is the result of that merge
+ * rather than a stated figure.
+ */
+const w = 540;
+const h = 306;
+
+type Iv = { a: number; b: number; aIn: boolean; bIn: boolean };
+
+/** Two intervals lie in the same component if their union has no gap. */
+function joins(p: Iv, q: Iv) {
+  const [l, r] = p.a <= q.a ? [p, q] : [q, p];
+  if (l.b > r.a) return true; // genuine overlap
+  if (l.b < r.a) return false; // a gap
+  return l.bIn || r.aIn; // touch at a point: joined only if the point is present
+}
+
+function components(ivs: Iv[]) {
+  const parent = ivs.map((_, i) => i);
+  const find = (i: number): number => (parent[i] === i ? i : (parent[i] = find(parent[i])));
+  for (let i = 0; i < ivs.length; i++) {
+    for (let j = i + 1; j < ivs.length; j++) {
+      if (joins(ivs[i], ivs[j])) parent[find(i)] = find(j);
+    }
+  }
+  const groups = new Map<number, Iv[]>();
+  ivs.forEach((iv, i) => {
+    const r = find(i);
+    if (!groups.has(r)) groups.set(r, []);
+    groups.get(r)!.push(iv);
+  });
+  return [...groups.values()].sort((g1, g2) => Math.min(...g1.map((x) => x.a)) - Math.min(...g2.map((x) => x.a)));
+}
+
+const rows = [
+  { name: "(0, 3)", ivs: [{ a: 0, b: 3, aIn: false, bIn: false }] },
+  {
+    name: "(0,1) ∪ (1,3)",
+    ivs: [
+      { a: 0, b: 1, aIn: false, bIn: false },
+      { a: 1, b: 3, aIn: false, bIn: false },
+    ],
+  },
+  {
+    name: "(0,1] ∪ (1,3)",
+    ivs: [
+      { a: 0, b: 1, aIn: false, bIn: true },
+      { a: 1, b: 3, aIn: false, bIn: false },
+    ],
+  },
+  {
+    name: "(0,1) ∪ (2,3)",
+    ivs: [
+      { a: 0, b: 1, aIn: false, bIn: false },
+      { a: 2, b: 3, aIn: false, bIn: false },
+    ],
+  },
+  {
+    name: "{0} ∪ (1,2) ∪ {3}",
+    ivs: [
+      { a: 0, b: 0, aIn: true, bIn: true },
+      { a: 1, b: 2, aIn: false, bIn: false },
+      { a: 3, b: 3, aIn: true, bIn: true },
+    ],
+  },
+].map((r) => ({ ...r, comps: components(r.ivs) }));
+
+const lo = -0.4;
+const hi = 3.4;
+const pxL = 150;
+const pxR = 400;
+const px = (v: number) => pxL + ((v - lo) / (hi - lo)) * (pxR - pxL);
+const rowY = (i: number) => 104 + i * 30;
+const palette = ["g", "b", "p"];
+---
+
+<figure
+  class="ccp"
+  role="img"
+  aria-label={`Five subsets of the real line broken into connected components. The counts are ${rows
+    .map((r) => `${r.name} has ${r.comps.length}`)
+    .join(", ")}. Two intervals meeting at a point form one component only when that point belongs to the set.`}
+>
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    <text x="16" y="20" class="ccp-head" font-size="12.5" font-weight="bold">Counting the pieces</text>
+    <text x="16" y="38" class="ccp-sub" font-size="10.5">Connected components of some subsets of ℝ, merged where there is no gap</text>
+
+    <text x="24" y="72" class="ccp-hdr" font-size="9.5" text-anchor="start">set</text>
+    <text x={(pxL + pxR) / 2} y="72" class="ccp-hdr" font-size="9.5" text-anchor="middle">components, coloured separately</text>
+    <text x="500" y="72" class="ccp-hdr" font-size="9.5" text-anchor="end">count</text>
+
+    {rows.map((r, i) => (
+      <g>
+        <line x1={pxL - 8} y1={rowY(i)} x2={pxR + 8} y2={rowY(i)} class="ccp-axis" />
+        {r.comps.map((g, k) =>
+          g.map((iv) => (
+            <g>
+              {iv.a === iv.b ? (
+                <circle cx={px(iv.a)} cy={rowY(i)} r="3.6" class={`ccp-f-${palette[k % 3]}`} />
+              ) : (
+                <line x1={px(iv.a)} y1={rowY(i)} x2={px(iv.b)} y2={rowY(i)} class={`ccp-seg ccp-s-${palette[k % 3]}`} />
+              )}
+            </g>
+          )),
+        )}
+        <text x="24" y={rowY(i) + 3.6} class="ccp-name" font-size="9.5" text-anchor="start">{r.name}</text>
+        <text x="500" y={rowY(i) + 3.6} class={`ccp-count ccp-f-${palette[0]}`} font-size="10.5" text-anchor="end">{String(r.comps.length)}</text>
+      </g>
+    ))}
+
+    <text x={w / 2} y="272" class="ccp-foot" font-size="10.5" text-anchor="middle">
+      (0,1] ∪ (1,3) is connected; (0,1) ∪ (1,3) is not, and the difference is one point
+    </text>
+    <text x={w / 2} y="292" class="ccp-sub2" font-size="9.5" text-anchor="middle">
+      Components are the maximal connected subsets, and they partition the space
+    </text>
+  </svg>
+</figure>
+
+<style>
+  .ccp { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .ccp svg { width:100%; max-width:100%; height:auto; }
+  .ccp-axis { stroke:#555; stroke-width:1; }
+  .ccp-seg { stroke-width:4; }
+  .ccp-s-g { stroke:#7ee787; }
+  .ccp-s-b { stroke:#58a6ff; }
+  .ccp-s-p { stroke:#d2a8ff; }
+  .ccp-f-g { fill:#7ee787; }
+  .ccp-f-b { fill:#58a6ff; }
+  .ccp-f-p { fill:#d2a8ff; }
+  .ccp-hdr { fill:#9198a1; font-family:'Libre Baskerville',Georgia,serif; font-style:italic; }
+  .ccp-name { fill:#9198a1; font-family:'Libre Baskerville',Georgia,serif; }
+  .ccp-count { font-family:'Libre Baskerville',Georgia,serif; font-weight:bold; }
+  .ccp-head { fill:#eee; font-family:'Libre Baskerville',Georgia,serif; }
+  .ccp-sub, .ccp-sub2 { fill:#9198a1; font-family:'Libre Baskerville',Georgia,serif; font-style:italic; }
+  .ccp-foot { fill:#58a6ff; font-family:'Libre Baskerville',Georgia,serif; }
+  :global([data-theme="light"]) .ccp-axis { stroke:#8c959f; }
+  :global([data-theme="light"]) .ccp-s-g { stroke:#116329; }
+  :global([data-theme="light"]) .ccp-f-g { fill:#116329; }
+  :global([data-theme="light"]) .ccp-s-b { stroke:#0550ae; }
+  :global([data-theme="light"]) .ccp-f-b { fill:#0550ae; }
+  :global([data-theme="light"]) .ccp-s-p { stroke:#6639ba; }
+  :global([data-theme="light"]) .ccp-f-p { fill:#6639ba; }
+  :global([data-theme="light"]) .ccp-head { fill:#24292f; }
+  :global([data-theme="light"]) .ccp-foot { fill:#0550ae; }
+  :global([data-theme="light"]) :is(.ccp-hdr, .ccp-name, .ccp-sub, .ccp-sub2) { fill:#57606a; }
+</style>

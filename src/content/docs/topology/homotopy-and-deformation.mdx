@@ -1,0 +1,323 @@
+---
+title: Homotopy and Deformation
+description: Continuous deformation of maps, homotopy equivalence, and contractible spaces
+sidebar:
+  order: 16
+---
+
+import Quiz from "../../../components/Quiz.astro";
+import HomotopyDeformation from "../../../components/HomotopyDeformation.astro";
+
+## What You'll Learn
+
+In this lesson you'll define homotopy of maps, learn homotopy equivalence as a coarser relation than homeomorphism, identify contractible spaces, and see which invariants survive homotopy.
+
+## The Concept
+
+### Homotopy of maps
+
+> Two continuous maps $f,g:X\to Y$ are **homotopic**, written $f\simeq g$, if there is a continuous
+>
+> $$
+> H:X\times[0,1]\to Y, \qquad H(x,0)=f(x), \quad H(x,1)=g(x)
+> $$
+
+Think of $s\in[0,1]$ as time and $H$ as a continuous movie deforming $f$ into $g$. Continuity is required in $x$ and $s$ **jointly**, which is what stops the deformation from jumping.
+
+Homotopy is an equivalence relation on maps: constant deformation gives reflexivity, reversing $s$ gives symmetry, and concatenating in $s$ gives transitivity.
+
+<HomotopyDeformation />
+
+The figure runs the straight-line homotopy $H(t,s) = (1-s)\gamma(t)$ on the unit circle. In the plane it shrinks the loop to a point without obstruction. In the punctured plane the same family of stages closes in on the missing point — the figure computes the clearance from the puncture at each stage and shows it heading to zero — so the deformation cannot be completed inside the space.
+
+**The hole is the obstruction**, and measuring it precisely is the next lesson's job.
+
+### Homotopy equivalence
+
+> $X$ and $Y$ are **homotopy equivalent** if there are maps $f:X\to Y$ and $g:Y\to X$ with
+>
+> $$
+> g\circ f\simeq \operatorname{id}_X, \qquad f\circ g\simeq \operatorname{id}_Y
+> $$
+
+Note the compositions need only be homotopic to the identities, not equal to them. That relaxation is what makes this strictly coarser than homeomorphism:
+
+$$
+\text{homeomorphic} \implies \text{homotopy equivalent}
+$$
+
+and the converse fails badly. A disc is homotopy equivalent to a point but not homeomorphic to it — one has uncountably many points. A solid torus is homotopy equivalent to a circle. An annulus is too.
+
+**Homotopy equivalence forgets dimension.** That is its purpose: it keeps track only of holes and connectivity, and discards everything else.
+
+### Contractible spaces
+
+> $X$ is **contractible** if it is homotopy equivalent to a point, equivalently if the identity map on $X$ is homotopic to a constant map.
+
+Contractible examples: any convex set, any star-shaped set, $\mathbb{R}^n$, a disc, a ball, a cone on anything, and a tree as a graph.
+
+Not contractible: the circle, the sphere, the torus, the annulus, the punctured plane. In each case something cannot be shrunk away.
+
+A useful subtlety: contractible is **not** the same as "has no holes" in any naive sense. There are contractible spaces that are hard to picture and non-contractible spaces that look simple. The circle is the cleanest non-contractible example and the standard starting point.
+
+### Deformation retraction
+
+The most common way to prove a homotopy equivalence in practice:
+
+> $A\subseteq X$ is a **deformation retract** if the identity on $X$ can be continuously deformed, keeping $A$ fixed throughout, into a map whose image is $A$.
+
+Then $X$ and $A$ are homotopy equivalent, and you have exhibited the equivalence rather than merely asserting it.
+
+Standard instances:
+
+- $\mathbb{R}^n$ deformation retracts to a point.
+- $\mathbb{R}^2\setminus\{0\}$ deformation retracts to the unit circle by $x\mapsto x/|x|$.
+- A solid torus retracts to its core circle.
+- A cylinder retracts to a central circle.
+- The Möbius strip retracts to its core circle, which is why it is homotopy equivalent to a circle despite being one-sided.
+
+That last one is instructive: **homotopy equivalence does not see orientability.** The Möbius strip and the cylinder are homotopy equivalent to each other, and telling them apart requires a finer invariant.
+
+### What is preserved
+
+| Invariant                  | Homeomorphism | Homotopy equivalence |
+| -------------------------- | ------------- | -------------------- |
+| Number of components       | yes           | yes                  |
+| Fundamental group          | yes           | yes                  |
+| Euler characteristic       | yes           | yes                  |
+| Homology groups            | yes           | yes                  |
+| Compactness                | yes           | **no**               |
+| Dimension                  | yes           | **no**               |
+| Orientability of a surface | yes           | **no**               |
+
+The two "no" rows are exactly what makes homotopy equivalence useful: a disc is compact and a point is compact, but $\mathbb{R}^n$ is not compact and is still equivalent to a point. Homotopy-invariant tools are therefore easier to compute with, at the cost of resolving less.
+
+### Homotopy of paths
+
+Specializing to paths gives the tool for the next lesson.
+
+> Two paths with the **same endpoints** are **path-homotopic** if one deforms into the other while both endpoints stay fixed throughout.
+
+The endpoint condition is essential. Without it every path in a path-connected space would be homotopic to every other, and the notion would carry no information. With it, the path-homotopy classes of loops at a point form a group — the fundamental group.
+
+## Worked Examples
+
+**Example 1: Show any two maps into a convex set are homotopic.**
+
+**Solution.** Let $f,g:X\to C$ with $C\subseteq\mathbb{R}^n$ convex, and define
+
+$$
+H(x,s) = (1-s)f(x)+sg(x)
+$$
+
+Convexity keeps the value in $C$, and $H$ is continuous jointly since $f$ and $g$ are.
+
+$$
+f\simeq g
+$$
+
+∎
+
+**The straight-line homotopy is the default construction**, and convexity is precisely what licenses it.
+
+**Example 2: Show $\mathbb{R}^n$ is contractible.**
+
+**Solution.** Take $H(x,s) = (1-s)x$. At $s=0$ this is the identity and at $s=1$ it is the constant map to the origin.
+
+$$
+\text{contractible}
+$$
+
+∎
+
+**Example 3: Show $\mathbb{R}^2\setminus\{0\}$ is homotopy equivalent to $S^1$.**
+
+**Solution.** Let $r(x) = x/|x|$, which lands in $S^1$, and let $i:S^1\to\mathbb{R}^2\setminus\{0\}$ be the inclusion.
+
+Then $r\circ i = \operatorname{id}_{S^1}$ exactly. For the other composite,
+
+$$
+H(x,s) = (1-s)x+s\frac{x}{|x|}
+$$
+
+never passes through 0, since it is a positive multiple of $x$ throughout, and it deforms the identity into $i\circ r$.
+
+$$
+\mathbb{R}^2\setminus\{0\}\simeq S^1
+$$
+
+∎
+
+**Example 4: Show the annulus and the Möbius strip are homotopy equivalent.**
+
+**Solution.** Each deformation retracts to its core circle: the annulus to its central circle, the Möbius strip to the circle traced by the midpoints of its cross-sections.
+
+Both are therefore homotopy equivalent to $S^1$, and hence to each other. ∎
+
+**But they are not homeomorphic**, since one has two boundary circles and one has one. Homotopy equivalence is genuinely coarser.
+
+**Example 5: Show $S^1$ is not contractible.**
+
+**Solution.** Suppose it were. Then its fundamental group would be trivial, since a point has trivial fundamental group and the group is a homotopy invariant.
+
+But $\pi_1(S^1)=\mathbb{Z}$, as shown in the next lesson, so the circle is not contractible.
+
+$$
+\text{not contractible}
+$$
+
+∎
+
+Note that this requires an invariant. **"I cannot see how to shrink it" is not a proof**, and the whole point of the next lesson is to supply the argument.
+
+**Example 6: Show a cone is contractible.**
+
+**Solution.** In $CX = (X\times[0,1])/(X\times\{1\})$ define
+
+$$
+H([x,t],s) = [x,\ t+s(1-t)]
+$$
+
+At $s=0$ this is the identity and at $s=1$ everything lands at the collapsed tip.
+
+$$
+\text{contractible}
+$$
+
+∎
+
+**Every cone is contractible regardless of $X$**, which is why cones are used to kill topology deliberately.
+
+**Example 7: Compare a solid torus with a hollow one.**
+
+**Solution.** A **solid** torus deformation retracts to its core circle, so it is homotopy equivalent to $S^1$.
+
+A **hollow** torus — the surface $T^2$ — is homotopy equivalent to $S^1\times S^1$, which is itself and not to a single circle. Its fundamental group is $\mathbb{Z}\times\mathbb{Z}$ rather than $\mathbb{Z}$.
+
+$$
+\text{solid torus} \simeq S^1, \qquad T^2\not\simeq S^1
+$$
+
+∎
+
+**Solid and hollow are very different homotopically**, which is worth being careful about since both are called a torus.
+
+## Real-World Applications
+
+**Path planning with obstacles.** Two routes are interchangeable if they are homotopic in the free space, so a planner only needs one representative per homotopy class. Enumerating those classes is how qualitatively different routes are found.
+
+**Cable and wire routing.** Whether a cable can be rerouted without disconnecting equipment is a homotopy question, and homotopy classes count the genuinely distinct routings around obstacles.
+
+**Animation and morphing.** A morph between two shapes is a homotopy, and it fails when the shapes are not homotopy equivalent — which is why morphing a sphere into a torus always shows an artefact.
+
+**Robot arm reconfiguration.** Moving a manipulator between configurations without collision is a path in configuration space, and the homotopy class determines whether the motion wraps around an obstacle.
+
+**Persistent homology.** Topological data analysis computes homotopy-invariant features across scales, and their invariance under deformation is exactly what makes them robust to noise in the data.
+
+**Sensor network coverage.** Whether a region is fully covered reduces to whether the union of sensor ranges is homotopy equivalent to the region, which can be decided from connectivity data alone.
+
+:::note[You've Got This]
+Homotopy equivalence is a deliberately blunter instrument than homeomorphism, and that bluntness is the point: it forgets dimension, compactness and orientability, keeping only holes and connectivity. That makes it computable. The figure is the whole idea in one picture — the same straight-line deformation succeeds in the plane and is blocked by a single missing point. The next lesson turns that obstruction into a group, which is where the subject gets its sharpest tools.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="topology-homotopy-and-deformation"
+  questions={[
+    {
+      id: "q1",
+      text: "What is a homotopy between maps f and g?",
+      options: [
+        "A homeomorphism between their images",
+        "A continuous H : X × [0,1] → Y with H(x,0) = f(x) and H(x,1) = g(x)",
+        "A path from f to g in X",
+        "A bijection between f and g",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Continuity must hold jointly in x and s, which is what prevents the deformation from jumping. Think of s as time in a continuous movie.",
+    },
+    {
+      id: "q2",
+      text: "How does homotopy equivalence differ from homeomorphism?",
+      options: [
+        "They are the same",
+        "The composites need only be homotopic to the identities, not equal, making it strictly coarser",
+        "Homotopy equivalence is stronger",
+        "Homotopy equivalence requires a bijection",
+      ],
+      correctIndex: 1,
+      explanation:
+        "That relaxation lets a disc be equivalent to a point and a solid torus to a circle. It forgets dimension, compactness and orientability.",
+    },
+    {
+      id: "q3",
+      text: "Which space is contractible?",
+      options: ["The circle", "The annulus", "ℝⁿ", "The torus"],
+      correctIndex: 2,
+      explanation:
+        "The homotopy H(x, s) = (1 − s)x deforms the identity to a constant. The others all have a hole that cannot be shrunk away.",
+    },
+    {
+      id: "q4",
+      text: "What is ℝ² minus the origin homotopy equivalent to?",
+      options: ["A point", "S¹", "ℝ²", "Two points"],
+      correctIndex: 1,
+      explanation:
+        "The radial retraction x ↦ x/|x| and the inclusion are homotopy inverses, and the connecting homotopy never passes through 0. The puncture leaves exactly one loop's worth of topology.",
+    },
+    {
+      id: "q5",
+      text: "Are the annulus and the Möbius strip homotopy equivalent?",
+      options: [
+        "No, one is one-sided",
+        "Yes, both deformation retract to a core circle",
+        "Only if they have the same width",
+        "No, they have different Euler characteristics",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Both are homotopy equivalent to S¹, so they are equivalent to each other. They are not homeomorphic, since the boundary counts differ, which shows how much homotopy forgets.",
+    },
+    {
+      id: "q6",
+      text: "Which property is NOT preserved by homotopy equivalence?",
+      options: [
+        "Number of components",
+        "Fundamental group",
+        "Compactness",
+        "Euler characteristic",
+      ],
+      correctIndex: 2,
+      explanation:
+        "ℝⁿ is homotopy equivalent to a point but is not compact. Dimension and orientability are likewise not preserved.",
+    },
+    {
+      id: "q7",
+      text: "Why must path homotopies keep the endpoints fixed?",
+      options: [
+        "For computational convenience",
+        "Otherwise every path in a path-connected space would be homotopic to every other, carrying no information",
+        "Because paths are injective",
+        "They do not need to be fixed",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Fixing the endpoints is what makes the classes of loops at a point into a meaningful group. Without it the notion is vacuous.",
+    },
+    {
+      id: "q8",
+      text: "Why is the solid torus homotopy equivalent to S¹ while the torus surface is not?",
+      options: [
+        "They are both equivalent to S¹",
+        "The solid torus retracts to its core circle, while the surface has two independent loops and fundamental group ℤ × ℤ",
+        "The surface is contractible",
+        "Neither is equivalent to S¹",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Solid and hollow are homotopically very different despite sharing a name. The surface's second loop, around the tube, cannot be contracted.",
+    },
+  ]}
+/>

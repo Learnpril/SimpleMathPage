@@ -1,0 +1,289 @@
+---
+title: Compactness
+description: The finite subcover property, and why it is the right notion of "small"
+sidebar:
+  order: 10
+---
+
+import Quiz from "../../../components/Quiz.astro";
+import OpenCoverFinite from "../../../components/OpenCoverFinite.astro";
+
+## What You'll Learn
+
+In this lesson you'll define compactness by open covers, learn what it buys you, prove that continuous images of compact sets are compact, and use it to recover the extreme value theorem in a line.
+
+## The Concept
+
+### The definition
+
+> An **open cover** of $X$ is a family of open sets whose union is $X$.
+>
+> $X$ is **compact** if every open cover has a **finite subcover**.
+
+The two quantifiers matter and are easy to swap by accident. It is _every_ cover that must reduce, and it must reduce to _some_ finite subfamily. Exhibiting one cover with a finite subcover proves nothing; exhibiting one cover **without** one proves non-compactness.
+
+<OpenCoverFinite />
+
+The figure works both directions. On the left, a cover of $[0,1]$ is reduced by a greedy left-to-right sweep, and the number of sets needed is computed. On the right, the cover of $(0,1]$ by the sets $\left(\frac1n,2\right)$ resists: any finite subfamily has a largest $n$, and everything in $\left(0,\frac1n\right]$ is left out. The figure computes the length of that gap for the subfamily shown.
+
+Those two intervals differ by a single point, and that point is the whole difference.
+
+### The subspace convention
+
+For $K\subseteq X$, compactness is checked in the subspace topology — equivalently, using covers by sets open in $X$. Both formulations give the same answer, and the second is usually more convenient.
+
+### Heine–Borel
+
+> **Heine–Borel theorem.** A subset of $\mathbb{R}^n$ is compact if and only if it is **closed and bounded**.
+
+This is the theorem that makes compactness usable in analysis, and it is worth being clear that it is a theorem about $\mathbb{R}^n$, **not** a definition. In general metric spaces closed and bounded does not imply compact: the closed unit ball of an infinite-dimensional Hilbert space is closed and bounded and not compact.
+
+Examples in $\mathbb{R}^n$: $[a,b]$ is compact; $(0,1)$ is not, being non-closed; $[0,\infty)$ is not, being unbounded; a sphere is compact; $\mathbb{Z}$ is not.
+
+### What compactness buys
+
+> **Continuous images.** If $f:X\to Y$ is continuous and $X$ is compact, then $f(X)$ is compact.
+
+_Proof._ Let $\{V_i\}$ cover $f(X)$. The preimages $\{f^{-1}(V_i)\}$ cover $X$ and are open, so finitely many suffice, and the corresponding $V_i$ cover $f(X)$. ∎
+
+> **Extreme value theorem.** A continuous real function on a compact space is bounded and attains its maximum and minimum.
+
+_Proof._ $f(X)$ is a compact subset of $\mathbb{R}$, hence closed and bounded by Heine–Borel. A nonempty closed bounded set contains its supremum and infimum, so both are attained. ∎
+
+**One line, once you have the right invariant.** That is the same pattern as connectedness giving the intermediate value theorem.
+
+Other standard consequences:
+
+- **Closed subsets** of compact spaces are compact.
+- **Compact subsets of Hausdorff spaces are closed.** Without Hausdorff this fails.
+- A **continuous bijection** from a compact space to a Hausdorff space is a homeomorphism — the free inverse-continuity from lesson 6.
+- On a compact metric space, every continuous function is **uniformly continuous**.
+- **Finite products.** A product of compact spaces is compact; for infinite products this is **Tychonoff's theorem**, which is equivalent to the axiom of choice.
+- A compact space has the **finite intersection property**: a family of closed sets with all finite intersections nonempty has nonempty total intersection.
+
+### Compactness is not hereditary
+
+$[0,1]$ is compact and its subspace $(0,1)$ is not. Only closed subspaces inherit compactness, which is the same pattern seen with completeness.
+
+Because it is preserved by homeomorphisms, compactness is an invariant, and it is often the quickest one: $[0,1]\not\cong(0,1)$ and $S^1\not\cong\mathbb{R}$ both follow immediately.
+
+### Related notions
+
+- **Sequentially compact** — every sequence has a convergent subsequence. Equivalent to compact in metric spaces, not in general.
+- **Limit point compact** — every infinite subset has a limit point. Weaker in general.
+- **Locally compact** — every point has a compact neighbourhood. $\mathbb{R}^n$ qualifies; infinite-dimensional spaces generally do not.
+- **$\sigma$-compact** — a countable union of compact sets, as $\mathbb{R}$ is.
+
+The equivalences in metric spaces are the subject of the next lesson.
+
+### Why the definition looks strange
+
+Open covers are not an obvious thing to axiomatize, and it is fair to ask why this is the right notion. Two answers.
+
+**It is the topological version of finiteness.** A finite space is compact trivially, and compactness lets you run arguments that need "finitely many cases" on infinite spaces. Every proof above is really the finite case plus a cover argument.
+
+**It is exactly what makes the theorems true.** Boundedness is not topological, since $(0,1)\cong\mathbb{R}$. Compactness is, and it is the hypothesis that the extreme value theorem, uniform continuity, and the closed-map results actually need.
+
+## Worked Examples
+
+**Example 1: Show $(0,1)$ is not compact.**
+
+**Solution.** Take the cover $\left\{\left(\frac1n,1\right) : n\ge2\right\}$, which covers $(0,1)$ since every $x>0$ exceeds some $\frac1n$.
+
+Any finite subfamily has a largest index $N$, so its union is $\left(\frac1N,1\right)$, missing everything in $\left(0,\frac1N\right]$.
+
+$$
+\text{no finite subcover, so not compact}
+$$
+
+∎
+
+**Example 2: Show $\mathbb{R}$ is not compact.**
+
+**Solution.** The cover $\{(-n,n) : n\in\mathbb{N}\}$ has union $\mathbb{R}$. Any finite subfamily is contained in the largest $(-N,N)$, which misses $N$.
+
+$$
+\text{not compact}
+$$
+
+∎
+
+**Example 3: Show a closed subset of a compact space is compact.**
+
+**Solution.** Let $C\subseteq X$ be closed with $X$ compact, and let $\{U_i\}$ be a cover of $C$ by open sets of $X$.
+
+Adding $X\setminus C$, which is open, gives an open cover of $X$. Compactness yields a finite subcover, and discarding $X\setminus C$ from it leaves finitely many $U_i$ still covering $C$.
+
+$$
+C \text{ is compact}
+$$
+
+∎
+
+**Example 4: Prove the extreme value theorem.**
+
+**Solution.** Let $f:K\to\mathbb{R}$ be continuous with $K$ compact and nonempty.
+
+$f(K)$ is compact, hence closed and bounded in $\mathbb{R}$. Being bounded, it has a supremum $M$; being closed, it contains $M$. So $M=f(x_0)$ for some $x_0\in K$, and similarly for the infimum. ∎
+
+**Example 5: Show compact subsets of a Hausdorff space are closed, and that Hausdorff is needed.**
+
+**Solution.** In a Hausdorff space $X$ with $K$ compact, take $y\notin K$. For each $x\in K$ choose disjoint open $U_x\ni x$ and $V_x\ni y$. The $U_x$ cover $K$, so finitely many do, and intersecting the corresponding $V_x$ gives an open set around $y$ missing $K$. Hence $X\setminus K$ is open.
+
+For the failure, take $X=\{a,b\}$ with the trivial topology. The subset $\{a\}$ is compact, being finite, but it is not closed: its complement $\{b\}$ is not open. ∎
+
+**Example 6: Show a finite space is always compact.**
+
+**Solution.** Any open cover of a finite space has, for each point, at least one member containing it. Choosing one such member per point gives a subcover with at most $|X|$ elements.
+
+$$
+\text{compact}
+$$
+
+∎
+
+**This is the sense in which compactness generalizes finiteness**, and it is worth keeping as the guiding intuition.
+
+**Example 7: Show closed and bounded does not imply compact in general metric spaces.**
+
+**Solution.** In the space of square-summable sequences $\ell^2$, take the standard basis vectors $e_n$, each with a single 1 in position $n$. The set $\{e_n\}$ is bounded, since every element has norm 1, and closed, since the points are all at distance $\sqrt2$ from each other and so the set has no limit points.
+
+The open balls $B(e_n,\frac12)$ cover it, each containing exactly one point, so no finite subfamily covers an infinite set.
+
+$$
+\text{closed, bounded, not compact}
+$$
+
+∎
+
+**Heine–Borel is special to $\mathbb{R}^n$**, and this is the standard reminder. The failure is what makes infinite-dimensional analysis genuinely different.
+
+## Real-World Applications
+
+**Optimization.** Existence of a solution is guaranteed on a compact feasible set and can fail otherwise. Minimizing $1/x$ on $(0,1]$ has no solution, which is exactly the non-compactness in the figure showing up as an engineering problem.
+
+**Numerical error bounds.** On a compact domain a continuous error function attains a worst case, so a maximum error can be quoted. On a non-compact domain the supremum may not be attained and may not even be finite.
+
+**Economics.** Existence of equilibria is proved with fixed-point theorems whose hypotheses include compactness of the strategy or price set. Compactifying the space is a standard modelling step.
+
+**Control theory.** Reachable sets are often shown to be compact so that optimal controls exist. Without it, an optimal control may be approached but never achieved.
+
+**Machine learning.** Bounding a parameter space to make it compact is what lets uniform convergence and generalization arguments go through, and it is why weight constraints appear in theoretical guarantees.
+
+**Logic and computation.** The compactness theorem of first-order logic — that a set of sentences with all finite subsets satisfiable is satisfiable — is literally topological compactness of a space of models, which is where the name came from.
+
+:::note[You've Got This]
+Compactness is the definition in this section that looks most arbitrary and turns out to be most useful. The intuition worth holding is that it is the topological stand-in for finiteness: it lets you take an infinite situation and reduce it to finitely many cases. Two cautions. Heine–Borel is a theorem about $\mathbb{R}^n$, not the definition, and $\ell^2$ shows why that matters. And to prove something is _not_ compact, all you need is one bad cover, which is usually much easier than checking every cover.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="topology-compactness"
+  questions={[
+    {
+      id: "q1",
+      text: "What does it mean for X to be compact?",
+      options: [
+        "X is closed and bounded",
+        "Every open cover of X has a finite subcover",
+        "Some open cover has a finite subcover",
+        "X is finite",
+      ],
+      correctIndex: 1,
+      explanation:
+        "It must hold for every cover. Closed and bounded is equivalent only in ℝⁿ, by Heine–Borel, and that is a theorem rather than the definition.",
+    },
+    {
+      id: "q2",
+      text: "Which cover shows (0, 1) is not compact?",
+      options: [
+        "The single set (0, 1)",
+        "The sets (1/n, 1) for n ≥ 2",
+        "The sets (0, 1 − 1/n)",
+        "No cover shows it",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Any finite subfamily has a largest index N and misses everything in (0, 1/N]. One bad cover is all that is needed to disprove compactness.",
+    },
+    {
+      id: "q3",
+      text: "What does the Heine–Borel theorem say, and where does it apply?",
+      options: [
+        "Closed and bounded is equivalent to compact in every metric space",
+        "Closed and bounded is equivalent to compact in ℝⁿ specifically",
+        "Compact implies finite",
+        "Bounded implies compact",
+      ],
+      correctIndex: 1,
+      explanation:
+        "In ℓ² the standard basis vectors form a closed bounded set that is not compact, so the equivalence is special to ℝⁿ.",
+    },
+    {
+      id: "q4",
+      text: "What happens to compactness under a continuous map?",
+      options: [
+        "It can be lost",
+        "The image of a compact space is compact",
+        "The preimage of a compact set is compact",
+        "Nothing is preserved",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Preimages of a cover of the image form a cover of the domain, which reduces. The preimage version is false in general.",
+    },
+    {
+      id: "q5",
+      text: "How does compactness give the extreme value theorem?",
+      options: [
+        "By bisection",
+        "f(K) is compact in ℝ, hence closed and bounded, so it contains its supremum and infimum",
+        "By the mean value theorem",
+        "It does not",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Boundedness gives the supremum's existence and closedness gives its attainment. This mirrors how connectedness yields the intermediate value theorem.",
+    },
+    {
+      id: "q6",
+      text: "Which subspaces of a compact space are guaranteed compact?",
+      options: [
+        "All of them",
+        "The closed ones",
+        "The open ones",
+        "The bounded ones",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Compactness is not hereditary: (0,1) sits inside the compact [0,1] and is not compact. Adding the complement of a closed subset to a cover is what makes the closed case work.",
+    },
+    {
+      id: "q7",
+      text: "Why are compact subsets of a Hausdorff space closed, and why is Hausdorff needed?",
+      options: [
+        "They are always closed in any space",
+        "The separation lets you build a neighbourhood of an outside point missing the set; in the trivial topology on {a,b} the compact set {a} is not closed",
+        "Because compact sets are bounded",
+        "Because compact sets are finite",
+      ],
+      correctIndex: 1,
+      explanation:
+        "The proof needs disjoint neighbourhoods, which only Hausdorff provides. The two-point trivial space is the standard counterexample.",
+    },
+    {
+      id: "q8",
+      text: "In what sense does compactness generalize finiteness?",
+      options: [
+        "Compact spaces are finite",
+        "Every finite space is compact, and compactness lets arguments needing finitely many cases run on infinite spaces",
+        "Compact spaces are countable",
+        "It does not generalize finiteness",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Choosing one cover member per point settles the finite case immediately. Every theorem in the lesson is essentially the finite case plus a cover reduction.",
+    },
+  ]}
+/>

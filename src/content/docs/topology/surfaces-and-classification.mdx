@@ -1,0 +1,305 @@
+---
+title: Surfaces and Classification
+description: The complete list of closed surfaces, sorted by orientability and genus
+sidebar:
+  order: 14
+---
+
+import Quiz from "../../../components/Quiz.astro";
+import GenusSurfaces3D from "../../../components/GenusSurfaces3D.astro";
+
+## What You'll Learn
+
+In this lesson you'll meet the classification theorem for closed surfaces, learn what genus and orientability mean, see the connected sum operation, and understand why this is one of the few complete classifications in mathematics.
+
+## The Concept
+
+### What a surface is
+
+> A **surface** is a topological space in which every point has a neighbourhood homeomorphic to an open disc in $\mathbb{R}^2$ — a 2-dimensional manifold.
+
+Add two adjectives and the situation becomes remarkably clean:
+
+- **Closed** means compact and without boundary.
+- **Connected** means all one piece.
+
+A surface **with boundary** allows points whose neighbourhoods look like half-discs; the disc, the cylinder, and the Möbius strip are examples.
+
+### The classification theorem
+
+> **Classification of closed surfaces.** Every closed connected surface is homeomorphic to exactly one of:
+>
+> - the **sphere** $S^2$;
+> - a **connected sum of $g$ tori**, for $g\ge1$ — the orientable surface of genus $g$;
+> - a **connected sum of $k$ real projective planes**, for $k\ge1$ — the non-orientable ones.
+
+This is one of very few complete classifications in mathematics. **Two numbers settle everything:** whether the surface is orientable, and its genus. Nothing else can differ.
+
+<GenusSurfaces3D />
+
+The figure shows the first three orientable cases. Genus counts the holes, and it is a complete invariant within the orientable family.
+
+For comparison, the analogous problem in three dimensions was open until 2003 and required Perelman's proof of the Poincaré conjecture; in four dimensions it is known to be undecidable. That two dimensions came out this cleanly is a genuine piece of luck.
+
+### The two invariants
+
+**Orientability.** A surface is orientable if it has a consistent choice of "which way is up" at every point, equivalently if it contains no embedded Möbius strip. The sphere and torus are orientable; the Möbius strip, Klein bottle, and $\mathbb{RP}^2$ are not.
+
+A practical test: try to travel around a loop and come back mirror-reversed. If you can, the surface is one-sided.
+
+**Genus and Euler characteristic.** These are two ways of recording the same information:
+
+$$
+\chi = 2-2g \quad\text{(orientable)}, \qquad \chi = 2-k \quad\text{(non-orientable, $k$ crosscaps)}
+$$
+
+| Surface         | Orientable | $g$ or $k$ | $\chi$ |
+| --------------- | ---------- | ---------- | ------ |
+| Sphere          | yes        | $g=0$      | 2      |
+| Torus           | yes        | $g=1$      | 0      |
+| Double torus    | yes        | $g=2$      | $-2$   |
+| $\mathbb{RP}^2$ | no         | $k=1$      | 1      |
+| Klein bottle    | no         | $k=2$      | 0      |
+
+Note that the torus and the Klein bottle **both** have $\chi=0$. So the Euler characteristic alone is not a complete invariant; you need orientability as well. That is exactly why the classification is stated with two pieces of data.
+
+### Connected sum
+
+> The **connected sum** $S_1\# S_2$ is formed by removing an open disc from each surface and gluing the resulting boundary circles together.
+
+This is the operation that builds the whole list. Its properties:
+
+- $S\# S^2 = S$, so the sphere is the identity element.
+- Genus adds: $T^2\# T^2$ has genus 2.
+- Euler characteristics combine as $\chi(S_1\# S_2) = \chi(S_1)+\chi(S_2)-2$.
+- $\mathbb{RP}^2\#\mathbb{RP}^2 = $ the Klein bottle.
+- $\mathbb{RP}^2\# T^2 = \mathbb{RP}^2\#\mathbb{RP}^2\#\mathbb{RP}^2$ — **once a surface is non-orientable, adding a torus is the same as adding two crosscaps.** This is why the list has two families rather than a mixed one.
+
+### Polygon presentations
+
+Every closed surface is a polygon with edges identified in pairs, which connects back to the previous lesson's gluing. The standard words, reading edges around the boundary:
+
+| Surface              | Edge word                                             |
+| -------------------- | ----------------------------------------------------- |
+| Sphere               | $aa^{-1}$                                             |
+| Torus                | $aba^{-1}b^{-1}$                                      |
+| $\mathbb{RP}^2$      | $aa$                                                  |
+| Klein bottle         | $abab^{-1}$                                           |
+| Genus $g$ orientable | $a_1b_1a_1^{-1}b_1^{-1}\cdots a_gb_ga_g^{-1}b_g^{-1}$ |
+
+The proof of the classification theorem is essentially an algorithm for reducing any such word to one of these normal forms, and it is constructive.
+
+### Surfaces with boundary
+
+Adding boundary circles extends the list, and the classification still holds: a compact surface is determined by its orientability, genus, and **number of boundary circles**.
+
+| Surface       | Orientable | $\chi$ | Boundary circles |
+| ------------- | ---------- | ------ | ---------------- |
+| Disc          | yes        | 1      | 1                |
+| Cylinder      | yes        | 0      | 2                |
+| Möbius strip  | no         | 0      | 1                |
+| Pair of pants | yes        | $-1$   | 3                |
+
+The cylinder and the Möbius strip have the same $\chi$ and differ only in orientability and boundary count, which is the pair from the gluing figure last lesson.
+
+### The Klein bottle in $\mathbb{R}^3$
+
+The Klein bottle cannot be embedded in $\mathbb{R}^3$ without self-intersection, though it embeds fine in $\mathbb{R}^4$. Every physical model you see is an **immersion** rather than an embedding, with a deliberate false crossing. The obstruction is that a closed non-orientable surface in $\mathbb{R}^3$ would have to bound a region and thereby inherit an orientation.
+
+## Worked Examples
+
+**Example 1: Compute $\chi$ for a tetrahedron and identify the surface.**
+
+**Solution.** A tetrahedron has $V=4$, $E=6$, $F=4$, so
+
+$$
+\chi = 4-6+4 = 2
+$$
+
+By the classification, an orientable closed surface with $\chi=2$ has $g=0$: it is a **sphere**. ∎
+
+**Every convex polyhedron is topologically a sphere**, which is why Euler's formula $V-E+F=2$ holds for all of them.
+
+**Example 2: Compute the genus of a surface with $\chi=-4$.**
+
+**Solution.** For an orientable closed surface, $\chi = 2-2g$, so
+
+$$
+-4 = 2-2g \implies g = 3
+$$
+
+A three-holed torus. ∎
+
+**Example 3: Identify $T^2\# T^2$.**
+
+**Solution.** Genus adds under connected sum, so the result has $g=2$ and
+
+$$
+\chi = 2-2(2) = -2
+$$
+
+Checking with the additivity rule: $\chi(T^2)+\chi(T^2)-2 = 0+0-2 = -2$ ✓
+
+$$
+\text{the double torus}
+$$
+
+∎
+
+**Example 4: Show $\chi$ alone does not classify surfaces.**
+
+**Solution.** The torus has $\chi=0$ and the Klein bottle has $\chi = 2-2 = 0$.
+
+They are not homeomorphic: the torus is orientable and the Klein bottle is not.
+
+$$
+\text{same } \chi, \text{ different surfaces}
+$$
+
+∎
+
+**This is why the classification needs orientability as a second input.**
+
+**Example 5: Identify the surface with edge word $abab^{-1}$.**
+
+**Solution.** Two pairs of edges, one glued with matching direction and one reversed. That is exactly the Klein bottle gluing from the previous lesson.
+
+$$
+\text{Klein bottle}, \quad \chi=0, \quad \text{non-orientable}
+$$
+
+∎
+
+**Example 6: What is $\mathbb{RP}^2\#\mathbb{RP}^2$?**
+
+**Solution.** Using additivity, $\chi = 1+1-2 = 0$, and the result is non-orientable since a connected sum containing a non-orientable piece is non-orientable.
+
+The non-orientable closed surface with $\chi=0$ has $k=2$, which is the **Klein bottle**.
+
+$$
+\mathbb{RP}^2\#\mathbb{RP}^2 = \text{Klein bottle}
+$$
+
+∎
+
+**Example 7: How many holes does a standard coffee mug have, and what surface is it?**
+
+**Solution.** The handle contributes one hole; the bowl is a depression, not a hole. So $g=1$ and
+
+$$
+\chi = 0
+$$
+
+The mug's surface is a **torus**. ∎
+
+That is the joke about topologists being unable to tell their coffee from their doughnuts, stated as a computation. A two-handled mug would be genus 2.
+
+## Real-World Applications
+
+**Computer graphics.** A mesh's genus determines whether it can be unwrapped to a plane without cuts, so texture mapping tools compute it and introduce seams accordingly. Mesh repair tools detect and fix genus errors from scanning.
+
+**3D printing.** Slicers require a closed orientable surface with consistent normals. A model that is non-orientable or has boundary is not printable, and the error messages are topological in origin.
+
+**Molecular surfaces.** The genus of a protein's solvent-accessible surface counts its tunnels and channels, which is functionally significant for binding and transport.
+
+**Geographic and brain surface analysis.** Cortical surfaces are topologically spheres, and any measured genus above 0 indicates a segmentation error. Topology correction is a standard step in neuroimaging pipelines.
+
+**String theory.** Perturbative amplitudes are organized as a sum over surfaces of increasing genus, with each genus contributing at a different order. The classification is what makes that expansion well defined.
+
+**Fluid vortex topology.** Vortex tube configurations are classified by the genus of their surfaces, and reconnection events change it. Tracking that change is how topological transitions in turbulence are identified.
+
+:::note[You've Got This]
+This is the payoff lesson of the section: a complete list of every possible closed surface, indexed by two pieces of data. That is unusual — the analogous question in three dimensions took a century and a Fields Medal. The one trap to avoid is thinking the Euler characteristic settles everything, since the torus and the Klein bottle both have $\chi=0$; orientability is the second half of the answer. And when you meet a surface in the wild, the routine is simple: count the holes, check for a Möbius strip, and you have identified it.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="topology-surfaces-and-classification"
+  questions={[
+    {
+      id: "q1",
+      text: "What does the classification theorem for closed surfaces say?",
+      options: [
+        "Every closed surface is a sphere",
+        "Every closed connected surface is a sphere, a connected sum of tori, or a connected sum of projective planes",
+        "There are infinitely many unclassifiable surfaces",
+        "Only orientable surfaces can be classified",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Two pieces of data — orientability and genus — determine the surface completely. Very few classification problems in mathematics are this clean.",
+    },
+    {
+      id: "q2",
+      text: "What is the Euler characteristic of an orientable closed surface of genus g?",
+      options: ["2 − g", "2 − 2g", "g − 2", "2g"],
+      correctIndex: 1,
+      explanation:
+        "So the sphere gives 2, the torus 0 and the double torus −2. For the non-orientable family the formula is 2 − k instead.",
+    },
+    {
+      id: "q3",
+      text: "Why is the Euler characteristic alone not a complete invariant?",
+      options: [
+        "Because it is hard to compute",
+        "Because the torus and the Klein bottle both have χ = 0 yet differ in orientability",
+        "Because it is not a topological invariant",
+        "It is a complete invariant",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Orientability is needed as a second input. That is exactly why the classification theorem is stated with two families.",
+    },
+    {
+      id: "q4",
+      text: "What is the connected sum of two surfaces?",
+      options: [
+        "Their disjoint union",
+        "Remove an open disc from each and glue along the resulting boundary circles",
+        "Their product",
+        "Their intersection",
+      ],
+      correctIndex: 1,
+      explanation:
+        "The sphere is the identity for this operation, genus adds, and Euler characteristics combine as χ₁ + χ₂ − 2.",
+    },
+    {
+      id: "q5",
+      text: "What is ℝP² # ℝP²?",
+      options: ["The sphere", "The torus", "The Klein bottle", "ℝP² again"],
+      correctIndex: 2,
+      explanation:
+        "Additivity gives χ = 1 + 1 − 2 = 0, and the result is non-orientable, which identifies it as the Klein bottle. This is why crosscaps rather than tori index the non-orientable family.",
+    },
+    {
+      id: "q6",
+      text: "What is the Euler characteristic of a tetrahedron's surface, and which surface is it?",
+      options: ["0, a torus", "2, a sphere", "1, ℝP²", "−2, a double torus"],
+      correctIndex: 1,
+      explanation:
+        "With V = 4, E = 6 and F = 4 the value is 2. Every convex polyhedron is topologically a sphere, which is why Euler's formula holds for all of them.",
+    },
+    {
+      id: "q7",
+      text: "Which surface has edge word abab⁻¹?",
+      options: ["Torus", "Sphere", "Klein bottle", "ℝP²"],
+      correctIndex: 2,
+      explanation:
+        "One pair glued straight and one reversed is the Klein bottle gluing. The torus word is aba⁻¹b⁻¹ and ℝP² is aa.",
+    },
+    {
+      id: "q8",
+      text: "Why can the Klein bottle not be embedded in ℝ³?",
+      options: [
+        "Because it is too large",
+        "Because a closed non-orientable surface in ℝ³ would bound a region and inherit an orientation",
+        "Because it is not compact",
+        "It can be embedded in ℝ³",
+      ],
+      correctIndex: 1,
+      explanation:
+        "It embeds without trouble in ℝ⁴. Physical models are immersions with a deliberate self-intersection.",
+    },
+  ]}
+/>

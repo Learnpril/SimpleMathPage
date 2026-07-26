@@ -93,6 +93,10 @@ export default defineConfig({
           label: "Complex Analysis",
           autogenerate: { directory: "complex-analysis" },
         },
+        {
+          label: "Topology",
+          autogenerate: { directory: "topology" },
+        },
       ],
       customCss: ["./src/styles/custom.css", "katex/dist/katex.min.css"],
       head: [
@@ -126,7 +130,8 @@ export default defineConfig({
                 'statistics': 'Statistics',
                 'abstract-algebra': 'Abstract Algebra',
                 'real-analysis': 'Real Analysis',
-                'complex-analysis': 'Complex Analysis'
+                'complex-analysis': 'Complex Analysis',
+                'topology': 'Topology'
               };
               var label = map[section];
               if (!label) return;
@@ -178,7 +183,8 @@ export default defineConfig({
                 {slug:'statistics', label:'Statistics', about:'about-statistics'},
                 {slug:'abstract-algebra', label:'Abstract Algebra', about:'about-abstract-algebra'},
                 {slug:'real-analysis', label:'Real Analysis', about:'about-real-analysis'},
-                {slug:'complex-analysis', label:'Complex Analysis', about:'about-complex-analysis'}
+                {slug:'complex-analysis', label:'Complex Analysis', about:'about-complex-analysis'},
+                {slug:'topology', label:'Topology', about:'about-topology'}
               ];
               var path = window.location.pathname.replace(/^\\//, '').replace(/\\/$/, '');
               var currentSection = path.split('/')[0] || '';
@@ -419,7 +425,8 @@ export default defineConfig({
                 'statistics': 'Statistics',
                 'abstract-algebra': 'Abstract Algebra',
                 'real-analysis': 'Real Analysis',
-                'complex-analysis': 'Complex Analysis'
+                'complex-analysis': 'Complex Analysis',
+                'topology': 'Topology'
               };
               var subject = sectionMap[section];
               if (!subject) return;
@@ -476,7 +483,8 @@ export default defineConfig({
                         'statistics': 'expert',
                         'abstract-algebra': 'expert',
                         'real-analysis': 'expert',
-                        'complex-analysis': 'expert'
+                        'complex-analysis': 'expert',
+                        'topology': 'expert'
                       };
                       var colorMap = {
                         'foundations': '#7ee787',

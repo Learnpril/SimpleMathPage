@@ -1,0 +1,143 @@
+---
+/**
+ * GenusSurfaces3D — the orientable closed surfaces of genus 0, 1 and 2, side by
+ * side. The genus-2 surface is assembled from two tori and a connecting tube rather
+ * than drawn by hand, and the Euler characteristic shown under each is computed from
+ * χ = 2 − 2g.
+ */
+const genera = [0, 1, 2];
+const chi = genera.map((g) => 2 - 2 * g);
+---
+
+<figure
+  class="gs3"
+  role="img"
+  aria-label={`Three closed orientable surfaces shown in 3D: a sphere of genus 0 with Euler characteristic ${chi[0]}, a torus of genus 1 with Euler characteristic ${chi[1]}, and a two-holed surface of genus 2 with Euler characteristic ${chi[2]}. Genus counts the holes and determines the surface completely.`}
+>
+  <div class="gs3-canvas" data-gs3d></div>
+  <div class="gs3-hint">Drag to rotate · Scroll/Pinch to zoom</div>
+  <figcaption class="gs3-cap">
+    Genus <strong>0</strong>, <strong>1</strong> and <strong>2</strong>, with Euler
+    characteristics <strong>{chi[0]}</strong>, <strong>{chi[1]}</strong> and
+    <strong>{chi[2]}</strong>. For a closed orientable surface χ = 2 − 2g, so a
+    single integer settles which surface you are looking at. No amount of stretching
+    turns one into another.
+  </figcaption>
+</figure>
+
+<script>
+  import * as THREE from "three";
+  import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+
+  function initScene(container: HTMLElement) {
+    const width = Math.min(container.clientWidth, 480);
+    const height = 340;
+    const isDark = document.documentElement.dataset.theme !== "light";
+
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(isDark ? 0x121212 : 0xf8f9fa);
+
+    const camera = new THREE.PerspectiveCamera(38, width / height, 0.1, 200);
+    camera.position.set(0, 3.6, 9.2);
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(width, height);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    container.appendChild(renderer.domElement);
+
+    const root = new THREE.Group();
+    scene.add(root);
+
+    const colours = isDark
+      ? [0x7ee787, 0x58a6ff, 0xd2a8ff]
+      : [0x116329, 0x0550ae, 0x6639ba];
+    const material = (c: number) =>
+      new THREE.MeshPhongMaterial({ color: c, shininess: 26, side: THREE.DoubleSide });
+
+    // genus 0: a sphere
+    const g0 = new THREE.Group();
+    g0.add(new THREE.Mesh(new THREE.SphereGeometry(0.95, 48, 32), material(colours[0])));
+    g0.position.x = -3.1;
+    root.add(g0);
+
+    // genus 1: a torus
+    const g1 = new THREE.Group();
+    g1.add(new THREE.Mesh(new THREE.TorusGeometry(0.72, 0.3, 32, 64), material(colours[1])));
+    root.add(g1);
+
+    // genus 2: two tori joined by a short tube, so the second hole is built rather than implied
+    const g2 = new THREE.Group();
+    const mat2 = material(colours[2]);
+    const left = new THREE.Mesh(new THREE.TorusGeometry(0.56, 0.24, 24, 48), mat2);
+    left.position.x = -0.6;
+    const right = new THREE.Mesh(new THREE.TorusGeometry(0.56, 0.24, 24, 48), mat2);
+    right.position.x = 0.6;
+    const tube = new THREE.Mesh(new THREE.CylinderGeometry(0.24, 0.24, 0.9, 24, 1, true), mat2);
+    tube.rotation.z = Math.PI / 2;
+    g2.add(left, right, tube);
+    g2.position.x = 3.1;
+    root.add(g2);
+
+    scene.add(new THREE.AmbientLight(0xffffff, 0.82));
+    const dl = new THREE.DirectionalLight(0xffffff, 0.55);
+    dl.position.set(3, 6, 6);
+    scene.add(dl);
+
+    const controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.08;
+    controls.minDistance = 5;
+    controls.maxDistance = 18;
+
+    const clock = new THREE.Clock();
+    let animId: number;
+    function animate() {
+      animId = requestAnimationFrame(animate);
+      const t = clock.getElapsedTime();
+      // a slow common spin, so every surface is seen from all sides
+      [g0, g1, g2].forEach((g) => {
+        g.rotation.y = t * 0.35;
+        g.rotation.x = -0.5;
+      });
+      controls.update();
+      renderer.render(scene, camera);
+    }
+    animate();
+
+    return () => {
+      cancelAnimationFrame(animId);
+      renderer.dispose();
+    };
+  }
+
+  function setup() {
+    document.querySelectorAll<HTMLElement>("[data-gs3d]").forEach((el) => {
+      if (el.querySelector("canvas")) return;
+      const obs = new IntersectionObserver(
+        (entries) => {
+          if (entries[0].isIntersecting) {
+            obs.disconnect();
+            initScene(el);
+          }
+        },
+        { threshold: 0.05 },
+      );
+      obs.observe(el);
+    });
+  }
+
+  setup();
+  document.addEventListener("astro:page-load", setup);
+</script>
+
+<style>
+  .gs3 { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .gs3-canvas { width:100%; max-width:480px; min-height:340px; border-radius:8px; overflow:hidden; }
+  .gs3-canvas canvas { border-radius:8px; }
+  .gs3-hint { font-family:'Libre Baskerville',Georgia,serif; font-size:0.8rem; color:#9198a1; margin-top:0.4rem; }
+  .gs3-cap {
+    font-family:'Libre Baskerville',Georgia,serif; font-size:0.85rem; color:#9198a1;
+    font-style:italic; text-align:center; max-width:460px; margin-top:0.5rem; line-height:1.5;
+  }
+  :global([data-theme="light"]) .gs3-hint, :global([data-theme="light"]) .gs3-cap { color:#57606a; }
+</style>
