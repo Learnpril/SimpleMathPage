@@ -1,0 +1,347 @@
+---
+title: The Derivative
+description: The derivative as a limit, why differentiability implies continuity, and the counterexamples
+sidebar:
+  order: 15
+---
+
+import Quiz from "../../../components/Quiz.astro";
+import SymbolKey from "../../../components/SymbolKey.astro";
+import IntuitionFails from "../../../components/IntuitionFails.astro";
+
+## What You'll Learn
+
+In this lesson you'll learn the definition of the derivative as a limit, prove that differentiability implies continuity, see why the converse fails badly, and meet the interior extremum theorem that the next lesson depends on.
+
+<SymbolKey
+  items={[
+    {
+      sym: "f′(a)",
+      read: "f prime of a, the derivative at a",
+      note: "a limit of difference quotients, not a fraction",
+    },
+    {
+      sym: "(f(a+h) − f(a))/h",
+      read: "the difference quotient",
+      note: "the slope of a secant; undefined at h = 0, which is why a limit is needed",
+    },
+    {
+      sym: "h → 0",
+      read: "h tends to 0",
+      note: "from both sides; one-sided versions give one-sided derivatives",
+    },
+    {
+      sym: "C¹",
+      read: "continuously differentiable",
+      note: "differentiable with a continuous derivative, which is strictly stronger",
+    },
+  ]}
+/>
+
+## The Concept
+
+### The definition
+
+> $f$ is **differentiable at $a$** if
+>
+> $$
+> f'(a) = \lim_{h\to 0}\frac{f(a+h)-f(a)}{h}
+> $$
+>
+> exists as a real number.
+
+Equivalently, with $x = a+h$:
+
+$$
+f'(a) = \lim_{x\to a}\frac{f(x)-f(a)}{x-a}
+$$
+
+The quotient is the slope of the secant through $(a, f(a))$ and $(a+h, f(a+h))$. The derivative is the limit of those slopes.
+
+**Note what the limit definition buys.** At $h = 0$ the quotient is $\frac00$, undefined. This is exactly why the limit definition excluded the point itself — if it had required a value at $h=0$, the derivative could not exist. That design decision, made in the limits lesson, was made for this.
+
+Requiring the limit to be a **real number** rules out $f'(a) = \pm\infty$. For $f(x) = x^{1/3}$ at 0 the quotient is $h^{-2/3} \to +\infty$, so $f$ is **not** differentiable there, even though the graph has a well-defined vertical tangent.
+
+### Differentiability implies continuity
+
+> If $f$ is differentiable at $a$ then $f$ is continuous at $a$.
+
+_Proof._ For $x \ne a$ write
+
+$$
+f(x) - f(a) = \frac{f(x)-f(a)}{x-a}\cdot(x-a)
+$$
+
+As $x \to a$, the first factor tends to $f'(a)$, a finite number, and the second tends to 0. By the product rule for limits,
+
+$$
+\lim_{x\to a}\big(f(x)-f(a)\big) = f'(a)\cdot 0 = 0
+$$
+
+so $\lim_{x\to a}f(x) = f(a)$, which is continuity. ∎
+
+**Finiteness of $f'(a)$ is essential.** If the quotient blew up, multiplying by something tending to 0 would be indeterminate rather than 0.
+
+### The converse fails, spectacularly
+
+<IntuitionFails />
+
+$|x|$ is continuous at 0 and not differentiable there. The one-sided quotients are
+
+$$
+\lim_{h\to0^+}\frac{|h|}{h} = 1, \qquad \lim_{h\to0^-}\frac{|h|}{h} = -1
+$$
+
+Different, so the two-sided limit does not exist. **A corner destroys differentiability while leaving continuity intact.**
+
+You can do far worse. **The Weierstrass function**
+
+$$
+W(x) = \sum_{n=0}^\infty a^n\cos(b^n\pi x), \qquad 0<a<1, \; ab>1
+$$
+
+is continuous everywhere and differentiable **nowhere**. Published in 1872, it demolished the widespread belief that a continuous curve must have tangents except at isolated points. The series converges uniformly, which gives continuity; the frequencies grow fast enough that no secant slope settles.
+
+So the implication is strictly one-way, and by a wide margin: continuity is a much weaker condition than it feels.
+
+### Differentiable but with discontinuous derivative
+
+Even having a derivative everywhere is not the end of the hierarchy. Let
+
+$$
+f(x) = \begin{cases}x^2\sin\frac1x & x\ne0\\ 0 & x=0\end{cases}
+$$
+
+At 0 the quotient is $h\sin\frac1h$, bounded by $|h|$, so by squeezing $f'(0) = 0$: differentiable at 0.
+
+For $x \ne 0$, the product and chain rules give
+
+$$
+f'(x) = 2x\sin\frac1x - \cos\frac1x
+$$
+
+which oscillates without limit as $x\to0$. So $f'$ exists everywhere and is **discontinuous at 0**.
+
+Hence $C^1$ (continuously differentiable) is strictly stronger than differentiable. The hierarchy is
+
+$$
+C^1 \subsetneq \text{differentiable} \subsetneq \text{continuous}
+$$
+
+### The interior extremum theorem
+
+> If $f$ has a local maximum or minimum at an **interior** point $c$ and $f'(c)$ exists, then $f'(c) = 0$.
+
+_Proof (maximum case)._ For small $h>0$, $f(c+h) \le f(c)$, so $\frac{f(c+h)-f(c)}{h} \le 0$, and the right-hand limit gives $f'(c) \le 0$.
+
+For small $h<0$ the same numerator is $\le 0$ while $h < 0$, so the quotient is $\ge 0$, and the left-hand limit gives $f'(c) \ge 0$.
+
+Both hold, so $f'(c)=0$. ∎
+
+Two words carry the weight.
+
+**Interior.** On $[0,1]$ the function $f(x)=x$ has a maximum at $x=1$ with $f'(1)=1\ne0$. Endpoints only give a one-sided inequality.
+
+**Exists.** $f(x)=|x|$ has a minimum at 0 with no derivative there.
+
+And the converse fails: $f'(0)=0$ for $f(x)=x^3$, which has no extremum at 0. A vanishing derivative is necessary, not sufficient — these are **critical points**, and classifying them needs more.
+
+This theorem is the bridge to the next lesson: Rolle's theorem uses EVT to produce an interior extremum, then this result to conclude the derivative vanishes there.
+
+## Worked Examples
+
+**Example 1: Compute $f'(a)$ for $f(x)=x^2$ from the definition.**
+
+**Solution.**
+
+$$
+\frac{(a+h)^2-a^2}{h} = \frac{a^2+2ah+h^2-a^2}{h} = \frac{2ah+h^2}{h} = 2a+h
+$$
+
+The cancellation is legal because $h \ne 0$ in the limit. Then
+
+$$
+f'(a) = \lim_{h\to0}(2a+h) = 2a
+$$
+
+∎
+
+**Example 2: Show $|x|$ is not differentiable at 0.**
+
+**Solution.** The quotient at $a=0$ is $\frac{|h|}{h}$, which equals $1$ for $h>0$ and $-1$ for $h<0$.
+
+$$
+\lim_{h\to0^+}\frac{|h|}{h}=1, \qquad \lim_{h\to0^-}\frac{|h|}{h}=-1
+$$
+
+The one-sided limits differ, so the limit does not exist and $f$ is **not differentiable at 0**. It is continuous there, so continuity does not imply differentiability. ∎
+
+**Example 3: A vertical tangent is not a derivative.**
+
+Is $f(x) = x^{1/3}$ differentiable at 0?
+
+**Solution.**
+
+$$
+\frac{h^{1/3}-0}{h} = h^{-2/3} \to +\infty \quad \text{as } h\to0
+$$
+
+The limit is not a real number, so $f$ is **not differentiable at 0**, despite the graph having a clean vertical tangent there.
+
+The definition demands a finite limit. Note $f$ is continuous at 0 and even strictly increasing, so plenty of good behaviour does not add up to differentiability.
+
+**Example 4: Differentiable with a discontinuous derivative.**
+
+For $f(x)=x^2\sin\frac1x$ (and $f(0)=0$), verify $f'(0)=0$ and that $f'$ is discontinuous at 0.
+
+**Solution.** At 0:
+
+$$
+\left|\frac{h^2\sin\frac1h - 0}{h}\right| = \left|h\sin\frac1h\right| \le |h| \to 0
+$$
+
+so by squeezing $f'(0) = 0$. ✓
+
+For $x\ne0$, $f'(x) = 2x\sin\frac1x - \cos\frac1x$. The first term $\to0$, but $\cos\frac1x$ oscillates through $[-1,1]$ with no limit, so $\lim_{x\to0}f'(x)$ does not exist.
+
+$f'$ exists everywhere and is **not continuous at 0**. So differentiable is strictly weaker than $C^1$. ∎
+
+**Example 5: A one-sided derivative.**
+
+Does $f(x)=\sqrt x$ have a derivative at 0 on $[0,\infty)$?
+
+**Solution.** Only the right side is available:
+
+$$
+\frac{\sqrt h - 0}{h} = \frac{1}{\sqrt h} \to +\infty
+$$
+
+Not finite, so **no derivative at 0**, one-sided or otherwise.
+
+This is why $\sqrt x$ is not Lipschitz on $[0,1]$, as the previous lesson found: the slope is unbounded near 0. The two facts are the same observation.
+
+**Example 6: The interior extremum theorem in action.**
+
+Find where $f(x)=x^3-3x$ can have local extrema on $\mathbb{R}$.
+
+**Solution.** $f$ is differentiable everywhere, so any local extremum has $f'(c)=0$:
+
+$$
+f'(x)=3x^2-3=0 \implies x=\pm1
+$$
+
+Candidates are $x=1$ and $x=-1$. Checking: $f'$ changes from positive to negative at $-1$ (local max) and negative to positive at $1$ (local min).
+
+**The theorem narrows infinitely many points to two.** That's its job — it does not confirm extrema, it eliminates everything else.
+
+**Example 7: A critical point that is not an extremum.**
+
+**Solution.** For $f(x)=x^3$, $f'(0)=0$, so 0 is a critical point.
+
+But $f$ is strictly increasing: $x^3 < 0 < y^3$ for $x<0<y$. So $f$ has **no extremum** at 0; it is an inflection point.
+
+**A vanishing derivative is necessary, not sufficient.** This is why the first and second derivative tests exist.
+
+## Real-World Applications
+
+**Instantaneous rates.** Velocity is the derivative of position, current is the derivative of charge, and marginal cost is the derivative of total cost. In every case the quantity is defined as a limit, which is why "instantaneous" is meaningful at all rather than a contradiction.
+
+**Optimization and gradient methods.** Setting the derivative to zero to find candidates is the interior extremum theorem. Gradient descent follows the derivative downhill, and it requires differentiability — which is why ReLU networks, having corners, need subgradients and why that choice has real consequences for training.
+
+**Numerical differentiation.** A finite difference approximates the limit with a small $h$. Too large and truncation error dominates; too small and floating-point cancellation does. The optimal $h$ is around $\sqrt{\text{machine epsilon}}$, a direct practical consequence of the limit being approached and not reached.
+
+**Sensitivity analysis.** The derivative of an output with respect to an input is the amplification factor for small errors, which is what condition numbers measure. A large derivative means a badly conditioned problem.
+
+**Rough signals and financial models.** Brownian motion paths are continuous and nowhere differentiable, which is the Weierstrass phenomenon appearing in nature. That is exactly why stochastic calculus exists: ordinary calculus cannot differentiate a stock price path.
+
+**Machine learning and non-smooth losses.** The absolute-value loss is not differentiable at 0, so optimizers use subgradient methods there. Choosing between squared and absolute loss is partly a choice about whether you want differentiability.
+
+:::note[You've Got This]
+Two things to take away. First, the derivative is a limit of secant slopes, and the limit definition's exclusion of the point is exactly what makes it possible — the quotient is undefined at h = 0. Second, the implication runs one way only: differentiable gives continuous, and the reverse fails at every corner, with the Weierstrass function showing how badly. Also worth internalizing is the interior extremum theorem, because it does not find extrema, it eliminates non-candidates, and it is what the mean value theorem is built on next.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="real-the-derivative"
+  questions={[
+    {
+      id: "q1",
+      text: "Why must the derivative be defined as a limit rather than by plugging in h = 0?",
+      options: [
+        "Because h = 0 gives a negative value",
+        "Because at h = 0 the difference quotient is 0/0 and undefined",
+        "Because f might not be continuous",
+        "Because h must be positive",
+      ],
+      correctIndex: 1,
+      explanation:
+        "The quotient is undefined exactly at the point of interest, which is why the limit definition deliberately excludes it. That design choice in the limits lesson exists to make the derivative possible.",
+    },
+    {
+      id: "q2",
+      text: "Which implication is true?",
+      options: [
+        "Continuous at a implies differentiable at a",
+        "Differentiable at a implies continuous at a",
+        "The two are equivalent",
+        "Neither implies the other",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Writing f(x) − f(a) as the quotient times (x − a) sends the product to f′(a)·0 = 0. The converse fails at every corner, and the Weierstrass function is continuous everywhere and differentiable nowhere.",
+    },
+    {
+      id: "q3",
+      text: "Why is x^(1/3) not differentiable at 0?",
+      options: [
+        "Because it is not continuous at 0",
+        "Because the difference quotient tends to +∞, which is not a real number",
+        "Because the one-sided limits differ",
+        "Because the function is not defined at 0",
+      ],
+      correctIndex: 1,
+      explanation:
+        "The quotient is h^(−2/3), which blows up. The definition requires a finite limit, so a vertical tangent does not count as a derivative even though the graph looks well behaved.",
+    },
+    {
+      id: "q4",
+      text: "What does f(x) = x² sin(1/x) with f(0) = 0 demonstrate?",
+      options: [
+        "That differentiable functions need not be continuous",
+        "That a function can be differentiable everywhere while its derivative is discontinuous",
+        "That continuity implies differentiability",
+        "That the derivative can be infinite",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Squeezing gives f′(0) = 0, while for x ≠ 0 the derivative contains a cos(1/x) term with no limit at 0. So C¹ is strictly stronger than differentiable.",
+    },
+    {
+      id: "q5",
+      text: "The interior extremum theorem says that if f has a local extremum at an interior point c and f′(c) exists, then",
+      options: [
+        "f′(c) > 0",
+        "f′(c) = 0",
+        "f is constant near c",
+        "c must be an endpoint",
+      ],
+      correctIndex: 1,
+      explanation:
+        "The one-sided quotients give opposite inequalities, forcing the derivative to vanish. Both words matter: on [0,1] the function x has a maximum at the endpoint 1 with derivative 1, and |x| has a minimum at 0 with no derivative.",
+    },
+    {
+      id: "q6",
+      text: "Does f′(c) = 0 guarantee an extremum at c?",
+      options: [
+        "Yes, always",
+        "No; x³ has f′(0) = 0 but is strictly increasing",
+        "Yes, if f is continuous",
+        "Only for polynomials",
+      ],
+      correctIndex: 1,
+      explanation:
+        "A vanishing derivative is necessary but not sufficient, which is why such points are called critical rather than extremal. Classifying them requires a sign change or a second-derivative test.",
+    },
+  ]}
+/>

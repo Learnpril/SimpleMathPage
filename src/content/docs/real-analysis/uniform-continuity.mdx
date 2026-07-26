@@ -1,0 +1,328 @@
+---
+title: Uniform Continuity
+description: When one delta works everywhere, and why compactness guarantees it
+sidebar:
+  order: 14
+---
+
+import Quiz from "../../../components/Quiz.astro";
+import SymbolKey from "../../../components/SymbolKey.astro";
+import UniformContinuity from "../../../components/UniformContinuity.astro";
+
+## What You'll Learn
+
+In this lesson you'll learn the difference between continuity and uniform continuity, why the distinction is about quantifier order, the theorem that continuity on a compact set is automatically uniform, and how Lipschitz conditions fit in.
+
+<SymbolKey
+  items={[
+    {
+      sym: "∀x ∃δ",
+      read: "for each point there is a delta",
+      note: "ordinary continuity: δ may depend on the point",
+    },
+    {
+      sym: "∃δ ∀x",
+      read: "there is one delta for all points",
+      note: "uniform continuity: δ depends on ε only",
+    },
+    {
+      sym: "|f(x) − f(y)| < ε",
+      read: "the outputs are within epsilon",
+      note: "two arbitrary points now, not a point and a fixed centre",
+    },
+    {
+      sym: "K",
+      read: "a Lipschitz constant",
+      note: "a bound on how fast the function can change",
+    },
+  ]}
+/>
+
+## The Concept
+
+### The definitions side by side
+
+**Continuity on a set $S$:**
+
+$$
+\forall a \in S \; \forall \varepsilon>0 \; \exists \delta>0 \; \forall x \in S: \; |x-a|<\delta \implies |f(x)-f(a)|<\varepsilon
+$$
+
+**Uniform continuity on $S$:**
+
+$$
+\forall \varepsilon>0 \; \exists\delta>0 \; \forall x,y \in S: \; |x-y|<\delta \implies |f(x)-f(y)|<\varepsilon
+$$
+
+The symbols are nearly identical. The **order of the quantifiers** is the entire difference.
+
+In ordinary continuity, $\forall a$ comes before $\exists \delta$, so $\delta$ may depend on the point. In uniform continuity, $\exists\delta$ comes first, so **one $\delta$ must serve every point at once.**
+
+Uniform continuity implies continuity. The converse is where the interest is.
+
+### Where uniformity fails
+
+<UniformContinuity />
+
+Take $f(x) = \frac1x$ on $(0,1]$. It is continuous at every point of its domain. But for a fixed $\varepsilon$, the required $\delta$ shrinks as the point approaches 0, because the graph steepens without bound. There is no smallest positive $\delta$ that works everywhere.
+
+Formally: **for any candidate $\delta$, you can find two points closer than $\delta$ whose outputs differ by more than $\varepsilon$.** Near 0 the function changes so fast that any fixed input window produces an arbitrarily large output change.
+
+$f(x) = x^2$ on $\mathbb{R}$ fails for the same reason at the other end. Take $x = n$ and $y = n + \frac{1}{n}$. Then $|x-y| = \frac1n \to 0$, but
+
+$$
+|f(y)-f(x)| = \left(n+\tfrac1n\right)^2 - n^2 = 2 + \tfrac{1}{n^2} > 2
+$$
+
+So $\varepsilon = 1$ has no workable $\delta$. **Unbounded slope over an unbounded domain is the obstruction**, and squaring is a perfectly nice function otherwise.
+
+### The compactness theorem
+
+> **If $f$ is continuous on a compact set $K$, then $f$ is uniformly continuous on $K$.**
+
+For $\mathbb{R}$ this means: continuous on a closed bounded interval implies uniformly continuous there.
+
+_Proof._ Let $\varepsilon>0$. For each $a \in K$, continuity gives $\delta_a > 0$ with $|f(x)-f(a)| < \frac{\varepsilon}{2}$ whenever $|x-a|<\delta_a$.
+
+Cover $K$ by the intervals $\left(a - \frac{\delta_a}{2}, a + \frac{\delta_a}{2}\right)$. By compactness, finitely many suffice, centred at $a_1,\dots,a_n$. Set
+
+$$
+\delta = \min\left(\frac{\delta_{a_1}}{2},\dots,\frac{\delta_{a_n}}{2}\right) > 0
+$$
+
+positive because it is a minimum of **finitely many** positive numbers.
+
+Now take any $x, y \in K$ with $|x-y|<\delta$. The point $x$ lies in some $\left(a_i - \frac{\delta_{a_i}}{2}, a_i + \frac{\delta_{a_i}}{2}\right)$, and then $|y - a_i| \le |y-x| + |x-a_i| < \delta + \frac{\delta_{a_i}}{2} \le \delta_{a_i}$. So both $x$ and $y$ are within $\delta_{a_i}$ of $a_i$, giving
+
+$$
+|f(x)-f(y)| \le |f(x)-f(a_i)| + |f(a_i)-f(y)| < \frac{\varepsilon}{2}+\frac{\varepsilon}{2} = \varepsilon
+$$
+
+∎
+
+**The whole proof is the finiteness trick.** Infinitely many $\delta_a$ have an infimum that may be 0; finitely many have a positive minimum. Compactness is what makes the collection finite. This is the argument previewed two lessons ago, now cashed in.
+
+### Lipschitz continuity
+
+> $f$ is **Lipschitz** on $S$ with constant $K$ if
+>
+> $$
+> |f(x)-f(y)| \le K|x-y| \quad \text{for all } x,y \in S
+> $$
+
+Lipschitz implies uniformly continuous: take $\delta = \frac{\varepsilon}{K}$, which depends only on $\varepsilon$.
+
+The chain of strength:
+
+$$
+\text{Lipschitz} \implies \text{uniformly continuous} \implies \text{continuous}
+$$
+
+Both implications are strict. $\sqrt x$ on $[0,1]$ is uniformly continuous (continuous on a compact set) but **not Lipschitz**, because its slope $\frac{1}{2\sqrt x}$ blows up at 0. And $\frac1x$ on $(0,1]$ is continuous but not uniformly continuous.
+
+A useful sufficient condition: **if $f'$ is bounded by $K$ on an interval, then $f$ is Lipschitz with constant $K$**, by the mean value theorem. That is usually the easiest way to establish uniform continuity in practice.
+
+### Why it matters
+
+Uniform continuity is exactly what you need to make an approximation valid **across a whole domain** rather than point by point. Two places it is indispensable:
+
+- **Riemann integrability.** Proving every continuous function on $[a,b]$ is integrable requires making the oscillation on every subinterval small at once, with a single mesh size. That is uniform continuity.
+- **Extending functions and swapping limits.** Uniform continuity lets a function defined on a dense subset extend continuously to the whole space, which is how many constructions in analysis get off the ground.
+
+## Worked Examples
+
+**Example 1: Show $f(x) = 3x+2$ is uniformly continuous on $\mathbb{R}$.**
+
+**Solution.** Given $\varepsilon>0$, take $\delta = \frac{\varepsilon}{3}$. For any $x,y$ with $|x-y|<\delta$,
+
+$$
+|f(x)-f(y)| = 3|x-y| < 3\delta = \varepsilon
+$$
+
+∎
+
+$\delta$ depends only on $\varepsilon$. Every linear function is Lipschitz with $K = |m|$, hence uniformly continuous on all of $\mathbb{R}$.
+
+**Example 2: Show $f(x)=x^2$ is uniformly continuous on $[0,5]$ but not on $\mathbb{R}$.**
+
+**Solution.** _On $[0,5]$._ $|x^2-y^2| = |x-y||x+y| \le 10|x-y|$ since $x,y \le 5$. Take $\delta = \frac{\varepsilon}{10}$. ✓ (Lipschitz with $K=10$.)
+
+_On $\mathbb{R}$._ Take $x_n = n$, $y_n = n+\frac1n$. Then $|x_n-y_n| = \frac1n \to 0$ but
+
+$$
+|f(y_n)-f(x_n)| = 2 + \frac{1}{n^2} > 2
+$$
+
+So with $\varepsilon=1$, no $\delta$ works. **Not uniformly continuous on $\mathbb{R}$.** ∎
+
+Note the same function is uniformly continuous on every bounded interval and fails globally. **Uniform continuity is a property of the function together with its domain.**
+
+**Example 3: Show $\frac1x$ is not uniformly continuous on $(0,1]$.**
+
+**Solution.** Let $\varepsilon=1$ and take any $\delta>0$. Choose $n$ with $\frac1n < \delta$ and set
+
+$$
+x_n = \frac{1}{n}, \qquad y_n = \frac{1}{n+1}
+$$
+
+Then $|x_n-y_n| = \frac{1}{n(n+1)} < \frac1n < \delta$, while
+
+$$
+|f(x_n)-f(y_n)| = |n - (n+1)| = 1 \ge \varepsilon
+$$
+
+So no $\delta$ works. **Not uniformly continuous.** ∎
+
+The construction pattern is worth remembering: to disprove uniformity, produce two sequences with $|x_n-y_n|\to0$ and $|f(x_n)-f(y_n)|$ bounded away from 0.
+
+**Example 4: $\sqrt x$ is uniformly continuous but not Lipschitz on $[0,1]$.**
+
+**Solution.** _Uniformly continuous._ Continuous on the compact $[0,1]$, so the theorem applies. ✓
+
+_Not Lipschitz._ Suppose $|\sqrt x - \sqrt y| \le K|x-y|$ for all $x,y$. Take $y=0$:
+
+$$
+\sqrt x \le Kx \implies K \ge \frac{1}{\sqrt x}
+$$
+
+which is unbounded as $x \to 0^+$. No finite $K$ exists. ∎
+
+**The middle implication is strict**, and this is the standard example.
+
+**Example 5: A bounded derivative gives Lipschitz.**
+
+Show $\sin x$ is uniformly continuous on $\mathbb{R}$.
+
+**Solution.** $|\sin'x| = |\cos x| \le 1$, so by the mean value theorem, for any $x<y$ there is $c$ with
+
+$$
+|\sin y - \sin x| = |\cos c||y-x| \le |y-x|
+$$
+
+Lipschitz with $K=1$, hence uniformly continuous on $\mathbb{R}$ with $\delta = \varepsilon$. ∎
+
+Contrast $x^2$, whose derivative $2x$ is unbounded on $\mathbb{R}$. **A bounded derivative is the practical test.**
+
+**Example 6: Continuous on an unbounded domain, and still uniform.**
+
+Is $f(x) = \frac{1}{1+x^2}$ uniformly continuous on $\mathbb{R}$?
+
+**Solution.** Yes. Its derivative is $\frac{-2x}{(1+x^2)^2}$, which is bounded on $\mathbb{R}$ (it tends to 0 at both ends and is continuous, so it attains a finite maximum modulus).
+
+Bounded derivative gives Lipschitz gives uniform continuity. ✓
+
+So **compactness is sufficient, not necessary.** Plenty of functions on unbounded domains are uniformly continuous; they just have to flatten out rather than steepen.
+
+**Example 7: Quantifier order made concrete.**
+
+For $f(x)=x^2$ on $[0,5]$ and $\varepsilon = 0.1$, compare the $\delta$ needed at $x=0$ and at $x=5$.
+
+**Solution.** Near 0: $|x^2 - 0| < 0.1$ needs $|x| < 0.316$, so $\delta \approx 0.316$ is fine.
+
+Near 5: $|x^2-25| = |x-5||x+5| \approx 10|x-5|$, so we need $|x-5| < 0.01$.
+
+**Different points need very different $\delta$.** Uniform continuity does not deny that; it only requires that _some_ single $\delta$ works for all, and here $\delta = 0.01$ does. Uniformity fails only when the required $\delta$ has infimum 0, which cannot happen on a compact set.
+
+## Real-World Applications
+
+**Numerical integration and step size.** Choosing one step size $h$ for a whole interval assumes a uniform error bound, which requires uniform continuity of the integrand (or of a derivative). Adaptive quadrature exists precisely because the required step varies when uniformity is weak, refining where the function changes fast.
+
+**ODE solvers and existence theory.** The Picard-Lindelöf theorem requires the right-hand side to be Lipschitz in the state variable. Without it, solutions can fail to be unique — $y' = \sqrt y$ with $y(0)=0$ has more than one solution, and $\sqrt{\ }$ failing Lipschitz at 0 is exactly why.
+
+**Machine learning robustness.** The Lipschitz constant of a network bounds how much the output can move when the input is perturbed, so it directly bounds vulnerability to adversarial examples. Spectral normalization is a technique for controlling it deliberately.
+
+**Signal sampling.** Reconstructing a signal from samples with a uniform error guarantee needs uniform continuity or a bandwidth limit. A signal with unbounded rate of change cannot be reconstructed uniformly from any fixed sample rate.
+
+**Control system gain.** A Lipschitz constant is a worst-case gain: the largest output change per unit input change. Stability margins are computed from exactly this quantity.
+
+**Floating-point error propagation.** Whether a fixed input precision guarantees a fixed output precision across the whole input range is a uniform continuity question. Functions that steepen, like division near zero, lose precision catastrophically, which is why numerical code special-cases them.
+
+:::note[You've Got This]
+The whole lesson is quantifier order: continuity lets δ depend on the point, uniform continuity does not. Everything else follows. The theorem to remember is that continuity on a compact set is automatically uniform, and its proof is the finiteness trick — infinitely many deltas can have infimum zero, finitely many have a positive minimum. In practice the quickest route to uniform continuity is a bounded derivative, which gives Lipschitz and hence δ = ε/K. And keep √x on [0,1] in mind as the example showing uniformly continuous does not imply Lipschitz.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="real-uniform-continuity"
+  questions={[
+    {
+      id: "q1",
+      text: "What distinguishes uniform continuity from ordinary continuity?",
+      options: [
+        "Uniform continuity requires f to be differentiable",
+        "In uniform continuity a single δ must work for every point, so δ depends only on ε",
+        "Uniform continuity applies only on unbounded domains",
+        "They are the same condition",
+      ],
+      correctIndex: 1,
+      explanation:
+        "The quantifier ∃δ moves in front of ∀x. Ordinary continuity lets δ be tailored to each point; uniform continuity forbids that dependence.",
+    },
+    {
+      id: "q2",
+      text: "Why is 1/x not uniformly continuous on (0, 1]?",
+      options: [
+        "Because it is discontinuous at 0",
+        "Because taking xₙ = 1/n and yₙ = 1/(n+1) makes the inputs arbitrarily close while the outputs stay exactly 1 apart",
+        "Because it is unbounded",
+        "Because (0,1] is not an interval",
+      ],
+      correctIndex: 1,
+      explanation:
+        "That pair defeats every candidate δ, since ε = 1 is never achieved. Note 0 is not in the domain, so there is no discontinuity there to speak of.",
+    },
+    {
+      id: "q3",
+      text: "What does the compactness theorem say?",
+      options: [
+        "Every continuous function is uniformly continuous",
+        "A continuous function on a compact set is uniformly continuous",
+        "A uniformly continuous function is Lipschitz",
+        "Compact sets are always intervals",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Compactness turns infinitely many pointwise deltas into finitely many, and a minimum of finitely many positive numbers is positive. On unbounded or open domains the conclusion can fail.",
+    },
+    {
+      id: "q4",
+      text: "Which chain of implications is correct?",
+      options: [
+        "continuous ⟹ uniformly continuous ⟹ Lipschitz",
+        "Lipschitz ⟹ uniformly continuous ⟹ continuous",
+        "uniformly continuous ⟹ Lipschitz ⟹ continuous",
+        "All three are equivalent",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Lipschitz gives δ = ε/K directly. Both implications are strict: √x on [0,1] is uniformly continuous without being Lipschitz, and 1/x on (0,1] is continuous without being uniformly continuous.",
+    },
+    {
+      id: "q5",
+      text: "Why is x² uniformly continuous on [0, 5] but not on ℝ?",
+      options: [
+        "Because it is discontinuous somewhere on ℝ",
+        "Because on [0,5] the factor |x + y| is bounded by 10, while on ℝ it is unbounded",
+        "Because [0,5] contains no irrationals",
+        "Because x² is not a polynomial on ℝ",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Writing |x² − y²| = |x − y||x + y| shows the bound depends on how large the inputs can get. On ℝ the pair n and n + 1/n gets arbitrarily close with outputs staying more than 2 apart.",
+    },
+    {
+      id: "q6",
+      text: "What is the easiest practical test for uniform continuity on an interval?",
+      options: [
+        "Check that the function is bounded",
+        "Check that the derivative is bounded, which gives a Lipschitz constant",
+        "Check that the function is increasing",
+        "Check that the domain is open",
+      ],
+      correctIndex: 1,
+      explanation:
+        "By the mean value theorem a derivative bounded by K makes the function Lipschitz with constant K, so δ = ε/K works. This is why sin x is uniformly continuous on ℝ while x² is not.",
+    },
+  ]}
+/>

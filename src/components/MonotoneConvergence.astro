@@ -1,0 +1,88 @@
+---
+/**
+ * MonotoneConvergence — a bounded increasing sequence has nowhere to go but its
+ * supremum. The sequence and its supremum are computed, and the component checks
+ * that the sequence really is increasing before claiming it.
+ */
+const w = 540;
+const h = 308;
+const left = 62;
+const right = 460;
+const axisY = 246;
+const top = 62;
+const nMax = 20;
+
+const supremum = 3;
+const ratio = 0.7;
+const seq = (n: number) => supremum * (1 - Math.pow(ratio, n));
+
+const terms = Array.from({ length: nMax }, (_, i) => ({ n: i + 1, v: seq(i + 1) }));
+const increasing = terms.every((t, i) => i === 0 || t.v > terms[i - 1].v);
+const bound = 3.3;
+
+const vMax = 3.6;
+const px = (n: number) => left + ((n - 1) / (nMax - 1)) * (right - left);
+const py = (v: number) => axisY - (v / vMax) * (axisY - top);
+const ticks = [1, 5, 10, 15, 20];
+---
+
+<figure
+  class="mcv"
+  role="img"
+  aria-label={`A plot of an increasing sequence bounded above by ${bound}. The terms rise and level off at their supremum ${supremum}, illustrating that a bounded monotone sequence must converge, with limit equal to the supremum.`}
+>
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    <text x="16" y="20" class="mcv-head" font-size="12.5" font-weight="bold">Increasing and bounded leaves only one option</text>
+    <text x="16" y="40" class="mcv-sub" font-size="10.5">
+      {increasing ? "Each term exceeds the last, and none exceeds the bound" : "sequence is not monotone"}
+    </text>
+
+    {/* An arbitrary upper bound, and the least one */}
+    <text x={right} y="71" class="mcv-boundlbl" font-size="9.5" text-anchor="end">an upper bound M</text>
+    <line x1={left} y1={py(bound)} x2={right} y2={py(bound)} class="mcv-bound" />
+
+    <line x1={left} y1={py(supremum)} x2={right} y2={py(supremum)} class="mcv-sup" />
+    <text x={right + 8} y={py(supremum) + 4} class="mcv-suplbl" font-size="9.5">{`sup = lim = ${supremum}`}</text>
+
+    <line x1={left - 12} y1={axisY} x2={right + 4} y2={axisY} class="mcv-axis" />
+    <line x1={left} y1={top} x2={left} y2={axisY} class="mcv-axis" />
+    {ticks.map((t) => (
+      <text x={px(t)} y="262" class="mcv-tick" font-size="9.5" text-anchor="middle">{t}</text>
+    ))}
+
+    <polyline points={terms.map((t) => `${px(t.n).toFixed(1)},${py(t.v).toFixed(1)}`).join(" ")} class="mcv-join" fill="none" />
+    {terms.map((t) => (
+      <circle cx={px(t.n)} cy={py(t.v)} r="3.4" class="mcv-dot" />
+    ))}
+
+    <text x={w / 2} y="278" class="mcv-foot" font-size="10.5" text-anchor="middle">
+      A bounded increasing sequence converges, and its limit is its supremum
+    </text>
+    <text x={w / 2} y="296" class="mcv-sub2" font-size="9.5" text-anchor="middle">
+      Over ℚ this fails: the truncations of √2 increase, stay bounded, and reach nothing rational
+    </text>
+  </svg>
+</figure>
+
+<style>
+  .mcv { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .mcv svg { width:100%; max-width:100%; height:auto; }
+  .mcv-bound { stroke:#f0883e; stroke-width:1.4; stroke-dasharray:5,4; }
+  .mcv-boundlbl { fill:#f0883e; font-family:'Libre Baskerville',Georgia,serif; font-style:italic; }
+  .mcv-sup { stroke:#d2a8ff; stroke-width:1.8; }
+  .mcv-suplbl { fill:#d2a8ff; font-family:'Libre Baskerville',Georgia,serif; font-weight:bold; }
+  .mcv-join { stroke:#7ee787; stroke-width:1.1; opacity:0.55; }
+  .mcv-dot { fill:#7ee787; stroke:#7ee787; stroke-width:1.2; }
+  .mcv-axis { stroke:#888; stroke-width:1.3; }
+  .mcv-tick { fill:#9198a1; font-family:'Libre Baskerville',Georgia,serif; }
+  .mcv-head { fill:#eee; font-family:'Libre Baskerville',Georgia,serif; }
+  .mcv-sub, .mcv-sub2 { fill:#9198a1; font-family:'Libre Baskerville',Georgia,serif; font-style:italic; }
+  .mcv-foot { fill:#58a6ff; font-family:'Libre Baskerville',Georgia,serif; }
+  :global([data-theme="light"]) .mcv-bound, :global([data-theme="light"]) .mcv-boundlbl { stroke:#b35900; fill:#b35900; }
+  :global([data-theme="light"]) .mcv-sup, :global([data-theme="light"]) .mcv-suplbl { stroke:#6639ba; fill:#6639ba; }
+  :global([data-theme="light"]) .mcv-join, :global([data-theme="light"]) .mcv-dot { stroke:#116329; fill:#116329; }
+  :global([data-theme="light"]) .mcv-axis { stroke:#666; }
+  :global([data-theme="light"]) :is(.mcv-tick, .mcv-sub, .mcv-sub2) { fill:#57606a; }
+  :global([data-theme="light"]) .mcv-head { fill:#24292f; }
+  :global([data-theme="light"]) .mcv-foot { fill:#0550ae; }
+</style>

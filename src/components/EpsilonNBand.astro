@@ -1,0 +1,110 @@
+---
+/**
+ * EpsilonNBand — the epsilon-N definition of convergence, drawn.
+ *
+ * The sequence, the band and the threshold N are all computed: N is found by
+ * searching for the first index from which every later term stays inside the
+ * band, so the figure cannot claim a threshold that does not work.
+ */
+const w = 540;
+const h = 312;
+const left = 62;
+const right = 460;
+const axisY = 248;
+const top = 62;
+const nMax = 24;
+
+const limit = 1;
+const eps = 0.15;
+const seq = (n: number) => limit + (n % 2 === 0 ? 1 : -1) / n;
+
+const terms = Array.from({ length: nMax }, (_, i) => ({ n: i + 1, v: seq(i + 1) }));
+
+// The first index from which all later terms lie within eps of the limit
+let N = nMax;
+for (let cand = 1; cand <= nMax; cand++) {
+  if (terms.slice(cand - 1).every((t) => Math.abs(t.v - limit) < eps)) {
+    N = cand;
+    break;
+  }
+}
+
+const vMax = 1.6;
+const px = (n: number) => left + ((n - 1) / (nMax - 1)) * (right - left);
+const py = (v: number) => axisY - (v / vMax) * (axisY - top);
+const ticks = [1, 5, 10, 15, 20];
+---
+
+<figure
+  class="enb"
+  role="img"
+  aria-label={`A plot of the sequence 1 plus minus one to the n over n for n up to ${nMax}, with a horizontal band of half-width ${eps} around the limit 1. The first ${N - 1} terms stray outside the band and every term from n equals ${N} onward stays inside it.`}
+>
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    <text x="16" y="20" class="enb-head" font-size="12.5" font-weight="bold">Convergence: eventually inside every band</text>
+    <text x="16" y="40" class="enb-sub" font-size="10.5">aₙ = 1 + (−1)ⁿ⁄n, which converges to 1</text>
+
+    {/* The epsilon band around the limit */}
+    <rect x={left} y={py(limit + eps)} width={right - left} height={py(limit - eps) - py(limit + eps)} class="enb-band" />
+    <line x1={left} y1={py(limit)} x2={right} y2={py(limit)} class="enb-limit" />
+
+    <text x={right + 8} y={py(limit + eps) + 4} class="enb-edge" font-size="9.5">L + ε</text>
+    <text x={right + 8} y={py(limit) + 4} class="enb-limitlbl" font-size="9.5">L = {limit}</text>
+    <text x={right + 8} y={py(limit - eps) + 4} class="enb-edge" font-size="9.5">L − ε</text>
+
+    {/* Threshold */}
+    <text x={px(N)} y="56" class="enb-nlbl" font-size="10.5" text-anchor="middle" font-weight="bold">{`N = ${N}`}</text>
+    <line x1={px(N)} y1={top} x2={px(N)} y2={axisY} class="enb-nline" />
+
+    {/* Axes */}
+    <line x1={left - 12} y1={axisY} x2={right + 4} y2={axisY} class="enb-axis" />
+    <line x1={left} y1={top} x2={left} y2={axisY} class="enb-axis" />
+    {ticks.map((t) => (
+      <text x={px(t)} y="264" class="enb-tick" font-size="9.5" text-anchor="middle">{t}</text>
+    ))}
+
+    {/* Terms */}
+    {terms.map((t) => (
+      <circle
+        cx={px(t.n)}
+        cy={py(t.v)}
+        r="3.6"
+        class={t.n >= N ? "enb-dot enb-in" : "enb-dot enb-out"}
+      />
+    ))}
+
+    <text x={w / 2} y="284" class="enb-foot" font-size="10.5" text-anchor="middle">
+      {`Given ε = ${eps}, every term from n = ${N} onward lies inside the band`}
+    </text>
+    <text x={w / 2} y="302" class="enb-sub2" font-size="9.5" text-anchor="middle">
+      Shrink ε and N grows; convergence says a workable N always exists
+    </text>
+  </svg>
+</figure>
+
+<style>
+  .enb { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .enb svg { width:100%; max-width:100%; height:auto; }
+  .enb-band { fill:#7ee787; fill-opacity:0.13; stroke:#7ee787; stroke-width:1; stroke-dasharray:4,3; }
+  .enb-limit { stroke:#7ee787; stroke-width:1.6; }
+  .enb-axis { stroke:#888; stroke-width:1.3; }
+  .enb-nline { stroke:#d2a8ff; stroke-width:1.5; stroke-dasharray:4,3; }
+  .enb-nlbl { fill:#d2a8ff; font-family:'Libre Baskerville',Georgia,serif; }
+  .enb-dot { stroke-width:1.4; }
+  .enb-in { fill:#7ee787; stroke:#7ee787; }
+  .enb-out { fill:none; stroke:#f0883e; stroke-width:1.8; }
+  .enb-edge { fill:#7ee787; font-family:'Libre Baskerville',Georgia,serif; font-style:italic; }
+  .enb-limitlbl { fill:#7ee787; font-family:'Libre Baskerville',Georgia,serif; font-weight:bold; }
+  .enb-tick { fill:#9198a1; font-family:'Libre Baskerville',Georgia,serif; }
+  .enb-head { fill:#eee; font-family:'Libre Baskerville',Georgia,serif; }
+  .enb-sub, .enb-sub2 { fill:#9198a1; font-family:'Libre Baskerville',Georgia,serif; font-style:italic; }
+  .enb-foot { fill:#58a6ff; font-family:'Libre Baskerville',Georgia,serif; }
+  :global([data-theme="light"]) .enb-band { fill:#116329; fill-opacity:0.1; stroke:#116329; }
+  :global([data-theme="light"]) .enb-limit, :global([data-theme="light"]) .enb-in, :global([data-theme="light"]) .enb-edge, :global([data-theme="light"]) .enb-limitlbl { stroke:#116329; fill:#116329; }
+  :global([data-theme="light"]) .enb-out { stroke:#b35900; fill:none; }
+  :global([data-theme="light"]) .enb-nline, :global([data-theme="light"]) .enb-nlbl { stroke:#6639ba; fill:#6639ba; }
+  :global([data-theme="light"]) .enb-axis { stroke:#666; }
+  :global([data-theme="light"]) :is(.enb-tick, .enb-sub, .enb-sub2) { fill:#57606a; }
+  :global([data-theme="light"]) .enb-head { fill:#24292f; }
+  :global([data-theme="light"]) .enb-foot { fill:#0550ae; }
+</style>

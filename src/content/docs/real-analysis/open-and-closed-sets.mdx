@@ -1,0 +1,289 @@
+---
+title: Open and Closed Sets
+description: Neighbourhoods, limit points, and the topology of the real line
+sidebar:
+  order: 8
+---
+
+import Quiz from "../../../components/Quiz.astro";
+import SymbolKey from "../../../components/SymbolKey.astro";
+import OpenClosedSets from "../../../components/OpenClosedSets.astro";
+
+## What You'll Learn
+
+In this lesson you'll learn what open and closed mean on the real line, why they are not opposites, what a limit point is, and how closedness relates to sequences. This vocabulary is what the next lesson's compactness result is stated in.
+
+<SymbolKey
+  items={[
+    {
+      sym: "(a − δ, a + δ)",
+      read: "a delta-neighbourhood of a",
+      note: "all points within δ of a; the basic building block",
+    },
+    {
+      sym: "Sᶜ",
+      read: "the complement of S",
+      note: "everything in ℝ not in S; closed means the complement is open",
+    },
+    {
+      sym: "S̄",
+      read: "the closure of S",
+      note: "S together with all its limit points",
+    },
+    {
+      sym: "limit point",
+      read: "a point approached arbitrarily closely by other points of S",
+      note: "need not belong to S; 0 is a limit point of (0,1)",
+    },
+    {
+      sym: "∅",
+      read: "the empty set",
+      note: "both open and closed, which is a good sanity check on the definitions",
+    },
+  ]}
+/>
+
+## The Concept
+
+### Neighbourhoods
+
+For $a \in \mathbb{R}$ and $\delta > 0$, the **$\delta$-neighbourhood** of $a$ is
+
+$$
+(a-\delta, a+\delta) = \{x : |x - a| < \delta\}
+$$
+
+Everything in this lesson is phrased in terms of these. "Near $a$" always means "inside some neighbourhood of $a$."
+
+### Open sets
+
+> $U \subseteq \mathbb{R}$ is **open** if for every $a \in U$ there is $\delta > 0$ with $(a-\delta, a+\delta) \subseteq U$.
+
+Every point of an open set has **room to wiggle**: you can move a little in either direction and stay inside.
+
+$(0,1)$ is open. Given $a \in (0,1)$, take $\delta = \min(a, 1-a)$, the distance to the nearer end. Note $\delta$ depends on $a$ and shrinks as you approach an endpoint — but it's always positive, which is all that's required.
+
+$[0,1]$ is **not** open, because the point 0 has no room: every neighbourhood of 0 contains negative numbers.
+
+Properties: arbitrary unions of open sets are open, and **finite** intersections of open sets are open. Infinite intersections can fail, and the standard example is
+
+$$
+\bigcap_{n=1}^\infty \left(-\frac1n, \frac1n\right) = \{0\}
+$$
+
+a single point, which is not open. The word "finite" is load-bearing.
+
+### Closed sets
+
+> $F$ is **closed** if $F^c$ is open.
+
+<OpenClosedSets />
+
+The most important thing here: **open and closed are not opposites.**
+
+- $(0,1)$ is open, not closed.
+- $[0,1]$ is closed, not open.
+- $[0,1)$ is **neither**.
+- $\mathbb{R}$ and $\emptyset$ are **both**.
+
+"Not open" does not mean closed. Sets called both open and closed are sometimes called _clopen_, and on the real line only $\mathbb{R}$ and $\emptyset$ are — a fact equivalent to $\mathbb{R}$ being connected.
+
+### Limit points
+
+> $a$ is a **limit point** of $S$ if every neighbourhood of $a$ contains a point of $S$ **other than $a$ itself**.
+
+The exclusion matters. Without it every point of $S$ would trivially qualify.
+
+For $S = (0,1)$ the limit points are all of $[0,1]$. Both endpoints are limit points despite not belonging to $S$ — that's the whole point of the notion.
+
+For $S = \{1, \frac12, \frac13, \dots\}$, the only limit point is **0**. Each $\frac1n$ is isolated: a small enough neighbourhood catches no other member of $S$.
+
+A point of $S$ that is not a limit point is **isolated**. The set $\mathbb{Z}$ consists entirely of isolated points and has no limit points at all, which makes it closed.
+
+### The sequential characterization
+
+This is the version you'll actually use.
+
+> $F$ is closed $\iff$ whenever $x_n \in F$ and $x_n \to x$, we have $x \in F$.
+
+**A closed set contains the limits of its own convergent sequences.** Closedness is closure under taking limits, which is where the name comes from.
+
+That immediately explains why $(0,1)$ is not closed: $\frac1n \in (0,1)$ and $\frac1n \to 0 \notin (0,1)$. The set leaks a limit.
+
+It also explains why closedness keeps appearing as a hypothesis. Any argument that constructs a point as a limit needs the limit to stay in the set, and closed is exactly that guarantee.
+
+### Closure
+
+The **closure** $\bar S$ is $S$ together with all its limit points. It is the smallest closed set containing $S$.
+
+$\overline{(0,1)} = [0,1]$. And $\overline{\mathbb{Q}} = \mathbb{R}$, because every real is a limit of rationals — the density result from the completeness lesson, restated topologically.
+
+$S$ is closed exactly when $S = \bar S$.
+
+### A set that is closed with empty interior
+
+The **Cantor set** is built by removing middle thirds from $[0,1]$ forever. What remains is closed, contains no interval at all, is uncountable, and has total length 0.
+
+It's worth knowing that such an object exists, because it is the standing reminder that "closed" and "small" and "big" are independent properties. Intuition built on intervals does not survive here.
+
+## Worked Examples
+
+**Example 1: Prove $(2, 5)$ is open.**
+
+**Solution.** Let $a \in (2,5)$, so $2 < a < 5$. Take
+
+$$
+\delta = \min(a - 2, 5 - a) > 0
+$$
+
+If $|x - a| < \delta$ then $x > a - \delta \ge a - (a-2) = 2$ and $x < a + \delta \le a + (5-a) = 5$, so $x \in (2,5)$. ∎
+
+$\delta$ is the distance to the nearer endpoint, and it depends on $a$. Points near an end get a small $\delta$; that's fine, since positivity is all that's needed.
+
+**Example 2: Prove $[0,1]$ is closed, two ways.**
+
+**Solution 1 (complement).** $[0,1]^c = (-\infty, 0) \cup (1,\infty)$, a union of two open intervals, hence open. So $[0,1]$ is closed. ∎
+
+**Solution 2 (sequences).** Let $x_n \in [0,1]$ with $x_n \to x$. Since $x_n \ge 0$ for all $n$, the order limit theorem gives $x \ge 0$. Likewise $x_n \le 1$ gives $x \le 1$. So $x \in [0,1]$. ∎
+
+The second proof is where the order limit theorem earns its place: weak inequalities survive limits, which is exactly what closedness of a closed interval needs.
+
+**Example 3: Show $[0,1)$ is neither open nor closed.**
+
+**Solution.** _Not open._ The point 0 has no room: every $(-\delta, \delta)$ contains negative numbers not in the set.
+
+_Not closed._ The sequence $x_n = 1 - \frac1n$ lies in $[0,1)$ and converges to 1, which is not in the set.
+
+**Neither.** ∎
+
+**Example 4: Find the limit points of $S = \{\frac1n : n \in \mathbb{N}\}$.**
+
+**Solution.** **0 is a limit point.** Any neighbourhood $(-\delta,\delta)$ contains $\frac1n$ for $n > \frac1\delta$, by the Archimedean property, and those points differ from 0.
+
+**No point of $S$ is a limit point.** For a fixed $\frac1n$, the nearest other elements are $\frac{1}{n-1}$ and $\frac{1}{n+1}$, at positive distance, so a small enough neighbourhood isolates it.
+
+**No other point.** Any $a \notin S \cup \{0\}$ has positive distance to the set.
+
+So the only limit point is 0, and $\bar S = S \cup \{0\}$. Since $0 \notin S$, $S$ is **not closed**; adding 0 makes it closed.
+
+**Example 5: An infinite intersection of open sets.**
+
+**Solution.** Let $U_n = \left(-\frac1n, \frac1n\right)$, each open.
+
+Their intersection is $\{0\}$: clearly $0$ is in every $U_n$, and any $x \ne 0$ fails to be in $U_n$ once $\frac1n < |x|$, which happens by the Archimedean property.
+
+$\{0\}$ is **not open** — no neighbourhood of 0 is contained in a single point. So **infinite intersections of open sets need not be open**, which is why the axiom says finite.
+
+Dually, infinite unions of closed sets need not be closed: $\bigcup_n \left[\frac1n, 1\right] = (0,1]$.
+
+**Example 6: Is $\mathbb{Q}$ open, closed, or neither?**
+
+**Solution.** _Not open._ Every neighbourhood of a rational contains irrationals, since the irrationals are dense. So no rational has room to wiggle inside $\mathbb{Q}$.
+
+_Not closed._ The truncations of $\sqrt2$ are rationals converging to $\sqrt2 \notin \mathbb{Q}$.
+
+**Neither.** And $\bar{\mathbb{Q}} = \mathbb{R}$: the closure of the rationals is everything.
+
+$\mathbb{Q}$ is a good stress test, because it is dense yet contains no interval, and it fails both definitions for different reasons.
+
+**Example 7: Is $\mathbb{Z}$ closed?**
+
+**Solution.** Yes. $\mathbb{Z}^c$ is the union of the open intervals $(n, n+1)$ over all integers $n$, and a union of open sets is open. So $\mathbb{Z}$ is closed.
+
+By sequences: a convergent sequence of integers must eventually be constant, since distinct integers are at least 1 apart, so its limit is that integer and lies in $\mathbb{Z}$.
+
+$\mathbb{Z}$ has no limit points at all. **Having no limit points makes closedness automatic**, since there is nothing to fail to contain.
+
+## Real-World Applications
+
+**Feasible regions in optimization.** A constraint $g(x) \le 0$ defines a closed set; $g(x) < 0$ defines an open one. This is not pedantry: closedness is exactly what lets you conclude an optimum is attained rather than merely approached, which is why solvers care whether a constraint is strict.
+
+**Numerical tolerance and stability.** Open sets are where small perturbations are safe. A parameter sitting strictly inside a stability region has room to wiggle; one on the boundary does not, and the difference is open versus closed.
+
+**Image processing.** Morphological operations, opening and closing, take their names directly from this topology, and boundary detection is computing the difference between a set and its interior.
+
+**Machine learning decision boundaries.** A classifier's decision regions are typically open, with the boundary a measure-zero set where the label is ambiguous. Points near the boundary are exactly those with little wiggle room, which is why they are the ones adversarial examples target.
+
+**Control theory.** A system is robustly stable when its parameters lie in the _interior_ of the stability region, since manufacturing tolerance moves them slightly. Designing to the boundary is designing to fail.
+
+**Domain of definition.** A function's natural domain is often open, such as $\ln$ on $(0,\infty)$, and open domains are exactly where you can differentiate, since a derivative needs limits from both sides.
+
+:::note[You've Got This]
+The trap in this lesson is treating open and closed as opposites. They are not: [0,1) is neither, and ℝ is both. Keep the two working pictures — open means every point has room to wiggle, closed means the set keeps the limits of its own sequences. That second one is what you'll actually reach for, and it explains why "closed" turns up as a hypothesis wherever a proof builds a point as a limit. The next lesson combines closed with bounded and gets something considerably more powerful than either alone.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="real-open-and-closed-sets"
+  questions={[
+    {
+      id: "q1",
+      text: "What does it mean for U to be open?",
+      options: [
+        "U contains no endpoints",
+        "For every a in U there is δ > 0 with (a − δ, a + δ) contained in U",
+        "U is an interval",
+        "The complement of U is closed",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Every point needs a neighbourhood entirely inside the set, and δ may depend on the point. The complement condition characterises closed sets, not open ones.",
+    },
+    {
+      id: "q2",
+      text: "Which interval is neither open nor closed?",
+      options: ["(0, 1)", "[0, 1]", "[0, 1)", "ℝ"],
+      correctIndex: 2,
+      explanation:
+        "The point 0 has no wiggle room, so it is not open, and the sequence 1 − 1/n lies inside but converges to 1, which is excluded, so it is not closed. Open and closed are not opposites.",
+    },
+    {
+      id: "q3",
+      text: "What is the sequential characterization of a closed set?",
+      options: [
+        "Every sequence in F converges",
+        "F contains the limit of every convergent sequence whose terms lie in F",
+        "F is bounded",
+        "F contains no isolated points",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Closedness is closure under taking limits, which is where the name comes from. (0,1) fails it because 1/n lies inside but converges to 0, which does not.",
+    },
+    {
+      id: "q4",
+      text: "What are the limit points of S = {1/n : n ∈ ℕ}?",
+      options: [
+        "Every point of S",
+        "Only 0",
+        "All of [0, 1]",
+        "S has no limit points",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Each 1/n is isolated, since its neighbours are a positive distance away, while every neighbourhood of 0 contains infinitely many terms. So the closure is S together with 0, and S itself is not closed.",
+    },
+    {
+      id: "q5",
+      text: "Why must intersections of open sets be restricted to finitely many?",
+      options: [
+        "Infinite intersections are always empty",
+        "Because the intersection of (−1/n, 1/n) over all n is {0}, which is not open",
+        "Because open sets cannot be intersected",
+        "Because infinite intersections are unbounded",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Each of those intervals is open, but the intersection is a single point with no wiggle room. Dually, an infinite union of closed sets can fail to be closed.",
+    },
+    {
+      id: "q6",
+      text: "Is ℚ open, closed, both, or neither?",
+      options: ["Open", "Closed", "Both", "Neither"],
+      correctIndex: 3,
+      explanation:
+        "It is not open because every neighbourhood of a rational contains irrationals, and it is not closed because rational truncations of √2 converge to an irrational. Its closure is all of ℝ.",
+    },
+  ]}
+/>

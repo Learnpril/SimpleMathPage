@@ -1,0 +1,239 @@
+---
+title: Compactness and Heine-Borel
+description: Open covers, the Heine-Borel theorem, and why "closed and bounded" keeps appearing
+sidebar:
+  order: 9
+---
+
+import Quiz from "../../../components/Quiz.astro";
+import HeineBorelCover from "../../../components/HeineBorelCover.astro";
+
+## What You'll Learn
+
+In this lesson you'll learn the open-cover definition of compactness, the Heine-Borel theorem identifying compact subsets of $\mathbb{R}$, and sequential compactness. This is the concept that explains why "continuous on a closed bounded interval" is the hypothesis of half the theorems in calculus.
+
+## The Concept
+
+### Open covers
+
+An **open cover** of $S$ is a collection of open sets whose union contains $S$. A **subcover** is a subcollection that still covers $S$.
+
+> $K$ is **compact** if every open cover of $K$ has a **finite** subcover.
+
+Note the quantifier: _every_ cover must admit a finite subcover. Exhibiting one cover with a finite subcover proves nothing, because every set has such covers ($\mathbb{R}$ alone covers anything). To prove non-compactness you produce a single cover with no finite subcover.
+
+<HeineBorelCover />
+
+### Why $(0,1)$ is not compact
+
+Take the cover $\left\{\left(\frac1n, 1\right) : n \ge 2\right\}$. Every $x \in (0,1)$ is in some member, since $\frac1n < x$ for large enough $n$ by the Archimedean property. So it is a genuine open cover.
+
+But any **finite** subfamily has a largest $\frac1n$, say $\frac{1}{N}$, and then the union misses everything in $\left(0, \frac1N\right]$ — which is non-empty. **No finite subcover.**
+
+The failure is at the missing endpoint. Points sneak arbitrarily close to 0 and 0 is not there to be covered along with them.
+
+Similarly $[0,\infty)$ fails via the cover $\{(-1, n) : n \in \mathbb{N}\}$: finitely many have a largest $n$ and miss everything beyond it. Here the failure is unboundedness.
+
+### The Heine-Borel theorem
+
+> $K \subseteq \mathbb{R}$ is compact $\iff$ $K$ is **closed and bounded**.
+
+Two failure modes, two hypotheses. Bounded rules out escaping to infinity; closed rules out leaking through a missing boundary point. That's exactly what the two counterexamples above illustrate.
+
+**This is why "closed bounded interval" appears everywhere.** The extreme value theorem, uniform continuity of continuous functions, Riemann integrability of continuous functions — each really requires compactness, and on $\mathbb{R}$ that means closed and bounded.
+
+The theorem is specific to $\mathbb{R}^n$. In general metric spaces compactness is strictly stronger than closed and bounded, and closed bounded sets can fail to be compact. Do not carry the equivalence into infinite-dimensional settings.
+
+### Sequential compactness
+
+> $K$ is **sequentially compact** if every sequence in $K$ has a subsequence converging to a point **of $K$**.
+
+In $\mathbb{R}$ (indeed in any metric space) this is equivalent to compactness.
+
+For $\mathbb{R}$ the proof is short and reuses what we have. If $K$ is closed and bounded, take any sequence in $K$. It is bounded, so Bolzano-Weierstrass gives a convergent subsequence, and closedness puts the limit in $K$. ∎
+
+Two lessons pulling their weight at once: **Bolzano-Weierstrass supplies the subsequence, closedness keeps the limit inside.** That pairing is the practical content of compactness, and it is the version most proofs actually use.
+
+Conversely, if $K$ is unbounded you can pick $x_n$ with $|x_n| > n$, and no subsequence converges. If $K$ is not closed there is a sequence in $K$ converging to a point outside $K$, and every subsequence has that same outside limit.
+
+### What compactness buys you
+
+Compactness converts "local" information into "global" information. That's the slogan, and it's worth unpacking.
+
+Suppose each point of $K$ has _some_ neighbourhood where a property holds. On a compact set, finitely many of those neighbourhoods cover everything, and a finite collection has a worst case: a smallest $\delta$, a largest bound. Infinitely many neighbourhoods have no worst case, since an infimum of infinitely many positive numbers can be 0.
+
+**Finiteness is what lets you take a minimum.** That single observation is the engine behind the extreme value theorem and behind continuous-implies-uniformly-continuous, both coming shortly.
+
+## Worked Examples
+
+**Example 1: Is $[0,1] \cup [2,3]$ compact?**
+
+**Solution.** Bounded: contained in $[0,3]$. ✓
+
+Closed: it's a union of two closed sets, and a _finite_ union of closed sets is closed. ✓
+
+**Compact**, by Heine-Borel.
+
+Compact sets need not be intervals or connected. Compactness says nothing about being in one piece.
+
+**Example 2: Is $\{ \frac1n : n \in \mathbb{N}\}$ compact?**
+
+**Solution.** Bounded: contained in $(0,1]$. ✓
+
+Closed: **no.** The sequence $\frac1n$ lies in the set and converges to 0, which is not a member.
+
+**Not compact.** An explicit bad cover: put a tiny interval around each $\frac1n$, narrow enough to catch only that point. Any finite subfamily covers only finitely many points and misses the rest.
+
+Adding the limit point repairs it: $\{ \frac1n \} \cup \{0\}$ is closed and bounded, hence **compact**.
+
+**Example 3: Is $\mathbb{Z}$ compact?**
+
+**Solution.** Closed ✓ (shown in the previous lesson), but **unbounded**.
+
+**Not compact.** The cover $\{(n - \frac12, n+\frac12) : n \in \mathbb{Z}\}$ has no finite subcover, since each member contains exactly one integer and there are infinitely many.
+
+Or sequentially: $x_n = n$ has no convergent subsequence.
+
+**Example 4: Show $[0,\infty)$ is not compact directly.**
+
+**Solution.** Consider $\mathcal{U} = \{(-1, n) : n \in \mathbb{N}\}$, all open, and covering $[0,\infty)$ since every $x \ge 0$ satisfies $x < n$ for some $n$ by the Archimedean property.
+
+Any finite subfamily $\{(-1,n_1), \dots, (-1,n_k)\}$ has union $(-1, N)$ where $N = \max n_i$, which misses $N$ itself.
+
+**No finite subcover.** ∎
+
+**Example 5: Compactness gives a smallest delta.**
+
+Suppose for each $x \in [0,1]$ you are given some $\delta_x > 0$. Must $\inf_x \delta_x > 0$?
+
+**Solution.** Not directly — an infimum over infinitely many positive numbers can be 0. Take $\delta_x = x$ on $(0,1]$; the infimum is 0.
+
+But compactness gives a workaround. Cover $[0,1]$ by the intervals $\left(x - \frac{\delta_x}{2}, x + \frac{\delta_x}{2}\right)$. Finitely many suffice, say indexed by $x_1,\dots,x_k$. Now
+
+$$
+\delta = \min\left(\frac{\delta_{x_1}}{2}, \dots, \frac{\delta_{x_k}}{2}\right) > 0
+$$
+
+because it is a minimum of **finitely many** positive numbers.
+
+That is exactly the argument used to prove uniform continuity from continuity, five lessons ahead. **The whole trick is replacing an infimum with a minimum.**
+
+**Example 6: A compact set with empty interior.**
+
+**Solution.** The Cantor set is closed and bounded, hence compact, yet contains no interval. It is also uncountable.
+
+So compact does not mean "chunky." Compactness controls escape to infinity and leakage at the boundary, and says nothing about size or thickness.
+
+**Example 7: Continuous image of a compact set.**
+
+Show that if $f$ is continuous on a compact $K$ then $f(K)$ is compact.
+
+**Solution.** Take an open cover $\{V_i\}$ of $f(K)$. Continuity makes each preimage $f^{-1}(V_i)$ open (relative to $K$), and these cover $K$.
+
+Compactness of $K$ gives finitely many, $f^{-1}(V_{i_1}),\dots,f^{-1}(V_{i_k})$, covering $K$. Then $V_{i_1},\dots,V_{i_k}$ cover $f(K)$. ∎
+
+**Continuous functions preserve compactness**, and this one fact will immediately give the extreme value theorem: a compact subset of $\mathbb{R}$ is closed and bounded, so it has a maximum and minimum, and those are attained.
+
+## Real-World Applications
+
+**Existence of optima.** Every proof that an optimization problem _has_ a solution rather than merely an infimum runs through compactness. In economics this is how equilibrium existence is established, and in engineering it is why a bounded closed design space guarantees a best design exists.
+
+**Global error bounds in numerical methods.** Error estimates like "the error is at most $C h^2$ on this interval" need a single constant $C$ valid everywhere. That constant comes from taking a maximum over a compact set, and it does not exist on an open or unbounded domain. This is why numerical analysis works on closed intervals.
+
+**Machine learning generalization.** Uniform convergence bounds require compactness of the parameter space or a substitute for it, such as a covering-number condition. Covering numbers are literally counting how many small balls it takes to cover the space — the open-cover definition, quantified.
+
+**Robotics and motion planning.** A robot's configuration space is compact when joint angles are bounded and the constraint set is closed, which guarantees that if a path exists, an optimal one exists too.
+
+**Image compression.** Finite covers of a compact space underlie quantization: you approximate a continuum of possible values by finitely many representatives, with a uniform error bound. Compactness is why finitely many suffice.
+
+**Numerical integration.** Guarantees for quadrature rules need a bound on a derivative across the whole interval, and that bound is a maximum on a compact set. On an unbounded interval the analysis changes completely, which is why improper integrals get separate treatment.
+
+:::note[You've Got This]
+Compactness looks abstract until you see what it does, so hold onto the two working forms. Heine-Borel says compact means closed and bounded, which is the version for checking examples. Sequential compactness says every sequence has a subsequence converging inside the set, which is the version for proofs. And the real payoff is the finiteness trick: a finite collection has a worst case, so you can take a minimum where an infimum would have been useless. Every big theorem in the rest of this section uses that move.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="real-compactness-and-heine-borel"
+  questions={[
+    {
+      id: "q1",
+      text: "What does the Heine-Borel theorem say about subsets of ℝ?",
+      options: [
+        "Compact means bounded",
+        "Compact means closed",
+        "Compact means closed and bounded",
+        "Every closed set is compact",
+      ],
+      correctIndex: 2,
+      explanation:
+        "Both conditions are needed: [0, ∞) is closed but unbounded, and (0,1) is bounded but not closed, and neither is compact. The equivalence is special to ℝⁿ and fails in general metric spaces.",
+    },
+    {
+      id: "q2",
+      text: "Why is (0, 1) not compact?",
+      options: [
+        "Because it is unbounded",
+        "Because the cover by intervals (1/n, 1) has no finite subcover, since any finite subfamily stops short of 0",
+        "Because it contains irrational numbers",
+        "Because it is uncountable",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Finitely many of those intervals have a largest 1/n, leaving everything below it uncovered. The failure is exactly the missing endpoint at 0.",
+    },
+    {
+      id: "q3",
+      text: "What is sequential compactness?",
+      options: [
+        "Every sequence in K converges",
+        "Every sequence in K has a subsequence converging to a point of K",
+        "K contains no sequences",
+        "Every sequence in K is monotone",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Bolzano-Weierstrass supplies the subsequence when K is bounded, and closedness ensures the limit stays in K. In ℝ this is equivalent to the open-cover definition.",
+    },
+    {
+      id: "q4",
+      text: "Is {1/n : n ∈ ℕ} compact?",
+      options: [
+        "Yes, it is bounded",
+        "No, it is not closed, since 1/n → 0 which is not in the set",
+        "Yes, since it is countable",
+        "No, since it is unbounded",
+      ],
+      correctIndex: 1,
+      explanation:
+        "It is bounded but leaks its limit point. Adding 0 makes it closed and bounded, and therefore compact.",
+    },
+    {
+      id: "q5",
+      text: "What does compactness let you do that an infinite collection does not?",
+      options: [
+        "Add infinitely many numbers",
+        "Replace an infimum over infinitely many positive numbers with a minimum over finitely many, which is therefore positive",
+        "Guarantee every function is continuous",
+        "Make every set an interval",
+      ],
+      correctIndex: 1,
+      explanation:
+        "An infimum of infinitely many positive numbers can be 0, but a minimum of finitely many is positive. That is the mechanism behind the extreme value theorem and uniform continuity.",
+    },
+    {
+      id: "q6",
+      text: "If f is continuous and K is compact, what can be said about f(K)?",
+      options: [
+        "It is an interval",
+        "It is compact",
+        "It is open",
+        "Nothing in general",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Pulling back an open cover of f(K) through f gives an open cover of K, and a finite subcover pushes forward. Since a compact subset of ℝ is closed and bounded, this immediately yields the extreme value theorem.",
+    },
+  ]}
+/>

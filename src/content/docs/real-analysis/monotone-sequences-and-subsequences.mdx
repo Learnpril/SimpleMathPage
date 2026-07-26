@@ -1,0 +1,286 @@
+---
+title: Monotone Sequences and Subsequences
+description: The monotone convergence theorem, subsequences, and Bolzano-Weierstrass
+sidebar:
+  order: 5
+---
+
+import Quiz from "../../../components/Quiz.astro";
+import SymbolKey from "../../../components/SymbolKey.astro";
+import MonotoneConvergence from "../../../components/MonotoneConvergence.astro";
+
+## What You'll Learn
+
+In this lesson you'll learn the monotone convergence theorem, how to work with subsequences, and the Bolzano-Weierstrass theorem, which repairs the gap left by "bounded does not imply convergent." All three come straight from completeness.
+
+<SymbolKey
+  items={[
+    {
+      sym: "aₙ ↑",
+      read: "the sequence is increasing",
+      note: "aₙ₊₁ ≥ aₙ for every n; strictly increasing if the inequality is strict",
+    },
+    {
+      sym: "a_{nₖ}",
+      read: "a-sub-n-sub-k, a subsequence",
+      note: "terms selected in order, with indices n₁ < n₂ < ⋯",
+    },
+    {
+      sym: "sup / inf",
+      read: "supremum and infimum",
+      note: "from the completeness lesson; the limits here are one of these",
+    },
+    {
+      sym: "lim sup",
+      read: "limit superior",
+      note: "the largest limit any subsequence can reach",
+    },
+  ]}
+/>
+
+## The Concept
+
+### Monotone sequences
+
+$(a_n)$ is **increasing** if $a_{n+1} \ge a_n$ for all $n$, **decreasing** if $a_{n+1} \le a_n$, and **monotone** if it is one or the other. Monotone sequences are unusually well behaved, and the reason is a single theorem.
+
+### The monotone convergence theorem
+
+> Every bounded monotone sequence converges. If $(a_n)$ is increasing and bounded above, then
+>
+> $$
+> \lim a_n = \sup\{a_n : n \in \mathbb{N}\}
+> $$
+
+<MonotoneConvergence />
+
+_Proof._ Let $S = \{a_n\}$, which is non-empty and bounded above. By completeness $L = \sup S$ exists.
+
+Let $\varepsilon>0$. By the $\varepsilon$-characterization of the supremum there is some term $a_N$ with $a_N > L - \varepsilon$.
+
+Now use monotonicity: for $n > N$ we have $a_n \ge a_N > L - \varepsilon$. And $a_n \le L$ since $L$ is an upper bound. So
+
+$$
+L - \varepsilon < a_n \le L, \quad \text{hence} \quad |a_n - L| < \varepsilon
+$$
+
+Therefore $a_n \to L$. ∎
+
+Look at what that proof used: completeness to produce $L$, the $\varepsilon$-characterization to find one good term, and monotonicity to spread that goodness to every later term. **Monotonicity is what turns a single witness into a tail.**
+
+This is the first theorem where completeness visibly earns its keep. Over $\mathbb{Q}$ the supremum need not exist and the whole argument collapses — the decimal truncations $1, 1.4, 1.41, 1.414, \dots$ are increasing and bounded and converge to nothing rational.
+
+A practical corollary: **a monotone sequence converges if and only if it is bounded.** An unbounded monotone sequence diverges to $\pm\infty$, with no third option. That dichotomy makes monotone sequences much easier to handle than general ones.
+
+### Subsequences
+
+A **subsequence** of $(a_n)$ is a sequence $(a_{n_k})$ where $n_1 < n_2 < n_3 < \cdots$. You keep infinitely many terms, in their original order, and discard the rest.
+
+Two facts do most of the work:
+
+- **If $a_n \to L$, every subsequence converges to $L$.** Since the indices strictly increase, $n_k \ge k$, so the subsequence inherits the tail behaviour.
+- **Contrapositive: two subsequences with different limits proves divergence.** This is the standard divergence tool.
+
+Subsequences can be far better behaved than their parent. $(-1)^n$ diverges, but its even-indexed subsequence is constantly 1.
+
+### Bolzano-Weierstrass
+
+> **Every bounded sequence has a convergent subsequence.**
+
+This is the workhorse theorem of the section. It doesn't promise the sequence converges — $(-1)^n$ doesn't — only that some infinite selection from it does.
+
+_Proof (bisection)._ Suppose $a_n \in [A, B]$ for all $n$. Cut the interval in half. At least one half contains infinitely many terms; call it $I_1$. Cut $I_1$ in half; at least one half contains infinitely many terms; call it $I_2$. Continue.
+
+This produces nested intervals $I_1 \supseteq I_2 \supseteq \cdots$ with lengths $\frac{B-A}{2^k} \to 0$, each containing infinitely many terms. Pick $n_1 < n_2 < \cdots$ with $a_{n_k} \in I_k$, always possible because each $I_k$ holds infinitely many indices.
+
+The left endpoints of the $I_k$ increase and are bounded, so by monotone convergence they converge to some $L$, which lies in every $I_k$. Since $|a_{n_k} - L|$ is at most the length of $I_k$, which tends to 0, we get $a_{n_k} \to L$. ∎
+
+Halving forever is only meaningful because the reals have no gaps. Over $\mathbb{Q}$ the nested intervals can close in on a hole.
+
+_Alternative proof._ Every sequence has a monotone subsequence. Combined with monotone convergence and boundedness, that gives the result immediately — a shorter route if you're allowed the monotone subsequence lemma.
+
+### Limit superior and inferior
+
+For a bounded sequence, define
+
+$$
+\limsup a_n = \lim_{N\to\infty} \sup\{a_n : n > N\}, \qquad \liminf a_n = \lim_{N\to\infty} \inf\{a_n : n > N\}
+$$
+
+The inner suprema decrease as $N$ grows and are bounded, so monotone convergence guarantees both limits exist — **for every bounded sequence, convergent or not.** That is their value: they always exist.
+
+$\limsup$ is the largest limit reachable by a subsequence, $\liminf$ the smallest, and
+
+$$
+a_n \text{ converges} \iff \limsup a_n = \liminf a_n
+$$
+
+For $(-1)^n$: $\limsup = 1$, $\liminf = -1$, unequal, hence divergent.
+
+## Worked Examples
+
+**Example 1: Show $a_{n+1} = \frac{a_n + 2}{2}$ with $a_1 = 0$ converges, and find the limit.**
+
+**Solution.** _Bounded above by 2._ Induction: $a_1 = 0 < 2$; if $a_n < 2$ then $a_{n+1} = \frac{a_n+2}{2} < \frac{2+2}{2} = 2$. ✓
+
+_Increasing._ $a_{n+1} - a_n = \frac{a_n+2}{2} - a_n = \frac{2 - a_n}{2} > 0$ since $a_n < 2$. ✓
+
+By monotone convergence the limit $L$ exists. Now take limits in the recursion, valid because $a_{n+1}$ is a subsequence-shifted copy with the same limit:
+
+$$
+L = \frac{L+2}{2} \implies 2L = L + 2 \implies L = 2
+$$
+
+**The limit is 2.** Note the order: you must prove convergence _first_. Solving the fixed-point equation on a divergent sequence produces a confident wrong answer.
+
+**Example 2: A recursion where the fixed point is a trap.**
+
+For $a_{n+1} = 2a_n$ with $a_1 = 1$, the fixed-point equation $L = 2L$ gives $L = 0$. Is that the limit?
+
+**Solution.** No. The sequence is $1, 2, 4, 8, \dots$, which diverges to infinity.
+
+The fixed-point step assumed a limit exists. It doesn't, so the conclusion is meaningless. **Always establish convergence before passing to the limit.**
+
+**Example 3: Find a convergent subsequence of $a_n = \sin n$.**
+
+**Solution.** The sequence is bounded, since $|\sin n| \le 1$, so Bolzano-Weierstrass guarantees a convergent subsequence exists.
+
+Bolzano-Weierstrass is an **existence** theorem and does not tell you which one. Producing an explicit convergent subsequence of $\sin n$ is genuinely hard, requiring facts about how the integers distribute modulo $2\pi$.
+
+That gap between "exists" and "can be exhibited" is worth noticing. Most of the theorems ahead are existence results, and that is enough to build the theory on.
+
+**Example 4: A bounded divergent sequence and its subsequences.**
+
+Analyse $a_n = \sin\left(\frac{n\pi}{2}\right)$.
+
+**Solution.** The terms cycle $1, 0, -1, 0, 1, 0, -1, \dots$
+
+Three convergent subsequences: indices $\equiv 1 \pmod 4$ give constantly 1; indices $\equiv 3 \pmod 4$ give $-1$; even indices give 0.
+
+Different limits, so the sequence **diverges**. Here $\limsup = 1$ and $\liminf = -1$.
+
+**Example 5: A decreasing sequence bounded below.**
+
+Show $a_n = \frac{n+1}{n}$ converges.
+
+**Solution.** $a_n = 1 + \frac1n$, so $a_{n+1} - a_n = \frac{1}{n+1} - \frac1n < 0$: decreasing. And $a_n > 1$ for all $n$: bounded below.
+
+By monotone convergence it converges, to $\inf\{a_n\} = 1$.
+
+Note $1$ is not a term of the sequence, matching the earlier point that an infimum need not be attained.
+
+**Example 6: Nested intervals.**
+
+If $I_1 \supseteq I_2 \supseteq \cdots$ are closed bounded intervals, must their intersection be non-empty?
+
+**Solution.** Yes. Write $I_k = [x_k, y_k]$. Nesting makes $(x_k)$ increasing and $(y_k)$ decreasing, with $x_k \le y_1$ for all $k$.
+
+So $(x_k)$ is increasing and bounded above; by monotone convergence it converges to $x = \sup x_k$, and $x \in I_k$ for every $k$.
+
+The intersection is non-empty. This is the **nested interval property**, and it is equivalent to completeness.
+
+**Closedness is essential.** For open intervals $\left(0, \frac1k\right)$ the intersection is empty, since any candidate $c > 0$ is excluded once $\frac1k < c$. That is the same phenomenon as an infimum not being attained.
+
+## Real-World Applications
+
+**Fixed-point iteration.** Solving $x = g(x)$ by iterating $x_{n+1} = g(x_n)$ is Example 1's pattern. Proving the iteration is monotone and bounded proves convergence, and only then may you solve the fixed-point equation. Numerical software checks these conditions because skipping them produces plausible nonsense.
+
+**Bisection root finding.** The bisection algorithm is the Bolzano-Weierstrass proof implemented: halve, keep the half containing the target, repeat. Its guaranteed convergence is completeness in code, and each step gains exactly one bit of precision.
+
+**Binary search and divide-and-conquer.** The same halving argument bounds the number of steps at $\log_2$ of the range, which is why bisection needs about 50 iterations for double precision regardless of the function.
+
+**Monotone convergence in economics.** Iterative auction and matching algorithms, including the Gale-Shapley stable-marriage procedure, are proved to terminate by showing some quantity moves monotonically within a bounded range.
+
+**Convergence of learning algorithms.** Value iteration in reinforcement learning converges because the value estimates form a monotone bounded sequence under a contraction. The proof is Example 1 in disguise.
+
+**Signal peak detection.** $\limsup$ formalizes "the largest value the signal keeps returning to," as distinct from a one-off spike. That distinction matters in any long-run stability analysis.
+
+:::note[You've Got This]
+Monotone convergence is the first theorem where you can see completeness doing the work, and it's worth rereading the proof with that in mind: completeness supplies the limit, and monotonicity spreads one good term into a whole tail. Bolzano-Weierstrass is the result you'll use most from here on, and its shape is worth remembering — bounded gets you a convergent _subsequence_, never convergence itself. And one habit that will save you real errors: never solve a fixed-point equation until you have proved the limit exists.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="real-monotone-sequences-and-subsequences"
+  questions={[
+    {
+      id: "q1",
+      text: "What does the monotone convergence theorem say?",
+      options: [
+        "Every monotone sequence converges",
+        "Every bounded sequence converges",
+        "Every bounded monotone sequence converges, with limit equal to its supremum or infimum",
+        "Every convergent sequence is monotone",
+      ],
+      correctIndex: 2,
+      explanation:
+        "Both hypotheses are needed: an unbounded monotone sequence diverges, and a bounded non-monotone one like (−1)ⁿ need not converge. The limit is the supremum for an increasing sequence.",
+    },
+    {
+      id: "q2",
+      text: "What does Bolzano-Weierstrass guarantee?",
+      options: [
+        "Every bounded sequence converges",
+        "Every bounded sequence has a convergent subsequence",
+        "Every sequence has a monotone subsequence",
+        "Every convergent sequence is bounded",
+      ],
+      correctIndex: 1,
+      explanation:
+        "It promises a convergent subsequence, not convergence. (−1)ⁿ is bounded and divergent, yet its even-indexed terms form a constant, convergent subsequence.",
+    },
+    {
+      id: "q3",
+      text: "For aₙ₊₁ = (aₙ + 2)/2 with a₁ = 0, what must you establish before solving L = (L+2)/2?",
+      options: [
+        "That the sequence is bounded and monotone, hence convergent",
+        "That the sequence is decreasing",
+        "That the terms are all rational",
+        "Nothing; the fixed-point equation always gives the limit",
+      ],
+      correctIndex: 0,
+      explanation:
+        "Passing to the limit assumes a limit exists. For aₙ₊₁ = 2aₙ the same step yields L = 0, which is wrong, since that sequence diverges to infinity.",
+    },
+    {
+      id: "q4",
+      text: "How do subsequences prove that a sequence diverges?",
+      options: [
+        "By showing one subsequence is unbounded",
+        "By exhibiting two subsequences with different limits",
+        "By showing no subsequence is monotone",
+        "By showing every subsequence diverges",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Every subsequence of a convergent sequence must share the limit, so two subsequences with different limits rules convergence out. For sin(nπ/2) the values 1, −1 and 0 all appear as subsequential limits.",
+    },
+    {
+      id: "q5",
+      text: "Why is the intersection of nested closed bounded intervals nonempty, while nested open intervals (0, 1/k) intersect emptily?",
+      options: [
+        "Because open intervals are shorter",
+        "Because the increasing left endpoints of closed intervals converge to a point that lies in every one, whereas the limit point 0 is excluded from every open interval",
+        "Because open intervals are not bounded",
+        "Because closed intervals contain rationals",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Monotone convergence supplies the common point, and closedness is what keeps it inside each interval. For (0, 1/k) the only candidate is 0, which none of them contains.",
+    },
+    {
+      id: "q6",
+      text: "For a bounded sequence, when does lim sup equal lim inf?",
+      options: [
+        "Always",
+        "Only when the sequence is monotone",
+        "Exactly when the sequence converges",
+        "Never, unless the sequence is constant",
+      ],
+      correctIndex: 2,
+      explanation:
+        "Both always exist for a bounded sequence, and they agree precisely when it converges. For (−1)ⁿ they are 1 and −1, which is a compact way of certifying divergence.",
+    },
+  ]}
+/>

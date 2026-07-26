@@ -1,0 +1,399 @@
+---
+title: Uniform Convergence of Functions
+description: Why pointwise convergence preserves almost nothing, and what uniform convergence fixes
+sidebar:
+  order: 19
+---
+
+import Quiz from "../../../components/Quiz.astro";
+import SymbolKey from "../../../components/SymbolKey.astro";
+import UniformTube from "../../../components/UniformTube.astro";
+import SequenceSurface3D from "../../../components/SequenceSurface3D.astro";
+
+## What You'll Learn
+
+In this lesson you'll see that a limit of continuous functions need not be continuous, learn the stronger notion — uniform convergence — that repairs this, and understand exactly which operations may be exchanged with a limit and which may not.
+
+<SymbolKey
+  title="Convergence of function sequences"
+  items={[
+    {
+      sym: "fₙ → f pointwise",
+      read: "for each x, the numbers fₙ(x) converge to f(x)",
+      note: "N may depend on both ε and x",
+    },
+    {
+      sym: "fₙ ⇉ f",
+      read: "fₙ converges uniformly to f",
+      note: "one N works for every x at once",
+    },
+    {
+      sym: "‖g‖ = sup |g(x)|",
+      read: "the supremum norm of g",
+      note: "uniform convergence is ‖fₙ − f‖ → 0",
+    },
+    {
+      sym: "Mₙ",
+      read: "a bound on |uₙ(x)| independent of x",
+      note: "used in the Weierstrass M-test",
+    },
+  ]}
+/>
+
+## The Concept
+
+A sequence of functions can converge in more than one way, and the difference is not a technicality — it decides whether continuity, integrals, and derivatives survive the limit.
+
+### Pointwise convergence
+
+> $f_n \to f$ **pointwise** on $S$ if $f_n(x) \to f(x)$ for every $x \in S$.
+
+Spelled out with quantifiers:
+
+$$
+\forall x \in S,\ \forall \varepsilon>0,\ \exists N \text{ such that } n \ge N \implies |f_n(x)-f(x)|<\varepsilon
+$$
+
+The $N$ sits **after** the $x$, so it may depend on it. That is the entire weakness, and it is enough to destroy nearly everything.
+
+### Uniform convergence
+
+> $f_n \to f$ **uniformly** on $S$ if for every $\varepsilon>0$ there is an $N$ such that $n \ge N$ implies $|f_n(x)-f(x)|<\varepsilon$ for **all** $x \in S$.
+
+$$
+\forall \varepsilon>0,\ \exists N,\ \forall n\ge N,\ \forall x \in S: |f_n(x)-f(x)|<\varepsilon
+$$
+
+Same symbols, one quantifier moved. Now $N$ is chosen before $x$ is seen, so a single index works across the whole set. Uniform convergence implies pointwise convergence; the converse fails.
+
+Equivalently, in terms of the supremum norm,
+
+$$
+f_n \rightrightarrows f \iff \|f_n - f\| = \sup_{x\in S}|f_n(x)-f(x)| \to 0
+$$
+
+That reformulation turns a statement about functions into a statement about a single sequence of numbers, which is usually the easiest way to check it.
+
+<UniformTube />
+
+**Geometrically:** draw a band of half-width $\varepsilon$ around the graph of $f$. Uniform convergence says that from some index on, the **entire graph** of $f_n$ lies inside the band. Pointwise convergence only says each individual point eventually gets in, and points may enter at wildly different times.
+
+### The standard example
+
+On $[0,1]$ let $f_n(x)=x^n$. Then
+
+$$
+f_n(x) \to f(x) = \begin{cases}0 & 0\le x<1\\ 1 & x=1\end{cases}
+$$
+
+Every $f_n$ is continuous. The limit is not. So **pointwise limits of continuous functions need not be continuous**, and this single example is why the whole lesson exists.
+
+The convergence is not uniform, because
+
+$$
+\|f_n-f\| = \sup_{0\le x<1}x^n = 1 \quad \text{for every } n
+$$
+
+The supremum is never attained, but it is 1 regardless of $n$: the graph always has a stretch climbing from near 0 to near 1, and that stretch just slides right without flattening.
+
+<SequenceSurface3D />
+
+On $[0, 0.9]$, by contrast, $\|f_n-f\| = 0.9^n \to 0$, so the convergence **is** uniform there. Uniformity is a property of the sequence **together with the set**, and shrinking the set can create it.
+
+### What uniform convergence preserves
+
+> **Continuity.** If each $f_n$ is continuous on $S$ and $f_n \rightrightarrows f$, then $f$ is continuous.
+
+_Proof._ Fix $c$ and $\varepsilon>0$. Pick $n$ with $\|f_n-f\|<\varepsilon/3$. Pick $\delta$ from continuity of that single $f_n$ at $c$, so $|f_n(x)-f_n(c)|<\varepsilon/3$ for $|x-c|<\delta$. Then
+
+$$
+|f(x)-f(c)| \le |f(x)-f_n(x)|+|f_n(x)-f_n(c)|+|f_n(c)-f(c)| < \varepsilon
+$$
+
+∎
+
+**The three-epsilon argument.** Two of the three pieces are controlled by uniformity and one by continuity of a fixed member of the sequence. Note that the middle term needs $|f_n(x)-f_n(c)|$ small for the _same_ $n$ at both points, which is exactly what pointwise convergence cannot deliver.
+
+An equivalent phrasing of the same theorem is that limits may be interchanged:
+
+$$
+\lim_{x\to c}\lim_{n\to\infty}f_n(x) = \lim_{n\to\infty}\lim_{x\to c}f_n(x)
+$$
+
+**Interchanging two limits is the recurring theme of this lesson**, and uniformity is the usual licence to do it.
+
+> **Integrals.** If each $f_n$ is integrable on $[a,b]$ and $f_n \rightrightarrows f$, then $f$ is integrable and
+>
+> $$
+> \int_a^b f_n \to \int_a^b f
+> $$
+
+_Reason._ $\left|\int f_n - \int f\right| \le \int|f_n-f| \le \|f_n-f\|(b-a) \to 0$. One line, and the $(b-a)$ shows why a bounded interval matters.
+
+Pointwise convergence is not enough. Let $f_n$ be a spike of height $n$ and width $1/n$ near 0, and 0 elsewhere. Then $f_n \to 0$ pointwise, but $\int_0^1 f_n = 1$ for every $n$. The limit of the integrals is 1, the integral of the limit is 0.
+
+### What uniform convergence does not preserve
+
+Derivatives. This is the important asymmetry.
+
+Let $f_n(x)=\frac{\sin(nx)}{\sqrt{n}}$. Then $\|f_n\| = 1/\sqrt{n}\to0$, so $f_n \rightrightarrows 0$ uniformly. But
+
+$$
+f_n'(x)=\sqrt{n}\cos(nx)
+$$
+
+which is unbounded and converges to nothing. **Uniform convergence of $f_n$ says nothing about $f_n'$.**
+
+The reason is structural: integration averages and therefore smooths, while differentiation amplifies fine detail, and uniform closeness of the graphs is a statement about values, not slopes.
+
+The correct theorem runs the other way round:
+
+> If $f_n \to f$ pointwise on $[a,b]$, each $f_n'$ is continuous, and $f_n' \rightrightarrows g$ **uniformly**, then $f$ is differentiable and $f'=g$.
+
+The hypothesis is uniform convergence of the **derivatives**, and then the conclusion about $f$ follows. It only needs $f_n$ to converge at a single point, in fact, with the rest supplied by the fundamental theorem.
+
+### Series of functions
+
+For $\sum u_n(x)$, uniform convergence means the partial sums converge uniformly. The workhorse test:
+
+> **Weierstrass M-test.** If $|u_n(x)| \le M_n$ for all $x \in S$ and $\sum M_n$ converges, then $\sum u_n$ converges uniformly on $S$.
+
+The bound $M_n$ must not depend on $x$, which is where the uniformity comes from. For example $\sum \frac{\sin(nx)}{n^2}$ converges uniformly on $\mathbb{R}$ because $|\sin(nx)/n^2| \le 1/n^2$ and $\sum 1/n^2$ converges.
+
+This is what makes power series well behaved: inside the radius of convergence they converge uniformly on every closed subinterval, so they may be differentiated and integrated term by term. **That is the justification for every term-by-term manipulation of Taylor series you performed in calculus.**
+
+### Uniform Cauchy criterion
+
+Just as with sequences of numbers, you can detect uniform convergence without knowing the limit:
+
+> $f_n$ converges uniformly on $S$ if and only if for every $\varepsilon>0$ there is $N$ with $\|f_n - f_m\| < \varepsilon$ for all $n,m \ge N$.
+
+This is completeness once more, now for the space of bounded functions under the supremum norm. Uniform convergence is precisely convergence in that norm, which is why the theory looks so much like the sequence theory from earlier in the section.
+
+## Worked Examples
+
+**Example 1: Show $x^n$ does not converge uniformly on $[0,1]$.**
+
+**Solution.** The pointwise limit $f$ is 0 on $[0,1)$ and 1 at 1.
+
+$$
+\|f_n - f\| \ge \sup_{0\le x<1}|x^n - 0| = 1
+$$
+
+since $x^n \to 1$ as $x \to 1^-$. The supremum norm is 1 for every $n$, so it does not go to 0. **Not uniform.** ∎
+
+Alternatively, cite the theorem: each $f_n$ is continuous, the limit is not, so the convergence cannot be uniform. That argument is shorter and generalizes.
+
+**Example 2: Same functions, smaller set.**
+
+Show $x^n \rightrightarrows 0$ on $[0,a]$ for any fixed $a<1$.
+
+**Solution.** On $[0,a]$ the limit is 0 everywhere, and
+
+$$
+\|f_n - 0\| = \sup_{0\le x\le a}x^n = a^n \to 0
+$$
+
+since $0\le a<1$. **Uniform.** ∎
+
+**Uniformity depends on the set.** The failure at $x=1$ is entirely local, and excluding any neighbourhood of it fixes the problem.
+
+**Example 3: Uniform convergence with a non-obvious supremum.**
+
+Let $f_n(x)=\frac{nx}{1+n^2x^2}$ on $[0,\infty)$. Is the convergence uniform?
+
+**Solution.** For fixed $x>0$, the numerator grows like $n$ and the denominator like $n^2$, so $f_n(x)\to0$; and $f_n(0)=0$. The pointwise limit is 0.
+
+Find the supremum by calculus: setting the derivative to zero gives $x=1/n$, where
+
+$$
+f_n(1/n)=\frac{1}{1+1}=\frac12
+$$
+
+So $\|f_n\|=\frac12$ for every $n$. **Not uniform**, even though every $f_n$ and the limit are continuous.
+
+**Continuity of the limit does not imply uniformity.** The theorem is one-directional: uniform plus continuous gives continuous, not the reverse.
+
+**Example 4: The spike, and why integrals need uniformity.**
+
+Let $f_n$ be the triangular spike of height $n$ on $[0, 2/n]$, peaking at $1/n$, and 0 afterwards. Compare $\lim\int f_n$ with $\int\lim f_n$.
+
+**Solution.** For any fixed $x>0$, once $n>2/x$ the spike has passed and $f_n(x)=0$; also $f_n(0)=0$. So $f_n \to 0$ pointwise.
+
+Each integral is the triangle's area:
+
+$$
+\int_0^1 f_n = \tfrac12 \cdot \tfrac{2}{n}\cdot n = 1
+$$
+
+So $\lim_n \int f_n = 1$ while $\int \lim_n f_n = 0$.
+
+**The two operations do not commute here**, and the reason is that $\|f_n - 0\| = n \to \infty$, the opposite of uniform.
+
+**Example 5: Uniform convergence without convergence of derivatives.**
+
+Let $f_n(x)=\frac{\sin(nx)}{\sqrt n}$ on $\mathbb{R}$.
+
+**Solution.** $\|f_n - 0\| = \frac{1}{\sqrt n}\to0$, so $f_n \rightrightarrows 0$.
+
+But $f_n'(x)=\sqrt n\cos(nx)$, and at $x=0$ this is $\sqrt n \to \infty$. The derivatives diverge.
+
+**Uniform convergence of the functions gives nothing about the derivatives.** The graphs get flat in amplitude while oscillating ever faster, so slopes blow up.
+
+**Example 6: Apply the M-test.**
+
+Show $\sum_{n=1}^{\infty}\frac{\cos(nx)}{n^2}$ converges uniformly on $\mathbb{R}$.
+
+**Solution.** For every real $x$,
+
+$$
+\left|\frac{\cos(nx)}{n^2}\right| \le \frac{1}{n^2} = M_n
+$$
+
+and $\sum 1/n^2$ converges as a $p$-series with $p=2>1$. By the M-test the series converges uniformly on all of $\mathbb{R}$. ∎
+
+Consequently the sum is a continuous function of $x$, and it may be integrated term by term over any bounded interval. Note that term-by-term **differentiation** is not licensed here: the differentiated series has terms $-\sin(nx)/n$, and $\sum 1/n$ diverges.
+
+**Example 7: Term-by-term integration.**
+
+Use $\frac{1}{1-x}=\sum_{n=0}^{\infty}x^n$ to obtain a series for $-\ln(1-x)$ on $|x|<1$.
+
+**Solution.** On $[-a,a]$ with $a<1$, the M-test with $M_n=a^n$ gives uniform convergence. So integration from 0 to $x$ may be done term by term:
+
+$$
+-\ln(1-x)=\int_0^x\frac{dt}{1-t}=\sum_{n=0}^{\infty}\frac{x^{n+1}}{n+1}=\sum_{k=1}^{\infty}\frac{x^k}{k}
+$$
+
+∎
+
+**Every term-by-term manipulation of a power series is an appeal to uniform convergence on a closed subinterval**, which is why the operation is safe strictly inside the radius and needs separate care at the endpoints.
+
+## Real-World Applications
+
+**Fourier series.** Whether a Fourier series converges to the function, and in what sense, is the founding question of this whole circle of ideas. The Gibbs phenomenon near a jump is non-uniform convergence made visible: the overshoot shrinks in width but not in height.
+
+**Numerical analysis.** A method that converges pointwise but not uniformly can be badly wrong on part of the domain at every step. Error bounds are quoted in the supremum norm precisely because that is the uniform notion.
+
+**Machine learning.** Uniform convergence of empirical averages to true expectations over a class of functions is the central object of statistical learning theory; it is what turns "low training error" into "low true error".
+
+**Signal processing.** Reconstructing a signal from finitely many terms is a question about uniform approximation, and the ringing artefacts near sharp edges in images and audio are the same non-uniformity as Gibbs.
+
+**PDE solutions.** Solutions are frequently built as series or as limits of approximations, and uniform convergence is what allows the limit to be differentiated and to satisfy the equation. Without it the limit may exist and solve nothing.
+
+**Numerical integration and simulation.** Interchanging a limit with an integral is the routine step in Monte Carlo estimates and in convergence proofs for numerical schemes. The spike example is the standing warning about doing it unjustified.
+
+:::note[You've Got This]
+One quantifier moved, and the consequences run through the rest of analysis. If you keep just one picture, keep the tube: uniform convergence means the whole graph eventually fits inside a band of any prescribed width. And keep one asymmetry: uniform convergence is friendly to continuity and integration, and useless for differentiation. That is not an arbitrary fact — integration averages, differentiation amplifies — and recognizing which side of that line a problem sits on is most of the skill here.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="real-uniform-convergence-of-functions"
+  questions={[
+    {
+      id: "q1",
+      text: "What is the difference between pointwise and uniform convergence?",
+      options: [
+        "Pointwise requires continuity, uniform does not",
+        "In pointwise convergence N may depend on x; in uniform convergence one N works for all x",
+        "Uniform convergence only applies to bounded functions",
+        "There is no difference for continuous functions",
+      ],
+      correctIndex: 1,
+      explanation:
+        "The quantifier on x moves after the quantifier on N. That single reordering is what makes uniform convergence strong enough to preserve continuity.",
+    },
+    {
+      id: "q2",
+      text: "For fₙ(x) = xⁿ on [0, 1], what is ‖fₙ − f‖ where f is the pointwise limit?",
+      options: [
+        "1/n",
+        "0",
+        "1 for every n",
+        "It depends on n in a complicated way",
+      ],
+      correctIndex: 2,
+      explanation:
+        "The supremum of xⁿ over [0, 1) is 1 for every n, since xⁿ → 1 as x → 1⁻. The norm never shrinks, so the convergence is not uniform even though it holds at every point.",
+    },
+    {
+      id: "q3",
+      text: "What does xⁿ on [0, 1] demonstrate?",
+      options: [
+        "That uniform limits of continuous functions can be discontinuous",
+        "That a pointwise limit of continuous functions can be discontinuous",
+        "That continuous functions are never integrable",
+        "That pointwise convergence implies uniform convergence",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Each xⁿ is continuous but the limit jumps at x = 1. A uniform limit of continuous functions is always continuous, so this also proves the convergence is not uniform.",
+    },
+    {
+      id: "q4",
+      text: "In the proof that a uniform limit of continuous functions is continuous, how is ε split?",
+      options: [
+        "Into two halves",
+        "Into three thirds: two from uniform convergence and one from continuity of a single fₙ",
+        "It is not split",
+        "Into n equal parts",
+      ],
+      correctIndex: 1,
+      explanation:
+        "The estimate |f(x) − f(c)| is broken through fₙ(x) and fₙ(c). Uniformity handles the two outer gaps and continuity of that one fₙ handles the middle one.",
+    },
+    {
+      id: "q5",
+      text: "Which operation does uniform convergence NOT justify interchanging with the limit?",
+      options: [
+        "Taking a limit at a point",
+        "Integration over a bounded interval",
+        "Differentiation",
+        "Evaluation",
+      ],
+      correctIndex: 2,
+      explanation:
+        "sin(nx)/√n converges uniformly to 0 while its derivative √n·cos(nx) diverges. Integration averages and smooths, whereas differentiation amplifies fine detail.",
+    },
+    {
+      id: "q6",
+      text: "A spike of height n and width 1/n near 0 converges pointwise to 0, yet its integral is 1 for every n. What does this show?",
+      options: [
+        "That the spike is not integrable",
+        "That pointwise convergence does not permit interchanging limit and integral",
+        "That the limit function is discontinuous",
+        "That the integral does not exist",
+      ],
+      correctIndex: 1,
+      explanation:
+        "The limit of the integrals is 1 while the integral of the limit is 0. The supremum distance is n, going to infinity, which is as far from uniform as possible.",
+    },
+    {
+      id: "q7",
+      text: "What does the Weierstrass M-test require?",
+      options: [
+        "That each uₙ is continuous",
+        "Bounds |uₙ(x)| ≤ Mₙ independent of x, with Σ Mₙ convergent",
+        "That the series converges pointwise first",
+        "That uₙ is monotone in n",
+      ],
+      correctIndex: 1,
+      explanation:
+        "The bound must not depend on x, which is the source of the uniformity. It is the standard route to term-by-term integration of power series and Fourier series.",
+    },
+    {
+      id: "q8",
+      text: "For fₙ(x) = nx/(1 + n²x²) on [0, ∞), the pointwise limit is 0 and every function is continuous. Is the convergence uniform?",
+      options: [
+        "Yes, because the limit is continuous",
+        "No, because the maximum is 1/2 at x = 1/n for every n",
+        "Yes, because each fₙ is bounded",
+        "It cannot be determined",
+      ],
+      correctIndex: 1,
+      explanation:
+        "The peak keeps its height 1/2 and merely slides toward 0, so the supremum norm never shrinks. This shows a continuous limit is not enough to guarantee uniformity.",
+    },
+  ]}
+/>

@@ -1,0 +1,429 @@
+---
+title: The Riemann Integral
+description: Building the integral from upper and lower sums, and proving the fundamental theorem
+sidebar:
+  order: 18
+---
+
+import Quiz from "../../../components/Quiz.astro";
+import SymbolKey from "../../../components/SymbolKey.astro";
+import DarbouxSums from "../../../components/DarbouxSums.astro";
+
+## What You'll Learn
+
+In this lesson you'll build the integral from scratch using upper and lower sums, see the criterion that decides which functions are integrable, meet a bounded function that is not, and finally prove the fundamental theorem of calculus instead of quoting it.
+
+<SymbolKey
+  title="Integration notation"
+  items={[
+    {
+      sym: "P = {x₀, …, xₙ}",
+      read: "a partition of [a, b]",
+      note: "any finite set of points with a = x₀ < ⋯ < xₙ = b",
+    },
+    {
+      sym: "mᵢ, Mᵢ",
+      read: "the infimum and supremum of f on the ith subinterval",
+      note: "these exist for any bounded f; no continuity needed",
+    },
+    {
+      sym: "L(f, P)",
+      read: "the lower sum",
+      note: "Σ mᵢ Δxᵢ — always an underestimate",
+    },
+    {
+      sym: "U(f, P)",
+      read: "the upper sum",
+      note: "Σ Mᵢ Δxᵢ — always an overestimate",
+    },
+    {
+      sym: "∫ f (underlined)",
+      read: "the lower integral",
+      note: "the supremum of all lower sums",
+    },
+    {
+      sym: "∫ f (overlined)",
+      read: "the upper integral",
+      note: "the infimum of all upper sums",
+    },
+    {
+      sym: "‖P‖",
+      read: "the mesh of P",
+      note: "the width of the widest subinterval",
+    },
+  ]}
+/>
+
+## The Concept
+
+Calculus defined the integral as a limit of sums with the partition getting finer, and left "the limit exists" undiscussed. Analysis reorganizes the definition so that existence becomes a checkable condition.
+
+### Partitions and the two sums
+
+Let $f$ be **bounded** on $[a,b]$. Boundedness is assumed from the start, and it is what makes everything below well defined. A **partition** $P$ is a finite set of points
+
+$$
+a = x_0 < x_1 < \cdots < x_n = b
+$$
+
+On the $i$th subinterval put $m_i = \inf f$ and $M_i = \sup f$, which exist by the completeness axiom because $f$ is bounded. Then
+
+$$
+L(f,P) = \sum_{i=1}^{n} m_i \Delta x_i, \qquad U(f,P) = \sum_{i=1}^{n} M_i \Delta x_i
+$$
+
+Notice what is _not_ here: no sample point is chosen, no continuity is assumed, and no limit is taken yet. Using inf and sup instead of function values at chosen points is the **Darboux** formulation, and it gives the same integral as Riemann's while being much easier to work with.
+
+<DarbouxSums />
+
+### Refinement, and the two integrals
+
+If $Q$ refines $P$ — meaning $P \subseteq Q$ — then
+
+$$
+L(f,P) \le L(f,Q) \le U(f,Q) \le U(f,P)
+$$
+
+Adding a point can only raise a lower sum and lower an upper sum, because the inf over a smaller set is at least as large. So refining tightens the trap and never loosens it.
+
+A short but crucial consequence: **every** lower sum is below **every** upper sum, even for unrelated partitions, since both compare to their common refinement. Therefore
+
+$$
+\underline{\int_a^b} f = \sup_P L(f,P) \le \inf_P U(f,P) = \overline{\int_a^b} f
+$$
+
+Both numbers exist for any bounded $f$. The lower integral is a supremum of a set bounded above; the upper is an infimum of a set bounded below. Completeness again.
+
+### The definition
+
+> $f$ is **Riemann integrable** on $[a,b]$ if it is bounded and the lower and upper integrals agree. Their common value is $\int_a^b f$.
+
+That is the whole definition. Integrability is the statement that the gap between the two integrals is zero.
+
+### The Riemann criterion
+
+The definition is hard to use directly, since it involves two sups and infs. This version is what you actually use:
+
+> $f$ is integrable on $[a,b]$ if and only if for every $\varepsilon > 0$ there is **some** partition $P$ with
+>
+> $$
+> U(f,P) - L(f,P) < \varepsilon
+> $$
+
+You only need to exhibit one good partition per $\varepsilon$, and the structure is identical to every other $\varepsilon$ argument in this section.
+
+### Which functions are integrable
+
+> **Every continuous function on $[a,b]$ is integrable.**
+
+_Proof sketch._ $[a,b]$ is compact, so $f$ is **uniformly continuous**. Given $\varepsilon$, choose $\delta$ so that $|f(s)-f(t)| < \varepsilon/(b-a)$ whenever $|s-t| < \delta$, and take any partition with mesh below $\delta$. On each subinterval $M_i - m_i \le \varepsilon/(b-a)$, so
+
+$$
+U(f,P) - L(f,P) \le \frac{\varepsilon}{b-a}\sum \Delta x_i = \varepsilon
+$$
+
+∎
+
+**This is the payoff for the uniform continuity lesson.** Ordinary continuity would give a different $\delta$ at each point and no single mesh would work. Uniformity is what lets one partition handle the whole interval at once.
+
+> **Every monotone function on $[a,b]$ is integrable**, even with infinitely many jumps.
+
+For an increasing $f$ and a uniform partition of width $\Delta x$, the differences $M_i - m_i = f(x_i) - f(x_{i-1})$ telescope:
+
+$$
+U - L = \Delta x \big(f(b)-f(a)\big) = \frac{(b-a)(f(b)-f(a))}{n}
+$$
+
+which goes to 0. Monotone functions can have countably many discontinuities and remain integrable.
+
+More generally, a bounded function with finitely many discontinuities is integrable, and in fact one with a discontinuity set of measure zero is too — that last statement is the Lebesgue criterion, and it is the natural stopping point of this theory.
+
+### A bounded function that is not integrable
+
+Let $f$ be 1 at every rational and 0 at every irrational, on $[0,1]$. Bounded, defined everywhere, and not integrable.
+
+Every subinterval, however short, contains both rationals and irrationals. So $m_i = 0$ and $M_i = 1$ for every subinterval of every partition, giving
+
+$$
+L(f,P) = 0 \quad\text{and}\quad U(f,P) = 1 \quad\text{for all } P
+$$
+
+The gap is 1 no matter how you refine. **The lower integral is 0 and the upper integral is 1**, so the definition simply does not apply.
+
+This is the example that motivated Lebesgue's integral, which handles it: the rationals are countable, so the "1" is spread over a set of measure zero and the Lebesgue integral is 0.
+
+### Properties
+
+All of these are proved from the sums, and none is assumed:
+
+- **Linearity.** $\int (\alpha f + \beta g) = \alpha\int f + \beta\int g$.
+- **Additivity over intervals.** $\int_a^c f = \int_a^b f + \int_b^c f$ for $a<b<c$.
+- **Monotonicity.** $f \le g$ implies $\int f \le \int g$.
+- **The basic bound.** $\left|\int_a^b f\right| \le \int_a^b|f| \le M(b-a)$ when $|f|\le M$.
+- **Products.** If $f,g$ are integrable so is $fg$, though $\int fg$ is unrelated to $\int f \cdot \int g$.
+
+The additivity proof is fussier than it looks, because it requires comparing partitions of the pieces with partitions of the whole. This is the usual pattern in this subject: the statements are unsurprising and the proofs are where the work is.
+
+### The fundamental theorem
+
+There are two halves, and they say different things.
+
+> **First part (differentiating an integral).** If $f$ is integrable on $[a,b]$, define $F(x) = \int_a^x f$. Then $F$ is continuous on $[a,b]$. If in addition $f$ is continuous at $c$, then $F$ is differentiable at $c$ with $F'(c) = f(c)$.
+
+_Proof of the derivative claim._ For $h > 0$,
+
+$$
+\frac{F(c+h)-F(c)}{h} = \frac{1}{h}\int_c^{c+h} f
+$$
+
+which is an average of $f$ over $[c, c+h]$ and therefore lies between the inf and sup of $f$ there. Continuity at $c$ squeezes both toward $f(c)$ as $h \to 0$. ∎
+
+Note the strength of the continuity half: $F$ is continuous whenever $f$ is merely integrable. **Integration smooths.** Differentiation does the opposite.
+
+> **Second part (evaluating an integral).** If $f$ is integrable on $[a,b]$ and $F$ is **any** antiderivative of $f$ there, then
+>
+> $$
+> \int_a^b f = F(b) - F(a)
+> $$
+
+_Proof._ Take any partition. On each $[x_{i-1},x_i]$ the mean value theorem gives $t_i$ with
+
+$$
+F(x_i)-F(x_{i-1}) = f(t_i)\Delta x_i
+$$
+
+Summing, the left side telescopes to $F(b)-F(a)$, while the right side is a sum with $m_i \le f(t_i) \le M_i$, so
+
+$$
+L(f,P) \le F(b)-F(a) \le U(f,P)
+$$
+
+for **every** partition $P$. Since $f$ is integrable, the only number with that property is $\int_a^b f$. ∎
+
+**That is the MVT doing the work again.** The theorem that made "+C" legitimate is also what turns the integral into a subtraction, which is why every definite integral you ever computed rests on it.
+
+The two parts are not the same statement: the first builds an antiderivative out of an integral, the second uses any antiderivative to evaluate one. A function can be integrable without being a derivative, and can be a derivative without being integrable.
+
+## Worked Examples
+
+**Example 1: Integrate $x^2$ over $[0,1]$ from the definition.**
+
+**Solution.** Use the uniform partition with $\Delta x = 1/n$. Since $x^2$ increases, $m_i = ((i-1)/n)^2$ and $M_i = (i/n)^2$.
+
+$$
+U(f,P_n) = \frac{1}{n}\sum_{i=1}^{n}\frac{i^2}{n^2} = \frac{1}{n^3}\cdot\frac{n(n+1)(2n+1)}{6}
+$$
+
+which simplifies to $\frac{2n^2+3n+1}{6n^2} \to \frac13$.
+
+Similarly $L(f,P_n) \to \frac13$, and indeed
+
+$$
+U - L = \frac{1}{n}\big(f(1)-f(0)\big) = \frac{1}{n} \to 0
+$$
+
+Both integrals equal $\frac13$, so $\int_0^1 x^2 = \frac13$. ✓
+
+**This is why nobody integrates from the definition twice.** The fundamental theorem exists so this calculation never has to be repeated.
+
+**Example 2: Show the Dirichlet function is not integrable.**
+
+**Solution.** $f = 1$ on rationals, 0 on irrationals, on $[0,1]$.
+
+Both rationals and irrationals are **dense**, so every subinterval of positive length contains points of each kind. Hence $m_i = 0$ and $M_i = 1$ always, giving $L(f,P)=0$ and $U(f,P)=1$ for every $P$.
+
+The lower integral is 0, the upper is 1, and they differ. **Not integrable.** ∎
+
+Notice that no refinement helps at all — the gap is not shrinking slowly, it is constant.
+
+**Example 3: Integrate a step function.**
+
+Let $f(x) = 1$ for $x \in [0,2)$ and $f(x)=3$ for $x\in[2,5]$. Compute $\int_0^5 f$.
+
+**Solution.** Use the partition $\{0, 2, 5\}$. On $[0,2]$, $m=1$ and $M=3$ because 2 is an endpoint of both pieces; that is inconvenient, so use $\{0, 2-\eta, 2+\eta, 5\}$ for small $\eta>0$ instead.
+
+The middle strip contributes at most $3 \cdot 2\eta$, and the outer strips give $1\cdot(2-\eta)$ and $3\cdot(3-\eta)$. As $\eta \to 0$,
+
+$$
+U - L \le 2 \cdot 2\eta \to 0
+$$
+
+so $f$ is integrable with $\int_0^5 f = 1(2) + 3(3) = 11$.
+
+**A single jump costs nothing**, because you can isolate it inside a subinterval of arbitrarily small width, and a bounded function times a small width is small.
+
+**Example 4: Additivity is needed, not obvious.**
+
+Explain why $\int_0^5 f$ in Example 3 is not just "$\int_0^2 + \int_2^5$" by definition.
+
+**Solution.** The definition of $\int_0^5 f$ ranges over partitions of $[0,5]$, and most of them do not include the point 2. To split at 2 you must first argue that inserting 2 changes neither integral, which is the refinement lemma, and then that partitions of the pieces combine to partitions of the whole.
+
+**The property is a theorem, not a definition.** It's a good illustration of how much of this subject consists of verifying things calculus used silently.
+
+**Example 5: Use the first part of the FTC.**
+
+Let $F(x) = \int_1^{x^2} \frac{1}{t}\,dt$. Find $F'(x)$ for $x > 0$.
+
+**Solution.** Let $G(u)=\int_1^u \frac1t dt$. Since $1/t$ is continuous on any interval avoiding 0, the first part gives $G'(u)=1/u$. Then $F = G \circ (x^2)$, and the chain rule gives
+
+$$
+F'(x) = \frac{1}{x^2}\cdot 2x = \frac{2}{x}
+$$
+
+Consistent with $F(x) = \ln(x^2) = 2\ln x$. ✓
+
+**The FTC supplies the derivative and the chain rule does the rest**, which is the standard shape of these problems.
+
+**Example 6: An integrable function whose integral is not differentiable everywhere.**
+
+Take $f = \operatorname{sign}(x)$ on $[-1,1]$, so $f=-1$ for $x<0$, $f=1$ for $x>0$, $f(0)=0$. What is $F(x)=\int_{-1}^x f$?
+
+**Solution.** $f$ is bounded with one discontinuity, hence integrable. Computing, $F(x) = -(x+1)$ for $x\le0$ and $F(x)=x-1$ for $x\ge0$, so $F(x)=|x|-1$.
+
+$F$ is continuous everywhere, as the first part promises. But $F$ is **not** differentiable at 0, precisely where $f$ is discontinuous.
+
+**The differentiability half of the FTC needs continuity at the point**, and this shows the hypothesis is not removable.
+
+**Example 7: Bound an integral without computing it.**
+
+Show $\int_0^1 \frac{dx}{1+x^4}$ lies between $\frac12$ and 1.
+
+**Solution.** On $[0,1]$ the denominator runs from 1 to 2, so
+
+$$
+\tfrac12 \le \frac{1}{1+x^4} \le 1
+$$
+
+Monotonicity of the integral gives $\frac12 \le \int_0^1 \frac{dx}{1+x^4} \le 1$. ∎
+
+The true value is about $0.8669$. **Bounding the integrand and integrating the bounds** is the most-used estimate in the subject, and it is a one-line consequence of monotonicity.
+
+## Real-World Applications
+
+**Numerical integration.** Trapezoid, midpoint, and Simpson rules are partition sums with specified sample points, and their error bounds come from Taylor's theorem on each subinterval. The Riemann criterion is what guarantees the answer they converge to exists.
+
+**Probability.** A continuous distribution's probabilities are integrals of a density. Cumulative distribution functions are exactly the $F(x)=\int f$ of the first part of the FTC, which is why they are always continuous even when the density has jumps.
+
+**Signal processing.** Energy, average power, and Fourier coefficients are all integrals of functions with jumps. Integrability of piecewise-continuous functions is the reason square waves and sampled signals can be analysed at all.
+
+**Physics.** Work, flux, centre of mass, and moment of inertia are integrals over regions where material properties change abruptly. Additivity over subintervals is what licenses computing piece by piece and adding.
+
+**Finance.** Accumulated value under a varying rate is $\int r(t)\,dt$, and rate schedules are step functions. This is Example 3 with money attached.
+
+**Where Riemann runs out.** Modern probability, Fourier analysis, and PDE theory all use the Lebesgue integral instead, and the Dirichlet function is the shortest explanation of why. Riemann integration also behaves badly under limits, which is the subject of the next lesson.
+
+:::note[You've Got This]
+This lesson is the one where integration stops being a symbol-manipulation game. The definition is short — trap the area between lower and upper sums and demand the gap close — and everything else follows from refinement. Two things are worth remembering above the rest: uniform continuity is what makes continuous functions integrable, and the mean value theorem is what makes the fundamental theorem true. If you noticed those two earlier lessons paying off here, you're reading the subject the way it was built.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="real-the-riemann-integral"
+  questions={[
+    {
+      id: "q1",
+      text: "What must be assumed about f before lower and upper sums can even be defined?",
+      options: [
+        "That f is continuous",
+        "That f is bounded on [a, b]",
+        "That f is monotone",
+        "That f is differentiable",
+      ],
+      correctIndex: 1,
+      explanation:
+        "The infimum and supremum on each subinterval must be finite, and boundedness is exactly what guarantees that. Continuity is a much stronger assumption that is not needed for the definition.",
+    },
+    {
+      id: "q2",
+      text: "What happens to the sums when a partition is refined?",
+      options: [
+        "Both sums increase",
+        "The lower sum increases or stays equal and the upper sum decreases or stays equal",
+        "Both sums decrease",
+        "Nothing predictable happens",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Splitting a subinterval can only raise the infimum on the pieces and lower the supremum. This is why refinement tightens the trap and never loosens it.",
+    },
+    {
+      id: "q3",
+      text: "The Riemann criterion says f is integrable exactly when:",
+      options: [
+        "U(f, P) − L(f, P) < ε for every partition P and every ε > 0",
+        "For each ε > 0 there exists some partition P with U(f, P) − L(f, P) < ε",
+        "L(f, P) = 0 for some P",
+        "f is continuous on [a, b]",
+      ],
+      correctIndex: 1,
+      explanation:
+        "One good partition per ε is enough; requiring it for every partition would be impossible since coarse partitions always have large gaps.",
+    },
+    {
+      id: "q4",
+      text: "Which earlier theorem is used to prove that continuous functions are integrable?",
+      options: [
+        "The intermediate value theorem",
+        "Uniform continuity on a compact interval",
+        "The mean value theorem",
+        "The monotone convergence theorem",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Uniform continuity supplies a single δ that works across the whole interval, so one mesh size controls every subinterval at once. Pointwise continuity would give a different δ at each point and no single partition would suffice.",
+    },
+    {
+      id: "q5",
+      text: "For the function equal to 1 on rationals and 0 on irrationals on [0, 1], what are L(f, P) and U(f, P)?",
+      options: [
+        "0 and 0",
+        "1 and 1",
+        "0 and 1, for every partition",
+        "They depend on P",
+      ],
+      correctIndex: 2,
+      explanation:
+        "Both sets are dense, so every subinterval has infimum 0 and supremum 1 regardless of the partition. The gap stays exactly 1, so the function is not Riemann integrable.",
+    },
+    {
+      id: "q6",
+      text: "If f is merely integrable and F(x) = ∫ₐˣ f, what can be said about F?",
+      options: [
+        "F is differentiable everywhere",
+        "F is continuous on [a, b], and differentiable at each point where f is continuous",
+        "F is integrable but need not be continuous",
+        "Nothing can be said",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Integration smooths: continuity of F follows from boundedness of f alone. Differentiability at a point requires f to be continuous there, as F(x) = |x| − 1 for the sign function shows.",
+    },
+    {
+      id: "q7",
+      text: "Which theorem is used in the proof that ∫ₐᵇ f = F(b) − F(a)?",
+      options: [
+        "The extreme value theorem",
+        "The mean value theorem, applied on each subinterval",
+        "Heine–Borel",
+        "The Bolzano–Weierstrass theorem",
+      ],
+      correctIndex: 1,
+      explanation:
+        "The MVT converts each increment F(xᵢ) − F(xᵢ₋₁) into f(tᵢ)Δxᵢ, and the sum telescopes while staying trapped between L and U. Since f is integrable, only the integral can sit between them for every partition.",
+    },
+    {
+      id: "q8",
+      text: "Which class of functions is integrable even when it has infinitely many discontinuities?",
+      options: [
+        "Unbounded functions",
+        "Monotone functions",
+        "Functions with a dense discontinuity set",
+        "Nowhere-continuous functions",
+      ],
+      correctIndex: 1,
+      explanation:
+        "For an increasing f the differences Mᵢ − mᵢ telescope, giving U − L = (b − a)(f(b) − f(a))/n on a uniform partition. A monotone function can have countably many jumps and still be integrable.",
+    },
+  ]}
+/>

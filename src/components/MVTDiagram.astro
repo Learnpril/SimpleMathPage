@@ -1,115 +1,132 @@
 ---
 /**
- * MVTDiagram — shows f(x) = x^2 on [1, 3] with:
- * - The curve
- * - Secant line from (1,1) to (3,9) (slope = 4, dashed purple)
- * - Tangent line at c=2 (slope = 4, solid green, parallel to secant)
- * - Dots at endpoints and at c
- * Demonstrates: tangent at c is parallel to the secant.
+ * MVTDiagram — the mean value theorem: some tangent is parallel to the secant.
+ *
+ * The point c is found by solving f'(c) = (f(b) − f(a))/(b − a) numerically, so
+ * the tangent drawn really is parallel to the secant.
  */
-const w = 440;
-const h = 320;
-const pad = 55;
-const gw = w - 2 * pad;
-const gh = h - 2 * pad;
-const xMin = 0, xMax = 4, yMin = 0, yMax = 10;
-const sx = (x: number) => pad + ((x - xMin) / (xMax - xMin)) * gw;
-const sy = (y: number) => pad + ((yMax - y) / (yMax - yMin)) * gh;
+const w = 540;
+const h = 306;
+const left = 70;
+const right = 450;
+const bottom = 232;
+const top = 66;
 
-const f = (x: number) => x * x;
-const pts: string[] = [];
-for (let i = 0; i <= 60; i++) {
-  const x = xMin + i * (xMax - xMin) / 60;
-  const y = f(x);
-  if (y <= yMax) pts.push(`${sx(x)},${sy(y)}`);
+const a = 0.3;
+const b = 2.6;
+const f = (x: number) => 0.35 * x * x * x - 1.6 * x * x + 2.1 * x + 0.4;
+const df = (x: number) => 1.05 * x * x - 3.2 * x + 2.1;
+
+const slope = (f(b) - f(a)) / (b - a);
+
+// Bisection on df(x) − slope over the subinterval where it changes sign
+function findC() {
+  let lo = a;
+  let hi = b;
+  const g = (x: number) => df(x) - slope;
+  // Walk to find a sign change, then bisect
+  const steps = 400;
+  for (let i = 0; i < steps; i++) {
+    const x1 = a + ((b - a) * i) / steps;
+    const x2 = a + ((b - a) * (i + 1)) / steps;
+    if (g(x1) * g(x2) <= 0) {
+      lo = x1;
+      hi = x2;
+      break;
+    }
+  }
+  for (let i = 0; i < 60; i++) {
+    const mid = (lo + hi) / 2;
+    if (g(lo) * g(mid) <= 0) hi = mid;
+    else lo = mid;
+  }
+  return (lo + hi) / 2;
 }
+const c = findC();
 
-// Secant from (1,1) to (3,9), slope = 4
-const secSlope = 4;
-const secX1 = 0.5, secX2 = 3.5;
-const secY1 = 1 + secSlope * (secX1 - 1);
-const secY2 = 1 + secSlope * (secX2 - 1);
+const xLo = 0;
+const xHi = 2.9;
+const yLo = 0;
+const yHi = 2.4;
+const px = (x: number) => left + ((x - xLo) / (xHi - xLo)) * (right - left);
+const py = (y: number) => bottom - ((y - yLo) / (yHi - yLo)) * (bottom - top);
 
-// Tangent at c=2, f(2)=4, slope=4 (same as secant)
-const c = 2, fc = 4;
-const tanX1 = 0.5, tanX2 = 3.5;
-const tanY1 = fc + secSlope * (tanX1 - c);
-const tanY2 = fc + secSlope * (tanX2 - c);
+const curve = Array.from({ length: 181 }, (_, i) => {
+  const x = xLo + (i / 180) * (xHi - xLo);
+  return `${px(x).toFixed(1)},${py(f(x)).toFixed(1)}`;
+}).join(" ");
+
+// Tangent at c, drawn as a short segment
+const tanHalf = 0.55;
+const tan = [c - tanHalf, c + tanHalf].map((x) => `${px(x).toFixed(1)},${py(f(c) + slope * (x - c)).toFixed(1)}`).join(" ");
 ---
 
-<figure class="mvt" role="img" aria-label="Mean Value Theorem: tangent at c is parallel to the secant from a to b">
+<figure
+  class="mvt"
+  role="img"
+  aria-label={`A curve with a secant drawn between two points. The secant slope is about ${slope.toFixed(3)}, and at the interior point c of about ${c.toFixed(3)} the tangent has that same slope, so the tangent is parallel to the secant.`}
+>
   <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
-    {/* Grid */}
-    {[1,2,3].map(v => (
-      <line x1={sx(v)} y1={sy(yMin)} x2={sx(v)} y2={sy(yMax)} class="mvt-grid" stroke-width="0.5" />
+    <text x="16" y="20" class="mvt-head" font-size="12.5" font-weight="bold">Somewhere the tangent matches the average slope</text>
+    <text x="16" y="40" class="mvt-sub" font-size="10.5">
+      {`Secant slope over [a, b] is ${slope.toFixed(3)}, and f′(c) equals it at c ≈ ${c.toFixed(3)}`}
+    </text>
+
+    <line x1={left - 10} y1={bottom} x2={right + 6} y2={bottom} class="mvt-axis" />
+    <line x1={left} y1={top - 4} x2={left} y2={bottom} class="mvt-axis" />
+
+    <polyline points={curve} class="mvt-curve" fill="none" />
+
+    {/* The secant, and the parallel tangent at c */}
+    <line x1={px(a)} y1={py(f(a))} x2={px(b)} y2={py(f(b))} class="mvt-secant" />
+    <polyline points={tan} class="mvt-tangent" fill="none" />
+
+    {/* Vertical guides down to the axis, so labels can live below it */}
+    {[a, c, b].map((x) => (
+      <line x1={px(x)} y1={py(f(x))} x2={px(x)} y2={bottom} class="mvt-drop" />
     ))}
-    {[2,4,6,8].map(v => (
-      <line x1={sx(xMin)} y1={sy(v)} x2={sx(xMax)} y2={sy(v)} class="mvt-grid" stroke-width="0.5" />
-    ))}
-    <line x1={sx(xMin)} y1={sy(0)} x2={sx(xMax)} y2={sy(0)} class="mvt-axis" stroke-width="1.5" />
-    <line x1={sx(0)} y1={sy(yMin)} x2={sx(0)} y2={sy(yMax)} class="mvt-axis" stroke-width="1.2" />
 
-    {/* Secant line (dashed purple) */}
-    <line x1={sx(secX1)} y1={sy(secY1)} x2={sx(secX2)} y2={sy(secY2)}
-          class="mvt-secant" stroke-width="2" stroke-dasharray="7,5" />
+    <circle cx={px(a)} cy={py(f(a))} r="4" class="mvt-end" />
+    <circle cx={px(b)} cy={py(f(b))} r="4" class="mvt-end" />
+    <circle cx={px(c)} cy={py(f(c))} r="4.4" class="mvt-cdot" />
 
-    {/* Tangent line at c (solid green, parallel) */}
-    <line x1={sx(tanX1)} y1={sy(tanY1)} x2={sx(tanX2)} y2={sy(tanY2)}
-          class="mvt-tangent" stroke-width="2.5" />
+    <text x={px(a)} y="252" class="mvt-lbl" font-size="9.5" text-anchor="middle">a</text>
+    <text x={px(c)} y="252" class="mvt-clbl" font-size="9.5" text-anchor="middle">{`c ≈ ${c.toFixed(2)}`}</text>
+    <text x={px(b)} y="252" class="mvt-lbl" font-size="9.5" text-anchor="middle">b</text>
 
-    {/* Curve */}
-    <polyline points={pts.join(' ')} fill="none" class="mvt-curve" stroke-width="3" />
-
-    {/* Endpoint dots */}
-    <circle cx={sx(1)} cy={sy(1)} r="6" class="mvt-dot-end" />
-    <circle cx={sx(3)} cy={sy(9)} r="6" class="mvt-dot-end" />
-    {/* c dot */}
-    <circle cx={sx(c)} cy={sy(fc)} r="7" class="mvt-dot-c" />
-
-    {/* Tick labels */}
-    <text class="mvt-tick" x={sx(1)} y={sy(0) + 30} font-size="11" text-anchor="middle">a = 1</text>
-    <text class="mvt-tick" x={sx(3)} y={sy(0) + 16} font-size="11" text-anchor="middle">b = 3</text>
-    <text class="mvt-tick" x={sx(2)} y={sy(0) + 16} font-size="11" text-anchor="middle">c = 2</text>
+    <text x={w / 2} y="278" class="mvt-foot" font-size="10.5" text-anchor="middle">
+      f′(c) = (f(b) − f(a)) / (b − a) for some c strictly inside (a, b)
+    </text>
+    <text x={w / 2} y="296" class="mvt-sub2" font-size="9.5" text-anchor="middle">
+      The proof applies Rolle's theorem to the difference between f and the secant line
+    </text>
   </svg>
-  <div class="mvt-legend">
-    <span class="mvt-leg-item"><span class="mvt-swatch mvt-sw-curve"></span> f(x) = x²</span>
-    <span class="mvt-leg-item"><span class="mvt-swatch mvt-sw-sec"></span> secant (avg rate = 4)</span>
-    <span class="mvt-leg-item"><span class="mvt-swatch mvt-sw-tan"></span> tangent at c (slope = 4)</span>
-    <span class="mvt-leg-item mvt-leg-note">parallel lines = same slope</span>
-  </div>
 </figure>
 
 <style>
   .mvt { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
-  .mvt svg { max-width:100%; height:auto; }
-  .mvt-grid { stroke:#333; }
-  .mvt-axis { stroke:#666; }
-  .mvt-curve { stroke:#58a6ff; }
-  .mvt-secant { stroke:#d2a8ff; }
-  .mvt-tangent { stroke:#7ee787; }
-  .mvt-dot-end { fill:#888; }
-  .mvt-dot-c { fill:#f0883e; }
-  .mvt-tick { fill:#888; font-family:'Libre Baskerville',Georgia,serif; }
-  .mvt-legend {
-    display:flex; gap:1rem; flex-wrap:wrap; justify-content:center;
-    margin-top:0.5rem; font-family:'Libre Baskerville',Georgia,serif; font-size:0.82rem;
-  }
-  .mvt-leg-item { display:flex; align-items:center; gap:0.35rem; }
-  .mvt-swatch { display:inline-block; width:18px; height:4px; border-radius:2px; }
-  .mvt-sw-curve { background:#58a6ff; }
-  .mvt-sw-sec { background:#d2a8ff; }
-  .mvt-sw-tan { background:#7ee787; }
-  .mvt-leg-note { color:#f0883e; font-style:italic; }
-
-  :global([data-theme="light"]) .mvt-grid { stroke:#ddd; }
-  :global([data-theme="light"]) .mvt-axis { stroke:#999; }
-  :global([data-theme="light"]) .mvt-curve { stroke:#0550ae; }
-  :global([data-theme="light"]) .mvt-secant { stroke:#6639ba; }
-  :global([data-theme="light"]) .mvt-tangent { stroke:#116329; }
-  :global([data-theme="light"]) .mvt-dot-c { fill:#b35900; }
-  :global([data-theme="light"]) .mvt-tick { fill:#666; }
-  :global([data-theme="light"]) .mvt-sw-curve { background:#0550ae; }
-  :global([data-theme="light"]) .mvt-sw-sec { background:#6639ba; }
-  :global([data-theme="light"]) .mvt-sw-tan { background:#116329; }
-  :global([data-theme="light"]) .mvt-leg-note { color:#b35900; }
+  .mvt svg { width:100%; max-width:100%; height:auto; }
+  .mvt-axis { stroke:#888; stroke-width:1.3; }
+  .mvt-curve { stroke:#58a6ff; stroke-width:2.2; }
+  .mvt-secant { stroke:#f0883e; stroke-width:1.8; stroke-dasharray:6,4; }
+  .mvt-tangent { stroke:#7ee787; stroke-width:2.4; }
+  .mvt-drop { stroke:#555; stroke-width:1; stroke-dasharray:3,3; }
+  .mvt-end { fill:#f0883e; stroke:#f0883e; stroke-width:1.6; }
+  .mvt-cdot { fill:#7ee787; stroke:#eee; stroke-width:1.2; }
+  .mvt-lbl { fill:#9198a1; font-family:'Libre Baskerville',Georgia,serif; }
+  .mvt-clbl { fill:#7ee787; font-family:'Libre Baskerville',Georgia,serif; font-weight:bold; }
+  .mvt-head { fill:#eee; font-family:'Libre Baskerville',Georgia,serif; }
+  .mvt-sub, .mvt-sub2 { fill:#9198a1; font-family:'Libre Baskerville',Georgia,serif; font-style:italic; }
+  .mvt-foot { fill:#58a6ff; font-family:'Libre Baskerville',Georgia,serif; }
+  :global([data-theme="light"]) .mvt-axis { stroke:#666; }
+  :global([data-theme="light"]) .mvt-curve, :global([data-theme="light"]) .mvt-foot { stroke:#0550ae; fill:#0550ae; }
+  :global([data-theme="light"]) .mvt-curve { fill:none; }
+  :global([data-theme="light"]) .mvt-secant, :global([data-theme="light"]) .mvt-end { stroke:#b35900; fill:#b35900; }
+  :global([data-theme="light"]) .mvt-secant { fill:none; }
+  :global([data-theme="light"]) .mvt-tangent, :global([data-theme="light"]) .mvt-clbl { stroke:#116329; fill:#116329; }
+  :global([data-theme="light"]) .mvt-tangent { fill:none; }
+  :global([data-theme="light"]) .mvt-cdot { fill:#116329; stroke:#fff; }
+  :global([data-theme="light"]) .mvt-drop { stroke:#ccc; }
+  :global([data-theme="light"]) :is(.mvt-lbl, .mvt-sub, .mvt-sub2) { fill:#57606a; }
+  :global([data-theme="light"]) .mvt-head { fill:#24292f; }
 </style>

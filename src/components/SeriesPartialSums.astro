@@ -1,0 +1,102 @@
+---
+/**
+ * SeriesPartialSums — a convergent series beside a divergent one, both plotted
+ * from their actual partial sums. The geometric sums level off at 1; the harmonic
+ * sums keep climbing even though their terms shrink to zero.
+ */
+const w = 540;
+const h = 302;
+const kMax = 14;
+const axisY = 230;
+const top = 70;
+
+function partials(term: (k: number) => number) {
+  let acc = 0;
+  return Array.from({ length: kMax }, (_, i) => {
+    acc += term(i + 1);
+    return { k: i + 1, s: acc };
+  });
+}
+const geo = partials((k) => 1 / Math.pow(2, k));
+const harm = partials((k) => 1 / k);
+const geoLimit = 1;
+
+const panels = [
+  { l: 54, r: 250, vMax: 1.2, data: geo, cls: "green", title: "Σ 1⁄2ᵏ converges" },
+  { l: 300, r: 496, vMax: 3.6, data: harm, cls: "orange", title: "Σ 1⁄k diverges" },
+];
+const pxOf = (p: (typeof panels)[0], k: number) => p.l + ((k - 1) / (kMax - 1)) * (p.r - p.l);
+const pyOf = (p: (typeof panels)[0], v: number) => axisY - (v / p.vMax) * (axisY - top);
+const ticks = [1, 5, 10, 14];
+---
+
+<figure
+  class="sps"
+  role="img"
+  aria-label={`Two plots of partial sums. The geometric series with ratio one half levels off at 1, reaching ${geo[kMax - 1].s.toFixed(4)} by term ${kMax}. The harmonic series keeps rising, reaching ${harm[kMax - 1].s.toFixed(3)} by term ${kMax} with no bound.`}
+>
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    <text x="16" y="20" class="sps-head" font-size="12.5" font-weight="bold">A series is the limit of its partial sums</text>
+
+    {panels.map((p) => (
+      <text x={(p.l + p.r) / 2} y="52" class={`sps-title sps-t-${p.cls}`} font-size="11" text-anchor="middle" font-weight="bold">{p.title}</text>
+    ))}
+
+    {/* The geometric limit */}
+    <line x1={panels[0].l} y1={pyOf(panels[0], geoLimit)} x2={panels[0].r} y2={pyOf(panels[0], geoLimit)} class="sps-limit" />
+    <text x={panels[0].r} y="90" class="sps-limitlbl" font-size="9.5" text-anchor="end">sum = 1</text>
+
+    {panels.map((p) => (
+      <g>
+        <line x1={p.l - 10} y1={axisY} x2={p.r + 4} y2={axisY} class="sps-axis" />
+        <line x1={p.l} y1={top} x2={p.l} y2={axisY} class="sps-axis" />
+        <polyline
+          points={p.data.map((d) => `${pxOf(p, d.k).toFixed(1)},${pyOf(p, d.s).toFixed(1)}`).join(" ")}
+          class={`sps-join sps-j-${p.cls}`}
+          fill="none"
+        />
+        {p.data.map((d) => (
+          <circle cx={pxOf(p, d.k)} cy={pyOf(p, d.s)} r="3.2" class={`sps-dot sps-d-${p.cls}`} />
+        ))}
+        {ticks.map((t) => (
+          <text x={pxOf(p, t)} y="246" class="sps-tick" font-size="9.5" text-anchor="middle">{t}</text>
+        ))}
+      </g>
+    ))}
+
+    <text x={w / 2} y="270" class="sps-foot" font-size="10.5" text-anchor="middle">
+      {`After ${kMax} terms: ${geo[kMax - 1].s.toFixed(4)} versus ${harm[kMax - 1].s.toFixed(3)} and still climbing`}
+    </text>
+    <text x={w / 2} y="288" class="sps-sub" font-size="9.5" text-anchor="middle">
+      Terms tending to zero is necessary but not sufficient; the harmonic series proves it
+    </text>
+  </svg>
+</figure>
+
+<style>
+  .sps { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .sps svg { width:100%; max-width:100%; height:auto; }
+  .sps-axis { stroke:#888; stroke-width:1.3; }
+  .sps-limit { stroke:#d2a8ff; stroke-width:1.6; stroke-dasharray:5,4; }
+  .sps-limitlbl { fill:#d2a8ff; font-family:'Libre Baskerville',Georgia,serif; font-weight:bold; }
+  .sps-join { stroke-width:1.1; opacity:0.6; }
+  .sps-j-green { stroke:#7ee787; }
+  .sps-j-orange { stroke:#f0883e; }
+  .sps-dot { stroke-width:1.2; }
+  .sps-d-green { fill:#7ee787; stroke:#7ee787; }
+  .sps-d-orange { fill:#f0883e; stroke:#f0883e; }
+  .sps-title { font-family:'Libre Baskerville',Georgia,serif; }
+  .sps-t-green { fill:#7ee787; }
+  .sps-t-orange { fill:#f0883e; }
+  .sps-tick { fill:#9198a1; font-family:'Libre Baskerville',Georgia,serif; }
+  .sps-head { fill:#eee; font-family:'Libre Baskerville',Georgia,serif; }
+  .sps-foot { fill:#58a6ff; font-family:'Libre Baskerville',Georgia,serif; }
+  .sps-sub { fill:#9198a1; font-family:'Libre Baskerville',Georgia,serif; font-style:italic; }
+  :global([data-theme="light"]) .sps-axis { stroke:#666; }
+  :global([data-theme="light"]) .sps-limit, :global([data-theme="light"]) .sps-limitlbl { stroke:#6639ba; fill:#6639ba; }
+  :global([data-theme="light"]) .sps-j-green, :global([data-theme="light"]) .sps-d-green, :global([data-theme="light"]) .sps-t-green { stroke:#116329; fill:#116329; }
+  :global([data-theme="light"]) .sps-j-orange, :global([data-theme="light"]) .sps-d-orange, :global([data-theme="light"]) .sps-t-orange { stroke:#b35900; fill:#b35900; }
+  :global([data-theme="light"]) :is(.sps-tick, .sps-sub) { fill:#57606a; }
+  :global([data-theme="light"]) .sps-head { fill:#24292f; }
+  :global([data-theme="light"]) .sps-foot { fill:#0550ae; }
+</style>

@@ -1,0 +1,190 @@
+---
+/**
+ * UniformTube — uniform convergence as a tube condition. Left: a sequence whose
+ * whole graph eventually fits inside the ε-tube around the limit. Right: a
+ * sequence that converges at every point yet never fits, because its supremum
+ * distance to the limit stays at 1.
+ *
+ * Both supremum distances are measured from the samples, not asserted.
+ */
+const w = 540;
+const h = 306;
+const plotTop = 68;
+const plotBottom = 202;
+
+/** Sampled supremum of |g − limit| on [x0, x1]. */
+function supDist(g: (x: number) => number, lim: (x: number) => number, x0: number, x1: number) {
+  let m = 0;
+  for (let k = 0; k <= 600; k++) {
+    const x = x0 + (k / 600) * (x1 - x0);
+    m = Math.max(m, Math.abs(g(x) - lim(x)));
+  }
+  return m;
+}
+
+type Panel = {
+  left: number;
+  right: number;
+  title: string;
+  xLo: number;
+  xHi: number;
+  yLo: number;
+  yHi: number;
+  eps: number;
+  n: number;
+  fn: (x: number) => number;
+  lim: (x: number) => number;
+  tickLo: string;
+  tickHi: string;
+};
+
+const panels: Panel[] = [
+  {
+    left: 44,
+    right: 246,
+    title: "uniform: the graph fits",
+    xLo: 0,
+    xHi: 3,
+    yLo: -0.6,
+    yHi: 3.6,
+    eps: 0.35,
+    n: 6,
+    fn: (x) => x + Math.sin(6 * x) / 6,
+    lim: (x) => x,
+    tickLo: "0",
+    tickHi: "3",
+  },
+  {
+    left: 294,
+    right: 496,
+    title: "pointwise only: it escapes",
+    xLo: 0,
+    xHi: 1,
+    yLo: -0.42,
+    yHi: 1.18,
+    eps: 0.25,
+    n: 8,
+    fn: (x) => Math.pow(x, 8),
+    lim: () => 0,
+    tickLo: "0",
+    tickHi: "1",
+  },
+];
+
+const measured = panels.map((p) => ({
+  sup: supDist(p.fn, p.lim, p.xLo, p.xHi),
+  fits: supDist(p.fn, p.lim, p.xLo, p.xHi) < p.eps,
+}));
+
+const pxOf = (p: Panel, x: number) =>
+  p.left + ((x - p.xLo) / (p.xHi - p.xLo)) * (p.right - p.left);
+const pyOf = (p: Panel, y: number) =>
+  plotBottom - ((y - p.yLo) / (p.yHi - p.yLo)) * (plotBottom - plotTop);
+
+const clamp = (p: Panel, y: number) => Math.max(p.yLo, Math.min(p.yHi, y));
+const trace = (p: Panel, g: (x: number) => number) =>
+  Array.from({ length: 161 }, (_, i) => {
+    const x = p.xLo + (i / 160) * (p.xHi - p.xLo);
+    return `${pxOf(p, x).toFixed(1)},${pyOf(p, clamp(p, g(x))).toFixed(1)}`;
+  }).join(" ");
+
+/** Where the right-hand curve leaves the tube, found by bisection. */
+function exitPoint(p: Panel) {
+  const g = (x: number) => Math.abs(p.fn(x) - p.lim(x)) - p.eps;
+  let lo = p.xLo;
+  let hi = p.xHi;
+  if (g(lo) * g(hi) > 0) return null;
+  for (let i = 0; i < 60; i++) {
+    const mid = (lo + hi) / 2;
+    if (g(lo) * g(mid) <= 0) hi = mid;
+    else lo = mid;
+  }
+  return (lo + hi) / 2;
+}
+const exitX = exitPoint(panels[1]);
+---
+
+<figure
+  class="utb"
+  role="img"
+  aria-label={`Two panels comparing uniform and pointwise convergence. On the left the sequence term has supremum distance ${measured[0].sup.toFixed(3)} from its limit, inside the tube of half-width ${panels[0].eps}. On the right the supremum distance is ${measured[1].sup.toFixed(3)}, so the graph leaves the tube of half-width ${panels[1].eps} no matter how large the index is.`}
+>
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    <text x="16" y="20" class="utb-head" font-size="12.5" font-weight="bold">Uniform convergence is a tube condition</text>
+    <text x="16" y="38" class="utb-sub" font-size="10.5">The whole graph of fₙ must sit inside the ε-band around the limit</text>
+
+    <line x1="270" y1="52" x2="270" y2="208" class="utb-divide" />
+
+    {panels.map((p, k) => (
+      <g>
+        <text x={(p.left + p.right) / 2} y="58" class="utb-panel" font-size="10" text-anchor="middle">{p.title}</text>
+
+        {/* The ε-tube around the limit, and the limit itself */}
+        <polyline points={trace(p, (x) => p.lim(x) + p.eps)} class="utb-edge" fill="none" />
+        <polyline points={trace(p, (x) => p.lim(x) - p.eps)} class="utb-edge" fill="none" />
+        <polyline points={trace(p, p.lim)} class="utb-lim" fill="none" />
+
+        {/* The sequence term */}
+        <polyline points={trace(p, p.fn)} class={k === 0 ? "utb-fn-ok" : "utb-fn-bad"} fill="none" />
+
+        <line x1={p.left - 6} y1={plotBottom} x2={p.right + 6} y2={plotBottom} class="utb-axis" />
+        <text x={p.left} y="216" class="utb-tick" font-size="9.5" text-anchor="middle">{p.tickLo}</text>
+        <text x={p.right} y="216" class="utb-tick" font-size="9.5" text-anchor="middle">{p.tickHi}</text>
+
+        <text
+          x={(p.left + p.right) / 2}
+          y="236"
+          class="utb-val"
+          font-size="9.5"
+          text-anchor="middle">{`n = ${p.n},  ε = ${p.eps}`}</text>
+        <text
+          x={(p.left + p.right) / 2}
+          y="252"
+          class={measured[k].fits ? "utb-ok" : "utb-bad"}
+          font-size="9.5"
+          text-anchor="middle">{`sup |fₙ − f| = ${measured[k].sup.toFixed(3)} ${measured[k].fits ? "<" : ">"} ε`}</text>
+      </g>
+    ))}
+
+    {exitX !== null && (
+      <circle cx={pxOf(panels[1], exitX)} cy={pyOf(panels[1], panels[1].eps)} r="3.6" class="utb-exit" />
+    )}
+
+    <text x={w / 2} y="278" class="utb-foot" font-size="10.5" text-anchor="middle">
+      fₙ → f uniformly ⟺ sup |fₙ(x) − f(x)| → 0, with one N serving every x at once
+    </text>
+    <text x={w / 2} y="296" class="utb-sub2" font-size="9.5" text-anchor="middle">
+      {`Right: xⁿ → 0 at each fixed x < 1, but the supremum stays ${measured[1].sup.toFixed(3)}, so the convergence is not uniform`}
+    </text>
+  </svg>
+</figure>
+
+<style>
+  .utb { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .utb svg { width:100%; max-width:100%; height:auto; }
+  .utb-axis { stroke:#888; stroke-width:1.3; }
+  .utb-divide { stroke:#3a3a3a; stroke-width:1; }
+  .utb-lim { stroke:#58a6ff; stroke-width:2.2; }
+  .utb-edge { stroke:#d2a8ff; stroke-width:1.2; stroke-dasharray:5,4; }
+  .utb-fn-ok { stroke:#7ee787; stroke-width:2.2; }
+  .utb-fn-bad { stroke:#ff7b72; stroke-width:2.2; }
+  .utb-exit { fill:#ff7b72; stroke:#eee; stroke-width:1.2; }
+  .utb-tick, .utb-val { fill:#9198a1; font-family:'Libre Baskerville',Georgia,serif; }
+  .utb-ok { fill:#7ee787; font-family:'Libre Baskerville',Georgia,serif; }
+  .utb-bad { fill:#ff7b72; font-family:'Libre Baskerville',Georgia,serif; }
+  .utb-panel, .utb-head { fill:#eee; font-family:'Libre Baskerville',Georgia,serif; }
+  .utb-sub, .utb-sub2 { fill:#9198a1; font-family:'Libre Baskerville',Georgia,serif; font-style:italic; }
+  .utb-foot { fill:#58a6ff; font-family:'Libre Baskerville',Georgia,serif; }
+  :global([data-theme="light"]) .utb-axis { stroke:#666; }
+  :global([data-theme="light"]) .utb-divide { stroke:#d0d7de; }
+  :global([data-theme="light"]) .utb-lim { stroke:#0550ae; }
+  :global([data-theme="light"]) .utb-foot { fill:#0550ae; }
+  :global([data-theme="light"]) .utb-edge { stroke:#6639ba; }
+  :global([data-theme="light"]) .utb-fn-ok { stroke:#116329; }
+  :global([data-theme="light"]) .utb-ok { fill:#116329; }
+  :global([data-theme="light"]) .utb-fn-bad { stroke:#a40e26; }
+  :global([data-theme="light"]) .utb-bad { fill:#a40e26; }
+  :global([data-theme="light"]) .utb-exit { fill:#a40e26; stroke:#fff; }
+  :global([data-theme="light"]) .utb-panel, :global([data-theme="light"]) .utb-head { fill:#24292f; }
+  :global([data-theme="light"]) :is(.utb-tick, .utb-val, .utb-sub, .utb-sub2) { fill:#57606a; }
+</style>

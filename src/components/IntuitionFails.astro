@@ -1,0 +1,119 @@
+---
+/**
+ * IntuitionFails — three standard counterexamples, plotted from their formulas.
+ * Each marks the exact boundary of a theorem you used in calculus without proof.
+ */
+const w = 540;
+const h = 278;
+const top = 64;
+const bottom = 184;
+
+// Panel 1: y = |x| on [-1, 1] — continuous, no derivative at 0
+const p1 = { l: 25, r: 175 };
+const p1x = (x: number) => (p1.l + p1.r) / 2 + x * 75;
+const p1y = (y: number) => bottom - y * 110;
+
+// Panel 2: y = sin(1/x) — sampled in 1/x so the points crowd toward zero
+const p2 = { l: 195, r: 345 };
+const p2mid = 124;
+const p2amp = 55;
+const xMax = 0.4;
+const oscPts = Array.from({ length: 1400 }, (_, i) => {
+  const t = 2.5 + (i / 1399) * 200; // t = 1/x
+  const x = 1 / t;
+  return `${(p2.l + (x / xMax) * (p2.r - p2.l)).toFixed(2)},${(p2mid - Math.sin(t) * p2amp).toFixed(2)}`;
+}).join(" ");
+
+// Panel 3: y = xⁿ on [0, 1] for several n — pointwise limit is discontinuous
+const p3 = { l: 365, r: 515 };
+const p3x = (x: number) => p3.l + x * (p3.r - p3.l);
+const p3y = (y: number) => bottom - y * 110;
+const powers = [1, 2, 4, 8, 20];
+const powerCurves = powers.map((n) =>
+  Array.from({ length: 121 }, (_, i) => {
+    const x = i / 120;
+    return `${p3x(x).toFixed(2)},${p3y(Math.pow(x, n)).toFixed(2)}`;
+  }).join(" "),
+);
+
+const panels = [
+  { cx: (p1.l + p1.r) / 2, title: "Continuous, no derivative", c1: "|x| has a corner at 0,", c2: "so no tangent line exists" },
+  { cx: (p2.l + p2.r) / 2, title: "No limit at 0", c1: "sin(1/x) oscillates forever", c2: "as x approaches 0" },
+  { cx: (p3.l + p3.r) / 2, title: "Limit not continuous", c1: "xⁿ → 0 on [0,1) but stays", c2: "at 1 when x = 1" },
+];
+---
+
+<figure
+  class="itf"
+  role="img"
+  aria-label="Three counterexamples. The absolute value function is continuous but has no derivative at zero. Sine of one over x oscillates without limit as x approaches zero. The functions x to the n converge to zero on the half-open interval but equal one at x equals one, so the limit is discontinuous."
+>
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    <text x="16" y="20" class="itf-head" font-size="12.5" font-weight="bold">Where calculus intuition stops being reliable</text>
+
+    {panels.map((p) => (
+      <text x={p.cx} y="44" class="itf-title" font-size="10.5" text-anchor="middle" font-weight="bold">{p.title}</text>
+    ))}
+
+    {/* ---------- Panel 1: |x| ---------- */}
+    <line x1={p1.l} y1={bottom} x2={p1.r} y2={bottom} class="itf-axis" />
+    <line x1={p1x(0)} y1={top} x2={p1x(0)} y2={bottom} class="itf-axis" />
+    <polyline points={`${p1x(-1)},${p1y(1)} ${p1x(0)},${p1y(0)} ${p1x(1)},${p1y(1)}`} class="itf-curve itf-c-green" fill="none" />
+    <circle cx={p1x(0)} cy={p1y(0)} r="4" class="itf-mark itf-m-green" />
+
+    {/* ---------- Panel 2: sin(1/x) ---------- */}
+    <line x1={p2.l} y1={p2mid} x2={p2.r} y2={p2mid} class="itf-axis" />
+    <line x1={p2.l} y1={top} x2={p2.l} y2={bottom} class="itf-axis" />
+    <polyline points={oscPts} class="itf-curve itf-c-blue itf-thin" fill="none" />
+
+    {/* ---------- Panel 3: xⁿ ---------- */}
+    <line x1={p3.l} y1={bottom} x2={p3.r} y2={bottom} class="itf-axis" />
+    <line x1={p3.l} y1={top} x2={p3.l} y2={bottom} class="itf-axis" />
+    {powerCurves.map((pts) => (
+      <polyline points={pts} class="itf-curve itf-c-purple itf-thin" fill="none" />
+    ))}
+    <circle cx={p3x(1)} cy={p3y(1)} r="4" class="itf-mark itf-m-orange" />
+
+    {panels.map((p) => (
+      <g>
+        <text x={p.cx} y="206" class="itf-cap" font-size="9.5" text-anchor="middle">{p.c1}</text>
+        <text x={p.cx} y="221" class="itf-cap" font-size="9.5" text-anchor="middle">{p.c2}</text>
+      </g>
+    ))}
+
+    <text x={w / 2} y="250" class="itf-foot" font-size="10.5" text-anchor="middle">
+      Each of these is legal, and each breaks a rule most people assume
+    </text>
+    <text x={w / 2} y="266" class="itf-sub" font-size="9.5" text-anchor="middle">
+      Analysis exists to say exactly which hypotheses rule them out
+    </text>
+  </svg>
+</figure>
+
+<style>
+  .itf { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .itf svg { width:100%; max-width:100%; height:auto; }
+  .itf-axis { stroke:#666; stroke-width:1.2; }
+  .itf-curve { stroke-width:2; }
+  .itf-thin { stroke-width:1.1; }
+  .itf-c-green { stroke:#7ee787; }
+  .itf-c-blue { stroke:#58a6ff; }
+  .itf-c-purple { stroke:#d2a8ff; }
+  .itf-mark { stroke-width:2; fill:none; }
+  .itf-m-green { stroke:#7ee787; }
+  .itf-m-orange { stroke:#f0883e; fill:#f0883e; }
+  .itf-title { fill:#c9d1d9; font-family:'Libre Baskerville',Georgia,serif; }
+  .itf-cap { fill:#9198a1; font-family:'Libre Baskerville',Georgia,serif; font-style:italic; }
+  .itf-head { fill:#eee; font-family:'Libre Baskerville',Georgia,serif; }
+  .itf-foot { fill:#f0883e; font-family:'Libre Baskerville',Georgia,serif; }
+  .itf-sub { fill:#9198a1; font-family:'Libre Baskerville',Georgia,serif; font-style:italic; }
+  :global([data-theme="light"]) .itf-axis { stroke:#8b949e; }
+  :global([data-theme="light"]) .itf-c-green, :global([data-theme="light"]) .itf-m-green { stroke:#116329; }
+  :global([data-theme="light"]) .itf-c-blue { stroke:#0550ae; }
+  :global([data-theme="light"]) .itf-c-purple { stroke:#6639ba; }
+  :global([data-theme="light"]) .itf-m-orange { stroke:#b35900; fill:#b35900; }
+  :global([data-theme="light"]) .itf-title { fill:#24292f; }
+  :global([data-theme="light"]) :is(.itf-cap, .itf-sub) { fill:#57606a; }
+  :global([data-theme="light"]) .itf-head { fill:#24292f; }
+  :global([data-theme="light"]) .itf-foot { fill:#b35900; }
+</style>

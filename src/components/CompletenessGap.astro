@@ -1,0 +1,85 @@
+---
+/**
+ * CompletenessGap — the set of rationals whose square is below 2 is bounded
+ * above but has no least rational upper bound. The position of the boundary is
+ * computed from Math.sqrt(2), so the picture sits where the number actually is.
+ */
+const w = 540;
+const h = 272;
+const left = 60;
+const right = 480;
+const vMin = 1;
+const vMax = 2;
+const axisY = 150;
+const px = (v: number) => left + ((v - vMin) / (vMax - vMin)) * (right - left);
+
+const root = Math.sqrt(2);
+const rootX = px(root);
+const ticks = [1, 1.2, 1.4, 1.6, 1.8, 2];
+---
+
+<figure
+  class="cgp"
+  role="img"
+  aria-label={`A number line from 1 to 2. The rationals whose square is less than 2 fill the segment up to about ${root.toFixed(5)}, with an open end, and every upper bound lies to the right. There is no least rational upper bound, because the boundary value root 2 is irrational. In the reals that boundary exists and is the supremum.`}
+>
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    <text x="16" y="20" class="cgp-head" font-size="12.5" font-weight="bold">The rationals have a gap exactly where √2 should be</text>
+
+    <text x={rootX} y="92" class="cgp-rootlbl" font-size="11" text-anchor="middle" font-weight="bold">√2</text>
+    <line x1={rootX} y1="100" x2={rootX} y2="170" class="cgp-gapline" />
+
+    <text x={(left + rootX) / 2} y="128" class="cgp-setlbl cgp-t-green" font-size="9.5" text-anchor="middle">
+      S = {"{"}x ∈ ℚ : x² &lt; 2{"}"}
+    </text>
+    <text x={(rootX + right) / 2} y="128" class="cgp-setlbl cgp-t-orange" font-size="9.5" text-anchor="middle">upper bounds of S</text>
+
+    {/* The axis, then the two regions drawn on top of it */}
+    <line x1={left - 14} y1={axisY} x2={right + 14} y2={axisY} class="cgp-axis" />
+    <line x1={left} y1={axisY} x2={rootX - 5} y2={axisY} class="cgp-set" />
+    <line x1={rootX + 5} y1={axisY} x2={right} y2={axisY} class="cgp-bounds" />
+    <circle cx={rootX} cy={axisY} r="5" class="cgp-open" />
+
+    {ticks.map((t) => (
+      <g>
+        <line x1={px(t)} y1={axisY} x2={px(t)} y2={axisY + 7} class="cgp-axis" />
+        <text x={px(t)} y="186" class="cgp-tick" font-size="9.5" text-anchor="middle">{t.toFixed(1)}</text>
+      </g>
+    ))}
+
+    <text x={w / 2} y="214" class="cgp-line1 cgp-t-orange" font-size="10.5" text-anchor="middle">
+      {`In ℚ: no least upper bound. The boundary is ${root.toFixed(5)}…, which is irrational.`}
+    </text>
+    <text x={w / 2} y="234" class="cgp-line1 cgp-t-green" font-size="10.5" text-anchor="middle">
+      In ℝ: sup S = √2 exists. That is completeness.
+    </text>
+
+    <text x={w / 2} y="260" class="cgp-foot" font-size="9.5" text-anchor="middle">
+      Nearly every theorem in this section fails over ℚ for exactly this reason
+    </text>
+  </svg>
+</figure>
+
+<style>
+  .cgp { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .cgp svg { width:100%; max-width:100%; height:auto; }
+  .cgp-axis { stroke:#888; stroke-width:1.4; }
+  .cgp-set { stroke:#7ee787; stroke-width:6; stroke-linecap:butt; }
+  .cgp-bounds { stroke:#f0883e; stroke-width:6; stroke-linecap:butt; opacity:0.55; }
+  .cgp-open { fill:#0d1117; stroke:#7ee787; stroke-width:2.2; }
+  .cgp-gapline { stroke:#d2a8ff; stroke-width:1.6; stroke-dasharray:4,3; }
+  .cgp-rootlbl { fill:#d2a8ff; font-family:'Libre Baskerville',Georgia,serif; }
+  .cgp-setlbl, .cgp-line1 { font-family:'Libre Baskerville',Georgia,serif; }
+  .cgp-t-green { fill:#7ee787; }
+  .cgp-t-orange { fill:#f0883e; }
+  .cgp-tick { fill:#9198a1; font-family:'Libre Baskerville',Georgia,serif; }
+  .cgp-head { fill:#eee; font-family:'Libre Baskerville',Georgia,serif; }
+  .cgp-foot { fill:#9198a1; font-family:'Libre Baskerville',Georgia,serif; font-style:italic; }
+  :global([data-theme="light"]) .cgp-axis { stroke:#666; }
+  :global([data-theme="light"]) .cgp-set, :global([data-theme="light"]) .cgp-t-green { stroke:#116329; fill:#116329; }
+  :global([data-theme="light"]) .cgp-bounds, :global([data-theme="light"]) .cgp-t-orange { stroke:#b35900; fill:#b35900; }
+  :global([data-theme="light"]) .cgp-open { fill:#ffffff; stroke:#116329; }
+  :global([data-theme="light"]) .cgp-gapline, :global([data-theme="light"]) .cgp-rootlbl { stroke:#6639ba; fill:#6639ba; }
+  :global([data-theme="light"]) :is(.cgp-tick, .cgp-foot) { fill:#57606a; }
+  :global([data-theme="light"]) .cgp-head { fill:#24292f; }
+</style>

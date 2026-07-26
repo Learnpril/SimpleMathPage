@@ -1,0 +1,319 @@
+---
+title: Infinite Series
+description: Partial sums, the divergence test, comparison and the Cauchy criterion for series
+sidebar:
+  order: 7
+---
+
+import Quiz from "../../../components/Quiz.astro";
+import SymbolKey from "../../../components/SymbolKey.astro";
+import SeriesPartialSums from "../../../components/SeriesPartialSums.astro";
+
+## What You'll Learn
+
+In this lesson you'll learn what an infinite series _is_ (a sequence in disguise), the divergence test and why it only works in one direction, the comparison and Cauchy criteria, and the difference between absolute and conditional convergence.
+
+<SymbolKey
+  items={[
+    {
+      sym: "Σ aₖ",
+      read: "the sum of the a-k",
+      note: "shorthand for the limit of the partial sums, if that limit exists",
+    },
+    {
+      sym: "sₙ",
+      read: "the n-th partial sum",
+      note: "a₁ + a₂ + ⋯ + aₙ, a finite sum and an ordinary sequence",
+    },
+    {
+      sym: "Σ |aₖ|",
+      read: "the sum of the absolute values",
+      note: "if this converges, the series converges absolutely",
+    },
+    {
+      sym: "aₖ → 0",
+      read: "the terms tend to zero",
+      note: "necessary for convergence, nowhere near sufficient",
+    },
+  ]}
+/>
+
+## The Concept
+
+### A series is a sequence
+
+An infinite series is not a new kind of object. Given terms $a_1, a_2, \dots$, form the **partial sums**
+
+$$
+s_n = a_1 + a_2 + \cdots + a_n
+$$
+
+Then by definition
+
+$$
+\sum_{k=1}^\infty a_k = \lim_{n\to\infty} s_n
+$$
+
+if that limit exists. **Everything from the sequence lessons applies immediately**, because $(s_n)$ is just a sequence.
+
+The notation is unfortunate: $\sum a_k$ looks like an operation performed on infinitely many numbers. It is a limit, and writing it down does not assert that it exists.
+
+<SeriesPartialSums />
+
+### The divergence test
+
+> If $\sum a_k$ converges then $a_k \to 0$.
+
+_Proof._ If $s_n \to L$ then also $s_{n-1} \to L$, and $a_n = s_n - s_{n-1} \to L - L = 0$. ∎
+
+The useful form is the contrapositive: **if the terms don't tend to zero, the series diverges.** That's the first thing to check.
+
+**The converse is false**, and this is the single most important fact in the lesson. The harmonic series $\sum \frac1k$ has terms tending to zero and diverges. So "the terms get small" is never a reason to conclude convergence.
+
+### The harmonic series diverges
+
+Two proofs, both worth knowing.
+
+**Cauchy criterion.** Take $m = 2n$:
+
+$$
+s_{2n} - s_n = \frac{1}{n+1} + \cdots + \frac{1}{2n} \ge n \cdot \frac{1}{2n} = \frac12
+$$
+
+With $\varepsilon = \frac12$ no threshold works, so $(s_n)$ is not Cauchy and the series diverges.
+
+**Grouping (Oresme, c. 1350).**
+
+$$
+1 + \underbrace{\frac12}_{\ge 1/2} + \underbrace{\frac13+\frac14}_{\ge 1/2} + \underbrace{\frac15 + \cdots + \frac18}_{\ge 1/2} + \cdots
+$$
+
+Each group of $2^{j}$ terms sums to at least $\frac12$, so the sums exceed any bound. It grows like $\ln n$ — slowly, and without limit.
+
+### The geometric series
+
+$$
+\sum_{k=0}^\infty r^k = \frac{1}{1-r} \quad \text{for } |r| < 1, \qquad \text{divergent for } |r| \ge 1
+$$
+
+From the closed form $s_n = \frac{1-r^{n+1}}{1-r}$: when $|r|<1$, $r^{n+1} \to 0$ and the limit follows. When $|r| \ge 1$ the terms don't tend to zero, so the divergence test settles it.
+
+This is the reference series for comparisons, and it is one of very few whose sum you can write down exactly.
+
+### The Cauchy criterion for series
+
+> $\sum a_k$ converges $\iff$ for every $\varepsilon>0$ there is $N$ such that for all $m > n > N$,
+>
+> $$
+> \left|\sum_{k=n+1}^{m} a_k\right| < \varepsilon
+> $$
+
+This is the Cauchy condition applied to $(s_n)$, since $s_m - s_n$ is exactly that block. In words: **every sufficiently late finite block is small.** It lets you settle convergence without knowing the sum, which is the normal case.
+
+### Comparison tests
+
+> **Comparison test.** Suppose $0 \le a_k \le b_k$ for all $k$.
+>
+> - If $\sum b_k$ converges, so does $\sum a_k$.
+> - If $\sum a_k$ diverges, so does $\sum b_k$.
+
+For non-negative terms the partial sums are increasing, so by monotone convergence they converge exactly when they are bounded. A convergent dominating series supplies the bound. **Monotone convergence is doing the work**, which is why this test needs non-negativity.
+
+Useful companion: the **$p$-series** $\sum \frac{1}{k^p}$ converges for $p > 1$ and diverges for $p \le 1$. With $p=1$ that's the harmonic series.
+
+### Absolute and conditional convergence
+
+$\sum a_k$ **converges absolutely** if $\sum |a_k|$ converges.
+
+> Absolute convergence implies convergence.
+
+_Proof._ Use the Cauchy criterion: $\left|\sum_{n+1}^m a_k\right| \le \sum_{n+1}^m |a_k|$, and the right side is small because $\sum|a_k|$ is Cauchy. ∎
+
+A series that converges but not absolutely **converges conditionally**. The standard example is the alternating harmonic series
+
+$$
+\sum \frac{(-1)^{k+1}}{k} = 1 - \frac12 + \frac13 - \cdots = \ln 2
+$$
+
+which converges, while $\sum \frac1k$ does not.
+
+The distinction has teeth. **Absolutely convergent series can be rearranged freely without changing the sum. Conditionally convergent ones cannot.** Riemann's rearrangement theorem says a conditionally convergent series can be reordered to sum to _any_ real number you nominate, or to diverge. Rearranging the alternating harmonic series can produce 5, or $-\pi$, or nothing. Commutativity of addition does not survive infinite sums without absolute convergence.
+
+## Worked Examples
+
+**Example 1: Does $\sum \frac{k}{k+1}$ converge?**
+
+**Solution.** Check the terms first:
+
+$$
+\frac{k}{k+1} \to 1 \ne 0
+$$
+
+By the divergence test, the series **diverges**. Adding infinitely many things each close to 1 was never going to settle.
+
+Always run this check first. It's one line and it resolves many series immediately.
+
+**Example 2: Does $\sum \frac{1}{k^2+3k}$ converge?**
+
+**Solution.** Terms are positive, and
+
+$$
+\frac{1}{k^2+3k} < \frac{1}{k^2}
+$$
+
+Since $\sum \frac{1}{k^2}$ is a $p$-series with $p = 2 > 1$, it converges. By comparison, **the series converges**. ∎
+
+Note we never computed the sum. (It happens to be $\frac{11}{18}$, but that took extra work and comparison didn't need it.)
+
+**Example 3: Does $\sum \frac{1}{\sqrt k}$ converge?**
+
+**Solution.** $p$-series with $p = \frac12 \le 1$, so it **diverges**.
+
+By comparison: $\frac{1}{\sqrt k} \ge \frac1k$ for $k \ge 1$, and the harmonic series diverges, so this one does too.
+
+The terms go to zero, and it still diverges. It goes like $2\sqrt n$, which is slow and unbounded.
+
+**Example 4: Comparison in the wrong direction.**
+
+A student argues: $\frac{1}{k^2} < \frac{1}{k}$, and $\sum \frac1k$ diverges, so $\sum \frac{1}{k^2}$ diverges. What's wrong?
+
+**Solution.** The comparison test runs one way. Being **smaller** than a divergent series says nothing — the smaller series may well converge, and here it does, to $\frac{\pi^2}{6}$.
+
+The valid inferences are: smaller than convergent gives convergent; bigger than divergent gives divergent. Get the direction backwards and the test is useless.
+
+**Example 5: Absolute versus conditional.**
+
+Classify $\sum \frac{(-1)^k}{k^2}$ and $\sum \frac{(-1)^k}{k}$.
+
+**Solution.** For the first, $\sum \left|\frac{(-1)^k}{k^2}\right| = \sum \frac{1}{k^2}$ converges, so the series converges **absolutely**.
+
+For the second, $\sum \frac1k$ diverges, so it is not absolutely convergent. It does converge, by the alternating series test, so it converges **conditionally**.
+
+Practical consequence: you may rearrange or regroup the first freely. Doing so to the second can change the answer to anything at all.
+
+**Example 6: A telescoping series.**
+
+Evaluate $\sum_{k=1}^\infty \frac{1}{k(k+1)}$.
+
+**Solution.** Partial fractions give $\frac{1}{k(k+1)} = \frac1k - \frac{1}{k+1}$, so
+
+$$
+s_n = \left(1 - \tfrac12\right) + \left(\tfrac12 - \tfrac13\right) + \cdots + \left(\tfrac1n - \tfrac1{n+1}\right) = 1 - \frac{1}{n+1}
+$$
+
+Everything cancels except the ends. Then $s_n \to 1$, so the sum is **1**. ∎
+
+Telescoping is one of the rare cases where an exact closed form for $s_n$ is available, which is why it's worth spotting.
+
+**Example 7: Using the Cauchy criterion.**
+
+Show $\sum \frac{1}{k^2}$ converges without evaluating it.
+
+**Solution.** For $m > n$, use $\frac{1}{k^2} < \frac{1}{k(k-1)} = \frac{1}{k-1} - \frac1k$:
+
+$$
+\sum_{k=n+1}^{m} \frac{1}{k^2} < \sum_{k=n+1}^{m}\left(\frac{1}{k-1} - \frac1k\right) = \frac1n - \frac1m < \frac1n
+$$
+
+Given $\varepsilon>0$, choose $N > \frac1\varepsilon$. Then every block past $N$ is below $\varepsilon$, so the partial sums are Cauchy and the series **converges**. ∎
+
+Note the telescoping bound did the work, and the actual value $\frac{\pi^2}{6}$ never appeared.
+
+## Real-World Applications
+
+**Numerical series and floating point.** Summing a series on a computer stops after finitely many terms, so the error is the tail. Bounding that tail is exactly the Cauchy criterion, and it is how library functions decide how many terms of a Taylor series to use.
+
+**Compound interest and annuities.** The present value of a perpetuity is a geometric series, $\frac{P}{r}$, and it converges only when the discount rate exceeds the growth rate. Valuation models that produce infinite values have crossed that boundary.
+
+**Signal processing.** A Fourier series is an infinite series of sinusoids. Whether it converges absolutely or only conditionally determines whether you can rearrange or regroup terms safely, and mishandling that is one source of reconstruction artifacts.
+
+**Probability.** An expected value of a discrete random variable is a series, and it exists only if the series converges absolutely. The St. Petersburg paradox is a game whose expected payout series diverges, which is why the "fair price" is unbounded.
+
+**Zeno's paradoxes.** Achilles' pursuit is the geometric series $\sum 2^{-k} = 1$: infinitely many steps, finite total. The resolution is that an infinite sum of shrinking terms can be finite, which is a statement about partial sums converging.
+
+**Algorithm analysis.** The expected cost of many randomized algorithms is a series, and the harmonic series appears constantly. The $\ln n$ growth of $\sum \frac1k$ is exactly why quicksort's expected comparison count carries a $\log n$ factor.
+
+:::note[You've Got This]
+The one idea to carry out of this lesson: a series is a sequence of partial sums, so nothing new is required, only the same tools pointed at a new object. And the one trap: terms shrinking to zero does not give convergence. The harmonic series is the standing counterexample and it is worth being able to reproduce the m = 2n argument on demand. If you keep the geometric series and the p-series in your pocket as comparison standards, most series you meet will yield to a two-line comparison.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="real-infinite-series"
+  questions={[
+    {
+      id: "q1",
+      text: "What does it mean for Σ aₖ to converge?",
+      options: [
+        "The terms aₖ tend to 0",
+        "The sequence of partial sums converges",
+        "The terms are eventually all positive",
+        "The terms are bounded",
+      ],
+      correctIndex: 1,
+      explanation:
+        "A series is defined as the limit of its partial sums, so it is a sequence in different notation. Terms tending to 0 is necessary but not sufficient.",
+    },
+    {
+      id: "q2",
+      text: "The harmonic series Σ 1/k has terms tending to 0. What does it do?",
+      options: [
+        "Converges to 1",
+        "Converges to ln 2",
+        "Diverges, growing like ln n",
+        "Converges conditionally",
+      ],
+      correctIndex: 2,
+      explanation:
+        "Grouping terms in blocks of doubling length gives each block a sum of at least 1/2, so the partial sums grow without bound. It is the standard proof that the divergence test has no converse.",
+    },
+    {
+      id: "q3",
+      text: "Which comparison is valid?",
+      options: [
+        "aₖ ≤ bₖ and Σ aₖ diverges, so Σ bₖ diverges",
+        "aₖ ≤ bₖ and Σ aₖ converges, so Σ bₖ converges",
+        "aₖ ≥ bₖ and Σ bₖ converges, so Σ aₖ converges",
+        "aₖ ≤ bₖ and Σ bₖ diverges, so Σ aₖ diverges",
+      ],
+      correctIndex: 0,
+      explanation:
+        "If the smaller non-negative series already diverges, the larger one must too. Being smaller than a divergent series proves nothing, since Σ 1/k² is smaller than Σ 1/k and converges.",
+    },
+    {
+      id: "q4",
+      text: "For which p does Σ 1/kᵖ converge?",
+      options: ["p ≥ 1", "p > 1", "p ≤ 1", "All p"],
+      correctIndex: 1,
+      explanation:
+        "Convergence requires p strictly greater than 1. At p = 1 it is the harmonic series, which diverges, and any smaller p makes the terms larger still.",
+    },
+    {
+      id: "q5",
+      text: "What is the practical difference between absolute and conditional convergence?",
+      options: [
+        "Conditionally convergent series have no sum",
+        "Absolutely convergent series may be rearranged without changing the sum; conditionally convergent ones may not",
+        "Absolutely convergent series always converge faster",
+        "There is no difference",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Riemann's rearrangement theorem says a conditionally convergent series can be reordered to sum to any real number, or to diverge. Commutativity of addition does not survive infinite sums without absolute convergence.",
+    },
+    {
+      id: "q6",
+      text: "Does Σ k/(k+1) converge?",
+      options: [
+        "Yes, to 1",
+        "Yes, by comparison with Σ 1/k²",
+        "No, since the terms tend to 1 rather than 0",
+        "No, since the terms are negative",
+      ],
+      correctIndex: 2,
+      explanation:
+        "The divergence test settles it immediately: k/(k+1) → 1 ≠ 0, so the partial sums cannot converge. Checking the terms first is always the cheapest move.",
+    },
+  ]}
+/>

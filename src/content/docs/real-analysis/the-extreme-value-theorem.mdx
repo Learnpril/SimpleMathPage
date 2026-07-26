@@ -1,0 +1,250 @@
+---
+title: The Extreme Value Theorem
+description: Why a continuous function on a compact interval is bounded and attains its bounds
+sidebar:
+  order: 13
+---
+
+import Quiz from "../../../components/Quiz.astro";
+import EVTDiagram from "../../../components/EVTDiagram.astro";
+
+## What You'll Learn
+
+In this lesson you'll learn the boundedness theorem, the extreme value theorem, both proofs, and exactly which counterexample each hypothesis excludes. This is the theorem that makes optimization possible.
+
+## The Concept
+
+### Two statements
+
+> **Boundedness theorem.** If $f$ is continuous on $[a,b]$ then $f$ is bounded on $[a,b]$.
+
+> **Extreme value theorem.** If $f$ is continuous on $[a,b]$ then there exist $c, d \in [a,b]$ with
+>
+> $$
+> f(c) \le f(x) \le f(d) \quad \text{for all } x \in [a,b]
+> $$
+
+The second is strictly stronger. Bounded means the supremum exists; **attained** means it is actually a value of the function.
+
+<EVTDiagram />
+
+### The proof, via compactness
+
+The shortest route uses the last two lessons.
+
+$[a,b]$ is closed and bounded, hence compact by Heine-Borel. Continuous images of compact sets are compact, so $f([a,b])$ is compact, hence closed and bounded.
+
+**Bounded** gives the boundedness theorem. And a non-empty compact subset of $\mathbb{R}$ **contains its supremum**: the supremum is a limit point (or a member), and closed sets contain their limit points. So $\sup f([a,b])$ is a value $f(d)$, and similarly for the infimum. ∎
+
+That's the whole thing. Compactness was worth the effort.
+
+### The proof, via sequences
+
+Worth seeing, because it shows where each hypothesis enters.
+
+_Boundedness._ Suppose $f$ is unbounded. Then for each $n$ there is $x_n \in [a,b]$ with $|f(x_n)| > n$. The sequence $(x_n)$ lies in a bounded set, so **Bolzano-Weierstrass** gives a subsequence $x_{n_k} \to x$. **Closedness** of $[a,b]$ puts $x \in [a,b]$. **Continuity** gives $f(x_{n_k}) \to f(x)$, so that subsequence is bounded — contradicting $|f(x_{n_k})| > n_k \to \infty$. ∎
+
+_Attainment._ Let $M = \sup f([a,b])$, finite by boundedness. For each $n$ pick $x_n$ with $f(x_n) > M - \frac1n$, possible by the $\varepsilon$-characterization of the supremum. Extract a convergent subsequence $x_{n_k} \to d \in [a,b]$. Continuity gives $f(x_{n_k}) \to f(d)$, while the squeeze $M - \frac{1}{n_k} < f(x_{n_k}) \le M$ forces $f(x_{n_k}) \to M$. Limits are unique, so $f(d) = M$. ∎
+
+Three hypotheses, three uses: **bounded** for Bolzano-Weierstrass, **closed** to keep the limit inside, **continuous** to transfer the limit through $f$. Remove any one and the proof stops.
+
+### The three counterexamples
+
+Each hypothesis has a matching failure.
+
+**Drop boundedness of the domain.** $f(x) = x$ on $[0,\infty)$ is continuous, unbounded, no maximum.
+
+**Drop closedness of the domain.** $f(x) = x$ on $(0,1)$ is continuous and bounded, but $\sup = 1$ and $\inf = 0$ are never attained. Also $f(x) = \frac1x$ on $(0,1]$ is continuous and **unbounded**, showing an open end can break even boundedness.
+
+**Drop continuity.** On $[0,1]$ let $f(x) = \frac1x$ for $x>0$ and $f(0)=0$. Bounded domain, closed domain, and $f$ is unbounded.
+
+Memorizing this trio is more useful than memorizing the theorem, because it tells you what each word is for.
+
+### Attained versus approached
+
+The distinction is the practical content.
+
+- $\sup$ always exists for a bounded non-empty set (completeness).
+- $\max$ exists only when the supremum is a member.
+
+On $(0,1)$ the function $f(x)=x$ has $\sup f = 1$ and no maximum. In optimization language: the problem has a finite optimal _value_ and no optimal _solution_. That situation is real and irritating, and EVT is the theorem that rules it out.
+
+### Consequences
+
+**Rolle's theorem and the MVT** both start by invoking EVT to produce an interior extremum, then use the derivative test there. So the next lesson depends on this one.
+
+**Riemann integrability of continuous functions** needs boundedness on each subinterval, supplied by this theorem.
+
+**Uniform continuity** on a compact interval, the next lesson, uses the same compactness machinery.
+
+## Worked Examples
+
+**Example 1: Verify EVT for $f(x) = x^2 - 4x + 3$ on $[0,3]$.**
+
+**Solution.** Continuous (polynomial) on a closed bounded interval, so EVT applies.
+
+Vertex at $x = 2$, giving $f(2) = 4-8+3 = -1$. Endpoints: $f(0) = 3$, $f(3) = 9-12+3 = 0$.
+
+**Minimum $-1$ at $x=2$** (interior), **maximum $3$ at $x=0$** (endpoint). Both attained. ✓
+
+Note the extremes can occur at endpoints or interior points; EVT promises existence, not location.
+
+**Example 2: Where does boundedness fail on an open interval?**
+
+**Solution.** $f(x) = \frac1x$ on $(0,1]$ is continuous at every point of its domain.
+
+As $x \to 0^+$, $f(x) \to \infty$: **unbounded**, so no maximum.
+
+The domain is bounded but not closed. The missing endpoint is where the trouble lives, and note that $f$ is _not_ discontinuous at 0 — 0 simply is not in the domain.
+
+**Example 3: A bounded function on an open interval with no extremes.**
+
+**Solution.** $f(x) = x$ on $(0,1)$.
+
+Bounded: $0 < f(x) < 1$. But $\sup f = 1$ is not attained, since $f(x) < 1$ for every $x$ in the domain, and likewise $\inf f = 0$ is not attained.
+
+**Neither maximum nor minimum**, despite boundedness and continuity. This separates the boundedness theorem from EVT: boundedness is not enough.
+
+**Example 4: Discontinuity breaking the theorem.**
+
+Let $f(x) = \frac1x$ for $x \in (0,1]$ and $f(0) = 0$, on the closed interval $[0,1]$.
+
+**Solution.** The domain is closed and bounded. But $f$ is discontinuous at 0, since $\lim_{x\to0^+}f(x)$ does not exist (it diverges).
+
+$f$ is unbounded, so it has no maximum. EVT does not apply and its conclusion fails.
+
+**Continuity is not a technicality here.** All three hypotheses are individually necessary.
+
+**Example 5: EVT gives an interior extremum for Rolle.**
+
+Suppose $f$ is continuous on $[a,b]$, differentiable on $(a,b)$, and $f(a) = f(b)$. Show $f$ has an extremum in the open interval, unless $f$ is constant.
+
+**Solution.** By EVT, $f$ attains a maximum $M$ and minimum $m$ on $[a,b]$.
+
+If $M = m$ then $f$ is constant and every point is an extremum.
+
+Otherwise at least one of $M, m$ differs from the common endpoint value $f(a) = f(b)$, so the point where it is attained is **not** an endpoint. Hence it lies in $(a,b)$. ∎
+
+That interior point is where Rolle's theorem then applies the derivative test. **EVT supplies the point; differentiability does the rest.**
+
+**Example 6: Optimization with no solution.**
+
+Minimize $f(x) = x$ over $x > 0$. What is the answer?
+
+**Solution.** The infimum is 0, but there is no smallest positive real: for any candidate $x>0$, $\frac x2$ is smaller and still feasible.
+
+**The infimum exists; the minimum does not.** The feasible set $(0,\infty)$ is neither closed nor bounded, so EVT does not apply.
+
+This is exactly why optimization problems are posed on closed feasible sets whenever possible. An open constraint like $x > 0$ often needs replacing with $x \ge \epsilon$ for the problem to have a solution at all.
+
+**Example 7: Continuous on a compact set, but not an interval.**
+
+Does EVT apply to a continuous $f$ on $[0,1]\cup[2,3]$?
+
+**Solution.** Yes. The domain is closed and bounded, hence compact, and the compactness proof of EVT never used connectedness.
+
+So $f$ attains a maximum and minimum on the union. **Compactness, not interval-ness, is the real hypothesis** — which is why the theorem generalizes far beyond $\mathbb{R}$.
+
+## Real-World Applications
+
+**Optimization solvers.** Every guarantee that a solver will find an optimum rather than chase an unreachable infimum traces to EVT. Practitioners close and bound the feasible region, sometimes artificially, precisely to get that guarantee.
+
+**Engineering design limits.** Finding the maximum stress in a beam over a bounded region requires that the maximum exists. Continuity of the stress field plus a closed bounded domain gives it, and both are checked implicitly whenever a finite element analysis reports a peak value.
+
+**Machine learning.** Existence of a minimizer of a loss function over a compact parameter set is EVT. Weight regularization and clipping effectively compactify the parameter space, which is one reason they improve well-posedness and not just generalization.
+
+**Numerical error bounds.** Statements like "the error is at most $\frac{M h^2}{8}$ where $M = \max|f''|$" require that maximum to exist. On a compact interval EVT supplies it; on an open or unbounded domain the bound may not exist and the analysis has to change.
+
+**Economics.** Utility maximization over a budget set has a solution because the budget set is compact (closed by the budget constraint, bounded by finite income) and utility is continuous. Relax either and the consumer's problem can fail to have an answer.
+
+**Scheduling and control.** Finding the worst-case response over a finite time window is a maximization over a compact set. Over an infinite horizon the supremum may not be attained, which is why infinite-horizon control theory is technically harder.
+
+:::note[You've Got This]
+The theorem is easy to state and the useful thing to memorize is the trio of counterexamples, because each one tells you what a hypothesis is for. x on [0,∞) for unbounded, x on (0,1) for not closed, and the patched 1/x on [0,1] for discontinuous. And keep the sup-versus-max distinction sharp: completeness always gives you a supremum, but only compactness plus continuity gives you a value that achieves it. That gap is exactly the difference between an optimization problem having an optimal value and having an optimal solution.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="real-the-extreme-value-theorem"
+  questions={[
+    {
+      id: "q1",
+      text: "What does the extreme value theorem require?",
+      options: [
+        "f continuous on an open interval",
+        "f continuous on a closed bounded interval",
+        "f differentiable on a closed interval",
+        "f bounded on an interval",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Continuity together with a compact domain is exactly what is needed. Compactness is the real hypothesis, so the theorem also applies on a union like [0,1] ∪ [2,3].",
+    },
+    {
+      id: "q2",
+      text: "Which example shows that boundedness alone does not give a maximum?",
+      options: [
+        "f(x) = x on [0, ∞)",
+        "f(x) = 1/x on (0, 1]",
+        "f(x) = x on (0, 1)",
+        "f(x) = x² on [0, 1]",
+      ],
+      correctIndex: 2,
+      explanation:
+        "That function is bounded between 0 and 1 and continuous, yet neither bound is attained because the endpoints are missing. This separates the boundedness theorem from the stronger extreme value theorem.",
+    },
+    {
+      id: "q3",
+      text: "In the sequential proof, what role does closedness of [a, b] play?",
+      options: [
+        "It makes f continuous",
+        "It guarantees the limit of the extracted subsequence lies in the domain",
+        "It gives the sequence a bound",
+        "It makes the supremum exist",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Boundedness gives Bolzano-Weierstrass a subsequence, and closedness keeps its limit inside the interval so continuity can be applied there. Each hypothesis has a distinct job.",
+    },
+    {
+      id: "q4",
+      text: "Which function shows continuity is essential, even on a closed bounded interval?",
+      options: [
+        "f(x) = x on [0, 1]",
+        "f(x) = 1/x for x > 0 with f(0) = 0, on [0, 1]",
+        "f(x) = sin x on [0, 2π]",
+        "f(x) = x² on [−1, 1]",
+      ],
+      correctIndex: 1,
+      explanation:
+        "The domain is closed and bounded but the function is discontinuous at 0 and unbounded, so it has no maximum. Removing any single hypothesis breaks the conclusion.",
+    },
+    {
+      id: "q5",
+      text: "What is the difference between a supremum and a maximum?",
+      options: [
+        "There is none",
+        "The supremum always exists for a bounded nonempty set; the maximum exists only if the supremum is actually a value of the function",
+        "The maximum is always larger",
+        "The supremum applies only to sequences",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Completeness gives the supremum; attainment needs more. In optimization terms this is the difference between having an optimal value and having an optimal solution.",
+    },
+    {
+      id: "q6",
+      text: "Why does the compactness proof of EVT also work on [0,1] ∪ [2,3]?",
+      options: [
+        "Because the set is an interval",
+        "Because the set is closed and bounded, hence compact, and the proof never used connectedness",
+        "Because the two pieces have the same length",
+        "It does not work there",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Continuous images of compact sets are compact, and a nonempty compact subset of ℝ contains its supremum and infimum. Connectedness plays no part, which is why the theorem generalizes so widely.",
+    },
+  ]}
+/>

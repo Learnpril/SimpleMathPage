@@ -1,0 +1,94 @@
+---
+/**
+ * OpenClosedSets — three intervals on the same axis, classified. Open and closed
+ * are not opposites: an interval can be neither, and ℝ and ∅ are both.
+ */
+const w = 540;
+const h = 294;
+const vLo = -0.3;
+const vHi = 1.3;
+const left = 100;
+const right = 420;
+const px = (v: number) => left + ((v - vLo) / (vHi - vLo)) * (right - left);
+
+const rows = [
+  { y: 92, label: "(0, 1)", leftClosed: false, rightClosed: false, verdict: "open", cls: "green" },
+  { y: 140, label: "[0, 1]", leftClosed: true, rightClosed: true, verdict: "closed", cls: "blue" },
+  { y: 188, label: "[0, 1)", leftClosed: true, rightClosed: false, verdict: "neither", cls: "orange" },
+];
+
+const wiggleAt = 0.6;
+const wiggleR = 14;
+---
+
+<figure
+  class="ocs"
+  role="img"
+  aria-label="Three intervals drawn on the same axis. The open interval from 0 to 1 is open, the closed interval is closed, and the half-open interval is neither. Open endpoints are drawn hollow and closed endpoints filled."
+>
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    <text x="16" y="20" class="ocs-head" font-size="12.5" font-weight="bold">Open and closed are not opposites</text>
+    <text x="16" y="42" class="ocs-sub" font-size="10.5">Hollow endpoints are excluded; filled endpoints belong to the set</text>
+
+    {/* Wiggle room around an interior point */}
+    <text x={px(wiggleAt)} y="72" class="ocs-wiggle" font-size="9" text-anchor="middle">room to wiggle</text>
+    <line x1={px(wiggleAt) - wiggleR} y1="80" x2={px(wiggleAt) + wiggleR} y2="80" class="ocs-wigline" />
+
+    {rows.map((r) => (
+      <g>
+        <text x="90" y={r.y + 4} class={`ocs-lbl ocs-t-${r.cls}`} font-size="11" text-anchor="end" font-weight="bold">{r.label}</text>
+        <line x1={px(vLo)} y1={r.y} x2={px(vHi)} y2={r.y} class="ocs-axis" />
+        <line x1={px(0)} y1={r.y} x2={px(1)} y2={r.y} class={`ocs-bar ocs-b-${r.cls}`} />
+        <circle cx={px(0)} cy={r.y} r="5" class={r.leftClosed ? `ocs-pt ocs-closed ocs-c-${r.cls}` : `ocs-pt ocs-open ocs-c-${r.cls}`} />
+        <circle cx={px(1)} cy={r.y} r="5" class={r.rightClosed ? `ocs-pt ocs-closed ocs-c-${r.cls}` : `ocs-pt ocs-open ocs-c-${r.cls}`} />
+        <text x="430" y={r.y + 4} class={`ocs-verdict ocs-t-${r.cls}`} font-size="10.5">{r.verdict}</text>
+      </g>
+    ))}
+
+    <text x={w / 2} y="234" class="ocs-both" font-size="10.5" text-anchor="middle">
+      ℝ and ∅ are both open and closed
+    </text>
+
+    <text x={w / 2} y="262" class="ocs-foot" font-size="10" text-anchor="middle">
+      Open: every point has a small interval around it still inside the set
+    </text>
+    <text x={w / 2} y="280" class="ocs-foot" font-size="10" text-anchor="middle">
+      Closed: contains all its limit points, equivalently its complement is open
+    </text>
+  </svg>
+</figure>
+
+<style>
+  .ocs { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .ocs svg { width:100%; max-width:100%; height:auto; }
+  .ocs-axis { stroke:#555; stroke-width:1.1; }
+  .ocs-bar { stroke-width:5; }
+  .ocs-b-green { stroke:#7ee787; }
+  .ocs-b-blue { stroke:#58a6ff; }
+  .ocs-b-orange { stroke:#f0883e; }
+  .ocs-pt { stroke-width:2.2; }
+  .ocs-open { fill:#0d1117; }
+  .ocs-c-green { stroke:#7ee787; }
+  .ocs-c-blue { stroke:#58a6ff; }
+  .ocs-c-orange { stroke:#f0883e; }
+  .ocs-closed.ocs-c-green { fill:#7ee787; }
+  .ocs-closed.ocs-c-blue { fill:#58a6ff; }
+  .ocs-closed.ocs-c-orange { fill:#f0883e; }
+  .ocs-lbl, .ocs-verdict { font-family:'Libre Baskerville',Georgia,serif; }
+  .ocs-t-green { fill:#7ee787; }
+  .ocs-t-blue { fill:#58a6ff; }
+  .ocs-t-orange { fill:#f0883e; }
+  .ocs-wigline { stroke:#d2a8ff; stroke-width:2.4; }
+  .ocs-wiggle { fill:#d2a8ff; font-family:'Libre Baskerville',Georgia,serif; font-style:italic; }
+  .ocs-both { fill:#d2a8ff; font-family:'Libre Baskerville',Georgia,serif; font-weight:bold; }
+  .ocs-head { fill:#eee; font-family:'Libre Baskerville',Georgia,serif; }
+  .ocs-sub, .ocs-foot { fill:#9198a1; font-family:'Libre Baskerville',Georgia,serif; font-style:italic; }
+  :global([data-theme="light"]) .ocs-axis { stroke:#ccc; }
+  :global([data-theme="light"]) .ocs-b-green, :global([data-theme="light"]) .ocs-c-green, :global([data-theme="light"]) .ocs-t-green { stroke:#116329; fill:#116329; }
+  :global([data-theme="light"]) .ocs-b-blue, :global([data-theme="light"]) .ocs-c-blue, :global([data-theme="light"]) .ocs-t-blue { stroke:#0550ae; fill:#0550ae; }
+  :global([data-theme="light"]) .ocs-b-orange, :global([data-theme="light"]) .ocs-c-orange, :global([data-theme="light"]) .ocs-t-orange { stroke:#b35900; fill:#b35900; }
+  :global([data-theme="light"]) .ocs-open { fill:#ffffff; }
+  :global([data-theme="light"]) .ocs-wigline, :global([data-theme="light"]) .ocs-wiggle, :global([data-theme="light"]) .ocs-both { stroke:#6639ba; fill:#6639ba; }
+  :global([data-theme="light"]) .ocs-head { fill:#24292f; }
+  :global([data-theme="light"]) :is(.ocs-sub, .ocs-foot) { fill:#57606a; }
+</style>

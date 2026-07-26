@@ -1,0 +1,230 @@
+---
+title: What is Real Analysis?
+description: Why calculus needed rebuilding, and what changes when you demand proofs
+sidebar:
+  order: 1
+---
+
+import Quiz from "../../../components/Quiz.astro";
+import IntuitionFails from "../../../components/IntuitionFails.astro";
+
+## What You'll Learn
+
+In this lesson you'll learn what separates analysis from calculus, why the subject exists at all, and the three counterexamples that motivated the whole rebuilding project. No epsilon-delta yet, just the change of standard.
+
+## The Concept
+
+### Calculus asserted; analysis proves
+
+Calculus handed you a set of facts and asked you to use them.
+
+- A continuous function on a closed interval attains a maximum.
+- If $f'(x) > 0$ then $f$ is increasing.
+- You can differentiate a power series term by term.
+- A continuous function has an antiderivative.
+
+All four are true. None was proved, and each has hypotheses that were quietly essential. Drop "closed" from the first and it fails: $f(x) = x$ on $(0,1)$ attains no maximum.
+
+Analysis is the same material with two changes. Every statement gets a proof, and every hypothesis gets justified by a counterexample showing what goes wrong without it.
+
+### Why the rebuilding was necessary
+
+For 150 years calculus ran on **infinitesimals**: quantities small enough to discard but not zero. The derivative was computed by dividing by $dx$ and then setting $dx = 0$, which is dividing by something and then declaring it zero.
+
+Bishop Berkeley called them "the ghosts of departed quantities" in 1734 and he was not being unfair. The technique produced right answers by reasoning nobody could defend.
+
+Worse, once functions got stranger, intuition started producing _wrong_ answers. Mathematicians believed a continuous function had to be differentiable except at isolated points. They believed the term-by-term limit of continuous functions was continuous. Both are false, and finding out required precise definitions.
+
+### Three counterexamples
+
+<IntuitionFails />
+
+These are the objects that forced the issue.
+
+**$|x|$ is continuous but not differentiable at 0.** The corner has no tangent line: approaching from the left gives slope $-1$, from the right $+1$. Weierstrass later did far worse, constructing a function continuous everywhere and differentiable **nowhere**, which no amount of drawing prepares you for.
+
+**$\sin(1/x)$ has no limit as $x \to 0$.** As $x$ shrinks, $1/x$ grows without bound and the sine cycles infinitely often, hitting every value in $[-1,1]$ arbitrarily close to zero. There is no single number it approaches. "The function gets close to something" is not precise enough to rule this out, which is exactly why the definition has to be sharper.
+
+**$x^n$ on $[0,1]$ converges to a discontinuous function.** Each $x^n$ is continuous. For $0 \le x < 1$, $x^n \to 0$. At $x = 1$, $x^n = 1$ for every $n$. So the limit function is 0 on $[0,1)$ and 1 at $x=1$: a jump. Continuity is not preserved by pointwise limits, and repairing that requires **uniform** convergence, the last lesson of the section.
+
+### What the reals have that the rationals don't
+
+Here's the load-bearing fact of the whole section.
+
+Consider the set of rationals whose square is less than 2. It has upper bounds — 1.5 is one, 2 is another. But among the rationals it has no **least** upper bound: any rational you propose can be beaten by a slightly smaller one, because the natural candidate is $\sqrt2$, which is irrational.
+
+The reals fix this. **Completeness**: every non-empty set of reals with an upper bound has a least upper bound. Equivalently, the real line has no gaps.
+
+Nearly every theorem ahead is completeness in disguise. Bolzano-Weierstrass, the extreme value theorem, the intermediate value theorem, the convergence of Cauchy sequences, Heine-Borel — all of them fail over $\mathbb{Q}$ and all of them are consequences of that one axiom. Calculus over the rationals is impossible, and completeness is the reason.
+
+### The change in vocabulary
+
+Analysis replaces informal phrases with quantified statements, and the translation is the skill you're building.
+
+| Calculus phrase           | Analysis statement                                                                                |
+| ------------------------- | ------------------------------------------------------------------------------------------------- |
+| $f(x)$ gets close to $L$  | for all $\varepsilon>0$ there is $\delta>0$ with $\|f(x)-L\|<\varepsilon$ when $0<\|x-a\|<\delta$ |
+| the sequence settles down | for all $\varepsilon>0$ there is $N$ with $\|a_n - L\|<\varepsilon$ for all $n>N$                 |
+| the function has no jumps | $f$ is continuous at every point of its domain                                                    |
+| eventually                | there exists $N$ such that for all $n > N$                                                        |
+| arbitrarily close         | for every $\varepsilon > 0$                                                                       |
+
+The pattern in the first two is worth naming now, because it never changes: **an adversary hands you a tolerance $\varepsilon$, and you must produce a threshold that meets it.** Every proof in this section is you winning that game.
+
+## Worked Examples
+
+**Example 1: Why does "closed interval" matter?**
+
+Show that $f(x) = x$ on the open interval $(0,1)$ attains no maximum.
+
+**Solution.** Suppose $f$ attained a maximum at some $c \in (0,1)$, so $f(c) = c \ge x$ for all $x \in (0,1)$.
+
+But $c < 1$, so consider $c' = \frac{c+1}{2}$. Then $c < c' < 1$, so $c' \in (0,1)$ and $f(c') = c' > c$. Contradiction.
+
+**No maximum exists.** The supremum is 1, but 1 is not in the interval, so the value is approached and never reached.
+
+The extreme value theorem requires a **closed** interval precisely to keep this out. On $[0,1]$ the maximum is attained at $x=1$.
+
+**Example 2: Why does "bounded" matter?**
+
+**Solution.** Take $f(x) = x$ on $[0, \infty)$, which is closed but unbounded. There is no maximum: for any $c$, $f(c+1) > f(c)$.
+
+Or take $f(x) = 1/x$ on $(0,1]$, which is bounded as an interval but where $f$ is unbounded. No maximum again.
+
+So "continuous on a closed bounded interval" has both words doing real work, and each excludes a different failure.
+
+**Example 3: A sequence that gets close to two things.**
+
+Does $a_n = (-1)^n$ converge?
+
+**Solution.** The terms are $-1, 1, -1, 1, \dots$, so they are all within 1 of both $-1$ and $1$ forever.
+
+But convergence requires **one** limit that the terms eventually stay arbitrarily close to. Take $\varepsilon = 1/2$. For any proposed limit $L$ and any $N$, the terms after $N$ include both $1$ and $-1$, and no single $L$ is within $1/2$ of both, since they are 2 apart.
+
+**Divergent.** Note the sequence is bounded and never settles, which shows bounded is not enough for convergence — that gap is exactly what Bolzano-Weierstrass addresses, by promising a convergent _subsequence_ instead.
+
+**Example 4: The rationals have a gap.**
+
+Show that $S = \{x \in \mathbb{Q} : x^2 < 2\}$ has no least upper bound in $\mathbb{Q}$.
+
+**Solution.** $S$ is non-empty ($1 \in S$) and bounded above ($2$ is an upper bound, since $x \ge 2$ gives $x^2 \ge 4$).
+
+Suppose $p \in \mathbb{Q}$ were the least upper bound. Since $\sqrt2$ is irrational, $p^2 \ne 2$, so either $p^2 < 2$ or $p^2 > 2$.
+
+If $p^2 < 2$, one can always find a slightly larger rational still squaring below 2, so $p$ is not an upper bound at all.
+
+If $p^2 > 2$, one can find a slightly smaller rational still above every element of $S$, so $p$ is not the _least_ upper bound.
+
+Either way a contradiction. **No least upper bound in $\mathbb{Q}$.**
+
+In $\mathbb{R}$ the least upper bound is $\sqrt2$, and completeness is exactly the axiom that guarantees it exists.
+
+**Example 5: Reading a definition backwards.**
+
+The definition of $\lim_{x\to a} f(x) = L$ starts "for all $\varepsilon>0$ there exists $\delta>0$." What would swapping the quantifiers say?
+
+**Solution.** "There exists $\delta > 0$ such that for all $\varepsilon > 0$..." would demand a single $\delta$ working for every tolerance at once. That forces $f(x) = L$ exactly on the whole punctured neighbourhood — a far stronger and nearly useless condition.
+
+**Order of quantifiers is not decoration.** $\delta$ is allowed to depend on $\varepsilon$, and it almost always does. Whether it is also allowed to depend on the _point_ is the difference between continuity and uniform continuity, which gets its own lesson.
+
+## Real-World Applications
+
+**Numerical analysis.** Every numerical method comes with a convergence theorem and an error bound, and both are analysis. Knowing that Newton's method converges quadratically _near a root_ and can diverge elsewhere is knowing the hypotheses of a theorem.
+
+**Floating-point arithmetic.** Machine arithmetic is not associative, so summing a large array in a different order gives a different answer. Bounding that error, and designing algorithms like Kahan summation to reduce it, is applied analysis.
+
+**Machine learning.** Convergence proofs for gradient descent require conditions on the objective (Lipschitz gradients, convexity) that come straight from this material. The universal approximation theorem, which says neural networks can approximate continuous functions, is a statement about uniform convergence on compact sets.
+
+**Signal processing.** A Fourier series converges to its function, but in which sense? Pointwise convergence can fail at jumps, producing the Gibbs phenomenon — the ringing artifacts visible near sharp edges in over-compressed images. Distinguishing modes of convergence has direct visual consequences.
+
+**Finance and economics.** Existence of an equilibrium price or an optimal portfolio is typically proved by a compactness argument. The theorem that guarantees a maximum exists is the extreme value theorem, generalized.
+
+:::note[You've Got This]
+Nothing was computed in this lesson, and that is the shift. From here on the question is not "what is the answer?" but "how do you know, and where does it break?" The three counterexamples are worth memorizing now, because each one is the reason a later theorem carries the hypothesis it does. And keep the adversary picture: someone hands you an ε and you have to produce a δ or an N. Every proof in the next nineteen lessons is a variation on winning that exchange.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="real-what-is-real-analysis"
+  questions={[
+    {
+      id: "q1",
+      text: "What is the main difference between calculus and real analysis?",
+      options: [
+        "Analysis uses harder formulas",
+        "Analysis proves the results calculus asserts, and identifies which hypotheses are needed",
+        "Analysis avoids limits entirely",
+        "Analysis only studies discontinuous functions",
+      ],
+      correctIndex: 1,
+      explanation:
+        "The subject matter overlaps heavily; what changes is the standard of argument. Every claim gets a proof, and every hypothesis gets a counterexample showing what fails without it.",
+    },
+    {
+      id: "q2",
+      text: "Why does f(x) = x attain no maximum on the open interval (0, 1)?",
+      options: [
+        "Because f is not continuous there",
+        "Because f is unbounded on that interval",
+        "Because for any c in (0,1) the midpoint of c and 1 is larger and still in the interval",
+        "Because the interval contains no rational numbers",
+      ],
+      correctIndex: 2,
+      explanation:
+        "There is always a larger point still inside, so no value is largest. The supremum is 1, but it is not in the interval, which is why the extreme value theorem insists on a closed interval.",
+    },
+    {
+      id: "q3",
+      text: "Which property of the real numbers does the set of rationals lack?",
+      options: [
+        "Closure under addition",
+        "Commutativity of multiplication",
+        "Completeness: every nonempty bounded-above set has a least upper bound",
+        "The existence of an additive identity",
+      ],
+      correctIndex: 2,
+      explanation:
+        "The rationals whose square is below 2 are bounded above but have no least rational upper bound, since the natural candidate √2 is irrational. Completeness is the axiom nearly every theorem in the section relies on.",
+    },
+    {
+      id: "q4",
+      text: "Why does sin(1/x) fail to have a limit as x approaches 0?",
+      options: [
+        "Because sin(1/x) is undefined for all small x",
+        "Because 1/x grows without bound, so the sine cycles infinitely often and takes every value in [−1,1] arbitrarily near 0",
+        "Because the function is unbounded near 0",
+        "Because sine is not continuous",
+      ],
+      correctIndex: 1,
+      explanation:
+        "The function stays between −1 and 1 but never settles on any single value, so no candidate limit works. It is bounded, which shows boundedness alone does not give a limit.",
+    },
+    {
+      id: "q5",
+      text: "The functions xⁿ on [0,1] converge pointwise to what?",
+      options: [
+        "The constant function 1",
+        "The constant function 0",
+        "A function equal to 0 on [0,1) and 1 at x = 1, which is discontinuous",
+        "They do not converge at all",
+      ],
+      correctIndex: 2,
+      explanation:
+        "For any fixed x below 1 the powers shrink to 0, while at x = 1 every term equals 1. So a sequence of continuous functions has a discontinuous pointwise limit, and repairing this needs uniform convergence.",
+    },
+    {
+      id: "q6",
+      text: "In the definition of a limit, why does the order of the quantifiers matter?",
+      options: [
+        "It does not; the order is a matter of style",
+        "Because δ is allowed to depend on ε, and swapping them would demand one δ working for every tolerance at once",
+        "Because ε must be an integer",
+        "Because δ must always be smaller than ε",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Choosing ε first lets δ be tailored to it, which is what makes the definition usable. Reversing the order would force f to equal L outright on a whole neighbourhood.",
+    },
+  ]}
+/>

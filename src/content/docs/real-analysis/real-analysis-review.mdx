@@ -1,0 +1,587 @@
+---
+title: Real Analysis Review
+description: Every definition, theorem, counterexample, and notation from the section in one place
+sidebar:
+  order: 20
+---
+
+import Quiz from "../../../components/Quiz.astro";
+import SymbolKey from "../../../components/SymbolKey.astro";
+import RealAnalysisTopicMap from "../../../components/RealAnalysisTopicMap.astro";
+
+## What You'll Review
+
+Everything from the section, arranged for lookup rather than for reading straight through: the definitions, the named theorems, the counterexamples that force the definitions to be what they are, and the notation.
+
+<RealAnalysisTopicMap />
+
+## Notation Reference
+
+<SymbolKey
+  title="Sets and bounds"
+  items={[
+    {
+      sym: "sup S",
+      read: "the supremum of S",
+      note: "least upper bound; need not belong to S",
+    },
+    {
+      sym: "inf S",
+      read: "the infimum of S",
+      note: "greatest lower bound; need not belong to S",
+    },
+    {
+      sym: "max S, min S",
+      read: "the maximum and minimum",
+      note: "a sup or inf that is actually attained",
+    },
+    {
+      sym: "(a − δ, a + δ)",
+      read: "a δ-neighbourhood of a",
+      note: "every open-set argument is written with these",
+    },
+    {
+      sym: "S′",
+      read: "the set of limit points of S",
+      note: "S is closed exactly when S′ ⊆ S",
+    },
+    {
+      sym: "S̄",
+      read: "the closure of S",
+      note: "S together with its limit points",
+    },
+  ]}
+/>
+
+<SymbolKey
+  title="Sequences and series"
+  items={[
+    {
+      sym: "aₙ → L",
+      read: "aₙ converges to L",
+      note: "∀ε>0 ∃N ∀n≥N: |aₙ − L| < ε",
+    },
+    {
+      sym: "aₙₖ",
+      read: "a subsequence of aₙ",
+      note: "indices strictly increasing; keeps the order",
+    },
+    {
+      sym: "lim sup, lim inf",
+      read: "the limit superior and inferior",
+      note: "always exist in the extended reals; equal exactly when the limit exists",
+    },
+    {
+      sym: "sₙ = Σ aₖ",
+      read: "the nth partial sum",
+      note: "a series converges by definition when this sequence does",
+    },
+    {
+      sym: "Σ |aₙ| < ∞",
+      read: "absolute convergence",
+      note: "stronger than convergence; permits rearrangement",
+    },
+  ]}
+/>
+
+<SymbolKey
+  title="Functions, limits and integrals"
+  items={[
+    {
+      sym: "lim_{x→c} f(x) = L",
+      read: "the limit of f at c is L",
+      note: "∀ε ∃δ: 0 < |x−c| < δ ⟹ |f(x)−L| < ε; f(c) is irrelevant",
+    },
+    {
+      sym: "f ∈ C[a,b]",
+      read: "f is continuous on [a, b]",
+      note: "on a compact interval this brings boundedness and uniform continuity free",
+    },
+    {
+      sym: "fₙ ⇉ f",
+      read: "fₙ converges uniformly to f",
+      note: "one N for all x; equivalently ‖fₙ − f‖ → 0",
+    },
+    {
+      sym: "L(f,P), U(f,P)",
+      read: "the lower and upper Darboux sums",
+      note: "integrable means the gap can be made arbitrarily small",
+    },
+    {
+      sym: "Rₙ(x)",
+      read: "the Taylor remainder",
+      note: "f(x) − Pₙ(x); an exact quantity, not an estimate",
+    },
+  ]}
+/>
+
+## The Real Numbers
+
+### Completeness
+
+The one axiom separating $\mathbb{R}$ from $\mathbb{Q}$:
+
+> **Every nonempty set of reals that is bounded above has a least upper bound.**
+
+$\mathbb{Q}$ fails it: $\{x \in \mathbb{Q} : x^2 < 2\}$ is bounded above with no rational supremum. Every existence theorem in the section traces back to this axiom.
+
+The $\varepsilon$-characterization, which is how supremum is used in practice: $s = \sup S$ iff $s$ is an upper bound and for every $\varepsilon>0$ there is $x \in S$ with $x > s - \varepsilon$.
+
+Consequences: the **Archimedean property**, density of $\mathbb{Q}$ and of the irrationals, the nested interval property, and the existence of $\sqrt{2}$.
+
+### The three main structural theorems
+
+| Name                 | Statement                                                        |
+| -------------------- | ---------------------------------------------------------------- |
+| Monotone convergence | A bounded monotone sequence converges                            |
+| Bolzano–Weierstrass  | Every bounded sequence has a convergent subsequence              |
+| Heine–Borel          | A subset of $\mathbb{R}$ is compact iff it is closed and bounded |
+
+These are three faces of completeness, and each is used to build a point out of nothing but bounds.
+
+## Sequences
+
+### Definitions
+
+$a_n \to L$ means: for every $\varepsilon>0$ there is $N$ with $|a_n - L|<\varepsilon$ for all $n\ge N$. Written in that order, $N$ depends on $\varepsilon$ only.
+
+- Limits are **unique**.
+- Convergent sequences are **bounded**; bounded sequences need not converge.
+- **Limit laws** hold for sums, products, quotients with nonzero limit.
+- **Squeeze theorem**: $a_n \le b_n \le c_n$ with $a_n, c_n \to L$ forces $b_n \to L$.
+
+### Monotone and Cauchy
+
+A **monotone** bounded sequence converges, to the sup or inf of its range. This needs no candidate limit, which is why it is the first tool to reach for.
+
+A sequence is **Cauchy** if its terms eventually cluster together: for every $\varepsilon$ there is $N$ with $|a_n - a_m|<\varepsilon$ for all $n,m\ge N$.
+
+$$
+\text{Cauchy} \iff \text{convergent} \quad \text{(in } \mathbb{R}\text{)}
+$$
+
+The forward direction is easy; the converse is completeness in yet another form. In $\mathbb{Q}$ it fails, which is exactly what "$\mathbb{Q}$ has holes" means.
+
+**Not sufficient:** consecutive terms getting close. $a_n = \sqrt{n}$ has $a_{n+1}-a_n \to 0$ and diverges. The Cauchy condition must hold for **all** pairs beyond $N$, not just neighbours.
+
+### Subsequences
+
+- If $a_n \to L$ then every subsequence converges to $L$.
+- Two subsequences with different limits proves divergence — the cleanest divergence proof there is.
+- $\limsup$ and $\liminf$ are the largest and smallest subsequential limits, and always exist.
+
+## Series
+
+$\sum a_n$ converges when the partial sums do. That is the definition; everything else is a test.
+
+- **nth-term test.** $a_n \to 0$ is necessary, never sufficient.
+- **Geometric.** $\sum r^n$ converges iff $|r|<1$.
+- **$p$-series.** $\sum 1/n^p$ converges iff $p>1$. The harmonic series $p=1$ diverges.
+- **Comparison, ratio, root, integral tests** for positive series.
+- **Alternating series test** for decreasing terms with $a_n\to0$.
+
+**Absolute versus conditional.** Absolute convergence implies convergence. A conditionally convergent series such as $\sum(-1)^{n+1}/n$ can be **rearranged to sum to anything**, which is Riemann's rearrangement theorem, while an absolutely convergent series is rearrangement-proof.
+
+## Topology of the Line
+
+- **Open**: every point has a neighbourhood inside the set. **Closed**: the complement is open, equivalently the set contains all its limit points.
+- $\varnothing$ and $\mathbb{R}$ are **both** open and closed. $[0,1)$ is neither. "Not open" does not mean closed.
+- Arbitrary unions of open sets are open; only **finite** intersections are. Dually for closed sets, and $\bigcap(-1/n,1/n)=\{0\}$ shows why the finiteness matters.
+- **Compact** means every open cover has a finite subcover, and by **Heine–Borel** that is the same as closed and bounded.
+- Compactness is what makes $[a,b]$ special: $(0,1]$ and $[0,\infty)$ each fail one condition, and each breaks a theorem.
+
+## Limits and Continuity
+
+### The definitions
+
+$$
+\lim_{x\to c}f(x)=L: \quad \forall\varepsilon>0\ \exists\delta>0:\ 0<|x-c|<\delta \implies |f(x)-L|<\varepsilon
+$$
+
+The value $f(c)$ plays no part, and $c$ need not be in the domain.
+
+$f$ is **continuous at $c$** iff $c$ is in the domain and $\lim_{x\to c}f(x)=f(c)$. Equivalently, every sequence $x_n\to c$ has $f(x_n)\to f(c)$ — the **sequential criterion**, which is the fastest way to prove *dis*continuity.
+
+### The compact-interval theorems
+
+For $f$ continuous on $[a,b]$:
+
+| Theorem            | Conclusion                                      |
+| ------------------ | ----------------------------------------------- |
+| Boundedness        | $f$ is bounded                                  |
+| Extreme value      | $f$ attains a maximum and a minimum             |
+| Intermediate value | $f$ takes every value between $f(a)$ and $f(b)$ |
+| Uniform continuity | $f$ is uniformly continuous                     |
+
+All four need **both** closed and bounded. $f(x)=1/x$ on $(0,1]$ is unbounded; $f(x)=x$ on $[0,\infty)$ attains no maximum; $\sin(1/x)$ on $(0,1]$ is continuous and not uniformly continuous.
+
+**Uniform continuity** moves the quantifier: one $\delta$ for the whole domain rather than one per point. Lipschitz implies uniformly continuous implies continuous, and both implications are strict — $\sqrt{x}$ on $[0,1]$ is uniformly continuous and not Lipschitz.
+
+## Differentiation
+
+$$
+f'(c)=\lim_{h\to0}\frac{f(c+h)-f(c)}{h}
+$$
+
+Differentiable implies continuous; the converse fails at every point for $|x|$ at 0, and Weierstrass built a function continuous everywhere and differentiable nowhere.
+
+**Interior extremum theorem:** an interior extremum of a differentiable function has $f'=0$. That plus EVT gives **Rolle**, and Rolle after subtracting the secant gives the **mean value theorem**.
+
+MVT consequences, all used freely in calculus and proved only here:
+
+- $f'=0$ on an interval $\implies f$ constant. This is what makes "+C" a theorem.
+- $f'>0 \implies f$ strictly increasing.
+- $|f'|\le K \implies f$ is Lipschitz with constant $K$.
+
+**Taylor's theorem** is Rolle applied $n+1$ times:
+
+$$
+f(x)=P_n(x)+\frac{f^{(n+1)}(\xi)}{(n+1)!}(x-a)^{n+1}
+$$
+
+an **equality** with only $\xi$ unspecified. It gives the usable bound $|R_n| \le \frac{K}{(n+1)!}|x-a|^{n+1}$.
+
+**Smooth is not analytic.** $e^{-1/x^2}$ has every derivative zero at 0, so its Taylor series converges everywhere to the wrong function. The series converging and the series converging to $f$ are different claims, and the second is exactly $R_n \to 0$.
+
+## Integration
+
+For bounded $f$, partitions give $L(f,P)=\sum m_i\Delta x_i$ and $U(f,P)=\sum M_i\Delta x_i$. Refining raises $L$ and lowers $U$, and every lower sum is below every upper sum.
+
+> **Integrable** means $\sup_P L = \inf_P U$. Equivalently (**Riemann criterion**), for each $\varepsilon$ some $P$ has $U(f,P)-L(f,P)<\varepsilon$.
+
+- **Continuous $\implies$ integrable**, via uniform continuity on the compact interval.
+- **Monotone $\implies$ integrable**, even with countably many jumps.
+- The **Dirichlet function** (1 on rationals, 0 on irrationals) is bounded and not integrable: $L=0$ and $U=1$ for every partition.
+
+**Fundamental theorem, part one.** $F(x)=\int_a^x f$ is continuous whenever $f$ is integrable, and $F'(c)=f(c)$ wherever $f$ is continuous. Integration smooths.
+
+**Fundamental theorem, part two.** $\int_a^b f = F(b)-F(a)$ for any antiderivative $F$, proved by applying the **MVT** on each subinterval and telescoping.
+
+## Uniform Convergence
+
+Pointwise: $N$ may depend on $x$. Uniform: one $N$ for all $x$, equivalently $\|f_n-f\|\to0$.
+
+| Preserved by uniform convergence | Not preserved         |
+| -------------------------------- | --------------------- |
+| Continuity of the limit          | Differentiability     |
+| The value of the integral        | Anything about $f_n'$ |
+| The uniform Cauchy property      | —                     |
+
+- $x^n$ on $[0,1]$: continuous terms, discontinuous limit, $\|f_n-f\|=1$ always. Uniform on $[0,a]$ for $a<1$.
+- $\frac{\sin(nx)}{\sqrt n} \rightrightarrows 0$ while $f_n'=\sqrt n\cos(nx)$ diverges.
+- A spike of height $n$ and width $1/n$: pointwise limit 0, every integral 1.
+- **Weierstrass M-test.** $|u_n(x)|\le M_n$ with $\sum M_n<\infty$ gives uniform convergence, and licenses term-by-term integration of power series.
+
+## The Named Theorems
+
+| Theorem                         | Statement                                                        |
+| ------------------------------- | ---------------------------------------------------------------- |
+| Completeness axiom              | Every nonempty set bounded above has a supremum                  |
+| Archimedean property            | For any real $x$ there is a natural $n > x$                      |
+| Monotone convergence            | A bounded monotone sequence converges                            |
+| Bolzano–Weierstrass             | Every bounded sequence has a convergent subsequence              |
+| Cauchy criterion                | A sequence of reals converges iff it is Cauchy                   |
+| Riemann rearrangement           | A conditionally convergent series can be rearranged to any sum   |
+| Heine–Borel                     | Compact in $\mathbb{R}$ = closed and bounded                     |
+| Extreme value                   | A continuous function on a compact interval attains its extremes |
+| Intermediate value              | A continuous function on $[a,b]$ takes every intermediate value  |
+| Uniform continuity theorem      | Continuous on a compact set implies uniformly continuous         |
+| Rolle                           | Equal endpoint values give an interior critical point            |
+| Mean value theorem              | $f'(c)$ equals the average rate for some interior $c$            |
+| Taylor                          | $f = P_n + f^{(n+1)}(\xi)(x-a)^{n+1}/(n+1)!$                     |
+| Riemann criterion               | Integrable iff some partition makes $U - L$ arbitrarily small    |
+| Fundamental theorem of calculus | $F' = f$ where $f$ is continuous, and $\int_a^b f = F(b)-F(a)$   |
+| Weierstrass M-test              | Uniform bounds with a convergent sum give uniform convergence    |
+
+## The Counterexamples
+
+They are worth memorizing as a set, because each one is the reason some hypothesis cannot be dropped.
+
+| Object                          | Shows                                                    |
+| ------------------------------- | -------------------------------------------------------- |
+| $\{x\in\mathbb{Q}:x^2<2\}$      | $\mathbb{Q}$ is not complete                             |
+| $(-1)^n$                        | Bounded need not imply convergent                        |
+| $\sqrt{n}$                      | Consecutive terms close does not imply Cauchy            |
+| $\sum 1/n$                      | $a_n\to0$ does not imply convergence                     |
+| $\sum(-1)^{n+1}/n$              | Convergent but not absolutely; rearrangeable             |
+| $[0,1)$                         | A set that is neither open nor closed                    |
+| $\bigcap(-1/n,1/n)$             | Infinite intersections of open sets need not be open     |
+| $1/x$ on $(0,1]$                | Non-compact domain breaks boundedness                    |
+| $\sin(1/x)$ on $(0,1]$          | Continuous, not uniformly continuous                     |
+| $x^2$ on $\mathbb{R}$           | Continuous, not uniformly continuous on an unbounded set |
+| $\sqrt{x}$ on $[0,1]$           | Uniformly continuous, not Lipschitz                      |
+| $\lvert x\rvert$ at 0           | Continuous, not differentiable                           |
+| $e^{-1/x^2}$                    | Smooth, not analytic                                     |
+| Dirichlet function              | Bounded, not Riemann integrable                          |
+| $x^n$ on $[0,1]$                | Pointwise limit of continuous functions can jump         |
+| $\sin(nx)/\sqrt n$              | Uniform convergence says nothing about derivatives       |
+| Height-$n$ spike of width $1/n$ | Limit and integral do not always commute                 |
+
+## Common Mistakes
+
+- **Confusing sup with max.** $\sup[0,1) = 1$ and there is no maximum.
+- **Letting $N$ depend on $x$** in a uniform statement, or on $n$ in a sequence statement. Quantifier order is the content.
+- **Thinking $a_{n+1}-a_n\to0$ makes a sequence Cauchy.** $\sqrt n$ refutes it.
+- **Using the nth-term test to prove convergence.** It can only prove divergence.
+- **Rearranging a conditionally convergent series.**
+- **Assuming "not open" means closed.**
+- **Applying EVT or IVT on an open or unbounded interval.**
+- **Forgetting that $f(c)$ is irrelevant to $\lim_{x\to c}f(x)$.**
+- **Treating differentiable and continuous as interchangeable.**
+- **Reading Taylor's theorem as an approximation.** It is an equality; the remainder is exact.
+- **Assuming a smooth function equals its Taylor series.**
+- **Concluding integrability from boundedness.** The Dirichlet function is bounded and not integrable.
+- **Interchanging a limit with an integral or a derivative without uniformity.**
+- **Expecting uniform convergence of $f_n$ to say something about $f_n'$.**
+
+:::note[You've Got This]
+Look back at what this section actually asked of you. Not long computations — a handful of definitions written with the quantifiers in the right order, one axiom, about sixteen theorems, and a stock of counterexamples that explain why every hypothesis is there. If the ε-δ and ε-N arguments started feeling mechanical somewhere around uniform continuity, that's the sign it worked: they _are_ mechanical once you see that each one is a negotiation where you're handed a tolerance and must produce a threshold. And this is the section where calculus stops being a set of rules you were given and becomes a set of theorems you can prove. That doesn't wear off.
+:::
+
+## Section Quiz
+
+<Quiz
+  quizId="real-analysis-review"
+  questions={[
+    {
+      id: "q1",
+      text: "Which single property distinguishes ℝ from ℚ?",
+      options: [
+        "ℝ is closed under addition",
+        "Every nonempty subset of ℝ bounded above has a least upper bound",
+        "ℝ is uncountable",
+        "ℝ contains the integers",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Completeness is the axiom, and uncountability is a consequence rather than the defining property. The set of rationals with square less than 2 is bounded above with no rational supremum.",
+    },
+    {
+      id: "q2",
+      text: "What is sup of the interval [0, 1)?",
+      options: ["0", "1", "It does not exist", "0.999…"],
+      correctIndex: 1,
+      explanation:
+        "One is the least upper bound even though it is not in the set. There is no maximum, which is exactly why supremum is the more useful notion.",
+    },
+    {
+      id: "q3",
+      text: "Which statement about aₙ → L is correct?",
+      options: [
+        "N may depend on both ε and n",
+        "For every ε > 0 there is N such that |aₙ − L| < ε for all n ≥ N",
+        "There is an ε such that for all N, |aₙ − L| < ε",
+        "|aₙ − L| decreases monotonically",
+      ],
+      correctIndex: 1,
+      explanation:
+        "N is chosen after ε and before n, and nothing is required to be monotone. Convergence permits the distance to fluctuate as long as it stays below ε past N.",
+    },
+    {
+      id: "q4",
+      text: "Which theorem guarantees a bounded sequence has a convergent subsequence?",
+      options: [
+        "Monotone convergence",
+        "Bolzano–Weierstrass",
+        "Heine–Borel",
+        "The squeeze theorem",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Bolzano–Weierstrass produces a convergent subsequence from boundedness alone. It is proved by repeated bisection, which is completeness in action.",
+    },
+    {
+      id: "q5",
+      text: "Why does aₙ = √n fail to be Cauchy despite aₙ₊₁ − aₙ → 0?",
+      options: [
+        "It is not monotone",
+        "The Cauchy condition requires all pairs beyond N to be close, not just consecutive terms",
+        "It is unbounded, and unbounded sequences cannot be tested",
+        "It has no subsequential limits",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Terms far apart in index remain far apart in value: √(4n) − √n grows without bound. Consecutive closeness is strictly weaker than the Cauchy property.",
+    },
+    {
+      id: "q6",
+      text: "For which p does Σ 1/nᵖ converge?",
+      options: ["p > 0", "p ≥ 1", "p > 1", "All p"],
+      correctIndex: 2,
+      explanation:
+        "The integral test gives convergence exactly for p > 1. The boundary case p = 1 is the harmonic series, which diverges.",
+    },
+    {
+      id: "q7",
+      text: "What is special about a conditionally convergent series?",
+      options: [
+        "It converges faster than an absolutely convergent one",
+        "It can be rearranged to sum to any real number",
+        "Its terms do not tend to zero",
+        "It has no partial sums",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Riemann's rearrangement theorem says the order of the terms determines the sum. Absolute convergence is what makes a series immune to reordering.",
+    },
+    {
+      id: "q8",
+      text: "Which set is neither open nor closed?",
+      options: ["ℝ", "The empty set", "[0, 1)", "(0, 1)"],
+      correctIndex: 2,
+      explanation:
+        "The point 0 has no neighbourhood inside the set, so it is not open, and the limit point 1 is missing, so it is not closed. Both ℝ and the empty set are simultaneously open and closed.",
+    },
+    {
+      id: "q9",
+      text: "By Heine–Borel, which subsets of ℝ are compact?",
+      options: [
+        "The bounded ones",
+        "The closed ones",
+        "The closed and bounded ones",
+        "The intervals",
+      ],
+      correctIndex: 2,
+      explanation:
+        "Both conditions are needed: (0,1] is bounded but not closed and [0,∞) is closed but not bounded, and each fails to be compact. Compactness is what makes the theorems on [a,b] work.",
+    },
+    {
+      id: "q10",
+      text: "Which hypothesis does the extreme value theorem require that the intermediate value theorem also requires?",
+      options: [
+        "Differentiability",
+        "Continuity on a closed bounded interval",
+        "Monotonicity",
+        "That f(a) and f(b) have opposite signs",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Both rest on continuity together with compactness of the domain. On (0,1] the function 1/x is continuous and attains no maximum, so the closedness cannot be dropped.",
+    },
+    {
+      id: "q11",
+      text: "How does uniform continuity differ from continuity?",
+      options: [
+        "It requires differentiability",
+        "One δ works for the whole domain rather than one δ per point",
+        "It only applies to bounded functions",
+        "There is no difference on any domain",
+      ],
+      correctIndex: 1,
+      explanation:
+        "The quantifier on the point moves after the choice of δ. On a compact set the two notions coincide, but sin(1/x) on (0,1] shows they differ in general.",
+    },
+    {
+      id: "q12",
+      text: "Which function is uniformly continuous on [0, 1] but not Lipschitz there?",
+      options: ["x²", "√x", "sin x", "3x + 1"],
+      correctIndex: 1,
+      explanation:
+        "Its difference quotients blow up near 0, so no single constant bounds them, yet continuity on a compact interval forces uniform continuity. This shows the chain Lipschitz ⊂ uniformly continuous is strict.",
+    },
+    {
+      id: "q13",
+      text: "What is the relationship between differentiability and continuity?",
+      options: [
+        "They are equivalent",
+        "Continuity implies differentiability",
+        "Differentiability implies continuity, and the converse fails",
+        "Neither implies the other",
+      ],
+      correctIndex: 2,
+      explanation:
+        "The difference quotient having a limit forces the numerator to zero. The absolute value function at 0 refutes the converse, and Weierstrass built one that is continuous everywhere and differentiable nowhere.",
+    },
+    {
+      id: "q14",
+      text: "Which calculus fact is a direct consequence of the mean value theorem?",
+      options: [
+        "Every continuous function is integrable",
+        "Two antiderivatives of the same function differ by a constant",
+        "Every bounded sequence has a convergent subsequence",
+        "Compact sets are closed",
+      ],
+      correctIndex: 1,
+      explanation:
+        "A function with zero derivative on an interval is constant, and applying that to the difference of two antiderivatives justifies the constant of integration.",
+    },
+    {
+      id: "q15",
+      text: "In Taylor's theorem, what makes the statement an equality rather than an approximation?",
+      options: [
+        "The polynomial is exact",
+        "The remainder term f⁽ⁿ⁺¹⁾(ξ)(x−a)ⁿ⁺¹/(n+1)! is included, with only ξ unspecified",
+        "The series always converges",
+        "The error is always zero",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Nothing is discarded; the remainder accounts for the difference exactly. The only concession is that the location of ξ is unknown, which is the same concession the MVT makes.",
+    },
+    {
+      id: "q16",
+      text: "What does e^(−1/x²), extended by 0 at the origin, demonstrate?",
+      options: [
+        "That a Taylor series can diverge",
+        "That a smooth function need not equal its Taylor series",
+        "That the function is discontinuous",
+        "That Taylor's theorem is false",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Every derivative at 0 vanishes, so the Taylor series is identically zero and converges everywhere to the wrong function. Smooth and analytic are therefore different properties.",
+    },
+    {
+      id: "q17",
+      text: "Which bounded function on [0, 1] is not Riemann integrable?",
+      options: [
+        "A step function with one jump",
+        "The function equal to 1 on rationals and 0 on irrationals",
+        "√x",
+        "A monotone function with infinitely many jumps",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Density of both sets forces every lower sum to be 0 and every upper sum to be 1, so the gap never closes. Monotone functions and functions with finitely many jumps are integrable.",
+    },
+    {
+      id: "q18",
+      text: "Which theorem is used to prove ∫ₐᵇ f = F(b) − F(a)?",
+      options: [
+        "Heine–Borel",
+        "The mean value theorem",
+        "Bolzano–Weierstrass",
+        "The M-test",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Applying the MVT on each subinterval turns each increment of F into f(tᵢ)Δxᵢ, and the telescoping sum stays trapped between the lower and upper sums.",
+    },
+    {
+      id: "q19",
+      text: "Which property is preserved by uniform convergence but not by pointwise convergence?",
+      options: [
+        "Boundedness of each term",
+        "Continuity of the limit",
+        "Differentiability of the limit",
+        "Monotonicity",
+      ],
+      correctIndex: 1,
+      explanation:
+        "A uniform limit of continuous functions is continuous, whereas xⁿ on [0,1] has continuous terms and a discontinuous pointwise limit. Differentiability survives neither, as sin(nx)/√n shows.",
+    },
+    {
+      id: "q20",
+      text: "What does the Weierstrass M-test establish?",
+      options: [
+        "That a series diverges",
+        "That Σuₙ converges uniformly when |uₙ(x)| ≤ Mₙ with ΣMₙ convergent",
+        "That every continuous function is a series",
+        "That power series converge everywhere",
+      ],
+      correctIndex: 1,
+      explanation:
+        "The bounds must be independent of x, which is where the uniformity comes from. This is what licenses term-by-term integration of power series and Fourier series.",
+    },
+  ]}
+/>

@@ -1,0 +1,129 @@
+---
+/**
+ * TaylorRemainder — Taylor polynomials of increasing degree closing in on a
+ * function, with the actual worst-case error on the plotted window measured
+ * rather than asserted.
+ */
+const w = 540;
+const h = 316;
+const left = 66;
+const right = 452;
+const bottom = 224;
+const top = 62;
+// Window chosen so every plotted polynomial stays inside the frame: no curve
+// is clipped, so the visible gaps really are the remainders.
+const xLo = -1.5;
+const xHi = 1.5;
+const yLo = -1.75;
+const yHi = 3.65;
+
+const f = (x: number) => Math.exp(x) - 1;
+// Taylor polynomial of e^x − 1 about 0: sum_{k=1..n} x^k / k!
+function taylor(x: number, n: number) {
+  let sum = 0;
+  let term = 1;
+  for (let k = 1; k <= n; k++) {
+    term = (term * x) / k;
+    sum += term;
+  }
+  return sum;
+}
+
+const degrees = [1, 2, 3, 5];
+const palette = ["orange", "pink", "purple", "green"];
+
+const px = (x: number) => left + ((x - xLo) / (xHi - xLo)) * (right - left);
+const py = (y: number) => bottom - ((y - yLo) / (yHi - yLo)) * (bottom - top);
+
+const clampY = (y: number) => Math.max(yLo, Math.min(yHi, y));
+const path = (g: (x: number) => number) =>
+  Array.from({ length: 201 }, (_, i) => {
+    const x = xLo + (i / 200) * (xHi - xLo);
+    return `${px(x).toFixed(1)},${py(clampY(g(x))).toFixed(1)}`;
+  }).join(" ");
+
+// Worst error on the window, measured from the samples
+const worst = degrees.map((n) => {
+  let m = 0;
+  for (let i = 0; i <= 400; i++) {
+    const x = xLo + (i / 400) * (xHi - xLo);
+    m = Math.max(m, Math.abs(f(x) - taylor(x, n)));
+  }
+  return { n, err: m };
+});
+---
+
+<figure
+  class="tay"
+  role="img"
+  aria-label={`The function e to the x minus 1 plotted with its Taylor polynomials of degree 1, 2, 3 and 5 about zero. The worst error on the window falls from about ${worst[0].err.toFixed(2)} at degree 1 to about ${worst[3].err.toFixed(3)} at degree 5.`}
+>
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    <text x="16" y="20" class="tay-head" font-size="12.5" font-weight="bold">Higher degree, smaller remainder</text>
+    <text x="16" y="40" class="tay-sub" font-size="10.5">f(x) = eˣ − 1 with its Taylor polynomials about 0</text>
+
+    <line x1={left - 8} y1={py(0)} x2={right + 6} y2={py(0)} class="tay-axis" />
+    <line x1={px(0)} y1={top - 4} x2={px(0)} y2={bottom} class="tay-axis" />
+
+    {degrees.map((n, i) => (
+      <polyline points={path((x) => taylor(x, n))} class={`tay-poly tay-p-${palette[i]}`} fill="none" />
+    ))}
+    <polyline points={path(f)} class="tay-fn" fill="none" />
+
+    <circle cx={px(0)} cy={py(0)} r="3.6" class="tay-centre" />
+
+    {/* Measured errors, in a column clear of the curves */}
+    <text x={right + 14} y="80" class="tay-errhdr" font-size="9" text-anchor="start">worst error</text>
+    {worst.map((wk, i) => (
+      <text x={right + 14} y={96 + i * 15} class={`tay-err tay-t-${palette[i]}`} font-size="9" text-anchor="start">
+        {`n=${wk.n}: ${wk.err.toFixed(3)}`}
+      </text>
+    ))}
+
+    <text x={w / 2} y="252" class="tay-foot" font-size="10.5" text-anchor="middle">
+      f(x) = Pₙ(x) + Rₙ(x), with Rₙ(x) = f⁽ⁿ⁺¹⁾(ξ) xⁿ⁺¹ ⁄ (n+1)! for some ξ between 0 and x
+    </text>
+    <text x={w / 2} y="272" class="tay-sub2" font-size="9.5" text-anchor="middle">
+      {`On this window the worst error drops from ${worst[0].err.toFixed(2)} to ${worst[3].err.toFixed(3)} as the degree goes 1 to 5`}
+    </text>
+    <text x={w / 2} y="290" class="tay-sub2" font-size="9.5" text-anchor="middle">
+      The remainder is exact, not an estimate; only ξ is left unspecified
+    </text>
+    <text x={w / 2} y="308" class="tay-sub2" font-size="9.5" text-anchor="middle">
+      Accuracy is best near the centre and decays as you move away from it
+    </text>
+  </svg>
+</figure>
+
+<style>
+  .tay { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .tay svg { width:100%; max-width:100%; height:auto; }
+  .tay-axis { stroke:#888; stroke-width:1.3; }
+  .tay-fn { stroke:#58a6ff; stroke-width:2.6; }
+  .tay-poly { stroke-width:1.5; }
+  .tay-p-orange { stroke:#f0883e; }
+  .tay-p-pink { stroke:#ff7b72; }
+  .tay-p-purple { stroke:#d2a8ff; }
+  .tay-p-green { stroke:#7ee787; }
+  .tay-centre { fill:#58a6ff; stroke:#eee; stroke-width:1.2; }
+  .tay-errhdr { fill:#9198a1; font-family:'Libre Baskerville',Georgia,serif; font-style:italic; }
+  .tay-err { font-family:'Libre Baskerville',Georgia,serif; }
+  .tay-t-orange { fill:#f0883e; }
+  .tay-t-pink { fill:#ff7b72; }
+  .tay-t-purple { fill:#d2a8ff; }
+  .tay-t-green { fill:#7ee787; }
+  .tay-head { fill:#eee; font-family:'Libre Baskerville',Georgia,serif; }
+  .tay-sub, .tay-sub2 { fill:#9198a1; font-family:'Libre Baskerville',Georgia,serif; font-style:italic; }
+  .tay-foot { fill:#58a6ff; font-family:'Libre Baskerville',Georgia,serif; }
+  :global([data-theme="light"]) .tay-axis { stroke:#666; }
+  :global([data-theme="light"]) .tay-fn, :global([data-theme="light"]) .tay-foot { stroke:#0550ae; fill:#0550ae; }
+  :global([data-theme="light"]) .tay-fn { fill:none; }
+  :global([data-theme="light"]) .tay-centre { fill:#0550ae; stroke:#fff; }
+  :global([data-theme="light"]) .tay-p-orange, :global([data-theme="light"]) .tay-t-orange { stroke:#b35900; fill:#b35900; }
+  :global([data-theme="light"]) .tay-p-pink, :global([data-theme="light"]) .tay-t-pink { stroke:#a40e26; fill:#a40e26; }
+  :global([data-theme="light"]) .tay-p-purple, :global([data-theme="light"]) .tay-t-purple { stroke:#6639ba; fill:#6639ba; }
+  :global([data-theme="light"]) .tay-p-green, :global([data-theme="light"]) .tay-t-green { stroke:#116329; fill:#116329; }
+  :global([data-theme="light"]) :is(.tay-poly) { fill:none; }
+  :global([data-theme="light"]) .tay-head { fill:#24292f; }
+  :global([data-theme="light"]) :is(.tay-sub, .tay-sub2, .tay-errhdr) { fill:#57606a; }
+</style>

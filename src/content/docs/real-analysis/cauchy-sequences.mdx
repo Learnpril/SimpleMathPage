@@ -1,0 +1,289 @@
+---
+title: Cauchy Sequences
+description: Convergence without naming the limit, and what completeness really means
+sidebar:
+  order: 6
+---
+
+import Quiz from "../../../components/Quiz.astro";
+import CauchyWindows from "../../../components/CauchyWindows.astro";
+
+## What You'll Learn
+
+In this lesson you'll learn the Cauchy condition, why it is equivalent to convergence in $\mathbb{R}$ but not in $\mathbb{Q}$, and how "complete" becomes a definition rather than an axiom. This is the cleanest statement of what makes the real numbers work.
+
+## The Concept
+
+### The problem with the limit definition
+
+To use the epsilon-N definition you must already know the limit $L$. That's fine for $\frac1n \to 0$, awkward for something like
+
+$$
+a_n = \sum_{k=1}^n \frac{1}{k^2}
+$$
+
+which converges to $\frac{\pi^2}{6}$ — a fact requiring real work to discover. You would like to prove convergence _before_ identifying the limit.
+
+Cauchy's idea: instead of measuring distance to a limit, measure distances **between terms**.
+
+### The definition
+
+> $(a_n)$ is a **Cauchy sequence** if
+>
+> $$
+> \forall \varepsilon>0 \; \exists N \; \text{such that} \; \forall m, n > N, \; |a_m - a_n| < \varepsilon
+> $$
+
+Two indices now, and no $L$ anywhere. The terms eventually get and stay close **to each other**.
+
+<CauchyWindows />
+
+Equivalently: for each $\varepsilon$, the whole tail past $N$ fits inside a window of width less than $\varepsilon$. Pushing $N$ further out shrinks the window without limit.
+
+A common misreading: **"consecutive terms get close" is not the Cauchy condition.** The definition quantifies over _all_ pairs $m, n > N$, not just $n$ and $n+1$. The counterexample is in the worked examples, and it matters.
+
+### Convergent implies Cauchy
+
+> Every convergent sequence is Cauchy.
+
+_Proof._ Suppose $a_n \to L$ and let $\varepsilon>0$. Choose $N$ with $|a_n - L| < \frac{\varepsilon}{2}$ for $n > N$. For $m, n > N$,
+
+$$
+|a_m - a_n| \le |a_m - L| + |L - a_n| < \frac{\varepsilon}{2} + \frac{\varepsilon}{2} = \varepsilon
+$$
+
+∎
+
+The triangle inequality routed through $L$, and $\varepsilon$ split in half. Same two moves as always. Note this direction needs no completeness — it holds in $\mathbb{Q}$ too.
+
+### Cauchy implies convergent: the completeness theorem
+
+> **In $\mathbb{R}$, every Cauchy sequence converges.**
+
+This is the deep direction, and it needs completeness.
+
+_Proof._ Let $(a_n)$ be Cauchy.
+
+**Step 1: it's bounded.** Apply the definition with $\varepsilon = 1$ to get $N$ with $|a_m - a_n| < 1$ for $m,n > N$. Fixing $m = N+1$ bounds the tail, and the finitely many earlier terms are bounded automatically.
+
+**Step 2: extract a convergent subsequence.** By Bolzano-Weierstrass, some subsequence $a_{n_k} \to L$.
+
+**Step 3: the whole sequence converges to that $L$.** Let $\varepsilon>0$. Cauchy gives $N_1$ with $|a_m - a_n| < \frac{\varepsilon}{2}$ for $m,n>N_1$. Subsequential convergence gives $K$ with $|a_{n_k} - L| < \frac{\varepsilon}{2}$ for $k > K$. Pick any $k$ with $k > K$ and $n_k > N_1$. Then for $n > N_1$,
+
+$$
+|a_n - L| \le |a_n - a_{n_k}| + |a_{n_k} - L| < \frac{\varepsilon}{2} + \frac{\varepsilon}{2} = \varepsilon
+$$
+
+∎
+
+Step 3 is the interesting one: **the Cauchy condition upgrades a subsequence's limit to the whole sequence's limit.** Without it, a bounded sequence's convergent subsequence tells you nothing about the rest — which is exactly the situation with $(-1)^n$.
+
+### What "complete" means
+
+Combining both directions:
+
+> In $\mathbb{R}$, a sequence converges **if and only if** it is Cauchy.
+
+A space where every Cauchy sequence converges is called **complete**. So the least upper bound axiom and Cauchy completeness are two descriptions of the same property, and either can be taken as the definition of $\mathbb{R}$.
+
+$\mathbb{Q}$ is **not** complete. The sequence $1, 1.4, 1.41, 1.414, 1.4142, \dots$ is Cauchy: any two terms past the $k$-th agree to $k$ decimal places, so they differ by less than $10^{-k}$. Every term is rational. It converges to $\sqrt2$, which is not.
+
+So the sequence bunches up around a location where no rational sits. **A gap in the number system appears as a Cauchy sequence with nowhere to converge.** Cantor's construction of $\mathbb{R}$ takes this seriously and _defines_ a real number to be an equivalence class of Cauchy sequences of rationals, with two sequences equivalent when their difference tends to zero.
+
+### Why this matters in practice
+
+The Cauchy criterion is what lets you prove convergence without solving for the limit, which is the usual situation. It is also the natural notion in settings where "the limit" is not a number you can write down: sequences of functions, of matrices, of probability distributions. Completeness of function spaces, which underpins Fourier analysis and the theory of differential equations, is exactly this definition transplanted.
+
+## Worked Examples
+
+**Example 1: Show $a_n = \frac1n$ is Cauchy directly.**
+
+**Solution.** Let $\varepsilon>0$ and choose $N > \frac{2}{\varepsilon}$. For $m, n > N$,
+
+$$
+\left|\frac1m - \frac1n\right| \le \frac1m + \frac1n < \frac1N + \frac1N = \frac2N < \varepsilon
+$$
+
+∎
+
+Note the estimate $|x - y| \le |x| + |y|$, a cheap over-estimate that avoids caring which of $m, n$ is larger.
+
+**Example 2: Consecutive terms close is not enough.**
+
+Show $a_n = \sqrt n$ has $|a_{n+1} - a_n| \to 0$ but is not Cauchy.
+
+**Solution.** For consecutive terms, rationalize:
+
+$$
+\sqrt{n+1} - \sqrt n = \frac{(n+1) - n}{\sqrt{n+1}+\sqrt n} = \frac{1}{\sqrt{n+1}+\sqrt n} \to 0
+$$
+
+So consecutive gaps vanish. But take $m = 4n$:
+
+$$
+|a_{4n} - a_n| = 2\sqrt n - \sqrt n = \sqrt n \to \infty
+$$
+
+So with $\varepsilon = 1$ there is no $N$ that works: **not Cauchy.** Indeed $\sqrt n$ diverges to infinity.
+
+This is the counterexample that makes the two-index quantifier essential. Distances between _neighbours_ shrinking says nothing about distances across the tail.
+
+**Example 3: A Cauchy sequence of rationals with no rational limit.**
+
+**Solution.** Let $a_n$ be $\sqrt2$ truncated to $n$ decimal places: $1, 1.4, 1.41, 1.414, \dots$ Each is rational.
+
+For $m, n > N$ both agree with $\sqrt2$ to at least $N$ places, so
+
+$$
+|a_m - a_n| \le 10^{-N}
+$$
+
+Given $\varepsilon>0$, choose $N$ with $10^{-N} < \varepsilon$. **Cauchy.**
+
+In $\mathbb{Q}$ it converges to nothing; in $\mathbb{R}$ it converges to $\sqrt2$. Same sequence, different ambient space, different answer. That is exactly the failure of completeness.
+
+**Example 4: Use the Cauchy criterion on a series.**
+
+Show the partial sums of $\sum \frac{1}{2^k}$ form a Cauchy sequence.
+
+**Solution.** For $m > n$,
+
+$$
+|s_m - s_n| = \sum_{k=n+1}^{m} \frac{1}{2^k} < \sum_{k=n+1}^{\infty} \frac{1}{2^k} = \frac{1}{2^n}
+$$
+
+Given $\varepsilon>0$, choose $N$ with $\frac{1}{2^N} < \varepsilon$. Then for $m,n > N$ the difference is below $\varepsilon$. **Cauchy, hence convergent.** ∎
+
+Convergence established without computing the sum. (It is 1, but we never needed that.)
+
+**Example 5: A sequence that fails the criterion.**
+
+Show the harmonic partial sums $s_n = \sum_{k=1}^n \frac1k$ are not Cauchy.
+
+**Solution.** Take $m = 2n$:
+
+$$
+|s_{2n} - s_n| = \frac{1}{n+1} + \frac{1}{n+2} + \cdots + \frac{1}{2n}
+$$
+
+There are $n$ terms, each at least $\frac{1}{2n}$, so the sum is at least $n \cdot \frac{1}{2n} = \frac12$.
+
+With $\varepsilon = \frac12$, no $N$ works, since we can always find such a pair beyond it. **Not Cauchy, hence divergent.** ∎
+
+The harmonic series diverges even though its terms tend to zero, and the Cauchy criterion catches it in three lines.
+
+**Example 6: Cauchy sequences are bounded.**
+
+**Solution.** Apply the definition with $\varepsilon = 1$: there is $N$ with $|a_m - a_n| < 1$ for $m,n>N$. Fix $m = N+1$; then $|a_n| < |a_{N+1}| + 1$ for all $n > N$.
+
+The terms $a_1,\dots,a_N$ form a finite set, so
+
+$$
+M = \max\{|a_1|,\dots,|a_N|, |a_{N+1}|+1\}
+$$
+
+bounds everything. ∎
+
+Same head-and-tail split as "convergent implies bounded," and it is Step 1 of the completeness theorem.
+
+## Real-World Applications
+
+**Iterative solvers and stopping rules.** Real algorithms cannot test $|x_n - L| < \varepsilon$, because $L$ is unknown. They test $|x_{n+1} - x_n| < \varepsilon$, which is a Cauchy-style criterion. Example 2 is the warning: consecutive differences shrinking does not by itself prove convergence, which is why serious solvers add a contraction estimate or a residual check.
+
+**Numerical linear algebra.** Convergence of iterative methods like conjugate gradient is established with Cauchy-type arguments in a complete normed space. Completeness of $\mathbb{R}^n$ is what guarantees the iterates have a limit to find.
+
+**Function spaces and differential equations.** The Picard existence theorem for ODEs builds a sequence of approximate solutions, shows it is Cauchy in a complete space of functions, and concludes a solution exists. Completeness is the entire mechanism, and the same pattern powers the Banach fixed-point theorem.
+
+**Digital arithmetic and precision.** Successive decimal or binary approximations of a real number form a Cauchy sequence. Every floating-point computation is working inside a Cauchy approximation to a value the machine never reaches.
+
+**Signal reconstruction.** Fourier partial sums are shown to converge by proving they are Cauchy in a suitable space. Which space you choose determines the kind of convergence you get, and hence which artifacts appear in the reconstruction.
+
+:::note[You've Got This]
+The value of the Cauchy condition is that it lets you prove convergence without knowing the limit, which is the normal situation outside textbooks. The one trap worth burning in: the definition quantifies over all pairs m, n past N, not just consecutive ones. √n is the counterexample, and it's exactly the mistake a naive stopping rule makes in real software. Beyond that, notice that "ℝ is complete" and "ℝ has the least upper bound property" are two ways of saying the same thing, so you can use whichever is more convenient.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="real-cauchy-sequences"
+  questions={[
+    {
+      id: "q1",
+      text: "What is the Cauchy condition for a sequence?",
+      options: [
+        "For every ε there is N with |aₙ − L| < ε for n > N",
+        "For every ε there is N with |aₘ − aₙ| < ε for all m, n > N",
+        "For every ε there is N with |aₙ₊₁ − aₙ| < ε for n > N",
+        "The sequence is bounded and monotone",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Two indices, both past N, and no limit mentioned. Restricting to consecutive terms gives a strictly weaker condition that √n satisfies while diverging.",
+    },
+    {
+      id: "q2",
+      text: "Why is √n not Cauchy, even though consecutive terms get arbitrarily close?",
+      options: [
+        "Because √n is irrational for most n",
+        "Because taking m = 4n gives |a₄ₙ − aₙ| = √n, which grows without bound",
+        "Because √n is not monotone",
+        "Because √n is bounded",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Consecutive gaps are 1/(√(n+1) + √n), which vanishes, but distances across the tail blow up. This is why the definition must quantify over all pairs.",
+    },
+    {
+      id: "q3",
+      text: "What does it mean for a space to be complete?",
+      options: [
+        "Every bounded sequence converges",
+        "Every Cauchy sequence in it converges to a point of the space",
+        "Every sequence has a monotone subsequence",
+        "It contains all the rationals",
+      ],
+      correctIndex: 1,
+      explanation:
+        "ℝ is complete; ℚ is not, since the decimal truncations of √2 are Cauchy rationals converging to an irrational. Completeness in this sense is equivalent to the least upper bound property.",
+    },
+    {
+      id: "q4",
+      text: "In the proof that Cauchy implies convergent in ℝ, which theorem supplies the candidate limit?",
+      options: [
+        "The monotone convergence theorem applied to the sequence itself",
+        "Bolzano-Weierstrass, giving a convergent subsequence",
+        "The triangle inequality",
+        "The Archimedean property",
+      ],
+      correctIndex: 1,
+      explanation:
+        "The sequence is first shown bounded, then Bolzano-Weierstrass produces a convergent subsequence, and the Cauchy condition upgrades that subsequential limit to the limit of the whole sequence.",
+    },
+    {
+      id: "q5",
+      text: "Using the Cauchy criterion on the harmonic partial sums with m = 2n gives what?",
+      options: [
+        "A difference tending to 0, so the series converges",
+        "A difference of at least 1/2, so the sums are not Cauchy and the series diverges",
+        "A difference of exactly 1",
+        "Nothing, since the criterion does not apply to series",
+      ],
+      correctIndex: 1,
+      explanation:
+        "The block from n+1 to 2n has n terms each at least 1/(2n), summing to at least 1/2. So ε = 1/2 defeats every N, and the harmonic series diverges despite its terms going to 0.",
+    },
+    {
+      id: "q6",
+      text: "Which direction of the equivalence needs completeness?",
+      options: [
+        "Convergent implies Cauchy",
+        "Cauchy implies convergent",
+        "Both directions",
+        "Neither; it is purely formal",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Convergent implies Cauchy holds in ℚ as well, by the triangle inequality. The reverse can fail without completeness, which is exactly what the √2 truncations demonstrate in ℚ.",
+    },
+  ]}
+/>

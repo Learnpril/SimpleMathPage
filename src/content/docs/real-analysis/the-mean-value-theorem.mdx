@@ -1,0 +1,291 @@
+---
+title: The Mean Value Theorem
+description: Rolle's theorem, the MVT, and the consequences that make calculus work
+sidebar:
+  order: 16
+---
+
+import Quiz from "../../../components/Quiz.astro";
+import MVTDiagram from "../../../components/MVTDiagram.astro";
+
+## What You'll Learn
+
+In this lesson you'll learn Rolle's theorem and the mean value theorem, see how they follow from the extreme value theorem, and prove the facts calculus took for granted: that a positive derivative means increasing, and that a zero derivative means constant.
+
+## The Concept
+
+### Rolle's theorem
+
+> If $f$ is continuous on $[a,b]$, differentiable on $(a,b)$, and $f(a)=f(b)$, then there is $c \in (a,b)$ with $f'(c)=0$.
+
+_Proof._ By the **extreme value theorem**, $f$ attains a maximum $M$ and a minimum $m$ on $[a,b]$.
+
+If $M = m$ then $f$ is constant and $f'(c)=0$ everywhere in $(a,b)$.
+
+Otherwise at least one of $M, m$ differs from the shared endpoint value $f(a)=f(b)$, so it is attained at some **interior** point $c$. By the **interior extremum theorem**, $f'(c)=0$. ∎
+
+Two theorems, both from earlier lessons, combined in four lines. EVT produces the point; the extremum theorem evaluates the derivative there.
+
+Note the asymmetry in the hypotheses: continuity on the **closed** interval, differentiability only on the **open** one. That is deliberate, because differentiability at the endpoints is never needed and demanding it would exclude useful cases like $\sqrt{1-x^2}$ on $[-1,1]$.
+
+### The mean value theorem
+
+> If $f$ is continuous on $[a,b]$ and differentiable on $(a,b)$, then there is $c \in (a,b)$ with
+>
+> $$
+> f'(c) = \frac{f(b)-f(a)}{b-a}
+> $$
+
+<MVTDiagram />
+
+**Some tangent is parallel to the secant.** Equivalently, the instantaneous rate equals the average rate somewhere.
+
+_Proof._ Let $L$ be the secant line through the endpoints and set $g = f - L$. Then $g$ is continuous on $[a,b]$, differentiable on $(a,b)$, and $g(a)=g(b)=0$ since $L$ agrees with $f$ at both ends.
+
+By Rolle, there is $c$ with $g'(c)=0$, that is $f'(c) = L'(c) = \frac{f(b)-f(a)}{b-a}$. ∎
+
+So Rolle is the special case $f(a)=f(b)$, and the MVT is Rolle after tilting the picture. **Subtracting off the secant to reduce to a flat case** is a move worth remembering; it recurs in Taylor's theorem next lesson.
+
+### Why the hypotheses are needed
+
+**Continuity on the closed interval.** Let $f(x)=x$ on $[0,1)$ and $f(1)=0$. Then $f(0)=f(1)=0$ but $f'=1$ everywhere it exists. Rolle fails, because $f$ is not continuous at 1.
+
+**Differentiability on the open interval.** Let $f(x)=|x|$ on $[-1,1]$. Then $f(-1)=f(1)=1$, but $f'=\pm1$ wherever it exists and is never 0. Rolle fails, because $f$ is not differentiable at 0.
+
+Each counterexample removes exactly one hypothesis, which is how you know neither is decoration.
+
+### The consequences
+
+This is where the lesson pays for itself. Every one of these was used freely in calculus and none was proved there.
+
+> **Zero derivative means constant.** If $f'(x)=0$ for all $x \in (a,b)$ then $f$ is constant on $[a,b]$.
+
+_Proof._ Take any $x_1<x_2$ in the interval. By MVT there is $c$ between them with
+
+$$
+f(x_2)-f(x_1) = f'(c)(x_2-x_1) = 0
+$$
+
+so $f(x_2)=f(x_1)$. All values agree. ∎
+
+**This is what justifies "+C" in integration.** Two antiderivatives of the same function differ by a constant precisely because their difference has zero derivative. Without the MVT, the constant of integration is an unproved assumption.
+
+> **Positive derivative means increasing.** If $f'>0$ on $(a,b)$ then $f$ is strictly increasing there.
+
+_Proof._ For $x_1<x_2$, MVT gives $f(x_2)-f(x_1) = f'(c)(x_2-x_1) > 0$. ∎
+
+Also used constantly and never proved in a first course. Note the converse is weaker: a strictly increasing differentiable function has $f' \ge 0$, not $f' > 0$, as $x^3$ at 0 shows.
+
+> **Bounded derivative gives Lipschitz.** If $|f'|\le K$ on an interval then $|f(x)-f(y)|\le K|x-y|$.
+
+That is the result quoted in the uniform continuity lesson, and the MVT is its proof: $|f(x)-f(y)| = |f'(c)||x-y| \le K|x-y|$.
+
+### Cauchy's mean value theorem
+
+> If $f,g$ are continuous on $[a,b]$ and differentiable on $(a,b)$, there is $c$ with
+>
+> $$
+> \big(f(b)-f(a)\big)g'(c) = \big(g(b)-g(a)\big)f'(c)
+> $$
+
+Taking $g(x)=x$ recovers the ordinary MVT. This generalized version is what proves **L'Hôpital's rule**, another calculus staple that gets its justification here rather than where it was taught.
+
+## Worked Examples
+
+**Example 1: Verify the MVT for $f(x)=x^2$ on $[1,3]$.**
+
+**Solution.** Continuous and differentiable everywhere, so MVT applies.
+
+$$
+\frac{f(3)-f(1)}{3-1} = \frac{9-1}{2} = 4
+$$
+
+Solve $f'(c)=2c=4$, giving $c=2$, which lies in $(1,3)$. ✓
+
+For any quadratic the point $c$ is the midpoint of the interval, which is a pleasant special fact and not true in general.
+
+**Example 2: Show Rolle fails without differentiability.**
+
+**Solution.** $f(x)=|x|$ on $[-1,1]$: continuous on $[-1,1]$, and $f(-1)=f(1)=1$.
+
+But $f'(x)=-1$ for $x<0$ and $+1$ for $x>0$, and $f'(0)$ does not exist. So there is no $c$ with $f'(c)=0$.
+
+**Rolle fails**, and it fails only because of the single non-differentiable point.
+
+**Example 3: Prove $\sin$ is Lipschitz with constant 1.**
+
+**Solution.** For any $x<y$, MVT gives $c \in (x,y)$ with
+
+$$
+\sin y - \sin x = \cos(c)(y-x)
+$$
+
+Since $|\cos c|\le1$,
+
+$$
+|\sin y - \sin x| \le |y-x|
+$$
+
+∎
+
+This is the estimate used in the uniform continuity lesson, now proved. It also gives the familiar bound $|\sin x| \le |x|$ by taking $y=x$, $x=0$.
+
+**Example 4: Use the MVT to bound a value.**
+
+Given $f(1)=5$ and $|f'(x)|\le 3$ for all $x$, bound $f(4)$.
+
+**Solution.** MVT on $[1,4]$ gives $c$ with
+
+$$
+f(4)-f(1) = f'(c)(4-1) = 3f'(c)
+$$
+
+Since $|f'(c)|\le3$, we get $|f(4)-5|\le9$, so
+
+$$
+-4 \le f(4) \le 14
+$$
+
+∎
+
+This is the standard way a derivative bound converts into a value bound, and it is the mechanism behind numerical error estimates.
+
+**Example 5: Prove an inequality.**
+
+Show $e^x \ge 1+x$ for all $x$.
+
+**Solution.** Let $g(x)=e^x-1-x$, so $g(0)=0$ and $g'(x)=e^x-1$.
+
+For $x>0$: $g'>0$ on $(0,x)$, so by the MVT consequence $g$ is increasing, giving $g(x)>g(0)=0$.
+
+For $x<0$: $g'<0$ on $(x,0)$, so $g$ is decreasing there, meaning $g(x)>g(0)=0$.
+
+Either way $g(x)\ge0$, that is $e^x\ge1+x$, with equality only at $x=0$. ∎
+
+**Monotonicity from the derivative's sign is the standard tool for proving inequalities**, and the MVT is what licenses it.
+
+**Example 6: At most one root.**
+
+Show $x^3+x-1=0$ has exactly one real root.
+
+**Solution.** _At least one._ By IVT, since $f(0)=-1<0$ and $f(1)=1>0$.
+
+_At most one._ $f'(x)=3x^2+1 > 0$ everywhere, so $f$ is strictly increasing and cannot take the value 0 twice.
+
+**Exactly one root.** ∎
+
+Alternatively via Rolle: two roots would force $f'(c)=0$ somewhere between them, and $f'$ is never 0.
+
+**Example 7: Why "+C" is a theorem.**
+
+If $F'=G'$ on an interval, show $F-G$ is constant.
+
+**Solution.** Let $H = F-G$. Then $H' = F'-G' = 0$ on the interval.
+
+By the MVT consequence, $H$ is constant, so $F = G + C$. ∎
+
+**Every antiderivative of a given function differs from every other by a constant**, and this is why. Note it needs the domain to be an **interval**: on $(-\infty,0)\cup(0,\infty)$ a function can have zero derivative and take different constants on each piece, which is why $\int\frac{1}{x}dx$ carries different constants on either side of 0.
+
+## Real-World Applications
+
+**Speed cameras.** Average-speed enforcement over a stretch of road relies on the MVT: if your average speed exceeded the limit, then at some instant your actual speed did too. That is a legally meaningful application of the theorem.
+
+**Numerical error bounds.** Taylor and finite-difference error terms are stated with an unspecified interior point, and they come directly from MVT-style arguments. Bounding the derivative there gives the usable error estimate.
+
+**Root-finding uniqueness.** Newton's method converges to _a_ root; showing there is only one, so you know which, is a monotonicity argument via the MVT. Example 6 is the pattern.
+
+**Physics and conservation.** Proving a quantity is conserved amounts to showing its derivative is zero and concluding it is constant. That step is a MVT consequence, not a definition.
+
+**Economics.** The claim that a marginal quantity somewhere equals the average over an interval is used in pricing and in proving existence of representative agents. It is the MVT with an economic label.
+
+**Signal analysis.** A bound on a signal's rate of change limits how much it can move between samples, which is what determines a safe sampling rate. Converting a derivative bound into a value bound is Example 4.
+
+:::note[You've Got This]
+The MVT is short to state and it is the workhorse behind results you have used for years without proof: that a zero derivative means constant, that a positive derivative means increasing, and that "+C" is legitimate. Notice how it is assembled — EVT gives an interior extremum, the interior extremum theorem kills the derivative there, and that is Rolle; then subtract the secant and you have the MVT. That habit of subtracting off a known piece to reduce to a simpler case shows up again immediately in Taylor's theorem.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="real-the-mean-value-theorem"
+  questions={[
+    {
+      id: "q1",
+      text: "What are the hypotheses of Rolle's theorem?",
+      options: [
+        "f differentiable on [a, b] with f(a) = f(b)",
+        "f continuous on [a, b], differentiable on (a, b), and f(a) = f(b)",
+        "f continuous on (a, b) with f(a) = f(b)",
+        "f increasing on [a, b]",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Continuity is required on the closed interval and differentiability only on the open one. Demanding differentiability at the endpoints would needlessly exclude functions like √(1 − x²) on [−1, 1].",
+    },
+    {
+      id: "q2",
+      text: "How is the mean value theorem proved from Rolle's theorem?",
+      options: [
+        "By taking a = b",
+        "By applying Rolle to the difference between f and the secant line",
+        "By differentiating twice",
+        "By using the intermediate value theorem",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Setting g = f − L, where L is the secant, makes g(a) = g(b) = 0 so Rolle applies. The conclusion g′(c) = 0 rearranges into the MVT statement.",
+    },
+    {
+      id: "q3",
+      text: "Which function shows Rolle's theorem fails without differentiability?",
+      options: [
+        "f(x) = x² on [−1, 1]",
+        "f(x) = |x| on [−1, 1]",
+        "f(x) = sin x on [0, 2π]",
+        "f(x) = x³ on [−1, 1]",
+      ],
+      correctIndex: 1,
+      explanation:
+        "It is continuous with f(−1) = f(1) = 1, but its derivative is ±1 wherever it exists and undefined at 0, so no point has a vanishing derivative.",
+    },
+    {
+      id: "q4",
+      text: "Which calculus fact does the MVT prove?",
+      options: [
+        "That every continuous function is integrable",
+        "That two antiderivatives of the same function differ by a constant",
+        "That every bounded sequence converges",
+        "That polynomials are continuous",
+      ],
+      correctIndex: 1,
+      explanation:
+        "If F′ = G′ then their difference has zero derivative, and the MVT forces a zero-derivative function on an interval to be constant. That is the justification for the constant of integration.",
+    },
+    {
+      id: "q5",
+      text: "If f(1) = 5 and |f′| ≤ 3 everywhere, what does the MVT give for f(4)?",
+      options: [
+        "f(4) = 14 exactly",
+        "−4 ≤ f(4) ≤ 14",
+        "f(4) ≥ 5",
+        "Nothing can be concluded",
+      ],
+      correctIndex: 1,
+      explanation:
+        "The MVT gives f(4) − f(1) = 3f′(c), and |f′(c)| ≤ 3 bounds the change by 9. This is how a derivative bound becomes a value bound in numerical error analysis.",
+    },
+    {
+      id: "q6",
+      text: "Why must the domain be an interval for 'zero derivative implies constant'?",
+      options: [
+        "Because derivatives only exist on intervals",
+        "Because on a disconnected domain a function can take different constants on each piece",
+        "Because intervals are bounded",
+        "It does not need to be an interval",
+      ],
+      correctIndex: 1,
+      explanation:
+        "The MVT needs the two points joined inside the domain. On ℝ minus zero a function can be 0 on one side and 1 on the other with zero derivative throughout, which is why 1/x has different constants of integration on each side.",
+    },
+  ]}
+/>

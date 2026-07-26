@@ -1,0 +1,329 @@
+---
+title: Sequences and Convergence
+description: The epsilon-N definition, how to write a convergence proof, and what divergence means
+sidebar:
+  order: 3
+---
+
+import Quiz from "../../../components/Quiz.astro";
+import SymbolKey from "../../../components/SymbolKey.astro";
+import EpsilonNBand from "../../../components/EpsilonNBand.astro";
+
+## What You'll Learn
+
+In this lesson you'll learn the epsilon-N definition of a limit, the standard template for a convergence proof, why limits are unique, and that convergent sequences are bounded. This is the first rigorous definition in the section and the pattern for all the others.
+
+<SymbolKey
+  items={[
+    {
+      sym: "(aₙ)",
+      read: "the sequence a-sub-n",
+      note: "an infinite list a₁, a₂, a₃, …; formally a function from ℕ to ℝ",
+    },
+    {
+      sym: "aₙ → L",
+      read: "a-n tends to L",
+      note: "the sequence converges to L; also written lim aₙ = L",
+    },
+    {
+      sym: "ε",
+      read: "epsilon, the tolerance",
+      note: "any positive number, handed to you; you do not get to choose it",
+    },
+    {
+      sym: "N",
+      read: "the threshold index",
+      note: "you produce it, and it may depend on ε",
+    },
+    {
+      sym: "|aₙ − L|",
+      read: "the distance from aₙ to L",
+      note: "absolute value is distance on the line; this is the quantity to control",
+    },
+    {
+      sym: "∀ε > 0 ∃N",
+      read: "for every epsilon there exists an N",
+      note: "the quantifier order that makes the definition work",
+    },
+  ]}
+/>
+
+## The Concept
+
+### The definition
+
+> A sequence $(a_n)$ **converges** to $L \in \mathbb{R}$ if
+>
+> $$
+> \forall \varepsilon > 0 \; \exists N \in \mathbb{N} \; \text{such that} \; \forall n > N, \; |a_n - L| < \varepsilon
+> $$
+
+Read it as a game. **Your opponent picks $\varepsilon$**, as small as they like. **You must produce an $N$** such that from that point on, every term is within $\varepsilon$ of $L$. If you can always win, the sequence converges.
+
+<EpsilonNBand />
+
+The picture is the definition: draw a horizontal band of half-width $\varepsilon$ around $L$. Convergence means that however thin the band, only finitely many terms fall outside it, and every term past $N$ is inside.
+
+Three things to notice.
+
+- **$N$ depends on $\varepsilon$.** Smaller $\varepsilon$ means larger $N$. That dependence is the whole content.
+- **$N$ need not be optimal.** Any $N$ that works is fine. Proofs routinely use a wasteful $N$ because it's easier to write down.
+- **Finitely many terms may misbehave.** The definition only constrains what happens eventually, so changing the first million terms changes nothing.
+
+### The proof template
+
+Every convergence proof has the same three parts.
+
+1. **Scratch work (not written).** Start from $|a_n - L| < \varepsilon$ and solve for $n$ to see how large $n$ must be.
+2. **Choose $N$.** State it, usually via the Archimedean property.
+3. **Verify.** Assume $n > N$ and derive $|a_n - L| < \varepsilon$ in the forward direction.
+
+Take $a_n = \frac{1}{n} \to 0$.
+
+_Scratch._ $\left|\frac1n - 0\right| = \frac1n < \varepsilon \iff n > \frac1\varepsilon$.
+
+_Proof._ Let $\varepsilon > 0$. By the Archimedean property choose $N \in \mathbb{N}$ with $N > \frac1\varepsilon$. Then for $n > N$,
+
+$$
+\left|\frac1n - 0\right| = \frac1n < \frac1N < \varepsilon
+$$
+
+Hence $\frac1n \to 0$. ∎
+
+Short, and the shape never changes. The scratch work is where the thinking happens; the written proof is the verification only.
+
+### Divergence
+
+$(a_n)$ **diverges** if it converges to no real number. Negating the definition:
+
+$$
+\forall L \; \exists \varepsilon>0 \; \text{such that} \; \forall N \; \exists n > N \text{ with } |a_n - L| \ge \varepsilon
+$$
+
+So to prove divergence you must, for **every** candidate $L$, exhibit an $\varepsilon$ that is violated infinitely often.
+
+Three flavours:
+
+- **To infinity.** $a_n = n$. For every $M$ there is $N$ with $a_n > M$ for $n > N$. Written $a_n \to \infty$, which is a description of divergence, not a limit.
+- **By oscillation.** $a_n = (-1)^n$. Bounded, never settles.
+- **Unbounded and oscillating.** $a_n = (-1)^n n$.
+
+### Limits are unique
+
+> If $a_n \to L$ and $a_n \to M$ then $L = M$.
+
+_Proof._ Suppose $L \ne M$ and set $\varepsilon = \frac{|L - M|}{2} > 0$.
+
+There is $N_1$ with $|a_n - L| < \varepsilon$ for $n > N_1$, and $N_2$ with $|a_n - M| < \varepsilon$ for $n > N_2$. Take $n > \max(N_1, N_2)$. By the triangle inequality,
+
+$$
+|L - M| \le |L - a_n| + |a_n - M| < \varepsilon + \varepsilon = |L - M|
+$$
+
+so $|L-M| < |L-M|$, a contradiction. Hence $L = M$. ∎
+
+Two techniques there are worth naming, because they recur constantly: **taking the max of two thresholds** so both conditions hold at once, and **inserting a term via the triangle inequality** to bridge two quantities.
+
+### Convergent implies bounded
+
+> Every convergent sequence is bounded.
+
+_Proof._ Say $a_n \to L$. Apply the definition with $\varepsilon = 1$: there is $N$ with $|a_n - L| < 1$ for $n > N$, so $|a_n| < |L| + 1$ for those $n$.
+
+The remaining terms $a_1, \dots, a_N$ are a **finite** list, so they have a largest absolute value. Then
+
+$$
+M = \max\{|a_1|, \dots, |a_N|, |L| + 1\}
+$$
+
+bounds the whole sequence. ∎
+
+The converse fails: $(-1)^n$ is bounded and divergent. Repairing that gap is Bolzano-Weierstrass, two lessons ahead.
+
+Note the structure: **handle the tail with the definition, the head by finiteness.** That split is a standard move.
+
+### Subsequences, briefly
+
+A **subsequence** picks out infinitely many terms in order: $a_{n_1}, a_{n_2}, \dots$ with $n_1 < n_2 < \cdots$.
+
+If $a_n \to L$ then every subsequence also $\to L$. Contrapositive: **two subsequences with different limits proves divergence.** For $(-1)^n$, the even terms give 1 and the odd terms give $-1$, so it diverges — much quicker than negating the definition directly.
+
+## Worked Examples
+
+**Example 1: Prove $\frac{2n+1}{n} \to 2$.**
+
+**Solution.** _Scratch._ $\left|\frac{2n+1}{n} - 2\right| = \left|\frac{2n+1-2n}{n}\right| = \frac1n$, and $\frac1n < \varepsilon \iff n > \frac1\varepsilon$.
+
+_Proof._ Let $\varepsilon>0$ and choose $N > \frac1\varepsilon$. For $n > N$,
+
+$$
+\left|\frac{2n+1}{n} - 2\right| = \frac1n < \frac1N < \varepsilon
+$$
+
+∎
+
+**Example 2: Prove $\frac{n}{n+1} \to 1$.**
+
+**Solution.** _Scratch._ $\left|\frac{n}{n+1} - 1\right| = \left|\frac{n - n - 1}{n+1}\right| = \frac{1}{n+1}$, which is $< \varepsilon$ when $n > \frac1\varepsilon - 1$.
+
+_Proof._ Given $\varepsilon>0$, choose $N > \frac1\varepsilon$. For $n > N$,
+
+$$
+\left|\frac{n}{n+1} - 1\right| = \frac{1}{n+1} < \frac1n < \frac1N < \varepsilon
+$$
+
+∎
+
+The step $\frac{1}{n+1} < \frac1n$ is a deliberate over-estimate. **Simplifying in the direction that makes the bound larger is always legal** and usually saves work.
+
+**Example 3: A sequence needing a sharper estimate.**
+
+Prove $\frac{3n^2}{n^2+5} \to 3$.
+
+**Solution.** _Scratch._
+
+$$
+\left|\frac{3n^2}{n^2+5} - 3\right| = \left|\frac{3n^2 - 3n^2 - 15}{n^2+5}\right| = \frac{15}{n^2+5}
+$$
+
+Rather than solve exactly, over-estimate: $\frac{15}{n^2+5} < \frac{15}{n^2} \le \frac{15}{n}$, and $\frac{15}{n} < \varepsilon \iff n > \frac{15}{\varepsilon}$.
+
+_Proof._ Let $\varepsilon>0$, choose $N > \frac{15}{\varepsilon}$. For $n > N$,
+
+$$
+\left|\frac{3n^2}{n^2+5} - 3\right| = \frac{15}{n^2+5} < \frac{15}{n} < \frac{15}{N} < \varepsilon
+$$
+
+∎
+
+**Example 4: Prove $(-1)^n$ diverges, twice.**
+
+**Solution 1 (subsequences).** The even-indexed subsequence is constantly $1$, so it converges to 1. The odd-indexed subsequence is constantly $-1$, converging to $-1$. Different limits, so the sequence diverges. ∎
+
+**Solution 2 (definition).** Let $L$ be any real and take $\varepsilon = 1$. Consecutive terms differ by 2, so for any $n$,
+
+$$
+|a_n - L| + |a_{n+1} - L| \ge |a_n - a_{n+1}| = 2
+$$
+
+meaning at least one of the two is $\ge 1$. So beyond any $N$ there is a term with $|a_n - L| \ge 1$, and no $L$ works. ∎
+
+The subsequence argument is shorter and it's the one to reach for.
+
+**Example 5: A convergent sequence with a badly behaved head.**
+
+Let $a_n = 10^6$ for $n \le 500$ and $a_n = \frac1n$ for $n > 500$. Does it converge?
+
+**Solution.** Yes, to 0. Given $\varepsilon>0$, choose $N > \max\left(500, \frac1\varepsilon\right)$. For $n > N$ we have $n > 500$, so $a_n = \frac1n < \varepsilon$. ∎
+
+**Convergence is entirely a statement about the tail.** Any finite number of terms can be arbitrary.
+
+**Example 6: Reading off the wrong quantifier order.**
+
+What would "$\exists N \; \forall \varepsilon>0 \; \forall n>N: |a_n - L|<\varepsilon$" describe?
+
+**Solution.** A single $N$ working for every $\varepsilon$ at once forces $|a_n - L| < \varepsilon$ for all $\varepsilon>0$, hence $|a_n - L| = 0$, so $a_n = L$ exactly for all $n > N$.
+
+That describes a sequence **eventually constant** at $L$ — far stronger than convergence, and it would exclude $\frac1n \to 0$. The quantifier order is the definition's whole content.
+
+## Real-World Applications
+
+**Iterative algorithms.** Newton's method, gradient descent, and the power method for eigenvalues all produce sequences, and the question "does it converge, and how fast?" is exactly the epsilon-N question. A stopping criterion like "halt when successive iterates differ by less than $10^{-8}$" is choosing an $\varepsilon$ and hoping for the corresponding $N$.
+
+**Fixed-point iteration in engineering.** Solving a circuit or a fluid model iteratively converges only under conditions like a contraction property, which is proved with these tools. When a simulation oscillates instead of settling, the sequence is diverging by oscillation.
+
+**Machine learning training curves.** A loss curve is a sequence. Distinguishing "converged," "converging slowly," and "oscillating" is what learning-rate schedules are managing, and the reason a too-large learning rate makes loss oscillate is a genuine divergence-by-oscillation.
+
+**Financial models.** Present value of a perpetuity is the limit of a sequence of partial sums, and whether it converges determines whether the asset has finite value. Discount rates below the growth rate make the sequence diverge, which is how bubble models get their infinite valuations.
+
+**Monte Carlo simulation.** The running average of samples is a sequence converging to the true expectation. The rate, $O(1/\sqrt{n})$, tells you that reducing error tenfold takes a hundred times more samples, which is a practical consequence of a convergence rate.
+
+:::note[You've Got This]
+This is the lesson that decides how the rest of the section feels, so it's worth over-practising. The template is fixed: do scratch work backwards from |aₙ − L| < ε, choose N, verify forwards. Two habits make it much easier. Over-estimate freely, since replacing 1/(n+1) with 1/n is always allowed and simplifies the algebra. And use max(N₁, N₂) whenever you need two conditions at once. If epsilon-N still feels alien after one pass, that's completely normal; write out five more proofs and it stops being alien.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="real-sequences-and-convergence"
+  questions={[
+    {
+      id: "q1",
+      text: "In the definition of aₙ → L, which quantity is allowed to depend on which?",
+      options: [
+        "ε may depend on N",
+        "N may depend on ε",
+        "Neither may depend on the other",
+        "Both depend on n",
+      ],
+      correctIndex: 1,
+      explanation:
+        "ε is handed to you first and N is your response, so N is chosen with knowledge of ε. Smaller ε generally forces larger N, and that dependence is the entire content of the definition.",
+    },
+    {
+      id: "q2",
+      text: "Which statement about convergent sequences is true?",
+      options: [
+        "Every bounded sequence converges",
+        "Every convergent sequence is bounded",
+        "A convergent sequence can have two different limits",
+        "Changing the first 100 terms can destroy convergence",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Applying the definition with ε = 1 bounds the tail, and the finitely many earlier terms are bounded automatically. The converse fails, since (−1)ⁿ is bounded and divergent.",
+    },
+    {
+      id: "q3",
+      text: "What is the quickest way to prove that (−1)ⁿ diverges?",
+      options: [
+        "Show it is unbounded",
+        "Show the even and odd subsequences converge to different limits",
+        "Show the terms are not monotone",
+        "Show it has no upper bound",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Every subsequence of a convergent sequence must share its limit, so two subsequences with limits 1 and −1 rule out convergence. The sequence is bounded, so unboundedness is not available.",
+    },
+    {
+      id: "q4",
+      text: "To prove 1/n → 0, what choice of N works for a given ε > 0?",
+      options: [
+        "Any N with N < 1/ε",
+        "Any N with N > 1/ε",
+        "N = ε",
+        "No N works, since 1/n is never 0",
+      ],
+      correctIndex: 1,
+      explanation:
+        "For n > N > 1/ε we get 1/n < 1/N < ε. The Archimedean property guarantees such an N exists, and the terms never needing to equal 0 is exactly why the definition uses a strict inequality with ε.",
+    },
+    {
+      id: "q5",
+      text: "Why is proving limits unique done by assuming L ≠ M and taking ε = |L − M|/2?",
+      options: [
+        "Because that ε makes the two ε-bands disjoint, so no term can be close to both",
+        "Because |L − M|/2 is always less than 1",
+        "Because the sequence must be bounded",
+        "Because ε has to be a rational number",
+      ],
+      correctIndex: 0,
+      explanation:
+        "With that ε the triangle inequality gives |L − M| < |L − M|, a contradiction. Half the distance is precisely what makes the two neighbourhoods fail to overlap.",
+    },
+    {
+      id: "q6",
+      text: "A sequence has aₙ = 10⁶ for n ≤ 500 and aₙ = 1/n afterwards. Does it converge?",
+      options: [
+        "No, because the early terms are enormous",
+        "No, because it is not monotone",
+        "Yes, to 0, since convergence depends only on the tail",
+        "Yes, to 10⁶",
+      ],
+      correctIndex: 2,
+      explanation:
+        "The definition constrains only what happens for n beyond some N, so choosing N greater than both 500 and 1/ε works. Any finite number of terms can be arbitrary.",
+    },
+  ]}
+/>

@@ -85,10 +85,10 @@ export default defineConfig({
           label: "Abstract Algebra",
           autogenerate: { directory: "abstract-algebra" },
         },
-        // {
-        //   label: "Real Analysis",
-        //   autogenerate: { directory: "real-analysis" },
-        // },
+        {
+          label: "Real Analysis",
+          autogenerate: { directory: "real-analysis" },
+        },
       ],
       customCss: ["./src/styles/custom.css", "katex/dist/katex.min.css"],
       head: [
@@ -120,7 +120,8 @@ export default defineConfig({
                 'differential-equations': 'Differential Equations',
                 'discrete-mathematics': 'Discrete Mathematics',
                 'statistics': 'Statistics',
-                'abstract-algebra': 'Abstract Algebra'
+                'abstract-algebra': 'Abstract Algebra',
+                'real-analysis': 'Real Analysis'
               };
               var label = map[section];
               if (!label) return;
@@ -170,7 +171,8 @@ export default defineConfig({
                 {slug:'differential-equations', label:'Differential Equations', about:'about-differential-equations'},
                 {slug:'discrete-mathematics', label:'Discrete Mathematics', about:'about-discrete-mathematics'},
                 {slug:'statistics', label:'Statistics', about:'about-statistics'},
-                {slug:'abstract-algebra', label:'Abstract Algebra', about:'about-abstract-algebra'}
+                {slug:'abstract-algebra', label:'Abstract Algebra', about:'about-abstract-algebra'},
+                {slug:'real-analysis', label:'Real Analysis', about:'about-real-analysis'}
               ];
               var path = window.location.pathname.replace(/^\\//, '').replace(/\\/$/, '');
               var currentSection = path.split('/')[0] || '';
@@ -409,7 +411,8 @@ export default defineConfig({
                 'differential-equations': 'Differential Equations',
                 'discrete-mathematics': 'Discrete Mathematics',
                 'statistics': 'Statistics',
-                'abstract-algebra': 'Abstract Algebra'
+                'abstract-algebra': 'Abstract Algebra',
+                'real-analysis': 'Real Analysis'
               };
               var subject = sectionMap[section];
               if (!subject) return;
@@ -464,7 +467,8 @@ export default defineConfig({
                         'differential-equations': 'expert',
                         'discrete-mathematics': 'expert',
                         'statistics': 'expert',
-                        'abstract-algebra': 'expert'
+                        'abstract-algebra': 'expert',
+                        'real-analysis': 'expert'
                       };
                       var colorMap = {
                         'foundations': '#7ee787',

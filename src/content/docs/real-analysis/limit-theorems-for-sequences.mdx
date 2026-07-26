@@ -1,0 +1,301 @@
+---
+title: Limit Theorems for Sequences
+description: The algebra of limits, the squeeze theorem, and why these results save you from epsilon-N
+sidebar:
+  order: 4
+---
+
+import Quiz from "../../../components/Quiz.astro";
+import SqueezeDiagram from "../../../components/SqueezeDiagram.astro";
+
+## What You'll Learn
+
+In this lesson you'll learn the algebraic limit theorems, how one of them is proved from the definition, the order limit theorem, and the squeeze theorem. Together these let you compute almost every limit you'll meet without returning to epsilon-N.
+
+## The Concept
+
+### Why these theorems exist
+
+Proving $\frac{3n^2+2n}{n^2+1} \to 3$ straight from the definition is unpleasant. Proving it from the algebraic limit theorems takes two lines.
+
+The point of this lesson is leverage. You pay the epsilon-N cost once, proving a handful of general results, and then compute freely.
+
+### The algebraic limit theorems
+
+> Suppose $a_n \to A$ and $b_n \to B$. Then
+>
+> $$
+> a_n + b_n \to A + B
+> $$
+>
+> $$
+> c \cdot a_n \to cA \quad \text{for any constant } c
+> $$
+>
+> $$
+> a_n b_n \to AB
+> $$
+>
+> $$
+> \frac{a_n}{b_n} \to \frac{A}{B} \quad \text{provided } B \ne 0
+> $$
+
+The quotient rule needs $B \ne 0$, and it also needs $b_n \ne 0$ eventually — which is automatic, since if $b_n \to B \ne 0$ then the terms are eventually within $\frac{|B|}{2}$ of $B$ and so nonzero.
+
+**These require both limits to exist.** $a_n = (-1)^n$ and $b_n = (-1)^{n+1}$ both diverge, yet $a_n + b_n = 0$ converges. So you cannot run the theorem backwards.
+
+### Proving the sum rule
+
+_Proof._ Let $\varepsilon>0$. Since $a_n \to A$, there is $N_1$ with $|a_n - A| < \frac{\varepsilon}{2}$ for $n > N_1$. Since $b_n \to B$, there is $N_2$ with $|b_n - B| < \frac{\varepsilon}{2}$ for $n > N_2$.
+
+Let $N = \max(N_1, N_2)$. For $n > N$, the triangle inequality gives
+
+$$
+|(a_n + b_n) - (A+B)| = |(a_n - A) + (b_n - B)| \le |a_n - A| + |b_n - B| < \frac{\varepsilon}{2} + \frac{\varepsilon}{2} = \varepsilon
+$$
+
+∎
+
+That's why you split $\varepsilon$ in half: each piece is budgeted for one source of error, and they add to exactly $\varepsilon$. Applying the definition with $\frac{\varepsilon}{2}$ instead of $\varepsilon$ is legal because the definition holds for _every_ positive tolerance.
+
+### Sketch of the product rule
+
+The product needs one extra idea. Write
+
+$$
+|a_nb_n - AB| = |a_nb_n - a_nB + a_nB - AB| \le |a_n||b_n - B| + |B||a_n - A|
+$$
+
+Adding and subtracting $a_nB$ is the same bridging trick as before. The wrinkle is the factor $|a_n|$, which is not constant. But $(a_n)$ converges, so by the previous lesson it is **bounded**, say $|a_n| \le M$. Then
+
+$$
+|a_nb_n - AB| \le M|b_n - B| + |B||a_n - A|
+$$
+
+and each term can be forced below $\frac{\varepsilon}{2}$. Notice that "convergent implies bounded" was not a throwaway result; it is exactly what makes the product rule work.
+
+### The order limit theorem
+
+> If $a_n \to A$ and $a_n \ge 0$ for all $n$, then $A \ge 0$.
+>
+> More generally, if $a_n \le b_n$ for all $n$ and both converge, then $\lim a_n \le \lim b_n$.
+
+**Weak inequalities survive limits; strict ones do not.** Take $a_n = 0$ and $b_n = \frac1n$. Then $a_n < b_n$ strictly for every $n$, yet both limits are 0, so the conclusion is $0 \le 0$ and not $0 < 0$.
+
+This trips people up constantly. Passing to a limit can turn $<$ into $=$, never into $>$.
+
+### The squeeze theorem
+
+> If $b_n \le a_n \le c_n$ for all $n$, and $b_n \to L$ and $c_n \to L$, then $a_n \to L$.
+
+<SqueezeDiagram />
+
+This is the most useful tool in the lesson, because it needs **no information about $a_n$ beyond the sandwich.** You don't have to understand $a_n$ at all; you only have to trap it.
+
+_Proof sketch._ Given $\varepsilon>0$, get $N_1$ past which $b_n > L - \varepsilon$ and $N_2$ past which $c_n < L + \varepsilon$. Beyond $\max(N_1,N_2)$,
+
+$$
+L - \varepsilon < b_n \le a_n \le c_n < L + \varepsilon
+$$
+
+so $|a_n - L| < \varepsilon$. ∎
+
+The standard application is anything with a bounded oscillating factor: $\left|\frac{\sin n}{n}\right| \le \frac1n$, so $-\frac1n \le \frac{\sin n}{n} \le \frac1n$ and the middle goes to 0. There is no formula for $\sin n$ as $n$ runs over the integers, and it doesn't matter.
+
+### A useful special case
+
+> If $a_n \to 0$ and $(b_n)$ is bounded, then $a_nb_n \to 0$.
+
+Note $(b_n)$ need not converge. $\frac{(-1)^n}{n} \to 0$ even though $(-1)^n$ diverges, because $\frac1n \to 0$ and the other factor stays bounded. The product rule doesn't apply here; this result does.
+
+## Worked Examples
+
+**Example 1: Compute $\lim \frac{3n^2+2n}{n^2+1}$.**
+
+**Solution.** Divide numerator and denominator by the highest power, $n^2$:
+
+$$
+\frac{3n^2+2n}{n^2+1} = \frac{3 + \frac{2}{n}}{1 + \frac{1}{n^2}}
+$$
+
+Now $\frac2n \to 0$ and $\frac{1}{n^2} \to 0$, so by the sum rule the numerator $\to 3$ and the denominator $\to 1$. Since the denominator's limit is nonzero, the quotient rule gives
+
+$$
+\lim \frac{3n^2+2n}{n^2+1} = \frac{3}{1} = 3
+$$
+
+Compare Example 3 of the previous lesson, which proved a similar statement from the definition. Same result, a fraction of the work.
+
+**Example 2: Compute $\lim \frac{\sin n}{n}$.**
+
+**Solution.** The quotient rule is unavailable, since $\sin n$ has no limit as $n$ runs over the integers.
+
+Instead squeeze. Since $|\sin n| \le 1$,
+
+$$
+-\frac1n \le \frac{\sin n}{n} \le \frac1n
+$$
+
+Both outer sequences $\to 0$, so the limit is **0**. ∎
+
+**Example 3: Compute $\lim \frac{n!}{n^n}$.**
+
+**Solution.** Write out the ratio:
+
+$$
+\frac{n!}{n^n} = \frac{n(n-1)(n-2)\cdots 1}{n \cdot n \cdots n} = 1 \cdot \frac{n-1}{n} \cdot \frac{n-2}{n} \cdots \frac1n
+$$
+
+Every factor is at most 1, and the last is exactly $\frac1n$. So
+
+$$
+0 < \frac{n!}{n^n} \le \frac1n
+$$
+
+Squeeze gives **0**. ∎
+
+An estimate plus a squeeze beats trying to compute directly.
+
+**Example 4: A limit needing care with the quotient rule.**
+
+Compute $\lim \frac{n^2+1}{2n+3}$.
+
+**Solution.** Dividing by $n$:
+
+$$
+\frac{n^2+1}{2n+3} = \frac{n + \frac1n}{2 + \frac3n}
+$$
+
+The denominator $\to 2$, but the numerator **diverges** to infinity, so the quotient rule does not apply — it requires both limits to exist.
+
+The sequence diverges to $\infty$. To see it directly, for $n \ge 3$,
+
+$$
+\frac{n^2+1}{2n+3} > \frac{n^2}{2n+3n} = \frac{n}{5}
+$$
+
+which is unbounded. **Divergent.** ∎
+
+The lesson: check the hypotheses. A theorem misapplied gives a confident wrong answer.
+
+**Example 5: Strict inequality lost in the limit.**
+
+Both $a_n = \frac{1}{n+1}$ and $b_n = \frac1n$ are positive with $a_n < b_n$ for every $n$. What does the order limit theorem give?
+
+**Solution.** Both converge to 0, so the conclusion is $0 \le 0$. True but not strict.
+
+**Strict inequalities are not preserved.** Any argument concluding $\lim a_n < \lim b_n$ from $a_n < b_n$ is wrong. To get a strict conclusion you need a gap that does not shrink, such as $a_n + c \le b_n$ for a fixed $c > 0$.
+
+**Example 6: A bounded times a null sequence.**
+
+Compute $\lim \frac{(-1)^n n}{n^2+1}$.
+
+**Solution.** Rewrite as a product:
+
+$$
+\frac{(-1)^n n}{n^2+1} = (-1)^n \cdot \frac{n}{n^2+1}
+$$
+
+The second factor is $\frac{1/n}{1 + 1/n^2} \to 0$. The first is bounded by 1 though divergent.
+
+By the bounded-times-null result, the limit is **0**. ∎
+
+Alternatively squeeze: $\left|\frac{(-1)^nn}{n^2+1}\right| \le \frac{n}{n^2} = \frac1n \to 0$.
+
+**Example 7: Why divergent sequences can sum to a convergent one.**
+
+**Solution.** $a_n = n$ and $b_n = -n$ both diverge, but $a_n + b_n = 0$ for every $n$, which converges to 0.
+
+So the sum rule is a one-way street: convergence of both parts gives convergence of the sum, but convergence of the sum says nothing about the parts. Writing $\lim(a_n+b_n) = \lim a_n + \lim b_n$ is only meaningful once both right-hand limits are known to exist.
+
+## Real-World Applications
+
+**Asymptotic analysis of algorithms.** Big-O statements are limit computations. Showing $\frac{3n^2+2n}{n^2} \to 3$ is the formal content of "this algorithm is $\Theta(n^2)$," and dividing by the dominant term is the standard technique in both settings.
+
+**Numerical error analysis.** Total error is usually a sum of a truncation term and a rounding term, and bounding each below $\frac{\varepsilon}{2}$ is exactly the sum-rule proof. That is why error bounds in numerical texts so often appear as a sum of two halves.
+
+**Signal processing.** A bounded signal multiplied by a decaying envelope goes to zero regardless of the signal's own behaviour, which is the bounded-times-null result and the reason exponential windowing damps arbitrary noise.
+
+**Physical estimates and sandwiching.** Engineers bound an unknown quantity between two computable ones and let both converge. The squeeze theorem is the formal justification, and it is why "bracket the answer" is a legitimate method rather than a fudge.
+
+**Statistics.** Consistency proofs for estimators typically squeeze the estimation error between two vanishing bounds. The estimator's own formula may be intractable; only the sandwich matters.
+
+:::note[You've Got This]
+These theorems are the payoff for last lesson's work: prove a few results from the definition, then compute almost everything without it. Two things worth holding onto. Splitting ε in half is not a trick, it's a budget — one half per source of error. And the squeeze theorem is the tool of choice whenever a factor oscillates without a limit, because it demands nothing about the middle sequence except that it's trapped. Also remember the direction of the order theorem: weak inequalities survive limits, strict ones can collapse to equality.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="real-limit-theorems-for-sequences"
+  questions={[
+    {
+      id: "q1",
+      text: "What is lim (5n² − n)/(2n² + 3)?",
+      options: ["0", "5/2", "5", "The sequence diverges"],
+      correctIndex: 1,
+      explanation:
+        "Dividing top and bottom by n² gives (5 − 1/n)/(2 + 3/n²), whose numerator tends to 5 and denominator to 2. The quotient rule applies since the denominator's limit is nonzero.",
+    },
+    {
+      id: "q2",
+      text: "Why can't the quotient rule be used to find lim (sin n)/n?",
+      options: [
+        "Because n is in the denominator",
+        "Because sin n has no limit as n runs over the integers",
+        "Because sin n is negative sometimes",
+        "Because the limit does not exist",
+      ],
+      correctIndex: 1,
+      explanation:
+        "The algebraic limit theorems require both limits to exist, and sin n keeps oscillating. Squeezing between −1/n and 1/n gives the limit 0 without needing to understand sin n at all.",
+    },
+    {
+      id: "q3",
+      text: "If aₙ < bₙ for every n and both converge, what does the order limit theorem give?",
+      options: [
+        "lim aₙ < lim bₙ",
+        "lim aₙ ≤ lim bₙ",
+        "lim aₙ = lim bₙ",
+        "Nothing can be concluded",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Only the weak inequality survives. Taking aₙ = 0 and bₙ = 1/n shows a strict inequality at every term can still collapse to equality in the limit.",
+    },
+    {
+      id: "q4",
+      text: "In proving the sum rule, why is the definition applied with ε/2 rather than ε?",
+      options: [
+        "Because ε/2 is smaller and so easier to achieve",
+        "So the two error terms add to exactly ε via the triangle inequality",
+        "Because the definition requires ε to be halved",
+        "To make N smaller",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Each sequence is budgeted half the total tolerance, so |aₙ − A| + |bₙ − B| < ε/2 + ε/2 = ε. This is legal because the definition holds for every positive tolerance, including ε/2.",
+    },
+    {
+      id: "q5",
+      text: "Which sequence shows that a convergent sum does not require convergent parts?",
+      options: [
+        "aₙ = 1/n and bₙ = 1/n²",
+        "aₙ = n and bₙ = −n",
+        "aₙ = n and bₙ = n",
+        "aₙ = 0 and bₙ = 0",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Both diverge, yet their sum is identically 0 and so converges. The sum rule runs one way only: it needs both limits to exist before it says anything.",
+    },
+    {
+      id: "q6",
+      text: "What is lim n!/nⁿ?",
+      options: ["0", "1", "e", "It diverges to infinity"],
+      correctIndex: 0,
+      explanation:
+        "Writing the ratio as a product of factors each at most 1, with the last equal to 1/n, gives 0 < n!/nⁿ ≤ 1/n. Squeezing sends it to 0, so nⁿ grows much faster than n!.",
+    },
+  ]}
+/>

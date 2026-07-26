@@ -1,0 +1,98 @@
+---
+/**
+ * HeineBorelCover — why [0,1] is compact and (0,1) is not, in terms of open
+ * covers. The second cover is generated from 1/n, so the intervals really do
+ * creep toward 0 without ever reaching it.
+ */
+const w = 540;
+const h = 322;
+const left = 70;
+const right = 470;
+const px = (v: number) => left + v * (right - left);
+
+// A finite open cover of the closed interval
+const goodCover = [
+  [-0.1, 0.3],
+  [0.2, 0.5],
+  [0.4, 0.7],
+  [0.6, 0.9],
+  [0.8, 1.1],
+];
+
+// The cover of (0,1) by (1/n, 1.05): no finite subfamily reaches 0.
+// Four members is enough to show the pattern, and keeps the 1/n labels apart.
+const badCover = [2, 3, 4, 5].map((n) => [1 / n, 1.05]);
+const badRowGap = 13;
+---
+
+<figure
+  class="hbc"
+  role="img"
+  aria-label="Two open covers. The closed interval from 0 to 1 is covered by five overlapping open intervals, and finitely many always suffice. The open interval from 0 to 1 is covered by the intervals from one over n to just past 1, and no finite subfamily reaches down to 0, so it is not compact."
+>
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    <text x="16" y="20" class="hbc-head" font-size="12.5" font-weight="bold">Compactness: can finitely many open sets do the job?</text>
+
+    {/* ---------- Compact ---------- */}
+    <text x="16" y="48" class="hbc-title hbc-t-green" font-size="11" font-weight="bold">[0, 1] is compact</text>
+    {goodCover.map((iv, i) => (
+      <line x1={px(iv[0])} y1={68 + i * 10} x2={px(iv[1])} y2={68 + i * 10} class="hbc-cover hbc-c-green" />
+    ))}
+    <line x1={px(0)} y1="128" x2={px(1)} y2="128" class="hbc-set hbc-s-green" />
+    <circle cx={px(0)} cy="128" r="5" class="hbc-pt hbc-closed-green" />
+    <circle cx={px(1)} cy="128" r="5" class="hbc-pt hbc-closed-green" />
+    <text x={w / 2} y="150" class="hbc-note" font-size="9.5" text-anchor="middle">
+      Every open cover has a finite subcover, however the cover is chosen
+    </text>
+
+    {/* ---------- Not compact ---------- */}
+    <text x="16" y="186" class="hbc-title hbc-t-orange" font-size="11" font-weight="bold">(0, 1) is not compact</text>
+    {badCover.map((iv, i) => (
+      <g>
+        <line x1={px(iv[0])} y1={206 + i * badRowGap} x2={px(iv[1])} y2={206 + i * badRowGap} class="hbc-cover hbc-c-orange" />
+        <text x={px(iv[0]) - 8} y={206 + i * badRowGap + 3.5} class="hbc-covlbl" font-size="8.5" text-anchor="end">
+          {`1⁄${i + 2}`}
+        </text>
+      </g>
+    ))}
+    <line x1={px(0)} y1="266" x2={px(1)} y2="266" class="hbc-set hbc-s-orange" />
+    <circle cx={px(0)} cy="266" r="5" class="hbc-pt hbc-open-orange" />
+    <circle cx={px(1)} cy="266" r="5" class="hbc-pt hbc-open-orange" />
+    <text x={w / 2} y="288" class="hbc-note" font-size="9.5" text-anchor="middle">
+      The cover (1⁄n, 1) creeps toward 0; any finite subfamily stops short of it
+    </text>
+
+    <text x={w / 2} y="310" class="hbc-foot" font-size="10.5" text-anchor="middle">
+      Heine–Borel: a subset of ℝ is compact exactly when it is closed and bounded
+    </text>
+  </svg>
+</figure>
+
+<style>
+  .hbc { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .hbc svg { width:100%; max-width:100%; height:auto; }
+  .hbc-cover { stroke-width:3.4; opacity:0.75; }
+  .hbc-c-green { stroke:#58a6ff; }
+  .hbc-c-orange { stroke:#f0883e; }
+  .hbc-set { stroke-width:5.5; }
+  .hbc-s-green { stroke:#7ee787; }
+  .hbc-s-orange { stroke:#ff7b72; }
+  .hbc-pt { stroke-width:2.2; }
+  .hbc-closed-green { fill:#7ee787; stroke:#7ee787; }
+  .hbc-open-orange { fill:#0d1117; stroke:#ff7b72; }
+  .hbc-title { font-family:'Libre Baskerville',Georgia,serif; }
+  .hbc-t-green { fill:#7ee787; }
+  .hbc-t-orange { fill:#ff7b72; }
+  .hbc-covlbl { fill:#9198a1; font-family:'Libre Baskerville',Georgia,serif; }
+  .hbc-head { fill:#eee; font-family:'Libre Baskerville',Georgia,serif; }
+  .hbc-note { fill:#9198a1; font-family:'Libre Baskerville',Georgia,serif; font-style:italic; }
+  .hbc-foot { fill:#d2a8ff; font-family:'Libre Baskerville',Georgia,serif; font-weight:bold; }
+  :global([data-theme="light"]) .hbc-c-green { stroke:#0550ae; }
+  :global([data-theme="light"]) .hbc-c-orange { stroke:#b35900; }
+  :global([data-theme="light"]) .hbc-s-green, :global([data-theme="light"]) .hbc-closed-green, :global([data-theme="light"]) .hbc-t-green { stroke:#116329; fill:#116329; }
+  :global([data-theme="light"]) .hbc-s-orange, :global([data-theme="light"]) .hbc-t-orange { stroke:#a40e26; fill:#a40e26; }
+  :global([data-theme="light"]) .hbc-open-orange { fill:#ffffff; stroke:#a40e26; }
+  :global([data-theme="light"]) :is(.hbc-covlbl, .hbc-note) { fill:#57606a; }
+  :global([data-theme="light"]) .hbc-head { fill:#24292f; }
+  :global([data-theme="light"]) .hbc-foot { fill:#6639ba; }
+</style>

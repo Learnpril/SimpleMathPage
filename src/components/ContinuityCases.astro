@@ -1,0 +1,113 @@
+---
+/**
+ * ContinuityCases — the three ways continuity at a point can fail, each drawn
+ * from its own formula, beside the case where it holds.
+ *
+ * Panel 1: removable — the limit exists but the value is wrong.
+ * Panel 2: jump — the one-sided limits differ.
+ * Panel 3: essential — no limit at all.
+ */
+const w = 540;
+const h = 292;
+const top = 66;
+const bottom = 178;
+
+const panels = [
+  { l: 30, r: 160, title: "Removable", c1: "the limit exists,", c2: "the value is wrong" },
+  { l: 205, r: 335, title: "Jump", c1: "one-sided limits", c2: "disagree" },
+  { l: 380, r: 510, title: "Essential", c1: "no limit at all", c2: "to repair" },
+];
+
+// Shared vertical scale: values in [-1.2, 1.2]
+const py = (v: number) => (top + bottom) / 2 - (v / 1.2) * ((bottom - top) / 2);
+const pxOf = (p: (typeof panels)[0], t: number) => p.l + t * (p.r - p.l);
+
+// Panel 3: sin(1/x) sampled in 1/x so it crowds toward the middle
+const osc = Array.from({ length: 700 }, (_, i) => {
+  const t = 3 + (i / 699) * 120;
+  const x = 1 / t;
+  return `${pxOf(panels[2], 0.5 + x * 1.4).toFixed(2)},${py(Math.sin(t) * 0.9).toFixed(2)}`;
+}).join(" ");
+const oscLeft = Array.from({ length: 700 }, (_, i) => {
+  const t = 3 + (i / 699) * 120;
+  const x = 1 / t;
+  return `${pxOf(panels[2], 0.5 - x * 1.4).toFixed(2)},${py(Math.sin(t) * 0.9).toFixed(2)}`;
+}).join(" ");
+---
+
+<figure
+  class="cnc"
+  role="img"
+  aria-label="Three kinds of discontinuity. A removable one where the limit exists but the function value differs, a jump where the one-sided limits disagree, and an essential one where the function oscillates and no limit exists."
+>
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    <text x="16" y="20" class="cnc-head" font-size="12.5" font-weight="bold">Three ways continuity at a point can fail</text>
+    <text x="16" y="40" class="cnc-sub" font-size="10">Continuity needs the limit to exist, the value to exist, and the two to agree</text>
+
+    {panels.map((p) => (
+      <g>
+        <text x={(p.l + p.r) / 2} y="58" class="cnc-title" font-size="10.5" text-anchor="middle" font-weight="bold">{p.title}</text>
+        <line x1={p.l - 6} y1={py(0)} x2={p.r + 6} y2={py(0)} class="cnc-axis" />
+        <line x1={pxOf(p, 0.5)} y1={top - 4} x2={pxOf(p, 0.5)} y2={bottom + 4} class="cnc-vline" />
+      </g>
+    ))}
+
+    {/* ---------- Removable: y = x, with the value at 0 moved up ---------- */}
+    <polyline
+      points={`${pxOf(panels[0], 0.06)},${py(-0.88)} ${pxOf(panels[0], 0.94)},${py(0.88)}`}
+      class="cnc-curve"
+      fill="none"
+    />
+    <circle cx={pxOf(panels[0], 0.5)} cy={py(0)} r="4" class="cnc-hole" />
+    <circle cx={pxOf(panels[0], 0.5)} cy={py(0.7)} r="4" class="cnc-value" />
+
+    {/* ---------- Jump: −0.6 on the left, +0.6 on the right ---------- */}
+    <polyline points={`${pxOf(panels[1], 0.06)},${py(-0.6)} ${pxOf(panels[1], 0.5)},${py(-0.6)}`} class="cnc-curve" fill="none" />
+    <polyline points={`${pxOf(panels[1], 0.5)},${py(0.6)} ${pxOf(panels[1], 0.94)},${py(0.6)}`} class="cnc-curve" fill="none" />
+    <circle cx={pxOf(panels[1], 0.5)} cy={py(-0.6)} r="4" class="cnc-value" />
+    <circle cx={pxOf(panels[1], 0.5)} cy={py(0.6)} r="4" class="cnc-hole" />
+
+    {/* ---------- Essential: sin(1/x) from both sides ---------- */}
+    <polyline points={osc} class="cnc-curve cnc-thin" fill="none" />
+    <polyline points={oscLeft} class="cnc-curve cnc-thin" fill="none" />
+
+    {panels.map((p) => (
+      <g>
+        <text x={(p.l + p.r) / 2} y="208" class="cnc-cap" font-size="9.5" text-anchor="middle">{p.c1}</text>
+        <text x={(p.l + p.r) / 2} y="223" class="cnc-cap" font-size="9.5" text-anchor="middle">{p.c2}</text>
+      </g>
+    ))}
+
+    <text x={w / 2} y="252" class="cnc-foot" font-size="10.5" text-anchor="middle">
+      Only the first can be fixed by redefining the function at the single point
+    </text>
+    <text x={w / 2} y="272" class="cnc-sub2" font-size="9.5" text-anchor="middle">
+      Continuous at a means lim f(x) as x → a exists and equals f(a)
+    </text>
+  </svg>
+</figure>
+
+<style>
+  .cnc { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .cnc svg { width:100%; max-width:100%; height:auto; }
+  .cnc-axis { stroke:#666; stroke-width:1.2; }
+  .cnc-vline { stroke:#555; stroke-width:1; stroke-dasharray:3,3; }
+  .cnc-curve { stroke:#58a6ff; stroke-width:2; }
+  .cnc-thin { stroke-width:1.1; }
+  .cnc-hole { fill:#0d1117; stroke:#58a6ff; stroke-width:2; }
+  .cnc-value { fill:#f0883e; stroke:#f0883e; stroke-width:2; }
+  .cnc-title { fill:#c9d1d9; font-family:'Libre Baskerville',Georgia,serif; }
+  .cnc-cap { fill:#9198a1; font-family:'Libre Baskerville',Georgia,serif; font-style:italic; }
+  .cnc-head { fill:#eee; font-family:'Libre Baskerville',Georgia,serif; }
+  .cnc-sub, .cnc-sub2 { fill:#9198a1; font-family:'Libre Baskerville',Georgia,serif; font-style:italic; }
+  .cnc-foot { fill:#f0883e; font-family:'Libre Baskerville',Georgia,serif; }
+  :global([data-theme="light"]) .cnc-axis { stroke:#8b949e; }
+  :global([data-theme="light"]) .cnc-vline { stroke:#ccc; }
+  :global([data-theme="light"]) .cnc-curve, :global([data-theme="light"]) .cnc-hole { stroke:#0550ae; }
+  :global([data-theme="light"]) .cnc-curve { fill:none; }
+  :global([data-theme="light"]) .cnc-hole { fill:#ffffff; }
+  :global([data-theme="light"]) .cnc-value, :global([data-theme="light"]) .cnc-foot { fill:#b35900; stroke:#b35900; }
+  :global([data-theme="light"]) .cnc-title { fill:#24292f; }
+  :global([data-theme="light"]) :is(.cnc-cap, .cnc-sub, .cnc-sub2) { fill:#57606a; }
+  :global([data-theme="light"]) .cnc-head { fill:#24292f; }
+</style>

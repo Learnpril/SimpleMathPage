@@ -1,0 +1,79 @@
+---
+title: About Real Analysis
+description: The rigorous foundations of calculus - limits, continuity, and the completeness of the real numbers
+sidebar:
+  order: 0
+---
+
+## What is Real Analysis?
+
+Real analysis is calculus with the proofs put back in.
+
+In calculus you learned that a derivative is a limit, that continuous functions on a closed interval attain a maximum, and that you can integrate anything reasonable. You used those facts constantly. What you were not told is _why_ any of them are true, or what "reasonable" means, or where they stop working.
+
+Real analysis answers all three. It starts from a single property of the real numbers and derives the whole of calculus from it, carefully enough that every claim either has a proof or a counterexample.
+
+import RealAnalysisTopicMap from "../../../components/RealAnalysisTopicMap.astro";
+
+<RealAnalysisTopicMap />
+
+The one property everything rests on is **completeness**: the real number line has no gaps. That sounds too obvious to be useful. It is the reason every theorem in the section works, and the rationals fail it, which is why you cannot do calculus with fractions alone.
+
+## A Brief History
+
+Calculus was invented around 1670 by **Isaac Newton** and **Gottfried Leibniz**, and it worked spectacularly well for about 150 years while resting on foundations nobody could defend.
+
+The trouble was the infinitesimal: a quantity small enough to ignore but not zero. Bishop **George Berkeley** attacked it in 1734, calling such quantities "the ghosts of departed quantities," and he was right that the reasoning was incoherent as stated. Mathematicians kept using calculus anyway, because the answers were correct.
+
+The repair took a century. **Augustin-Louis Cauchy** (1820s) defined limits and continuity in something close to modern language and made convergence a precise notion. **Bernard Bolzano** had similar ideas earlier but published obscurely and went largely unread.
+
+**Karl Weierstrass** finished the job in the 1860s and 70s with the epsilon-delta definition, removing infinitesimals entirely. He also produced the counterexample that ended any hope of relying on intuition: a function that is continuous everywhere and differentiable nowhere. Before that, most mathematicians believed a continuous curve had to have a tangent almost everywhere.
+
+**Richard Dedekind** and **Georg Cantor** independently constructed the real numbers in 1872, finally saying what a real number _is_. Dedekind used cuts in the rationals; Cantor used equivalence classes of Cauchy sequences. **Bernhard Riemann** had already given the integral its first careful definition in 1854.
+
+The period is called the **arithmetization of analysis**, and the pattern is worth noticing: a subject that worked was rebuilt from scratch because nobody could say why. The rebuild then produced results no one had anticipated, including Cantor's discovery that there are strictly more real numbers than rationals.
+
+## Why We're Learning It
+
+Real analysis is where you learn to prove things about the continuous, and it is the hardest transition in an undergraduate mathematics education. Not because the objects are exotic, but because the standard of argument changes.
+
+In calculus, "the function gets close to 3" was an acceptable sentence. Here it has to become: for every $\varepsilon > 0$ there exists $\delta > 0$ such that... The epsilon-delta definition is the central skill of the section, and it takes most people several attempts before it clicks.
+
+What you gain is the ability to tell when a plausible statement is false. Analysis is unusually rich in counterexamples, and they are the point rather than a curiosity. A continuous nowhere-differentiable function. A convergent sequence of continuous functions whose limit is discontinuous. A function that is integrable but not continuous. Each one marks the exact boundary of a theorem.
+
+You also learn where the hypotheses come from. "Continuous on a **closed bounded** interval" appears in half the theorems of calculus, and after this section you will know precisely which counterexample each word is keeping out.
+
+## Why It Matters in Real Life
+
+- **Numerical computing.** Whether an algorithm converges, how fast, and how error accumulates are all questions about sequences and limits. Every floating-point library rests on error bounds proved with these tools.
+- **Machine learning.** Gradient descent convergence proofs, and the guarantees behind stochastic methods, are analysis. So is the question of when a neural network can approximate a given function, which is a theorem about uniform convergence.
+- **Signal processing.** Fourier series converge, but in what sense? The answer requires distinguishing pointwise, uniform, and mean-square convergence, and getting it wrong produces real artifacts in audio and images.
+- **Economics and optimization.** Existence of equilibria and optima are compactness arguments. The extreme value theorem is doing the work behind "an optimum exists."
+- **Probability theory.** Measure theory, the modern foundation of probability, is the direct continuation of this material.
+- **Engineering stability.** Whether a control system settles or oscillates forever is a convergence question about sequences and series.
+
+## What You'll Learn in This Section
+
+The section builds upward from one axiom:
+
+- **The real numbers** - completeness, suprema and infima, why the rationals have gaps, and the Archimedean property.
+- **Sequences** - the epsilon-N definition, limit theorems, monotone convergence, Bolzano-Weierstrass, Cauchy sequences, and series.
+- **Topology of the line** - open and closed sets, limit points, compactness, and the Heine-Borel theorem.
+- **Limits and continuity** - the epsilon-delta definition, the extreme and intermediate value theorems, and uniform continuity.
+- **Differentiation and integration** - the derivative as a limit done properly, Rolle's theorem, the mean value theorem, Taylor's theorem, the Riemann integral, and uniform convergence of function sequences.
+
+Each lesson has worked examples, real-world connections, and a quiz.
+
+## How to Get the Most Out of This Section
+
+**Write out epsilon-delta proofs by hand, many times.** There is no shortcut. The structure is always the same: you are handed an $\varepsilon$, and you must produce a $\delta$ or an $N$ that works. Do it until the shape of the argument is automatic, because every later proof reuses it.
+
+**Work backwards when constructing a proof, then write it forwards.** Start from what you need, $|f(x) - L| < \varepsilon$, manipulate until you see what constraint on $|x - a|$ would guarantee it, then present the proof in the opposite order. Everyone does this; textbooks just hide the scratch work.
+
+**Collect counterexamples as carefully as theorems.** Keep a list: $1/x$ on $(0,1)$ for unbounded-on-an-open-interval, $\sin(1/x)$ for a limit that fails to exist, $x^n$ on $[0,1]$ for pointwise but not uniform convergence. They are how you remember which hypothesis does what.
+
+**Draw the picture, then distrust it.** Diagrams are essential for finding a proof and useless as a proof. The Weierstrass function is the standing reminder that the real line contains things you cannot draw.
+
+:::note[You've Got This]
+Real analysis has a reputation as the course where mathematics gets hard, and there's truth in that, but the difficulty is concentrated in one place: the epsilon-delta definition. Once that clicks, and it does click, the rest of the section is variations on a theme you already know. Two pieces of advice from everyone who has been through it. Expect the first two weeks to feel like fog, and don't conclude anything from that. And when a proof will not come, go find the counterexample that would break the theorem if the hypothesis were dropped; it almost always shows you which hypothesis the proof needs to use.
+:::

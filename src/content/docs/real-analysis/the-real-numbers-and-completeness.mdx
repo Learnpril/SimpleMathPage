@@ -1,0 +1,285 @@
+---
+title: The Real Numbers and Completeness
+description: Suprema, infima, the least upper bound axiom, and the one property that makes analysis possible
+sidebar:
+  order: 2
+---
+
+import Quiz from "../../../components/Quiz.astro";
+import SymbolKey from "../../../components/SymbolKey.astro";
+import CompletenessGap from "../../../components/CompletenessGap.astro";
+
+## What You'll Learn
+
+In this lesson you'll learn what suprema and infima are, how to prove a number is a supremum, the least upper bound axiom, and the two immediate consequences that get used constantly: the Archimedean property and the density of the rationals.
+
+<SymbolKey
+  items={[
+    {
+      sym: "sup S",
+      read: "the supremum of S, the least upper bound",
+      note: "the smallest number that is ≥ every element of S; need not belong to S",
+    },
+    {
+      sym: "inf S",
+      read: "the infimum of S, the greatest lower bound",
+      note: "the largest number that is ≤ every element of S",
+    },
+    {
+      sym: "max S",
+      read: "the maximum of S",
+      note: "the supremum, when it happens to be an element of S",
+    },
+    {
+      sym: "∀ / ∃",
+      read: "for all / there exists",
+      note: "the two quantifiers every definition in this section is built from",
+    },
+    {
+      sym: "ℚ / ℝ",
+      read: "the rationals / the reals",
+      note: "the whole point of the lesson is what separates them",
+    },
+    {
+      sym: "ε",
+      read: "epsilon, an arbitrarily small positive number",
+      note: "always positive, never zero, and chosen by your opponent",
+    },
+  ]}
+/>
+
+## The Concept
+
+### Bounds
+
+A set $S \subseteq \mathbb{R}$ is **bounded above** if there is some $M$ with $x \le M$ for every $x \in S$. Such an $M$ is an **upper bound**. Bounded below and lower bounds are defined the same way. **Bounded** means both.
+
+Upper bounds are never unique: if $M$ works, so does $M + 1$. The interesting question is whether there is a _smallest_ one.
+
+### Supremum and infimum
+
+$M$ is the **supremum** of $S$, written $\sup S$, if
+
+1. $M$ is an upper bound: $x \le M$ for all $x \in S$, and
+2. $M$ is the least one: no $M' < M$ is an upper bound.
+
+Condition 2 is awkward to use directly. This equivalent version is the one you actually work with:
+
+$$
+M = \sup S \iff M \text{ is an upper bound, and } \forall \varepsilon>0 \; \exists x \in S \text{ with } x > M - \varepsilon
+$$
+
+In words: **nothing below $M$ is an upper bound, because you can always find an element of $S$ within $\varepsilon$ of $M$.** That $\varepsilon$-characterization is how essentially every supremum proof goes.
+
+The key subtlety: **the supremum need not be an element of $S$.** For $S = (0,1)$, $\sup S = 1 \notin S$. When the supremum does belong to $S$ it is called the **maximum**. Every maximum is a supremum; not every supremum is a maximum.
+
+### The completeness axiom
+
+> **Least upper bound axiom.** Every non-empty subset of $\mathbb{R}$ that is bounded above has a supremum in $\mathbb{R}$.
+
+This is an **axiom**, not a theorem. It is part of what defines the real numbers, and it is exactly what the rationals lack.
+
+<CompletenessGap />
+
+The set $S = \{x \in \mathbb{Q} : x^2 < 2\}$ is non-empty and bounded above, but no rational is its least upper bound. Any rational with $p^2 < 2$ can be nudged up and still square below 2, so it isn't an upper bound; any rational with $p^2 > 2$ can be nudged down and still exceed everything in $S$, so it isn't least. In $\mathbb{R}$ the supremum exists and is $\sqrt2$.
+
+By applying the axiom to $-S$, the matching statement for infima follows for free: every non-empty set bounded below has an infimum.
+
+### Why this axiom is the whole section
+
+Every major theorem ahead is a consequence of completeness, and every one of them is false over $\mathbb{Q}$:
+
+- **Monotone convergence** — a bounded increasing sequence converges. Over $\mathbb{Q}$, the decimal truncations of $\sqrt2$ increase and are bounded and converge to nothing rational.
+- **Bolzano-Weierstrass** — every bounded sequence has a convergent subsequence.
+- **Cauchy completeness** — every Cauchy sequence converges.
+- **Intermediate value theorem** — over $\mathbb{Q}$, $f(x) = x^2 - 2$ goes from negative to positive without ever being zero.
+- **Extreme value theorem** and **Heine-Borel**.
+
+When a proof in this section feels like it appeared from nowhere, look for where it took a supremum. That step is almost always the load-bearing one.
+
+### The Archimedean property
+
+> For every real $x$ there is a natural number $n$ with $n > x$.
+
+Equivalently, $\mathbb{N}$ is unbounded above, and equivalently, for every $\varepsilon > 0$ there is $n$ with $\frac1n < \varepsilon$.
+
+This follows from completeness. Suppose $\mathbb{N}$ were bounded above; then it would have a supremum $M$. By the $\varepsilon$-characterization with $\varepsilon = 1$, there is $n \in \mathbb{N}$ with $n > M - 1$, hence $n + 1 > M$. But $n+1 \in \mathbb{N}$, contradicting that $M$ is an upper bound. ∎
+
+The third form, "$1/n$ can be made as small as you like," is what gets used in practice: it is how you turn "for all $\varepsilon$" into "for all $n$ beyond some point."
+
+### Density of the rationals
+
+> Between any two distinct reals there is a rational.
+
+So the rationals are **dense** in $\mathbb{R}$: every real is a limit of rationals, and every interval, however short, contains infinitely many. The irrationals are dense too.
+
+This is why decimal approximations work at all, and why numerical computation on rationals can approximate any real quantity to any accuracy — even though it can never represent most of them exactly.
+
+## Worked Examples
+
+**Example 1: Find the supremum and infimum of $S = \{1 - \frac1n : n \in \mathbb{N}\}$.**
+
+**Solution.** The elements are $0, \frac12, \frac23, \frac34, \dots$, increasing toward 1.
+
+**Infimum.** The smallest element is $0$ (at $n=1$), and $1 - \frac1n \ge 0$ always. So $\inf S = 0$, and since $0 \in S$ it is also the minimum.
+
+**Supremum.** Every element is $< 1$, so 1 is an upper bound. Is it least? Take any $\varepsilon>0$. By the Archimedean property choose $n$ with $\frac1n < \varepsilon$. Then
+
+$$
+1 - \tfrac1n > 1 - \varepsilon
+$$
+
+so an element of $S$ exceeds $1 - \varepsilon$. Hence no number below 1 is an upper bound, and $\sup S = 1$.
+
+$1 \notin S$, so there is **no maximum**. This is the standard illustration that a supremum can sit outside its set.
+
+**Example 2: Prove $\sup\{x \in \mathbb{R} : x^2 < 4\} = 2$.**
+
+**Solution.** The set is $(-2,2)$.
+
+_Upper bound._ If $x^2 < 4$ then $|x| < 2$, so $x < 2$. ✓
+
+_Least._ Let $\varepsilon>0$. We need an element exceeding $2-\varepsilon$. If $\varepsilon \ge 4$ then $0$ works. Otherwise take $x = 2 - \frac{\varepsilon}{2}$. Then $0 < x < 2$, so $x^2 < 4$ and $x \in S$, and $x > 2 - \varepsilon$. ✓
+
+So $\sup S = 2$. ∎
+
+Notice the shape: verify the bound, then given an arbitrary $\varepsilon$ **construct** a witness. Every supremum proof looks like this.
+
+**Example 3: A set whose supremum is a maximum.**
+
+**Solution.** For $S = [0, 3]$, we have $\sup S = 3$ and $3 \in S$, so $\max S = 3$. Likewise $\inf S = \min S = 0$.
+
+Compare $T = [0,3)$: still $\sup T = 3$, but $3 \notin T$ so $T$ has no maximum. **The supremum does not change when you remove the endpoint**, which is precisely why "sup" is the useful notion and "max" is not.
+
+**Example 4: Suprema of unbounded and empty sets.**
+
+**Solution.** $\mathbb{N}$ is not bounded above, so it has no supremum in $\mathbb{R}$. (Some texts write $\sup \mathbb{N} = +\infty$ as shorthand; that is a convention, not a real number.)
+
+The empty set is a genuine edge case: _every_ real is an upper bound for $\emptyset$, so there is no least one. This is why the axiom says **non-empty**. Both hypotheses in "non-empty and bounded above" are doing work.
+
+**Example 5: Use the Archimedean property.**
+
+Show that $\inf\{\frac1n : n \in \mathbb{N}\} = 0$.
+
+**Solution.** _Lower bound._ $\frac1n > 0$ for all $n$, so 0 is a lower bound. ✓
+
+_Greatest._ Suppose some $c > 0$ were a lower bound, so $\frac1n \ge c$ for all $n$, that is $n \le \frac1c$ for all $n$. That makes $\mathbb{N}$ bounded above, contradicting the Archimedean property.
+
+So no positive number is a lower bound, and $\inf = 0$. ∎
+
+Note $0$ is not in the set, so there is no minimum. The set has elements arbitrarily close to 0 and never reaches it.
+
+**Example 6: Suprema and sums.**
+
+For non-empty bounded sets $A, B$ and $A + B = \{a + b\}$, show $\sup(A+B) = \sup A + \sup B$.
+
+**Solution.** Write $\alpha = \sup A$, $\beta = \sup B$.
+
+_Upper bound._ Any element of $A+B$ is $a + b \le \alpha + \beta$. ✓
+
+_Least._ Let $\varepsilon>0$. Pick $a \in A$ with $a > \alpha - \frac{\varepsilon}{2}$ and $b \in B$ with $b > \beta - \frac{\varepsilon}{2}$, both possible by the $\varepsilon$-characterization. Then
+
+$$
+a + b > \alpha + \beta - \varepsilon
+$$
+
+so no smaller number is an upper bound. Hence $\sup(A+B) = \alpha+\beta$. ∎
+
+The trick of splitting $\varepsilon$ into $\frac{\varepsilon}{2} + \frac{\varepsilon}{2}$ appears in nearly every proof from here on. Worth getting comfortable with it now.
+
+## Real-World Applications
+
+**Floating-point representation.** A `double` stores a rational approximation, so the reals a computer manipulates are always rational. Density of $\mathbb{Q}$ is what makes that acceptable: any real can be approximated to within machine precision. Completeness is also why the _limits_ your algorithms converge to are guaranteed to exist even though the machine never reaches them.
+
+**Optimization and economics.** "The supremum of achievable profit" always exists for a bounded feasible set, but it may not be attained. That distinction is exactly sup versus max, and it is why optimization theory works so hard to establish that a maximum is achieved rather than merely bounded.
+
+**Numerical root finding.** Bisection works by maintaining an interval containing a root and halving it. The root it converges to exists because of completeness; over $\mathbb{Q}$ the algorithm would run forever narrowing in on a value that is not there. Solving $x^2 = 2$ by bisection is literally constructing $\sqrt2$ as a supremum.
+
+**Measurement and tolerance.** An engineering specification like "within $\varepsilon$ of nominal for some achievable $\varepsilon$" is an $\varepsilon$-argument. The Archimedean property is the formal statement that any tolerance, however tight, can be met by taking enough steps.
+
+**Auctions and pricing.** The market-clearing price is often characterized as a supremum or infimum of a set of bids, and whether it is attained determines whether the auction has a well-defined winner.
+
+:::note[You've Got This]
+Two things carry the whole lesson. First, the ε-characterization of a supremum: M is the least upper bound exactly when you can always find an element of the set above M − ε. That converts an awkward "no smaller number works" into something you can actually construct. Second, completeness is an axiom, and it is the reason analysis over ℝ works and over ℚ does not. Whenever a later proof seems to produce a number out of thin air, look for the supremum — that is where the axiom got spent.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="real-the-real-numbers-and-completeness"
+  questions={[
+    {
+      id: "q1",
+      text: "What is sup S for S = (0, 1)?",
+      options: ["0", "1", "There is none, since 1 is not in S", "0.999…"],
+      correctIndex: 1,
+      explanation:
+        "1 is an upper bound, and no smaller number is, since points of S get arbitrarily close to 1. A supremum need not belong to the set; here S has a supremum but no maximum.",
+    },
+    {
+      id: "q2",
+      text: "What does the least upper bound axiom state?",
+      options: [
+        "Every set of reals has a supremum",
+        "Every nonempty set of reals that is bounded above has a supremum in ℝ",
+        "Every bounded set of reals has a maximum",
+        "Every set of rationals has a rational supremum",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Both hypotheses matter. The empty set has every real as an upper bound and so no least one, and an unbounded set has none at all. The axiom fails over ℚ, which is why analysis needs ℝ.",
+    },
+    {
+      id: "q3",
+      text: "Which condition is the useful characterization of M = sup S?",
+      options: [
+        "M is an upper bound and M is in S",
+        "M is an upper bound and for every ε > 0 there is an x in S with x > M − ε",
+        "M is an upper bound and M is rational",
+        "Every element of S is less than M",
+      ],
+      correctIndex: 1,
+      explanation:
+        "The ε-condition says nothing below M can be an upper bound, which is exactly leastness in a form you can construct with. Requiring M ∈ S would define the maximum instead.",
+    },
+    {
+      id: "q4",
+      text: "What does the Archimedean property say?",
+      options: [
+        "Every real number is rational",
+        "For every real x there is a natural number n with n > x",
+        "Every bounded sequence converges",
+        "The rationals are dense in the reals",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Equivalently, ℕ is unbounded above, and equivalently 1/n can be made smaller than any positive ε. It follows from completeness and is the standard tool for turning an arbitrary ε into a choice of n.",
+    },
+    {
+      id: "q5",
+      text: "Why does the set of rationals whose square is below 2 have no least upper bound in ℚ?",
+      options: [
+        "Because it is not bounded above",
+        "Because it is empty",
+        "Because the boundary value √2 is irrational, so any rational candidate is either not an upper bound or not the least one",
+        "Because ℚ is uncountable",
+      ],
+      correctIndex: 2,
+      explanation:
+        "A rational squaring below 2 can be nudged up and still qualify, so it is not an upper bound; one squaring above 2 can be nudged down and still dominate the set, so it is not least. In ℝ the supremum is √2.",
+    },
+    {
+      id: "q6",
+      text: "For S = {1 − 1/n : n ∈ ℕ}, which is correct?",
+      options: [
+        "sup S = 1 and S has no maximum",
+        "sup S = 1 and max S = 1",
+        "sup S does not exist",
+        "sup S = 1/2",
+      ],
+      correctIndex: 0,
+      explanation:
+        "Every element is below 1, and the Archimedean property lets you exceed 1 − ε for any ε, so the supremum is 1. Since 1 is never attained, there is no maximum.",
+    },
+  ]}
+/>

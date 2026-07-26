@@ -1,0 +1,377 @@
+---
+title: Taylor's Theorem
+description: Polynomial approximation with an exact remainder, and what it does and does not promise
+sidebar:
+  order: 17
+---
+
+import Quiz from "../../../components/Quiz.astro";
+import TaylorRemainder from "../../../components/TaylorRemainder.astro";
+
+## What You'll Learn
+
+In this lesson you'll see Taylor's theorem stated with an **exact** remainder rather than a vague "≈", learn to prove it by the same subtract-off-the-known-part trick that gave the mean value theorem, use the remainder to get honest error bounds, and understand the difference between a Taylor series converging and a Taylor series converging to the function it came from.
+
+## The Concept
+
+Calculus introduced Taylor series as an infinite sum and asked you to trust it. Analysis does the opposite: it starts with a **finite** polynomial plus an error term you can control, and only afterwards asks whether the error goes to zero.
+
+### The Taylor polynomial
+
+Suppose $f$ has $n$ derivatives at $a$. The **$n$th Taylor polynomial** of $f$ about $a$ is
+
+$$
+P_n(x) = \sum_{k=0}^{n} \frac{f^{(k)}(a)}{k!}(x-a)^k
+$$
+
+It is the unique polynomial of degree at most $n$ whose first $n$ derivatives at $a$ match those of $f$. That matching is the whole design goal: $P_n$ agrees with $f$ in value, slope, curvature, and so on, up to order $n$, at the single point $a$.
+
+The linear case $P_1(x) = f(a) + f'(a)(x-a)$ is the tangent line. Taylor's theorem is what tangent-line approximation grows into.
+
+<TaylorRemainder />
+
+### The theorem
+
+> **Taylor's theorem (Lagrange form).** Let $f$ be $n+1$ times differentiable on an open interval containing $a$ and $x$. Then there is a point $\xi$ strictly between $a$ and $x$ with
+>
+> $$
+> f(x) = P_n(x) + \frac{f^{(n+1)}(\xi)}{(n+1)!}(x-a)^{n+1}
+> $$
+
+Write $R_n(x) = f(x) - P_n(x)$ for the **remainder**. The theorem says $R_n$ has exactly the shape of the next term in the pattern, except that the derivative is evaluated at an unknown interior point instead of at $a$.
+
+Two things to notice. First, this is an **equality**, not an estimate — nothing has been thrown away. Second, the only thing unspecified is _where_ $\xi$ sits, and that is precisely the same concession the mean value theorem makes. Taking $n = 0$ recovers the MVT exactly:
+
+$$
+f(x) = f(a) + f'(\xi)(x-a)
+$$
+
+So Taylor's theorem is the MVT extended to higher order, and it is proved the same way.
+
+### Proof
+
+_Proof._ Fix $x \ne a$ and choose the number $M$ so that
+
+$$
+f(x) = P_n(x) + M(x-a)^{n+1}
+$$
+
+which is possible since $(x-a)^{n+1} \ne 0$. The claim is that $M = f^{(n+1)}(\xi)/(n+1)!$ for some interior $\xi$.
+
+Let
+
+$$
+g(t) = f(t) - P_n(t) - M(t-a)^{n+1}
+$$
+
+Because $P_n$ matches $f$ to order $n$ at $a$, we get $g(a) = g'(a) = \cdots = g^{(n)}(a) = 0$, and by the choice of $M$ we also get $g(x) = 0$.
+
+Now apply Rolle repeatedly. Since $g(a) = g(x) = 0$, there is $\xi_1$ between them with $g'(\xi_1) = 0$. Since $g'(a) = g'(\xi_1) = 0$, there is $\xi_2$ between those with $g''(\xi_2) = 0$. Continuing $n+1$ times produces $\xi = \xi_{n+1}$ strictly between $a$ and $x$ with
+
+$$
+g^{(n+1)}(\xi) = 0
+$$
+
+But $P_n$ has degree at most $n$, so its $(n+1)$st derivative vanishes, and the $(n+1)$st derivative of $M(t-a)^{n+1}$ is $M(n+1)!$. Hence
+
+$$
+0 = f^{(n+1)}(\xi) - M(n+1)! \quad\Longrightarrow\quad M = \frac{f^{(n+1)}(\xi)}{(n+1)!}
+$$
+
+∎
+
+**Subtract off the part you already understand, then apply Rolle.** That is the same move as in the MVT proof, iterated. It is worth seeing that the entire content of Taylor's theorem is Rolle applied $n+1$ times.
+
+### Using the remainder
+
+In practice you never know $\xi$, so you bound the derivative instead. If
+
+$$
+|f^{(n+1)}(t)| \le K \quad \text{for all } t \text{ between } a \text{ and } x
+$$
+
+then
+
+$$
+|R_n(x)| \le \frac{K}{(n+1)!}|x-a|^{n+1}
+$$
+
+That is the working form. Everything on the right is computable, and the $(n+1)!$ in the denominator is why Taylor approximation is so effective at short range.
+
+Two separate effects shrink the error:
+
+- Increasing the degree divides by a larger factorial.
+- Moving $x$ closer to $a$ shrinks $|x-a|^{n+1}$, and shrinks it faster for larger $n$.
+
+The second is why $P_n$ is a **local** tool. Away from $a$ the factor $|x-a|^{n+1}$ grows, and for a function whose derivatives are large the bound can be useless.
+
+### Taylor series, and when it fails
+
+Letting $n \to \infty$ gives the **Taylor series**
+
+$$
+\sum_{k=0}^{\infty} \frac{f^{(k)}(a)}{k!}(x-a)^k
+$$
+
+Here is where calculus quietly assumed something false. The series converging is **not** the same as the series converging to $f$. The correct statement is:
+
+> The Taylor series converges to $f(x)$ if and only if $R_n(x) \to 0$.
+
+And $R_n(x) \to 0$ can fail in two different ways.
+
+**The series can diverge.** For $f(x) = \frac{1}{1-x}$ about 0, the series is $\sum x^k$, which diverges for $|x| \ge 1$ even though $f$ is perfectly well behaved at, say, $x = -2$.
+
+**The series can converge to the wrong function.** Define
+
+$$
+f(x) = \begin{cases} e^{-1/x^2} & x \ne 0 \\ 0 & x = 0\end{cases}
+$$
+
+Every derivative of this function at 0 is 0. So its Taylor series about 0 is the zero series, which converges everywhere — to the zero function, which is not $f$. The remainder never goes to zero for $x \ne 0$.
+
+That example is the reason **smooth** and **analytic** are different words. A function is smooth if it has derivatives of all orders; it is analytic at $a$ if it also equals its Taylor series near $a$. Analytic implies smooth, and this function shows the converse fails.
+
+### Taylor's theorem in the little-o form
+
+There is a weaker but often more convenient statement, requiring only $n$ derivatives:
+
+$$
+f(x) = P_n(x) + o\big((x-a)^n\big) \quad \text{as } x \to a
+$$
+
+meaning $R_n(x)/(x-a)^n \to 0$. This says nothing quantitative at a fixed $x$, but it is exactly what you want when computing limits, and it is the form behind the standard limit tricks.
+
+## Worked Examples
+
+**Example 1: Build $P_3$ for $\sin x$ about 0 and bound the error at $x = 0.5$.**
+
+**Solution.** Derivatives at 0 cycle $0, 1, 0, -1$, so
+
+$$
+P_3(x) = x - \frac{x^3}{6}
+$$
+
+The fourth derivative is $\sin x$, so $K = 1$ works everywhere. Then
+
+$$
+|R_3(0.5)| \le \frac{1}{4!}(0.5)^4 = \frac{0.0625}{24} \approx 0.0026
+$$
+
+Checking: $P_3(0.5) = 0.5 - 0.0208333 = 0.4791667$ and $\sin(0.5) = 0.4794255$. The true error is about $0.00026$, ten times better than the bound.
+
+**The bound is honest but not tight**, because it assumes the worst possible fourth derivative on the interval. That is typical and acceptable: a guaranteed bound is worth more than a sharp guess.
+
+**Example 2: How many terms for $e$ to six decimal places?**
+
+**Solution.** Take $f(x) = e^x$, $a = 0$, $x = 1$. All derivatives are $e^x$, bounded on $[0,1]$ by $e < 3$. So
+
+$$
+|R_n(1)| \le \frac{3}{(n+1)!}
+$$
+
+We want this below $5 \times 10^{-7}$, so we need $(n+1)! > 6 \times 10^6$. Since $10! = 3{,}628{,}800$ and $11! = 39{,}916{,}800$, take $n + 1 = 11$, that is $n = 10$.
+
+$$
+e \approx \sum_{k=0}^{10} \frac{1}{k!} = 2.718281801\ldots
+$$
+
+against $e = 2.718281828\ldots$ ✓
+
+**This is how a library function decides where to stop.** The factorial growth means ten terms buy six digits.
+
+**Example 3: Why $\frac{1}{1-x}$ has a radius of only 1.**
+
+**Solution.** $f^{(k)}(x) = k!/(1-x)^{k+1}$, so $f^{(k)}(0) = k!$ and the series is $\sum x^k$.
+
+That geometric series converges exactly when $|x| < 1$. Yet $f$ is smooth at every $x \ne 1$, including $x = -3$.
+
+**A Taylor series about $a$ is blind to good behaviour beyond the nearest singularity**, even a singularity in the other direction. The radius here is 1 because the pole at $x = 1$ is at distance 1, and that limit applies symmetrically.
+
+**Example 4: A smooth function that is not analytic.**
+
+Show the Taylor series of $f(x) = e^{-1/x^2}$ (with $f(0) = 0$) about 0 is identically zero.
+
+**Solution.** For $x \ne 0$, each derivative is $e^{-1/x^2}$ times a rational function of $x$. At 0, apply the limit definition:
+
+$$
+f'(0) = \lim_{h\to0}\frac{e^{-1/h^2}}{h}
+$$
+
+Substituting $t = 1/h$ turns this into $\lim_{t\to\infty} t e^{-t^2} = 0$, since the exponential beats any power. The same argument, with a higher power of $t$, gives $f^{(k)}(0) = 0$ for every $k$.
+
+So $P_n \equiv 0$ for all $n$, and $R_n(x) = f(x) \ne 0$ for $x \ne 0$. The remainder does not vanish.
+
+**Smooth does not imply analytic.** This function is infinitely flat at the origin without being zero near it.
+
+**Example 5: Estimate $\sqrt{4.2}$ with an error bound.**
+
+**Solution.** Take $f(x)=\sqrt{x}$, $a = 4$, so $f(4) = 2$, $f'(4) = \tfrac14$, $f''(4) = -\tfrac{1}{32}$.
+
+$$
+P_2(x) = 2 + \tfrac14(x-4) - \tfrac{1}{64}(x-4)^2
+$$
+
+$$
+P_2(4.2) = 2 + 0.05 - 0.000625 = 2.049375
+$$
+
+For the bound, $f'''(x) = \tfrac{3}{8}x^{-5/2}$, which on $[4, 4.2]$ is largest at $x=4$: $\tfrac{3}{8}\cdot\tfrac{1}{32} \approx 0.01172$. So
+
+$$
+|R_2(4.2)| \le \frac{0.01172}{6}(0.2)^3 \approx 1.6\times10^{-5}
+$$
+
+The true value is $2.0493902\ldots$, so the actual error is about $1.5\times10^{-5}$. **Here the bound is nearly tight**, because the third derivative barely varies on such a short interval.
+
+**Example 6: Use Taylor to evaluate a limit.**
+
+Find $\displaystyle\lim_{x\to0}\frac{x - \sin x}{x^3}$.
+
+**Solution.** From $\sin x = x - \frac{x^3}{6} + o(x^3)$,
+
+$$
+x - \sin x = \frac{x^3}{6} + o(x^3)
+$$
+
+Dividing by $x^3$ gives $\frac16 + o(1) \to \frac16$.
+
+Compare L'Hôpital, which needs three rounds of differentiation. **Substituting a Taylor expansion is usually faster and always tells you which term is doing the work.**
+
+**Example 7: Second-derivative test, derived.**
+
+Suppose $f'(a) = 0$ and $f''(a) > 0$. Show $a$ is a local minimum.
+
+**Solution.** Taylor with $n=1$ gives, for some $\xi$ between $a$ and $x$,
+
+$$
+f(x) = f(a) + f'(a)(x-a) + \frac{f''(\xi)}{2}(x-a)^2 = f(a) + \frac{f''(\xi)}{2}(x-a)^2
+$$
+
+If $f''$ is continuous at $a$ and positive there, it stays positive on some interval around $a$. For $x$ in that interval, $\xi$ lies in it too, so the last term is positive and $f(x) > f(a)$. ∎
+
+**The second-derivative test is Taylor's theorem at $n=1$.** It also shows why the test is silent when $f''(a)=0$: the sign information came from that term, and there is none.
+
+## Real-World Applications
+
+**Numerical libraries.** Evaluating $\sin$, $\exp$, or $\log$ in hardware or software means reducing the argument to a small range and then using a polynomial. The degree is chosen from a remainder bound like Example 2, so the routine can promise a result correct to the last bit.
+
+**Finite-difference methods.** Every discretization of a derivative, and the order of accuracy quoted for it, comes from expanding in Taylor series and seeing which terms cancel. The leading uncancelled term _is_ the error term.
+
+**Physics linearization.** The small-angle approximation $\sin\theta \approx \theta$ that makes the pendulum solvable is $P_1$, and the remainder bound tells you the angle at which the model stops being trustworthy.
+
+**Optimization.** Newton's method is built by minimizing $P_2$ at each step, and the quadratic convergence rate comes from the size of $R_2$. Quasi-Newton methods are approximations of the same quadratic model.
+
+**Computer graphics and audio.** Polynomial approximation of transcendental functions is standard where a per-sample or per-pixel cost matters, and the acceptable degree is set by an error budget.
+
+**Error propagation in measurement.** Expanding a formula to first order in its inputs is exactly how uncertainty is propagated through a calculation; the second-order remainder is what tells you when the linear rule is inadequate.
+
+:::note[You've Got This]
+The one idea worth carrying out of this lesson: Taylor's theorem is an equality, not an approximation. The polynomial plus the remainder is exactly $f$, and all the work is in bounding one derivative on one interval. That reframing turns "≈" into a guarantee, which is the difference between using an approximation and trusting it. And if the $e^{-1/x^2}$ example bothered you, good — it should. It's the example that shows why analysis insists on checking that the remainder actually goes to zero.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="real-taylors-theorem"
+  questions={[
+    {
+      id: "q1",
+      text: "What characterizes the nth Taylor polynomial of f about a?",
+      options: [
+        "It has the same values as f at n+1 points",
+        "It is the polynomial of degree at most n whose derivatives at a match those of f up to order n",
+        "It minimizes the maximum error on an interval",
+        "It is the best polynomial fit by least squares",
+      ],
+      correctIndex: 1,
+      explanation:
+        "The construction matches derivatives at the single point a, not values at many points. That is why the approximation is excellent near a and can be poor far away.",
+    },
+    {
+      id: "q2",
+      text: "What is the Lagrange form of the remainder Rₙ(x)?",
+      options: [
+        "f⁽ⁿ⁺¹⁾(a)(x − a)ⁿ⁺¹ / (n+1)!",
+        "f⁽ⁿ⁺¹⁾(ξ)(x − a)ⁿ⁺¹ / (n+1)! for some ξ between a and x",
+        "f⁽ⁿ⁾(ξ)(x − a)ⁿ / n!",
+        "The sum of all terms of degree above n",
+      ],
+      correctIndex: 1,
+      explanation:
+        "The derivative is evaluated at an unknown interior point ξ, not at a. That single unspecified point is the only imprecision in an otherwise exact equality.",
+    },
+    {
+      id: "q3",
+      text: "Which theorem is Taylor's theorem proved from?",
+      options: [
+        "The intermediate value theorem",
+        "Rolle's theorem, applied n+1 times",
+        "The Heine–Borel theorem",
+        "The monotone convergence theorem",
+      ],
+      correctIndex: 1,
+      explanation:
+        "An auxiliary function is built whose first n derivatives vanish at a and which vanishes at x, then Rolle is applied repeatedly. Taking n = 0 recovers the mean value theorem itself.",
+    },
+    {
+      id: "q4",
+      text: "For f(x) = sin x with a = 0, what does the Lagrange bound give for |R₃(0.5)|?",
+      options: ["About 0.0026", "About 0.5", "Exactly 0", "About 0.125"],
+      correctIndex: 0,
+      explanation:
+        "The fourth derivative of sin is bounded by 1, so the bound is (0.5)⁴/4! ≈ 0.0026. The true error is about 0.00026, so the bound is valid but not tight.",
+    },
+    {
+      id: "q5",
+      text: "Under what condition does the Taylor series of f converge to f(x)?",
+      options: [
+        "Whenever f is infinitely differentiable",
+        "Whenever the series converges",
+        "Exactly when Rₙ(x) → 0",
+        "Whenever f is continuous",
+      ],
+      correctIndex: 2,
+      explanation:
+        "Convergence of the series and convergence to f are different statements. The remainder going to zero is the precise condition, and it can fail even for a smooth function.",
+    },
+    {
+      id: "q6",
+      text: "What does the function e^(−1/x²), extended by 0 at the origin, demonstrate?",
+      options: [
+        "That a discontinuous function can have a Taylor series",
+        "That a smooth function need not equal its Taylor series",
+        "That Taylor series always diverge",
+        "That the remainder can be negative",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Every derivative at 0 is zero, so the Taylor series is identically zero and converges everywhere, but to the zero function rather than to f. This is why smooth and analytic are separate notions.",
+    },
+    {
+      id: "q7",
+      text: "Why does increasing the degree improve a Taylor approximation so quickly at short range?",
+      options: [
+        "Because the derivatives shrink",
+        "Because the remainder carries a factor of 1/(n+1)! and a power |x − a|ⁿ⁺¹",
+        "Because polynomials are continuous",
+        "Because the series always converges",
+      ],
+      correctIndex: 1,
+      explanation:
+        "The factorial in the denominator grows faster than almost anything, and when |x − a| < 1 the power shrinks as well. Both effects work in the same direction near a.",
+    },
+    {
+      id: "q8",
+      text: "How does Taylor's theorem justify the second-derivative test?",
+      options: [
+        "By showing f is continuous",
+        "By writing f(x) = f(a) + f″(ξ)(x − a)²/2 when f′(a) = 0, whose sign is fixed by f″",
+        "By differentiating the series",
+        "It does not; the test is a separate axiom",
+      ],
+      correctIndex: 1,
+      explanation:
+        "With the linear term gone, the quadratic remainder decides whether f(x) exceeds f(a). It also explains why the test says nothing when f″(a) = 0, since that is the term supplying the sign.",
+    },
+  ]}
+/>

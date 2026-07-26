@@ -1,0 +1,339 @@
+---
+title: Limits of Functions
+description: The epsilon-delta definition, how to write the proof, and the sequential criterion
+sidebar:
+  order: 10
+---
+
+import Quiz from "../../../components/Quiz.astro";
+import SymbolKey from "../../../components/SymbolKey.astro";
+import EpsilonDelta from "../../../components/EpsilonDelta.astro";
+
+## What You'll Learn
+
+In this lesson you'll learn the epsilon-delta definition of a function limit, the standard proof template, why the point $a$ itself is excluded, and the sequential criterion that makes disproving limits easy. This is the definition the whole subject is built on.
+
+<SymbolKey
+  items={[
+    {
+      sym: "lim_{x→a} f(x) = L",
+      read: "the limit of f at a is L",
+      note: "a statement about values near a, never about f(a) itself",
+    },
+    {
+      sym: "δ",
+      read: "delta, the input tolerance",
+      note: "you produce it, and it may depend on both ε and a",
+    },
+    {
+      sym: "0 < |x − a| < δ",
+      read: "x is within δ of a but not equal to a",
+      note: "the strict left inequality is what excludes the point itself",
+    },
+    {
+      sym: "punctured neighbourhood",
+      read: "a neighbourhood of a with a removed",
+      note: "the set the definition actually looks at",
+    },
+  ]}
+/>
+
+## The Concept
+
+### The definition
+
+> $\displaystyle\lim_{x\to a} f(x) = L$ means
+>
+> $$
+> \forall \varepsilon>0 \; \exists \delta>0 \; \text{such that} \; 0 < |x - a| < \delta \implies |f(x) - L| < \varepsilon
+> $$
+
+The same game as epsilon-N. Your opponent picks a tolerance $\varepsilon$ on the **output**; you must produce a tolerance $\delta$ on the **input** that guarantees it.
+
+<EpsilonDelta />
+
+Geometrically: draw a horizontal band of half-width $\varepsilon$ around $L$. You must find a vertical strip of half-width $\delta$ around $a$ such that the graph over that strip stays inside the band. Thinner band, thinner strip.
+
+### Why $0 < |x-a|$
+
+That strict inequality excludes $x = a$, and it is deliberate.
+
+**The limit does not care about $f(a)$.** The function need not even be defined at $a$. This is essential, because the derivative is defined as
+
+$$
+\lim_{h\to 0} \frac{f(a+h) - f(a)}{h}
+$$
+
+and that quotient is undefined at $h = 0$. If limits required the value at the point, calculus could not start.
+
+So three situations are all consistent with $\lim_{x\to a} f(x) = L$: $f(a) = L$, $f(a) \ne L$, and $f(a)$ undefined. Continuity is the extra condition that $f(a)$ exists and equals $L$ — the next lesson.
+
+### The proof template
+
+Same shape as before.
+
+1. **Scratch.** Start from $|f(x)-L| < \varepsilon$. Factor out $|x-a|$ and bound whatever is left over.
+2. **Choose $\delta$.** Usually a min of two things.
+3. **Verify.** Assume $0<|x-a|<\delta$, derive the conclusion forwards.
+
+For a linear function it's clean. To show $\lim_{x\to 3}(2x+1) = 7$:
+
+_Scratch._ $|(2x+1) - 7| = |2x - 6| = 2|x-3|$, and $2|x-3| < \varepsilon \iff |x-3| < \frac{\varepsilon}{2}$.
+
+_Proof._ Given $\varepsilon>0$, take $\delta = \frac{\varepsilon}{2}$. If $0<|x-3|<\delta$ then $|(2x+1)-7| = 2|x-3| < 2\delta = \varepsilon$. ∎
+
+### The min trick
+
+Non-linear functions need one extra step. For $\lim_{x\to 2} x^2 = 4$:
+
+$$
+|x^2 - 4| = |x-2||x+2|
+$$
+
+We control $|x-2|$, but $|x+2|$ is a nuisance factor. **Bound it first by restricting $\delta$.**
+
+If $\delta \le 1$ then $|x-2|<1$ gives $1 < x < 3$, so $|x+2| < 5$. Then
+
+$$
+|x^2-4| < 5|x-2|
+$$
+
+which is below $\varepsilon$ once $|x-2| < \frac{\varepsilon}{5}$. So take
+
+$$
+\delta = \min\left(1, \frac{\varepsilon}{5}\right)
+$$
+
+The min does two jobs at once: the 1 tames the nuisance factor, and the $\frac{\varepsilon}{5}$ delivers the tolerance. **This pattern appears in nearly every non-linear epsilon-delta proof.**
+
+### The sequential criterion
+
+> $\displaystyle\lim_{x\to a} f(x) = L$ $\iff$ for **every** sequence $x_n \to a$ with $x_n \ne a$, we have $f(x_n) \to L$.
+
+This connects function limits to sequence limits, and it hands you two useful things.
+
+**All the sequence limit theorems transfer.** Sums, products, quotients and the squeeze theorem for function limits follow immediately, with no new epsilon-delta work.
+
+**Disproving a limit becomes easy.** Exhibit two sequences approaching $a$ whose images have different limits, and the limit cannot exist. Negating the epsilon-delta definition directly is much more painful.
+
+### One-sided limits
+
+$\lim_{x\to a^+} f(x) = L$ uses $a < x < a+\delta$; the left limit uses $a - \delta < x < a$. Then
+
+$$
+\lim_{x\to a} f(x) = L \iff \lim_{x\to a^-} f(x) = \lim_{x\to a^+} f(x) = L
+$$
+
+For $f(x) = \frac{|x|}{x}$ the right limit at 0 is 1 and the left is $-1$, so the two-sided limit does not exist.
+
+## Worked Examples
+
+**Example 1: Prove $\lim_{x\to 4}(3x - 5) = 7$.**
+
+**Solution.** _Scratch._ $|(3x-5)-7| = |3x-12| = 3|x-4| < \varepsilon \iff |x-4| < \frac{\varepsilon}{3}$.
+
+_Proof._ Let $\varepsilon>0$ and take $\delta = \frac{\varepsilon}{3}$. If $0<|x-4|<\delta$ then
+
+$$
+|(3x-5)-7| = 3|x-4| < 3\delta = \varepsilon
+$$
+
+∎
+
+For any linear $f(x) = mx+c$ with $m \ne 0$, $\delta = \frac{\varepsilon}{|m|}$ always works.
+
+**Example 2: Prove $\lim_{x\to 3} x^2 = 9$.**
+
+**Solution.** _Scratch._ $|x^2-9| = |x-3||x+3|$. Restrict $\delta \le 1$, so $2<x<4$ and $|x+3| < 7$. Then $|x^2-9| < 7|x-3|$, below $\varepsilon$ when $|x-3| < \frac{\varepsilon}{7}$.
+
+_Proof._ Given $\varepsilon>0$, take $\delta = \min\left(1, \frac{\varepsilon}{7}\right)$. If $0<|x-3|<\delta$ then $|x-3|<1$ so $|x+3|<7$, and
+
+$$
+|x^2-9| = |x-3||x+3| < 7|x-3| < 7 \cdot \frac{\varepsilon}{7} = \varepsilon
+$$
+
+∎
+
+**Example 3: A limit where the function is undefined at the point.**
+
+Compute $\lim_{x\to 2}\frac{x^2-4}{x-2}$.
+
+**Solution.** At $x = 2$ the expression is $\frac00$, undefined. But the definition only looks at $x \ne 2$, and there
+
+$$
+\frac{x^2-4}{x-2} = \frac{(x-2)(x+2)}{x-2} = x+2
+$$
+
+The cancellation is legal precisely because $x \ne 2$. So the limit is $\lim_{x\to2}(x+2) = 4$.
+
+**The limit is 4** even though $f(2)$ does not exist. This is exactly the situation every derivative is in.
+
+**Example 4: Disprove a limit with sequences.**
+
+Show $\lim_{x\to 0}\sin\left(\frac1x\right)$ does not exist.
+
+**Solution.** Take two sequences approaching 0.
+
+$$
+x_n = \frac{1}{2\pi n} \implies \sin\left(\frac{1}{x_n}\right) = \sin(2\pi n) = 0
+$$
+
+$$
+y_n = \frac{1}{2\pi n + \frac{\pi}{2}} \implies \sin\left(\frac{1}{y_n}\right) = \sin\left(2\pi n + \frac\pi2\right) = 1
+$$
+
+Both $x_n \to 0$ and $y_n \to 0$, but the images converge to 0 and 1.
+
+By the sequential criterion, **the limit does not exist.** ∎
+
+Compare how much work negating the epsilon-delta definition would have been. Two sequences settled it.
+
+**Example 5: Delta depending on the point.**
+
+For $f(x) = \frac1x$ on $(0,\infty)$, how does $\delta$ depend on $a$ for a fixed $\varepsilon$?
+
+**Solution.**
+
+$$
+\left|\frac1x - \frac1a\right| = \frac{|a-x|}{|ax|}
+$$
+
+Restrict $|x - a| < \frac a2$, so $x > \frac a2$ and $|ax| > \frac{a^2}{2}$. Then
+
+$$
+\left|\frac1x-\frac1a\right| < \frac{2|x-a|}{a^2}
+$$
+
+so $\delta = \min\left(\frac a2, \frac{\varepsilon a^2}{2}\right)$ works.
+
+**$\delta$ shrinks like $a^2$ as $a \to 0$.** The function gets steeper near 0, so the same output tolerance demands a much tighter input tolerance. That dependence on the _point_, not just on $\varepsilon$, is what fails to be uniform — and uniform continuity, four lessons ahead, is exactly the condition that rules it out.
+
+**Example 6: A limit of 0 via squeezing.**
+
+Compute $\lim_{x\to 0} x\sin\left(\frac1x\right)$.
+
+**Solution.** The previous example shows $\sin\frac1x$ has no limit. But it is bounded, and
+
+$$
+\left|x\sin\frac1x\right| \le |x|
+$$
+
+so $-|x| \le x\sin\frac1x \le |x|$. Both bounds $\to 0$, so by squeezing the limit is **0**.
+
+A bounded factor times a vanishing one goes to zero, whether or not the bounded factor has a limit. Same result as for sequences, now for functions.
+
+**Example 7: One-sided limits differing.**
+
+Analyse $f(x) = \frac{|x|}{x}$ at $x = 0$.
+
+**Solution.** For $x>0$, $f(x) = 1$. For $x<0$, $f(x) = -1$. Undefined at 0.
+
+$$
+\lim_{x\to0^+}f(x) = 1, \qquad \lim_{x\to0^-}f(x) = -1
+$$
+
+Different, so the two-sided limit **does not exist**. Sequentially: $\frac1n \to 0$ gives images 1, and $-\frac1n \to 0$ gives images $-1$.
+
+This is a **jump discontinuity**, and it is what makes the sign function non-integrable-by-inspection arguments fail and why step functions need care.
+
+## Real-World Applications
+
+**Tolerance engineering.** "The output must be within $\varepsilon$, so how tightly must the input be controlled?" is literally the epsilon-delta question. Manufacturing tolerance stack-up analysis computes $\delta$ from a required $\varepsilon$, and the derivative is the local conversion factor between them.
+
+**Numerical differentiation.** Approximating $f'(a)$ by a difference quotient with small $h$ relies on the limit existing. Too large an $h$ gives truncation error and too small an $h$ gives catastrophic floating-point cancellation, so there is an optimal $h$ — a very practical consequence of the limit being approached rather than reached.
+
+**Sensor calibration.** A sensor's sensitivity is a derivative, and the amplification of input noise into output noise is the $\frac{\varepsilon}{\delta}$ ratio. Example 5's point matters here: near a steep part of the response curve, the same output precision demands far better input precision.
+
+**Control systems.** Steady-state error is a limit as $t \to \infty$, and a controller specification like "settle within 2% of setpoint" is a choice of $\varepsilon$ with a corresponding settling time.
+
+**Graphics and continuity of rendering.** A shader with a discontinuity produces visible seams. Detecting where a piecewise definition fails to have matching one-sided limits is exactly how those artifacts get diagnosed.
+
+:::note[You've Got This]
+This is the definition the whole section is built on, so it's worth drilling until the shape is reflex. Two techniques carry nearly every proof: factor out |x − a| and bound the leftover nuisance factor, and use δ = min(something, ε/something) so the min tames the nuisance while the second term delivers the tolerance. And when you need to show a limit _doesn't_ exist, always reach for two sequences rather than negating the definition. That single habit will save you a great deal of algebra.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="real-limits-of-functions"
+  questions={[
+    {
+      id: "q1",
+      text: "Why does the definition use 0 < |x − a| < δ rather than |x − a| < δ?",
+      options: [
+        "To make δ smaller",
+        "To exclude x = a, so the limit does not depend on f(a) and may exist where f is undefined",
+        "Because δ must be positive",
+        "To ensure f is continuous at a",
+      ],
+      correctIndex: 1,
+      explanation:
+        "The strict inequality removes the point itself, which is essential since every derivative is a limit of a quotient undefined at the point. Requiring f(a) to equal the limit is the separate condition of continuity.",
+    },
+    {
+      id: "q2",
+      text: "In proving lim_{x→3} x² = 9, why is δ taken as min(1, ε/7)?",
+      options: [
+        "Because 7 is the value of the function at 3",
+        "The 1 bounds the nuisance factor |x + 3| by 7, and ε/7 then delivers the tolerance",
+        "Because ε is always less than 1",
+        "To make the proof shorter",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Restricting |x − 3| < 1 forces 2 < x < 4, so |x + 3| < 7. With that bound in hand, |x − 3| < ε/7 makes the product below ε.",
+    },
+    {
+      id: "q3",
+      text: "What is the quickest way to show lim_{x→0} sin(1/x) does not exist?",
+      options: [
+        "Show the function is unbounded near 0",
+        "Negate the epsilon-delta definition directly",
+        "Exhibit two sequences tending to 0 whose images tend to different values",
+        "Show the function is not defined at 0",
+      ],
+      correctIndex: 2,
+      explanation:
+        "Taking xₙ = 1/(2πn) gives images 0, and yₙ = 1/(2πn + π/2) gives images 1. The sequential criterion then rules the limit out, with far less work than negating the definition.",
+    },
+    {
+      id: "q4",
+      text: "What is lim_{x→2} (x² − 4)/(x − 2)?",
+      options: [
+        "It does not exist, since the function is undefined at 2",
+        "0",
+        "4",
+        "Infinity",
+      ],
+      correctIndex: 2,
+      explanation:
+        "For x ≠ 2 the expression simplifies to x + 2, and the definition only examines x ≠ 2, so the cancellation is legal. The limit is 4 even though f(2) is undefined.",
+    },
+    {
+      id: "q5",
+      text: "For f(x) = 1/x, how does the required δ behave as the point a approaches 0, for fixed ε?",
+      options: [
+        "It stays constant",
+        "It grows",
+        "It shrinks roughly like a²",
+        "It becomes negative",
+      ],
+      correctIndex: 2,
+      explanation:
+        "Working through the estimate gives δ = min(a/2, εa²/2), so δ collapses as a → 0 because the graph steepens. That dependence on the point is precisely what uniform continuity forbids.",
+    },
+    {
+      id: "q6",
+      text: "What is lim_{x→0} x·sin(1/x)?",
+      options: [
+        "It does not exist, since sin(1/x) has no limit",
+        "0, by squeezing between −|x| and |x|",
+        "1",
+        "Infinity",
+      ],
+      correctIndex: 1,
+      explanation:
+        "The sine factor is bounded even though it has no limit, so the product is trapped between −|x| and |x|, both of which vanish. A bounded factor times a vanishing one goes to zero.",
+    },
+  ]}
+/>

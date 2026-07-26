@@ -1,0 +1,102 @@
+---
+/**
+ * SqueezeDiagram — the squeeze theorem. Two sequences closing on the same limit
+ * leave the sequence between them nowhere to go.
+ *
+ * All three sequences are plotted from their formulas, and the component asserts
+ * the sandwich by construction: aₙ is built to sit between bₙ and cₙ.
+ */
+const w = 540;
+const h = 316;
+const left = 62;
+const right = 460;
+const axisY = 248;
+const top = 62;
+const nMax = 20;
+const limit = 1;
+const vMax = 2.2;
+
+const lower = (n: number) => limit - 1 / n;
+const upper = (n: number) => limit + 1 / n;
+// A sequence genuinely trapped between them: the wobble is damped by 1/n
+const middle = (n: number) => limit + Math.sin(3 * n) / (1.6 * n);
+
+const px = (n: number) => left + ((n - 1) / (nMax - 1)) * (right - left);
+const py = (v: number) => axisY - (v / vMax) * (axisY - top);
+
+const ns = Array.from({ length: nMax }, (_, i) => i + 1);
+const path = (f: (n: number) => number) => ns.map((n) => `${px(n).toFixed(1)},${py(f(n)).toFixed(1)}`).join(" ");
+
+// The shaded corridor: along the lower sequence, back along the upper one
+const corridor = `${path(lower)} ${ns
+  .slice()
+  .reverse()
+  .map((n) => `${px(n).toFixed(1)},${py(upper(n)).toFixed(1)}`)
+  .join(" ")}`;
+
+const ticks = [1, 5, 10, 15, 20];
+---
+
+<figure
+  class="sqz"
+  role="img"
+  aria-label="Three sequences plotted together. The lower sequence 1 minus 1 over n rises to 1, the upper sequence 1 plus 1 over n falls to 1, and a third sequence trapped between them is forced to converge to 1 as well."
+>
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    <text x="16" y="20" class="sqz-head" font-size="12.5" font-weight="bold">The squeeze theorem leaves no room to escape</text>
+
+    <text x="16" y="42" class="sqz-key sqz-t-orange" font-size="10">bₙ = 1 − 1⁄n</text>
+    <text x="106" y="42" class="sqz-key sqz-t-orange" font-size="10">cₙ = 1 + 1⁄n</text>
+    <text x="196" y="42" class="sqz-key sqz-t-green" font-size="10">aₙ trapped between them</text>
+
+    <polygon points={corridor} class="sqz-corridor" />
+    <line x1={left} y1={py(limit)} x2={right} y2={py(limit)} class="sqz-limit" />
+    <text x={right + 8} y={py(limit) + 4} class="sqz-limitlbl" font-size="9.5">L = {limit}</text>
+
+    <polyline points={path(lower)} class="sqz-bound" fill="none" />
+    <polyline points={path(upper)} class="sqz-bound" fill="none" />
+
+    <line x1={left - 12} y1={axisY} x2={right + 4} y2={axisY} class="sqz-axis" />
+    <line x1={left} y1={top} x2={left} y2={axisY} class="sqz-axis" />
+    {ticks.map((t) => (
+      <text x={px(t)} y="264" class="sqz-tick" font-size="9.5" text-anchor="middle">{t}</text>
+    ))}
+
+    {ns.map((n) => (
+      <circle cx={px(n)} cy={py(middle(n))} r="3.4" class="sqz-dot" />
+    ))}
+
+    <text x={w / 2} y="288" class="sqz-foot" font-size="10.5" text-anchor="middle">
+      If bₙ → L and cₙ → L and bₙ ≤ aₙ ≤ cₙ, then aₙ → L
+    </text>
+    <text x={w / 2} y="306" class="sqz-sub" font-size="9.5" text-anchor="middle">
+      No assumption about aₙ is needed beyond being caught in the middle
+    </text>
+  </svg>
+</figure>
+
+<style>
+  .sqz { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .sqz svg { width:100%; max-width:100%; height:auto; }
+  .sqz-corridor { fill:#f0883e; fill-opacity:0.12; }
+  .sqz-bound { stroke:#f0883e; stroke-width:1.6; stroke-dasharray:4,3; }
+  .sqz-limit { stroke:#d2a8ff; stroke-width:1.6; }
+  .sqz-limitlbl { fill:#d2a8ff; font-family:'Libre Baskerville',Georgia,serif; font-weight:bold; }
+  .sqz-dot { fill:#7ee787; stroke:#7ee787; stroke-width:1.2; }
+  .sqz-axis { stroke:#888; stroke-width:1.3; }
+  .sqz-tick { fill:#9198a1; font-family:'Libre Baskerville',Georgia,serif; }
+  .sqz-key { font-family:'Libre Baskerville',Georgia,serif; }
+  .sqz-t-orange { fill:#f0883e; }
+  .sqz-t-green { fill:#7ee787; }
+  .sqz-head { fill:#eee; font-family:'Libre Baskerville',Georgia,serif; }
+  .sqz-foot { fill:#58a6ff; font-family:'Libre Baskerville',Georgia,serif; }
+  .sqz-sub { fill:#9198a1; font-family:'Libre Baskerville',Georgia,serif; font-style:italic; }
+  :global([data-theme="light"]) .sqz-corridor { fill:#b35900; fill-opacity:0.1; }
+  :global([data-theme="light"]) .sqz-bound, :global([data-theme="light"]) .sqz-t-orange { stroke:#b35900; fill:#b35900; }
+  :global([data-theme="light"]) .sqz-limit, :global([data-theme="light"]) .sqz-limitlbl { stroke:#6639ba; fill:#6639ba; }
+  :global([data-theme="light"]) .sqz-dot, :global([data-theme="light"]) .sqz-t-green { fill:#116329; stroke:#116329; }
+  :global([data-theme="light"]) .sqz-axis { stroke:#666; }
+  :global([data-theme="light"]) :is(.sqz-tick, .sqz-sub) { fill:#57606a; }
+  :global([data-theme="light"]) .sqz-head { fill:#24292f; }
+  :global([data-theme="light"]) .sqz-foot { fill:#0550ae; }
+</style>

@@ -1,0 +1,105 @@
+---
+/**
+ * UniformContinuity — why 1/x is continuous but not uniformly continuous.
+ *
+ * A fixed epsilon band is placed at three points, and the delta each one needs is
+ * computed from the function. The widths are measured, not asserted, and they
+ * collapse toward the steep end, which is exactly the failure of uniformity.
+ */
+const w = 540;
+const h = 314;
+const left = 70;
+const right = 470;
+const bottom = 236;
+const top = 64;
+const xLo = 0.18;
+const xHi = 2.0;
+const yHi = 5.8;
+
+const f = (x: number) => 1 / x;
+const eps = 0.6;
+
+const px = (x: number) => left + ((x - xLo) / (xHi - xLo)) * (right - left);
+const py = (y: number) => bottom - (y / yHi) * (bottom - top);
+
+const curve = Array.from({ length: 241 }, (_, i) => {
+  const x = xLo + (i / 240) * (xHi - xLo);
+  return `${px(x).toFixed(1)},${py(f(x)).toFixed(1)}`;
+}).join(" ");
+
+// For each sample point, the largest delta keeping f within eps of f(a).
+// For 1/x the binding side is always the left one, since the graph is steeper there.
+const marks = [0.28, 0.6, 1.5].map((a) => {
+  const lo = 1 / (f(a) + eps); // where f rises to f(a) + eps
+  const hi = 1 / (f(a) - eps); // where f falls to f(a) - eps
+  return { a, delta: Math.min(a - lo, hi - a), lo, hi };
+});
+---
+
+<figure
+  class="ufc"
+  role="img"
+  aria-label={`The graph of 1 over x with a fixed output tolerance of ${eps} applied at three points. The input tolerance needed shrinks from about ${marks[2].delta.toFixed(3)} at the flat end to about ${marks[0].delta.toFixed(3)} near the steep end, so no single delta works everywhere and the function is not uniformly continuous on this domain.`}
+>
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
+    <text x="16" y="20" class="ufc-head" font-size="12.5" font-weight="bold">Continuous everywhere, uniformly continuous nowhere near 0</text>
+    <text x="16" y="40" class="ufc-sub" font-size="10.5">
+      {`Same output tolerance ε = ${eps} at three points, and the δ it demands`}
+    </text>
+
+    <line x1={left - 10} y1={bottom} x2={right + 6} y2={bottom} class="ufc-axis" />
+    <line x1={left} y1={top - 4} x2={left} y2={bottom} class="ufc-axis" />
+
+    {/* The delta strips: same epsilon, very different widths */}
+    {marks.map((m) => (
+      <rect x={px(m.a - m.delta)} y={top} width={px(m.a + m.delta) - px(m.a - m.delta)} height={bottom - top} class="ufc-strip" />
+    ))}
+
+    <polyline points={curve} class="ufc-curve" fill="none" />
+
+    {marks.map((m) => (
+      <g>
+        <line x1={px(m.a)} y1={py(f(m.a))} x2={px(m.a)} y2={bottom} class="ufc-drop" />
+        <circle cx={px(m.a)} cy={py(f(m.a))} r="3.8" class="ufc-dot" />
+      </g>
+    ))}
+
+    {/* Measured widths, below the axis where nothing can cross them */}
+    {marks.map((m) => (
+      <g>
+        <text x={px(m.a)} y="256" class="ufc-albl" font-size="9.5" text-anchor="middle">{`a = ${m.a}`}</text>
+        <text x={px(m.a)} y="270" class="ufc-dlbl" font-size="9.5" text-anchor="middle">{`δ ≈ ${m.delta.toFixed(3)}`}</text>
+      </g>
+    ))}
+
+    <text x={w / 2} y="294" class="ufc-foot" font-size="10.5" text-anchor="middle">
+      {`δ collapses from ${marks[2].delta.toFixed(3)} to ${marks[0].delta.toFixed(3)}: no single δ serves the whole domain`}
+    </text>
+    <text x={w / 2} y="310" class="ufc-sub2" font-size="9.5" text-anchor="middle">
+      On a closed bounded interval this cannot happen, and continuity upgrades to uniform
+    </text>
+  </svg>
+</figure>
+
+<style>
+  .ufc { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .ufc svg { width:100%; max-width:100%; height:auto; }
+  .ufc-axis { stroke:#888; stroke-width:1.3; }
+  .ufc-curve { stroke:#58a6ff; stroke-width:2.2; }
+  .ufc-strip { fill:#d2a8ff; fill-opacity:0.16; stroke:#d2a8ff; stroke-width:1; stroke-dasharray:4,3; }
+  .ufc-drop { stroke:#d2a8ff; stroke-width:1; stroke-dasharray:3,3; }
+  .ufc-dot { fill:#58a6ff; stroke:#eee; stroke-width:1.2; }
+  .ufc-albl { fill:#9198a1; font-family:'Libre Baskerville',Georgia,serif; }
+  .ufc-dlbl { fill:#d2a8ff; font-family:'Libre Baskerville',Georgia,serif; font-weight:bold; }
+  .ufc-head { fill:#eee; font-family:'Libre Baskerville',Georgia,serif; }
+  .ufc-sub, .ufc-sub2 { fill:#9198a1; font-family:'Libre Baskerville',Georgia,serif; font-style:italic; }
+  .ufc-foot { fill:#f0883e; font-family:'Libre Baskerville',Georgia,serif; }
+  :global([data-theme="light"]) .ufc-axis { stroke:#666; }
+  :global([data-theme="light"]) .ufc-curve { stroke:#0550ae; fill:none; }
+  :global([data-theme="light"]) .ufc-dot { fill:#0550ae; stroke:#fff; }
+  :global([data-theme="light"]) .ufc-strip, :global([data-theme="light"]) .ufc-drop, :global([data-theme="light"]) .ufc-dlbl { fill:#6639ba; stroke:#6639ba; }
+  :global([data-theme="light"]) .ufc-strip { fill-opacity:0.12; }
+  :global([data-theme="light"]) .ufc-foot { fill:#b35900; }
+  :global([data-theme="light"]) :is(.ufc-albl, .ufc-sub, .ufc-sub2) { fill:#57606a; }
+  :global([data-theme="light"]) .ufc-head { fill:#24292f; }
+</style>

@@ -1,0 +1,288 @@
+---
+title: Continuity
+description: The definition, the three ways it fails, and why continuity is preserved by composition
+sidebar:
+  order: 11
+---
+
+import Quiz from "../../../components/Quiz.astro";
+import ContinuityCases from "../../../components/ContinuityCases.astro";
+
+## What You'll Learn
+
+In this lesson you'll learn the definition of continuity at a point and on a set, the sequential characterization, the three types of discontinuity, and the theorem that continuous functions pull back open sets to open sets. This is where limits become a property of functions rather than of points.
+
+## The Concept
+
+### The definition
+
+> $f$ is **continuous at $a$** if
+>
+> $$
+> \forall \varepsilon>0 \; \exists\delta>0 \; \text{such that} \; |x - a| < \delta \implies |f(x) - f(a)| < \varepsilon
+> $$
+
+Compare the limit definition. Two changes, and both matter.
+
+- The condition is $|x-a| < \delta$, **not** $0 < |x-a| < \delta$. The point $a$ is included now.
+- The target is $f(a)$, not some separate $L$.
+
+So continuity at $a$ packages three requirements:
+
+1. $f(a)$ is defined.
+2. $\lim_{x\to a}f(x)$ exists.
+3. They are equal.
+
+$$
+\lim_{x\to a} f(x) = f(a)
+$$
+
+That one equation is the whole definition, and each of the three parts can fail independently.
+
+### The three failures
+
+<ContinuityCases />
+
+**Removable.** The limit exists but the value is wrong or missing. $f(x) = \frac{x^2-4}{x-2}$ has limit 4 at $x=2$ and no value there; defining $f(2)=4$ repairs it. Hence "removable."
+
+**Jump.** The one-sided limits both exist and differ, so no value at the point can help. $\frac{|x|}{x}$ at 0 is the model, and so is any step function. Common in physical models with switching behaviour.
+
+**Essential.** No limit exists at all. $\sin\frac1x$ at 0. Nothing can be redefined to fix it, because there is nothing to converge to.
+
+### The sequential characterization
+
+> $f$ is continuous at $a$ $\iff$ for **every** sequence $x_n \to a$, we have $f(x_n) \to f(a)$.
+
+Notice $x_n = a$ is now allowed, unlike the limit version. In words: **continuous functions commute with limits.**
+
+$$
+\lim_{n\to\infty} f(x_n) = f\left(\lim_{n\to\infty}x_n\right)
+$$
+
+That is what "continuous" buys you, and it is why continuity is the hypothesis whenever you want to move a function inside a limit.
+
+Same practical benefit as before: to disprove continuity, find one sequence $x_n \to a$ with $f(x_n) \not\to f(a)$.
+
+### Combining continuous functions
+
+If $f, g$ are continuous at $a$ then so are $f+g$, $cf$, $fg$, and $f/g$ when $g(a) \ne 0$. These follow from the sequential characterization plus the algebraic limit theorems — no new epsilon-delta work.
+
+**Composition** deserves its own statement:
+
+> If $g$ is continuous at $a$ and $f$ is continuous at $g(a)$, then $f \circ g$ is continuous at $a$.
+
+_Proof (sequential)._ Let $x_n \to a$. Continuity of $g$ gives $g(x_n) \to g(a)$. Continuity of $f$ at $g(a)$ gives $f(g(x_n)) \to f(g(a))$. ∎
+
+Two lines, versus a genuinely fiddly epsilon-delta argument with two nested tolerances. This is the sequential criterion paying off.
+
+Consequences: polynomials are continuous everywhere; rational functions are continuous where the denominator is nonzero; $\sin$, $\cos$, $\exp$ are continuous everywhere; $\sqrt x$ is continuous on $[0,\infty)$; and any composition of these is continuous on its natural domain.
+
+### The topological characterization
+
+> $f: \mathbb{R}\to\mathbb{R}$ is continuous $\iff$ $f^{-1}(V)$ is open for every open $V$.
+
+**Preimages of open sets are open.** This is the definition used in general topology, where there is no $\varepsilon$ to speak of.
+
+Note it is about **preimages**. Images of open sets need not be open: $f(x) = x^2$ maps the open $(-1,1)$ to $[0,1)$, which is not open. And a constant function maps every open set to a single point.
+
+This characterization is what made the "continuous image of a compact set is compact" proof in the last lesson work, and it is why compactness and continuity interact so cleanly.
+
+### A pathological example worth knowing
+
+Define
+
+$$
+f(x) = \begin{cases} x & x \in \mathbb{Q} \\ 0 & x \notin \mathbb{Q}\end{cases}
+$$
+
+This is continuous at **exactly one point**, $x = 0$, and discontinuous everywhere else.
+
+At 0: $|f(x)| \le |x|$ always, so $\delta = \varepsilon$ works. At any $a \ne 0$: sequences of rationals approaching $a$ give images approaching $a$, while sequences of irrationals give images approaching 0, and $a \ne 0$.
+
+The point of the example: continuity is a **pointwise** condition, and the set where a function is continuous can be extremely strange. Intuition about curves you can draw is not a guide.
+
+## Worked Examples
+
+**Example 1: Show $f(x) = 3x+1$ is continuous everywhere.**
+
+**Solution.** Fix $a$. Given $\varepsilon>0$, take $\delta = \frac{\varepsilon}{3}$. If $|x-a|<\delta$ then
+
+$$
+|f(x)-f(a)| = |3x+1-3a-1| = 3|x-a| < 3\delta = \varepsilon
+$$
+
+∎
+
+Here $\delta$ depends on $\varepsilon$ only, not on $a$. That extra property is uniform continuity, coming in three lessons.
+
+**Example 2: Classify the discontinuity of $f(x) = \frac{x^2-9}{x-3}$ at $x=3$.**
+
+**Solution.** For $x \ne 3$, $f(x) = x+3$, so $\lim_{x\to3}f(x) = 6$. But $f(3)$ is undefined.
+
+The limit exists, so the discontinuity is **removable**. Setting $f(3) = 6$ makes it continuous.
+
+**Example 3: Classify the discontinuity of the floor function at an integer.**
+
+**Solution.** At $x = 2$: $\lfloor x \rfloor = 1$ for $x \in [1,2)$ and $= 2$ for $x \in [2,3)$.
+
+$$
+\lim_{x\to2^-}\lfloor x\rfloor = 1, \qquad \lim_{x\to2^+}\lfloor x\rfloor = 2
+$$
+
+Both one-sided limits exist and differ, so this is a **jump discontinuity** of size 1. No redefinition helps.
+
+The floor function is continuous at every non-integer, so its set of discontinuities is $\mathbb{Z}$ — infinite but isolated.
+
+**Example 4: Show $f(x) = \frac1x$ is continuous on $(0,\infty)$.**
+
+**Solution.** Fix $a > 0$. From the limits lesson,
+
+$$
+\left|\frac1x-\frac1a\right| = \frac{|x-a|}{|ax|}
+$$
+
+Take $\delta = \min\left(\frac a2, \frac{\varepsilon a^2}{2}\right)$. Then $|x-a|<\frac a2$ gives $x>\frac a2$, so $|ax| > \frac{a^2}{2}$, and
+
+$$
+\left|\frac1x-\frac1a\right| < \frac{2|x-a|}{a^2} < \frac{2}{a^2}\cdot\frac{\varepsilon a^2}{2} = \varepsilon
+$$
+
+∎
+
+Continuous at every point of $(0,\infty)$. There is no discontinuity at 0 to classify, because 0 is not in the domain — "$\frac1x$ is discontinuous at 0" is a common but incorrect phrasing.
+
+**Example 5: Continuity of a composition.**
+
+Show $h(x) = \sqrt{x^2+1}$ is continuous on $\mathbb{R}$.
+
+**Solution.** Write $h = f\circ g$ with $g(x) = x^2+1$ and $f(u) = \sqrt u$.
+
+$g$ is a polynomial, continuous everywhere. And $g(x) \ge 1 > 0$ for all $x$, so $g$ maps into $[1,\infty)$ where $f$ is continuous.
+
+By the composition theorem, $h$ is continuous on all of $\mathbb{R}$. ∎
+
+The check that $g$ lands where $f$ is continuous is the step people skip, and it is the step that fails for something like $\sqrt{x^2-1}$.
+
+**Example 6: Disprove continuity with one sequence.**
+
+Let $f(x) = 1$ for $x \ge 0$ and $f(x) = 0$ for $x<0$. Show $f$ is discontinuous at 0.
+
+**Solution.** Take $x_n = -\frac1n \to 0$. Then $f(x_n) = 0$ for every $n$, so $f(x_n) \to 0$.
+
+But $f(0) = 1 \ne 0$. By the sequential characterization, $f$ is **not continuous at 0**. ∎
+
+One sequence suffices, since the characterization requires _every_ sequence to work.
+
+**Example 7: Preimages, not images.**
+
+For $f(x) = x^2$, compare $f((-1,1))$ with $f^{-1}((-1,1))$.
+
+**Solution.** The image is $f((-1,1)) = [0,1)$, which is **not open** — 0 has no room to wiggle inside it.
+
+The preimage is $f^{-1}((-1,1)) = \{x : x^2 < 1\} = (-1,1)$, which **is open**.
+
+Continuity guarantees the second, never the first. Getting the direction backwards is a standard error, and the topological definition is stated with preimages precisely because that is the version that is true.
+
+## Real-World Applications
+
+**Numerical root finding.** Bisection requires continuity to guarantee a sign change encloses a root. Applied to a discontinuous function it can converge confidently to a jump where no root exists, which is a real failure mode in practice.
+
+**Physical modelling.** Jump discontinuities model switching: a thermostat, a diode turning on, a phase transition. Recognizing which type of discontinuity a model has determines whether standard numerical solvers apply or whether the problem must be split into smooth pieces.
+
+**Computer graphics.** Visible seams and banding are discontinuities in a shading function. Texture filtering and level-of-detail transitions are engineered to be continuous, and often to have continuous derivatives too, because the eye detects even a derivative jump as a crease.
+
+**Signal processing.** Discontinuities in a signal have infinite frequency content, which is why a sharp edge produces ringing after band-limited reconstruction. The Gibbs phenomenon is a jump discontinuity's signature.
+
+**Optimization.** Most solvers assume continuity, and many assume more. A discontinuous objective breaks gradient methods and can break even derivative-free ones, since neighbouring evaluations no longer predict nearby behaviour.
+
+**Finance.** Asset prices are usually modelled as continuous paths, but jump-diffusion models add discontinuities explicitly to capture crashes. The choice changes both the mathematics and the hedging strategy.
+
+:::note[You've Got This]
+Continuity is one equation, lim f(x) = f(a), holding three requirements at once: the value exists, the limit exists, they agree. Each can fail on its own, which is what gives the three types of discontinuity. The most useful form in practice is the sequential one — continuous functions let you move the function inside a limit — and it makes the composition theorem a two-line proof instead of a nested epsilon-delta grind. One thing to keep straight: it's preimages of open sets that stay open, never images.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="real-continuity"
+  questions={[
+    {
+      id: "q1",
+      text: "What does continuity of f at a require?",
+      options: [
+        "Only that the limit of f at a exists",
+        "That f(a) exists, the limit at a exists, and they are equal",
+        "That f is defined on an open interval around a",
+        "That f is differentiable at a",
+      ],
+      correctIndex: 1,
+      explanation:
+        "All three parts are needed, and each can fail on its own, giving the three types of discontinuity. Differentiability is strictly stronger, since |x| is continuous but not differentiable at 0.",
+    },
+    {
+      id: "q2",
+      text: "How does the continuity definition differ from the limit definition?",
+      options: [
+        "It uses 0 < |x − a| < δ instead of |x − a| < δ",
+        "It drops the exclusion of x = a and compares to f(a) rather than a separate L",
+        "It requires δ to be independent of a",
+        "It requires ε to be rational",
+      ],
+      correctIndex: 1,
+      explanation:
+        "The point a is now included and the target value is f(a) itself. Requiring δ to be independent of the point would be uniform continuity, a stronger condition.",
+    },
+    {
+      id: "q3",
+      text: "What kind of discontinuity does the floor function have at x = 2?",
+      options: [
+        "Removable",
+        "Jump",
+        "Essential",
+        "None; it is continuous there",
+      ],
+      correctIndex: 1,
+      explanation:
+        "The left limit is 1 and the right limit is 2, so both one-sided limits exist but differ. No choice of value at the point can repair a jump.",
+    },
+    {
+      id: "q4",
+      text: "Why is the sequential characterization useful for proving compositions are continuous?",
+      options: [
+        "Because it avoids using sequences",
+        "Because g(xₙ) → g(a) feeds directly into continuity of f at g(a), giving a two-line proof",
+        "Because compositions are always continuous",
+        "Because it only needs one sequence",
+      ],
+      correctIndex: 1,
+      explanation:
+        "The output of the inner function's continuity is exactly the input the outer function's continuity needs. The direct epsilon-delta proof requires juggling two nested tolerances.",
+    },
+    {
+      id: "q5",
+      text: "For a continuous f, which is guaranteed?",
+      options: [
+        "The image of every open set is open",
+        "The preimage of every open set is open",
+        "The image of every closed set is closed",
+        "Both images and preimages of open sets are open",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Preimages of open sets are open, and that is the topological definition. Images can fail: x² sends the open interval (−1,1) to [0,1), which is not open.",
+    },
+    {
+      id: "q6",
+      text: "The function equal to x on the rationals and 0 on the irrationals is continuous at how many points?",
+      options: [
+        "None",
+        "Exactly one, at x = 0",
+        "Only at the rationals",
+        "Everywhere",
+      ],
+      correctIndex: 1,
+      explanation:
+        "At 0 the bound |f(x)| ≤ |x| makes δ = ε work. At any a ≠ 0 rational and irrational sequences approaching a give images approaching a and 0 respectively, which differ.",
+    },
+  ]}
+/>

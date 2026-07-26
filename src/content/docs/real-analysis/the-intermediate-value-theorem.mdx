@@ -1,0 +1,268 @@
+---
+title: The Intermediate Value Theorem
+description: Why a continuous function cannot skip a value, and what the proof actually uses
+sidebar:
+  order: 12
+---
+
+import Quiz from "../../../components/Quiz.astro";
+import IVTDiagram from "../../../components/IVTDiagram.astro";
+
+## What You'll Learn
+
+In this lesson you'll learn the intermediate value theorem, the supremum proof, why it fails over $\mathbb{Q}$, and the fixed-point and root-finding consequences that follow from it.
+
+## The Concept
+
+### The statement
+
+> **Intermediate value theorem.** If $f$ is continuous on $[a,b]$ and $y$ lies between $f(a)$ and $f(b)$, then there exists $c \in [a,b]$ with $f(c) = y$.
+
+The special case $y = 0$ is the one used most: **a continuous function that changes sign has a root.**
+
+<IVTDiagram />
+
+Two hypotheses, and both are doing work.
+
+- **Continuity.** A jump can step over the value entirely, as the right panel shows.
+- **A closed interval.** On an open interval the crossing point may be exactly the endpoint you excluded.
+
+### The proof
+
+Take $f(a) < 0 < f(b)$ and let
+
+$$
+S = \{x \in [a,b] : f(x) < 0\}
+$$
+
+$S$ is non-empty ($a \in S$) and bounded above by $b$. **By completeness, $c = \sup S$ exists.** That is where the axiom gets spent, and it is the only non-trivial step.
+
+Now show $f(c) = 0$ by ruling out both alternatives.
+
+**If $f(c) < 0$:** by continuity there is a neighbourhood of $c$ where $f$ stays negative. (Take $\varepsilon = |f(c)|$ in the definition.) So points slightly to the right of $c$ are in $S$, contradicting $c$ being an upper bound. Note $c \ne b$ here, since $f(b) > 0$.
+
+**If $f(c) > 0$:** similarly $f$ stays positive on a neighbourhood of $c$, so some interval $(c - \delta, c]$ contains no points of $S$. Then $c - \delta$ is a smaller upper bound, contradicting leastness.
+
+Hence $f(c) = 0$. ∎
+
+Notice the shape: **the supremum is the candidate, and continuity kills both ways it could be wrong.** Sup for existence, continuity for correctness. That pairing recurs in the next lesson too.
+
+### Why it fails over the rationals
+
+Let $f(x) = x^2 - 2$ on $[0,2] \cap \mathbb{Q}$. Then $f(0) = -2 < 0$ and $f(2) = 2 > 0$, and $f$ is continuous as a function on the rationals.
+
+But there is no rational $c$ with $c^2 = 2$. **The theorem fails.**
+
+The proof breaks at exactly one place: $\sup S$ does not exist in $\mathbb{Q}$. This is the cleanest demonstration that IVT is a completeness theorem wearing geometric clothing. The picture of a curve crossing a line looks like it should be about geometry; it is about the number line having no holes.
+
+### What it does not say
+
+**It does not say the root is unique.** $f(x) = \sin x$ on $[0, 4\pi]$ has many.
+
+**It does not say a value not between $f(a)$ and $f(b)$ is skipped.** Values outside that range may also be attained; the theorem is one-directional.
+
+**The converse is false.** A function can attain every intermediate value and still be discontinuous. $f(x) = \sin\frac1x$ for $x \ne 0$ with $f(0)=0$ has the intermediate value property on any interval containing 0 and is discontinuous there. So "hits every value in between" is strictly weaker than continuity.
+
+### Consequences
+
+**Root existence and bisection.** If $f(a)$ and $f(b)$ have opposite signs, a root lies between them, and halving repeatedly finds it. That is the bisection algorithm, and IVT is its correctness proof.
+
+**Fixed points.** If $g: [0,1]\to[0,1]$ is continuous, it has a fixed point $g(c) = c$. Apply IVT to $f(x) = g(x) - x$: $f(0) = g(0) \ge 0$ and $f(1) = g(1)-1 \le 0$, so $f$ has a zero. This is the one-dimensional case of Brouwer's fixed point theorem.
+
+**Odd-degree polynomials have a real root.** As $x \to \pm\infty$ an odd-degree polynomial takes both signs, so IVT applies on a large enough interval. Even-degree polynomials need not: $x^2+1$ has none.
+
+**The pancake and ham sandwich style results.** Any continuous function on a circle takes the same value at some pair of antipodal points, which follows from IVT applied to $f(x) - f(-x)$.
+
+## Worked Examples
+
+**Example 1: Show $x^3 + x - 1 = 0$ has a real root.**
+
+**Solution.** Let $f(x) = x^3+x-1$, a polynomial and so continuous everywhere.
+
+$$
+f(0) = -1 < 0, \qquad f(1) = 1 > 0
+$$
+
+By IVT there is $c \in (0,1)$ with $f(c) = 0$. ∎
+
+To narrow it: $f(0.5) = 0.125+0.5-1 = -0.375 < 0$, so the root is in $(0.5, 1)$. Then $f(0.75) = 0.4219+0.75-1 = 0.1719 > 0$, so it is in $(0.5, 0.75)$. That is bisection, and each step halves the interval.
+
+**Example 2: Show every positive real has a square root.**
+
+**Solution.** Fix $y > 0$ and let $f(x) = x^2$ on $[0, y+1]$, continuous.
+
+$$
+f(0) = 0 \le y, \qquad f(y+1) = (y+1)^2 = y^2+2y+1 > y
+$$
+
+By IVT there is $c$ with $c^2 = y$. ∎
+
+**The existence of $\sqrt y$ is a theorem, not a definition.** It requires completeness, which is why the rationals have no $\sqrt2$.
+
+**Example 3: A continuous self-map has a fixed point.**
+
+Let $g:[0,1]\to[0,1]$ be continuous. Show $g(c) = c$ for some $c$.
+
+**Solution.** Let $f(x) = g(x) - x$, continuous as a difference of continuous functions.
+
+Since $g(0) \in [0,1]$, $f(0) = g(0) \ge 0$. Since $g(1) \in [0,1]$, $f(1) = g(1) - 1 \le 0$.
+
+If either is zero we are done. Otherwise $f(0) > 0 > f(1)$, and IVT gives $c$ with $f(c) = 0$, that is $g(c) = c$. ∎
+
+Interpretation: any continuous way of stretching and folding $[0,1]$ into itself leaves at least one point where it started.
+
+**Example 4: Where the closed interval matters.**
+
+Does $f(x) = \frac1x$ on $(0,1)$ attain the value 5? What about IVT?
+
+**Solution.** It does: $f(0.2) = 5$. But note IVT does not apply as usually stated, because $(0,1)$ is not closed and $f$ has no values at the endpoints to compare.
+
+A better illustration of the failure: on $(0,1)$ consider $f(x) = x$. It takes values arbitrarily close to 0 and 1 without attaining either, so the value 0 is "between" the limits at the endpoints and is never attained. **Closedness is what makes the endpoints available.**
+
+**Example 5: An odd-degree polynomial.**
+
+Show $p(x) = x^5 - 3x^2 + 1$ has a real root.
+
+**Solution.** $p(0) = 1 > 0$ and $p(-1) = -1 - 3 + 1 = -3 < 0$.
+
+By IVT there is a root in $(-1, 0)$. ∎
+
+Generally, for odd degree the leading term dominates at large $|x|$ and has opposite signs at $\pm\infty$, so IVT always applies. **Every odd-degree real polynomial has a real root**, while $x^2+1$ shows even degree gives no such guarantee.
+
+**Example 6: Antipodal points.**
+
+Show that at any moment there are two diametrically opposite points on the equator with the same temperature.
+
+**Solution.** Let $T(\theta)$ be the temperature at angle $\theta$, assumed continuous, and define
+
+$$
+f(\theta) = T(\theta) - T(\theta + \pi)
+$$
+
+Then $f(0) = T(0) - T(\pi)$ and $f(\pi) = T(\pi) - T(2\pi) = T(\pi) - T(0) = -f(0)$.
+
+So $f(0)$ and $f(\pi)$ have opposite signs (or both are 0). By IVT there is $\theta_0$ with $f(\theta_0) = 0$, meaning
+
+$$
+T(\theta_0) = T(\theta_0 + \pi)
+$$
+
+∎
+
+The trick of forming $f(x) - f(x+\text{shift})$ and noting it changes sign is worth remembering; it powers a whole family of these results.
+
+**Example 7: The converse fails.**
+
+Give a discontinuous function with the intermediate value property.
+
+**Solution.** Let $f(x) = \sin\frac1x$ for $x \ne 0$ and $f(0) = 0$.
+
+On any interval containing 0, $f$ oscillates through every value in $[-1,1]$ infinitely often, so it attains every intermediate value.
+
+Yet $f$ is discontinuous at 0, since $\lim_{x\to0}\sin\frac1x$ does not exist.
+
+**The intermediate value property is strictly weaker than continuity.** IVT is a one-way implication.
+
+## Real-World Applications
+
+**Bisection and numerical solvers.** Every root-finding routine that brackets a root relies on IVT for correctness. It is slower than Newton's method but it cannot fail once a sign change is found, which is why robust solvers fall back to it.
+
+**Control systems.** Showing a control input exists that achieves a target output is an IVT argument: the response is continuous and straddles the target, so some input hits it exactly. That is the formal basis of a calibration sweep.
+
+**Thermostats and equilibrium.** Any continuous process that is too cold at one setting and too hot at another has a setting that is exactly right. Trivial-sounding, and it is the argument used to prove equilibrium existence in far less obvious settings.
+
+**Economics.** Existence of a market-clearing price is IVT in one dimension and Brouwer's fixed point theorem in many. Excess demand is positive at low prices and negative at high ones, so it vanishes somewhere.
+
+**Game theory.** Nash's existence theorem is a fixed-point argument, generalizing Example 3 to higher dimensions. The one-dimensional case here is the whole idea in miniature.
+
+**Engineering tolerance.** If a design parameter gives too little clearance at one extreme and too much at the other, some intermediate value is exact. Bisection on a physical prototype is IVT applied by hand.
+
+:::note[You've Got This]
+The IVT looks like a picture of a curve crossing a line, and it is genuinely worth resisting that reading. Its content is that ℝ has no holes: the same statement is false over ℚ, where x² − 2 changes sign without ever vanishing. The proof is worth remembering in shape rather than detail — take a supremum for the candidate, then let continuity rule out both ways it could be wrong. And keep the one-directionality in mind: continuity gives the intermediate value property, but not conversely.
+:::
+
+## Quiz
+
+<Quiz
+  quizId="real-the-intermediate-value-theorem"
+  questions={[
+    {
+      id: "q1",
+      text: "What does the intermediate value theorem require?",
+      options: [
+        "f differentiable on (a, b)",
+        "f continuous on the closed interval [a, b]",
+        "f monotone on [a, b]",
+        "f bounded on [a, b]",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Continuity on a closed interval is exactly what is needed. Differentiability is stronger than required, and monotonicity is irrelevant since the root need not be unique.",
+    },
+    {
+      id: "q2",
+      text: "Where in the proof is completeness used?",
+      options: [
+        "In choosing ε",
+        "In asserting that c = sup{x : f(x) < 0} exists",
+        "In the triangle inequality",
+        "In showing f is bounded",
+      ],
+      correctIndex: 1,
+      explanation:
+        "The supremum is the candidate root, and its existence is the least upper bound axiom. This is exactly the step that fails over ℚ, where x² − 2 changes sign with no rational root.",
+    },
+    {
+      id: "q3",
+      text: "Why does the IVT fail for f(x) = x² − 2 viewed on the rationals?",
+      options: [
+        "Because f is not continuous on ℚ",
+        "Because ℚ is unbounded",
+        "Because sup{x ∈ ℚ : x² < 2} does not exist in ℚ, so the proof's candidate root is missing",
+        "Because f(0) and f(2) have the same sign",
+      ],
+      correctIndex: 2,
+      explanation:
+        "The function is continuous as a map on ℚ and does change sign, but √2 is not rational. The theorem is a statement about completeness rather than about geometry.",
+    },
+    {
+      id: "q4",
+      text: "Which conclusion does IVT support for a continuous g: [0,1] → [0,1]?",
+      options: [
+        "g is monotone",
+        "g has a fixed point c with g(c) = c",
+        "g attains its maximum at an endpoint",
+        "g is differentiable somewhere",
+      ],
+      correctIndex: 1,
+      explanation:
+        "Applying IVT to f(x) = g(x) − x works because f(0) ≥ 0 and f(1) ≤ 0. This is the one-dimensional case of Brouwer's fixed point theorem.",
+    },
+    {
+      id: "q5",
+      text: "Which polynomials are guaranteed a real root by IVT?",
+      options: [
+        "All polynomials",
+        "All polynomials of even degree",
+        "All polynomials of odd degree",
+        "Only linear polynomials",
+      ],
+      correctIndex: 2,
+      explanation:
+        "An odd-degree polynomial's leading term gives it opposite signs at large positive and large negative inputs, so a sign change is guaranteed. The even-degree x² + 1 has no real root.",
+    },
+    {
+      id: "q6",
+      text: "Does having the intermediate value property imply continuity?",
+      options: [
+        "Yes, they are equivalent",
+        "No; sin(1/x) with value 0 at 0 has the property but is discontinuous there",
+        "Yes, for polynomials only",
+        "No, because no function has the property",
+      ],
+      correctIndex: 1,
+      explanation:
+        "That function takes every value in [−1,1] on any interval containing 0, yet has no limit at 0. So the intermediate value property is strictly weaker than continuity.",
+    },
+  ]}
+/>
