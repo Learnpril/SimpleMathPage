@@ -23,80 +23,78 @@ export default defineConfig({
         Head: "./src/components/Head.astro",
         Header: "./src/components/Header.astro",
       },
+      // Two top-level tracks. Core keeps its original URLs (/arithmetic/... rather
+      // than /core/arithmetic/...) because every section-detection script below reads
+      // path.split('/')[0] as the subject slug, and because those pages are already
+      // indexed. Applied is new, so it gets /applied/... from the start.
       sidebar: [
         {
-          label: "Arithmetic",
-          autogenerate: { directory: "arithmetic" },
+          label: "Core Mathematics",
+          collapsed: true,
+          items: [
+            { label: "All Core Subjects", link: "/core-mathematics/" },
+            { label: "Arithmetic", autogenerate: { directory: "arithmetic" } },
+            {
+              label: "Pre-Algebra",
+              autogenerate: { directory: "pre-algebra" },
+            },
+            {
+              label: "Algebra Basics",
+              autogenerate: { directory: "algebra-basics" },
+            },
+            { label: "Geometry", autogenerate: { directory: "geometry" } },
+            { label: "Algebra 2", autogenerate: { directory: "algebra-2" } },
+            {
+              label: "Trigonometry",
+              autogenerate: { directory: "trigonometry" },
+            },
+            {
+              label: "Pre-Calculus",
+              autogenerate: { directory: "pre-calculus" },
+            },
+            { label: "Calculus 1", autogenerate: { directory: "calculus-1" } },
+            { label: "Calculus 2", autogenerate: { directory: "calculus-2" } },
+            { label: "Calculus 3", autogenerate: { directory: "calculus-3" } },
+            {
+              label: "Linear Algebra",
+              autogenerate: { directory: "linear-algebra" },
+            },
+            {
+              label: "Differential Equations",
+              autogenerate: { directory: "differential-equations" },
+            },
+            {
+              label: "Discrete Mathematics",
+              autogenerate: { directory: "discrete-mathematics" },
+            },
+            { label: "Statistics", autogenerate: { directory: "statistics" } },
+            {
+              label: "Abstract Algebra",
+              autogenerate: { directory: "abstract-algebra" },
+            },
+            {
+              label: "Real Analysis",
+              autogenerate: { directory: "real-analysis" },
+            },
+            {
+              label: "Complex Analysis",
+              autogenerate: { directory: "complex-analysis" },
+            },
+            { label: "Topology", autogenerate: { directory: "topology" } },
+          ],
         },
         {
-          label: "Pre-Algebra",
-          autogenerate: { directory: "pre-algebra" },
+          label: "Applied Mathematics",
+          collapsed: true,
+          items: [
+            { label: "All Applied Tracks", link: "/applied-mathematics/" },
+            {
+              label: "Game Development",
+              autogenerate: { directory: "applied/game-development" },
+            },
+          ],
         },
-        {
-          label: "Algebra Basics",
-          autogenerate: { directory: "algebra-basics" },
-        },
-        // Uncomment these sections as you add content:
-        {
-          label: "Geometry",
-          autogenerate: { directory: "geometry" },
-        },
-        {
-          label: "Algebra 2",
-          autogenerate: { directory: "algebra-2" },
-        },
-        {
-          label: "Trigonometry",
-          autogenerate: { directory: "trigonometry" },
-        },
-        {
-          label: "Pre-Calculus",
-          autogenerate: { directory: "pre-calculus" },
-        },
-        {
-          label: "Calculus 1",
-          autogenerate: { directory: "calculus-1" },
-        },
-        {
-          label: "Calculus 2",
-          autogenerate: { directory: "calculus-2" },
-        },
-        {
-          label: "Calculus 3",
-          autogenerate: { directory: "calculus-3" },
-        },
-        {
-          label: "Linear Algebra",
-          autogenerate: { directory: "linear-algebra" },
-        },
-        {
-          label: "Differential Equations",
-          autogenerate: { directory: "differential-equations" },
-        },
-        {
-          label: "Discrete Mathematics",
-          autogenerate: { directory: "discrete-mathematics" },
-        },
-        {
-          label: "Statistics",
-          autogenerate: { directory: "statistics" },
-        },
-        {
-          label: "Abstract Algebra",
-          autogenerate: { directory: "abstract-algebra" },
-        },
-        {
-          label: "Real Analysis",
-          autogenerate: { directory: "real-analysis" },
-        },
-        {
-          label: "Complex Analysis",
-          autogenerate: { directory: "complex-analysis" },
-        },
-        {
-          label: "Topology",
-          autogenerate: { directory: "topology" },
-        },
+        { label: "About", link: "/about/" },
       ],
       customCss: ["./src/styles/custom.css", "katex/dist/katex.min.css"],
       head: [
@@ -112,8 +110,15 @@ export default defineConfig({
               var path = window.location.pathname.replace(/^\\//, '').replace(/\\/$/, '');
               var parts = path.split('/');
               if (parts.length < 2) return;
-              var section = parts[0];
+              /* Core subjects live at the site root, so the first segment names the
+                 subject. Applied tracks live under /applied/<track>/, so the first
+                 segment is always "applied" and the track name is the second. */
+              function sectionKey(p) {
+                return p[0] === 'applied' && p.length > 2 ? p[0] + '/' + p[1] : p[0];
+              }
+              var section = sectionKey(parts);
               var map = {
+                'applied/game-development': 'Game Development',
                 'arithmetic': 'Arithmetic',
                 'pre-algebra': 'Pre-Algebra',
                 'algebra-basics': 'Algebra Basics',
@@ -149,7 +154,7 @@ export default defineConfig({
                 var hrefClean = href.replace(/^\\//, '').replace(/\\/$/, '');
                 var hrefParts = hrefClean.split('/');
                 if (hrefParts.length < 2) return;
-                var linkSection = map[hrefParts[0]];
+                var linkSection = map[sectionKey(hrefParts)];
                 if (!linkSection) return;
                 var linkTitle = link.querySelector('.link-title');
                 if (!linkTitle) return;
@@ -167,6 +172,7 @@ export default defineConfig({
             document.addEventListener('DOMContentLoaded', function() {
               if (window.innerWidth >= 800) return;
               var subjects = [
+                {slug:'applied/game-development', label:'Game Development', about:'about-game-development'},
                 {slug:'arithmetic', label:'Arithmetic', about:'about-arithmetic'},
                 {slug:'pre-algebra', label:'Pre-Algebra', about:'about-pre-algebra'},
                 {slug:'algebra-basics', label:'Algebra Basics', about:'about-algebra-basics'},
@@ -187,7 +193,11 @@ export default defineConfig({
                 {slug:'topology', label:'Topology', about:'about-topology'}
               ];
               var path = window.location.pathname.replace(/^\\//, '').replace(/\\/$/, '');
-              var currentSection = path.split('/')[0] || '';
+              var pathParts = path.split('/');
+              /* Applied tracks are two segments deep, Core subjects one. */
+              var currentSection = (pathParts[0] === 'applied' && pathParts.length > 2
+                ? pathParts[0] + '/' + pathParts[1]
+                : pathParts[0]) || '';
 
               /* Scrape lessons from Starlight's sidebar nav */
               function getLessons(slug) {
@@ -224,6 +234,24 @@ export default defineConfig({
               title.className = 'mobile-subject-panel-title';
               title.textContent = 'Jump to Subject';
               panel.appendChild(title);
+
+              /* The desktop nav is hidden on mobile, so the two top-level hubs and
+                 About need a home. This panel is the only always-reachable menu. */
+              var hubs = document.createElement('div');
+              hubs.className = 'msw-hub-links';
+              [
+                {href: '/core-mathematics/', label: 'Core Mathematics'},
+                {href: '/applied-mathematics/', label: 'Applied Mathematics'},
+                {href: '/about/', label: 'About'}
+              ].forEach(function(h) {
+                var a = document.createElement('a');
+                a.href = h.href;
+                a.className = 'msw-hub-link';
+                a.textContent = h.label;
+                if (path === h.href.replace(/^\\//, '').replace(/\\/$/, '')) a.classList.add('current');
+                hubs.appendChild(a);
+              });
+              panel.appendChild(hubs);
 
               var expandedSlug = null;
 
@@ -407,8 +435,11 @@ export default defineConfig({
               var path = window.location.pathname.replace(/^\\//, '').replace(/\\/$/, '');
               var parts = path.split('/');
               if (parts.length < 2 || !parts[1]) return;
-              var section = parts[0];
+              var section = parts[0] === 'applied' && parts.length > 2
+                ? parts[0] + '/' + parts[1]
+                : parts[0];
               var sectionMap = {
+                'applied/game-development': 'Game Development',
                 'arithmetic': 'Arithmetic',
                 'pre-algebra': 'Pre-Algebra',
                 'algebra-basics': 'Algebra Basics',
@@ -446,20 +477,26 @@ export default defineConfig({
         {
           tag: "script",
           content: `
-            /* Feature: Continue Learning Banner + Progress Bar Fill (homepage only) */
+            /* Feature: Continue Learning Banner (homepage) + Progress Bar Fill.
+               The subject cards moved to /core-mathematics/, so the fill has to run
+               there as well as on the homepage, or every bar would sit at zero. */
             document.addEventListener('DOMContentLoaded', function() {
               var path = window.location.pathname.replace(/^\\//, '').replace(/\\/$/, '');
-              if (path !== '' && path !== 'index') return;
+              var isHome = path === '' || path === 'index';
+              var isCoreHub = path === 'core-mathematics';
+              if (!isHome && !isCoreHub) return;
 
-              /* --- Continue Learning Banner --- */
-              try {
+              /* --- Continue Learning Banner (homepage only) --- */
+              if (isHome) try {
                 var raw = localStorage.getItem('mbu-last-lesson');
                 if (raw) {
                   var data = JSON.parse(raw);
                   var age = Date.now() - (data.timestamp || 0);
                   var thirtyDays = 30 * 24 * 60 * 60 * 1000;
                   if (age < thirtyDays && data.href && data.title && data.subject) {
-                    var heading = document.querySelector('h2');
+                    /* Sit just above the progress call-to-action, which puts the
+                       banner below the two path cards rather than above them. */
+                    var heading = document.querySelector('.progress-cta') || document.querySelector('h2');
                     if (heading) {
                       var banner = document.createElement('a');
                       banner.className = 'continue-banner';
@@ -467,6 +504,7 @@ export default defineConfig({
 
                       /* Determine accent color from subject level */
                       var levelMap = {
+                        'applied': 'applied',
                         'arithmetic': 'foundations',
                         'pre-algebra': 'foundations',
                         'algebra-basics': 'foundations',
@@ -490,7 +528,8 @@ export default defineConfig({
                         'foundations': '#7ee787',
                         'intermediate': '#d2a8ff',
                         'advanced': '#58a6ff',
-                        'expert': '#f0883e'
+                        'expert': '#f0883e',
+                        'applied': '#39d3c3'
                       };
                       var slug = data.href.replace(/^\\//, '').split('/')[0];
                       var level = levelMap[slug] || 'advanced';

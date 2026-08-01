@@ -22,8 +22,16 @@ const shouldRenderSearch =
 		{shouldRenderSearch && <Search />}
 	</div>
 	<div class="sl-hidden md:sl-flex print:hidden right-group">
-		<nav class="progress-nav" aria-label="Progress navigation">
-			<a href="/progress/" class="progress-nav-link" data-progress-link>Progress</a>
+		<nav class="progress-nav" aria-label="Main navigation">
+			<a href="/" class="progress-nav-link" data-nav-link="/">Home</a>
+			<a href="/core-mathematics/" class="progress-nav-link" data-nav-link="/core-mathematics">
+				<span class="nav-full">Core Mathematics</span><span class="nav-short">Core</span>
+			</a>
+			<a href="/applied-mathematics/" class="progress-nav-link" data-nav-link="/applied-mathematics">
+				<span class="nav-full">Applied Mathematics</span><span class="nav-short">Applied</span>
+			</a>
+			<a href="/progress/" class="progress-nav-link" data-nav-link="/progress" data-progress-link>Progress</a>
+			<a href="/about/" class="progress-nav-link" data-nav-link="/about">About</a>
 		</nav>
 		<div class="sl-flex social-icons">
 			<SocialIcons />
@@ -48,14 +56,32 @@ const shouldRenderSearch =
 </div>
 
 <script>
+	// Mark the current top-level nav item. Core Mathematics also lights up while you
+	// are inside any core subject, since those lessons live at the site root rather
+	// than under /core/, and an unlit nav on a lesson page reads as "nowhere".
+	const CORE_SLUGS = [
+		'arithmetic', 'pre-algebra', 'algebra-basics', 'geometry', 'algebra-2',
+		'trigonometry', 'pre-calculus', 'calculus-1', 'calculus-2', 'calculus-3',
+		'linear-algebra', 'differential-equations', 'discrete-mathematics',
+		'statistics', 'abstract-algebra', 'real-analysis', 'complex-analysis',
+		'topology',
+	];
+
 	function initProgressLink() {
-		const link = document.querySelector('a[data-progress-link]');
-		if (!link) return;
+		const links = document.querySelectorAll<HTMLElement>('a[data-nav-link]');
+		if (!links.length) return;
 		const path = window.location.pathname.replace(/\/$/, '');
-		if (path === '/progress') {
+		const first = path.replace(/^\//, '').split('/')[0];
+
+		let current = path === '' ? '/' : path;
+		if (CORE_SLUGS.indexOf(first) !== -1) current = '/core-mathematics';
+		else if (first === 'applied') current = '/applied-mathematics';
+
+		links.forEach((link) => {
+			if (link.dataset.navLink !== current) return;
 			link.setAttribute('aria-current', 'page');
 			link.classList.add('progress-nav-link--active');
-		}
+		});
 	}
 
 	function initMobileIcons() {

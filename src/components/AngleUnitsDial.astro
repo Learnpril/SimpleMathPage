@@ -1,0 +1,198 @@
+---
+/**
+ * AngleUnitsDial - degrees and radians as two readings of one angle.
+ *
+ * The point being made is that a radian is not an arbitrary unit: on a unit circle the
+ * angle in radians *is* the arc length. Sweeping one slider and watching three numbers
+ * move together makes that concrete in a way a conversion formula does not.
+ *
+ * This is the track's reference pattern for an interactive figure:
+ *   - a native <input type="range">, so keyboard control comes for free
+ *   - a visible label and a live numeric readout
+ *   - a sensible default rendered on the server, so the figure is meaningful
+ *     before (or without) JavaScript
+ */
+const DEFAULT_DEG = 57.29577951308232; // exactly one radian, the natural default
+const cx = 150;
+const cy = 155;
+const R = 108;
+---
+
+<figure
+  class="aud"
+  role="img"
+  aria-label="An interactive unit circle. A slider sets an angle, and the figure reports it in degrees, in radians, as a multiple of pi, and as the arc length swept. On a unit circle the radian measure and the arc length are the same number. The default position is one radian, about 57.3 degrees."
+>
+  <svg viewBox="0 0 520 300" xmlns="http://www.w3.org/2000/svg">
+    <circle cx={cx} cy={cy} r={R} class="aud-circle" />
+    <line x1={cx - R - 16} y1={cy} x2={cx + R + 16} y2={cy} class="aud-axis" />
+    <line x1={cx} y1={cy - R - 16} x2={cx} y2={cy + R + 16} class="aud-axis" />
+
+    <path class="aud-arc" data-arc fill="none" />
+    <path class="aud-wedge" data-wedge />
+    <line x1={cx} y1={cy} x2={cx + R} y2={cy} class="aud-radius" />
+    <line class="aud-radius aud-moving" data-radius x1={cx} y1={cy} x2={cx + R} y2={cy} />
+    <circle class="aud-dot" data-dot cx={cx + R} cy={cy} r="5" />
+
+    <text x={cx + R + 22} y={cy + 4} class="aud-tick">1</text>
+    <text x={cx - 6} y={cy - R - 22} class="aud-tick" text-anchor="middle">r = 1</text>
+
+    <text x="310" y="52" class="aud-rowlabel">degrees</text>
+    <text x="505" y="52" class="aud-value" data-deg text-anchor="end">57.3&#176;</text>
+    <text x="310" y="92" class="aud-rowlabel">radians</text>
+    <text x="505" y="92" class="aud-value" data-rad text-anchor="end">1.000</text>
+    <text x="310" y="132" class="aud-rowlabel">as a multiple of &#960;</text>
+    <text x="505" y="132" class="aud-value" data-pi text-anchor="end">0.318&#960;</text>
+    <text x="310" y="172" class="aud-rowlabel">arc length swept</text>
+    <text x="505" y="172" class="aud-value aud-hi" data-arclen text-anchor="end">1.000</text>
+
+    <line x1="310" y1="192" x2="505" y2="192" class="aud-divider" />
+    <text x="310" y="216" class="aud-foot">radian measure and arc</text>
+    <text x="310" y="232" class="aud-foot">length agree when r = 1</text>
+  </svg>
+
+  <div class="aud-controls">
+    <label class="aud-label" for="aud-angle">Angle</label>
+    <input
+      id="aud-angle"
+      class="aud-range"
+      type="range"
+      min="0"
+      max="360"
+      step="0.5"
+      value={DEFAULT_DEG.toFixed(1)}
+      data-angle-input
+    />
+    <output class="aud-out" data-out>57.3&#176;</output>
+  </div>
+
+  <figcaption class="aud-cap">
+    One angle, four readings. Drag the slider (or focus it and use the arrow keys) and
+    watch the bottom two numbers stay locked together: on a circle of radius 1, the
+    <strong>angle in radians is the arc length</strong>. That is the entire reason
+    radians exist, and why every trig function in every engine expects them.
+  </figcaption>
+</figure>
+
+<script>
+  const CX = 150;
+  const CY = 155;
+  const R = 108;
+
+  function wire(fig: HTMLElement) {
+    const input = fig.querySelector<HTMLInputElement>("[data-angle-input]");
+    if (!input || input.dataset.wired) return;
+    input.dataset.wired = "true";
+
+    const arc = fig.querySelector<SVGPathElement>("[data-arc]");
+    const wedge = fig.querySelector<SVGPathElement>("[data-wedge]");
+    const radius = fig.querySelector<SVGLineElement>("[data-radius]");
+    const dot = fig.querySelector<SVGCircleElement>("[data-dot]");
+    const degOut = fig.querySelector<SVGTextElement>("[data-deg]");
+    const radOut = fig.querySelector<SVGTextElement>("[data-rad]");
+    const piOut = fig.querySelector<SVGTextElement>("[data-pi]");
+    const arcOut = fig.querySelector<SVGTextElement>("[data-arclen]");
+    const out = fig.querySelector<HTMLOutputElement>("[data-out]");
+
+    function update() {
+      const deg = parseFloat(input!.value);
+      const rad = (deg * Math.PI) / 180;
+
+      // Screen y grows downward, so a positive (counter-clockwise) angle subtracts.
+      const ex = CX + R * Math.cos(rad);
+      const ey = CY - R * Math.sin(rad);
+
+      // An SVG arc flag is needed once the sweep passes a half turn.
+      const large = deg > 180 ? 1 : 0;
+      const arcPath = `M ${CX + R} ${CY} A ${R} ${R} 0 ${large} 0 ${ex.toFixed(2)} ${ey.toFixed(2)}`;
+
+      if (deg >= 359.9) {
+        // A full turn cannot be drawn as one arc, so use two halves.
+        arc!.setAttribute(
+          "d",
+          `M ${CX + R} ${CY} A ${R} ${R} 0 1 0 ${CX - R} ${CY} A ${R} ${R} 0 1 0 ${CX + R} ${CY}`,
+        );
+        wedge!.setAttribute("d", "");
+      } else {
+        arc!.setAttribute("d", arcPath);
+        wedge!.setAttribute("d", `${arcPath} L ${CX} ${CY} Z`);
+      }
+
+      radius!.setAttribute("x2", ex.toFixed(2));
+      radius!.setAttribute("y2", ey.toFixed(2));
+      dot!.setAttribute("cx", ex.toFixed(2));
+      dot!.setAttribute("cy", ey.toFixed(2));
+
+      degOut!.textContent = `${deg.toFixed(1)}\u00B0`;
+      radOut!.textContent = rad.toFixed(3);
+      piOut!.textContent = `${(rad / Math.PI).toFixed(3)}\u03C0`;
+      // Arc length on a unit circle is the radian measure. Computed independently
+      // rather than copied, so the figure demonstrates the claim instead of asserting it.
+      arcOut!.textContent = (1 * rad).toFixed(3);
+      out!.textContent = `${deg.toFixed(1)}\u00B0`;
+    }
+
+    input.addEventListener("input", update);
+    update();
+  }
+
+  function setup() {
+    document.querySelectorAll<HTMLElement>(".aud").forEach(wire);
+  }
+
+  setup();
+  document.addEventListener("astro:page-load", setup);
+</script>
+
+<style>
+  .aud { display: flex; flex-direction: column; align-items: center; margin: 1.5rem 0; }
+  .aud svg { width: 100%; max-width: 100%; height: auto; display: block; }
+  .aud-circle { fill: none; stroke: #30363d; stroke-width: 1.6; }
+  .aud-axis { stroke: #30363d; stroke-width: 1; }
+  .aud-arc { stroke: #39d3c3; stroke-width: 3.4; }
+  .aud-wedge { fill: #39d3c3; opacity: 0.1; stroke: none; }
+  .aud-radius { stroke: #6e7681; stroke-width: 1.6; }
+  .aud-moving { stroke: #58a6ff; stroke-width: 2.2; }
+  .aud-dot { fill: #58a6ff; }
+  .aud-divider { stroke: #30363d; stroke-width: 1; }
+  .aud-tick, .aud-rowlabel, .aud-value, .aud-foot {
+    font-family: 'Libre Baskerville', Georgia, serif;
+  }
+  .aud-tick { font-size: 11px; fill: #9198a1; }
+  .aud-rowlabel { font-size: 12px; fill: #9198a1; }
+  .aud-value { font-size: 16px; font-weight: 700; fill: #e6edf3; }
+  .aud-hi { fill: #39d3c3; }
+  .aud-foot { font-size: 10.5px; font-style: italic; fill: #6e7681; }
+
+  .aud-controls {
+    display: flex; align-items: center; gap: 0.75rem; margin-top: 0.5rem;
+    width: 100%; max-width: 420px;
+  }
+  .aud-label {
+    font-family: 'Libre Baskerville', Georgia, serif; font-size: 0.85rem;
+    font-weight: 700; color: #9198a1;
+  }
+  .aud-range { flex: 1; accent-color: #39d3c3; }
+  .aud-out {
+    font-family: 'Libre Baskerville', Georgia, serif; font-size: 0.85rem;
+    font-weight: 700; color: #39d3c3; min-width: 4.2rem; text-align: right;
+  }
+  .aud-cap {
+    font-family: 'Libre Baskerville', Georgia, serif; font-size: 0.85rem; color: #9198a1;
+    font-style: italic; text-align: center; max-width: 520px; margin-top: 0.6rem;
+    line-height: 1.5;
+  }
+  :global([data-theme="light"]) .aud-circle,
+  :global([data-theme="light"]) .aud-axis,
+  :global([data-theme="light"]) .aud-divider { stroke: #d0d7de; }
+  :global([data-theme="light"]) .aud-arc { stroke: #0d7d72; }
+  :global([data-theme="light"]) .aud-wedge { fill: #0d7d72; }
+  :global([data-theme="light"]) .aud-moving { stroke: #0550ae; }
+  :global([data-theme="light"]) .aud-dot { fill: #0550ae; }
+  :global([data-theme="light"]) .aud-value { fill: #1f2328; }
+  :global([data-theme="light"]) .aud-hi { fill: #0d7d72; }
+  :global([data-theme="light"]) .aud-tick,
+  :global([data-theme="light"]) .aud-rowlabel { fill: #57606a; }
+  :global([data-theme="light"]) .aud-cap, :global([data-theme="light"]) .aud-label { color: #57606a; }
+  :global([data-theme="light"]) .aud-out { color: #0d7d72; }
+</style>

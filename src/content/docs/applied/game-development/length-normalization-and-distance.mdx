@@ -1,0 +1,200 @@
+---
+title: Length, Normalization and Distance
+description: Magnitude, unit vectors, the squared-distance trick, and guarding the zero-length case that quietly produces NaN
+sidebar:
+  order: 2
+---
+
+import VectorLengthDial from "../../../../components/VectorLengthDial.astro";
+
+## What You'll Learn
+
+How to get a length out of a vector, how to strip the length off and keep only the
+direction, why comparing squared distances is faster and just as correct, and the one
+edge case that turns a working movement script into a character that vanishes.
+
+## Length
+
+The length of a vector is the Pythagorean theorem, once per dimension:
+
+$$
+|\vec{v}| = \sqrt{v_x^2 + v_y^2}, \qquad
+|\vec{v}| = \sqrt{v_x^2 + v_y^2 + v_z^2}
+$$
+
+That is it. Three dimensions is the same formula with one more term, and so is four.
+Length is also called **magnitude** or **norm**, and all three words mean this.
+
+<VectorLengthDial />
+
+## Normalization
+
+A **unit vector** has length exactly 1. Normalizing means scaling a vector down (or up)
+until it has length 1, keeping its direction:
+
+$$
+\hat{v} = \frac{\vec{v}}{|\vec{v}|}
+$$
+
+Divide each component by the length. The result answers "which way?" with no answer to
+"how far?".
+
+This matters because **direction and speed are separate decisions**, and most bugs in
+movement code come from conflating them. If a player holds two arrow keys, the raw input
+vector is $(1, 1)$ with length $1.414$, so a diagonal-walking character moves 41%
+faster than one walking straight - the classic diagonal speed bug. Normalize the input
+first, then multiply by the speed you meant:
+
+$$
+\vec{velocity} = \hat{input} \times speed
+$$
+
+:::note[In Godot]
+
+```gdscript
+var input := Vector2(
+    Input.get_axis("left", "right"),
+    Input.get_axis("up", "down")
+)
+# Without this line, diagonal movement is 1.414x too fast.
+velocity = input.normalized() * SPEED
+```
+
+`normalized()` returns a new vector and leaves the original alone. Godot also gives you
+`length()`, `length_squared()`, and `distance_to()`.
+:::
+
+## The Zero-Length Trap
+
+Look at the normalization formula again and ask what happens when $|\vec{v}| = 0$.
+
+You divide by zero. In floating-point arithmetic that does not crash - it produces
+`NaN`, which then contaminates everything it touches. `NaN + 1` is `NaN`. `NaN > 0` is
+false, and so is `NaN < 0`, and so is `NaN == NaN`. A position that becomes `NaN` puts
+your character nowhere, and the node usually just disappears with no error message.
+
+The trigger is mundane: the player lets go of the keys, so input is $(0, 0)$, so
+normalizing it is a division by zero. Or an enemy reaches the player exactly, so the
+"direction to target" vector is zero length.
+
+Drag the slider above to exactly zero and the readout tells you it is undefined rather
+than pretending.
+
+Guard it by checking the length first, and compare against a small epsilon rather than
+exactly zero, because floating point rarely lands on exact values:
+
+$$
+\hat{v} = \begin{cases}
+\dfrac{\vec{v}}{|\vec{v}|} & |\vec{v}| > \varepsilon \\[6pt]
+\vec{0} \text{ or some sensible default} & \text{otherwise}
+\end{cases}
+$$
+
+:::note[In Godot]
+Godot is unusually kind here: `Vector2.normalized()` and `Vector3.normalized()` return
+the **zero vector** rather than `NaN` when the input is zero length. So the naive code
+above does not explode.
+
+Do not rely on that if you write the maths yourself, and do not rely on it in other
+engines:
+
+```gdscript
+var to_target := target.position - position
+if to_target.length() > 0.001:
+    var dir := to_target / to_target.length()
+    look_at(position + dir, Vector3.UP)
+```
+
+Note also that `look_at` will complain if the direction is zero length or parallel to
+the up vector, which is the same edge case wearing a different hat.
+:::
+
+:::note[In other engines]
+Unity's `Vector3.normalized` also returns zero for a zero-length input, but raw
+`vector / vector.magnitude` does not, and neither does hand-written GLSL or HLSL. Shader
+code is where this bites hardest, because a `NaN` pixel is usually black or missing
+rather than an error.
+:::
+
+## Distance
+
+Distance between two points is the length of the vector between them, which is why the
+point-minus-point rule from the previous lesson matters:
+
+$$
+d(A, B) = |B - A| = \sqrt{(B_x - A_x)^2 + (B_y - A_y)^2 + (B_z - A_z)^2}
+$$
+
+## Skip the Square Root
+
+Square roots are the expensive part of that formula, and often you do not need one.
+
+Suppose you want to know whether an enemy is within 10 metres. The obvious test is
+$d < 10$. But since both sides are non-negative, and squaring preserves order for
+non-negative numbers, this is equivalent:
+
+$$
+d < 10 \iff d^2 < 100
+$$
+
+So compare squared distance against squared radius and never take the root. The
+comparison gives an identical answer, and the sqrt is gone.
+
+$$
+|B - A|^2 = (B_x - A_x)^2 + (B_y - A_y)^2 + (B_z - A_z)^2
+$$
+
+This works for **any comparison**: nearest enemy, inside a radius, which of two things
+is closer. It does not work when you need the actual number - a distance to display, or
+a value to divide by - because $d^2$ is not $d$.
+
+The rule: **if you are comparing, square the other side. If you are reporting, take the
+root.**
+
+:::note[In Godot]
+
+```gdscript
+const AGGRO_RANGE := 10.0
+var aggro_sq := AGGRO_RANGE * AGGRO_RANGE   # compute once, not per frame
+
+for enemy in enemies:
+    if position.distance_squared_to(enemy.position) < aggro_sq:
+        enemy.notice(self)
+```
+
+`distance_squared_to()` and `length_squared()` exist precisely for this. On a handful of
+enemies it will not matter; in a loop over a few thousand it does.
+:::
+
+## Try It Yourself
+
+**Reproduce the diagonal bug.** Move a character with raw input, without normalizing,
+and walk in a circle. The diagonals are visibly faster. Then add `.normalized()` and
+feel the difference.
+
+**Make a NaN on purpose.** Print `Vector2(0, 0).normalized()` in Godot, then print
+`Vector2(0, 0) / 0.0`. One gives you `(0, 0)` and the other gives `(nan, nan)`.
+Knowing which functions protect you and which do not is worth five minutes.
+
+**Confirm the squared comparison.** Print `position.distance_to(other) < 10` and
+`position.distance_squared_to(other) < 100` side by side while moving. They agree
+everywhere, which is the point.
+
+## Where This Shows Up
+
+- **Movement**, every time you separate a direction from a speed.
+- **Aggro and interaction ranges**, which are squared-distance comparisons in almost
+  every shipped game.
+- **Sorting by proximity** - nearest cover, nearest pickup, nearest enemy - where
+  sorting by squared distance gives the same order for free.
+- **Lighting falloff**, where inverse-square attenuation wants $d^2$ directly, so
+  taking a root and squaring it again is pure waste.
+- **Anywhere a character disappears without an error**, which is very often a `NaN`
+  that started as a zero-length normalize.
+
+:::note[The one thing to take away]
+Normalizing answers "which way", length answers "how far", and keeping those two
+questions separate in your code prevents a whole family of bugs. When you do combine
+them, do it explicitly: `direction * speed`, never a raw input vector used as a
+velocity.
+:::

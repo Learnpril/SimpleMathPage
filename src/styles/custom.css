@@ -299,6 +299,11 @@ starlight-toc {
 :root[data-theme="light"] .subject-card[data-level="advanced"] { --card-accent: #0550ae; }
 :root[data-theme="light"] .subject-card[data-level="expert"] { --card-accent: #c05010; }
 
+/* Applied tracks get their own accent so the two halves of the site read apart
+   at a glance, rather than reusing a Core difficulty colour. */
+.subject-card[data-level="applied"] { --card-accent: #39d3c3; }
+:root[data-theme="light"] .subject-card[data-level="applied"] { --card-accent: #0d7d72; }
+
 /* Card footer with lesson count */
 .subject-footer {
   display: flex;
@@ -709,6 +714,109 @@ body {
   }
 }
 
+/* ---------- Top-level path cards (homepage: Core vs Applied) ---------- */
+/* Two cards, side by side on desktop and stacked on mobile. Deliberately larger
+   and quieter than the subject cards, since this is a choice between two halves of
+   the site rather than one of eighteen subjects. */
+.path-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(19rem, 1fr));
+  gap: 1.25rem;
+  margin: 1.25rem 0 2.5rem;
+}
+
+.path-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 1.5rem 1.5rem 1.25rem;
+  border: 1px solid var(--sl-color-gray-5, #dee2e6);
+  border-radius: 0.6rem;
+  border-top: 5px solid var(--path-accent);
+  text-decoration: none;
+  color: inherit;
+  transition:
+    border-color 0.15s,
+    background-color 0.15s,
+    transform 0.15s;
+}
+.path-card[data-path="core"] { --path-accent: #58a6ff; }
+.path-card[data-path="applied"] { --path-accent: #39d3c3; }
+:root[data-theme="light"] .path-card[data-path="core"] { --path-accent: #0550ae; }
+:root[data-theme="light"] .path-card[data-path="applied"] { --path-accent: #0d7d72; }
+
+.path-card:hover {
+  border-color: var(--path-accent);
+  background-color: color-mix(in srgb, var(--path-accent) 7%, transparent);
+  transform: translateY(-2px);
+}
+.path-card:focus-visible {
+  outline: 2px solid var(--path-accent);
+  outline-offset: 3px;
+}
+
+.path-icon {
+  width: 100%;
+  max-width: 13rem;
+  height: auto;
+  margin-bottom: 0.9rem;
+  align-self: center;
+}
+
+.path-title {
+  font-family: "Libre Baskerville", Georgia, serif;
+  font-size: 1.35rem;
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--path-accent);
+}
+
+.path-tagline {
+  margin-top: 0.35rem;
+  font-family: "Libre Baskerville", Georgia, serif;
+  font-size: 0.95rem;
+  font-style: italic;
+  color: var(--sl-color-gray-2);
+}
+
+.path-desc {
+  margin-top: 0.7rem;
+  font-size: 0.92rem;
+  line-height: 1.55;
+  color: var(--sl-color-gray-2);
+}
+
+.path-meta {
+  margin-top: 0.7rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--sl-color-gray-3);
+}
+
+.path-btn {
+  margin-top: 1.1rem;
+  padding: 0.5rem 1.1rem;
+  border-radius: 0.4rem;
+  background-color: var(--path-accent);
+  color: #0d1117;
+  font-family: var(--sl-font);
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+.path-card:hover .path-btn {
+  filter: brightness(1.08);
+}
+
+:root[data-theme="light"] .path-tagline,
+:root[data-theme="light"] .path-desc {
+  color: var(--sl-color-gray-3);
+}
+:root[data-theme="light"] .path-btn {
+  color: #fff;
+}
+
 /* ---------- Diagram centering ---------- */
 .diagram-container {
   display: flex;
@@ -815,6 +923,24 @@ body {
   padding-bottom: 6px;
   border-bottom: 1px solid rgba(255,255,255,0.08);
 }
+/* Top-level hub links at the head of the mobile panel, set apart from the
+   eighteen subject rows below them. */
+.msw-hub-links {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-bottom: 10px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+.msw-hub-link {
+  font-weight: 700 !important;
+  color: var(--sl-color-text-accent, #58a6ff) !important;
+}
+.msw-hub-link.current {
+  background-color: var(--sl-color-accent-low);
+}
+
 .mobile-subject-panel a {
   display: block;
   padding: 10px 12px;
@@ -1428,10 +1554,30 @@ body {
   color: var(--sl-color-gray-3);
 }
 
-/* ---------- Progress Navigation Link (Header) ---------- */
+/* ---------- Main Navigation (Header) ---------- */
 .progress-nav {
   display: flex;
   align-items: center;
+  gap: 0.1rem;
+}
+
+/* Five nav items share the header with the search box, social icons and the theme
+   and language pickers. Rather than let "Applied Mathematics" wrap or shove the
+   search box off screen, each long label ships with a short form and CSS picks
+   one. Below 66rem the short labels win; the full names live on the pages. */
+.nav-short {
+  display: none;
+}
+@media (max-width: 66rem) {
+  .nav-full {
+    display: none;
+  }
+  .nav-short {
+    display: inline;
+  }
+  .progress-nav-link {
+    padding-inline: 0.5rem;
+  }
 }
 
 .progress-nav-link {

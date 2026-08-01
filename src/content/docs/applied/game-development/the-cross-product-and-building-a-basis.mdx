@@ -1,0 +1,242 @@
+---
+title: The Cross Product and Building a Basis
+description: The perpendicular vector, why its direction depends on handedness, and how two cross products give you a complete orientation
+sidebar:
+  order: 4
+---
+
+import CrossProductHanded3D from "../../../../components/CrossProductHanded3D.astro";
+
+## What You'll Learn
+
+How to get a vector perpendicular to two others, why its magnitude is an area, why the
+answer flips between Godot and Unity, and how to build a full set of right/up/forward
+axes from a single direction - which is all `look_at` does.
+
+## The Formula
+
+The cross product takes two vectors and returns a **vector**, unlike the dot product
+which returns a number:
+
+$$
+\vec{a} \times \vec{b} =
+\begin{pmatrix}
+a_y b_z - a_z b_y \\
+a_z b_x - a_x b_z \\
+a_x b_y - a_y b_x
+\end{pmatrix}
+$$
+
+Each component is built from the _other two_ axes, cycling $x \to y \to z \to x$. Nobody
+memorises this by staring at it; the pattern is easier: for the $x$ component, skip $x$
+and take $y_a z_b - z_a y_b$, then rotate the letters.
+
+Two properties matter more than the formula:
+
+$$
+|\vec{a} \times \vec{b}| = |\vec{a}|\,|\vec{b}| \sin\theta, \qquad
+(\vec{a} \times \vec{b}) \perp \vec{a} \text{ and } \perp \vec{b}
+$$
+
+The result is **perpendicular to both inputs**, and its **length is the area** of the
+parallelogram they span.
+
+<CrossProductHanded3D />
+
+## It Is Not Commutative
+
+$$
+\vec{a} \times \vec{b} = -(\vec{b} \times \vec{a})
+$$
+
+Swapping the inputs flips the output. This is unlike the dot product, where order does
+not matter, and it is a live source of bugs: a normal computed from a triangle's edges in
+the wrong order points into the surface instead of out of it, and the face renders
+black.
+
+Also, the cross product of parallel vectors is **zero**, because $\sin 0 = 0$. Two
+vectors pointing the same way span no parallelogram, so there is no unique perpendicular
+to return. This is the cross product's version of the zero-length trap from lesson 2, and
+it is why `look_at` fails when you ask an object to look straight up while its up vector
+is also straight up.
+
+## Handedness: Why Your Answer Flips
+
+The formula above is fixed arithmetic. Feed it the same six numbers and you get the same
+three numbers out, in Godot, Unity, or on paper.
+
+What differs is **where those three numbers point**.
+
+In a right-handed system, $\hat{x} \times \hat{y} = +\hat{z}$. In a left-handed system,
+the same components describe a $\hat{z}$ that points the other way. The figure above
+shows exactly this: identical arithmetic, mirrored frame, opposite arrow.
+
+The practical consequence is that any test built on cross-product _direction_ inverts
+when ported:
+
+- "Is this point left or right of my facing direction?"
+- "Is this triangle wound clockwise or counter-clockwise?"
+- "Which way does this surface face?"
+
+Recall the table from lesson 1: **Godot and Blender are right-handed; Unity and Unreal
+are left-handed.** When you copy a snippet from a Unity tutorial and the character turns
+the wrong way, this is usually why, and the fix is a single negation - once you know it
+is the cause rather than guessing.
+
+:::note[In Godot]
+
+```gdscript
+var c := a.cross(b)          # Vector3.cross, right-handed
+var area := a.cross(b).length()
+```
+
+Godot's `Vector2` has no true cross product, since two dimensions has no perpendicular
+axis to point along. Instead it gives you the scalar $a_x b_y - a_y b_x$, which is the
+$z$ component the 3D version would produce:
+
+```gdscript
+var z := a.cross(b)          # Vector2.cross returns a float, not a Vector2
+```
+
+That scalar is enormously useful: its **sign** tells you which side of $\vec{a}$ the
+vector $\vec{b}$ lies on. It is the missing half of the dot product, and lesson 5 uses
+it to get a signed angle.
+:::
+
+:::note[In other engines]
+Unity's `Vector3.Cross(a, b)` uses the same component formula in a left-handed frame,
+so the resulting direction is the mirror of Godot's. Unreal is also left-handed _and_
+Z-up, so both the handedness and the up-axis differ - expect two adjustments, not one.
+:::
+
+## Two Uses Worth Knowing
+
+### Surface normals
+
+Given a triangle with corners $P_0, P_1, P_2$, two edges are
+$\vec{e_1} = P_1 - P_0$ and $\vec{e_2} = P_2 - P_0$, and the normal is:
+
+$$
+\hat{n} = \frac{\vec{e_1} \times \vec{e_2}}{|\vec{e_1} \times \vec{e_2}|}
+$$
+
+The **winding order** of the corners decides which way the normal points. This is why
+mesh tools have a "flip normals" button, and why a model can look correct in Blender and
+inside-out in an engine.
+
+### Which side am I on?
+
+For a character with forward $\hat{f}$ and up $\hat{u}$, and a direction to a target
+$\hat{d}$:
+
+$$
+s = (\hat{f} \times \hat{d}) \cdot \hat{u}
+$$
+
+The sign of $s$ says whether the target is to the left or the right. Cross to get a
+perpendicular, dot with up to collapse it to a signed number. Which sign means "left"
+depends on handedness, so determine it once by experiment and write it down.
+
+## Building a Basis From One Direction
+
+Here is the payoff, and it is what `look_at` does internally.
+
+You know where you want something to face. You need a complete orientation - three
+perpendicular axes. Two cross products get you there.
+
+Start with the desired forward $\hat{f}$ and a rough world up $\hat{u}_{world}$, usually
+$(0, 1, 0)$:
+
+$$
+\hat{r} = \frac{\hat{u}_{world} \times \hat{f}}{|\hat{u}_{world} \times \hat{f}|}
+\qquad\text{then}\qquad
+\hat{u} = \hat{f} \times \hat{r}
+$$
+
+The first cross gives a **right** vector perpendicular to both, which is horizontal
+because it is perpendicular to world up. The second gives a **true up**, perpendicular to
+forward and right - and it needs no normalizing, because the cross product of two
+perpendicular unit vectors already has length 1.
+
+The three vectors $\hat{r}, \hat{u}, \hat{f}$ are now an **orthonormal basis**: mutually
+perpendicular, each of length 1. In the next module these become the columns of a
+rotation matrix, and the whole thing becomes one multiply.
+
+### Where it breaks
+
+If $\hat{f}$ is parallel to $\hat{u}_{world}$ - looking straight up or straight down -
+then the first cross product is zero, normalizing it is a division by zero, and the
+orientation is undefined. This is not a bug in the maths; there genuinely is no way to
+decide which way is "right" when you are looking straight up.
+
+Every engine hits this. It is the reason a third-person camera goes haywire at the poles,
+and the standard fix is to clamp the pitch to something like $\pm 89^\circ$ so the
+degenerate case never arrives. The camera lesson comes back to this.
+
+:::note[In Godot]
+
+```gdscript
+# What look_at does, by hand:
+var f := (target - global_position).normalized()
+if absf(f.dot(Vector3.UP)) > 0.999:
+    return                                  # looking straight up or down: bail out
+var r := Vector3.UP.cross(f).normalized()
+var u := f.cross(r)
+
+# Or just let the engine do it, with the same restriction:
+look_at(target, Vector3.UP)
+```
+
+Godot will print an error if the direction is zero length or parallel to the up vector,
+which is the degenerate case above announcing itself.
+:::
+
+## Worked Example
+
+Compute $\vec{a} \times \vec{b}$ for $\vec{a} = (2, 0, 0)$ and $\vec{b} = (0, 3, 0)$.
+
+$$
+\begin{aligned}
+x &= a_y b_z - a_z b_y = (0)(0) - (0)(3) = 0 \\
+y &= a_z b_x - a_x b_z = (0)(0) - (2)(0) = 0 \\
+z &= a_x b_y - a_y b_x = (2)(3) - (0)(0) = 6
+\end{aligned}
+$$
+
+So the result is $(0, 0, 6)$: perpendicular to both, as expected, with length 6. And 6
+is exactly the area of a $2 \times 3$ rectangle, which is the parallelogram the two
+vectors span. The area interpretation is not a metaphor.
+
+In a left-handed frame the same $(0, 0, 6)$ points the opposite way in space.
+
+## Try It Yourself
+
+**Flip a normal.** Build a triangle in Blender, compute its normal from the edges in
+both orders, and watch the sign of every component invert.
+
+**Write look_at yourself.** Use the two-cross-product recipe, then compare your basis
+against Godot's `global_transform.basis` after calling the built-in `look_at`. They
+should match.
+
+**Find the pole.** Aim your hand-written version straight up and watch it fail. Then add
+the guard. This is the failure most third-person cameras have to handle.
+
+## Where This Shows Up
+
+- **Lighting and shading**, since every surface normal in every mesh came from a cross
+  product at some point.
+- **`look_at` and camera orientation**, which is the basis construction above.
+- **Turning decisions in AI** - the left/right sign test tells a steering behaviour which
+  way to rotate.
+- **Torque and angular physics**, where $\vec{\tau} = \vec{r} \times \vec{F}$ is
+  literally a cross product.
+- **Backface culling and winding order**, which decides whether a triangle is drawn at
+  all.
+- **Quaternions**, in the next module, whose vector part is built from a cross product.
+
+:::note[The one thing to take away]
+The cross product gives you a perpendicular, and its length is an area. Everything else -
+normals, left/right tests, `look_at`, torque - is one of those two facts in costume. Just
+remember that the _direction_ is a convention, so check the handedness of the engine
+before trusting a snippet from the internet.
+:::

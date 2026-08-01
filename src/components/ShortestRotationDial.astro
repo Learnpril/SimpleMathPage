@@ -1,0 +1,244 @@
+---
+/**
+ * ShortestRotationDial - turning toward a target without spinning the long way round.
+ *
+ * A turret facing a fixed heading, a target the reader moves, and three numbers: the
+ * raw difference, the wrapped difference, and the direction to turn. The raw and
+ * wrapped values agree until the difference passes 180 degrees, at which point the raw
+ * one sends the turret the long way. Seeing them disagree is the lesson.
+ *
+ * Readouts sit in a right-hand column the drawing never enters.
+ */
+const ox = 175;
+const oy = 175;
+const R = 105;
+const FACING_DEG = 40; // the turret's fixed heading
+const DEFAULT_TARGET_DEG = 300;
+
+const rad = (d: number) => (d * Math.PI) / 180;
+const fx = ox + R * Math.cos(rad(FACING_DEG));
+const fy = oy - R * Math.sin(rad(FACING_DEG));
+const tx0 = ox + R * Math.cos(rad(DEFAULT_TARGET_DEG));
+const ty0 = oy - R * Math.sin(rad(DEFAULT_TARGET_DEG));
+---
+
+<figure
+  class="srd"
+  role="img"
+  aria-label={`An interactive figure. A turret faces ${FACING_DEG} degrees and a slider moves a target around it. The figure reports the raw angle difference, the same difference wrapped into the range minus 180 to plus 180, and which way to turn. When the raw difference exceeds 180 degrees the two disagree, and turning by the raw value sends the turret the long way round.`}
+>
+  <svg viewBox="0 0 540 350" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <marker id="srd-f" markerWidth="9" markerHeight="9" refX="7.5" refY="4.5" orient="auto">
+        <path d="M0,0 L9,4.5 L0,9 Z" fill="#7ee787" />
+      </marker>
+      <marker id="srd-t" markerWidth="9" markerHeight="9" refX="7.5" refY="4.5" orient="auto">
+        <path d="M0,0 L9,4.5 L0,9 Z" fill="#f0883e" />
+      </marker>
+    </defs>
+
+    <circle cx={ox} cy={oy} r={R} class="srd-circle" />
+
+    {/* The short way, drawn as the arc the turret should actually sweep. */}
+    <path class="srd-arc" data-arc fill="none" />
+
+    <line x1={ox} y1={oy} x2={fx} y2={fy} class="srd-facing" marker-end="url(#srd-f)" />
+    <text x={fx + 10} y={fy - 8} class="srd-veclabel srd-green">facing</text>
+
+    <line class="srd-target" data-tgt x1={ox} y1={oy} x2={tx0} y2={ty0} marker-end="url(#srd-t)" />
+    <text class="srd-veclabel srd-orange" data-tgtlabel x={tx0 + 10} y={ty0 + 14}>target</text>
+
+    <circle cx={ox} cy={oy} r="4" class="srd-hub" />
+
+    <text x="345" y="42" class="srd-rowlabel">target &minus; facing</text>
+    <text x="525" y="42" class="srd-value" data-raw text-anchor="end">260.0&#176;</text>
+    <text x="345" y="62" class="srd-foot">raw, as computed</text>
+
+    <text x="345" y="104" class="srd-rowlabel">wrapped to &plusmn;180&#176;</text>
+    <text x="525" y="104" class="srd-value srd-teal" data-wrapped text-anchor="end">&minus;100.0&#176;</text>
+    <text x="345" y="124" class="srd-foot">what you should use</text>
+
+    <line x1="345" y1="146" x2="525" y2="146" class="srd-divider" />
+
+    <text x="345" y="174" class="srd-rowlabel">turn</text>
+    <text x="525" y="174" class="srd-value srd-big" data-dir text-anchor="end">clockwise</text>
+    <text x="345" y="216" class="srd-rowlabel">by</text>
+    <text x="525" y="216" class="srd-value" data-mag text-anchor="end">100.0&#176;</text>
+
+    <text x="345" y="264" class="srd-warn" data-warn></text>
+    <text x="345" y="292" class="srd-foot">the arc shows the short way</text>
+  </svg>
+
+  <div class="srd-controls">
+    <label class="srd-label" for="srd-target">Target heading</label>
+    <input
+      id="srd-target"
+      class="srd-range"
+      type="range"
+      min="0"
+      max="360"
+      step="1"
+      value={DEFAULT_TARGET_DEG}
+      data-target-input
+    />
+    <output class="srd-out" data-out>300&#176;</output>
+  </div>
+
+  <figcaption class="srd-cap">
+    The turret faces <strong>{FACING_DEG}&deg;</strong>. Sweep the target and watch the
+    top two numbers: they agree until the difference passes 180&deg;, then split.
+    Rotating by the <em>raw</em> difference is what makes an enemy spin most of the way
+    around to look at something just behind it.
+  </figcaption>
+</figure>
+
+<script>
+  const OX = 175;
+  const OY = 175;
+  const R = 105;
+  const FACING = 40;
+
+  /** Fold any angle difference into the range (-180, 180]. */
+  function wrapDeg(d: number) {
+    let x = ((d + 180) % 360 + 360) % 360 - 180;
+    if (x === -180) x = 180;
+    return x;
+  }
+
+  function wire(fig: HTMLElement) {
+    const input = fig.querySelector<HTMLInputElement>("[data-target-input]");
+    if (!input || input.dataset.wired) return;
+    input.dataset.wired = "true";
+
+    const tgt = fig.querySelector<SVGLineElement>("[data-tgt]");
+    const tgtLabel = fig.querySelector<SVGTextElement>("[data-tgtlabel]");
+    const arc = fig.querySelector<SVGPathElement>("[data-arc]");
+    const rawOut = fig.querySelector<SVGTextElement>("[data-raw]");
+    const wrapOut = fig.querySelector<SVGTextElement>("[data-wrapped]");
+    const dirOut = fig.querySelector<SVGTextElement>("[data-dir]");
+    const magOut = fig.querySelector<SVGTextElement>("[data-mag]");
+    const warn = fig.querySelector<SVGTextElement>("[data-warn]");
+    const out = fig.querySelector<HTMLOutputElement>("[data-out]");
+
+    function update() {
+      const target = parseFloat(input!.value);
+      const rad = (target * Math.PI) / 180;
+      const ex = OX + R * Math.cos(rad);
+      const ey = OY - R * Math.sin(rad);
+
+      tgt!.setAttribute("x2", ex.toFixed(2));
+      tgt!.setAttribute("y2", ey.toFixed(2));
+      tgtLabel!.setAttribute("x", (OX + Math.cos(rad) * (R + 14)).toFixed(2));
+      tgtLabel!.setAttribute("y", (OY - Math.sin(rad) * (R + 14) + 5).toFixed(2));
+
+      const raw = target - FACING;
+      const wrapped = wrapDeg(raw);
+
+      // The arc runs from the facing direction through the wrapped delta, so it always
+      // draws the short way even when the raw difference is large.
+      const aR = (FACING * Math.PI) / 180;
+      const bR = ((FACING + wrapped) * Math.PI) / 180;
+      const r = R * 0.62;
+      const ax = OX + r * Math.cos(aR);
+      const ay = OY - r * Math.sin(aR);
+      const bx = OX + r * Math.cos(bR);
+      const by = OY - r * Math.sin(bR);
+      // sweep-flag 0 is counter-clockwise on screen because y points down.
+      const sweep = wrapped > 0 ? 0 : 1;
+      if (Math.abs(wrapped) < 0.5) {
+        arc!.setAttribute("d", "");
+      } else {
+        arc!.setAttribute(
+          "d",
+          `M ${ax.toFixed(2)} ${ay.toFixed(2)} A ${r} ${r} 0 0 ${sweep} ${bx.toFixed(2)} ${by.toFixed(2)}`,
+        );
+      }
+
+      const sign = (v: number) => (v < 0 ? "\u2212" : "") + Math.abs(v).toFixed(1);
+      rawOut!.textContent = `${sign(raw)}\u00B0`;
+      wrapOut!.textContent = `${sign(wrapped)}\u00B0`;
+      magOut!.textContent = `${Math.abs(wrapped).toFixed(1)}\u00B0`;
+
+      if (Math.abs(wrapped) < 0.5) {
+        dirOut!.textContent = "already aimed";
+        dirOut!.setAttribute("class", "srd-value srd-big srd-teal");
+      } else if (wrapped > 0) {
+        dirOut!.textContent = "counter-clockwise";
+        dirOut!.setAttribute("class", "srd-value srd-big srd-green");
+      } else {
+        dirOut!.textContent = "clockwise";
+        dirOut!.setAttribute("class", "srd-value srd-big srd-orange");
+      }
+
+      warn!.textContent =
+        Math.abs(raw) > 180.001
+          ? `raw is ${Math.abs(raw - wrapped).toFixed(0)}\u00B0 too far`
+          : "";
+
+      out!.textContent = `${target.toFixed(0)}\u00B0`;
+    }
+
+    input.addEventListener("input", update);
+    update();
+  }
+
+  function setup() {
+    document.querySelectorAll<HTMLElement>(".srd").forEach(wire);
+  }
+
+  setup();
+  document.addEventListener("astro:page-load", setup);
+</script>
+
+<style>
+  .srd { display: flex; flex-direction: column; align-items: center; margin: 1.5rem 0; }
+  .srd svg { width: 100%; max-width: 100%; height: auto; display: block; }
+  .srd-circle { fill: none; stroke: #30363d; stroke-width: 1.2; stroke-dasharray: 3 3; }
+  .srd-facing { stroke: #7ee787; stroke-width: 2.6; }
+  .srd-target { stroke: #f0883e; stroke-width: 2.6; }
+  .srd-arc { stroke: #39d3c3; stroke-width: 4.5; opacity: 0.85; }
+  .srd-hub { fill: #9198a1; }
+  .srd-divider { stroke: #30363d; stroke-width: 1; }
+  .srd-rowlabel, .srd-value, .srd-foot, .srd-veclabel, .srd-warn {
+    font-family: 'Libre Baskerville', Georgia, serif;
+  }
+  .srd-rowlabel { font-size: 12px; fill: #9198a1; }
+  .srd-value { font-size: 15px; font-weight: 700; fill: #e6edf3; }
+  .srd-big { font-size: 16px; }
+  .srd-teal { fill: #39d3c3; }
+  .srd-green { fill: #7ee787; }
+  .srd-orange { fill: #f0883e; }
+  .srd-foot { font-size: 10px; font-style: italic; fill: #6e7681; }
+  .srd-warn { font-size: 11px; font-weight: 700; fill: #ff7b72; }
+  .srd-veclabel { font-size: 12px; font-weight: 700; }
+
+  .srd-controls {
+    display: flex; align-items: center; gap: 0.75rem; margin-top: 0.5rem;
+    width: 100%; max-width: 440px;
+  }
+  .srd-label {
+    font-family: 'Libre Baskerville', Georgia, serif; font-size: 0.85rem; color: #9198a1;
+  }
+  .srd-range { flex: 1; accent-color: #f0883e; }
+  .srd-out {
+    font-family: 'Libre Baskerville', Georgia, serif; font-size: 0.85rem;
+    font-weight: 700; color: #f0883e; min-width: 3.4rem; text-align: right;
+  }
+  .srd-cap {
+    font-family: 'Libre Baskerville', Georgia, serif; font-size: 0.85rem; color: #9198a1;
+    font-style: italic; text-align: center; max-width: 520px; margin-top: 0.6rem;
+    line-height: 1.5;
+  }
+  :global([data-theme="light"]) .srd-circle, :global([data-theme="light"]) .srd-divider { stroke: #d0d7de; }
+  :global([data-theme="light"]) .srd-facing { stroke: #116329; }
+  :global([data-theme="light"]) .srd-target { stroke: #c05010; }
+  :global([data-theme="light"]) .srd-arc { stroke: #0d7d72; }
+  :global([data-theme="light"]) .srd-hub { fill: #57606a; }
+  :global([data-theme="light"]) .srd-value { fill: #1f2328; }
+  :global([data-theme="light"]) .srd-teal { fill: #0d7d72; }
+  :global([data-theme="light"]) .srd-green { fill: #116329; }
+  :global([data-theme="light"]) .srd-orange { fill: #c05010; }
+  :global([data-theme="light"]) .srd-rowlabel { fill: #57606a; }
+  :global([data-theme="light"]) .srd-cap, :global([data-theme="light"]) .srd-label { color: #57606a; }
+  :global([data-theme="light"]) .srd-out { color: #c05010; }
+</style>

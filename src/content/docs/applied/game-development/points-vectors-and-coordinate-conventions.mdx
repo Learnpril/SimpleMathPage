@@ -1,0 +1,231 @@
+---
+title: Points, Vectors and Coordinate Conventions
+description: The difference between a place and a displacement, and the axis conventions that make the same math produce different signs in different engines
+sidebar:
+  order: 1
+---
+
+import PointVsVector from "../../../../components/PointVsVector.astro";
+import HandednessTriads3D from "../../../../components/HandednessTriads3D.astro";
+import AngleUnitsDial from "../../../../components/AngleUnitsDial.astro";
+
+## What You'll Learn
+
+The difference between a point and a vector and why storing both as `(x, y, z)` hides
+a real distinction. What basis vectors are. Which way is up and which way is forward in
+Godot, Unity and Blender, and why that single table prevents most sign errors. Degrees
+versus radians, and why every engine function wants radians.
+
+## Points and Vectors Are Not the Same Thing
+
+Both are three numbers. They mean different things.
+
+A **point** is a location. `(3, 2)` as a point is a specific spot, and it only means
+anything once you have agreed where the origin is.
+
+A **vector** is a displacement - a direction with a length, and no location at all.
+`(3, 2)` as a vector means _three right and two up_, starting from wherever you happen
+to be.
+
+<PointVsVector />
+
+All three arrows in that figure are the same vector. They are drawn in different places
+because a vector does not have a place. Their tips are three different points.
+
+This is not pedantry, and here is the practical test:
+
+- **Point minus point is a vector.** Enemy position minus player position gives the
+  displacement from you to the enemy. Subtracting two places gives a journey.
+- **Point plus vector is a point.** Your position plus your velocity times delta time
+  gives your new position. Applying a journey to a place gives a place.
+- **Point plus point is nothing.** There is no meaningful sum of two locations. If you
+  find yourself adding positions, something is wrong - except when you are averaging
+  them, which is really a weighted sum of displacements from the origin.
+
+Most engines use one type for both. Godot has `Vector3` and nothing else; you decide
+per variable whether it holds a place or a displacement. The compiler will not help
+you, which is exactly why the distinction is worth holding in your head.
+
+:::note[In Godot]
+`Vector3` serves as both. The naming convention that saves you is to name
+displacements after what they do - `velocity`, `to_target`, `offset` - and points after
+what they are - `position`, `spawn_point`, `hit_point`.
+
+```gdscript
+var to_target: Vector3 = target.position - self.position   # point - point = vector
+var next_pos:  Vector3 = self.position + velocity * delta  # point + vector = point
+```
+
+Later, in the transforms module, the distinction becomes mechanical rather than a
+matter of discipline: points carry a fourth component of 1 and directions carry 0.
+:::
+
+## Basis Vectors: What the Numbers Are Counting
+
+Writing a vector as `(3, 2)` is shorthand. In full it means:
+
+$$
+(3, 2) = 3\,\hat{\imath} + 2\,\hat{\jmath}
+$$
+
+where $\hat{\imath}$ and $\hat{\jmath}$ are the **basis vectors** - one unit along x
+and one unit along y. The numbers are counts of basis vectors, not the vector itself.
+
+That sounds like a technicality until you realise the basis can be anything. A
+character's own right, up and forward directions form a basis, and the same physical
+arrow has different numbers in that basis than in the world's. "Move me one metre to my
+right" and "move me one metre along world x" are different instructions that happen to
+coincide only when the character faces down the world axis. Everything the transforms
+module does is bookkeeping for changing which basis the numbers refer to.
+
+## The Conventions Table
+
+Here is where engines genuinely disagree, and where a wrong assumption produces a model
+lying on its side or a character walking backwards.
+
+<HandednessTriads3D />
+
+Two independent choices are being made. **Which axis points up**, and **whether the
+coordinate system is left- or right-handed**.
+
+|                   | Handedness   | Up axis | Forward axis | Vector convention          |
+| :---------------- | :----------- | :------ | :----------- | :------------------------- |
+| **Godot 4**       | right-handed | $+Y$    | $-Z$         | column vectors, $M\vec{v}$ |
+| **Unity**         | left-handed  | $+Y$    | $+Z$         | column vectors, $M\vec{v}$ |
+| **Unreal**        | left-handed  | $+Z$    | $+X$         | row vectors, $\vec{v}M$    |
+| **Blender**       | right-handed | $+Z$    | $-Y$         | column vectors, $M\vec{v}$ |
+| **OpenGL / glTF** | right-handed | $+Y$    | $-Z$         | column vectors, $M\vec{v}$ |
+
+Bookmark this. Six later lessons refer back to it.
+
+### Handedness, and why it flips your cross products
+
+Point the fingers of your **right** hand along $+X$, curl them toward $+Y$, and your
+thumb points along $+Z$. If that matches the engine, it is right-handed. Do the same
+with your left hand and you have the left-handed convention.
+
+The consequence is concrete: **the cross product changes sign**. In a right-handed
+system $\hat{x} \times \hat{y} = +\hat{z}$; in a left-handed one the same formula
+applied to the same numbers gives a vector pointing the other way. So a "which side of
+this wall am I on" test written for Unity gives the opposite answer in Godot unless you
+account for it. This is dealt with properly in the cross product lesson; for now, just
+know the two are not interchangeable.
+
+### Up axis, and why exported models lie down
+
+Godot and Unity treat $+Y$ as up. Blender treats $+Z$ as up. So a model that stands
+correctly in Blender arrives in Godot rotated 90 degrees about the x axis, face-planted
+on the floor.
+
+Both tools know this and will convert on export. The reason to understand it anyway is
+that the conversion sometimes fails silently, and when a rig arrives rotated it is much
+faster to recognise a known axis swap than to hunt for a broken bone.
+
+### Forward, which is the arbitrary one
+
+Handedness and up-axis are mathematical facts about the coordinate system. Forward is
+pure convention - somebody decided which way a camera looks by default.
+
+Godot and OpenGL use $-Z$ as forward, which surprises people: a camera at the origin
+looks toward _negative_ z, so things in front of it have negative z coordinates. Unity
+picked $+Z$. Neither is wrong; they simply disagree.
+
+:::note[In Godot]
+Rather than writing axis constants by hand, ask the transform:
+
+```gdscript
+var forward: Vector3 = -global_transform.basis.z   # note the minus
+var right:   Vector3 =  global_transform.basis.x
+var up:      Vector3 =  global_transform.basis.y
+```
+
+The minus sign in the first line _is_ the $-Z$ forward convention. Godot also provides
+`Vector3.FORWARD`, which equals `(0, 0, -1)`, so the same fact is baked into the
+constant.
+:::
+
+:::note[In other engines]
+In Unity the same three lines read `transform.forward`, `transform.right` and
+`transform.up`, and `forward` is `+Z` with no minus sign. Porting code between them
+means checking every place a forward vector is constructed from raw axis numbers.
+Anywhere you see a literal `(0, 0, -1)` or `(0, 0, 1)`, expect to change it.
+:::
+
+## Degrees and Radians
+
+Humans think in degrees. Every trigonometric function in every engine expects radians.
+
+A **radian** is not an arbitrary unit. It is defined so that the angle equals the arc
+length it sweeps on a circle of radius 1:
+
+<AngleUnitsDial />
+
+Sweep the slider and watch the bottom two rows. The radian measure and the arc length
+are always the same number, because the radius is 1. That is the whole definition.
+
+Since a full circle has circumference $2\pi r$, a full turn is $2\pi$ radians:
+
+$$
+360^\circ = 2\pi \text{ rad}, \qquad
+1 \text{ rad} = \frac{180^\circ}{\pi} \approx 57.296^\circ
+$$
+
+The conversions are worth memorising in this direction, because this is the direction
+you need when a designer hands you a number in degrees:
+
+$$
+\text{radians} = \text{degrees} \times \frac{\pi}{180}
+$$
+
+The values worth knowing on sight: $\pi/6 = 30^\circ$, $\pi/4 = 45^\circ$,
+$\pi/3 = 60^\circ$, $\pi/2 = 90^\circ$, $\pi = 180^\circ$.
+
+:::note[In Godot]
+`sin`, `cos`, `atan2` and the rotation properties all use radians.
+`rotation_degrees` is the exception, and it exists because the inspector shows degrees
+to designers.
+
+```gdscript
+var r := deg_to_rad(45.0)   # 0.7853981633974483
+var d := rad_to_deg(PI)     # 180.0
+```
+
+The bug this causes is passing a degree value to `sin` and getting a plausible-looking
+wrong answer. `sin(90)` is not 1; it is about 0.894, because 90 radians is roughly
+fourteen full turns plus a bit.
+:::
+
+## Try It Yourself
+
+Three short exercises, each under twenty lines.
+
+**Print your own axes.** Attach a script to a node, rotate it in the editor, and print
+`-global_transform.basis.z` each frame. Watch the numbers as you spin it. This makes
+"forward is $-Z$" a thing you have seen rather than read.
+
+**Break the units on purpose.** Write `print(sin(90), sin(deg_to_rad(90)))` and look at
+the two numbers. Getting this wrong once deliberately is cheaper than getting it wrong
+accidentally later.
+
+**Subtract two positions.** Make two nodes, print `a.position - b.position`, then move
+them and watch it change. Confirm that the length of that vector matches
+`a.position.distance_to(b.position)` - which is the next lesson.
+
+## Where This Shows Up
+
+- **Every gameplay script**, whenever you compute a direction from one thing to another
+  and have to decide whether you are holding a place or a displacement.
+- **Asset pipelines**, where the up-axis mismatch between Blender and a game engine is
+  the single most common import problem.
+- **Porting and tutorials.** Most game-math material online is written for Unity. Being
+  able to spot which parts are convention rather than mathematics is what makes it
+  usable in Godot.
+- **Networking**, where sending a position and sending a velocity have different
+  precision and prediction requirements, and conflating them causes rubber-banding.
+
+:::note[The one thing to take away]
+When something is mirrored, upside down, or facing backwards, do not start flipping
+signs until it looks right. Come back to the table above and work out _which_
+convention you assumed wrongly. A sign error you understand is fixed once; a sign error
+you guessed at comes back in the next system you write.
+:::

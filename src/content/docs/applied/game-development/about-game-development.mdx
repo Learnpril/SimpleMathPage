@@ -1,0 +1,112 @@
+---
+title: About Math for Game Development
+description: The exact math needed to write gameplay, cameras, physics and tools - engine-agnostic, with Godot as the worked example
+sidebar:
+  order: 0
+---
+
+## What This Track Is
+
+The math you actually need to make a 3D game move.
+
+Not a survey of mathematics that happens to mention games. This track starts from
+things you want to build - a character that walks up a slope, a camera that follows
+without jitter, a jump that feels right, a click that selects the thing under the
+cursor - and works backwards to the math that makes each one possible.
+
+import GameDevTopicMap from "../../../../components/GameDevTopicMap.astro";
+
+<GameDevTopicMap />
+
+Every lesson is built the same way: the mathematics first, on its own terms, with a
+figure you can look at. Then the same idea shown in a real tool. Then, where it
+matters, a note on how another engine differs.
+
+## Engine-Agnostic, With Concrete Examples
+
+The math belongs to nobody. Vectors, matrices and quaternions behave identically in
+Godot, Unity, Unreal, Three.js and an engine you wrote yourself over a weekend.
+
+**Godot 4** is used for the code examples, because it is free, small enough to learn
+in an afternoon, and its source is readable when you want to know what a function
+really does. Where Blender is the better illustration - coordinate spaces, rigging,
+mesh normals - it is used instead.
+
+:::note[Versions matter here]
+All Godot examples target **Godot 4.x**. Godot 3 renamed nodes, split `Transform` into
+`Transform2D` and `Transform3D`, and changed the `move_and_slide` signature, so 3.x
+code will not paste in cleanly. If you are on Godot 3, the math is unchanged but the
+API names are not.
+:::
+
+If you use Unity or Unreal, you lose nothing. The one place engines genuinely disagree
+is **coordinate conventions**, and that is dealt with head-on in the first lesson
+rather than left to ambush you in the fourth.
+
+## This Is a Guide, Not a Course
+
+Applied Mathematics is reference material. There are no quizzes here, and no
+requirement to go in order - though the ordering is not arbitrary, and the map above
+shows what depends on what.
+
+Two orderings are worth respecting. **Time before curves**, because everything from
+rotations onward moves once per frame, and the most common bug in gameplay code is
+interpolation that behaves differently at 60 and 144 frames per second. And
+**collision response before the capstone**, because detecting a wall and walking along
+it are separate problems, and only one of them is in most tutorials.
+
+## What You Should Already Know
+
+- **Trigonometry** - sine, cosine, tangent, and the unit circle. Used constantly.
+- **Linear Algebra** - vectors and matrices, for the transforms and rotations modules.
+  You can start without it, but lesson 6 onward will be smoother with it.
+- **Algebra 2** - quadratics, for jump arcs and projectile motion.
+- **Calculus 1** - optional. Velocity and acceleration are derivatives, and knowing
+  that makes integration methods obvious rather than arbitrary. Everything here is
+  written so you do not need it.
+
+Links to each are in [Core Mathematics](/core-mathematics/). If a lesson here leans on
+something you have not met, it says so and links to the Core lesson that builds it.
+
+## What You'll Learn
+
+- **Vectors and spatial reasoning** - dot and cross products as tools rather than
+  formulas: facing checks, projections, surface normals, look-at, and turning toward a
+  target along the shortest path.
+- **Matrices and transformations** - what a matrix does to space, homogeneous
+  coordinates, why TRS order matters, and the local-world-view-clip pipeline.
+- **Rotations** - gimbal lock demonstrated rather than described, quaternions built up
+  from axis and angle, and interpolating rotations without taking the long way round.
+- **Time, interpolation and feel** - frame-rate independence, easing, Bézier curves,
+  splines, and moving along a path at constant speed.
+- **Cameras and screen space** - field of view, the frustum, and converting between
+  screen pixels and world rays for picking and aiming.
+- **Geometry and collision** - rays, planes, closest points, bounding volumes,
+  intersection tests, and resolving a collision once you have found one.
+- **Physics integration** - forces, semi-implicit Euler, and the fixed timestep.
+
+It ends with a **capstone**: a third-person character controller and camera, assembled
+from the pieces, with each piece traced back to the lesson that built it.
+
+## How to Get the Most Out of This Track
+
+**Play with the figures.** Where a slider exists, the slider is the lesson. Reading
+that a dot product goes negative behind you is worth less than sweeping a vector past
+90 degrees and watching the sign flip.
+
+**Build the small thing immediately.** Every lesson has something you can implement in
+under twenty lines. A working `look_at` you wrote yourself teaches more than a chapter
+about cross products.
+
+**Trust your eyes for bugs and the math for correctness.** Games are unusually
+forgiving: a wrong sign is visible instantly because the character walks backwards. Use
+that. But when something almost works, go back to the math rather than adding another
+minus sign until it looks right.
+
+:::note[You've Got This]
+Most game math is a handful of ideas reused constantly. Dot product, cross product,
+matrix multiply, lerp - that short list carries an enormous fraction of everything a
+game does, and none of it is harder than the trigonometry you have already met. The
+hard part was never the math; it was that nobody told you which parts mattered or why.
+That is what this track is for.
+:::

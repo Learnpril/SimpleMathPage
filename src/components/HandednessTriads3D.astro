@@ -1,0 +1,262 @@
+---
+/**
+ * HandednessTriads3D - the axis conventions of three tools side by side, in 3D.
+ *
+ * This is the figure the whole transform half of the track leans on. Godot, Unity and
+ * Blender disagree about which way is up and which way is forward, and one of them is
+ * left-handed, so the same maths produces different signs in each. Reading that off a
+ * table is much harder than looking at it.
+ *
+ * Forward arrows are drawn from each tool's documented convention:
+ *   Godot 4  - right-handed, +Y up, -Z forward
+ *   Unity    - left-handed,  +Y up, +Z forward
+ *   Blender  - right-handed, +Z up, -Y forward
+ */
+const tools = [
+  { name: "Godot 4", hand: "right-handed", up: "+Y", fwd: "-Z" },
+  { name: "Unity", hand: "left-handed", up: "+Y", fwd: "+Z" },
+  { name: "Blender", hand: "right-handed", up: "+Z", fwd: "-Y" },
+];
+---
+
+<figure
+  class="hdt"
+  role="img"
+  aria-label={`Three axis triads shown in 3D, one per tool. ${tools
+    .map((t) => `${t.name}: ${t.hand}, ${t.up} is up, ${t.fwd} is forward`)
+    .join(". ")}. X is red, Y is green, Z is blue, and the white arrow marks each tool's forward direction.`}
+>
+  <div class="hdt-canvas" data-hdt3d></div>
+  <div class="hdt-hint">Drag to rotate &middot; Scroll/Pinch to zoom</div>
+  <div class="hdt-legend">
+    <span class="hdt-key hdt-x">X</span>
+    <span class="hdt-key hdt-y">Y</span>
+    <span class="hdt-key hdt-z">Z</span>
+    <span class="hdt-key hdt-f">forward</span>
+  </div>
+  <figcaption class="hdt-cap">
+    The same three axes, three different agreements about what they mean. Godot and
+    Blender are <strong>right-handed</strong>; Unity is <strong>left-handed</strong>,
+    so a cross product that points up in Godot points down in Unity. Blender stands
+    <strong>Z up</strong> while both engines use <strong>Y up</strong>, which is why
+    exported models arrive lying on their side.
+  </figcaption>
+</figure>
+
+<script>
+  import * as THREE from "three";
+  import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+
+  type Triad = {
+    name: string;
+    /** Signed axis for "up" and "forward", as [axisIndex, sign]. */
+    up: [number, number];
+    fwd: [number, number];
+    /** false for a left-handed frame, which flips the drawn Z axis. */
+    right: boolean;
+  };
+
+  const TRIADS: Triad[] = [
+    { name: "Godot 4", up: [1, 1], fwd: [2, -1], right: true },
+    { name: "Unity", up: [1, 1], fwd: [2, 1], right: false },
+    { name: "Blender", up: [2, 1], fwd: [1, -1], right: true },
+  ];
+
+  const AXIS_COLOURS = [0xff7b72, 0x7ee787, 0x58a6ff]; // X, Y, Z
+
+  /** A cylinder plus cone from the origin along `dir`, as one group. */
+  function arrow(dir: THREE.Vector3, len: number, colour: number, thin = false) {
+    const g = new THREE.Group();
+    const r = thin ? 0.014 : 0.022;
+    const headLen = 0.16;
+    const mat = new THREE.MeshPhongMaterial({ color: colour, shininess: 30 });
+
+    const shaft = new THREE.Mesh(
+      new THREE.CylinderGeometry(r, r, len - headLen, 12),
+      mat,
+    );
+    shaft.position.y = (len - headLen) / 2;
+    const head = new THREE.Mesh(
+      new THREE.ConeGeometry(r * 2.6, headLen, 14),
+      mat,
+    );
+    head.position.y = len - headLen / 2;
+    g.add(shaft, head);
+
+    // Cylinders are built along +Y, so rotate +Y onto the requested direction.
+    const q = new THREE.Quaternion().setFromUnitVectors(
+      new THREE.Vector3(0, 1, 0),
+      dir.clone().normalize(),
+    );
+    g.quaternion.copy(q);
+    return g;
+  }
+
+  function unit(axis: number, sign: number) {
+    const v = new THREE.Vector3();
+    v.setComponent(axis, sign);
+    return v;
+  }
+
+  function buildTriad(t: Triad) {
+    const g = new THREE.Group();
+
+    // The three coordinate axes. A left-handed frame is drawn with Z reversed,
+    // which is exactly what "left-handed" means for the picture.
+    for (let a = 0; a < 3; a++) {
+      const sign = a === 2 && !t.right ? -1 : 1;
+      g.add(arrow(unit(a, sign), 1.0, AXIS_COLOURS[a]));
+      g.add(arrow(unit(a, -sign), 0.34, AXIS_COLOURS[a], true));
+    }
+
+    // The tool's forward direction, drawn thicker and pale so it reads as an
+    // annotation on top of the axes rather than a fourth axis.
+    const fwdDir = unit(t.fwd[0], t.fwd[1]);
+    const fwd = arrow(fwdDir, 1.35, 0xffffff);
+    g.add(fwd);
+
+    // A small ground quad on the plane the tool treats as the floor, i.e. the plane
+    // perpendicular to its up axis.
+    const plane = new THREE.Mesh(
+      new THREE.PlaneGeometry(1.7, 1.7),
+      new THREE.MeshBasicMaterial({
+        color: 0x39d3c3,
+        transparent: true,
+        opacity: 0.07,
+        side: THREE.DoubleSide,
+      }),
+    );
+    if (t.up[0] === 1) plane.rotation.x = -Math.PI / 2; // floor is XZ
+    else if (t.up[0] === 2) plane.rotation.x = 0; // floor is XY
+    g.add(plane);
+
+    return g;
+  }
+
+  function initScene(container: HTMLElement) {
+    const width = Math.min(container.clientWidth, 620);
+    const height = 300;
+    const isDark = document.documentElement.dataset.theme !== "light";
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(isDark ? 0x121212 : 0xf8f9fa);
+
+    const camera = new THREE.PerspectiveCamera(40, width / height, 0.1, 200);
+    camera.position.set(2.6, 2.4, 6.4);
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(width, height);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    container.appendChild(renderer.domElement);
+
+    const root = new THREE.Group();
+    scene.add(root);
+
+    const spacing = 2.7;
+    const groups: THREE.Group[] = [];
+    TRIADS.forEach((t, i) => {
+      const g = buildTriad(t);
+      g.position.x = (i - 1) * spacing;
+      root.add(g);
+      groups.push(g);
+    });
+
+    scene.add(new THREE.AmbientLight(0xffffff, 0.85));
+    const dl = new THREE.DirectionalLight(0xffffff, 0.5);
+    dl.position.set(4, 6, 6);
+    scene.add(dl);
+
+    const controls = new OrbitControls(camera, renderer.domElement);
+    // Damping needs a continuous loop to settle. With reduced motion there is no loop,
+    // so damping would leave the camera drifting to a stop that never gets drawn.
+    controls.enableDamping = !reduced;
+    controls.dampingFactor = 0.08;
+    controls.minDistance = 4;
+    controls.maxDistance = 16;
+
+    const clock = new THREE.Clock();
+    let animId = 0;
+
+    function render() {
+      controls.update();
+      renderer.render(scene, camera);
+    }
+
+    function animate() {
+      animId = requestAnimationFrame(animate);
+      const t = clock.getElapsedTime();
+      groups.forEach((g) => {
+        g.rotation.y = t * 0.25;
+      });
+      render();
+    }
+
+    if (reduced) {
+      // No autoplaying spin. Orbit still works, so the reader keeps full control.
+      controls.addEventListener("change", render);
+      render();
+    } else {
+      animate();
+    }
+
+    return () => {
+      if (animId) cancelAnimationFrame(animId);
+      controls.dispose();
+      renderer.dispose();
+    };
+  }
+
+  const teardowns = new Map<HTMLElement, () => void>();
+
+  function setup() {
+    document.querySelectorAll<HTMLElement>("[data-hdt3d]").forEach((el) => {
+      if (el.querySelector("canvas")) return;
+      const obs = new IntersectionObserver(
+        (entries) => {
+          if (entries[0].isIntersecting) {
+            obs.disconnect();
+            teardowns.set(el, initScene(el));
+          }
+        },
+        { threshold: 0.05 },
+      );
+      obs.observe(el);
+    });
+  }
+
+  document.addEventListener("astro:before-swap", () => {
+    teardowns.forEach((fn) => fn());
+    teardowns.clear();
+  });
+
+  setup();
+  document.addEventListener("astro:page-load", setup);
+</script>
+
+<style>
+  .hdt { display: flex; flex-direction: column; align-items: center; margin: 1.5rem 0; }
+  .hdt-canvas { width: 100%; max-width: 620px; min-height: 300px; border-radius: 8px; overflow: hidden; }
+  .hdt-canvas canvas { border-radius: 8px; }
+  .hdt-hint, .hdt-legend {
+    font-family: 'Libre Baskerville', Georgia, serif; font-size: 0.8rem; color: #9198a1;
+    margin-top: 0.4rem;
+  }
+  .hdt-legend { display: flex; gap: 1rem; }
+  .hdt-key { font-weight: 700; }
+  .hdt-x { color: #ff7b72; }
+  .hdt-y { color: #7ee787; }
+  .hdt-z { color: #58a6ff; }
+  .hdt-f { color: #e6edf3; }
+  .hdt-cap {
+    font-family: 'Libre Baskerville', Georgia, serif; font-size: 0.85rem; color: #9198a1;
+    font-style: italic; text-align: center; max-width: 560px; margin-top: 0.5rem; line-height: 1.5;
+  }
+  :global([data-theme="light"]) .hdt-hint,
+  :global([data-theme="light"]) .hdt-legend,
+  :global([data-theme="light"]) .hdt-cap { color: #57606a; }
+  :global([data-theme="light"]) .hdt-f { color: #1f2328; }
+  :global([data-theme="light"]) .hdt-x { color: #b3261e; }
+  :global([data-theme="light"]) .hdt-y { color: #116329; }
+  :global([data-theme="light"]) .hdt-z { color: #0550ae; }
+</style>

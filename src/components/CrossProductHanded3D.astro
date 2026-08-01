@@ -1,0 +1,263 @@
+---
+/**
+ * CrossProductHanded3D - the cross product in 3D, and the same numbers in a
+ * left-handed frame pointing the other way.
+ *
+ * Two scenes side by side. Both compute a x b from identical component arithmetic; the
+ * right-hand scene is drawn in a mirrored frame, which is what "left-handed" means.
+ * The result visibly points the opposite way, which is the fact that breaks ported
+ * Unity code in Godot and vice versa.
+ *
+ * Named CrossProductHanded3D because CrossProduct3D already exists in the Calculus 3
+ * section and does a different job.
+ */
+const a = { x: 1.1, y: 0, z: 0 };
+const b = { x: 0.35, y: 0.95, z: 0 };
+
+// Computed here so the caption and the mesh cannot disagree.
+const cross = {
+  x: a.y * b.z - a.z * b.y,
+  y: a.z * b.x - a.x * b.z,
+  z: a.x * b.y - a.y * b.x,
+};
+const crossLen = Math.hypot(cross.x, cross.y, cross.z);
+const dotAB = a.x * b.x + a.y * b.y + a.z * b.z;
+const lenA = Math.hypot(a.x, a.y, a.z);
+const lenB = Math.hypot(b.x, b.y, b.z);
+// |a x b| = |a||b| sin t, so the parallelogram area is the magnitude.
+const sinT = crossLen / (lenA * lenB);
+const angDeg = (Math.asin(Math.min(1, Math.max(-1, sinT))) * 180) / Math.PI;
+---
+
+<figure
+  class="cph"
+  role="img"
+  aria-label={`Two 3D scenes side by side. In each, vector a points along x and vector b is rotated ${angDeg.toFixed(
+    1,
+  )} degrees from it, with the shaded parallelogram they span. The cross product a cross b has magnitude ${crossLen.toFixed(
+    3,
+  )}, equal to the area of that parallelogram, and points perpendicular to both. In the right-handed frame on the left it points up; in the left-handed frame on the right the identical arithmetic points down.`}
+>
+  <div class="cph-canvas" data-cph3d></div>
+  <div class="cph-hint">Drag to rotate &middot; Scroll/Pinch to zoom</div>
+  <div class="cph-labels">
+    <span class="cph-tag cph-left">right-handed (Godot, Blender)</span>
+    <span class="cph-tag cph-right">left-handed (Unity, Unreal)</span>
+  </div>
+  <div class="cph-readout">
+    <span><strong>a &times; b</strong> = ({cross.x.toFixed(2)}, {cross.y.toFixed(2)}, {cross.z.toFixed(2)})</span>
+    <span>|a &times; b| = {crossLen.toFixed(3)}</span>
+    <span>= area of the parallelogram</span>
+  </div>
+  <figcaption class="cph-cap">
+    Identical arithmetic, opposite results. The magnitude
+    <strong>{crossLen.toFixed(3)}</strong> is the area of the shaded parallelogram in
+    both scenes, and in both the result is perpendicular to <strong>a</strong> and
+    <strong>b</strong>. But <em>which</em> perpendicular depends on the handedness of
+    the coordinate system, so a "which side am I on" test ported between engines
+    answers backwards until you account for it.
+  </figcaption>
+</figure>
+
+<script>
+  import * as THREE from "three";
+  import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+
+  const A = new THREE.Vector3(1.1, 0, 0);
+  const B = new THREE.Vector3(0.35, 0.95, 0);
+  const C = new THREE.Vector3().crossVectors(A, B);
+
+  function arrow(dir: THREE.Vector3, colour: number, thickness = 0.024) {
+    const g = new THREE.Group();
+    const len = dir.length();
+    if (len < 1e-6) return g;
+    const headLen = Math.min(0.18, len * 0.32);
+    const mat = new THREE.MeshPhongMaterial({ color: colour, shininess: 30 });
+    const shaft = new THREE.Mesh(
+      new THREE.CylinderGeometry(thickness, thickness, len - headLen, 14),
+      mat,
+    );
+    shaft.position.y = (len - headLen) / 2;
+    const head = new THREE.Mesh(
+      new THREE.ConeGeometry(thickness * 2.7, headLen, 16),
+      mat,
+    );
+    head.position.y = len - headLen / 2;
+    g.add(shaft, head);
+    g.quaternion.setFromUnitVectors(
+      new THREE.Vector3(0, 1, 0),
+      dir.clone().normalize(),
+    );
+    return g;
+  }
+
+  /** The parallelogram spanned by a and b, whose area is |a x b|. */
+  function parallelogram(a: THREE.Vector3, b: THREE.Vector3, colour: number) {
+    const p0 = new THREE.Vector3(0, 0, 0);
+    const p1 = a.clone();
+    const p2 = a.clone().add(b);
+    const p3 = b.clone();
+    const geo = new THREE.BufferGeometry();
+    geo.setAttribute(
+      "position",
+      new THREE.Float32BufferAttribute(
+        [
+          p0.x, p0.y, p0.z, p1.x, p1.y, p1.z, p2.x, p2.y, p2.z,
+          p0.x, p0.y, p0.z, p2.x, p2.y, p2.z, p3.x, p3.y, p3.z,
+        ],
+        3,
+      ),
+    );
+    geo.computeVertexNormals();
+    return new THREE.Mesh(
+      geo,
+      new THREE.MeshBasicMaterial({
+        color: colour,
+        transparent: true,
+        opacity: 0.16,
+        side: THREE.DoubleSide,
+      }),
+    );
+  }
+
+  function buildScene(mirrored: boolean) {
+    const g = new THREE.Group();
+
+    // Faint coordinate axes for orientation.
+    const axes: [THREE.Vector3, number][] = [
+      [new THREE.Vector3(1.5, 0, 0), 0xff7b72],
+      [new THREE.Vector3(0, 1.5, 0), 0x7ee787],
+      [new THREE.Vector3(0, 0, 1.5), 0x58a6ff],
+    ];
+    axes.forEach(([d, c]) => g.add(arrow(d, c, 0.008)));
+
+    g.add(arrow(A, 0x9198a1));
+    g.add(arrow(B, 0x58a6ff));
+    g.add(arrow(C, 0xf0883e, 0.03));
+    g.add(parallelogram(A, B, 0x39d3c3));
+
+    // A left-handed frame is the mirror image of a right-handed one. Scaling z by -1
+    // is exactly that mirror, and it is why the same components point elsewhere.
+    if (mirrored) g.scale.z = -1;
+    return g;
+  }
+
+  function initScene(container: HTMLElement) {
+    const width = Math.min(container.clientWidth, 620);
+    const height = 300;
+    const isDark = document.documentElement.dataset.theme !== "light";
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(isDark ? 0x121212 : 0xf8f9fa);
+
+    const camera = new THREE.PerspectiveCamera(42, width / height, 0.1, 200);
+    camera.position.set(1.4, 2.2, 5.6);
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(width, height);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    container.appendChild(renderer.domElement);
+
+    const root = new THREE.Group();
+    scene.add(root);
+
+    const left = buildScene(false);
+    left.position.x = -1.5;
+    const right = buildScene(true);
+    right.position.x = 1.5;
+    root.add(left, right);
+
+    scene.add(new THREE.AmbientLight(0xffffff, 0.88));
+    const dl = new THREE.DirectionalLight(0xffffff, 0.45);
+    dl.position.set(3, 6, 6);
+    scene.add(dl);
+
+    const controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = !reduced;
+    controls.dampingFactor = 0.08;
+    controls.minDistance = 3.4;
+    controls.maxDistance = 14;
+
+    const clock = new THREE.Clock();
+    let animId = 0;
+
+    function render() {
+      controls.update();
+      renderer.render(scene, camera);
+    }
+
+    function animate() {
+      animId = requestAnimationFrame(animate);
+      const t = clock.getElapsedTime();
+      root.rotation.y = Math.sin(t * 0.22) * 0.45;
+      render();
+    }
+
+    if (reduced) {
+      controls.addEventListener("change", render);
+      render();
+    } else {
+      animate();
+    }
+
+    return () => {
+      if (animId) cancelAnimationFrame(animId);
+      controls.dispose();
+      renderer.dispose();
+    };
+  }
+
+  const teardowns = new Map<HTMLElement, () => void>();
+
+  function setup() {
+    document.querySelectorAll<HTMLElement>("[data-cph3d]").forEach((el) => {
+      if (el.querySelector("canvas")) return;
+      const obs = new IntersectionObserver(
+        (entries) => {
+          if (entries[0].isIntersecting) {
+            obs.disconnect();
+            teardowns.set(el, initScene(el));
+          }
+        },
+        { threshold: 0.05 },
+      );
+      obs.observe(el);
+    });
+  }
+
+  document.addEventListener("astro:before-swap", () => {
+    teardowns.forEach((fn) => fn());
+    teardowns.clear();
+  });
+
+  setup();
+  document.addEventListener("astro:page-load", setup);
+</script>
+
+<style>
+  .cph { display: flex; flex-direction: column; align-items: center; margin: 1.5rem 0; }
+  .cph-canvas { width: 100%; max-width: 620px; min-height: 300px; border-radius: 8px; overflow: hidden; }
+  .cph-canvas canvas { border-radius: 8px; }
+  .cph-hint, .cph-labels, .cph-readout {
+    font-family: 'Libre Baskerville', Georgia, serif; font-size: 0.8rem; color: #9198a1;
+    margin-top: 0.4rem;
+  }
+  .cph-labels { display: flex; gap: 1.4rem; flex-wrap: wrap; justify-content: center; }
+  .cph-tag { font-weight: 700; }
+  .cph-left { color: #7ee787; }
+  .cph-right { color: #ff7b72; }
+  .cph-readout { display: flex; gap: 1.1rem; flex-wrap: wrap; justify-content: center; }
+  .cph-readout strong { color: #f0883e; }
+  .cph-cap {
+    font-family: 'Libre Baskerville', Georgia, serif; font-size: 0.85rem; color: #9198a1;
+    font-style: italic; text-align: center; max-width: 560px; margin-top: 0.5rem; line-height: 1.5;
+  }
+  :global([data-theme="light"]) .cph-hint,
+  :global([data-theme="light"]) .cph-labels,
+  :global([data-theme="light"]) .cph-readout,
+  :global([data-theme="light"]) .cph-cap { color: #57606a; }
+  :global([data-theme="light"]) .cph-left { color: #116329; }
+  :global([data-theme="light"]) .cph-right { color: #b3261e; }
+  :global([data-theme="light"]) .cph-readout strong { color: #c05010; }
+</style>

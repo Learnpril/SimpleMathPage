@@ -1,0 +1,239 @@
+---
+/**
+ * VectorLengthDial - scaling a vector changes its length but not its direction, and
+ * normalizing throws the length away entirely.
+ *
+ * The base vector is (3, 4) because its length is exactly 5, so the numbers stay
+ * readable while the slider moves. The normalized components stay pinned at
+ * (0.600, 0.800) for every positive scale and flip sign for negative ones, which is
+ * the whole point and is much clearer swept than stated.
+ *
+ * Readouts live in a right-hand column that the arrow never reaches, so no label can
+ * be struck through. Absolute coordinates only; the auditor ignores transforms.
+ */
+const BASE = { x: 3, y: 4 };
+const baseLen = Math.hypot(BASE.x, BASE.y); // exactly 5
+const ox = 170;
+const oy = 230;
+const s = 18;
+const DEFAULT_K = 1;
+
+const px = (u: number) => ox + u * s;
+const py = (v: number) => oy - v * s;
+
+const init = {
+  x: BASE.x * DEFAULT_K,
+  y: BASE.y * DEFAULT_K,
+};
+const initLen = baseLen * Math.abs(DEFAULT_K);
+---
+
+<figure
+  class="vld"
+  role="img"
+  aria-label={`An interactive figure. A vector starting at the origin with base components 3 and 4, whose length is exactly ${baseLen}. A slider scales the vector, and the figure reports its components, its length, its squared length, and its normalized components. The normalized components stay at 0.600 and 0.800 for any positive scale, showing that normalizing keeps direction and discards length.`}
+>
+  <svg viewBox="0 0 540 320" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <marker id="vld-head" markerWidth="9" markerHeight="9" refX="7.5" refY="4.5" orient="auto">
+        <path d="M0,0 L9,4.5 L0,9 Z" fill="#39d3c3" />
+      </marker>
+      <marker id="vld-uhead" markerWidth="9" markerHeight="9" refX="7.5" refY="4.5" orient="auto">
+        <path d="M0,0 L9,4.5 L0,9 Z" fill="#f0883e" />
+      </marker>
+    </defs>
+
+    <line x1="60" y1={oy} x2="300" y2={oy} class="vld-axis" />
+    <line x1={ox} y1="20" x2={ox} y2="310" class="vld-axis" />
+    {
+      [-4, -2, 2, 4, 6].map((i) => (
+        <line x1={px(i)} y1={oy - 4} x2={px(i)} y2={oy + 4} class="vld-tick" />
+      ))
+    }
+    {
+      [-2, 2, 4, 6, 8].map((j) => (
+        <line x1={ox - 4} y1={py(j)} x2={ox + 4} y2={py(j)} class="vld-tick" />
+      ))
+    }
+
+    {/* The unit circle: the normalized vector always lands on it. */}
+    <circle cx={ox} cy={oy} r={s} class="vld-unit" />
+
+    <line
+      class="vld-vec"
+      data-vec
+      x1={ox}
+      y1={oy}
+      x2={px(init.x)}
+      y2={py(init.y)}
+      marker-end="url(#vld-head)"
+    />
+    <line
+      class="vld-unitvec"
+      data-unitvec
+      x1={ox}
+      y1={oy}
+      x2={px(BASE.x / baseLen)}
+      y2={py(BASE.y / baseLen)}
+      marker-end="url(#vld-uhead)"
+    />
+
+    <text x="330" y="44" class="vld-rowlabel">components</text>
+    <text x="525" y="44" class="vld-value" data-comp text-anchor="end">(3.00, 4.00)</text>
+    <text x="330" y="86" class="vld-rowlabel">length</text>
+    <text x="525" y="86" class="vld-value vld-hi" data-len text-anchor="end">5.000</text>
+    <text x="330" y="128" class="vld-rowlabel">length squared</text>
+    <text x="525" y="128" class="vld-value" data-len2 text-anchor="end">25.000</text>
+    <line x1="330" y1="150" x2="525" y2="150" class="vld-divider" />
+    <text x="330" y="176" class="vld-rowlabel">normalized</text>
+    <text x="525" y="176" class="vld-value vld-orange" data-norm text-anchor="end">(0.600, 0.800)</text>
+    <text x="330" y="218" class="vld-rowlabel">its length</text>
+    <text x="525" y="218" class="vld-value vld-orange" data-normlen text-anchor="end">1.000</text>
+
+    <text x="330" y="262" class="vld-foot">the orange arrow never</text>
+    <text x="330" y="278" class="vld-foot">changes length</text>
+    <text x="330" y="300" class="vld-warn" data-warn></text>
+  </svg>
+
+  <div class="vld-controls">
+    <label class="vld-label" for="vld-scale">Scale</label>
+    <input
+      id="vld-scale"
+      class="vld-range"
+      type="range"
+      min="-1"
+      max="2"
+      step="0.02"
+      value={DEFAULT_K}
+      data-scale-input
+    />
+    <output class="vld-out" data-out>&times;1.00</output>
+  </div>
+
+  <figcaption class="vld-cap">
+    Scaling changes length, not direction. The <strong>orange</strong> arrow is the
+    normalized version and it always has length exactly 1, so it always sits on the
+    circle. Drag past zero and the direction reverses - normalizing keeps whichever
+    way the vector points, it does not keep "which way is positive".
+  </figcaption>
+</figure>
+
+<script>
+  const BASE = { x: 3, y: 4 };
+  const OX = 170;
+  const OY = 230;
+  const S = 18;
+
+  function wire(fig: HTMLElement) {
+    const input = fig.querySelector<HTMLInputElement>("[data-scale-input]");
+    if (!input || input.dataset.wired) return;
+    input.dataset.wired = "true";
+
+    const vec = fig.querySelector<SVGLineElement>("[data-vec]");
+    const uvec = fig.querySelector<SVGLineElement>("[data-unitvec]");
+    const comp = fig.querySelector<SVGTextElement>("[data-comp]");
+    const len = fig.querySelector<SVGTextElement>("[data-len]");
+    const len2 = fig.querySelector<SVGTextElement>("[data-len2]");
+    const norm = fig.querySelector<SVGTextElement>("[data-norm]");
+    const normLen = fig.querySelector<SVGTextElement>("[data-normlen]");
+    const warn = fig.querySelector<SVGTextElement>("[data-warn]");
+    const out = fig.querySelector<HTMLOutputElement>("[data-out]");
+
+    function update() {
+      const k = parseFloat(input!.value);
+      const x = BASE.x * k;
+      const y = BASE.y * k;
+      const L = Math.hypot(x, y);
+
+      vec!.setAttribute("x2", (OX + x * S).toFixed(2));
+      vec!.setAttribute("y2", (OY - y * S).toFixed(2));
+
+      comp!.textContent = `(${x.toFixed(2)}, ${y.toFixed(2)})`;
+      len!.textContent = L.toFixed(3);
+      // Computed from components, not from L, so the squared value is independently
+      // derived rather than a restatement.
+      len2!.textContent = (x * x + y * y).toFixed(3);
+
+      // Guarding the zero-length case is the practical lesson here: dividing by a
+      // length of zero yields NaN and silently poisons everything downstream.
+      const EPS = 1e-6;
+      if (L < EPS) {
+        norm!.textContent = "undefined";
+        normLen!.textContent = "-";
+        warn!.textContent = "length 0: cannot normalize";
+        uvec!.setAttribute("x2", OX.toFixed(2));
+        uvec!.setAttribute("y2", OY.toFixed(2));
+      } else {
+        const nx = x / L;
+        const ny = y / L;
+        norm!.textContent = `(${nx.toFixed(3)}, ${ny.toFixed(3)})`;
+        normLen!.textContent = Math.hypot(nx, ny).toFixed(3);
+        warn!.textContent = "";
+        uvec!.setAttribute("x2", (OX + nx * S).toFixed(2));
+        uvec!.setAttribute("y2", (OY - ny * S).toFixed(2));
+      }
+
+      out!.textContent = `\u00D7${k.toFixed(2)}`;
+    }
+
+    input.addEventListener("input", update);
+    update();
+  }
+
+  function setup() {
+    document.querySelectorAll<HTMLElement>(".vld").forEach(wire);
+  }
+
+  setup();
+  document.addEventListener("astro:page-load", setup);
+</script>
+
+<style>
+  .vld { display: flex; flex-direction: column; align-items: center; margin: 1.5rem 0; }
+  .vld svg { width: 100%; max-width: 100%; height: auto; display: block; }
+  .vld-axis { stroke: #6e7681; stroke-width: 1.3; }
+  .vld-tick { stroke: #444c56; stroke-width: 1; }
+  .vld-unit { fill: none; stroke: #30363d; stroke-width: 1.2; stroke-dasharray: 3 3; }
+  .vld-vec { stroke: #39d3c3; stroke-width: 2.6; }
+  .vld-unitvec { stroke: #f0883e; stroke-width: 3.2; }
+  .vld-divider { stroke: #30363d; stroke-width: 1; }
+  .vld-rowlabel, .vld-value, .vld-foot, .vld-warn {
+    font-family: 'Libre Baskerville', Georgia, serif;
+  }
+  .vld-rowlabel { font-size: 12px; fill: #9198a1; }
+  .vld-value { font-size: 15px; font-weight: 700; fill: #e6edf3; }
+  .vld-hi { fill: #39d3c3; }
+  .vld-orange { fill: #f0883e; }
+  .vld-foot { font-size: 10.5px; font-style: italic; fill: #6e7681; }
+  .vld-warn { font-size: 11px; font-weight: 700; fill: #ff7b72; }
+
+  .vld-controls {
+    display: flex; align-items: center; gap: 0.75rem; margin-top: 0.5rem;
+    width: 100%; max-width: 420px;
+  }
+  .vld-label {
+    font-family: 'Libre Baskerville', Georgia, serif; font-size: 0.85rem;
+    font-weight: 700; color: #9198a1;
+  }
+  .vld-range { flex: 1; accent-color: #39d3c3; }
+  .vld-out {
+    font-family: 'Libre Baskerville', Georgia, serif; font-size: 0.85rem;
+    font-weight: 700; color: #39d3c3; min-width: 4.2rem; text-align: right;
+  }
+  .vld-cap {
+    font-family: 'Libre Baskerville', Georgia, serif; font-size: 0.85rem; color: #9198a1;
+    font-style: italic; text-align: center; max-width: 520px; margin-top: 0.6rem;
+    line-height: 1.5;
+  }
+  :global([data-theme="light"]) .vld-axis { stroke: #57606a; }
+  :global([data-theme="light"]) .vld-tick, :global([data-theme="light"]) .vld-unit,
+  :global([data-theme="light"]) .vld-divider { stroke: #d0d7de; }
+  :global([data-theme="light"]) .vld-vec { stroke: #0d7d72; }
+  :global([data-theme="light"]) .vld-unitvec { stroke: #c05010; }
+  :global([data-theme="light"]) .vld-value { fill: #1f2328; }
+  :global([data-theme="light"]) .vld-hi { fill: #0d7d72; }
+  :global([data-theme="light"]) .vld-orange { fill: #c05010; }
+  :global([data-theme="light"]) .vld-rowlabel { fill: #57606a; }
+  :global([data-theme="light"]) .vld-cap, :global([data-theme="light"]) .vld-label { color: #57606a; }
+  :global([data-theme="light"]) .vld-out { color: #0d7d72; }
+</style>

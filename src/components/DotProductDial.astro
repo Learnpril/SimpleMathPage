@@ -1,0 +1,236 @@
+---
+/**
+ * DotProductDial - the dot product as a facing test and as a projection.
+ *
+ * A fixed reference vector pointing right, and a second vector the reader sweeps
+ * around it. Three things move together: the dot value, the angle, and the length of
+ * the projection onto the reference. The sign flip at 90 degrees is the single most
+ * useful fact about the dot product in gameplay code, and watching it cross zero is
+ * worth more than reading that it does.
+ *
+ * The projection is drawn as a bar along the reference axis so "component along" is
+ * literal rather than metaphorical.
+ */
+const ox = 190;
+const oy = 175;
+const R = 108; // both vectors are drawn this long, i.e. both are unit vectors scaled
+const DEFAULT_DEG = 50;
+---
+
+<figure
+  class="dpd"
+  role="img"
+  aria-label="An interactive figure. A fixed unit vector points right and a second unit vector sweeps around it under slider control. The figure reports the dot product, the angle between them, and the length of the projection of the second vector onto the first. The dot product is positive when the angle is under 90 degrees, zero at exactly 90, and negative beyond, which is why the dot product works as a test for whether something is in front of you."
+>
+  <svg viewBox="0 0 540 350" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <marker id="dpd-a" markerWidth="9" markerHeight="9" refX="7.5" refY="4.5" orient="auto">
+        <path d="M0,0 L9,4.5 L0,9 Z" fill="#9198a1" />
+      </marker>
+      <marker id="dpd-b" markerWidth="9" markerHeight="9" refX="7.5" refY="4.5" orient="auto">
+        <path d="M0,0 L9,4.5 L0,9 Z" fill="#58a6ff" />
+      </marker>
+    </defs>
+
+    <circle cx={ox} cy={oy} r={R} class="dpd-circle" />
+    {/* The perpendicular line: the boundary where the dot product changes sign. */}
+    <line x1={ox} y1={oy - R - 14} x2={ox} y2={oy + R + 14} class="dpd-zero" />
+    <text x={ox + 6} y={oy - R - 20} class="dpd-zerolabel">dot = 0 here</text>
+
+    {/* Projection bar, drawn along the reference direction. */}
+    <line class="dpd-proj" data-proj x1={ox} y1={oy} x2={ox} y2={oy} />
+    <line class="dpd-drop" data-drop x1={ox} y1={oy} x2={ox} y2={oy} />
+
+    <line
+      x1={ox}
+      y1={oy}
+      x2={ox + R}
+      y2={oy}
+      class="dpd-ref"
+      marker-end="url(#dpd-a)"
+    />
+    <text x={ox + R + 12} y={oy + 16} class="dpd-veclabel dpd-grey">a</text>
+
+    <line class="dpd-vec" data-vec x1={ox} y1={oy} x2={ox + R} y2={oy} marker-end="url(#dpd-b)" />
+    <text class="dpd-veclabel dpd-blue" data-veclabel x={ox + R + 12} y={oy - 8}>b</text>
+
+    <text x="350" y="42" class="dpd-rowlabel">angle</text>
+    <text x="525" y="42" class="dpd-value" data-ang text-anchor="end">50.0&#176;</text>
+    <text x="350" y="84" class="dpd-rowlabel">a &middot; b</text>
+    <text x="525" y="84" class="dpd-value dpd-big" data-dot text-anchor="end">0.643</text>
+    <text x="350" y="126" class="dpd-rowlabel">projection length</text>
+    <text x="525" y="126" class="dpd-value dpd-teal" data-proj-len text-anchor="end">0.643</text>
+    <line x1="350" y1="148" x2="525" y2="148" class="dpd-divider" />
+    <text x="350" y="174" class="dpd-verdict" data-verdict>in front</text>
+    <text x="350" y="196" class="dpd-foot" data-foot>angle under 90&#176;</text>
+
+    <text x="350" y="240" class="dpd-foot">both vectors are unit</text>
+    <text x="350" y="256" class="dpd-foot">length, so a &middot; b is</text>
+    <text x="350" y="272" class="dpd-foot">exactly cos of the angle</text>
+  </svg>
+
+  <div class="dpd-controls">
+    <label class="dpd-label" for="dpd-angle">Angle of <strong>b</strong></label>
+    <input
+      id="dpd-angle"
+      class="dpd-range"
+      type="range"
+      min="0"
+      max="360"
+      step="1"
+      value={DEFAULT_DEG}
+      data-angle-input
+    />
+    <output class="dpd-out" data-out>50&#176;</output>
+  </div>
+
+  <figcaption class="dpd-cap">
+    Sweep <strong>b</strong> and watch the sign. Positive means the two point broadly
+    the same way, zero means exactly perpendicular, negative means broadly opposite.
+    The <strong>teal bar</strong> is how much of <strong>b</strong> lies along
+    <strong>a</strong>, and for unit vectors its signed length is the dot product
+    itself.
+  </figcaption>
+</figure>
+
+<script>
+  const OX = 190;
+  const OY = 175;
+  const R = 108;
+
+  function wire(fig: HTMLElement) {
+    const input = fig.querySelector<HTMLInputElement>("[data-angle-input]");
+    if (!input || input.dataset.wired) return;
+    input.dataset.wired = "true";
+
+    const vec = fig.querySelector<SVGLineElement>("[data-vec]");
+    const label = fig.querySelector<SVGTextElement>("[data-veclabel]");
+    const proj = fig.querySelector<SVGLineElement>("[data-proj]");
+    const drop = fig.querySelector<SVGLineElement>("[data-drop]");
+    const angOut = fig.querySelector<SVGTextElement>("[data-ang]");
+    const dotOut = fig.querySelector<SVGTextElement>("[data-dot]");
+    const projOut = fig.querySelector<SVGTextElement>("[data-proj-len]");
+    const verdict = fig.querySelector<SVGTextElement>("[data-verdict]");
+    const foot = fig.querySelector<SVGTextElement>("[data-foot]");
+    const out = fig.querySelector<HTMLOutputElement>("[data-out]");
+
+    function update() {
+      const deg = parseFloat(input!.value);
+      const rad = (deg * Math.PI) / 180;
+
+      // a is the unit vector (1, 0); b is the unit vector at this angle.
+      const bx = Math.cos(rad);
+      const by = Math.sin(rad);
+      const dot = 1 * bx + 0 * by; // computed as a genuine dot product, not as cos
+
+      const ex = OX + bx * R;
+      const ey = OY - by * R;
+      vec!.setAttribute("x2", ex.toFixed(2));
+      vec!.setAttribute("y2", ey.toFixed(2));
+      label!.setAttribute("x", (OX + bx * (R + 16)).toFixed(2));
+      label!.setAttribute("y", (OY - by * (R + 16) + 5).toFixed(2));
+
+      // Projection of b onto a, which for unit a is just the dot product.
+      proj!.setAttribute("x2", (OX + dot * R).toFixed(2));
+      proj!.setAttribute("y2", OY.toFixed(2));
+      // Dashed drop line from b's tip down to the reference axis.
+      drop!.setAttribute("x1", ex.toFixed(2));
+      drop!.setAttribute("y1", ey.toFixed(2));
+      drop!.setAttribute("x2", (OX + dot * R).toFixed(2));
+      drop!.setAttribute("y2", OY.toFixed(2));
+
+      // The reported angle is the unsigned angle between the vectors, so it folds
+      // back after half a turn: 350 degrees of sweep is 10 degrees of separation.
+      const between = deg <= 180 ? deg : 360 - deg;
+
+      angOut!.textContent = `${between.toFixed(1)}\u00B0`;
+      dotOut!.textContent = dot.toFixed(3);
+      projOut!.textContent = dot.toFixed(3);
+
+      if (Math.abs(dot) < 0.005) {
+        verdict!.textContent = "perpendicular";
+        verdict!.setAttribute("class", "dpd-verdict dpd-zeroed");
+        foot!.textContent = "exactly 90\u00B0";
+      } else if (dot > 0) {
+        verdict!.textContent = "in front";
+        verdict!.setAttribute("class", "dpd-verdict dpd-pos");
+        foot!.textContent = "angle under 90\u00B0";
+      } else {
+        verdict!.textContent = "behind";
+        verdict!.setAttribute("class", "dpd-verdict dpd-neg");
+        foot!.textContent = "angle over 90\u00B0";
+      }
+
+      out!.textContent = `${deg.toFixed(0)}\u00B0`;
+    }
+
+    input.addEventListener("input", update);
+    update();
+  }
+
+  function setup() {
+    document.querySelectorAll<HTMLElement>(".dpd").forEach(wire);
+  }
+
+  setup();
+  document.addEventListener("astro:page-load", setup);
+</script>
+
+<style>
+  .dpd { display: flex; flex-direction: column; align-items: center; margin: 1.5rem 0; }
+  .dpd svg { width: 100%; max-width: 100%; height: auto; display: block; }
+  .dpd-circle { fill: none; stroke: #30363d; stroke-width: 1.2; stroke-dasharray: 3 3; }
+  .dpd-zero { stroke: #6e7681; stroke-width: 1.2; stroke-dasharray: 5 4; }
+  .dpd-ref { stroke: #9198a1; stroke-width: 2.4; }
+  .dpd-vec { stroke: #58a6ff; stroke-width: 2.6; }
+  .dpd-proj { stroke: #39d3c3; stroke-width: 7; opacity: 0.75; }
+  .dpd-drop { stroke: #58a6ff; stroke-width: 1.2; stroke-dasharray: 4 3; opacity: 0.7; }
+  .dpd-divider { stroke: #30363d; stroke-width: 1; }
+  .dpd-rowlabel, .dpd-value, .dpd-foot, .dpd-verdict, .dpd-veclabel, .dpd-zerolabel {
+    font-family: 'Libre Baskerville', Georgia, serif;
+  }
+  .dpd-rowlabel { font-size: 12px; fill: #9198a1; }
+  .dpd-value { font-size: 15px; font-weight: 700; fill: #e6edf3; }
+  .dpd-big { font-size: 19px; }
+  .dpd-teal { fill: #39d3c3; }
+  .dpd-verdict { font-size: 17px; font-weight: 700; fill: #e6edf3; }
+  .dpd-pos { fill: #7ee787; }
+  .dpd-neg { fill: #ff7b72; }
+  .dpd-zeroed { fill: #d2a8ff; }
+  .dpd-foot { font-size: 10.5px; font-style: italic; fill: #6e7681; }
+  .dpd-veclabel { font-size: 15px; font-weight: 700; font-style: italic; }
+  .dpd-grey { fill: #9198a1; }
+  .dpd-blue { fill: #58a6ff; }
+  .dpd-zerolabel { font-size: 10px; fill: #6e7681; }
+
+  .dpd-controls {
+    display: flex; align-items: center; gap: 0.75rem; margin-top: 0.5rem;
+    width: 100%; max-width: 440px;
+  }
+  .dpd-label {
+    font-family: 'Libre Baskerville', Georgia, serif; font-size: 0.85rem; color: #9198a1;
+  }
+  .dpd-range { flex: 1; accent-color: #58a6ff; }
+  .dpd-out {
+    font-family: 'Libre Baskerville', Georgia, serif; font-size: 0.85rem;
+    font-weight: 700; color: #58a6ff; min-width: 3.4rem; text-align: right;
+  }
+  .dpd-cap {
+    font-family: 'Libre Baskerville', Georgia, serif; font-size: 0.85rem; color: #9198a1;
+    font-style: italic; text-align: center; max-width: 520px; margin-top: 0.6rem;
+    line-height: 1.5;
+  }
+  :global([data-theme="light"]) .dpd-circle, :global([data-theme="light"]) .dpd-divider { stroke: #d0d7de; }
+  :global([data-theme="light"]) .dpd-zero, :global([data-theme="light"]) .dpd-ref { stroke: #57606a; }
+  :global([data-theme="light"]) .dpd-vec, :global([data-theme="light"]) .dpd-drop { stroke: #0550ae; }
+  :global([data-theme="light"]) .dpd-proj { stroke: #0d7d72; }
+  :global([data-theme="light"]) .dpd-value, :global([data-theme="light"]) .dpd-verdict { fill: #1f2328; }
+  :global([data-theme="light"]) .dpd-teal { fill: #0d7d72; }
+  :global([data-theme="light"]) .dpd-pos { fill: #116329; }
+  :global([data-theme="light"]) .dpd-neg { fill: #b3261e; }
+  :global([data-theme="light"]) .dpd-zeroed { fill: #6639ba; }
+  :global([data-theme="light"]) .dpd-blue { fill: #0550ae; }
+  :global([data-theme="light"]) .dpd-rowlabel, :global([data-theme="light"]) .dpd-grey { fill: #57606a; }
+  :global([data-theme="light"]) .dpd-cap, :global([data-theme="light"]) .dpd-label { color: #57606a; }
+  :global([data-theme="light"]) .dpd-out { color: #0550ae; }
+</style>

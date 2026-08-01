@@ -1,0 +1,164 @@
+---
+/**
+ * GameDevTopicMap - the seven modules of the Game Development track and what each
+ * one feeds. Laid out as a dependency flow rather than a list, because the ordering
+ * is the argument: time comes before curves, collision response before the capstone.
+ *
+ * Coordinates are absolute. The figure auditor does not apply SVG transforms, so a
+ * translate() here would produce phantom collision reports.
+ */
+const modules = [
+  { n: 1, label: "Vectors", sub: "dot, cross, angles", col: 0, row: 0 },
+  { n: 2, label: "Transforms", sub: "matrices, spaces", col: 1, row: 0 },
+  { n: 3, label: "Rotations", sub: "euler, quaternions", col: 2, row: 0 },
+  { n: 4, label: "Time & Curves", sub: "dt, easing, splines", col: 0, row: 1 },
+  { n: 5, label: "Cameras", sub: "fov, screen space", col: 1, row: 1 },
+  { n: 6, label: "Collision", sub: "tests, response", col: 2, row: 1 },
+  { n: 7, label: "Physics", sub: "forces, timestep", col: 1, row: 2 },
+];
+
+const W = 560;
+const boxW = 150;
+const boxH = 52;
+const gapX = 25;
+const gapY = 58;
+const originX = (W - (3 * boxW + 2 * gapX)) / 2;
+const originY = 16;
+
+const at = (m: { col: number; row: number }) => ({
+  x: originX + m.col * (boxW + gapX),
+  y: originY + m.row * (boxH + gapY),
+});
+
+const placed = modules.map((m) => ({ ...m, ...at(m) }));
+const capY = originY + 3 * (boxH + gapY);
+const H = capY + boxH + 20;
+
+// Every module feeds the capstone; these are the extra ordering constraints worth
+// drawing, as pairs of module numbers.
+const flows = [
+  [1, 2],
+  [2, 3],
+  [1, 4],
+  [2, 5],
+  [1, 6],
+  [4, 7],
+  [6, 7],
+];
+
+const box = (n: number) => placed.find((p) => p.n === n)!;
+---
+
+<figure
+  class="gdtm"
+  role="img"
+  aria-label={`Dependency map of the Game Development track: seven modules. ${placed
+    .map((p) => `Module ${p.n}, ${p.label}: ${p.sub}`)
+    .join(". ")}. Vectors feeds transforms, time and collision. Transforms feeds rotations and cameras. Time and collision both feed physics. All seven feed the capstone character controller.`}
+>
+  <svg viewBox={`0 0 ${W} ${H}`} xmlns="http://www.w3.org/2000/svg">
+    {
+      flows.map(([a, b]) => {
+        const from = box(a);
+        const to = box(b);
+        const x1 = from.x + boxW / 2;
+        const y1 = from.y + boxH;
+        const x2 = to.x + boxW / 2;
+        const y2 = to.y;
+        // Sideways links leave the right edge and enter the left edge instead.
+        const sideways = from.row === to.row;
+        return sideways ? (
+          <line
+            x1={from.x + boxW}
+            y1={from.y + boxH / 2}
+            x2={to.x - 4}
+            y2={to.y + boxH / 2}
+            class="gdtm-flow"
+          />
+        ) : (
+          <path
+            d={`M ${x1} ${y1} C ${x1} ${y1 + 24}, ${x2} ${y2 - 24}, ${x2} ${y2 - 4}`}
+            class="gdtm-flow"
+            fill="none"
+          />
+        );
+      })
+    }
+    {
+      placed.map((p) => (
+        <>
+          <rect
+            x={p.x}
+            y={p.y}
+            width={boxW}
+            height={boxH}
+            rx="6"
+            class={`gdtm-box gdtm-m${p.n}`}
+          />
+          <text x={p.x + 11} y={p.y + 21} class="gdtm-num">
+            {p.n}
+          </text>
+          <text x={p.x + 30} y={p.y + 21} class="gdtm-label">
+            {p.label}
+          </text>
+          <text x={p.x + 30} y={p.y + 38} class="gdtm-sub">
+            {p.sub}
+          </text>
+        </>
+      ))
+    }
+    <rect
+      x={originX}
+      y={capY}
+      width={3 * boxW + 2 * gapX}
+      height={boxH}
+      rx="6"
+      class="gdtm-box gdtm-cap"
+    />
+    <text x={W / 2} y={capY + 22} class="gdtm-caplabel" text-anchor="middle">
+      Capstone
+    </text>
+    <text x={W / 2} y={capY + 39} class="gdtm-sub" text-anchor="middle">
+      third-person character controller + camera
+    </text>
+  </svg>
+  <figcaption class="gdtm-cap-text">
+    The seven modules and what depends on what. <strong>Time</strong> comes before
+    curves and physics because everything after module 3 moves once per frame, and
+    <strong>collision response</strong> comes before the capstone because a character
+    that only detects walls cannot walk along them.
+  </figcaption>
+</figure>
+
+<style>
+  .gdtm { margin: 1.5rem 0; }
+  .gdtm svg { width: 100%; max-width: 100%; height: auto; display: block; }
+  .gdtm-box { fill: none; stroke-width: 1.5; stroke: #39d3c3; }
+  .gdtm-m1, .gdtm-m4 { stroke: #7ee787; }
+  .gdtm-m2, .gdtm-m5 { stroke: #58a6ff; }
+  .gdtm-m3, .gdtm-m6 { stroke: #d2a8ff; }
+  .gdtm-m7 { stroke: #f0883e; }
+  .gdtm-cap { stroke: #39d3c3; stroke-width: 2; }
+  .gdtm-flow { stroke: #6e7681; stroke-width: 1.2; }
+  .gdtm-num, .gdtm-label, .gdtm-sub, .gdtm-caplabel {
+    font-family: 'Libre Baskerville', Georgia, serif;
+  }
+  .gdtm-num { font-size: 15px; font-weight: 700; fill: #6e7681; }
+  .gdtm-label { font-size: 13.5px; font-weight: 700; fill: #e6edf3; }
+  .gdtm-caplabel { font-size: 15px; font-weight: 700; fill: #39d3c3; }
+  .gdtm-sub { font-size: 10.5px; fill: #9198a1; }
+  .gdtm-cap-text {
+    font-family: 'Libre Baskerville', Georgia, serif; font-size: 0.85rem;
+    color: #9198a1; font-style: italic; text-align: center; max-width: 520px;
+    margin: 0.6rem auto 0; line-height: 1.5;
+  }
+  :global([data-theme="light"]) .gdtm-label { fill: #1f2328; }
+  :global([data-theme="light"]) .gdtm-sub { fill: #57606a; }
+  :global([data-theme="light"]) .gdtm-cap-text { color: #57606a; }
+  :global([data-theme="light"]) .gdtm-caplabel { fill: #0d7d72; }
+  :global([data-theme="light"]) .gdtm-box { stroke: #0d7d72; }
+  :global([data-theme="light"]) .gdtm-m1, :global([data-theme="light"]) .gdtm-m4 { stroke: #116329; }
+  :global([data-theme="light"]) .gdtm-m2, :global([data-theme="light"]) .gdtm-m5 { stroke: #0550ae; }
+  :global([data-theme="light"]) .gdtm-m3, :global([data-theme="light"]) .gdtm-m6 { stroke: #6639ba; }
+  :global([data-theme="light"]) .gdtm-m7 { stroke: #c05010; }
+</style>
