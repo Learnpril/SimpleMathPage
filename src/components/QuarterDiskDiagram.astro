@@ -1,6 +1,6 @@
 ---
 /**
- * QuarterDiskDiagram — Shows the quarter-disk in the first quadrant
+ * QuarterDiskDiagram - Shows the quarter-disk in the first quadrant
  * with radius 2, shaded, with r and θ limits labeled clearly outside.
  */
 const w = 380;
@@ -58,7 +58,7 @@ for (let i = 0; i <= 20; i++) {
     <text class="qdd-tick" x={cx + R} y={cy + 20} font-size="12" text-anchor="middle">2</text>
     <text class="qdd-tick" x={cx - 10} y={cy - R + 5} font-size="12" text-anchor="end">2</text>
 
-    {/* Area label — centered in the quarter-disk */}
+    {/* Area label - centered in the quarter-disk */}
     <text class="qdd-area" x={cx + R * 0.25} y={cy - R * 0.5} font-size="14" text-anchor="middle">Area = π</text>
   </svg>
   <div class="qdd-legend">

@@ -1,6 +1,6 @@
 ---
 /**
- * SquareMapping — the map w = z² shown as a picture of two planes. A polar grid
+ * SquareMapping - the map w = z² shown as a picture of two planes. A polar grid
  * sector in the z-plane is carried to the w-plane by squaring each sampled
  * point, so the image curves are computed rather than drawn by hand. The
  * doubling of the sector angle is measured from the sampled image.
@@ -98,7 +98,7 @@ const imgRadii = `${(rLo * rLo).toFixed(2)} to ${(rHi * rHi).toFixed(2)}`;
       z = re^(iθ) ⟼ r²e^(2iθ): moduli square, arguments double
     </text>
     <text x={w / 2} y="286" class="sqm-sub2" font-size="9.5" text-anchor="middle">
-      Right angles between the arcs and rays survive the map — squaring is conformal away from 0
+      Right angles between the arcs and rays survive the map - squaring is conformal away from 0
     </text>
     <text x={w / 2} y="302" class="sqm-sub2" font-size="9.5" text-anchor="middle">
       At z = 0 the derivative vanishes and angles are not preserved; that is the one exception

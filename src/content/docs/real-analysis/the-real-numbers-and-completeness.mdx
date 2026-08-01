@@ -45,6 +45,11 @@ In this lesson you'll learn what suprema and infima are, how to prove a number i
       read: "epsilon, an arbitrarily small positive number",
       note: "always positive, never zero, and chosen by your opponent",
     },
+    {
+      sym: "∎",
+      read: "end of proof",
+      note: "the tombstone: the argument is complete and ordinary prose resumes. Older texts write QED, or draw it hollow as □",
+    },
   ]}
 />
 
@@ -89,10 +94,10 @@ By applying the axiom to $-S$, the matching statement for infima follows for fre
 
 Every major theorem ahead is a consequence of completeness, and every one of them is false over $\mathbb{Q}$:
 
-- **Monotone convergence** — a bounded increasing sequence converges. Over $\mathbb{Q}$, the decimal truncations of $\sqrt2$ increase and are bounded and converge to nothing rational.
-- **Bolzano-Weierstrass** — every bounded sequence has a convergent subsequence.
-- **Cauchy completeness** — every Cauchy sequence converges.
-- **Intermediate value theorem** — over $\mathbb{Q}$, $f(x) = x^2 - 2$ goes from negative to positive without ever being zero.
+- **Monotone convergence** - a bounded increasing sequence converges. Over $\mathbb{Q}$, the decimal truncations of $\sqrt2$ increase and are bounded and converge to nothing rational.
+- **Bolzano-Weierstrass** - every bounded sequence has a convergent subsequence.
+- **Cauchy completeness** - every Cauchy sequence converges.
+- **Intermediate value theorem** - over $\mathbb{Q}$, $f(x) = x^2 - 2$ goes from negative to positive without ever being zero.
 - **Extreme value theorem** and **Heine-Borel**.
 
 When a proof in this section feels like it appeared from nowhere, look for where it took a supremum. That step is almost always the load-bearing one.
@@ -113,7 +118,7 @@ The third form, "$1/n$ can be made as small as you like," is what gets used in p
 
 So the rationals are **dense** in $\mathbb{R}$: every real is a limit of rationals, and every interval, however short, contains infinitely many. The irrationals are dense too.
 
-This is why decimal approximations work at all, and why numerical computation on rationals can approximate any real quantity to any accuracy — even though it can never represent most of them exactly.
+This is why decimal approximations work at all, and why numerical computation on rationals can approximate any real quantity to any accuracy - even though it can never represent most of them exactly.
 
 ## Worked Examples
 
@@ -200,7 +205,7 @@ The trick of splitting $\varepsilon$ into $\frac{\varepsilon}{2} + \frac{\vareps
 **Auctions and pricing.** The market-clearing price is often characterized as a supremum or infimum of a set of bids, and whether it is attained determines whether the auction has a well-defined winner.
 
 :::note[You've Got This]
-Two things carry the whole lesson. First, the ε-characterization of a supremum: M is the least upper bound exactly when you can always find an element of the set above M − ε. That converts an awkward "no smaller number works" into something you can actually construct. Second, completeness is an axiom, and it is the reason analysis over ℝ works and over ℚ does not. Whenever a later proof seems to produce a number out of thin air, look for the supremum — that is where the axiom got spent.
+Two things carry the whole lesson. First, the ε-characterization of a supremum: M is the least upper bound exactly when you can always find an element of the set above M − ε. That converts an awkward "no smaller number works" into something you can actually construct. Second, completeness is an axiom, and it is the reason analysis over ℝ works and over ℚ does not. Whenever a later proof seems to produce a number out of thin air, look for the supremum - that is where the axiom got spent.
 :::
 
 ## Quiz

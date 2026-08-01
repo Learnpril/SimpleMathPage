@@ -29,12 +29,12 @@ In this lesson you'll build the integral from scratch using upper and lower sums
     {
       sym: "L(f, P)",
       read: "the lower sum",
-      note: "Σ mᵢ Δxᵢ — always an underestimate",
+      note: "Σ mᵢ Δxᵢ - always an underestimate",
     },
     {
       sym: "U(f, P)",
       read: "the upper sum",
-      note: "Σ Mᵢ Δxᵢ — always an overestimate",
+      note: "Σ Mᵢ Δxᵢ - always an overestimate",
     },
     {
       sym: "∫ f (underlined)",
@@ -78,7 +78,7 @@ Notice what is _not_ here: no sample point is chosen, no continuity is assumed, 
 
 ### Refinement, and the two integrals
 
-If $Q$ refines $P$ — meaning $P \subseteq Q$ — then
+If $Q$ refines $P$ - meaning $P \subseteq Q$ - then
 
 $$
 L(f,P) \le L(f,Q) \le U(f,Q) \le U(f,P)
@@ -136,7 +136,7 @@ $$
 
 which goes to 0. Monotone functions can have countably many discontinuities and remain integrable.
 
-More generally, a bounded function with finitely many discontinuities is integrable, and in fact one with a discontinuity set of measure zero is too — that last statement is the Lebesgue criterion, and it is the natural stopping point of this theory.
+More generally, a bounded function with finitely many discontinuities is integrable, and in fact one with a discontinuity set of measure zero is too - that last statement is the Lebesgue criterion, and it is the natural stopping point of this theory.
 
 ### A bounded function that is not integrable
 
@@ -234,7 +234,7 @@ Both rationals and irrationals are **dense**, so every subinterval of positive l
 
 The lower integral is 0, the upper is 1, and they differ. **Not integrable.** ∎
 
-Notice that no refinement helps at all — the gap is not shrinking slowly, it is constant.
+Notice that no refinement helps at all - the gap is not shrinking slowly, it is constant.
 
 **Example 3: Integrate a step function.**
 
@@ -313,7 +313,7 @@ The true value is about $0.8669$. **Bounding the integrand and integrating the b
 **Where Riemann runs out.** Modern probability, Fourier analysis, and PDE theory all use the Lebesgue integral instead, and the Dirichlet function is the shortest explanation of why. Riemann integration also behaves badly under limits, which is the subject of the next lesson.
 
 :::note[You've Got This]
-This lesson is the one where integration stops being a symbol-manipulation game. The definition is short — trap the area between lower and upper sums and demand the gap close — and everything else follows from refinement. Two things are worth remembering above the rest: uniform continuity is what makes continuous functions integrable, and the mean value theorem is what makes the fundamental theorem true. If you noticed those two earlier lessons paying off here, you're reading the subject the way it was built.
+This lesson is the one where integration stops being a symbol-manipulation game. The definition is short - trap the area between lower and upper sums and demand the gap close - and everything else follows from refinement. Two things are worth remembering above the rest: uniform continuity is what makes continuous functions integrable, and the mean value theorem is what makes the fundamental theorem true. If you noticed those two earlier lessons paying off here, you're reading the subject the way it was built.
 :::
 
 ## Quiz

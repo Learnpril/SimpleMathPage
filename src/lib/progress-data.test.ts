@@ -11,7 +11,7 @@ vi.mock("./supabase/streak", () => ({
   readStreakDatesFromSupabase: vi.fn(),
 }));
 
-// Mock progress-calc module (partially — keep computeProgress real but mock localStorage reader)
+// Mock progress-calc module (partially - keep computeProgress real but mock localStorage reader)
 vi.mock("./progress-calc", async (importOriginal) => {
   const actual = await importOriginal<typeof import("./progress-calc")>();
   return {

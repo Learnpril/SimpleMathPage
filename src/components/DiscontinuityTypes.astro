@@ -1,6 +1,6 @@
 ---
 /**
- * DiscontinuityTypes — three mini-graphs showing the three types:
+ * DiscontinuityTypes - three mini-graphs showing the three types:
  * 1. Removable (hole): y = x+3 with hole at (3,6)
  * 2. Jump: piecewise, left piece ends at (2,3), right piece starts at (2,5)
  * 3. Infinite: vertical asymptote at x=2 (like 1/(x-2))
@@ -86,11 +86,11 @@ for (let i = 0; i <= 40; i++) {
         <line x1={jsx(0)} y1={jsy(j1.yMin)} x2={jsx(0)} y2={jsy(j1.yMax)} class="dt-axis" stroke-width="1" />
         {/* Left piece: y = x+1, x < 2 */}
         <line x1={jsx(0)} y1={jsy(1)} x2={jsx(2)} y2={jsy(3)} class="dt-curve" stroke-width="2.5" />
-        {/* Open circle at (2,3) — left limit */}
+        {/* Open circle at (2,3) - left limit */}
         <circle cx={jsx(2)} cy={jsy(3)} r="5" fill="none" class="dt-hole" stroke-width="2" />
         {/* Right piece: y = x+3, x >= 2 */}
         <line x1={jsx(2)} y1={jsy(5)} x2={jsx(4)} y2={jsy(7)} class="dt-curve" stroke-width="2.5" />
-        {/* Filled circle at (2,5) — right value */}
+        {/* Filled circle at (2,5) - right value */}
         <circle cx={jsx(2)} cy={jsy(5)} r="5" class="dt-dot" />
         {/* Label */}
         <text class="dt-lbl-orange" x={jsx(2.5)} y={jsy(3.8)} font-size="9">jump</text>

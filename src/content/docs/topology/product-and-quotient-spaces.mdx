@@ -18,7 +18,7 @@ In this lesson you'll learn the product topology and why it is defined with a ba
 
 > For spaces $X$ and $Y$, the **product topology** on $X\times Y$ has as a **basis** the sets $U\times V$ with $U$ open in $X$ and $V$ open in $Y$.
 
-The word basis matters. The products $U\times V$ are not themselves closed under unions, so they cannot be the whole topology — an open disc in $\mathbb{R}^2$ is not a product of intervals, though it is a union of such products. Boxes generate; they do not exhaust.
+The word basis matters. The products $U\times V$ are not themselves closed under unions, so they cannot be the whole topology - an open disc in $\mathbb{R}^2$ is not a product of intervals, though it is a union of such products. Boxes generate; they do not exhaust.
 
 The product topology is exactly the topology making both projections $\pi_X$ and $\pi_Y$ continuous, and it is the coarsest one doing so. That is its real characterization:
 
@@ -46,7 +46,7 @@ This is the **finest** topology making $q$ continuous, and it is the mirror imag
 
 In practice you specify an equivalence relation on $X$ and take $Y = X/\!\sim$, the set of equivalence classes. Gluing points together is exactly forming such a quotient.
 
-Two warnings. Quotients can destroy good behaviour: a quotient of a Hausdorff space need not be Hausdorff, and a quotient of a metric space need not be metrizable. And a quotient map need not be open — the map $\mathbb{R}\to\mathbb{R}/\mathbb{Z} = S^1$ is a quotient map, and it is open, but that is a fact to check rather than assume.
+Two warnings. Quotients can destroy good behaviour: a quotient of a Hausdorff space need not be Hausdorff, and a quotient of a metric space need not be metrizable. And a quotient map need not be open - the map $\mathbb{R}\to\mathbb{R}/\mathbb{Z} = S^1$ is a quotient map, and it is open, but that is a fact to check rather than assume.
 
 ### Gluing a square
 
@@ -58,10 +58,10 @@ Each panel identifies edges of a square according to matching arrows. The figure
 
 Reading off the four cases:
 
-- **Cylinder** — glue left to right preserving direction. Orientable, two boundary circles.
-- **Torus** — glue both pairs preserving direction. Orientable, no boundary. Equals $S^1\times S^1$, so here product and quotient constructions agree.
-- **Möbius strip** — glue left to right with a **flip**. One-sided, and its two edges merge into a **single** boundary circle.
-- **Klein bottle** — glue one pair straight and one flipped. One-sided, no boundary, and it cannot be embedded in $\mathbb{R}^3$ without self-intersection.
+- **Cylinder** - glue left to right preserving direction. Orientable, two boundary circles.
+- **Torus** - glue both pairs preserving direction. Orientable, no boundary. Equals $S^1\times S^1$, so here product and quotient constructions agree.
+- **Möbius strip** - glue left to right with a **flip**. One-sided, and its two edges merge into a **single** boundary circle.
+- **Klein bottle** - glue one pair straight and one flipped. One-sided, no boundary, and it cannot be embedded in $\mathbb{R}^3$ without self-intersection.
 
 A fifth standard case is the **real projective plane** $\mathbb{RP}^2$, obtained by flipping both pairs, equivalently by identifying antipodal points of a sphere. It is one-sided with no boundary and has Euler characteristic 1.
 
@@ -71,15 +71,15 @@ A fifth standard case is the **real projective plane** $\mathbb{RP}^2$, obtained
 
 Three more quotient constructions used constantly in algebraic topology:
 
-- **Cone** $CX = (X\times[0,1])/(X\times\{1\})$ — crush one end to a point. Always contractible.
-- **Suspension** $\Sigma X$ — crush both ends to separate points. Notably $\Sigma S^n = S^{n+1}$.
-- **Wedge** $X\vee Y$ — glue the two spaces at a single point. A figure eight is $S^1\vee S^1$.
+- **Cone** $CX = (X\times[0,1])/(X\times\{1\})$ - crush one end to a point. Always contractible.
+- **Suspension** $\Sigma X$ - crush both ends to separate points. Notably $\Sigma S^n = S^{n+1}$.
+- **Wedge** $X\vee Y$ - glue the two spaces at a single point. A figure eight is $S^1\vee S^1$.
 
 Collapsing a subspace, written $X/A$, is the general pattern all three follow.
 
 ### Why quotients matter
 
-Almost every interesting space is presented as a quotient. Surfaces come from polygons, $\mathbb{RP}^n$ from spheres, and CW-complexes — the standard objects of algebraic topology — are built by successively gluing discs along their boundaries. The quotient topology is the mechanism that makes any of it well defined.
+Almost every interesting space is presented as a quotient. Surfaces come from polygons, $\mathbb{RP}^n$ from spheres, and CW-complexes - the standard objects of algebraic topology - are built by successively gluing discs along their boundaries. The quotient topology is the mechanism that makes any of it well defined.
 
 ## Worked Examples
 
@@ -95,7 +95,7 @@ The disc is therefore a union of basis elements, hence open. ∎
 
 **Solution.** Parametrise each circle by an angle, so a point of the product is a pair $(\theta,\varphi)$ with each taken mod $2\pi$.
 
-That is exactly the square $[0,2\pi]^2$ with left glued to right and top glued to bottom, both preserving direction — the torus gluing in the figure. ∎
+That is exactly the square $[0,2\pi]^2$ with left glued to right and top glued to bottom, both preserving direction - the torus gluing in the figure. ∎
 
 **Example 3: Compute the Euler characteristic of the torus from the square.**
 
@@ -129,7 +129,7 @@ $$
 q(x) = \big(\cos2\pi x,\ \sin2\pi x\big)
 $$
 
-This is well defined on classes and surjective onto $S^1$. It induces a continuous bijection from $\mathbb{R}/\mathbb{Z}$ to $S^1$, and since $\mathbb{R}/\mathbb{Z}$ is compact — being the image of $[0,1]$ — and $S^1$ is Hausdorff, the map is a homeomorphism.
+This is well defined on classes and surjective onto $S^1$. It induces a continuous bijection from $\mathbb{R}/\mathbb{Z}$ to $S^1$, and since $\mathbb{R}/\mathbb{Z}$ is compact - being the image of $[0,1]$ - and $S^1$ is Hausdorff, the map is a homeomorphism.
 
 $$
 \mathbb{R}/\mathbb{Z}\cong S^1
@@ -145,11 +145,7 @@ $$
 
 Any open set containing $[0]$ must have open preimage containing 0, hence containing nonzero reals, hence containing $[*]$. So $[0]$ and $[*]$ cannot be separated.
 
-$$
-\text{not Hausdorff}
-$$
-
-∎
+**Answer:** not Hausdorff. ∎
 
 **Quotients can destroy separation properties**, which is why lesson 13's axioms are usually imposed as hypotheses rather than assumed.
 
@@ -163,11 +159,7 @@ $$
 
 At $s=0$ this is the identity, and at $s=1$ every point maps to the collapsed tip. The map is continuous and well defined on classes.
 
-$$
-\text{contractible}
-$$
-
-∎
+**Answer:** contractible. ∎
 
 So a cone always has trivial topology in the homotopy sense, which is why suspensions rather than cones are used to build interesting spaces.
 
@@ -181,7 +173,7 @@ So a cone always has trivial topology in the homotopy sense, which is why suspen
 
 **Video game worlds.** Wrap-around maps in games such as Asteroids are toroidal, and a Möbius-style flip would reverse the player's orientation, which is why it is almost never used.
 
-**Data quotients.** Identifying points that are equivalent under a symmetry — rotations of a molecule, relabelling of graph nodes — produces a quotient space, and analysis is done there rather than on the redundant original.
+**Data quotients.** Identifying points that are equivalent under a symmetry - rotations of a molecule, relabelling of graph nodes - produces a quotient space, and analysis is done there rather than on the redundant original.
 
 **Orientation in manufacturing.** Whether a surface is one-sided determines whether it can be painted, coated, or printed on one face. Möbius-like belts are used deliberately in conveyor systems to wear both sides evenly.
 

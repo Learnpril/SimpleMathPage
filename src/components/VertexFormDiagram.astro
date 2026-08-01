@@ -1,6 +1,6 @@
 ---
 /**
- * VertexFormDiagram — shows parent y = x² (dashed) and
+ * VertexFormDiagram - shows parent y = x² (dashed) and
  * g(x) = −2(x+1)² + 5 (solid) to illustrate transformations.
  * Parent vertex (0,0), transformed vertex (−1, 5).
  */
@@ -80,7 +80,7 @@ const yLabelTicks = [-4, -2, 2, 4, 6];
     <path class="vf-parent" d={parentD} fill="none" stroke-width="2" stroke-dasharray="6,4" />
     {/* Parent vertex */}
     <circle class="vf-parent-pt" cx={toX(0)} cy={toY(0)} r="4" />
-    {/* Parent label — far right, above the curve in open space */}
+    {/* Parent label - far right, above the curve in open space */}
     <text class="vf-parent-label" x={toX(3.5)} y={toY(7.2)} font-size="11">y = x²</text>
 
     {/* Transformed curve: g(x) = −2(x+1)² + 5 (solid, orange) */}
@@ -88,7 +88,7 @@ const yLabelTicks = [-4, -2, 2, 4, 6];
     {/* Transformed vertex at (−1, 5) */}
     <circle class="vf-trans-pt" cx={toX(-1)} cy={toY(5)} r="5" />
     <text class="vf-trans-pt-label" x={toX(-1) - 14} y={toY(5) - 12} font-size="11" text-anchor="end">(−1, 5)</text>
-    {/* Transformed label — bottom-left, moved up to be inside plot area */}
+    {/* Transformed label - bottom-left, moved up to be inside plot area */}
     <text class="vf-trans-label" x={toX(-4.8)} y={toY(-2.5)} font-size="10" font-weight="bold">−2(x + 1)² + 5</text>
 
     {/* Transformation arrows/annotations */}

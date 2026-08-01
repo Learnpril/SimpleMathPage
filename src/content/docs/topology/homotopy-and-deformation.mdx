@@ -28,7 +28,7 @@ Homotopy is an equivalence relation on maps: constant deformation gives reflexiv
 
 <HomotopyDeformation />
 
-The figure runs the straight-line homotopy $H(t,s) = (1-s)\gamma(t)$ on the unit circle. In the plane it shrinks the loop to a point without obstruction. In the punctured plane the same family of stages closes in on the missing point — the figure computes the clearance from the puncture at each stage and shows it heading to zero — so the deformation cannot be completed inside the space.
+The figure runs the straight-line homotopy $H(t,s) = (1-s)\gamma(t)$ on the unit circle. In the plane it shrinks the loop to a point without obstruction. In the punctured plane the same family of stages closes in on the missing point - the figure computes the clearance from the puncture at each stage and shows it heading to zero - so the deformation cannot be completed inside the space.
 
 **The hole is the obstruction**, and measuring it precisely is the next lesson's job.
 
@@ -46,7 +46,7 @@ $$
 \text{homeomorphic} \implies \text{homotopy equivalent}
 $$
 
-and the converse fails badly. A disc is homotopy equivalent to a point but not homeomorphic to it — one has uncountably many points. A solid torus is homotopy equivalent to a circle. An annulus is too.
+and the converse fails badly. A disc is homotopy equivalent to a point but not homeomorphic to it - one has uncountably many points. A solid torus is homotopy equivalent to a circle. An annulus is too.
 
 **Homotopy equivalence forgets dimension.** That is its purpose: it keeps track only of holes and connectivity, and discards everything else.
 
@@ -98,7 +98,7 @@ Specializing to paths gives the tool for the next lesson.
 
 > Two paths with the **same endpoints** are **path-homotopic** if one deforms into the other while both endpoints stay fixed throughout.
 
-The endpoint condition is essential. Without it every path in a path-connected space would be homotopic to every other, and the notion would carry no information. With it, the path-homotopy classes of loops at a point form a group — the fundamental group.
+The endpoint condition is essential. Without it every path in a path-connected space would be homotopic to every other, and the notion would carry no information. With it, the path-homotopy classes of loops at a point form a group - the fundamental group.
 
 ## Worked Examples
 
@@ -122,13 +122,7 @@ $$
 
 **Example 2: Show $\mathbb{R}^n$ is contractible.**
 
-**Solution.** Take $H(x,s) = (1-s)x$. At $s=0$ this is the identity and at $s=1$ it is the constant map to the origin.
-
-$$
-\text{contractible}
-$$
-
-∎
+**Solution.** Take $H(x,s) = (1-s)x$. At $s=0$ this is the identity and at $s=1$ it is the constant map to the origin, so $\mathbb{R}^n$ is contractible. ∎
 
 **Example 3: Show $\mathbb{R}^2\setminus\{0\}$ is homotopy equivalent to $S^1$.**
 
@@ -160,13 +154,7 @@ Both are therefore homotopy equivalent to $S^1$, and hence to each other. ∎
 
 **Solution.** Suppose it were. Then its fundamental group would be trivial, since a point has trivial fundamental group and the group is a homotopy invariant.
 
-But $\pi_1(S^1)=\mathbb{Z}$, as shown in the next lesson, so the circle is not contractible.
-
-$$
-\text{not contractible}
-$$
-
-∎
+But $\pi_1(S^1)=\mathbb{Z}$, as shown in the next lesson, so the circle is not contractible. ∎
 
 Note that this requires an invariant. **"I cannot see how to shrink it" is not a proof**, and the whole point of the next lesson is to supply the argument.
 
@@ -178,13 +166,7 @@ $$
 H([x,t],s) = [x,\ t+s(1-t)]
 $$
 
-At $s=0$ this is the identity and at $s=1$ everything lands at the collapsed tip.
-
-$$
-\text{contractible}
-$$
-
-∎
+At $s=0$ this is the identity and at $s=1$ everything lands at the collapsed tip, so the cone is contractible. ∎
 
 **Every cone is contractible regardless of $X$**, which is why cones are used to kill topology deliberately.
 
@@ -192,7 +174,7 @@ $$
 
 **Solution.** A **solid** torus deformation retracts to its core circle, so it is homotopy equivalent to $S^1$.
 
-A **hollow** torus — the surface $T^2$ — is homotopy equivalent to $S^1\times S^1$, which is itself and not to a single circle. Its fundamental group is $\mathbb{Z}\times\mathbb{Z}$ rather than $\mathbb{Z}$.
+A **hollow** torus - the surface $T^2$ - is homotopy equivalent to $S^1\times S^1$, which is itself and not to a single circle. Its fundamental group is $\mathbb{Z}\times\mathbb{Z}$ rather than $\mathbb{Z}$.
 
 $$
 \text{solid torus} \simeq S^1, \qquad T^2\not\simeq S^1
@@ -208,7 +190,7 @@ $$
 
 **Cable and wire routing.** Whether a cable can be rerouted without disconnecting equipment is a homotopy question, and homotopy classes count the genuinely distinct routings around obstacles.
 
-**Animation and morphing.** A morph between two shapes is a homotopy, and it fails when the shapes are not homotopy equivalent — which is why morphing a sphere into a torus always shows an artefact.
+**Animation and morphing.** A morph between two shapes is a homotopy, and it fails when the shapes are not homotopy equivalent - which is why morphing a sphere into a torus always shows an artefact.
 
 **Robot arm reconfiguration.** Moving a manipulator between configurations without collision is a path in configuration space, and the homotopy class determines whether the motion wraps around an obstacle.
 
@@ -217,7 +199,7 @@ $$
 **Sensor network coverage.** Whether a region is fully covered reduces to whether the union of sensor ranges is homotopy equivalent to the region, which can be decided from connectivity data alone.
 
 :::note[You've Got This]
-Homotopy equivalence is a deliberately blunter instrument than homeomorphism, and that bluntness is the point: it forgets dimension, compactness and orientability, keeping only holes and connectivity. That makes it computable. The figure is the whole idea in one picture — the same straight-line deformation succeeds in the plane and is blocked by a single missing point. The next lesson turns that obstruction into a group, which is where the subject gets its sharpest tools.
+Homotopy equivalence is a deliberately blunter instrument than homeomorphism, and that bluntness is the point: it forgets dimension, compactness and orientability, keeping only holes and connectivity. That makes it computable. The figure is the whole idea in one picture - the same straight-line deformation succeeds in the plane and is blocked by a single missing point. The next lesson turns that obstruction into a group, which is where the subject gets its sharpest tools.
 :::
 
 ## Quiz

@@ -66,7 +66,7 @@ $$
 
 and that quotient is undefined at $h = 0$. If limits required the value at the point, calculus could not start.
 
-So three situations are all consistent with $\lim_{x\to a} f(x) = L$: $f(a) = L$, $f(a) \ne L$, and $f(a)$ undefined. Continuity is the extra condition that $f(a)$ exists and equals $L$ — the next lesson.
+So three situations are all consistent with $\lim_{x\to a} f(x) = L$: $f(a) = L$, $f(a) \ne L$, and $f(a)$ undefined. Continuity is the extra condition that $f(a)$ exists and equals $L$ - the next lesson.
 
 ### The proof template
 
@@ -206,7 +206,7 @@ $$
 
 so $\delta = \min\left(\frac a2, \frac{\varepsilon a^2}{2}\right)$ works.
 
-**$\delta$ shrinks like $a^2$ as $a \to 0$.** The function gets steeper near 0, so the same output tolerance demands a much tighter input tolerance. That dependence on the _point_, not just on $\varepsilon$, is what fails to be uniform — and uniform continuity, four lessons ahead, is exactly the condition that rules it out.
+**$\delta$ shrinks like $a^2$ as $a \to 0$.** The function gets steeper near 0, so the same output tolerance demands a much tighter input tolerance. That dependence on the _point_, not just on $\varepsilon$, is what fails to be uniform - and uniform continuity, four lessons ahead, is exactly the condition that rules it out.
 
 **Example 6: A limit of 0 via squeezing.**
 
@@ -240,7 +240,7 @@ This is a **jump discontinuity**, and it is what makes the sign function non-int
 
 **Tolerance engineering.** "The output must be within $\varepsilon$, so how tightly must the input be controlled?" is literally the epsilon-delta question. Manufacturing tolerance stack-up analysis computes $\delta$ from a required $\varepsilon$, and the derivative is the local conversion factor between them.
 
-**Numerical differentiation.** Approximating $f'(a)$ by a difference quotient with small $h$ relies on the limit existing. Too large an $h$ gives truncation error and too small an $h$ gives catastrophic floating-point cancellation, so there is an optimal $h$ — a very practical consequence of the limit being approached rather than reached.
+**Numerical differentiation.** Approximating $f'(a)$ by a difference quotient with small $h$ relies on the limit existing. Too large an $h$ gives truncation error and too small an $h$ gives catastrophic floating-point cancellation, so there is an optimal $h$ - a very practical consequence of the limit being approached rather than reached.
 
 **Sensor calibration.** A sensor's sensitivity is a derivative, and the amplification of input noise into output noise is the $\frac{\varepsilon}{\delta}$ ratio. Example 5's point matters here: near a steep part of the response curve, the same output precision demands far better input precision.
 

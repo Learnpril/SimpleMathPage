@@ -82,9 +82,9 @@ Some properties pass to subspaces automatically, and some do not.
 | Hausdorff         | yes                           |
 | Metrizable        | yes                           |
 | Second countable  | yes                           |
-| Compact           | no — only by closed subspaces |
+| Compact           | no - only by closed subspaces |
 | Connected         | no                            |
-| Complete (metric) | no — only by closed subspaces |
+| Complete (metric) | no - only by closed subspaces |
 
 A property inherited by all subspaces is called **hereditary**. Compactness and connectedness are not hereditary, which is why $[0,1]$ is compact and connected while its subspace $\{0\}\cup(\frac12,1)$ is neither.
 
@@ -98,21 +98,13 @@ Closed subspaces are the well-behaved case, and that pattern recurs: a closed su
 
 Condition 2: the intersection of two open intervals is either empty or an open interval, so it is itself a basis element and serves as $B_3$ ✓
 
-$$
-\text{a basis}
-$$
-
-∎
+**Answer:** a basis. ∎
 
 **Example 2: Verify that open discs form a basis for $\mathbb{R}^2$.**
 
 **Solution.** Condition 1 is clear. For condition 2, let $x\in D_1\cap D_2$. Each disc contains a small disc about $x$, say of radii $r_1$ and $r_2$, so the disc about $x$ of radius $\min(r_1,r_2)$ lies inside both.
 
-$$
-\text{a basis}
-$$
-
-∎
+**Answer:** a basis. ∎
 
 **Note the intersection of two discs is not a disc**, which is exactly why condition 2 is stated with a containment rather than membership.
 
@@ -124,11 +116,7 @@ $$
 x\in(p,q)\subseteq(a,b)\subseteq U
 $$
 
-$$
-\text{a basis, and a countable one}
-$$
-
-∎
+**Answer:** a basis, and a countable one. ∎
 
 **A countable basis for an uncountable space.** This is what second countability means, and it is used constantly in analysis.
 
@@ -162,11 +150,7 @@ $$
 
 so every singleton is open in the subspace, and therefore every subset is.
 
-$$
-\text{discrete}
-$$
-
-∎
+**Answer:** discrete. ∎
 
 **A discrete subspace of a non-discrete space.** The subspace topology can look nothing like the ambient one.
 
@@ -174,11 +158,7 @@ $$
 
 **Solution.** $[0,1]$ is compact, as we prove in lesson 10. Its subspace $(0,1)$ is not: the cover by $\left(\frac1n,1\right)$ for $n\ge2$ has no finite subcover, since any finite collection has a smallest $\frac1n$ and misses everything below it.
 
-$$
-\text{compact space, non-compact subspace}
-$$
-
-∎
+**Answer:** compact space, non-compact subspace. ∎
 
 **Closed subspaces are the exception**: a closed subspace of a compact space is always compact, and $(0,1)$ is not closed in $[0,1]$.
 

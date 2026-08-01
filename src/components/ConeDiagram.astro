@@ -2,14 +2,14 @@
 interface Props {
   title?: string;
 }
-const { title = "Cone — V = ⅓πr²h" } = Astro.props;
+const { title = "Cone - V = ⅓πr²h" } = Astro.props;
 ---
 
 <figure class="cone-diagram" role="img" aria-label={title}>
   {title && <figcaption class="cone-title">{title}</figcaption>}
   <svg viewBox="0 0 220 200" width="220" height="200" xmlns="http://www.w3.org/2000/svg">
 
-    {/* Cone body — two slant lines from apex to base ellipse */}
+    {/* Cone body - two slant lines from apex to base ellipse */}
     <line class="cone-edge" x1="110" y1="20" x2="40" y2="155" />
     <line class="cone-edge" x1="110" y1="20" x2="180" y2="155" />
 

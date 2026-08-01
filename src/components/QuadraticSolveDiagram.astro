@@ -1,6 +1,6 @@
 ---
 /**
- * QuadraticSolveDiagram — plots y = x² − 4x + 3
+ * QuadraticSolveDiagram - plots y = x² − 4x + 3
  * Shows x-intercepts at (1,0) and (3,0), vertex at (2,−1), y-int at (0,3).
  * Illustrates that "solving = 0" means finding where the curve crosses the x-axis.
  */
@@ -57,7 +57,7 @@ const yLabelTicks = [-2, 2, 4];
 
     <path class="qs-curve" d={curveD} fill="none" stroke-width="2.5" />
 
-    {/* x-intercepts — the solutions */}
+    {/* x-intercepts - the solutions */}
     <circle class="qs-sol" cx={toX(1)} cy={toY(0)} r="6" />
     <text class="qs-sol-label" x={toX(1) - 10} y={toY(0) + 20} font-size="11" text-anchor="end">x = 1</text>
 
@@ -68,7 +68,7 @@ const yLabelTicks = [-2, 2, 4];
     <circle class="qs-vtx" cx={toX(2)} cy={toY(-1)} r="4" />
     <text class="qs-vtx-label" x={toX(2) + 10} y={toY(-1) + 16} font-size="10">(2, −1)</text>
 
-    {/* Curve label — right side, open space */}
+    {/* Curve label - right side, open space */}
     <text class="qs-curve-label" x={toX(4.3)} y={toY(2.5)} font-size="10" font-weight="bold">x² − 4x + 3</text>
 
   </svg>

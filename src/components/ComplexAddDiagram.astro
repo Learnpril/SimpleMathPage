@@ -1,6 +1,6 @@
 ---
 /**
- * ComplexAddDiagram — shows (3+4i) + (5−2i) = 8+2i on the complex plane.
+ * ComplexAddDiagram - shows (3+4i) + (5−2i) = 8+2i on the complex plane.
  * Vectors from origin to each point, parallelogram to the sum.
  */
 
@@ -62,13 +62,13 @@ const yTicks = [-3, -2, -1, 1, 2, 3, 4, 5];
       <text class="ca-tick" x={imagAxisX - 8} y={toY(y) + 4} font-size="10" text-anchor="end">{y}i</text>
     ))}
 
-    {/* Vector 1: origin → (3, 4i) — blue */}
+    {/* Vector 1: origin → (3, 4i) - blue */}
     <line class="ca-vec1" x1={toX(0)} y1={toY(0)} x2={toX(3) - 4} y2={toY(4) + 4}
       stroke-width="2.5" marker-end="url(#ca-arr-b)" />
     <circle class="ca-pt1" cx={toX(3)} cy={toY(4)} r="5" />
     <text class="ca-label1" x={toX(3) - 14} y={toY(4) - 10} font-size="13" font-weight="bold" text-anchor="end">3 + 4i</text>
 
-    {/* Vector 2: origin → (5, −2i) — orange */}
+    {/* Vector 2: origin → (5, −2i) - orange */}
     <line class="ca-vec2" x1={toX(0)} y1={toY(0)} x2={toX(5) - 4} y2={toY(-2) - 2}
       stroke-width="2.5" marker-end="url(#ca-arr-o)" />
     <circle class="ca-pt2" cx={toX(5)} cy={toY(-2)} r="5" />
@@ -78,7 +78,7 @@ const yTicks = [-3, -2, -1, 1, 2, 3, 4, 5];
     <line class="ca-para" x1={toX(3)} y1={toY(4)} x2={toX(8)} y2={toY(2)} stroke-width="1.5" stroke-dasharray="5,4" />
     <line class="ca-para" x1={toX(5)} y1={toY(-2)} x2={toX(8)} y2={toY(2)} stroke-width="1.5" stroke-dasharray="5,4" />
 
-    {/* Result vector: origin → (8, 2i) — green */}
+    {/* Result vector: origin → (8, 2i) - green */}
     <line class="ca-vec3" x1={toX(0)} y1={toY(0)} x2={toX(8) - 4} y2={toY(2) + 2}
       stroke-width="2.5" marker-end="url(#ca-arr-g)" />
     <circle class="ca-pt3" cx={toX(8)} cy={toY(2)} r="6" />

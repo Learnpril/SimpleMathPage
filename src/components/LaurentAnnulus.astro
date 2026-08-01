@@ -1,6 +1,6 @@
 ---
 /**
- * LaurentAnnulus — the same function has three different series depending on
+ * LaurentAnnulus - the same function has three different series depending on
  * which annulus you sit in. The Laurent coefficients for the middle annulus are
  * computed by numerically evaluating the coefficient integral on a circle of
  * radius 1.5, so the printed coefficients are measured, not quoted.
@@ -86,7 +86,7 @@ const regions = [
     <text x="306" y="70" class="lau-panel" font-size="10" text-anchor="start">three regions, three series</text>
     {regions.map((r, i) => (
       <text x="306" y={92 + i * 20} class={`lau-key lau-t-${r.cls}`} font-size="9.5" text-anchor="start">
-        {`${r.label} — ${r.note}`}
+        {`${r.label} - ${r.note}`}
       </text>
     ))}
 

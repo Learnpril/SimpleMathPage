@@ -1,6 +1,6 @@
 ---
 /**
- * ParabolaDownGraph — plots g(x) = −x² + 4x + 5 (downward parabola)
+ * ParabolaDownGraph - plots g(x) = −x² + 4x + 5 (downward parabola)
  * Vertex (2, 9), y-int (0, 5), x-ints (−1, 0) and (5, 0), axis x = 2.
  */
 
@@ -79,22 +79,22 @@ const yLabelTicks = [-2, 2, 4, 6, 8, 10];
     {/* Parabola curve */}
     <path class="pgd-curve" d={curveD} fill="none" stroke-width="2.5" />
 
-    {/* Vertex (2, 9) — label above-right, in open space */}
+    {/* Vertex (2, 9) - label above-right, in open space */}
     <circle class="pgd-pt-vertex" cx={toX(vtx.x)} cy={toY(vtx.y)} r="5" />
     <text class="pgd-pt-vertex-label" x={toX(vtx.x) + 10} y={toY(vtx.y) - 10} font-size="11">(2, 9)</text>
 
-    {/* Y-intercept (0, 5) — label to the right, away from curve */}
+    {/* Y-intercept (0, 5) - label to the right, away from curve */}
     <circle class="pgd-pt" cx={toX(yInt.x)} cy={toY(yInt.y)} r="5" />
     <text class="pgd-pt-label" x={toX(yInt.x) + 12} y={toY(yInt.y) - 10} font-size="11">(0, 5)</text>
 
-    {/* X-intercepts — labels below-left, inside the parabola opening */}
+    {/* X-intercepts - labels below-left, inside the parabola opening */}
     <circle class="pgd-pt" cx={toX(xInt1.x)} cy={toY(xInt1.y)} r="5" />
     <text class="pgd-pt-label" x={toX(xInt1.x) + 12} y={toY(xInt1.y) + 18} font-size="11">(−1, 0)</text>
 
     <circle class="pgd-pt" cx={toX(xInt2.x)} cy={toY(xInt2.y)} r="5" />
     <text class="pgd-pt-label" x={toX(xInt2.x) - 12} y={toY(xInt2.y) + 18} font-size="11" text-anchor="end">(5, 0)</text>
 
-    {/* Curve label — inside the parabola, below vertex in open space */}
+    {/* Curve label - inside the parabola, below vertex in open space */}
     <text class="pgd-curve-label" x={toX(2)} y={toY(6)} font-size="11" font-weight="bold" text-anchor="middle">−x² + 4x + 5</text>
 
   </svg>

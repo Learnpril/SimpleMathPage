@@ -1,6 +1,6 @@
 ---
 /**
- * ContourPathCompare — two different paths from 0 to 1+i. The integral of z is
+ * ContourPathCompare - two different paths from 0 to 1+i. The integral of z is
  * the same along both; the integral of conj(z) is not. Both integrals are
  * evaluated numerically along the drawn paths by summing f(z) dz, so the numbers
  * printed are the ones the picture actually produces.
@@ -109,7 +109,7 @@ const drawDogleg = Array.from({ length: 41 }, (_, i) => {
         <text x="288" y={100 + k * 92} class="cpc-row" font-size="10" text-anchor="start">{`path A:  ${fmt(r.a)}`}</text>
         <text x="288" y={120 + k * 92} class="cpc-row" font-size="10" text-anchor="start">{`path B:  ${fmt(r.b)}`}</text>
         <text x="288" y={142 + k * 92} class={`cpc-verdict cpc-${r.cls}`} font-size="10" text-anchor="start">
-          {r.same ? "equal — path independent" : "different — path dependent"}
+          {r.same ? "equal - path independent" : "different - path dependent"}
         </text>
       </g>
     ))}

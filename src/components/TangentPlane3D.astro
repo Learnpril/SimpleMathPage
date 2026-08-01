@@ -1,6 +1,6 @@
 ---
 /**
- * TangentPlane3D — Interactive 3D visual of the paraboloid z = x² + y²
+ * TangentPlane3D - Interactive 3D visual of the paraboloid z = x² + y²
  * with a tangent plane at the point (1, 2, 5).
  * Tangent plane: z = 2x + 4y - 5
  * Lazy-loads Three.js via IntersectionObserver.
@@ -110,7 +110,7 @@
     });
     scene.add(new THREE.Mesh(planeGeo, planeMat));
 
-    // Point (1, 2, 5) — Three.js: (1, 5*zScale, 2)
+    // Point (1, 2, 5) - Three.js: (1, 5*zScale, 2)
     const dotGeo = new THREE.SphereGeometry(0.1, 16, 16);
     const dotMat = new THREE.MeshBasicMaterial({
       color: isDark ? 0xd2a8ff : 0x6639ba,
@@ -159,7 +159,7 @@
     makeLabel("z", [0, 3.0, 0], lc, 0.4); // Three.js y-up = math z
     makeLabel("y", [0, -0.2, 3.0], lc, 0.4);
 
-    // Point label — offset away from the surface so it's always readable
+    // Point label - offset away from the surface so it's always readable
     makeLabel("(1, 2, 5)", [0.6, 5 * zScale + 1.8, 4.0], isDark ? "#d2a8ff" : "#6639ba", 0.7);
 
     // Leader line from label to dot

@@ -394,7 +394,7 @@ export default defineConfig({
             document.addEventListener('DOMContentLoaded', function() {
               var footer = document.createElement('div');
               footer.className = 'scratch-paper-footer';
-              footer.innerHTML = '\\u270F\\uFE0F Grab some scratch paper and work the problems out by hand — it makes a huge difference.';
+              footer.innerHTML = '\\u270F\\uFE0F Grab some scratch paper and work the problems out by hand - it makes a huge difference.';
               document.body.appendChild(footer);
             });
           `,

@@ -1,5 +1,5 @@
 ---
-// VerticalAnglesWorked.astro — Two intersecting lines with 40°/140° vertical angle pairs
+// VerticalAnglesWorked.astro - Two intersecting lines with 40°/140° vertical angle pairs
 // Center (190,130). Line1: horizontal. Line2: 40° above horizontal.
 // Circle radius 35. Four arc segments form a complete circle.
 // cos(40°)≈0.766, sin(40°)≈0.643
@@ -18,13 +18,13 @@
     <circle cx="190" cy="130" r="4" fill="var(--point-color, #e5c07b)" />
 
     <!-- Four arcs forming a complete circle -->
-    <!-- Arc 1: 0° to 40° = 40° ACUTE (blue) — top-right -->
+    <!-- Arc 1: 0° to 40° = 40° ACUTE (blue) - top-right -->
     <path d="M 225,130 A 35,35 0 0,0 217,107" fill="none" stroke="var(--angle-a-color, #61afef)" stroke-width="2.5" />
-    <!-- Arc 2: 40° to 180° = 140° OBTUSE (red) — top-left -->
+    <!-- Arc 2: 40° to 180° = 140° OBTUSE (red) - top-left -->
     <path d="M 217,107 A 35,35 0 0,0 155,130" fill="none" stroke="var(--angle-b-color, #e06c75)" stroke-width="2.5" />
-    <!-- Arc 3: 180° to 220° = 40° ACUTE (blue) — bottom-left -->
+    <!-- Arc 3: 180° to 220° = 40° ACUTE (blue) - bottom-left -->
     <path d="M 155,130 A 35,35 0 0,0 163,153" fill="none" stroke="var(--angle-a-color, #61afef)" stroke-width="2.5" />
-    <!-- Arc 4: 220° to 360° = 140° OBTUSE (red) — bottom-right -->
+    <!-- Arc 4: 220° to 360° = 140° OBTUSE (red) - bottom-right -->
     <path d="M 163,153 A 35,35 0 0,0 225,130" fill="none" stroke="var(--angle-b-color, #e06c75)" stroke-width="2.5" />
 
     <!-- Labels pushed outward -->

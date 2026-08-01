@@ -1,6 +1,6 @@
 ---
 /**
- * CyclicClock — which elements of ℤ₁₂ generate the whole group, and what
+ * CyclicClock - which elements of ℤ₁₂ generate the whole group, and what
  * happens when one doesn't.
  *
  * Generators are computed from gcd(k, 12) = 1 and the orbit on the right is
@@ -87,7 +87,7 @@ const genSet = new Set(generators);
       {`k generates ℤ₁₂ exactly when gcd(k, 12) = 1, so the generators are ${generators.join(", ")}`}
     </text>
     <text x={w / 2} y="304" class="cyc-sub" font-size="9.5" text-anchor="middle">
-      {`Otherwise ⟨k⟩ has order 12 / gcd(k, 12) — here ⟨${step}⟩ has order ${orbit.length}`}
+      {`Otherwise ⟨k⟩ has order 12 / gcd(k, 12) - here ⟨${step}⟩ has order ${orbit.length}`}
     </text>
   </svg>
 </figure>

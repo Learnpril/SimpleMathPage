@@ -1,5 +1,5 @@
 ---
-// TriangleTypes.astro — Three triangles: equilateral, isosceles (tall/narrow), scalene
+// TriangleTypes.astro - Three triangles: equilateral, isosceles (tall/narrow), scalene
 // All base lines at y=145. Headers at y=20. Subtitle at y=163.
 ---
 
@@ -16,9 +16,9 @@
     <line x1="90" y1="145" x2="96" y2="145" stroke="var(--tside-a, #61afef)" stroke-width="1.5" />
     <text x="93" y="163" font-size="11" fill="var(--sublabel-color, #888)" text-anchor="middle">All sides equal</text>
 
-    <!-- ISOSCELES (centered at x=280, tall and narrow — clearly different shape) -->
+    <!-- ISOSCELES (centered at x=280, tall and narrow - clearly different shape) -->
     <text x="280" y="20" font-size="13" font-weight="bold" fill="var(--label-color, currentColor)" text-anchor="middle">Isosceles</text>
-    <!-- Narrow base (80px), tall apex — two long equal sides, short base -->
+    <!-- Narrow base (80px), tall apex - two long equal sides, short base -->
     <polygon points="280,35 240,145 320,145" fill="none" stroke="var(--tside-b, #98c379)" stroke-width="2" stroke-linejoin="round" />
     <!-- Double tick marks on the two equal (long) sides -->
     <line x1="257" y1="87" x2="263" y2="93" stroke="var(--tside-b, #98c379)" stroke-width="1.5" />

@@ -36,14 +36,14 @@ Notice the coefficient formula is the same one as in Cauchy's integral formula f
 
 The two halves have names:
 
-- $\sum_{n\ge0}c_n(z-z_0)^n$ — the **analytic part**, converging for $|z-z_0|<R$
-- $\sum_{n<0}c_n(z-z_0)^n$ — the **principal part**, converging for $|z-z_0|>r$
+- $\sum_{n\ge0}c_n(z-z_0)^n$ - the **analytic part**, converging for $|z-z_0|<R$
+- $\sum_{n<0}c_n(z-z_0)^n$ - the **principal part**, converging for $|z-z_0|>r$
 
 Both conditions together give the annulus. The principal part is the new object and it is what encodes the singularity.
 
 ### One function, several series
 
-Because the region is an annulus and a function can have several, the expansion is not unique to the function — only to the function **together with the annulus**.
+Because the region is an annulus and a function can have several, the expansion is not unique to the function - only to the function **together with the annulus**.
 
 <LaurentAnnulus />
 
@@ -87,9 +87,9 @@ $$
 
 The principal part also tells you what kind of singularity you have, which is the subject of the next lesson:
 
-- **No principal part** — removable singularity.
-- **Finitely many terms**, lowest power $(z-z_0)^{-m}$ — pole of order $m$.
-- **Infinitely many terms** — essential singularity.
+- **No principal part** - removable singularity.
+- **Finitely many terms**, lowest power $(z-z_0)^{-m}$ - pole of order $m$.
+- **Infinitely many terms** - essential singularity.
 
 This is the cleanest of the several equivalent definitions, and it is why Laurent series come before the classification.
 
@@ -213,7 +213,7 @@ $$
 
 ∎
 
-**An essential singularity is no obstacle to integration.** You do not need to understand the singularity, only to read off one coefficient — which is the practical power of Laurent series.
+**An essential singularity is no obstacle to integration.** You do not need to understand the singularity, only to read off one coefficient - which is the practical power of Laurent series.
 
 ## Real-World Applications
 
@@ -225,7 +225,7 @@ $$
 
 **Multipole expansions.** In electrostatics and gravitation, the field far from a charge distribution is expanded in inverse powers of distance, with monopole, dipole and quadrupole terms. It is a Laurent series with physical names for the coefficients.
 
-**Digital filter design.** The $z$-transform of a causal filter is a Laurent series, and the region of convergence — an annulus — determines whether the filter is stable and causal. Signal processing texts state stability directly in terms of that annulus.
+**Digital filter design.** The $z$-transform of a causal filter is a Laurent series, and the region of convergence - an annulus - determines whether the filter is stable and causal. Signal processing texts state stability directly in terms of that annulus.
 
 **Perturbation near a singular limit.** Problems with a small parameter appearing in a denominator are handled by Laurent expansion in that parameter, standard in fluid dynamics and in quantum field theory regularization.
 

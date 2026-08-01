@@ -36,7 +36,7 @@ This is the practical payoff. Cancellation is so familiar that its failure is ge
   labels={["0", "1", "2", "3", "4", "5"]}
   op={(i, j) => (i * j) % 6}
   opSymbol="×"
-  title="Multiplication in ℤ₆ — not an integral domain"
+  title="Multiplication in ℤ₆ - not an integral domain"
   caption="Zeros appear off the top row and left column: 2 × 3 = 0 and 3 × 4 = 0. Row 2 reads 0, 2, 4, 0, 2, 4, repeating, so 2x = 2y does not force x = y."
 />
 
@@ -48,7 +48,7 @@ Compare a prime modulus.
   labels={["0", "1", "2", "3", "4"]}
   op={(i, j) => (i * j) % 5}
   opSymbol="×"
-  title="Multiplication in ℤ₅ — a field"
+  title="Multiplication in ℤ₅ - a field"
   caption="The only zeros sit in row 0 and column 0. Every other row is a rearrangement of 1, 2, 3, 4, so every nonzero element has an inverse."
 />
 
@@ -88,7 +88,7 @@ Here's a result with no analogue for infinite rings.
 
 Proof: let $D$ be a finite integral domain and $a \ne 0$. Consider the map $x \mapsto ax$ from $D$ to $D$. It's injective, because $ax = ay$ implies $x = y$ by cancellation. An injective map from a **finite** set to itself is surjective, so something maps to 1: there is an $x$ with $ax = 1$. ∎
 
-So $a$ is invertible. Finiteness is what forces it — the same argument fails for $\mathbb{Z}$, where $x \mapsto 2x$ is injective but misses 1 because the set is infinite.
+So $a$ is invertible. Finiteness is what forces it - the same argument fails for $\mathbb{Z}$, where $x \mapsto 2x$ is injective but misses 1 because the set is infinite.
 
 This is why the distinction between domain and field, which matters a great deal for $\mathbb{Z}$ and $\mathbb{R}[x]$, evaporates in the finite world.
 
@@ -126,7 +126,7 @@ $$
 0^2=0,\ 1^2=1,\ 2^2=4,\ 3^2=1,\ 4^2=0,\ 5^2=1,\ 6^2=4,\ 7^2=1
 $$
 
-Solutions: $x \in \{1, 3, 5, 7\}$ — **four** of them.
+Solutions: $x \in \{1, 3, 5, 7\}$ - **four** of them.
 
 Over a field, $x^2 = 1$ factors as $(x-1)(x+1) = 0$ and has at most two solutions. Here $\mathbb{Z}_8$ has zero divisors, the factoring argument fails, and a quadratic gets four roots.
 
@@ -180,7 +180,7 @@ $$
 \text{char} = \operatorname{lcm}(4,6) = 12
 $$
 
-Since 12 is composite, this ring cannot be an integral domain — and indeed $(2,0)(0,3) = (0,0)$ with both factors nonzero.
+Since 12 is composite, this ring cannot be an integral domain - and indeed $(2,0)(0,3) = (0,0)$ with both factors nonzero.
 
 **Example 7: The freshman's dream.**
 
@@ -204,7 +204,7 @@ This map $x \mapsto x^p$ is the **Frobenius endomorphism**, and it is the engine
 
 ## Real-World Applications
 
-**Cryptography.** Elliptic-curve cryptography works over $\mathbb{F}_p$ for a large prime $p$, and needing a _field_ rather than just a ring is essential: the group law on the curve involves dividing by coordinate differences. Over $\mathbb{Z}_n$ with composite $n$ that division can fail, and the failure leaks a factor of $n$ — the basis of Lenstra's elliptic-curve factoring method.
+**Cryptography.** Elliptic-curve cryptography works over $\mathbb{F}_p$ for a large prime $p$, and needing a _field_ rather than just a ring is essential: the group law on the curve involves dividing by coordinate differences. Over $\mathbb{Z}_n$ with composite $n$ that division can fail, and the failure leaks a factor of $n$ - the basis of Lenstra's elliptic-curve factoring method.
 
 **Reed–Solomon codes.** QR codes, CDs, DVDs and spacecraft telemetry use codes over finite fields. Decoding solves linear systems, which requires inverting elements, which requires a field. The field is usually $GF(256)$, so one field element is exactly one byte.
 
@@ -215,7 +215,7 @@ This map $x \mapsto x^p$ is the **Frobenius endomorphism**, and it is the engine
 **Fixed-width integer bugs.** 32-bit arithmetic is $\mathbb{Z}_{2^{32}}$, which is riddled with zero divisors. Code assuming that `a * b == a * c` implies `b == c` is assuming an integral domain it does not have, and this is a genuine source of security vulnerabilities.
 
 :::note[You've Got This]
-Two headline facts. Zero divisors are what break cancellation, and cancellation is what makes "factor and set each piece to zero" legal — so ℤ₆ is a place where familiar algebra genuinely stops working. And ℤₙ is a field exactly when n is prime, which retroactively explains a lot of earlier lessons, including why U(p) has all p−1 nonzero elements. The finite-domain-implies-field theorem is worth admiring too: finiteness alone upgrades cancellation into division, and that's the sort of thing abstraction is good at finding.
+Two headline facts. Zero divisors are what break cancellation, and cancellation is what makes "factor and set each piece to zero" legal - so ℤ₆ is a place where familiar algebra genuinely stops working. And ℤₙ is a field exactly when n is prime, which retroactively explains a lot of earlier lessons, including why U(p) has all p−1 nonzero elements. The finite-domain-implies-field theorem is worth admiring too: finiteness alone upgrades cancellation into division, and that's the sort of thing abstraction is good at finding.
 :::
 
 ## Quiz

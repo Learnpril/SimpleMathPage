@@ -1,6 +1,6 @@
 ---
 /**
- * FunctionTypes — injective, surjective, and bijective as arrow diagrams
+ * FunctionTypes - injective, surjective, and bijective as arrow diagrams
  * between two sets. The failure in each of the first two panels is flagged.
  */
 const w = 540;
@@ -75,7 +75,7 @@ const halfW = 30;
             <circle cx={lx} cy={domY(i)} r="5.5" class="fnt-dom" />
           ))}
 
-          {/* Codomain dots — an unhit target is drawn hollow and orange */}
+          {/* Codomain dots - an unhit target is drawn hollow and orange */}
           {Array.from({ length: p.cod }).map((_, i) => (
             <circle cx={rx} cy={codY(i)} r="5.5" class={p.map.includes(i) ? "fnt-cod" : "fnt-cod-miss"} />
           ))}

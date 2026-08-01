@@ -1,6 +1,6 @@
 ---
 /**
- * TopologistSineCurve — the standard example of a connected space that is not
+ * TopologistSineCurve - the standard example of a connected space that is not
  * path-connected. The curve is plotted from sin(1/x), and the oscillation count on
  * each shrinking window is counted from the samples, which is what makes a path to
  * the origin impossible.
@@ -31,7 +31,7 @@ const curve = (() => {
   return pts.join(" ");
 })();
 
-/** Count sign changes of sin(1/x) on (0, d] — one per half oscillation. */
+/** Count sign changes of sin(1/x) on (0, d] - one per half oscillation. */
 function oscillations(d: number) {
   // sin(1/x) = 0 exactly when 1/x = kπ, so x = 1/(kπ) for integers k ≥ 1
   return Math.floor(1 / (d * Math.PI)) === 0 ? 0 : Number.POSITIVE_INFINITY;

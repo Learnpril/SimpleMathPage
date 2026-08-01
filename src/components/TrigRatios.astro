@@ -1,12 +1,12 @@
 ---
 /**
- * TrigRatios — visual showing a right triangle with labeled sides
+ * TrigRatios - visual showing a right triangle with labeled sides
  * and the three primary trig ratios: sin, cos, tan.
  * Wider layout to prevent text overlap.
  */
 const w = 540;
 const h = 210;
-// Triangle vertices — smaller triangle, shifted left
+// Triangle vertices - smaller triangle, shifted left
 const ax = 40, ay = 180;    // bottom-left (angle θ)
 const bx = 240, by = 180;   // bottom-right (right angle)
 const cx = 240, cy = 50;    // top-right
@@ -44,7 +44,7 @@ const cx = 240, cy = 50;    // top-right
     <text class="tr-opp" x={bx + 12} y={(by + cy) / 2 + 5} font-size="13" text-anchor="start" font-weight="bold">Opposite</text>
     <text class="tr-adj" x={(ax + bx) / 2} y={ay + 20} font-size="13" text-anchor="middle" font-weight="bold">Adjacent</text>
 
-    {/* Ratio formulas — pushed far right */}
+    {/* Ratio formulas - pushed far right */}
     <text class="tr-formula" x={w - 20} y="60" font-size="14" text-anchor="end">
       <tspan fill="#58a6ff" font-weight="bold">sin θ</tspan>
       <tspan fill="#999"> = Opp / Hyp</tspan>

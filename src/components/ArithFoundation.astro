@@ -1,6 +1,6 @@
 ---
 /**
- * ArithFoundation — visual showing the four arithmetic operations
+ * ArithFoundation - visual showing the four arithmetic operations
  * as pillars supporting higher math, with a foundation metaphor.
  */
 const w = 480;
@@ -23,7 +23,7 @@ const pillarH = 70;
   <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
     {/* Base platform */}
     <rect class="af-base" x="20" y={baseY} width={w - 40} height="30" rx="6" />
-    <text class="af-base-text" x={w / 2} y={baseY + 20} font-size="13" text-anchor="middle" font-weight="bold">Arithmetic — The Foundation</text>
+    <text class="af-base-text" x={w / 2} y={baseY + 20} font-size="13" text-anchor="middle" font-weight="bold">Arithmetic - The Foundation</text>
 
     {/* Pillars */}
     {pillars.map((p, i) => {

@@ -28,7 +28,7 @@ That is the whole definition. No distance, no coordinates, no algebra. You simpl
 
 <TopologyAxiomCheck />
 
-The figure tests three candidate families on a three-element set by brute force over all unions and intersections. Two pass. The third contains $\{a\}$ and $\{b\}$ but not their union $\{ab\}$, so it fails axiom 2 — and the figure names the offending union rather than just reporting failure.
+The figure tests three candidate families on a three-element set by brute force over all unions and intersections. Two pass. The third contains $\{a\}$ and $\{b\}$ but not their union $\{ab\}$, so it fails axiom 2 - and the figure names the offending union rather than just reporting failure.
 
 ### Why the asymmetry
 
@@ -58,7 +58,7 @@ Three warnings that cause most early confusion:
 - $\varnothing$ and $X$ are **always both** open and closed.
 - "Not open" does not mean closed. In $\mathbb{R}$, the interval $[0,1)$ is neither.
 
-A set that is both open and closed is called **clopen**, and how many clopen sets a space has turns out to measure its connectedness — that is lesson 8.
+A set that is both open and closed is called **clopen**, and how many clopen sets a space has turns out to measure its connectedness - that is lesson 8.
 
 ### The standard topologies
 
@@ -116,21 +116,13 @@ Axiom 3, intersections: $\{a\}\cap\{b\}=\varnothing$ ✓, and all others are fin
 
 Axiom 2, unions: $\{a\}\cup\{b\} = \{a,b\}$, which is **not** in the collection ✗
 
-$$
-\text{not a topology}
-$$
-
-∎
+**Answer:** not a topology. ∎
 
 **Example 2: Is $\{\varnothing, \{a\}, \{a,b\}, \{a,b,c\}\}$ a topology?**
 
 **Solution.** This family is a chain, each set contained in the next. Any union of members is the largest of them, and any intersection is the smallest, so both are in the family.
 
-$$
-\text{a topology}
-$$
-
-∎
+**Answer:** a topology. ∎
 
 **Nested chains are automatically topologies**, which is a handy shortcut when checking examples.
 
@@ -168,13 +160,13 @@ is finite. Since $X$ is infinite, $U\cap V$ must be nonempty.
 
 **Every two nonempty open sets meet.** ∎
 
-This is the failure of the Hausdorff condition, and it is why the cofinite topology on an infinite set is not metrizable — a fact we prove in lesson 13.
+This is the failure of the Hausdorff condition, and it is why the cofinite topology on an infinite set is not metrizable - a fact we prove in lesson 13.
 
 **Example 6: Which sets are clopen in $\mathbb{R}$ with the standard topology?**
 
 **Solution.** Only $\varnothing$ and $\mathbb{R}$.
 
-Suppose $A$ is nonempty, clopen, and not all of $\mathbb{R}$. Then $A$ and its complement are both open, nonempty, and partition $\mathbb{R}$ — which contradicts connectedness of $\mathbb{R}$, proved in lesson 8.
+Suppose $A$ is nonempty, clopen, and not all of $\mathbb{R}$. Then $A$ and its complement are both open, nonempty, and partition $\mathbb{R}$ - which contradicts connectedness of $\mathbb{R}$, proved in lesson 8.
 
 $$
 \text{clopen sets: } \varnothing \text{ and } \mathbb{R}
@@ -217,7 +209,7 @@ $$
 **Sensor networks.** Coverage without coordinates is a topological question, answered from connectivity data alone, which is exactly the setting where distance is unavailable.
 
 :::note[You've Got This]
-Three axioms, and they will feel unmotivated for a while. Two things help. First, the asymmetry between unions and intersections is not arbitrary: the shrinking-intervals example forces it, and once you have seen that, the definition stops looking like a convention. Second, get the standard topologies into memory early — discrete, trivial, standard on $\mathbb{R}$, cofinite. Almost every question in the section can be tested against those four before you attempt a proof, and they will usually tell you the answer.
+Three axioms, and they will feel unmotivated for a while. Two things help. First, the asymmetry between unions and intersections is not arbitrary: the shrinking-intervals example forces it, and once you have seen that, the definition stops looking like a convention. Second, get the standard topologies into memory early - discrete, trivial, standard on $\mathbb{R}$, cofinite. Almost every question in the section can be tested against those four before you attempt a proof, and they will usually tell you the answer.
 :::
 
 ## Quiz

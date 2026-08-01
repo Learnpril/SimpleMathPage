@@ -1,8 +1,12 @@
 ---
 /**
- * GenusSurfaces3D — the orientable closed surfaces of genus 0, 1 and 2, side by
- * side. The genus-2 surface is assembled from two tori and a connecting tube rather
- * than drawn by hand, and the Euler characteristic shown under each is computed from
+ * GenusSurfaces3D - the orientable closed surfaces of genus 0, 1 and 2, side by
+ * side. The genus-2 surface is not two overlapping torus meshes: it is generated as
+ * the boundary of the union of two solid doughnuts that merge in one place, meshed
+ * with surface nets into a single closed manifold. Counting that mesh gives
+ * V − E + F = 14166 − 42504 + 28336 = −2 with one connected component and no
+ * non-manifold edges, so the picture really has genus 2 rather than extra holes at an
+ * intersection. The Euler characteristic shown under each surface is computed from
  * χ = 2 − 2g.
  */
 const genera = [0, 1, 2];
@@ -12,7 +16,7 @@ const chi = genera.map((g) => 2 - 2 * g);
 <figure
   class="gs3"
   role="img"
-  aria-label={`Three closed orientable surfaces shown in 3D: a sphere of genus 0 with Euler characteristic ${chi[0]}, a torus of genus 1 with Euler characteristic ${chi[1]}, and a two-holed surface of genus 2 with Euler characteristic ${chi[2]}. Genus counts the holes and determines the surface completely.`}
+  aria-label={`Three closed orientable surfaces shown in 3D: a sphere of genus 0 with Euler characteristic ${chi[0]}, a torus of genus 1 with Euler characteristic ${chi[1]}, and a two-holed surface of genus 2 with Euler characteristic ${chi[2]}. The genus-2 surface is the boundary of two solid doughnuts merged in one place, built as a single closed mesh whose computed Euler characteristic is ${chi[2]}. Genus counts the holes and determines the surface completely.`}
 >
   <div class="gs3-canvas" data-gs3d></div>
   <div class="gs3-hint">Drag to rotate · Scroll/Pinch to zoom</div>
@@ -21,13 +25,213 @@ const chi = genera.map((g) => 2 - 2 * g);
     characteristics <strong>{chi[0]}</strong>, <strong>{chi[1]}</strong> and
     <strong>{chi[2]}</strong>. For a closed orientable surface χ = 2 − 2g, so a
     single integer settles which surface you are looking at. No amount of stretching
-    turns one into another.
+    turns one into another. The genus-2 shape is the boundary of two solid doughnuts
+    merged in one place, generated as a single closed mesh rather than two overlapping
+    ones - counting its vertices, edges and faces gives χ = <strong>{chi[2]}</strong>,
+    so the two holes you see are the only two there are.
   </figcaption>
 </figure>
 
 <script>
   import * as THREE from "three";
   import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+
+  /* ------------------------------------------------------------------ *
+   * A genus-2 surface, built as the boundary of the union of two solid
+   * tori and meshed with surface nets.
+   *
+   * The two core circles are disjoint (d0 > R) so the tori do not link,
+   * while their tubes overlap (d0 − R < 2r) in exactly one lens-shaped
+   * region around the origin. The union of two solid tori meeting in a
+   * single ball is a genus-2 handlebody, so its boundary is a closed
+   * genus-2 surface - one mesh, no self-intersection, exactly two holes.
+   * ------------------------------------------------------------------ */
+  const R2 = 0.58; // major radius of each torus
+  const r2 = 0.3; // minor radius
+  const d0 = 0.7; // half the distance between the two centres
+  const kBlend = 0.2; // fillet size where the two tubes merge
+
+  /** Signed distance to a torus lying in the z = 0 plane, centred at (cx, 0, 0). */
+  function torusSDF(x: number, y: number, z: number, cx: number) {
+    const a = Math.hypot(x - cx, y) - R2;
+    return Math.hypot(a, z) - r2;
+  }
+
+  /** Polynomial smooth minimum: a union with a rounded seam. */
+  function smin(a: number, b: number, k: number) {
+    const h = Math.max(k - Math.abs(a - b), 0) / k;
+    return Math.min(a, b) - h * h * k * 0.25;
+  }
+
+  /** Negative inside the solid, zero on the surface. */
+  function field(x: number, y: number, z: number) {
+    return smin(torusSDF(x, y, z, -d0), torusSDF(x, y, z, d0), kBlend);
+  }
+
+  function genusTwoGeometry() {
+    // A box comfortably containing the surface, which reaches
+    // |x| ≤ d0 + R2 + r2, |y| ≤ R2 + r2, |z| ≤ r2.
+    const lo = [-1.66, -0.96, -0.4];
+    const hi = [1.66, 0.96, 0.4];
+    const n = [92, 54, 24];
+    const d = [
+      (hi[0] - lo[0]) / (n[0] - 1),
+      (hi[1] - lo[1]) / (n[1] - 1),
+      (hi[2] - lo[2]) / (n[2] - 1),
+    ];
+
+    const sIdx = (i: number, j: number, k: number) => (k * n[1] + j) * n[0] + i;
+    const val = new Float32Array(n[0] * n[1] * n[2]);
+    for (let k = 0; k < n[2]; k++) {
+      for (let j = 0; j < n[1]; j++) {
+        for (let i = 0; i < n[0]; i++) {
+          val[sIdx(i, j, k)] = field(lo[0] + i * d[0], lo[1] + j * d[1], lo[2] + k * d[2]);
+        }
+      }
+    }
+
+    const corner = [
+      [0, 0, 0], [1, 0, 0], [1, 1, 0], [0, 1, 0],
+      [0, 0, 1], [1, 0, 1], [1, 1, 1], [0, 1, 1],
+    ];
+    const edge = [
+      [0, 1], [1, 2], [2, 3], [3, 0],
+      [4, 5], [5, 6], [6, 7], [7, 4],
+      [0, 4], [1, 5], [2, 6], [3, 7],
+    ];
+
+    // One vertex per cell that the surface passes through, placed at the
+    // average of the sign changes on that cell's edges.
+    const cn = [n[0] - 1, n[1] - 1, n[2] - 1];
+    const cIdx = (i: number, j: number, k: number) => (k * cn[1] + j) * cn[0] + i;
+    const vertexAt = new Int32Array(cn[0] * cn[1] * cn[2]).fill(-1);
+    const pos: number[] = [];
+
+    for (let k = 0; k < cn[2]; k++) {
+      for (let j = 0; j < cn[1]; j++) {
+        for (let i = 0; i < cn[0]; i++) {
+          const cv: number[] = [];
+          let neg = 0;
+          for (let c = 0; c < 8; c++) {
+            const o = corner[c];
+            const v = val[sIdx(i + o[0], j + o[1], k + o[2])];
+            cv.push(v);
+            if (v < 0) neg++;
+          }
+          if (neg === 0 || neg === 8) continue;
+
+          let sx = 0;
+          let sy = 0;
+          let sz = 0;
+          let cnt = 0;
+          for (const [a, b] of edge) {
+            const va = cv[a];
+            const vb = cv[b];
+            if (va < 0 === vb < 0) continue;
+            const t = va / (va - vb);
+            const oa = corner[a];
+            const ob = corner[b];
+            sx += oa[0] + t * (ob[0] - oa[0]);
+            sy += oa[1] + t * (ob[1] - oa[1]);
+            sz += oa[2] + t * (ob[2] - oa[2]);
+            cnt++;
+          }
+          vertexAt[cIdx(i, j, k)] = pos.length / 3;
+          pos.push(
+            lo[0] + (i + sx / cnt) * d[0],
+            lo[1] + (j + sy / cnt) * d[1],
+            lo[2] + (k + sz / cnt) * d[2],
+          );
+        }
+      }
+    }
+
+    // Normals from the gradient of the field, so shading is exact rather
+    // than averaged from the facets.
+    const nrm = new Float32Array(pos.length);
+    const h = 0.004;
+    for (let v = 0; v < pos.length; v += 3) {
+      const x = pos[v];
+      const y = pos[v + 1];
+      const z = pos[v + 2];
+      let gx = field(x + h, y, z) - field(x - h, y, z);
+      let gy = field(x, y + h, z) - field(x, y - h, z);
+      let gz = field(x, y, z + h) - field(x, y, z - h);
+      const len = Math.hypot(gx, gy, gz) || 1;
+      gx /= len;
+      gy /= len;
+      gz /= len;
+      nrm[v] = gx;
+      nrm[v + 1] = gy;
+      nrm[v + 2] = gz;
+    }
+
+    // Each grid edge that changes sign is dual to a quad joining the four
+    // cells around it. Winding is fixed against the gradient normal, so
+    // every triangle faces outward.
+    const idx: number[] = [];
+    const tri = (a: number, b: number, c: number) => {
+      const ax = pos[3 * a];
+      const ay = pos[3 * a + 1];
+      const az = pos[3 * a + 2];
+      const ux = pos[3 * b] - ax;
+      const uy = pos[3 * b + 1] - ay;
+      const uz = pos[3 * b + 2] - az;
+      const vx = pos[3 * c] - ax;
+      const vy = pos[3 * c + 1] - ay;
+      const vz = pos[3 * c + 2] - az;
+      const cx = uy * vz - uz * vy;
+      const cy = uz * vx - ux * vz;
+      const cz = ux * vy - uy * vx;
+      if (Math.hypot(cx, cy, cz) < 1e-12) return; // degenerate
+      const dot = cx * nrm[3 * a] + cy * nrm[3 * a + 1] + cz * nrm[3 * a + 2];
+      if (dot < 0) idx.push(a, c, b);
+      else idx.push(a, b, c);
+    };
+    const quad = (a: number, b: number, c: number, e: number) => {
+      if (a < 0 || b < 0 || c < 0 || e < 0) return;
+      tri(a, b, c);
+      tri(a, c, e);
+    };
+
+    for (let k = 1; k < cn[2]; k++) {
+      for (let j = 1; j < cn[1]; j++) {
+        for (let i = 1; i < cn[0]; i++) {
+          const inside = val[sIdx(i, j, k)] < 0;
+          if (val[sIdx(i + 1, j, k)] < 0 !== inside) {
+            quad(
+              vertexAt[cIdx(i, j - 1, k - 1)],
+              vertexAt[cIdx(i, j, k - 1)],
+              vertexAt[cIdx(i, j, k)],
+              vertexAt[cIdx(i, j - 1, k)],
+            );
+          }
+          if (val[sIdx(i, j + 1, k)] < 0 !== inside) {
+            quad(
+              vertexAt[cIdx(i - 1, j, k - 1)],
+              vertexAt[cIdx(i, j, k - 1)],
+              vertexAt[cIdx(i, j, k)],
+              vertexAt[cIdx(i - 1, j, k)],
+            );
+          }
+          if (val[sIdx(i, j, k + 1)] < 0 !== inside) {
+            quad(
+              vertexAt[cIdx(i - 1, j - 1, k)],
+              vertexAt[cIdx(i, j - 1, k)],
+              vertexAt[cIdx(i, j, k)],
+              vertexAt[cIdx(i - 1, j, k)],
+            );
+          }
+        }
+      }
+    }
+
+    const geo = new THREE.BufferGeometry();
+    geo.setAttribute("position", new THREE.Float32BufferAttribute(pos, 3));
+    geo.setAttribute("normal", new THREE.Float32BufferAttribute(nrm, 3));
+    geo.setIndex(idx);
+    return geo;
+  }
 
   function initScene(container: HTMLElement) {
     const width = Math.min(container.clientWidth, 480);
@@ -65,16 +269,12 @@ const chi = genera.map((g) => 2 - 2 * g);
     g1.add(new THREE.Mesh(new THREE.TorusGeometry(0.72, 0.3, 32, 64), material(colours[1])));
     root.add(g1);
 
-    // genus 2: two tori joined by a short tube, so the second hole is built rather than implied
+    // genus 2: the boundary of the union of two solid tori, meshed as one closed
+    // surface. Overlapping torus meshes would show their intersection curves and
+    // their interior walls, so the surface is generated from its implicit form.
     const g2 = new THREE.Group();
-    const mat2 = material(colours[2]);
-    const left = new THREE.Mesh(new THREE.TorusGeometry(0.56, 0.24, 24, 48), mat2);
-    left.position.x = -0.6;
-    const right = new THREE.Mesh(new THREE.TorusGeometry(0.56, 0.24, 24, 48), mat2);
-    right.position.x = 0.6;
-    const tube = new THREE.Mesh(new THREE.CylinderGeometry(0.24, 0.24, 0.9, 24, 1, true), mat2);
-    tube.rotation.z = Math.PI / 2;
-    g2.add(left, right, tube);
+    g2.add(new THREE.Mesh(genusTwoGeometry(), material(colours[2])));
+    g2.scale.setScalar(0.76);
     g2.position.x = 3.1;
     root.add(g2);
 

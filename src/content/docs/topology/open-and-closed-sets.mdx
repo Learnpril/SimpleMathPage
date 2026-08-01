@@ -59,7 +59,7 @@ The characterization that makes closedness workable:
 
 > $A$ is closed if and only if $A$ contains all of its limit points.
 
-For example the limit points of $(0,1)$ are $[0,1]$, so $(0,1)$ misses two of them and is not closed. The set $\{1/n : n\ge1\}$ has exactly one limit point, 0, which it does not contain — adding it produces a closed set.
+For example the limit points of $(0,1)$ are $[0,1]$, so $(0,1)$ misses two of them and is not closed. The set $\{1/n : n\ge1\}$ has exactly one limit point, 0, which it does not contain - adding it produces a closed set.
 
 ### Sequences, with a warning
 
@@ -75,8 +75,8 @@ This is the version most people carry from real analysis, and it is exactly righ
 
 Three derived notions, taken up properly in lesson 7 but worth naming now:
 
-- **Interior** $\operatorname{int}A$ — the largest open set inside $A$
-- **Closure** $\bar A$ — the smallest closed set containing $A$
+- **Interior** $\operatorname{int}A$ - the largest open set inside $A$
+- **Closure** $\bar A$ - the smallest closed set containing $A$
 - **Boundary** $\partial A = \bar A\setminus\operatorname{int}A$
 
 Immediately: $A$ is open iff $A = \operatorname{int}A$, and closed iff $A = \bar A$. A set is clopen precisely when its boundary is empty.
@@ -97,11 +97,7 @@ Immediately: $A$ is open iff $A = \operatorname{int}A$, and closed iff $A = \bar
 
 Not closed: its complement is $(-\infty,0)\cup[1,\infty)$, and any interval around 1 contains points just below 1, which lie in $[0,1)$. So the complement is not open.
 
-$$
-\text{neither}
-$$
-
-∎
+**Answer:** neither. ∎
 
 **Example 2: Find the limit points of $A = \{1/n : n\in\mathbb{N}\}$ in $\mathbb{R}$.**
 
@@ -141,11 +137,7 @@ So $\{5\}$ is closed, and $\{n : n \ge 0\}$ is neither open nor closed, since it
 
 **Solution.** Every set is open, so every complement is open too, so every set is closed.
 
-$$
-\text{every subset is clopen}
-$$
-
-∎
+**Answer:** every subset is clopen. ∎
 
 This makes the discrete space maximally disconnected, which is the content of lesson 8.
 
@@ -155,11 +147,7 @@ This makes the discrete space maximally disconnected, which is the content of le
 
 Not closed: $\sqrt2$ is a limit point of $\mathbb{Q}$, since rationals are dense, and it is not rational.
 
-$$
-\text{neither}
-$$
-
-∎
+**Answer:** neither. ∎
 
 In fact $\bar{\mathbb{Q}} = \mathbb{R}$ and $\operatorname{int}\mathbb{Q} = \varnothing$, so $\partial\mathbb{Q} = \mathbb{R}$. **A set can have all of $\mathbb{R}$ as its boundary**, which is a good sign that boundary is not an intuitive notion.
 
@@ -194,7 +182,7 @@ $$
 **Image segmentation.** Morphological opening and closing operations are named after these notions and behave analogously, removing small protrusions or filling small gaps.
 
 :::note[You've Got This]
-The one thing to over-learn here is that open and closed are not opposites. Four combinations exist and all of them occur in $\mathbb{R}$: $(0,1)$, $[0,1]$, $\varnothing$, and $[0,1)$. Keep those four examples to hand. The other habit worth building early is asking "open in what?" — since $[0,\frac12)$ is open in $[0,1]$ and not in $\mathbb{R}$, the ambient space is part of the question every time.
+The one thing to over-learn here is that open and closed are not opposites. Four combinations exist and all of them occur in $\mathbb{R}$: $(0,1)$, $[0,1]$, $\varnothing$, and $[0,1)$. Keep those four examples to hand. The other habit worth building early is asking "open in what?" - since $[0,\frac12)$ is open in $[0,1]$ and not in $\mathbb{R}$, the ambient space is part of the question every time.
 :::
 
 ## Quiz

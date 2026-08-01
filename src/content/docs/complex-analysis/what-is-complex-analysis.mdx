@@ -6,11 +6,32 @@ sidebar:
 ---
 
 import Quiz from "../../../components/Quiz.astro";
+import SymbolKey from "../../../components/SymbolKey.astro";
 import WhyComplexHelps from "../../../components/WhyComplexHelps.astro";
 
 ## What You'll Learn
 
 In this lesson you'll see what complex analysis is for, why complex differentiability is a far stronger condition than real differentiability, and three concrete problems that are unsolvable on the real line and routine in the plane.
+
+<SymbolKey
+  items={[
+    {
+      sym: "ℂ",
+      read: "the complex numbers",
+      note: "every number a + bi; the plane, once you read a and b as coordinates",
+    },
+    {
+      sym: "f : ℂ → ℂ",
+      read: "f maps complex numbers to complex numbers",
+      note: "feed it a point of the plane, get back a point of the plane",
+    },
+    {
+      sym: "∎",
+      read: "end of proof",
+      note: "the tombstone: the argument is complete and ordinary prose resumes. Older texts write QED, or draw it hollow as □",
+    },
+  ]}
+/>
 
 ## The Concept
 
@@ -93,7 +114,7 @@ Take $h = t$ real: the quotient is $t/t = 1$.
 
 Take $h = it$ imaginary: the quotient is $\overline{it}/(it) = -it/(it) = -1$.
 
-Two directions, two different answers, so the limit does not exist — **at any point**. ∎
+Two directions, two different answers, so the limit does not exist - **at any point**. ∎
 
 Note how ordinary $\bar z$ looks. As a map $\mathbb{R}^2 \to \mathbb{R}^2$ it is $(x,y)\mapsto(x,-y)$, which is linear and as smooth as anything can be. It fails the complex test because reflection is not a rotation-and-scaling, and that is exactly what complex differentiability requires locally.
 
@@ -178,7 +199,7 @@ The details come later in the section; the point now is that the method exists a
 **Prime numbers.** The prime number theorem, describing how primes thin out, is proved using contour integration applied to the Riemann zeta function. A counting problem about integers requires calculus in the plane, which remains one of the most surprising connections in mathematics.
 
 :::note[You've Got This]
-The one idea to carry into the next lesson: complex differentiability is a strong condition, not a mild generalization. Every theorem in this section is a dividend paid by that strength. And keep the $\frac{1}{1+x^2}$ example close — a completely real question whose only honest answer lives off the real line. That is what the subject does, over and over, and noticing it happen is most of the pleasure of learning it.
+The one idea to carry into the next lesson: complex differentiability is a strong condition, not a mild generalization. Every theorem in this section is a dividend paid by that strength. And keep the $\frac{1}{1+x^2}$ example close - a completely real question whose only honest answer lives off the real line. That is what the subject does, over and over, and noticing it happen is most of the pleasure of learning it.
 :::
 
 ## Quiz

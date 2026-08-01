@@ -1,6 +1,6 @@
 ---
 /**
- * LinearApproxDiagram — shows the idea of linear approximation:
+ * LinearApproxDiagram - shows the idea of linear approximation:
  * a curve f(x) with a tangent line at a point, and the approximation
  * being the tangent line value at a nearby point.
  * Uses a 1D slice: f(x) = x² + 4 (the y=2 slice of f(x,y) = x² + y²),
@@ -78,10 +78,10 @@ const aApprox = sy(2 * approxX + 3);       // 6.0
     {/* Approx point on tangent at x=1.5 */}
     <circle cx={ax} cy={aApprox} r="3.5" class="la-approx" />
 
-    {/* Label: actual — above-left of the blue dot */}
+    {/* Label: actual - above-left of the blue dot */}
     <text class="la-label-actual" x={ax - 65} y={aActual - 10} font-size="10">actual: 6.25</text>
 
-    {/* Label: approx — below the orange dot, to the right */}
+    {/* Label: approx - below the orange dot, to the right */}
     <text class="la-label-approx" x={ax + 10} y={aApprox + 16} font-size="10">approx: 6.0</text>
 
     {/* x label on axis */}

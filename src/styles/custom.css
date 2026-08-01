@@ -1,20 +1,20 @@
 /* ===========================
-   Mom's Basement University — Custom Theme
+   Mom's Basement University - Custom Theme
    =========================== */
 
 /* ---------- Light mode (default) ---------- */
 :root {
-  /* Base palette — cool gray */
+  /* Base palette - cool gray */
   --sl-color-bg: #f8f9fa;
   --sl-color-bg-sidebar: #f1f3f5;
 
-  /* Accent — teal */
+  /* Accent - teal */
   --sl-color-accent-low: hsl(174, 88%, 90%);
   --sl-color-accent: hsl(174, 80%, 35%);
   --sl-color-accent-high: hsl(174, 80%, 25%);
   --sl-color-text-accent: hsl(174, 80%, 35%);
 
-  /* Typography — serif for a math-book feel */
+  /* Typography - serif for a math-book feel */
   --sl-font: "Libre Baskerville", Georgia, "Times New Roman", serif;
 
   /* Quiz tokens */
@@ -40,7 +40,7 @@
   --quiz-special: #b197fc;
 }
 
-/* Site title — high contrast in both modes */
+/* Site title - high contrast in both modes */
 [data-theme="light"] .site-title,
 :root:not([data-theme="dark"]) .site-title {
   color: #1a1a1a;
@@ -49,7 +49,7 @@
   color: #ffffff;
 }
 
-/* Sidebar active link — subtle highlight instead of solid accent block */
+/* Sidebar active link - subtle highlight instead of solid accent block */
 [aria-current="page"] {
   background-color: var(--sl-color-accent-low) !important;
   color: #1a1a1a !important;
@@ -109,7 +109,7 @@ starlight-menu-button + nav ul a[aria-current="page"] {
    Quiz Component Styles
    =========================== */
 
-/* Page title heading — centered */
+/* Page title heading - centered */
 .sl-markdown-content h1,
 .content-panel h1,
 [data-page-title],
@@ -128,19 +128,19 @@ main h1:first-of-type {
   width: auto;
 }
 
-/* Site title — tighten gap and match font */
+/* Site title - tighten gap and match font */
 .site-title {
   gap: 0.25rem !important;
   font-family: "Libre Baskerville", Georgia, serif !important;
 }
 
-/* Right sidebar — thinner and pushed right */
+/* Right sidebar - thinner and pushed right */
 starlight-toc {
   width: 10rem;
   margin-inline-start: auto;
 }
 
-/* Fieldset — one per question */
+/* Fieldset - one per question */
 .quiz-question {
   border: 1px solid var(--sl-color-gray-5, #dee2e6);
   border-radius: 0.5rem;
@@ -402,7 +402,7 @@ starlight-toc {
   color: var(--sl-color-gray-3);
 }
 
-/* Coming soon cards — muted, non-clickable */
+/* Coming soon cards - muted, non-clickable */
 .subject-card.coming-soon {
   opacity: 0.55;
   cursor: default;
@@ -531,7 +531,7 @@ starlight-toc {
     color: var(--sl-color-accent);
   }
 
-  /* Theme toggle button — in header top-right */
+  /* Theme toggle button - in header top-right */
   .mobile-header-icons {
     display: flex;
     align-items: center;
@@ -575,17 +575,17 @@ starlight-toc {
   }
 }
 
-/* KaTeX display math — breathing room around equations */
+/* KaTeX display math - breathing room around equations */
 .katex-display {
   margin: 2.5em 0 !important;
 }
 
-/* KaTeX inline — slightly larger for readability */
+/* KaTeX inline - slightly larger for readability */
 .sl-markdown-content .katex {
   font-size: 1.21em;
 }
 
-/* KaTeX inline-rendered block math (single $ on own line) — breathing room */
+/* KaTeX inline-rendered block math (single $ on own line) - breathing room */
 /* DISABLED: This rule was causing inline math to float as block elements
    when the browser wrapped text. Use $$ for display math instead. */
 
@@ -635,7 +635,7 @@ starlight-toc {
   padding-inline-end: 1rem;
 }
 
-/* KaTeX array/table borders — vertical separators transparent, hlines high contrast */
+/* KaTeX array/table borders - vertical separators transparent, hlines high contrast */
 .katex .arraycolsep,
 .katex .vertical-separator {
   border-color: transparent !important;
@@ -729,10 +729,28 @@ body {
      p:has(> strong:first-child:last-child)
 
    but :first-child and :last-child only count element children, so that also
-   matched any paragraph with plain text around a single bold phrase — which is
+   matched any paragraph with plain text around a single bold phrase - which is
    ordinary prose, and it opened a 4rem hole mid-paragraph-run. */
 .sl-markdown-content p.bold-heading {
   margin-top: 4rem;
+}
+
+/* Breathing room between an example's statement and its solution. Must come
+   after the rule above, because a bare "**Solution.**" paragraph is also a
+   bold-heading and 4rem there detaches the solution from the problem it
+   belongs to. Equal specificity, so source order decides. */
+.sl-markdown-content p.solution-start {
+  margin-top: 1.75rem;
+}
+
+/* End-of-proof tombstone on a line of its own, which happens when the proof
+   closes on a display equation. AMS style sets it flush right; left-aligned it
+   reads as a stray glyph. Pulled up so it hangs off the display rather than
+   floating in the middle of a gap. */
+.sl-markdown-content p.qed {
+  text-align: right;
+  margin-top: -0.75rem;
+  color: var(--sl-color-gray-3, #9198a1);
 }
 
 /* ---------- Themed KaTeX math blocks ---------- */

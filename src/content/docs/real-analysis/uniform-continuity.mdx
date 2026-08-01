@@ -227,7 +227,7 @@ Near 5: $|x^2-25| = |x-5||x+5| \approx 10|x-5|$, so we need $|x-5| < 0.01$.
 
 **Numerical integration and step size.** Choosing one step size $h$ for a whole interval assumes a uniform error bound, which requires uniform continuity of the integrand (or of a derivative). Adaptive quadrature exists precisely because the required step varies when uniformity is weak, refining where the function changes fast.
 
-**ODE solvers and existence theory.** The Picard-Lindelöf theorem requires the right-hand side to be Lipschitz in the state variable. Without it, solutions can fail to be unique — $y' = \sqrt y$ with $y(0)=0$ has more than one solution, and $\sqrt{\ }$ failing Lipschitz at 0 is exactly why.
+**ODE solvers and existence theory.** The Picard-Lindelöf theorem requires the right-hand side to be Lipschitz in the state variable. Without it, solutions can fail to be unique - $y' = \sqrt y$ with $y(0)=0$ has more than one solution, and $\sqrt{\ }$ failing Lipschitz at 0 is exactly why.
 
 **Machine learning robustness.** The Lipschitz constant of a network bounds how much the output can move when the input is perturbed, so it directly bounds vulnerability to adversarial examples. Spectral normalization is a technique for controlling it deliberately.
 
@@ -238,7 +238,7 @@ Near 5: $|x^2-25| = |x-5||x+5| \approx 10|x-5|$, so we need $|x-5| < 0.01$.
 **Floating-point error propagation.** Whether a fixed input precision guarantees a fixed output precision across the whole input range is a uniform continuity question. Functions that steepen, like division near zero, lose precision catastrophically, which is why numerical code special-cases them.
 
 :::note[You've Got This]
-The whole lesson is quantifier order: continuity lets δ depend on the point, uniform continuity does not. Everything else follows. The theorem to remember is that continuity on a compact set is automatically uniform, and its proof is the finiteness trick — infinitely many deltas can have infimum zero, finitely many have a positive minimum. In practice the quickest route to uniform continuity is a bounded derivative, which gives Lipschitz and hence δ = ε/K. And keep √x on [0,1] in mind as the example showing uniformly continuous does not imply Lipschitz.
+The whole lesson is quantifier order: continuity lets δ depend on the point, uniform continuity does not. Everything else follows. The theorem to remember is that continuity on a compact set is automatically uniform, and its proof is the finiteness trick - infinitely many deltas can have infimum zero, finitely many have a positive minimum. In practice the quickest route to uniform continuity is a bounded derivative, which gives Lipschitz and hence δ = ε/K. And keep √x on [0,1] in mind as the example showing uniformly continuous does not imply Lipschitz.
 :::
 
 ## Quiz

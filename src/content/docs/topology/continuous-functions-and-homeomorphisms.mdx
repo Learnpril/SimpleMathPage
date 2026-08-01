@@ -18,7 +18,7 @@ In this lesson you'll meet the preimage definition of continuity, check that it 
 
 > $f:X\to Y$ is **continuous** if $f^{-1}(V)$ is open in $X$ for every open $V\subseteq Y$.
 
-That is the whole definition. No epsilons, no distances, no sequences — and it works in any topological space.
+That is the whole definition. No epsilons, no distances, no sequences - and it works in any topological space.
 
 <PreimageContinuity />
 
@@ -40,7 +40,7 @@ All of these are the same condition, and different ones are convenient in differ
 
 - $f^{-1}(V)$ is open for every open $V$
 - $f^{-1}(C)$ is closed for every closed $C$
-- $f^{-1}(B)$ is open for every $B$ in a **basis** of $Y$ — usually the cheapest to check
+- $f^{-1}(B)$ is open for every $B$ in a **basis** of $Y$ - usually the cheapest to check
 - $f(\bar A)\subseteq\overline{f(A)}$ for every $A\subseteq X$
 - For every $x$ and every neighbourhood $V$ of $f(x)$, there is a neighbourhood $U$ of $x$ with $f(U)\subseteq V$
 
@@ -55,7 +55,7 @@ The basis version is worth remembering: to show a map into $\mathbb{R}$ is conti
 - **Any map from a discrete space** is continuous, since every preimage is open.
 - **Any map into a trivial space** is continuous, since the only open sets to pull back are $\varnothing$ and $Y$.
 
-Those last two are worth pausing on. They say that continuity depends on the topologies as much as on the function — the same function can be continuous or not depending on which topologies you place on the two sets.
+Those last two are worth pausing on. They say that continuity depends on the topologies as much as on the function - the same function can be continuous or not depending on which topologies you place on the two sets.
 
 ### Homeomorphism
 
@@ -132,21 +132,13 @@ $$
 
 which is not open, since no interval around 0 stays inside it.
 
-$$
-\text{not continuous}
-$$
-
-∎
+**Answer:** not continuous. ∎
 
 **Example 4: Show any map from a discrete space is continuous.**
 
 **Solution.** Let $X$ carry the discrete topology and let $f:X\to Y$ be arbitrary. For any open $V\subseteq Y$, the set $f^{-1}(V)$ is a subset of $X$, and every subset of a discrete space is open.
 
-$$
-\text{continuous}
-$$
-
-∎
+**Answer:** continuous. ∎
 
 **Continuity is a statement about the topologies**, not only the formula. The same function becomes discontinuous if $X$ is given a coarser topology.
 
@@ -154,13 +146,9 @@ $$
 
 **Solution.** $f:[0,2\pi)\to S^1$ with $f(t)=(\cos t,\sin t)$ is a continuous bijection.
 
-The inverse fails continuity at $(1,0)$. Take the open set $[0,1)\subseteq[0,2\pi)$, which is open in the subspace. Its image is an arc containing the point $(1,0)$ but no full neighbourhood of it in $S^1$, so the image is not open — meaning $f$ is not an open map and $f^{-1}$ is not continuous.
+The inverse fails continuity at $(1,0)$. Take the open set $[0,1)\subseteq[0,2\pi)$, which is open in the subspace. Its image is an arc containing the point $(1,0)$ but no full neighbourhood of it in $S^1$, so the image is not open - meaning $f$ is not an open map and $f^{-1}$ is not continuous.
 
-$$
-\text{not a homeomorphism}
-$$
-
-∎
+**Answer:** not a homeomorphism. ∎
 
 **Example 6: Show $(0,1)\cong\mathbb{R}$.**
 
@@ -196,7 +184,7 @@ $$
 
 **Coordinate charts.** A manifold is defined by homeomorphisms from patches of it onto open subsets of $\mathbb{R}^n$. Map projections are exactly such charts for the Earth, and the fact that no single chart covers the sphere is a topological statement.
 
-**Data embedding.** Dimensionality reduction methods aim to embed data homeomorphically into a low-dimensional space. When the method distorts the topology — merging separate clusters, or tearing a loop — the failure is a failure of homeomorphism.
+**Data embedding.** Dimensionality reduction methods aim to embed data homeomorphically into a low-dimensional space. When the method distorts the topology - merging separate clusters, or tearing a loop - the failure is a failure of homeomorphism.
 
 **Mesh parameterization.** Flattening a 3D surface patch for texturing requires a homeomorphism onto a planar region, and it is impossible without cutting when the patch has the wrong topology. Graphics tools detect this and introduce seams.
 
@@ -207,7 +195,7 @@ $$
 **Protein structure.** Comparing folds uses topological equivalence rather than exact geometry, because the same functional shape appears with quite different coordinates.
 
 :::note[You've Got This]
-The preimage definition is shorter than epsilon-delta and stronger, in the sense that it works everywhere, so it is worth making it your default. Two things to keep straight: continuity restricts preimages and says nothing about images, and a homeomorphism needs the inverse to be continuous too — the interval wrapping onto the circle is the example that shows why. When you want to prove two spaces differ, reach for an invariant, and the cut-point trick is usually the cheapest one available.
+The preimage definition is shorter than epsilon-delta and stronger, in the sense that it works everywhere, so it is worth making it your default. Two things to keep straight: continuity restricts preimages and says nothing about images, and a homeomorphism needs the inverse to be continuous too - the interval wrapping onto the circle is the example that shows why. When you want to prove two spaces differ, reach for an invariant, and the cut-point trick is usually the cheapest one available.
 :::
 
 ## Quiz

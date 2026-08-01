@@ -1,6 +1,6 @@
 ---
 /**
- * DivTheoremDiagram — Interactive 3D concept visual for the Divergence Theorem.
+ * DivTheoremDiagram - Interactive 3D concept visual for the Divergence Theorem.
  * Purple blob surface S with orange grid, outward normal arrows with vec-n labels,
  * green divergence source arrows inside volume E, and labels S and E.
  * Everything is added to a Group at the scene origin so rotation is centered.
@@ -170,7 +170,7 @@
     const dl2 = new THREE.DirectionalLight(0xffffff, 0.3);
     dl2.position.set(-2, -1, -2); scene.add(dl2);
 
-    /* Controls — target is (0,0,0), the center of the group */
+    /* Controls - target is (0,0,0), the center of the group */
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.target.set(0, 0, 0);
     controls.enableDamping = true;

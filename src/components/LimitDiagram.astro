@@ -1,6 +1,6 @@
 ---
 /**
- * LimitDiagram — shows f(x) = (x²-9)/(x-3) with a hole at x=3.
+ * LimitDiagram - shows f(x) = (x²-9)/(x-3) with a hole at x=3.
  * The function simplifies to y = x+3 everywhere except x=3.
  * Shows the line approaching y=6 from both sides with a clear hole.
  */
@@ -41,7 +41,7 @@ const sy = (y: number) => pad + ((yMax - y) / (yMax - yMin)) * gh;
     <line x1={sx(3)} y1={sy(0)} x2={sx(3)} y2={sy(6)} class="ld-guide" stroke-width="1" stroke-dasharray="4,3" />
     <line x1={sx(0)} y1={sy(6)} x2={sx(3)} y2={sy(6)} class="ld-guide-h" stroke-width="1" stroke-dasharray="4,3" />
 
-    {/* Labels — positioned to avoid all lines */}
+    {/* Labels - positioned to avoid all lines */}
     <text class="ld-lbl" x={sx(0.3)} y={sy(8.5)} font-size="10">limit = 6</text>
     <text class="ld-lbl-hole" x={sx(4.5)} y={sy(4.2)} font-size="9">hole</text>
     <text class="ld-lbl-func" x={sx(0.3)} y={sy(1.2)} font-size="8">y = x + 3</text>

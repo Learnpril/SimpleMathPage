@@ -1,6 +1,6 @@
 ---
 /**
- * ParabolaGraph — plots f(x) = x² − 4x − 5
+ * ParabolaGraph - plots f(x) = x² − 4x − 5
  * Vertex (2, −9), y-int (0, −5), x-ints (−1, 0) and (5, 0), axis x = 2.
  */
 
@@ -79,22 +79,22 @@ const yLabelTicks = [-8, -6, -4, -2, 2, 4];
     {/* Parabola curve */}
     <path class="pg-curve" d={curveD} fill="none" stroke-width="2.5" />
 
-    {/* Vertex (2, −9) — label below-right, away from curve */}
+    {/* Vertex (2, −9) - label below-right, away from curve */}
     <circle class="pg-pt-vertex" cx={toX(vtx.x)} cy={toY(vtx.y)} r="5" />
     <text class="pg-pt-vertex-label" x={toX(vtx.x) + 10} y={toY(vtx.y) + 18} font-size="11">(2, −9)</text>
 
-    {/* Y-intercept (0, −5) — label to the left, well away from curve */}
+    {/* Y-intercept (0, −5) - label to the left, well away from curve */}
     <circle class="pg-pt" cx={toX(yInt.x)} cy={toY(yInt.y)} r="5" />
     <text class="pg-pt-label" x={toX(yInt.x) - 10} y={toY(yInt.y) + 18} font-size="11" text-anchor="end">(0, −5)</text>
 
-    {/* X-intercepts — labels shifted left of the dots to avoid the curve */}
+    {/* X-intercepts - labels shifted left of the dots to avoid the curve */}
     <circle class="pg-pt" cx={toX(xInt1.x)} cy={toY(xInt1.y)} r="5" />
     <text class="pg-pt-label" x={toX(xInt1.x) - 12} y={toY(xInt1.y) - 10} font-size="11" text-anchor="end">(−1, 0)</text>
 
     <circle class="pg-pt" cx={toX(xInt2.x)} cy={toY(xInt2.y)} r="5" />
     <text class="pg-pt-label" x={toX(xInt2.x) - 12} y={toY(xInt2.y) - 10} font-size="11" text-anchor="end">(5, 0)</text>
 
-    {/* Curve label — positioned far right in open space, away from curve */}
+    {/* Curve label - positioned far right in open space, away from curve */}
     <text class="pg-curve-label" x={toX(6.2)} y={toY(1)} font-size="11" font-weight="bold">x² − 4x − 5</text>
 
   </svg>

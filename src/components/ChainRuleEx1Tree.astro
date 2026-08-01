@@ -1,6 +1,6 @@
 ---
 /**
- * ChainRuleEx1Tree — Tree diagram for Example 1:
+ * ChainRuleEx1Tree - Tree diagram for Example 1:
  * z = x² + 3xy + y², x = t², y = 3t
  * Shows the two paths from z to t with actual derivative values.
  * Large text, no overlaps.
@@ -10,7 +10,7 @@ const h = 340;
 const cx = w / 2;
 const nr = 20; // node radius
 
-// Nodes — spread wide and tall
+// Nodes - spread wide and tall
 const zX = cx; const zY = 55;
 const xX = cx - 100; const xY = 165;
 const yX = cx + 100; const yY = 165;
@@ -19,13 +19,13 @@ const tX = cx; const tY = 285;
 
 <figure class="ex1t" role="img" aria-label="Tree diagram for Example 1 showing z depends on x and y, which both depend on t, with derivative values">
   <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
-    {/* Edges — connect from circle edge to circle edge */}
+    {/* Edges - connect from circle edge to circle edge */}
     <line x1={zX} y1={zY + nr} x2={xX} y2={xY - nr} class="ex1t-edge" stroke-width="1.5" />
     <line x1={zX} y1={zY + nr} x2={yX} y2={yY - nr} class="ex1t-edge" stroke-width="1.5" />
     <line x1={xX} y1={xY + nr} x2={tX} y2={tY - nr} class="ex1t-edge" stroke-width="1.5" />
     <line x1={yX} y1={yY + nr} x2={tX} y2={tY - nr} class="ex1t-edge" stroke-width="1.5" />
 
-    {/* Edge labels — well outside each edge */}
+    {/* Edge labels - well outside each edge */}
     {/* z→x: far left */}
     <text class="ex1t-elabel" x={xX - 28} y={zY + 58} font-size="13" text-anchor="end">2x + 3y</text>
     <text class="ex1t-dname" x={xX - 28} y={zY + 73} font-size="9" text-anchor="end">∂z/∂x</text>
@@ -39,7 +39,7 @@ const tX = cx; const tY = 285;
     <text class="ex1t-elabel" x={yX + 28} y={yY + 62} font-size="13" text-anchor="start">3</text>
     <text class="ex1t-dname" x={yX + 28} y={yY + 77} font-size="9" text-anchor="start">dy/dt</text>
 
-    {/* Nodes — circles with single-letter labels inside */}
+    {/* Nodes - circles with single-letter labels inside */}
     <circle cx={zX} cy={zY} r={nr} class="ex1t-node" />
     <text class="ex1t-nlabel" x={zX} y={zY + 6} font-size="16" text-anchor="middle">z</text>
     {/* Label above z circle */}

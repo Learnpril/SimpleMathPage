@@ -1,6 +1,6 @@
 ---
 /**
- * LimitEx2 — graph of f(x) = (x²-9)/(x-3) = x+3 with hole at (3,6).
+ * LimitEx2 - graph of f(x) = (x²-9)/(x-3) = x+3 with hole at (3,6).
  * Shows removable discontinuity: limit = 6 even though f(3) is undefined.
  */
 const w = 280;
@@ -36,7 +36,7 @@ const sy = (y: number) => pad + ((yMax - y) / (yMax - yMin)) * gh;
     {/* Dashed guides */}
     <line x1={sx(3)} y1={sy(0)} x2={sx(3)} y2={sy(6)} class="le2-guide" stroke-width="1" stroke-dasharray="4,3" />
     <line x1={sx(0)} y1={sy(6)} x2={sx(3)} y2={sy(6)} class="le2-guide" stroke-width="1" stroke-dasharray="4,3" />
-    {/* Labels — positioned in clear space below the line */}
+    {/* Labels - positioned in clear space below the line */}
     <text class="le2-lbl" x={sx(0.3)} y={sy(9)} font-size="10">limit = 6</text>
     <text class="le2-lbl-hole" x={sx(4.2)} y={sy(4.2)} font-size="9">hole</text>
     <text class="le2-lbl-func" x={sx(0.5)} y={sy(1.5)} font-size="9">y = x + 3</text>

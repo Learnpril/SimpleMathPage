@@ -20,10 +20,10 @@ In a general topological space, several distinct conditions compete for the name
 
 > For a metric space $X$, the following are equivalent:
 >
-> 1. **Compact** — every open cover has a finite subcover.
-> 2. **Sequentially compact** — every sequence has a convergent subsequence with limit in $X$.
+> 1. **Compact** - every open cover has a finite subcover.
+> 2. **Sequentially compact** - every sequence has a convergent subsequence with limit in $X$.
 > 3. **Complete and totally bounded**.
-> 4. **Limit point compact** — every infinite subset has a limit point in $X$.
+> 4. **Limit point compact** - every infinite subset has a limit point in $X$.
 
 None of these equivalences holds in general topological spaces. There are compact spaces that are not sequentially compact and vice versa, so the metric setting is genuinely special.
 
@@ -31,7 +31,7 @@ None of these equivalences holds in general topological spaces. There are compac
 
 The figure demonstrates the sequential form. On $[0,1]$, bisection extracts a convergent subsequence from an equidistributed sequence that itself has no limit: at each level the half containing more of the surviving terms is kept, and after eight halvings the interval has width under $0.004$ while still containing infinitely many terms. That construction is Bolzano–Weierstrass, and the figure runs it rather than describing it.
 
-On $(0,1]$ the same idea fails. The sequence $\frac1n$ has every subsequence tending to 0, and 0 is not a point of the space, so no subsequence converges **in $X$**. The interval is therefore not sequentially compact, and by the equivalence not compact — matching the open-cover argument from the previous lesson.
+On $(0,1]$ the same idea fails. The sequence $\frac1n$ has every subsequence tending to 0, and 0 is not a point of the space, so no subsequence converges **in $X$**. The interval is therefore not sequentially compact, and by the equivalence not compact - matching the open-cover argument from the previous lesson.
 
 ### Total boundedness
 
@@ -39,7 +39,7 @@ On $(0,1]$ the same idea fails. The sequence $\frac1n$ has every subsequence ten
 
 This is strictly stronger than bounded, and the difference is exactly what goes wrong in infinite dimensions.
 
-In $\mathbb{R}^n$ they coincide: a bounded set sits in a large box, which can be chopped into finitely many small boxes. In $\ell^2$ they do not. The set of standard basis vectors $\{e_n\}$ is bounded — every element has norm 1 — but the points are pairwise at distance $\sqrt2$, so a ball of radius $\frac12$ contains at most one of them and no finite family of such balls covers an infinite set.
+In $\mathbb{R}^n$ they coincide: a bounded set sits in a large box, which can be chopped into finitely many small boxes. In $\ell^2$ they do not. The set of standard basis vectors $\{e_n\}$ is bounded - every element has norm 1 - but the points are pairwise at distance $\sqrt2$, so a ball of radius $\frac12$ contains at most one of them and no finite family of such balls covers an infinite set.
 
 **That is why Heine–Borel is a theorem about $\mathbb{R}^n$.** The correct general statement replaces "bounded" with "totally bounded" and adds completeness:
 
@@ -79,11 +79,11 @@ The Lebesgue number lemma is the technical workhorse behind subdivision argument
 
 The standard example worth having: the Cantor set $C$ is
 
-- **compact** — closed and bounded in $\mathbb{R}$
-- **totally disconnected** — every component is a single point
-- **uncountable** — it has the cardinality of $\mathbb{R}$
-- **nowhere dense** — its interior is empty
-- **perfect** — every point is a limit point
+- **compact** - closed and bounded in $\mathbb{R}$
+- **totally disconnected** - every component is a single point
+- **uncountable** - it has the cardinality of $\mathbb{R}$
+- **nowhere dense** - its interior is empty
+- **perfect** - every point is a limit point
 
 That combination sounds contradictory and is not. $C$ is the canonical example showing that compactness says nothing about connectedness, and that topological smallness has nothing to do with cardinality.
 
@@ -95,11 +95,7 @@ That combination sounds contradictory and is not. $C$ is the canonical example s
 
 This produces nested intervals of width $2^{-n}$, each containing infinitely many terms. Choosing one term from each level with increasing index gives a subsequence, and by completeness the nested intervals shrink to a single point, which is the limit.
 
-$$
-\text{sequentially compact}
-$$
-
-∎
+**Answer:** sequentially compact. ∎
 
 **This is exactly the computation in the figure**, run to eight levels there.
 
@@ -109,11 +105,7 @@ $$
 
 Since $0\notin(0,1]$, no subsequence converges to a point of the space.
 
-$$
-\text{not sequentially compact}
-$$
-
-∎
+**Answer:** not sequentially compact. ∎
 
 **Example 3: Show $\{e_n\}\subseteq\ell^2$ is bounded but not totally bounded.**
 
@@ -127,11 +119,7 @@ $$
 
 So a ball of radius $\frac{\sqrt2}{2}$ contains at most one basis vector, and no finite collection of such balls covers infinitely many.
 
-$$
-\text{bounded, not totally bounded}
-$$
-
-∎
+**Answer:** bounded, not totally bounded. ∎
 
 **Example 4: Show $\mathbb{R}$ is complete but not compact.**
 
@@ -139,11 +127,7 @@ $$
 
 $\mathbb{R}$ is not totally bounded, since no finite family of balls of radius 1 covers it. By the equivalence it is not compact, and directly the cover $\{(-n,n)\}$ has no finite subcover.
 
-$$
-\text{complete, not compact}
-$$
-
-∎
+**Answer:** complete, not compact. ∎
 
 **Example 5: Prove uniform continuity on a compact metric space.**
 
@@ -165,11 +149,7 @@ which is positive precisely because the collection is **finite**. Any two points
 
 By the extreme value theorem $d$ attains a maximum, so there are points $p,q$ with $d(p,q) = \operatorname{diam}K$.
 
-$$
-\text{the diameter is attained}
-$$
-
-∎
+**Answer:** the diameter is attained. ∎
 
 Contrast $(0,1)$, whose diameter is 1 and is attained by no pair.
 
@@ -179,11 +159,7 @@ Contrast $(0,1)$, whose diameter is 1 and is attained by no pair.
 
 For total disconnectedness, take $x\ne y$ in $C$. At stage $n$ with $2^{-n}$... more precisely once $3^{-n}<|x-y|$, the two points lie in different intervals of $C_n$, and the removed middle third between them separates $C$ into two relatively open pieces.
 
-$$
-\text{compact and totally disconnected}
-$$
-
-∎
+**Answer:** compact and totally disconnected. ∎
 
 ## Real-World Applications
 
@@ -193,14 +169,14 @@ $$
 
 **Optimization existence.** Compactness plus continuity gives existence of a minimizer, which is the first thing any convergence proof establishes. In infinite-dimensional problems, total boundedness failing is why weak topologies are introduced.
 
-**Approximation theory.** Total boundedness of a function class is exactly what makes finite approximation possible, and covering numbers — the count of $\varepsilon$-balls needed — are the quantitative version used in statistical learning bounds.
+**Approximation theory.** Total boundedness of a function class is exactly what makes finite approximation possible, and covering numbers - the count of $\varepsilon$-balls needed - are the quantitative version used in statistical learning bounds.
 
 **Signal quantization.** Covering a signal space with finitely many balls is quantization, and the number needed at a given resolution is the covering number. Total boundedness is the condition for a finite codebook to exist.
 
 **Data compactness assumptions.** Machine learning guarantees typically assume the data lies in a compact set, which is what allows a finite sample to control behaviour everywhere.
 
 :::note[You've Got This]
-The headline is that in a metric space the competing definitions of compactness are all the same condition, so you can use whichever is convenient — covers for topological arguments, sequences for analytic ones. The one distinction worth keeping sharp is bounded versus totally bounded. In $\mathbb{R}^n$ they coincide and Heine–Borel works; in $\ell^2$ they part company, and that split is the reason infinite-dimensional analysis needs different tools.
+The headline is that in a metric space the competing definitions of compactness are all the same condition, so you can use whichever is convenient - covers for topological arguments, sequences for analytic ones. The one distinction worth keeping sharp is bounded versus totally bounded. In $\mathbb{R}^n$ they coincide and Heine–Borel works; in $\ell^2$ they part company, and that split is the reason infinite-dimensional analysis needs different tools.
 :::
 
 ## Quiz

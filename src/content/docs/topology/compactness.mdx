@@ -30,7 +30,7 @@ Those two intervals differ by a single point, and that point is the whole differ
 
 ### The subspace convention
 
-For $K\subseteq X$, compactness is checked in the subspace topology — equivalently, using covers by sets open in $X$. Both formulations give the same answer, and the second is usually more convenient.
+For $K\subseteq X$, compactness is checked in the subspace topology - equivalently, using covers by sets open in $X$. Both formulations give the same answer, and the second is usually more convenient.
 
 ### Heine–Borel
 
@@ -56,7 +56,7 @@ Other standard consequences:
 
 - **Closed subsets** of compact spaces are compact.
 - **Compact subsets of Hausdorff spaces are closed.** Without Hausdorff this fails.
-- A **continuous bijection** from a compact space to a Hausdorff space is a homeomorphism — the free inverse-continuity from lesson 6.
+- A **continuous bijection** from a compact space to a Hausdorff space is a homeomorphism - the free inverse-continuity from lesson 6.
 - On a compact metric space, every continuous function is **uniformly continuous**.
 - **Finite products.** A product of compact spaces is compact; for infinite products this is **Tychonoff's theorem**, which is equivalent to the axiom of choice.
 - A compact space has the **finite intersection property**: a family of closed sets with all finite intersections nonempty has nonempty total intersection.
@@ -69,10 +69,10 @@ Because it is preserved by homeomorphisms, compactness is an invariant, and it i
 
 ### Related notions
 
-- **Sequentially compact** — every sequence has a convergent subsequence. Equivalent to compact in metric spaces, not in general.
-- **Limit point compact** — every infinite subset has a limit point. Weaker in general.
-- **Locally compact** — every point has a compact neighbourhood. $\mathbb{R}^n$ qualifies; infinite-dimensional spaces generally do not.
-- **$\sigma$-compact** — a countable union of compact sets, as $\mathbb{R}$ is.
+- **Sequentially compact** - every sequence has a convergent subsequence. Equivalent to compact in metric spaces, not in general.
+- **Limit point compact** - every infinite subset has a limit point. Weaker in general.
+- **Locally compact** - every point has a compact neighbourhood. $\mathbb{R}^n$ qualifies; infinite-dimensional spaces generally do not.
+- **$\sigma$-compact** - a countable union of compact sets, as $\mathbb{R}$ is.
 
 The equivalences in metric spaces are the subject of the next lesson.
 
@@ -92,21 +92,13 @@ Open covers are not an obvious thing to axiomatize, and it is fair to ask why th
 
 Any finite subfamily has a largest index $N$, so its union is $\left(\frac1N,1\right)$, missing everything in $\left(0,\frac1N\right]$.
 
-$$
-\text{no finite subcover, so not compact}
-$$
-
-∎
+**Answer:** no finite subcover, so not compact. ∎
 
 **Example 2: Show $\mathbb{R}$ is not compact.**
 
 **Solution.** The cover $\{(-n,n) : n\in\mathbb{N}\}$ has union $\mathbb{R}$. Any finite subfamily is contained in the largest $(-N,N)$, which misses $N$.
 
-$$
-\text{not compact}
-$$
-
-∎
+**Answer:** not compact. ∎
 
 **Example 3: Show a closed subset of a compact space is compact.**
 
@@ -136,11 +128,7 @@ For the failure, take $X=\{a,b\}$ with the trivial topology. The subset $\{a\}$ 
 
 **Solution.** Any open cover of a finite space has, for each point, at least one member containing it. Choosing one such member per point gives a subcover with at most $|X|$ elements.
 
-$$
-\text{compact}
-$$
-
-∎
+**Answer:** compact. ∎
 
 **This is the sense in which compactness generalizes finiteness**, and it is worth keeping as the guiding intuition.
 
@@ -150,11 +138,7 @@ $$
 
 The open balls $B(e_n,\frac12)$ cover it, each containing exactly one point, so no finite subfamily covers an infinite set.
 
-$$
-\text{closed, bounded, not compact}
-$$
-
-∎
+**Answer:** closed, bounded, not compact. ∎
 
 **Heine–Borel is special to $\mathbb{R}^n$**, and this is the standard reminder. The failure is what makes infinite-dimensional analysis genuinely different.
 
@@ -170,7 +154,7 @@ $$
 
 **Machine learning.** Bounding a parameter space to make it compact is what lets uniform convergence and generalization arguments go through, and it is why weight constraints appear in theoretical guarantees.
 
-**Logic and computation.** The compactness theorem of first-order logic — that a set of sentences with all finite subsets satisfiable is satisfiable — is literally topological compactness of a space of models, which is where the name came from.
+**Logic and computation.** The compactness theorem of first-order logic - that a set of sentences with all finite subsets satisfiable is satisfiable - is literally topological compactness of a space of models, which is where the name came from.
 
 :::note[You've Got This]
 Compactness is the definition in this section that looks most arbitrary and turns out to be most useful. The intuition worth holding is that it is the topological stand-in for finiteness: it lets you take an infinite situation and reduce it to finitely many cases. Two cautions. Heine–Borel is a theorem about $\mathbb{R}^n$, not the definition, and $\ell^2$ shows why that matters. And to prove something is _not_ compact, all you need is one bad cover, which is usually much easier than checking every cover.

@@ -1,6 +1,6 @@
 ---
 /**
- * CramersVisual — shows two lines intersecting at the solution
+ * CramersVisual - shows two lines intersecting at the solution
  * point found by Cramer's Rule: 2x + 3y = 8 and x - 4y = -5.
  * Solution: x = 17/11 ≈ 1.545, y = 18/11 ≈ 1.636
  */
@@ -41,7 +41,7 @@ const solY = 18 / 11;
     {/* Solution point */}
     <circle cx={sx(solX)} cy={sy(solY)} r="5" class="crv-dot" />
 
-    {/* Labels — positioned to avoid lines and axes */}
+    {/* Labels - positioned to avoid lines and axes */}
     <text class="crv-lbl1" x={sx(3.8)} y={sy(0.4)} font-size="10">2x + 3y = 8</text>
     <text class="crv-lbl2" x={sx(3.5)} y={sy(3.2)} font-size="10">x - 4y = -5</text>
     <text class="crv-sol" x={sx(2.6)} y={sy(1.2)} font-size="9">(17/11, 18/11)</text>

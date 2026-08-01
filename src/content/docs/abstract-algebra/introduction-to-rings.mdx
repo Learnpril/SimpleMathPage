@@ -56,7 +56,7 @@ A group has one operation. But the number systems you actually use have two, and
 
 A **ring** is a set $R$ with two operations, $+$ and $\times$, satisfying:
 
-**For addition** — $(R, +)$ is an abelian group:
+**For addition** - $(R, +)$ is an abelian group:
 
 1. Closed under $+$
 2. Associative
@@ -69,7 +69,7 @@ A **ring** is a set $R$ with two operations, $+$ and $\times$, satisfying:
 6. Closed under $\times$
 7. Associative
 
-**Connecting them** — distributivity:
+**Connecting them** - distributivity:
 
 $$
 a(b+c) = ab + ac, \qquad (a+b)c = ac + bc
@@ -98,7 +98,7 @@ An element $u \in R$ is a **unit** if it has a multiplicative inverse in $R$. Th
 
 - In $\mathbb{Z}$, the units are $\{1, -1\}$. Only two.
 - In $\mathbb{Q}$, every nonzero element is a unit.
-- In $\mathbb{Z}_n$, the units are exactly the residues coprime to $n$ — the group $U(n)$ from earlier lessons, now revealed as the unit group of a ring.
+- In $\mathbb{Z}_n$, the units are exactly the residues coprime to $n$ - the group $U(n)$ from earlier lessons, now revealed as the unit group of a ring.
 
 **A field is precisely a commutative ring with unity in which every nonzero element is a unit.** That's the shortest correct definition of a field.
 
@@ -128,12 +128,12 @@ Zero divisors break something you rely on constantly: **cancellation**. In $\mat
 
 ### Examples worth knowing
 
-- $\mathbb{Z}$ — commutative, unity, no zero divisors. An integral domain, not a field.
-- $\mathbb{Z}_n$ — commutative with unity. A field exactly when $n$ is prime.
-- $\mathbb{Q}, \mathbb{R}, \mathbb{C}$ — fields.
-- $M_2(\mathbb{R})$, the $2\times 2$ real matrices — unity (the identity matrix), **not** commutative, and full of zero divisors.
-- $\mathbb{R}[x]$, real polynomials — commutative with unity, an integral domain, not a field (there's no polynomial inverse for $x$).
-- $2\mathbb{Z}$, the even integers — commutative, no zero divisors, but **no unity**, since $1$ is odd.
+- $\mathbb{Z}$ - commutative, unity, no zero divisors. An integral domain, not a field.
+- $\mathbb{Z}_n$ - commutative with unity. A field exactly when $n$ is prime.
+- $\mathbb{Q}, \mathbb{R}, \mathbb{C}$ - fields.
+- $M_2(\mathbb{R})$, the $2\times 2$ real matrices - unity (the identity matrix), **not** commutative, and full of zero divisors.
+- $\mathbb{R}[x]$, real polynomials - commutative with unity, an integral domain, not a field (there's no polynomial inverse for $x$).
+- $2\mathbb{Z}$, the even integers - commutative, no zero divisors, but **no unity**, since $1$ is odd.
 
 ## Worked Examples
 
@@ -159,7 +159,7 @@ $$
 
 Zero divisors: $\{2, 3, 4, 6, 8, 9, 10\}$.
 
-Non-zero-divisors: $\{1, 5, 7, 11\}$ — exactly $U(12)$.
+Non-zero-divisors: $\{1, 5, 7, 11\}$ - exactly $U(12)$.
 
 **The pattern:** in $\mathbb{Z}_n$, an element is a unit when $\gcd(a,n) = 1$ and a zero divisor otherwise. Every nonzero element is one or the other, never both.
 
@@ -236,7 +236,7 @@ $\mathbb{Z}_n$ is a field exactly when $n$ is prime, which is the subject of the
 **Image and signal processing.** Convolution makes the set of signals into a ring, and filter design is ring arithmetic. The reason the Fourier transform simplifies filtering is that it is a ring homomorphism turning convolution into multiplication.
 
 :::note[You've Got This]
-The one thing to hold onto is the asymmetry: addition gets everything, multiplication gets almost nothing. Every qualifier in ring theory — commutative, with unity, domain, field — is just a note about how much extra multiplication happens to have. The other idea worth carrying forward is zero divisors, because they are what break cancellation, and cancellation is something you have used without thinking since arithmetic. ℤ₆ is the example to keep handy: 2 × 3 = 0 there, and once that stops feeling strange, rings will feel comfortable.
+The one thing to hold onto is the asymmetry: addition gets everything, multiplication gets almost nothing. Every qualifier in ring theory - commutative, with unity, domain, field - is just a note about how much extra multiplication happens to have. The other idea worth carrying forward is zero divisors, because they are what break cancellation, and cancellation is something you have used without thinking since arithmetic. ℤ₆ is the example to keep handy: 2 × 3 = 0 there, and once that stops feeling strange, rings will feel comfortable.
 :::
 
 ## Quiz

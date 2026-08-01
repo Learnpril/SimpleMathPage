@@ -1,6 +1,6 @@
 ---
 /**
- * TangentIdeaDiagram — larger version with slope triangle.
+ * TangentIdeaDiagram - larger version with slope triangle.
  * A curve with ONE tangent line touching at one point,
  * plus a dashed purple rise/run triangle showing the slope.
  */
@@ -60,7 +60,7 @@ const slopeY2 = ty + rise;
           x2={sx(tX2)} y2={sy(tY2)}
           class="tid-tangent" stroke-width="2.5" />
 
-    {/* Slope triangle — dashed purple */}
+    {/* Slope triangle - dashed purple */}
     {/* Horizontal run */}
     <line x1={sx(slopeX0)} y1={sy(slopeY0)}
           x2={sx(slopeX1)} y2={sy(slopeY1)}
@@ -70,9 +70,9 @@ const slopeY2 = ty + rise;
           x2={sx(slopeX2)} y2={sy(slopeY2)}
           class="tid-slope" stroke-width="2" stroke-dasharray="6,4" />
 
-    {/* Run label — below the horizontal line */}
+    {/* Run label - below the horizontal line */}
     <text class="tid-lbl-slope" x={(sx(slopeX0) + sx(slopeX1)) / 2} y={sy(slopeY0) + 16} font-size="11" text-anchor="middle">run</text>
-    {/* Rise label — right of the vertical line */}
+    {/* Rise label - right of the vertical line */}
     <text class="tid-lbl-slope" x={sx(slopeX1) + 10} y={sy(slopeY1) - 6} font-size="11" text-anchor="start">rise</text>
 
     {/* The point where curve and tangent touch */}

@@ -68,7 +68,7 @@ Therefore $a_n \to L$. ∎
 
 Look at what that proof used: completeness to produce $L$, the $\varepsilon$-characterization to find one good term, and monotonicity to spread that goodness to every later term. **Monotonicity is what turns a single witness into a tail.**
 
-This is the first theorem where completeness visibly earns its keep. Over $\mathbb{Q}$ the supremum need not exist and the whole argument collapses — the decimal truncations $1, 1.4, 1.41, 1.414, \dots$ are increasing and bounded and converge to nothing rational.
+This is the first theorem where completeness visibly earns its keep. Over $\mathbb{Q}$ the supremum need not exist and the whole argument collapses - the decimal truncations $1, 1.4, 1.41, 1.414, \dots$ are increasing and bounded and converge to nothing rational.
 
 A practical corollary: **a monotone sequence converges if and only if it is bounded.** An unbounded monotone sequence diverges to $\pm\infty$, with no third option. That dichotomy makes monotone sequences much easier to handle than general ones.
 
@@ -87,7 +87,7 @@ Subsequences can be far better behaved than their parent. $(-1)^n$ diverges, but
 
 > **Every bounded sequence has a convergent subsequence.**
 
-This is the workhorse theorem of the section. It doesn't promise the sequence converges — $(-1)^n$ doesn't — only that some infinite selection from it does.
+This is the workhorse theorem of the section. It doesn't promise the sequence converges - $(-1)^n$ doesn't - only that some infinite selection from it does.
 
 _Proof (bisection)._ Suppose $a_n \in [A, B]$ for all $n$. Cut the interval in half. At least one half contains infinitely many terms; call it $I_1$. Cut $I_1$ in half; at least one half contains infinitely many terms; call it $I_2$. Continue.
 
@@ -97,7 +97,7 @@ The left endpoints of the $I_k$ increase and are bounded, so by monotone converg
 
 Halving forever is only meaningful because the reals have no gaps. Over $\mathbb{Q}$ the nested intervals can close in on a hole.
 
-_Alternative proof._ Every sequence has a monotone subsequence. Combined with monotone convergence and boundedness, that gives the result immediately — a shorter route if you're allowed the monotone subsequence lemma.
+_Alternative proof._ Every sequence has a monotone subsequence. Combined with monotone convergence and boundedness, that gives the result immediately - a shorter route if you're allowed the monotone subsequence lemma.
 
 ### Limit superior and inferior
 
@@ -107,7 +107,7 @@ $$
 \limsup a_n = \lim_{N\to\infty} \sup\{a_n : n > N\}, \qquad \liminf a_n = \lim_{N\to\infty} \inf\{a_n : n > N\}
 $$
 
-The inner suprema decrease as $N$ grows and are bounded, so monotone convergence guarantees both limits exist — **for every bounded sequence, convergent or not.** That is their value: they always exist.
+The inner suprema decrease as $N$ grows and are bounded, so monotone convergence guarantees both limits exist - **for every bounded sequence, convergent or not.** That is their value: they always exist.
 
 $\limsup$ is the largest limit reachable by a subsequence, $\liminf$ the smallest, and
 
@@ -196,7 +196,7 @@ The intersection is non-empty. This is the **nested interval property**, and it 
 **Signal peak detection.** $\limsup$ formalizes "the largest value the signal keeps returning to," as distinct from a one-off spike. That distinction matters in any long-run stability analysis.
 
 :::note[You've Got This]
-Monotone convergence is the first theorem where you can see completeness doing the work, and it's worth rereading the proof with that in mind: completeness supplies the limit, and monotonicity spreads one good term into a whole tail. Bolzano-Weierstrass is the result you'll use most from here on, and its shape is worth remembering — bounded gets you a convergent _subsequence_, never convergence itself. And one habit that will save you real errors: never solve a fixed-point equation until you have proved the limit exists.
+Monotone convergence is the first theorem where you can see completeness doing the work, and it's worth rereading the proof with that in mind: completeness supplies the limit, and monotonicity spreads one good term into a whole tail. Bolzano-Weierstrass is the result you'll use most from here on, and its shape is worth remembering - bounded gets you a convergent _subsequence_, never convergence itself. And one habit that will save you real errors: never solve a fixed-point equation until you have proved the limit exists.
 :::
 
 ## Quiz

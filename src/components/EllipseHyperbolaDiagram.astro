@@ -1,6 +1,6 @@
 ---
 /**
- * EllipseHyperbolaDiagram — two panels:
+ * EllipseHyperbolaDiagram - two panels:
  * Left: ellipse (x-2)²/9 + (y+1)²/4 = 1, center (2,-1), a=3, b=2
  * Right: hyperbola (x+3)²/16 - (y-5)²/9 = 1, center (-3,5), a=4, b=3
  */
@@ -60,7 +60,7 @@ const asym2s = 5 - 0.75 * (rxLo + 3); const asym2e = 5 - 0.75 * (rxHi + 3);
     {/* Vertices */}
     <circle class="eh-vert" cx={lX(-1)} cy={lY(-1)} r="3" />
     <circle class="eh-vert" cx={lX(5)} cy={lY(-1)} r="3" />
-    {/* Semi-axis labels — clear of curve */}
+    {/* Semi-axis labels - clear of curve */}
     <text class="eh-a-label" x={lX(3.5)} y={lY(-1) - 10} font-size="9" text-anchor="middle">a = 3</text>
     <text class="eh-b-label" x={lX(2) - 14} y={lY(0.2)} font-size="9" text-anchor="end">b = 2</text>
     <text class="eh-eq" x={lx + pw / 2} y={ly + ph + 18} font-size="9" text-anchor="middle" font-weight="bold">(x−2)²/9 + (y+1)²/4 = 1</text>

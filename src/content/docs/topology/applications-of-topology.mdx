@@ -34,10 +34,10 @@ The output is the important part. For small $r$ the points are 20 separate piece
 
 Uses in practice:
 
-- **Genomics** — detecting recombination structure in viral evolution, where a loop in the data indicates horizontal gene transfer.
-- **Neuroscience** — the shape of neural activity spaces, where a torus in grid-cell recordings was found this way.
-- **Materials science** — pore structure in amorphous solids, characterized by counting holes across scales.
-- **Time series** — periodicity shows up as a persistent loop in a delay embedding.
+- **Genomics** - detecting recombination structure in viral evolution, where a loop in the data indicates horizontal gene transfer.
+- **Neuroscience** - the shape of neural activity spaces, where a torus in grid-cell recordings was found this way.
+- **Materials science** - pore structure in amorphous solids, characterized by counting holes across scales.
+- **Time series** - periodicity shows up as a persistent loop in a delay embedding.
 
 ### Topological phases of matter
 
@@ -71,13 +71,13 @@ A knot is an embedding of $S^1$ into $\mathbb{R}^3$. As a space every knot is ju
 
 ### Networks and coverage
 
-Whether a sensor network covers a region without gaps is a question about holes in the union of the sensor ranges, and it can be answered from **connectivity data alone** — which sensors can hear each other — without any coordinates. That is valuable precisely when positions are unknown.
+Whether a sensor network covers a region without gaps is a question about holes in the union of the sensor ranges, and it can be answered from **connectivity data alone** - which sensors can hear each other - without any coordinates. That is valuable precisely when positions are unknown.
 
 The same tools give:
 
-- **Evasion problems** — whether an intruder can move through a region avoiding all sensors, decided by a homological criterion.
-- **Network reliability** — components after failures, as in lesson 8.
-- **Circuit planarity** — whether a board needs multiple layers, as in lesson 15.
+- **Evasion problems** - whether an intruder can move through a region avoiding all sensors, decided by a homological criterion.
+- **Network reliability** - components after failures, as in lesson 8.
+- **Circuit planarity** - whether a board needs multiple layers, as in lesson 15.
 
 ### The classics, restated
 
@@ -97,11 +97,7 @@ A point cloud yields one component and one cycle over $r\in[0.410,0.515]$ and ma
 
 **Solution.** A single long-lived cycle means a **loop**: the points sample a circle. The many cycles at large $r$ are artefacts of the graph filling in, and they persist over a short range each.
 
-$$
-\text{the data lies on a loop}
-$$
-
-∎
+**Answer:** the data lies on a loop. ∎
 
 **Persistence length is the signal.** Short-lived features are discarded, which is what makes the method noise-tolerant.
 
@@ -121,15 +117,11 @@ A torus. Its fundamental group is $\mathbb{Z}\times\mathbb{Z}$, so there are two
 
 Why is the quantum Hall conductance so insensitive to impurities?
 
-**Solution.** The conductance equals an integer times $e^2/h$, and that integer is a Chern number of the band structure — a topological invariant.
+**Solution.** The conductance equals an integer times $e^2/h$, and that integer is a Chern number of the band structure - a topological invariant.
 
 Impurities deform the system continuously. An invariant cannot change under continuous deformation, and an integer cannot change a little.
 
-$$
-\text{quantization is protected}
-$$
-
-∎
+**Answer:** quantization is protected. ∎
 
 **Example 4: Decide reachability.**
 
@@ -137,11 +129,7 @@ A robot's free configuration space has three path components. The robot starts i
 
 **Solution.** Path components are exactly the mutually reachable sets, so no continuous motion joins them.
 
-$$
-\text{the goal is unreachable, for any planner}
-$$
-
-∎
+**Answer:** the goal is unreachable, for any planner. ∎
 
 **This is an impossibility result, not a planning failure.** It means the mechanism or the environment has to change.
 
@@ -151,11 +139,7 @@ Two DNA loops are extracted and found to have different Jones polynomials. What 
 
 **Solution.** The Jones polynomial is a knot invariant, so equal knots give equal polynomials. Different polynomials therefore mean the two loops are **not** the same knot, and no sequence of deformations without cutting turns one into the other.
 
-$$
-\text{genuinely different knots}
-$$
-
-∎
+**Answer:** genuinely different knots. ∎
 
 Note the asymmetry familiar from lesson 1: equal polynomials would **not** prove the knots are the same, since the Jones polynomial is not a complete invariant.
 
@@ -167,23 +151,15 @@ Why must there always be a cyclone somewhere on Earth?
 
 A zero of the wind field with circulation around it is a cyclonic or anticyclonic centre.
 
-$$
-\text{always at least one}
-$$
-
-∎
+**Answer:** always at least one. ∎
 
 **Example 7: Detect coverage gaps without coordinates.**
 
 Sensors report which other sensors they can hear, and nothing about position. How can a coverage hole be found?
 
-**Solution.** Build the complex whose vertices are sensors and whose simplices record mutual communication. Compute its first homology; a nontrivial class corresponds to a loop of sensors with no coverage inside — a hole.
+**Solution.** Build the complex whose vertices are sensors and whose simplices record mutual communication. Compute its first homology; a nontrivial class corresponds to a loop of sensors with no coverage inside - a hole.
 
-$$
-\text{holes found from connectivity alone}
-$$
-
-∎
+**Answer:** holes found from connectivity alone. ∎
 
 **No geometry was used**, which is exactly why the method works when positions are unknown or unreliable.
 
@@ -191,7 +167,7 @@ $$
 
 **Drug discovery.** Persistent homology characterizes binding pocket shapes and protein cavity structure, and the features are stable against the conformational noise that defeats geometric descriptors.
 
-**Cosmology.** The large-scale structure of the universe — voids, filaments, walls — is quantified with topological measures, since the arrangement of holes is more robust than any particular density threshold.
+**Cosmology.** The large-scale structure of the universe - voids, filaments, walls - is quantified with topological measures, since the arrangement of holes is more robust than any particular density threshold.
 
 **Medical imaging.** Cortical surfaces are topologically spheres, and topology correction is a routine step in brain segmentation pipelines because a genus error indicates a reconstruction fault.
 
@@ -202,7 +178,7 @@ $$
 **Materials.** Topological insulators and Weyl semimetals are engineered by designing band structures with prescribed invariants, and the robustness of the resulting surface states is the commercial motivation.
 
 :::note[You've Got This]
-The unifying idea across all of these is worth stating once more: an invariant cannot change a little. That is why topology is the right tool when the data is noisy, the material is dirty, or the measurement is imprecise — it is measuring something that discretely refuses to budge. The persistence figure is the cleanest illustration, since it turns a vague question about the shape of a point cloud into an exact computation with a definite answer, and the answer survives the noise.
+The unifying idea across all of these is worth stating once more: an invariant cannot change a little. That is why topology is the right tool when the data is noisy, the material is dirty, or the measurement is imprecise - it is measuring something that discretely refuses to budge. The persistence figure is the cleanest illustration, since it turns a vague question about the shape of a point cloud into an exact computation with a definite answer, and the answer survives the noise.
 :::
 
 ## Quiz

@@ -83,7 +83,7 @@ Note the "only if" in axiom 2. Dropping it gives a **pseudometric**, where disti
 
 > A set $U\subseteq X$ is **open** if every point of $U$ has some ball around it contained in $U$.
 
-That second definition is the bridge to the rest of the section. It converts a numerical notion, distance, into a purely set-theoretic one, openness — and openness is all the next lesson will keep.
+That second definition is the bridge to the rest of the section. It converts a numerical notion, distance, into a purely set-theoretic one, openness - and openness is all the next lesson will keep.
 
 **Open balls need not look round.** The shape depends entirely on the metric.
 
@@ -105,7 +105,7 @@ $$
 
 The figure measures the relevant constants on $\mathbb{R}^2$: over the Euclidean unit circle, $d_1$ ranges between 1 and $\sqrt2$, and $d_\infty$ between $\frac{1}{\sqrt2}$ and 1. Since each is bounded above and below by a multiple of the other, any ball of one metric contains a ball of the other, so the open sets coincide.
 
-**Consequence:** every topological statement about $\mathbb{R}^2$ — continuity, convergence, connectedness, compactness — gives the same answer for all three. Proving a theorem once topologically covers all of them.
+**Consequence:** every topological statement about $\mathbb{R}^2$ - continuity, convergence, connectedness, compactness - gives the same answer for all three. Proving a theorem once topologically covers all of them.
 
 The discrete metric on $\mathbb{R}$ is **not** equivalent to the usual one, since it makes every singleton open. That is a genuinely different topology.
 
@@ -162,11 +162,7 @@ So each metric is bounded by a constant times the other, which is exactly what m
 
 **Solution.** Yes. Given $x\in(0,1)$, set $r = \min(x, 1-x) > 0$. Then $B(x,r) = (x-r,x+r)\subseteq(0,1)$.
 
-$$
-\text{open}
-$$
-
-∎
+**Answer:** open. ∎
 
 Note $[0,1)$ is **not** open, because no ball around 0 stays inside: every $B(0,r)$ contains negative numbers.
 
@@ -186,7 +182,7 @@ The open ball is already closed, since every set is, so its closure is $\{x\}$, 
 
 What does $d(f,g) = \sup_{x\in[0,1]}|f(x)-g(x)| < \varepsilon$ mean?
 
-**Solution.** It says the graphs of $f$ and $g$ stay within vertical distance $\varepsilon$ of each other at **every** point of $[0,1]$ — the entire graph of $g$ lies in an $\varepsilon$-tube around $f$.
+**Solution.** It says the graphs of $f$ and $g$ stay within vertical distance $\varepsilon$ of each other at **every** point of $[0,1]$ - the entire graph of $g$ lies in an $\varepsilon$-tube around $f$.
 
 Convergence in this metric is therefore **uniform convergence**, exactly the notion from real analysis, and a ball in this metric is the tube. ∎
 

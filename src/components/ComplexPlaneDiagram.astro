@@ -1,6 +1,6 @@
 ---
 /**
- * ComplexPlaneDiagram — the complex plane (Argand diagram).
+ * ComplexPlaneDiagram - the complex plane (Argand diagram).
  * Horizontal axis = Real, Vertical axis = Imaginary.
  * Plots: 3+4i, −2+3i, 4−2i, −3−i, and 5i (pure imaginary).
  */
@@ -33,7 +33,7 @@ const points = [
 ---
 
 <figure class="cp-diagram" role="img" aria-label="The complex plane showing several complex numbers plotted as points">
-  <figcaption class="cp-title">The complex plane — every complex number a + bi is a point</figcaption>
+  <figcaption class="cp-title">The complex plane - every complex number a + bi is a point</figcaption>
   <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
 
     <rect class="cp-bg" x="0" y="0" width={w} height={h} rx="8" />
@@ -50,7 +50,7 @@ const points = [
     <line class="cp-axis" x1={pad} y1={realAxisY} x2={pad + plotW + 5} y2={realAxisY} stroke-width="1.5" />
     <line class="cp-axis" x1={imagAxisX} y1={pad + plotH} x2={imagAxisX} y2={pad - 5} stroke-width="1.5" />
 
-    {/* Axis labels — outside the plot area */}
+    {/* Axis labels - outside the plot area */}
     <text class="cp-axis-label" x={pad + plotW + 10} y={realAxisY - 8} font-size="14">Real</text>
     <text class="cp-axis-label" x={imagAxisX + 10} y={pad - 10} font-size="14">Imaginary</text>
 

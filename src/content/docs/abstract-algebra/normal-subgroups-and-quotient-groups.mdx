@@ -61,15 +61,15 @@ Concretely, in $S_3$ with $H = \{e, s\}$: we have $rH = \{r, rs\}$, so $r$ and $
 - Using $r$: $(sH)(rH) = srH = r^2sH = \{r^2s, r^2\}$
 - Using $rs$: $(sH)(rsH) = s(rs)H = (r^2s)sH = r^2 H = \{r^2, r^2s\}$
 
-Those happen to agree. Try instead $(rH)(sH)$ two ways: with $r$, get $rsH = \{rs, r\}$; with $rs$, get $(rs)(s)H = rH = \{r, rs\}$. Also agree. But now compute $(rH)(rH)$: using $r$ twice gives $r^2H = \{r^2, r^2s\}$; using $r$ and $rs$ gives $r(rs)H = r^2sH = \{r^2s, r^2\}$. Still fine — but the general pattern breaks for other choices, and the theorem below says exactly when.
+Those happen to agree. Try instead $(rH)(sH)$ two ways: with $r$, get $rsH = \{rs, r\}$; with $rs$, get $(rs)(s)H = rH = \{r, rs\}$. Also agree. But now compute $(rH)(rH)$: using $r$ twice gives $r^2H = \{r^2, r^2s\}$; using $r$ and $rs$ gives $r(rs)H = r^2sH = \{r^2s, r^2\}$. Still fine - but the general pattern breaks for other choices, and the theorem below says exactly when.
 
 ### Normal subgroups
 
 $N \le G$ is **normal**, written $N \trianglelefteq G$, if any of these equivalent conditions holds:
 
-1. $gN = Ng$ for all $g \in G$ — left and right cosets coincide.
-2. $gNg^{-1} = N$ for all $g \in G$ — conjugation preserves $N$.
-3. $gng^{-1} \in N$ for all $g \in G$, $n \in N$ — the practical test.
+1. $gN = Ng$ for all $g \in G$ - left and right cosets coincide.
+2. $gNg^{-1} = N$ for all $g \in G$ - conjugation preserves $N$.
+3. $gng^{-1} \in N$ for all $g \in G$, $n \in N$ - the practical test.
 
 Condition 3 is what you actually check. Note it does **not** say $gng^{-1} = n$; the conjugate may be a different element of $N$, it just has to stay inside.
 

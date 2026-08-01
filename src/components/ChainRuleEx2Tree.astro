@@ -1,6 +1,6 @@
 ---
 /**
- * ChainRuleEx2Tree — Tree diagram for Example 2:
+ * ChainRuleEx2Tree - Tree diagram for Example 2:
  * z = e^(xy), x = s + t, y = s - t
  * Shows four paths with actual derivative values.
  * Result formulas are in the lesson MDX as proper KaTeX.
@@ -19,13 +19,13 @@ const tX2 = cx + 90; const tY2 = 290;
 
 <figure class="ex2t" role="img" aria-label="Tree diagram for Example 2 showing z depends on x and y, which both depend on s and t, with derivative values">
   <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
-    {/* Edges — outer */}
+    {/* Edges - outer */}
     <line x1={zX} y1={zY + nr} x2={xX} y2={xY - nr} class="ex2t-edge" stroke-width="1.5" />
     <line x1={zX} y1={zY + nr} x2={yX} y2={yY - nr} class="ex2t-edge" stroke-width="1.5" />
     <line x1={xX} y1={xY + nr} x2={sX} y2={sY - nr} class="ex2t-edge" stroke-width="1.5" />
     <line x1={yX} y1={yY + nr} x2={tX2} y2={tY2 - nr} class="ex2t-edge" stroke-width="1.5" />
 
-    {/* Edges — cross (dashed) */}
+    {/* Edges - cross (dashed) */}
     <line x1={xX} y1={xY + nr} x2={tX2} y2={tY2 - nr} class="ex2t-edge-cross" stroke-width="1.5" stroke-dasharray="5,3" />
     <line x1={yX} y1={yY + nr} x2={sX} y2={sY - nr} class="ex2t-edge-cross" stroke-width="1.5" stroke-dasharray="5,3" />
 

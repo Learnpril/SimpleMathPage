@@ -63,7 +63,7 @@ A more entertaining version: "all horses are the same color." The inductive step
 >
 > [Start from the $P(k+1)$ expression, split off the new piece, substitute the inductive hypothesis, simplify to the target form.]
 >
-> By induction, $P(n)$ holds for all $n \geq 1$. $\blacksquare$
+> By induction, $P(n)$ holds for all $n \geq 1$. ∎
 
 The mechanical move in the inductive step is almost always: **peel off the last term, apply the hypothesis to what remains.**
 
@@ -105,7 +105,7 @@ $$
 
 That's exactly the formula with $n = k+1$.
 
-By induction, the formula holds for all $n \geq 1$. $\blacksquare$
+By induction, the formula holds for all $n \geq 1$. ∎
 
 **Example 2: A divisibility claim.**
 
@@ -131,7 +131,7 @@ $$
 
 Since $m + k^2 + k$ is an integer, the expression is divisible by 3.
 
-By induction, $3 \mid (n^3 - n)$ for all $n \geq 1$. $\blacksquare$
+By induction, $3 \mid (n^3 - n)$ for all $n \geq 1$. ∎
 
 The key maneuver: expand, then **rearrange to expose the previous case** so the hypothesis can be substituted.
 
@@ -155,7 +155,7 @@ $$
 2^{k+1} > 2k \geq k+1
 $$
 
-By induction, $2^n > n$ for all $n \geq 1$. $\blacksquare$
+By induction, $2^n > n$ for all $n \geq 1$. ∎
 
 Inequality inductions need one extra step: after applying the hypothesis you usually have to bridge from what you got to what you wanted, and that bridge uses a fact about $k$.
 
@@ -180,7 +180,7 @@ $$
 2^k + 2^k = 2 \cdot 2^k = 2^{k+1}
 $$
 
-By induction, an $n$-element set has $2^n$ subsets. $\blacksquare$
+By induction, an $n$-element set has $2^n$ subsets. ∎
 
 Notice there's no algebra here at all. The induction is on a **structure**, which is the flavor you'll see most in computer science.
 
@@ -198,7 +198,7 @@ Notice there's no algebra here at all. The induction is on a **structure**, whic
 
 **Case 2: $k+1$ is composite.** Then $k+1 = a \cdot b$ where $2 \leq a, b \leq k$. By the strong inductive hypothesis, both $a$ and $b$ are products of primes. Multiplying those factorizations gives a prime factorization of $k+1$.
 
-By strong induction, every integer $n \geq 2$ is a product of primes. $\blacksquare$
+By strong induction, every integer $n \geq 2$ is a product of primes. ∎
 
 Ordinary induction can't do this, because $a$ and $b$ are somewhere below $k+1$ and you have no idea where. You need the whole range available, which is exactly what strong induction gives you.
 
@@ -218,7 +218,7 @@ $$
 
 And $2(k+1) - 1 = 2k+1$. Match.
 
-By strong induction, $a_n = 2n-1$ for all $n \geq 1$. $\blacksquare$
+By strong induction, $a_n = 2n-1$ for all $n \geq 1$. ∎
 
 Two base cases are required here because the recurrence reaches back two terms. One base case would leave $a_2$ unjustified.
 

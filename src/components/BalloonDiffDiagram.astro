@@ -1,6 +1,6 @@
 ---
 /**
- * BalloonDiffDiagram — two concentric circles showing a balloon
+ * BalloonDiffDiagram - two concentric circles showing a balloon
  * at r=5 and r=5.1, with the thin shell (dr) highlighted.
  * Demonstrates dV = 4πr² dr visually.
  */
@@ -15,10 +15,10 @@ const r2 = r1 + 12;    // exaggerated dr for visibility (actual 2.6px)
 
 <figure class="bdd" role="img" aria-label="Balloon expanding from radius 5 to 5.1, showing the thin shell of added volume">
   <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
-    {/* Outer circle (r = 5.1) — the shell fill */}
+    {/* Outer circle (r = 5.1) - the shell fill */}
     <circle cx={cx} cy={cy} r={r2} class="bdd-shell" />
 
-    {/* Inner circle (r = 5) — covers the shell to show only the ring */}
+    {/* Inner circle (r = 5) - covers the shell to show only the ring */}
     <circle cx={cx} cy={cy} r={r1} class="bdd-inner" />
 
     {/* Inner circle outline */}
@@ -30,7 +30,7 @@ const r2 = r1 + 12;    // exaggerated dr for visibility (actual 2.6px)
     {/* Radius line from center to edge */}
     <line x1={cx} y1={cy} x2={cx + r1} y2={cy} class="bdd-radius" stroke-width="2" />
 
-    {/* dr bracket — spans from inner to outer circle on the right */}
+    {/* dr bracket - spans from inner to outer circle on the right */}
     <line x1={cx + r1} y1={cy - 20} x2={cx + r2} y2={cy - 20}
           class="bdd-dr" stroke-width="2.5" />
 

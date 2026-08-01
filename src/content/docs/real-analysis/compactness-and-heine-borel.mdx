@@ -28,7 +28,7 @@ Note the quantifier: _every_ cover must admit a finite subcover. Exhibiting one 
 
 Take the cover $\left\{\left(\frac1n, 1\right) : n \ge 2\right\}$. Every $x \in (0,1)$ is in some member, since $\frac1n < x$ for large enough $n$ by the Archimedean property. So it is a genuine open cover.
 
-But any **finite** subfamily has a largest $\frac1n$, say $\frac{1}{N}$, and then the union misses everything in $\left(0, \frac1N\right]$ — which is non-empty. **No finite subcover.**
+But any **finite** subfamily has a largest $\frac1n$, say $\frac{1}{N}$, and then the union misses everything in $\left(0, \frac1N\right]$ - which is non-empty. **No finite subcover.**
 
 The failure is at the missing endpoint. Points sneak arbitrarily close to 0 and 0 is not there to be covered along with them.
 
@@ -40,7 +40,7 @@ Similarly $[0,\infty)$ fails via the cover $\{(-1, n) : n \in \mathbb{N}\}$: fin
 
 Two failure modes, two hypotheses. Bounded rules out escaping to infinity; closed rules out leaking through a missing boundary point. That's exactly what the two counterexamples above illustrate.
 
-**This is why "closed bounded interval" appears everywhere.** The extreme value theorem, uniform continuity of continuous functions, Riemann integrability of continuous functions — each really requires compactness, and on $\mathbb{R}$ that means closed and bounded.
+**This is why "closed bounded interval" appears everywhere.** The extreme value theorem, uniform continuity of continuous functions, Riemann integrability of continuous functions - each really requires compactness, and on $\mathbb{R}$ that means closed and bounded.
 
 The theorem is specific to $\mathbb{R}^n$. In general metric spaces compactness is strictly stronger than closed and bounded, and closed bounded sets can fail to be compact. Do not carry the equivalence into infinite-dimensional settings.
 
@@ -106,7 +106,7 @@ Any finite subfamily $\{(-1,n_1), \dots, (-1,n_k)\}$ has union $(-1, N)$ where $
 
 Suppose for each $x \in [0,1]$ you are given some $\delta_x > 0$. Must $\inf_x \delta_x > 0$?
 
-**Solution.** Not directly — an infimum over infinitely many positive numbers can be 0. Take $\delta_x = x$ on $(0,1]$; the infimum is 0.
+**Solution.** Not directly - an infimum over infinitely many positive numbers can be 0. Take $\delta_x = x$ on $(0,1]$; the infimum is 0.
 
 But compactness gives a workaround. Cover $[0,1]$ by the intervals $\left(x - \frac{\delta_x}{2}, x + \frac{\delta_x}{2}\right)$. Finitely many suffice, say indexed by $x_1,\dots,x_k$. Now
 
@@ -140,7 +140,7 @@ Compactness of $K$ gives finitely many, $f^{-1}(V_{i_1}),\dots,f^{-1}(V_{i_k})$,
 
 **Global error bounds in numerical methods.** Error estimates like "the error is at most $C h^2$ on this interval" need a single constant $C$ valid everywhere. That constant comes from taking a maximum over a compact set, and it does not exist on an open or unbounded domain. This is why numerical analysis works on closed intervals.
 
-**Machine learning generalization.** Uniform convergence bounds require compactness of the parameter space or a substitute for it, such as a covering-number condition. Covering numbers are literally counting how many small balls it takes to cover the space — the open-cover definition, quantified.
+**Machine learning generalization.** Uniform convergence bounds require compactness of the parameter space or a substitute for it, such as a covering-number condition. Covering numbers are literally counting how many small balls it takes to cover the space - the open-cover definition, quantified.
 
 **Robotics and motion planning.** A robot's configuration space is compact when joint angles are bounded and the constraint set is closed, which guarantees that if a path exists, an optimal one exists too.
 

@@ -6,11 +6,37 @@ sidebar:
 ---
 
 import Quiz from "../../../components/Quiz.astro";
+import SymbolKey from "../../../components/SymbolKey.astro";
 import HoleClassification from "../../../components/HoleClassification.astro";
 
 ## What You'll Learn
 
 In this lesson you'll learn what topology keeps and what it discards, meet the idea of a topological invariant, see why "the same shape" needs a careful definition, and get the list of standard examples the rest of the section uses.
+
+<SymbolKey
+  items={[
+    {
+      sym: "Sⁿ",
+      read: "the n-sphere",
+      note: "S¹ is the circle, S² is the surface of a ball. The exponent is the dimension of the surface itself, not of the space it sits in",
+    },
+    {
+      sym: "T²",
+      read: "the torus",
+      note: "the doughnut surface, the standard example with exactly one hole",
+    },
+    {
+      sym: "ℝⁿ",
+      read: "n-dimensional real space",
+      note: "the line when n = 1, the plane when n = 2, ordinary space when n = 3",
+    },
+    {
+      sym: "∎",
+      read: "end of proof",
+      note: "the tombstone: the argument is complete and ordinary prose resumes. Older texts write QED, or draw it hollow as □",
+    },
+  ]}
+/>
 
 ## The Concept
 
@@ -20,8 +46,8 @@ Geometry cares about length, angle, area, and curvature. Topology discards all o
 
 Two operations are forbidden, and they are the entire content of the restriction:
 
-- **Cutting** — you may not tear the object apart.
-- **Gluing** — you may not join points that were separate.
+- **Cutting** - you may not tear the object apart.
+- **Gluing** - you may not join points that were separate.
 
 Everything else is allowed. So a circle and a square are the same, an interval and a line segment of any length are the same, and a coffee mug and a doughnut are the same because the handle can be fattened into the doughnut's body without cutting.
 
@@ -39,13 +65,13 @@ Homeomorphism is an equivalence relation, so it sorts all spaces into classes. M
 
 ### Invariants
 
-You cannot prove two spaces are different by failing to find a deformation. You need a property that is preserved by all homeomorphisms — a **topological invariant** — and then exhibit a difference.
+You cannot prove two spaces are different by failing to find a deformation. You need a property that is preserved by all homeomorphisms - a **topological invariant** - and then exhibit a difference.
 
 <HoleClassification />
 
 The simplest invariant is the number of holes. In the figure, six shapes sort into three classes, and shapes in the same class really can be deformed into one another. The letters C and the filled disc both have none; A and an annulus both have one; B and a figure eight both have two.
 
-An **annulus** is a flat ring — the region between two concentric circles, like a washer or a CD. It appears throughout this section as the standard example of a shape with exactly one hole, and as the standard region that is _not_ simply connected.
+An **annulus** is a flat ring - the region between two concentric circles, like a washer or a CD. It appears throughout this section as the standard example of a shape with exactly one hole, and as the standard region that is _not_ simply connected.
 
 The letter B is worth a second look, since it is the one case where counting is easy to get wrong. Its outline consists of **three** closed loops: the outer boundary plus the two counters, the enclosed white spaces in the upper and lower bowls. One of those loops is the outside edge, so the hole count is $3-1=2$. The figure applies that same rule to every shape, which is why the caption under each column reports boundary loops rather than holes directly.
 
@@ -112,7 +138,7 @@ Formally the sphere has trivial fundamental group and the torus has $\mathbb{Z}\
 
 **Solution.** Sorting by hole count and by the number of junction points, in a plain sans-serif font:
 
-- **No holes, no junctions:** C, I, J, L, M, N, S, U, V, W, Z — all homeomorphic to a segment
+- **No holes, no junctions:** C, I, J, L, M, N, S, U, V, W, Z - all homeomorphic to a segment
 - **No holes, one junction:** E, F, T, Y
 - **One hole:** A, D, O, P, Q, R
 - **Two holes:** B
@@ -141,7 +167,7 @@ The Möbius strip is also **non-orientable**, which is the deeper distinction an
 
 **Solution.** No. Stretching, bending, and knotting a closed rubber band in space are all continuous deformations without cutting, so the band remains a circle $S^1$ throughout.
 
-**A knotted loop is homeomorphic to an unknotted one.** Knot theory studies something subtler — how the loop sits _inside_ $\mathbb{R}^3$ — which is an embedding question rather than a question about the loop itself.
+**A knotted loop is homeomorphic to an unknotted one.** Knot theory studies something subtler - how the loop sits _inside_ $\mathbb{R}^3$ - which is an embedding question rather than a question about the loop itself.
 
 **Example 7: How many holes does a T-shirt have?**
 
@@ -166,7 +192,7 @@ Silly-sounding, but it is exactly the reasoning used for classifying surfaces in
 **Mesh processing.** Graphics pipelines track the genus of a surface and repair meshes that violate it, since texture mapping and subdivision both assume a valid topology.
 
 :::note[You've Got This]
-The one habit to build in this lesson is reaching for an invariant. When you want to show two spaces differ, do not try to argue that no deformation exists — find a property one has and the other lacks, and you are done in a sentence. And note the asymmetry carefully, because it catches people out: matching invariants prove nothing at all. Everything else in the section is the construction of better invariants, culminating in the fundamental group.
+The one habit to build in this lesson is reaching for an invariant. When you want to show two spaces differ, do not try to argue that no deformation exists - find a property one has and the other lacks, and you are done in a sentence. And note the asymmetry carefully, because it catches people out: matching invariants prove nothing at all. Everything else in the section is the construction of better invariants, culminating in the fundamental group.
 :::
 
 ## Quiz

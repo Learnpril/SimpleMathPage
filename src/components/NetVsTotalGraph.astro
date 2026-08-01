@@ -1,6 +1,6 @@
 ---
 /**
- * NetVsTotalGraph — shows f(x) = x on [-2, 3].
+ * NetVsTotalGraph - shows f(x) = x on [-2, 3].
  * Green shaded area above x-axis (positive), red below (negative).
  * Net = 2.5, Total = 6.5.
  */
@@ -13,7 +13,7 @@ const xMin = -3, xMax = 4, yMin = -3, yMax = 4;
 const sx = (x: number) => pad + ((x - xMin) / (xMax - xMin)) * gw;
 const sy = (y: number) => pad + ((yMax - y) / (yMax - yMin)) * gh;
 
-// Negative triangle: (-2,0) to (0,0) to (0,-2) — actually (-2,-2) to (0,0)
+// Negative triangle: (-2,0) to (0,0) to (0,-2) - actually (-2,-2) to (0,0)
 const negPts = `${sx(-2)},${sy(0)} ${sx(-2)},${sy(-2)} ${sx(0)},${sy(0)}`;
 // Positive triangle: (0,0) to (3,3) to (3,0)
 const posPts = `${sx(0)},${sy(0)} ${sx(3)},${sy(3)} ${sx(3)},${sy(0)}`;

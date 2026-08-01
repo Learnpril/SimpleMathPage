@@ -1,6 +1,6 @@
 ---
 /**
- * ConvergeDivergeDiagram — three mini plots side by side showing:
+ * ConvergeDivergeDiagram - three mini plots side by side showing:
  * 1. Converging partial sums (settling to a limit)
  * 2. Diverging partial sums (growing without bound)
  * 3. Oscillating partial sums (bouncing, no limit)
@@ -20,7 +20,7 @@ const makeMap = (ox: number) => {
   return { sx, sy };
 };
 
-// Panel 1: converging — S_n = 1 - (1/2)^n → 1
+// Panel 1: converging - S_n = 1 - (1/2)^n → 1
 const p1x = padL;
 const m1 = makeMap(p1x);
 const conv: { x: number; y: number }[] = [];
@@ -30,7 +30,7 @@ for (let n = 1; n <= 12; n++) {
   conv.push({ x: n, y: s1 });
 }
 
-// Panel 2: diverging — S_n = sum 1/sqrt(k), grows
+// Panel 2: diverging - S_n = sum 1/sqrt(k), grows
 const p2x = padL + pw + gap;
 const m2 = makeMap(p2x);
 const divg: { x: number; y: number }[] = [];
@@ -40,7 +40,7 @@ for (let n = 1; n <= 12; n++) {
   divg.push({ x: n, y: s2 / 6 }); // scale to fit
 }
 
-// Panel 3: oscillating — S_n = sum (-1)^(n+1) = 1, 0, 1, 0, ...
+// Panel 3: oscillating - S_n = sum (-1)^(n+1) = 1, 0, 1, 0, ...
 const p3x = padL + (pw + gap) * 2;
 const m3 = makeMap(p3x);
 const osc: { x: number; y: number }[] = [];

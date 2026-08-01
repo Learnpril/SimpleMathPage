@@ -1,6 +1,6 @@
 ---
 /**
- * CayleyTable — an operation table for a finite algebraic structure.
+ * CayleyTable - an operation table for a finite algebraic structure.
  *
  * The body is computed from the `op` callback rather than typed out, so the
  * table can never disagree with the arithmetic it claims to show. Pass a set of
@@ -122,7 +122,7 @@ const identity = grid.findIndex(
       highlight.length > 0 && (
         <span class="cay-hi-note">
           Shaded: {highlight.map((i) => labels[i]).join(", ")}
-          {highlightLabel ? ` (${highlightLabel})` : ""} —{" "}
+          {highlightLabel ? ` (${highlightLabel})` : ""} -{" "}
           {closed
             ? "closed, every product stays inside"
             : "not closed, some product escapes"}

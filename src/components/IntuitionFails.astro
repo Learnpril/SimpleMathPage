@@ -1,6 +1,6 @@
 ---
 /**
- * IntuitionFails — three standard counterexamples, plotted from their formulas.
+ * IntuitionFails - three standard counterexamples, plotted from their formulas.
  * Each marks the exact boundary of a theorem you used in calculus without proof.
  */
 const w = 540;
@@ -8,12 +8,12 @@ const h = 278;
 const top = 64;
 const bottom = 184;
 
-// Panel 1: y = |x| on [-1, 1] — continuous, no derivative at 0
+// Panel 1: y = |x| on [-1, 1] - continuous, no derivative at 0
 const p1 = { l: 25, r: 175 };
 const p1x = (x: number) => (p1.l + p1.r) / 2 + x * 75;
 const p1y = (y: number) => bottom - y * 110;
 
-// Panel 2: y = sin(1/x) — sampled in 1/x so the points crowd toward zero
+// Panel 2: y = sin(1/x) - sampled in 1/x so the points crowd toward zero
 const p2 = { l: 195, r: 345 };
 const p2mid = 124;
 const p2amp = 55;
@@ -24,7 +24,7 @@ const oscPts = Array.from({ length: 1400 }, (_, i) => {
   return `${(p2.l + (x / xMax) * (p2.r - p2.l)).toFixed(2)},${(p2mid - Math.sin(t) * p2amp).toFixed(2)}`;
 }).join(" ");
 
-// Panel 3: y = xⁿ on [0, 1] for several n — pointwise limit is discontinuous
+// Panel 3: y = xⁿ on [0, 1] for several n - pointwise limit is discontinuous
 const p3 = { l: 365, r: 515 };
 const p3x = (x: number) => p3.l + x * (p3.r - p3.l);
 const p3y = (y: number) => bottom - y * 110;

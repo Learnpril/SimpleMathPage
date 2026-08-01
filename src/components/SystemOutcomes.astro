@@ -1,6 +1,6 @@
 ---
 /**
- * SystemOutcomes — three small graphs showing the three possible
+ * SystemOutcomes - three small graphs showing the three possible
  * outcomes of a system of equations:
  * 1. One solution (two lines crossing at a point)
  * 2. No solution (two parallel lines)
@@ -15,7 +15,7 @@ const sy = (y: number) => pad + ((yMax - y) / (yMax - yMin)) * gs;
 ---
 
 <div class="so-wrap">
-  {/* Graph 1: One unique solution — lines cross */}
+  {/* Graph 1: One unique solution - lines cross */}
   <figure class="so-fig" role="img" aria-label="One solution: two lines crossing at a single point">
     <svg viewBox={`0 0 ${s} ${s}`} width={s} height={s} xmlns="http://www.w3.org/2000/svg">
       <line x1={sx(xMin)} y1={sy(0)} x2={sx(xMax)} y2={sy(0)} class="so-axis" stroke-width="1" />
@@ -31,7 +31,7 @@ const sy = (y: number) => pad + ((yMax - y) / (yMax - yMin)) * gs;
     <figcaption class="so-cap">One solution</figcaption>
   </figure>
 
-  {/* Graph 2: No solution — parallel lines */}
+  {/* Graph 2: No solution - parallel lines */}
   <figure class="so-fig" role="img" aria-label="No solution: two parallel lines that never meet">
     <svg viewBox={`0 0 ${s} ${s}`} width={s} height={s} xmlns="http://www.w3.org/2000/svg">
       <line x1={sx(xMin)} y1={sy(0)} x2={sx(xMax)} y2={sy(0)} class="so-axis" stroke-width="1" />
@@ -47,7 +47,7 @@ const sy = (y: number) => pad + ((yMax - y) / (yMax - yMin)) * gs;
     <figcaption class="so-cap">No solution</figcaption>
   </figure>
 
-  {/* Graph 3: Infinite solutions — same line */}
+  {/* Graph 3: Infinite solutions - same line */}
   <figure class="so-fig" role="img" aria-label="Infinite solutions: two equations describe the same line">
     <svg viewBox={`0 0 ${s} ${s}`} width={s} height={s} xmlns="http://www.w3.org/2000/svg">
       <line x1={sx(xMin)} y1={sy(0)} x2={sx(xMax)} y2={sy(0)} class="so-axis" stroke-width="1" />

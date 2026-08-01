@@ -96,7 +96,7 @@ and each implication is strict. The counterexamples worth knowing:
 | Various line-with-two-origins constructions | $T_2$     | $T_3$ |
 | The Sorgenfrey plane                        | $T_3$     | $T_4$ |
 
-The cofinite example is the most instructive. Any two nonempty open sets there intersect, as proved in lesson 3, so no two points can be separated by disjoint sets — yet every singleton is closed. So $T_1$ and $T_2$ are genuinely different conditions.
+The cofinite example is the most instructive. Any two nonempty open sets there intersect, as proved in lesson 3, so no two points can be separated by disjoint sets - yet every singleton is closed. So $T_1$ and $T_2$ are genuinely different conditions.
 
 ### Where metric spaces sit
 
@@ -134,11 +134,7 @@ $$
 
 a contradiction. So the balls are disjoint.
 
-$$
-\text{Hausdorff}
-$$
-
-∎
+**Answer:** Hausdorff. ∎
 
 **Example 2: Show the cofinite topology on $\mathbb{Z}$ is $T_1$ but not $T_2$.**
 
@@ -186,15 +182,11 @@ This space is not a curiosity: it is fundamental in domain theory, where the two
 
 **Example 5: Show a compact Hausdorff space is normal.**
 
-**Solution sketch.** In a Hausdorff space, a compact set and a point outside it can be separated — the argument from lesson 10, Example 5. That gives regularity, since closed subsets of a compact space are compact.
+**Solution sketch.** In a Hausdorff space, a compact set and a point outside it can be separated - the argument from lesson 10, Example 5. That gives regularity, since closed subsets of a compact space are compact.
 
 Applying the same finite-subcover argument again, now with a compact set on each side, separates two disjoint closed sets.
 
-$$
-\text{normal}
-$$
-
-∎
+**Answer:** normal. ∎
 
 **Both steps are the same trick**: cover, take a finite subcover, intersect the finitely many neighbourhoods.
 
@@ -235,7 +227,7 @@ The separating open sets follow: take $U = f^{-1}\left(\left[0,\frac13\right)\ri
 **Function existence in modelling.** Urysohn's lemma is why smooth bump functions and partitions of unity exist, and those are the basic tools of differential geometry, finite element methods, and computer graphics blending.
 
 :::note[You've Got This]
-Five axioms, but in practice one matters most: Hausdorff. It is the condition that makes limits unique and compact sets closed, and it is why "compact Hausdorff" is the standard setting for general topology. The other high-value fact is the contrapositive — since every metric space satisfies all of these, a space failing any of them is not metrizable, and that is the cheapest way to prove non-metrizability. The cofinite topology is the example to keep, since it separates $T_1$ from $T_2$ cleanly.
+Five axioms, but in practice one matters most: Hausdorff. It is the condition that makes limits unique and compact sets closed, and it is why "compact Hausdorff" is the standard setting for general topology. The other high-value fact is the contrapositive - since every metric space satisfies all of these, a space failing any of them is not metrizable, and that is the cheapest way to prove non-metrizability. The cofinite topology is the example to keep, since it separates $T_1$ from $T_2$ cleanly.
 :::
 
 ## Quiz

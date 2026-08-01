@@ -62,7 +62,7 @@ Here is the list. Most of these are proved later in the section, but seeing them
 
 - **Infinite differentiability.** If $f$ is analytic then $f', f'', f''', \ldots$ all exist and are analytic. One derivative buys all of them.
 - **Power series.** $f$ equals its Taylor series on any disc inside its domain. So _analytic_ in the sense of "differentiable" coincides with _analytic_ in the sense of "locally a convergent power series." In real analysis these are genuinely different properties; here they are the same.
-- **The identity theorem.** If two analytic functions on a domain agree on a set with a limit point in the domain — a segment, an arc, a convergent sequence of points — they agree everywhere on the domain.
+- **The identity theorem.** If two analytic functions on a domain agree on a set with a limit point in the domain - a segment, an arc, a convergent sequence of points - they agree everywhere on the domain.
 - **The maximum modulus principle.** A non-constant analytic function on a domain has no interior maximum of $|f|$. The largest values are always on the boundary.
 - **Liouville's theorem.** A bounded entire function is constant.
 - **Open mapping.** A non-constant analytic function maps open sets to open sets.
@@ -76,7 +76,7 @@ Sums, products, quotients (off the zeros of the denominator), and compositions o
 
 The practical test is the one from last lesson:
 
-> If you can write $f$ using only $z$, arithmetic, and the standard functions — no $\bar z$, no $|z|$, no $\operatorname{Re}$, no $\operatorname{Im}$ — then it is analytic wherever it is defined. If you cannot, it almost certainly is not analytic anywhere.
+> If you can write $f$ using only $z$, arithmetic, and the standard functions - no $\bar z$, no $|z|$, no $\operatorname{Re}$, no $\operatorname{Im}$ - then it is analytic wherever it is defined. If you cannot, it almost certainly is not analytic anywhere.
 
 So $\frac{z^3-1}{z^2+4}$ is analytic off $\pm2i$, $e^{z^2}$ is entire, and $\sin(1/z)$ is analytic off the origin. Meanwhile $z\bar z$, $\operatorname{Re}(z)^2$, and $|z|$ are analytic nowhere.
 
@@ -116,11 +116,7 @@ It is **meromorphic** on $\mathbb{C}$, since the two bad points are isolated pol
 
 **Solution.** From the previous lesson it is differentiable only at $z=0$. Analyticity at 0 would require differentiability on an entire disc around 0, and every other point of that disc fails.
 
-$$
-\text{analytic nowhere}
-$$
-
-∎
+**Answer:** analytic nowhere. ∎
 
 **This is the example that justifies the definition.** "Differentiable at a point" is too weak to build a theory on.
 
@@ -130,7 +126,7 @@ Two functions are analytic on $\mathbb{C}$ and agree at every point of the real 
 
 **Solution.** The real axis has limit points in $\mathbb{C}$, so the identity theorem applies: they agree on all of $\mathbb{C}$.
 
-**This is the principle behind analytic continuation.** It is why $e^z$, $\sin z$, and $\cos z$ have exactly one possible definition extending their real versions, and why any identity valid for real arguments — such as $\sin^2+\cos^2=1$ — automatically holds for complex ones.
+**This is the principle behind analytic continuation.** It is why $e^z$, $\sin z$, and $\cos z$ have exactly one possible definition extending their real versions, and why any identity valid for real arguments - such as $\sin^2+\cos^2=1$ - automatically holds for complex ones.
 
 **Example 4: Apply the maximum modulus principle.**
 
@@ -144,7 +140,7 @@ $$
 
 and this is best possible, attained by the constant $f \equiv 5$. ∎
 
-Note how unlike the real case this is. A real harmonic-looking function on an interval can perfectly well be larger in the middle than at the ends — but $|f|$ for analytic $f$ cannot.
+Note how unlike the real case this is. A real harmonic-looking function on an interval can perfectly well be larger in the middle than at the ends - but $|f|$ for analytic $f$ cannot.
 
 **Example 5: Use Liouville's theorem.**
 
@@ -195,7 +191,7 @@ Two families of circles, all through the origin, meeting at right angles. ∎
 **Cryptography and coding, indirectly.** Generating-function arguments that require analyticity in a disc underpin asymptotic counting results used in algorithm analysis, where the radius of convergence gives the growth rate.
 
 :::note[You've Got This]
-The definition change in this lesson is small on the page and enormous in consequence: differentiable on an open set, not at a point. Everything that makes complex analysis feel like a superpower — infinite differentiability, power series, the identity theorem, Liouville — is downstream of that one word "open." And the orthogonal level curves are worth sitting with for a minute, because they are the reason a subject about abstract differentiability turns out to describe heat, electricity, and flowing water.
+The definition change in this lesson is small on the page and enormous in consequence: differentiable on an open set, not at a point. Everything that makes complex analysis feel like a superpower - infinite differentiability, power series, the identity theorem, Liouville - is downstream of that one word "open." And the orthogonal level curves are worth sitting with for a minute, because they are the reason a subject about abstract differentiability turns out to describe heat, electricity, and flowing water.
 :::
 
 ## Quiz

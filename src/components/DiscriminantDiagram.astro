@@ -1,6 +1,6 @@
 ---
 /**
- * DiscriminantDiagram — three mini parabolas showing D > 0, D = 0, D < 0.
+ * DiscriminantDiagram - three mini parabolas showing D > 0, D = 0, D < 0.
  * Left: two x-intercepts. Center: one x-intercept (tangent). Right: no x-intercepts.
  */
 
@@ -63,7 +63,7 @@ const ax3Y = toY(0, p3yLo, p3yHi);
 
     <rect class="disc-bg" x="0" y="0" width={totalW} height={totalH} rx="8" />
 
-    {/* Panel 1: D > 0 — two roots */}
+    {/* Panel 1: D > 0 - two roots */}
     <text class="disc-heading disc-pos" x={panelX(0) + pw / 2} y={18} font-size="11" text-anchor="middle" font-weight="bold">D &gt; 0</text>
     <text class="disc-sub" x={panelX(0) + pw / 2} y={32} font-size="9" text-anchor="middle">Two real solutions</text>
     <line class="disc-axis" x1={panelX(0)} y1={ax1Y} x2={panelX(0) + pw} y2={ax1Y} stroke-width="1" />
@@ -71,14 +71,14 @@ const ax3Y = toY(0, p3yLo, p3yHi);
     <circle class="disc-dot-pos" cx={toX(0, 1, p1xLo, p1xHi)} cy={ax1Y} r="4" />
     <circle class="disc-dot-pos" cx={toX(0, 3, p1xLo, p1xHi)} cy={ax1Y} r="4" />
 
-    {/* Panel 2: D = 0 — one root */}
+    {/* Panel 2: D = 0 - one root */}
     <text class="disc-heading disc-zero" x={panelX(1) + pw / 2} y={18} font-size="11" text-anchor="middle" font-weight="bold">D = 0</text>
     <text class="disc-sub" x={panelX(1) + pw / 2} y={32} font-size="9" text-anchor="middle">One real solution</text>
     <line class="disc-axis" x1={panelX(1)} y1={ax2Y} x2={panelX(1) + pw} y2={ax2Y} stroke-width="1" />
     <path class="disc-curve disc-curve-zero" d={p2Pts.join(' ')} fill="none" stroke-width="2" />
     <circle class="disc-dot-zero" cx={toX(1, 2, p2xLo, p2xHi)} cy={ax2Y} r="4" />
 
-    {/* Panel 3: D < 0 — no real roots */}
+    {/* Panel 3: D < 0 - no real roots */}
     <text class="disc-heading disc-neg" x={panelX(2) + pw / 2} y={18} font-size="11" text-anchor="middle" font-weight="bold">D &lt; 0</text>
     <text class="disc-sub" x={panelX(2) + pw / 2} y={32} font-size="9" text-anchor="middle">No real solutions</text>
     <line class="disc-axis" x1={panelX(2)} y1={ax3Y} x2={panelX(2) + pw} y2={ax3Y} stroke-width="1" />

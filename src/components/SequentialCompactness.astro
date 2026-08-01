@@ -1,6 +1,6 @@
 ---
 /**
- * SequentialCompactness — extracting a convergent subsequence by bisection. The
+ * SequentialCompactness - extracting a convergent subsequence by bisection. The
  * sequence is generated, and at each level the half containing more of the surviving
  * terms is kept, so the nested intervals and the limit found are the output of an
  * actual search. On the right, the same sequence idea fails on (0,1] because the
@@ -60,7 +60,7 @@ const barY = (k: number) => 104 + k * 12;
   aria-label={`On the left, a sequence in the closed unit interval is narrowed by ${levels} bisections, each keeping the half with more surviving terms, ending in an interval of width ${width.toExponential(2)} about ${limit.toFixed(4)} that still contains infinitely many terms. On the right, the sequence one over n in the half-open interval has every subsequence tending to zero, which is not a point of that space.`}
 >
   <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
-    <text x="16" y="20" class="sqc-head" font-size="12.5" font-weight="bold">Every sequence has a convergent subsequence — or not</text>
+    <text x="16" y="20" class="sqc-head" font-size="12.5" font-weight="bold">Every sequence has a convergent subsequence - or not</text>
     <text x="16" y="38" class="sqc-sub" font-size="10.5">Bisection finds the limit point; a missing endpoint destroys it</text>
 
     <line x1="276" y1="52" x2="276" y2="252" class="sqc-divide" />

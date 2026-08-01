@@ -1,6 +1,6 @@
 ---
 /**
- * CubicFactorGraph — plots y = 2x³ − 3x² − 11x + 6
+ * CubicFactorGraph - plots y = 2x³ − 3x² − 11x + 6
  * Roots at x = −2, x = 1/2, x = 3. Labels clear of curve.
  */
 const pad = 55;
@@ -57,15 +57,15 @@ const yLabelTicks = [-10, -5, 5, 10, 15];
     {/* Curve */}
     <path class="cf-curve" d={curveD} fill="none" stroke-width="2.5" />
 
-    {/* Root at x = −2 — label below-left */}
+    {/* Root at x = −2 - label below-left */}
     <circle class="cf-root" cx={toX(-2)} cy={xAxisY} r="6" />
     <text class="cf-root-label" x={toX(-2) - 10} y={xAxisY + 20} font-size="12" font-weight="bold" text-anchor="end">x = −2</text>
 
-    {/* Root at x = 1/2 — label below-right */}
+    {/* Root at x = 1/2 - label below-right */}
     <circle class="cf-root" cx={toX(0.5)} cy={xAxisY} r="6" />
     <text class="cf-root-label" x={toX(0.5) + 10} y={xAxisY + 20} font-size="12" font-weight="bold">x = ½</text>
 
-    {/* Root at x = 3 — label below-right */}
+    {/* Root at x = 3 - label below-right */}
     <circle class="cf-root" cx={toX(3)} cy={xAxisY} r="6" />
     <text class="cf-root-label" x={toX(3) + 10} y={xAxisY + 20} font-size="12" font-weight="bold">x = 3</text>
 

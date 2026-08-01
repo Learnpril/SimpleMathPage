@@ -69,7 +69,7 @@ export async function fetchProgressData(): Promise<ProgressDataResult> {
           error: null,
         };
       } catch {
-        // Supabase fetch failed — fall back to localStorage but keep auth state
+        // Supabase fetch failed - fall back to localStorage but keep auth state
         const passedSlugs = readPassedSlugsFromLocalStorage();
         const streakDates = readStreakDates();
         const progress = computeProgress(passedSlugs, SUBJECTS, TOTAL_LESSONS);
@@ -83,7 +83,7 @@ export async function fetchProgressData(): Promise<ProgressDataResult> {
       }
     }
   } catch {
-    // Supabase client creation or auth check failed — treat as guest
+    // Supabase client creation or auth check failed - treat as guest
     // Fall through to guest flow below
   }
 

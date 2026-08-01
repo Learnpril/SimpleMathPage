@@ -40,7 +40,7 @@ The point of this lesson is leverage. You pay the epsilon-N cost once, proving a
 > \frac{a_n}{b_n} \to \frac{A}{B} \quad \text{provided } B \ne 0
 > $$
 
-The quotient rule needs $B \ne 0$, and it also needs $b_n \ne 0$ eventually — which is automatic, since if $b_n \to B \ne 0$ then the terms are eventually within $\frac{|B|}{2}$ of $B$ and so nonzero.
+The quotient rule needs $B \ne 0$, and it also needs $b_n \ne 0$ eventually - which is automatic, since if $b_n \to B \ne 0$ then the terms are eventually within $\frac{|B|}{2}$ of $B$ and so nonzero.
 
 **These require both limits to exist.** $a_n = (-1)^n$ and $b_n = (-1)^{n+1}$ both diverge, yet $a_n + b_n = 0$ converges. So you cannot run the theorem backwards.
 
@@ -166,7 +166,7 @@ $$
 \frac{n^2+1}{2n+3} = \frac{n + \frac1n}{2 + \frac3n}
 $$
 
-The denominator $\to 2$, but the numerator **diverges** to infinity, so the quotient rule does not apply — it requires both limits to exist.
+The denominator $\to 2$, but the numerator **diverges** to infinity, so the quotient rule does not apply - it requires both limits to exist.
 
 The sequence diverges to $\infty$. To see it directly, for $n \ge 3$,
 
@@ -221,7 +221,7 @@ So the sum rule is a one-way street: convergence of both parts gives convergence
 **Statistics.** Consistency proofs for estimators typically squeeze the estimation error between two vanishing bounds. The estimator's own formula may be intractable; only the sandwich matters.
 
 :::note[You've Got This]
-These theorems are the payoff for last lesson's work: prove a few results from the definition, then compute almost everything without it. Two things worth holding onto. Splitting ε in half is not a trick, it's a budget — one half per source of error. And the squeeze theorem is the tool of choice whenever a factor oscillates without a limit, because it demands nothing about the middle sequence except that it's trapped. Also remember the direction of the order theorem: weak inequalities survive limits, strict ones can collapse to equality.
+These theorems are the payoff for last lesson's work: prove a few results from the definition, then compute almost everything without it. Two things worth holding onto. Splitting ε in half is not a trick, it's a budget - one half per source of error. And the squeeze theorem is the tool of choice whenever a factor oscillates without a limit, because it demands nothing about the middle sequence except that it's trapped. Also remember the direction of the order theorem: weak inequalities survive limits, strict ones can collapse to equality.
 :::
 
 ## Quiz

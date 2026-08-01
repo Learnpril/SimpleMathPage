@@ -86,7 +86,7 @@ A quick check on your setup: if it isn't clear that every pigeon lands in exactl
 
 Show that in any group of 13 people, at least two were born in the same month.
 
-**Solution.** Pigeons: 13 people. Holes: 12 months. Since $13 > 12$, some month holds at least 2 people. $\blacksquare$
+**Solution.** Pigeons: 13 people. Holes: 12 months. Since $13 > 12$, some month holds at least 2 people. ∎
 
 **Example 2: Socks in the dark.**
 
@@ -116,7 +116,7 @@ $$
 
 Show that among any 5 integers, some two have the same remainder when divided by 4.
 
-**Solution.** Holes: the possible remainders mod 4, which are $\{0, 1, 2, 3\}$. That's 4 holes. Pigeons: 5 integers. Since $5 > 4$, two share a remainder. $\blacksquare$
+**Solution.** Holes: the possible remainders mod 4, which are $\{0, 1, 2, 3\}$. That's 4 holes. Pigeons: 5 integers. Since $5 > 4$, two share a remainder. ∎
 
 A consequence: those two integers have a difference divisible by 4, since equal remainders subtract away. Remainder classes are the single most useful non-obvious choice of holes.
 
@@ -130,7 +130,7 @@ $$
 \{1,8\}, \{2,7\}, \{3,6\}, \{4,5\}
 $$
 
-That's 4 holes covering all 8 numbers. Pigeons: your 5 chosen numbers. Since $5 > 4$, two of your numbers fall in the same pair, and that pair sums to 9. $\blacksquare$
+That's 4 holes covering all 8 numbers. Pigeons: your 5 chosen numbers. Since $5 > 4$, two of your numbers fall in the same pair, and that pair sums to 9. ∎
 
 Notice the holes were **constructed** to make the conclusion automatic. That's the technique in these harder problems: build the categories so that sharing a category _is_ the property you want.
 
@@ -142,7 +142,7 @@ In a room of $n$ people ($n \geq 2$) where some pairs shake hands, show that at 
 
 But the values 0 and $n-1$ cannot both occur. If someone shook everyone's hand ($n-1$), then nobody shook zero hands. So at most $n-1$ of the $n$ values are actually available.
 
-Now $n$ people into at most $n-1$ holes forces a repeat. $\blacksquare$
+Now $n$ people into at most $n-1$ holes forces a repeat. ∎
 
 The extra step of eliminating one hole is what makes this problem interesting, and it's a common pattern: get the counts to $n$ versus $n$, then argue one hole is unreachable.
 
@@ -150,7 +150,7 @@ The extra step of eliminating one hole is what makes this problem interesting, a
 
 Show that in a city of 1,000,000 people, at least two have exactly the same number of hairs on their head.
 
-**Solution.** A human head holds at most about 150,000 hairs. Holes: the possible hair counts, $0$ through $150{,}000$, so $150{,}001$ holes. Pigeons: 1,000,000 people. Since $1{,}000{,}000 > 150{,}001$, at least two match. $\blacksquare$
+**Solution.** A human head holds at most about 150,000 hairs. Holes: the possible hair counts, $0$ through $150{,}000$, so $150{,}001$ holes. Pigeons: 1,000,000 people. Since $1{,}000{,}000 > 150{,}001$, at least two match. ∎
 
 In fact by the generalized form at least $\lceil 1{,}000{,}000 / 150{,}001 \rceil = 7$ people share a hair count.
 

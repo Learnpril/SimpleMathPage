@@ -54,7 +54,7 @@ Security rests on factoring: knowing $\varphi(n)$ requires knowing $p$ and $q$. 
 
 ### Error-correcting codes
 
-A **linear code** of length $n$ over $\mathbb{F}_2$ is a subgroup $C \le (\mathbb{F}_2^n, +)$. Valid codewords are closed under bitwise XOR and include the all-zeros word — precisely the subgroup conditions.
+A **linear code** of length $n$ over $\mathbb{F}_2$ is a subgroup $C \le (\mathbb{F}_2^n, +)$. Valid codewords are closed under bitwise XOR and include the all-zeros word - precisely the subgroup conditions.
 
 Transmission adds an error vector: you receive $r = c + e$. Since $r$ and $c$ differ by an element of... no, wait: $r - c = e$, and $r$ lies in the coset $c + C$ only if $e \in C$. In general $r$ lies in the coset $e + C$, and **the coset identifies the error pattern.**
 
@@ -82,7 +82,7 @@ For degrees up to 4, the Galois groups are small enough that such chains always 
 
 The generic quintic has Galois group $S_5$, of order 120. Inside it sits $A_5$, of order 60, and $A_5$ is **simple**: its only normal subgroups are the trivial ones. A simple non-abelian group admits no chain of abelian quotients, so $S_5$ is not solvable.
 
-**Therefore no formula in radicals can express the roots of a general quintic.** Not undiscovered — impossible.
+**Therefore no formula in radicals can express the roots of a general quintic.** Not undiscovered - impossible.
 
 The specific polynomial $x^5 - x - 1$ has Galois group $S_5$, so its roots provably cannot be written with radicals, even though it plainly has five of them and they can be computed numerically to any precision you like.
 
@@ -126,7 +126,7 @@ $\gcd(3, 40) = 1$ ✓. Find $d$ with $3d \equiv 1 \pmod{40}$: $3 \cdot 27 = 81 =
 
 Encrypt: $c = 9^3 = 729 \bmod 55$. Since $55 \cdot 13 = 715$, $c = 14$.
 
-Decrypt: $14^{27} \bmod 55$. Work smart — $14^2 = 196 \equiv 31$, $14^4 \equiv 31^2 = 961 \equiv 26$, $14^8 \equiv 26^2 = 676 \equiv 16$, $14^{16} \equiv 16^2 = 256 \equiv 36$.
+Decrypt: $14^{27} \bmod 55$. Work smart - $14^2 = 196 \equiv 31$, $14^4 \equiv 31^2 = 961 \equiv 26$, $14^8 \equiv 26^2 = 676 \equiv 16$, $14^{16} \equiv 16^2 = 256 \equiv 36$.
 
 $27 = 16 + 8 + 2 + 1$:
 
@@ -146,7 +146,7 @@ $$
 a \equiv h g^{-1} \pmod n
 $$
 
-using the extended Euclidean algorithm — a few dozen operations even for enormous $n$.
+using the extended Euclidean algorithm - a few dozen operations even for enormous $n$.
 
 So the discrete log is trivial here. **Being isomorphic to a group with a hard discrete log does not help**, because the isomorphism itself is easy to compute. This is the sharpest possible illustration that isomorphism preserves structure and not computational difficulty.
 
@@ -172,7 +172,7 @@ Correcting: $1101 - 0010 = 1101 + 0010 = 1111$.
 
 **Solution.** $|A_5| = 5!/2 = 60$.
 
-$A_5$ is simple: it has no normal subgroup other than $\{e\}$ and itself. One route to this is a conjugacy-class count — the class sizes in $A_5$ are 1, 15, 20, 12, 12, and any normal subgroup is a union of classes including the identity whose total divides 60. The only subsets of $\{1,15,20,12,12\}$ containing the 1 that sum to a divisor of 60 are $\{1\}$ and all of them.
+$A_5$ is simple: it has no normal subgroup other than $\{e\}$ and itself. One route to this is a conjugacy-class count - the class sizes in $A_5$ are 1, 15, 20, 12, 12, and any normal subgroup is a union of classes including the identity whose total divides 60. The only subsets of $\{1,15,20,12,12\}$ containing the 1 that sum to a divisor of 60 are $\{1\}$ and all of them.
 
 Since a solvable group needs a chain with abelian quotients, and a simple non-abelian group offers no proper normal subgroup to start such a chain, $A_5$ is not solvable. Neither is $S_5$, which contains it as a normal subgroup with quotient $\mathbb{Z}_2$.
 

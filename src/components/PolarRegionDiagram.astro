@@ -1,6 +1,6 @@
 ---
 /**
- * PolarRegionDiagram — Shows a polar coordinate region (unit disk)
+ * PolarRegionDiagram - Shows a polar coordinate region (unit disk)
  * with r and θ labeled, a radial slice, and the area element r dr dθ.
  */
 const w = 340;
@@ -24,7 +24,7 @@ const wedgePath = `M ${cx},${cy} L ${wx1},${wy1} A ${R},${R} 0 0,0 ${wx2},${wy2}
 const rAngle = 0.35;
 const rEndX = cx + R * Math.cos(rAngle);
 const rEndY = cy - R * Math.sin(rAngle);
-// r label — below the green line, to the right of theta
+// r label - below the green line, to the right of theta
 const rMidX = cx + R * 0.55 * Math.cos(rAngle) + 6;
 const rMidY = cy - R * 0.55 * Math.sin(rAngle) + 16;
 
@@ -36,7 +36,7 @@ for (let i = 0; i <= 20; i++) {
   thetaArcPts.push(`${cx + thetaArcR * Math.cos(a)},${cy - thetaArcR * Math.sin(a)}`);
 }
 
-// dA label — to the right of the wedge, not overlapping
+// dA label - to the right of the wedge, not overlapping
 const daX = cx + R * 0.85 * Math.cos(sliceAngle) + 18;
 const daY = cy - R * 0.85 * Math.sin(sliceAngle) - 10;
 ---

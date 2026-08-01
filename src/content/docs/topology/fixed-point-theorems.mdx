@@ -85,7 +85,7 @@ The two theorems trade different things.
 | Needs               | compact convex domain | complete space, contraction  |
 | Continuity required | continuous only       | Lipschitz with $k<1$         |
 | Conclusion          | existence             | existence **and** uniqueness |
-| Constructive        | no                    | yes — just iterate           |
+| Constructive        | no                    | yes - just iterate           |
 
 **Brouwer is topological and non-constructive; Banach is metric and gives you an algorithm.** Brouwer tells you a solution exists without any way to find it, which is why it is used for existence proofs in economics; Banach is what numerical methods actually run.
 
@@ -97,7 +97,7 @@ The two theorems trade different things.
 
 **The ham sandwich theorem.** Any $n$ measurable sets in $\mathbb{R}^n$ can be simultaneously bisected by a single hyperplane. In three dimensions, one cut halves the bread, the ham, and the cheese at once.
 
-**Nash's theorem.** Every finite game has a mixed-strategy equilibrium, proved by applying Brouwer — or its generalization, Kakutani's theorem — to the best-response map. This is the result that won Nash the Nobel Prize in Economics.
+**Nash's theorem.** Every finite game has a mixed-strategy equilibrium, proved by applying Brouwer - or its generalization, Kakutani's theorem - to the best-response map. This is the result that won Nash the Nobel Prize in Economics.
 
 **Perron–Frobenius.** A positive matrix has a positive eigenvector, proved by applying Brouwer to the induced map on the simplex. This is the mathematics behind PageRank.
 
@@ -119,11 +119,7 @@ By the intermediate value theorem, $g(p)=0$ for some $p$, so $f(p)=p$. ∎
 
 It moves every point, since rotation fixes only the origin and $0\notin A$.
 
-$$
-\text{no fixed point}
-$$
-
-∎
+**Answer:** no fixed point. ∎
 
 $A$ is compact but not convex, and its $\pi_1$ is $\mathbb{Z}$ rather than trivial. **The hole is what breaks the retraction argument.**
 
@@ -139,11 +135,7 @@ where $e_1=(1,0)$. This maps the open disc into itself, since the midpoint of tw
 
 A fixed point would satisfy $x = \frac{x+e_1}{2}$, hence $x=e_1$, which is on the boundary and not in the space.
 
-$$
-\text{no fixed point}
-$$
-
-∎
+**Answer:** no fixed point. ∎
 
 **Compactness is not optional.**
 
@@ -167,11 +159,7 @@ The unique fixed point solves $p = \frac p2+1$, giving $p=2$. Iterating from $x_
 
 Meanwhile a rotation about the centre fixes exactly one point.
 
-$$
-\text{existence only; the count varies}
-$$
-
-∎
+**Answer:** existence only; the count varies. ∎
 
 Uniqueness requires the contraction condition, and the identity map is emphatically not a contraction.
 
@@ -179,11 +167,7 @@ Uniqueness requires the contraction condition, and the identity map is emphatica
 
 **Solution.** Define $f:S^2\to\mathbb{R}^2$ by sending each point to its (temperature, pressure) pair. Assuming these vary continuously, Borsuk–Ulam gives antipodal $x$ and $-x$ with $f(x)=f(-x)$.
 
-$$
-\text{two antipodal points agree in both quantities}
-$$
-
-∎
+**Answer:** two antipodal points agree in both quantities. ∎
 
 **Two quantities, two dimensions.** With three quantities the conclusion would fail, which is a good check that the dimension count in the statement is doing real work.
 
@@ -195,11 +179,7 @@ $r$ is continuous, and $r(x)=x$ for $x\in S^1$, so $r$ is a retraction $D^2\to S
 
 Applying $\pi_1$: the composite $S^1\hookrightarrow D^2\xrightarrow{r}S^1$ is the identity, so the induced maps compose to the identity on $\mathbb{Z}$. But they factor through $\pi_1(D^2)=0$.
 
-$$
-\text{impossible, so a fixed point exists}
-$$
-
-∎
+**Answer:** impossible, so a fixed point exists. ∎
 
 ## Real-World Applications
 

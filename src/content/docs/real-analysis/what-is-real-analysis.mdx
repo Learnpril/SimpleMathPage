@@ -51,11 +51,11 @@ These are the objects that forced the issue.
 
 Here's the load-bearing fact of the whole section.
 
-Consider the set of rationals whose square is less than 2. It has upper bounds — 1.5 is one, 2 is another. But among the rationals it has no **least** upper bound: any rational you propose can be beaten by a slightly smaller one, because the natural candidate is $\sqrt2$, which is irrational.
+Consider the set of rationals whose square is less than 2. It has upper bounds - 1.5 is one, 2 is another. But among the rationals it has no **least** upper bound: any rational you propose can be beaten by a slightly smaller one, because the natural candidate is $\sqrt2$, which is irrational.
 
 The reals fix this. **Completeness**: every non-empty set of reals with an upper bound has a least upper bound. Equivalently, the real line has no gaps.
 
-Nearly every theorem ahead is completeness in disguise. Bolzano-Weierstrass, the extreme value theorem, the intermediate value theorem, the convergence of Cauchy sequences, Heine-Borel — all of them fail over $\mathbb{Q}$ and all of them are consequences of that one axiom. Calculus over the rationals is impossible, and completeness is the reason.
+Nearly every theorem ahead is completeness in disguise. Bolzano-Weierstrass, the extreme value theorem, the intermediate value theorem, the convergence of Cauchy sequences, Heine-Borel - all of them fail over $\mathbb{Q}$ and all of them are consequences of that one axiom. Calculus over the rationals is impossible, and completeness is the reason.
 
 ### The change in vocabulary
 
@@ -101,7 +101,7 @@ Does $a_n = (-1)^n$ converge?
 
 But convergence requires **one** limit that the terms eventually stay arbitrarily close to. Take $\varepsilon = 1/2$. For any proposed limit $L$ and any $N$, the terms after $N$ include both $1$ and $-1$, and no single $L$ is within $1/2$ of both, since they are 2 apart.
 
-**Divergent.** Note the sequence is bounded and never settles, which shows bounded is not enough for convergence — that gap is exactly what Bolzano-Weierstrass addresses, by promising a convergent _subsequence_ instead.
+**Divergent.** Note the sequence is bounded and never settles, which shows bounded is not enough for convergence - that gap is exactly what Bolzano-Weierstrass addresses, by promising a convergent _subsequence_ instead.
 
 **Example 4: The rationals have a gap.**
 
@@ -123,7 +123,7 @@ In $\mathbb{R}$ the least upper bound is $\sqrt2$, and completeness is exactly t
 
 The definition of $\lim_{x\to a} f(x) = L$ starts "for all $\varepsilon>0$ there exists $\delta>0$." What would swapping the quantifiers say?
 
-**Solution.** "There exists $\delta > 0$ such that for all $\varepsilon > 0$..." would demand a single $\delta$ working for every tolerance at once. That forces $f(x) = L$ exactly on the whole punctured neighbourhood — a far stronger and nearly useless condition.
+**Solution.** "There exists $\delta > 0$ such that for all $\varepsilon > 0$..." would demand a single $\delta$ working for every tolerance at once. That forces $f(x) = L$ exactly on the whole punctured neighbourhood - a far stronger and nearly useless condition.
 
 **Order of quantifiers is not decoration.** $\delta$ is allowed to depend on $\varepsilon$, and it almost always does. Whether it is also allowed to depend on the _point_ is the difference between continuity and uniform continuity, which gets its own lesson.
 
@@ -135,7 +135,7 @@ The definition of $\lim_{x\to a} f(x) = L$ starts "for all $\varepsilon>0$ there
 
 **Machine learning.** Convergence proofs for gradient descent require conditions on the objective (Lipschitz gradients, convexity) that come straight from this material. The universal approximation theorem, which says neural networks can approximate continuous functions, is a statement about uniform convergence on compact sets.
 
-**Signal processing.** A Fourier series converges to its function, but in which sense? Pointwise convergence can fail at jumps, producing the Gibbs phenomenon — the ringing artifacts visible near sharp edges in over-compressed images. Distinguishing modes of convergence has direct visual consequences.
+**Signal processing.** A Fourier series converges to its function, but in which sense? Pointwise convergence can fail at jumps, producing the Gibbs phenomenon - the ringing artifacts visible near sharp edges in over-compressed images. Distinguishing modes of convergence has direct visual consequences.
 
 **Finance and economics.** Existence of an equilibrium price or an optimal portfolio is typically proved by a compactness argument. The theorem that guarantees a maximum exists is the extreme value theorem, generalized.
 

@@ -1,6 +1,6 @@
 ---
 /**
- * VecProjectionDiagram — shows projection of u onto v
+ * VecProjectionDiagram - shows projection of u onto v
  * u = <3, 4>, v = <5, 0> (x-axis), proj = <3, 0>
  * With dashed drop line showing the "shadow".
  */
@@ -41,14 +41,14 @@
   <!-- Dashed drop line from u tip to projection point -->
   <line x1="90" y1="0" x2="90" y2="120" stroke="#d2a8ff" stroke-width="1.5" stroke-dasharray="5 3" opacity="0.6" />
 
-  <!-- Right angle marker at projection point — draw before orange so it's behind -->
+  <!-- Right angle marker at projection point - draw before orange so it's behind -->
   <polyline points="80,120 80,110 90,110" fill="none" stroke="#999" stroke-width="1" />
 
-  <!-- v vector (green): origin to (150, 120) — draw first so proj is on top -->
+  <!-- v vector (green): origin to (150, 120) - draw first so proj is on top -->
   <line x1="0" y1="120" x2="140.4" y2="120" stroke="#7ee787" stroke-width="2" opacity="0.5" />
   <polygon points="150,120 138,116 138,124" class="vp-green-arrow2" fill="#7ee787" opacity="0.5" />
 
-  <!-- Projection vector (orange): origin to (90, 120) — on top of everything -->
+  <!-- Projection vector (orange): origin to (90, 120) - on top of everything -->
   <line x1="0" y1="120" x2="80" y2="120" stroke="#f0883e" stroke-width="3" />
   <polygon points="90,120 78,115 78,125" class="vp-orange-arrow" fill="#f0883e" />
 

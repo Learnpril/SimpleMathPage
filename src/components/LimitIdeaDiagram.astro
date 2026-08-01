@@ -1,6 +1,6 @@
 ---
 /**
- * LimitIdeaDiagram — shows the core idea of a limit:
+ * LimitIdeaDiagram - shows the core idea of a limit:
  * A curve with arrows from left and right converging toward
  * the limit value L at x = a. Dashed guides show the approach.
  * The function has a hole at the point to emphasize "near, not at."
@@ -66,9 +66,9 @@ const arRtipY = sy(f(arR - 0.5));
     <line x1={sx(a)} y1={sy(0)} x2={sx(a)} y2={sy(L)} class="lid-guide" stroke-width="1" stroke-dasharray="4,3" />
     <line x1={sx(0)} y1={sy(L)} x2={sx(a)} y2={sy(L)} class="lid-guide" stroke-width="1" stroke-dasharray="4,3" />
 
-    {/* Curve — left side */}
+    {/* Curve - left side */}
     <polyline points={leftPts.join(' ')} fill="none" class="lid-curve" stroke-width="2.5" />
-    {/* Curve — right side */}
+    {/* Curve - right side */}
     <polyline points={rightPts.join(' ')} fill="none" class="lid-curve" stroke-width="2.5" />
 
     {/* Approach arrows on the curve */}

@@ -47,7 +47,7 @@ function toX(n: number) {
 const ticks: number[] = [];
 for (let i = min; i <= max; i += step) ticks.push(i);
 
-// Build jumps array — support both single jump (legacy) and multi-jump props
+// Build jumps array - support both single jump (legacy) and multi-jump props
 const allJumps: Jump[] = jumpsProp
   ? jumpsProp
   : (jumpFrom !== undefined && jumpTo !== undefined)

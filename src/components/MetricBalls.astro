@@ -1,6 +1,6 @@
 ---
 /**
- * MetricBalls — the unit ball of three different metrics on the plane. Each
+ * MetricBalls - the unit ball of three different metrics on the plane. Each
  * boundary is traced by solving ‖r·direction‖ = 1 for r at many angles, so the
  * shapes are computed from the metric formulas. The measured ranges at the bottom
  * are the comparison constants that prove the three metrics give the same topology.
@@ -51,7 +51,7 @@ function ball(norm: (x: number, y: number) => number, cx: number) {
   return pts.join(" ");
 }
 
-/** Range of one norm over the Euclidean unit circle — the comparison constants. */
+/** Range of one norm over the Euclidean unit circle - the comparison constants. */
 function rangeOverCircle(norm: (x: number, y: number) => number) {
   let lo = Infinity;
   let hi = 0;

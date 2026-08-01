@@ -69,7 +69,7 @@ $$
 
 Such an $a$ is a **generator**. One element, applied over and over, produces the whole group.
 
-Every cyclic group is abelian, and the proof is one line: $a^i a^j = a^{i+j} = a^j a^i$, since integer addition commutes. The converse is false — the Klein four-group is abelian and not cyclic — so "cyclic" is strictly stronger.
+Every cyclic group is abelian, and the proof is one line: $a^i a^j = a^{i+j} = a^j a^i$, since integer addition commutes. The converse is false - the Klein four-group is abelian and not cyclic - so "cyclic" is strictly stronger.
 
 ### Which elements generate?
 
@@ -216,7 +216,7 @@ The same argument works for any prime, so there is exactly one group of each pri
 **Hash tables.** Open addressing with a probe step $k$ modulo table size $m$ visits every slot exactly when $\gcd(k, m) = 1$. Implementations often pick a prime table size for precisely this reason: with $m$ prime, any nonzero step works.
 
 :::note[You've Got This]
-Cyclic groups are the friendliest objects in the section, and it's worth enjoying that while it lasts. Almost everything reduces to one formula, $|k| = n/\gcd(k,n)$, and one classification: there's only one cyclic group per size. Keep the clock picture in mind — a generator is a step size that eventually lands on every hour, and gcd is what decides whether it does. If you can compute element orders in ℤₙ quickly, you'll find Lagrange's theorem in two lessons feels almost obvious.
+Cyclic groups are the friendliest objects in the section, and it's worth enjoying that while it lasts. Almost everything reduces to one formula, $|k| = n/\gcd(k,n)$, and one classification: there's only one cyclic group per size. Keep the clock picture in mind - a generator is a step size that eventually lands on every hour, and gcd is what decides whether it does. If you can compute element orders in ℤₙ quickly, you'll find Lagrange's theorem in two lessons feels almost obvious.
 :::
 
 ## Quiz

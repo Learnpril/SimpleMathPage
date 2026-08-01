@@ -51,13 +51,13 @@ At the opposite end:
 
 > $X$ is **totally disconnected** if every component is a single point.
 
-Examples: $\mathbb{Q}$, the irrationals, any discrete space, and the Cantor set. The Cantor set is the interesting one — compact, uncountable, and totally disconnected all at once.
+Examples: $\mathbb{Q}$, the irrationals, any discrete space, and the Cantor set. The Cantor set is the interesting one - compact, uncountable, and totally disconnected all at once.
 
 ### The theorems
 
 > **Continuous images.** If $f:X\to Y$ is continuous and $X$ is connected, then $f(X)$ is connected.
 
-_Proof._ If $f(X) = U\sqcup V$ were a separation, then $f^{-1}(U)$ and $f^{-1}(V)$ would be nonempty, open, disjoint, and cover $X$ — a separation of $X$. ∎
+_Proof._ If $f(X) = U\sqcup V$ were a separation, then $f^{-1}(U)$ and $f^{-1}(V)$ would be nonempty, open, disjoint, and cover $X$ - a separation of $X$. ∎
 
 **This is the workhorse.** It says connectedness is preserved by continuous maps, which immediately makes it a topological invariant and gives the next result for free.
 
@@ -75,7 +75,7 @@ That is the whole proof. Compare the real-analysis version, which needs a bisect
 
 ### Why not hereditary
 
-Connectedness is emphatically not inherited by subspaces. $\mathbb{R}$ is connected and $\mathbb{R}\setminus\{0\}$ is not. This is what makes cut-point arguments work: if $X\cong Y$ then removing corresponding points must leave homeomorphic — hence equally connected — spaces.
+Connectedness is emphatically not inherited by subspaces. $\mathbb{R}$ is connected and $\mathbb{R}\setminus\{0\}$ is not. This is what makes cut-point arguments work: if $X\cong Y$ then removing corresponding points must leave homeomorphic - hence equally connected - spaces.
 
 That single observation distinguishes $[0,1]$ from $S^1$, distinguishes $\mathbb{R}$ from $\mathbb{R}^2$ (removing a point disconnects the line and not the plane), and distinguishes a letter Y from a letter I.
 
@@ -85,11 +85,7 @@ That single observation distinguishes $[0,1]$ from $S^1$, distinguishes $\mathbb
 
 **Solution.** In the subspace topology, $\{0\} = (-\frac12,\frac12)\cap A$ is open, and $(1,2) = (\frac12,3)\cap A$ is open. They are nonempty, disjoint, and cover $A$.
 
-$$
-\text{a separation exists, so disconnected}
-$$
-
-∎
+**Answer:** a separation exists, so disconnected. ∎
 
 **Openness is relative to the subspace**, which is what makes this work even though $\{0\}$ is not open in $\mathbb{R}$.
 
@@ -119,11 +115,7 @@ are open in $\mathbb{Q}$, disjoint, nonempty, and cover $\mathbb{Q}$ since no ra
 
 So no subset with two points can be connected, meaning every component is a single point.
 
-$$
-\text{totally disconnected}
-$$
-
-∎
+**Answer:** totally disconnected. ∎
 
 **The irrationals do the cutting.** This is exactly the failure of completeness showing up as a topological property.
 
@@ -145,7 +137,7 @@ For general $m\ne n$, proving $\mathbb{R}^m\not\cong\mathbb{R}^n$ needs more mac
 
 **Solution.** Let $f:X\to D$ be continuous with $X$ connected and $D$ discrete, and suppose $f$ takes two values $d_1\ne d_2$.
 
-Every subset of $D$ is open, so $U = f^{-1}(\{d_1\})$ and $V = f^{-1}(D\setminus\{d_1\})$ are open, nonempty, disjoint, and cover $X$ — a separation.
+Every subset of $D$ is open, so $U = f^{-1}(\{d_1\})$ and $V = f^{-1}(D\setminus\{d_1\})$ are open, nonempty, disjoint, and cover $X$ - a separation.
 
 $$
 \text{contradiction, so } f \text{ is constant}
@@ -186,7 +178,7 @@ $$
 **Root-finding.** Every bisection method is the intermediate value theorem in action, so every numerical solver that brackets a root is relying on connectedness of the interval.
 
 :::note[You've Got This]
-Connectedness is defined by what cannot happen, which takes getting used to, but the payoff is immediate: the intermediate value theorem drops out in one line once you know that continuous images of connected sets are connected. The two facts to keep are that the connected subsets of $\mathbb{R}$ are exactly the intervals, and that connectedness is not hereditary — which is what makes removing a point such a cheap and effective way to tell spaces apart.
+Connectedness is defined by what cannot happen, which takes getting used to, but the payoff is immediate: the intermediate value theorem drops out in one line once you know that continuous images of connected sets are connected. The two facts to keep are that the connected subsets of $\mathbb{R}$ are exactly the intervals, and that connectedness is not hereditary - which is what makes removing a point such a cheap and effective way to tell spaces apart.
 :::
 
 ## Quiz

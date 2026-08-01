@@ -1,6 +1,6 @@
 ---
 /**
- * EigenDiagram — shows eigenvectors being scaled by matrix A = [[2,0],[0,0.5]]
+ * EigenDiagram - shows eigenvectors being scaled by matrix A = [[2,0],[0,0.5]]
  * Focused on first quadrant. Dashed = before, solid = after.
  * x-eigenvector scaled by λ=2, y-eigenvector scaled by λ=0.5
  * Non-eigenvector (1,1) → (2,0.5) shows direction change.
@@ -13,13 +13,13 @@
   {/* Title */}
   <text x="185" y="14" fill="#888" font-size="15" font-family="serif" text-anchor="middle" font-weight="bold">Eigenvectors of A (scaling 2x, 0.5y)</text>
 
-  {/* Grid — first quadrant focus */}
+  {/* Grid - first quadrant focus */}
   <g stroke="#333" stroke-width="0.5" opacity="0.15">
     {[30,110,190,270,350].map(x => <line x1={x} y1="20" x2={x} y2="265" />)}
     {[260,180,100,20].map(y => <line x1="25" y1={y} x2="355" y2={y} />)}
   </g>
 
-  {/* Axes — origin at (30, 260) */}
+  {/* Axes - origin at (30, 260) */}
   <line x1="25" y1="260" x2="365" y2="260" stroke="#666" stroke-width="1" class="eg-axis" />
   <line x1="30" y1="270" x2="30" y2="18" stroke="#666" stroke-width="1" class="eg-axis" />
 
@@ -39,7 +39,7 @@
   <line x1="30" y1="260" x2="182" y2="260" stroke="#58a6ff" stroke-width="3" class="eg-blue-line" />
   <polygon points="190,260 180,255 180,265" fill="#58a6ff" class="eg-blue-fill" />
 
-  {/* Label — below the axis, clear of arrows */}
+  {/* Label - below the axis, clear of arrows */}
   <text x="150" y="290" fill="#58a6ff" font-size="14" font-family="serif" text-anchor="middle" class="eg-blue-text">x-eigen: &#x03BB; = 2</text>
 
   {/* === Y-eigenvector (green): λ=0.5 === */}
@@ -51,7 +51,7 @@
   <line x1="30" y1="260" x2="30" y2="226" stroke="#7ee787" stroke-width="3" class="eg-green-line" />
   <polygon points="30,220 25,230 35,230" fill="#7ee787" class="eg-green-fill" />
 
-  {/* Label — to the left of the axis */}
+  {/* Label - to the left of the axis */}
   <text x="55" y="148" fill="#7ee787" font-size="14" font-family="serif" class="eg-green-text">y-eigen: &#x03BB; = 0.5</text>
 
   {/* === Non-eigenvector (orange): (1,1) → (2,0.5) === */}
@@ -60,12 +60,12 @@
   <line x1="30" y1="260" x2="103" y2="187" stroke="#f0883e" stroke-width="2" stroke-dasharray="5,4" opacity="0.4" class="eg-orange-line" />
   <polygon points="110,180 106.4,190.6 99.4,183.6" fill="#f0883e" opacity="0.4" class="eg-orange-fill" />
 
-  {/* After: (2,0.5) → (190, 220) — direction changed! */}
+  {/* After: (2,0.5) → (190, 220) - direction changed! */}
   {/* dir from (30,260) to (190,220): dx=160, dy=-40, unit=(0.97,-0.24), perp=(0.24,0.97) */}
   <line x1="30" y1="260" x2="183" y2="222" stroke="#f0883e" stroke-width="2.5" class="eg-orange-line" />
   <polygon points="190,220 179,220 181,228" fill="#f0883e" class="eg-orange-fill" />
 
-  {/* Labels — positioned well clear of vectors */}
+  {/* Labels - positioned well clear of vectors */}
   <text x="130" y="175" fill="#f0883e" font-size="13" font-family="serif" class="eg-orange-text">before: (1, 1)</text>
   <text x="200" y="215" fill="#f0883e" font-size="13" font-family="serif" class="eg-orange-text">after: (2, 0.5)</text>
   <text x="260" y="235" fill="#888" font-size="12" font-family="serif">direction changed</text>

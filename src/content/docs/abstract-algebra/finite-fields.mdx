@@ -99,7 +99,7 @@ using that $-1 = 1$ in characteristic 2.
   labels={["0", "1", "a", "a+1"]}
   op={(i, j) => i ^ j}
   opSymbol="+"
-  title="GF(4) addition — coefficientwise mod 2, which is XOR"
+  title="GF(4) addition - coefficientwise mod 2, which is XOR"
   caption="The whole diagonal is 0, so every element is its own additive inverse and the characteristic is 2. The additive group is ℤ₂ × ℤ₂, not ℤ₄."
 />
 
@@ -116,7 +116,7 @@ using that $-1 = 1$ in characteristic 2.
     return hi * 2 + lo;
   }}
   opSymbol="×"
-  title="GF(4) multiplication — reduced using a² = a + 1"
+  title="GF(4) multiplication - reduced using a² = a + 1"
   caption="Every nonzero row is a rearrangement of 1, a, a+1, so all three nonzero elements are invertible. Note a · (a+1) = 1, so a and a+1 are inverses."
 />
 
@@ -128,7 +128,7 @@ Note $a^3 = a \cdot a^2 = a(a+1) = 1$, so $a$ has multiplicative order 3 and gen
 
 > $GF(q)^*$, the nonzero elements under multiplication, is **cyclic** of order $q - 1$.
 
-A generator is called a **primitive element**. This is a strong statement — it says every finite field's nonzero part is as simple as possible — and it's why discrete logarithms make sense in finite fields, and hence why Diffie-Hellman works there.
+A generator is called a **primitive element**. This is a strong statement - it says every finite field's nonzero part is as simple as possible - and it's why discrete logarithms make sense in finite fields, and hence why Diffie-Hellman works there.
 
 For $GF(4)$: $a$ is primitive, since $a^1 = a$, $a^2 = a+1$, $a^3 = 1$.
 
@@ -148,7 +148,7 @@ $$
 \phi(x) = x^p
 $$
 
-is a **field homomorphism**, because $(x+y)^p = x^p + y^p$ there — all the middle binomial coefficients are divisible by $p$. It's the "freshman's dream," true in characteristic $p$ and false over $\mathbb{R}$.
+is a **field homomorphism**, because $(x+y)^p = x^p + y^p$ there - all the middle binomial coefficients are divisible by $p$. It's the "freshman's dream," true in characteristic $p$ and false over $\mathbb{R}$.
 
 On $\mathbb{F}_p$ itself, $\phi$ is the identity by Fermat's little theorem. On $GF(p^n)$ it generates a cyclic group of $n$ automorphisms, and that group is the Galois group of the extension. Finite fields have the simplest possible Galois theory.
 
@@ -231,7 +231,7 @@ How many monic irreducible quadratics are there over $\mathbb{F}_2$?
 - $x^2+x = x(x+1)$: reducible.
 - $x^2+x+1$: no root, so irreducible.
 
-**Exactly one.** That's why $GF(4)$ has a canonical construction — there's no other choice of modulus.
+**Exactly one.** That's why $GF(4)$ has a canonical construction - there's no other choice of modulus.
 
 For higher degrees there are several, and any of them gives an isomorphic field. Two monic irreducible cubics exist over $\mathbb{F}_2$, and both build $GF(8)$.
 

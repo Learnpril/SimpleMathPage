@@ -40,7 +40,7 @@ The linear case $P_1(x) = f(a) + f'(a)(x-a)$ is the tangent line. Taylor's theor
 
 Write $R_n(x) = f(x) - P_n(x)$ for the **remainder**. The theorem says $R_n$ has exactly the shape of the next term in the pattern, except that the derivative is evaluated at an unknown interior point instead of at $a$.
 
-Two things to notice. First, this is an **equality**, not an estimate — nothing has been thrown away. Second, the only thing unspecified is _where_ $\xi$ sits, and that is precisely the same concession the mean value theorem makes. Taking $n = 0$ recovers the MVT exactly:
+Two things to notice. First, this is an **equality**, not an estimate - nothing has been thrown away. Second, the only thing unspecified is _where_ $\xi$ sits, and that is precisely the same concession the mean value theorem makes. Taking $n = 0$ recovers the MVT exactly:
 
 $$
 f(x) = f(a) + f'(\xi)(x-a)
@@ -127,7 +127,7 @@ $$
 f(x) = \begin{cases} e^{-1/x^2} & x \ne 0 \\ 0 & x = 0\end{cases}
 $$
 
-Every derivative of this function at 0 is 0. So its Taylor series about 0 is the zero series, which converges everywhere — to the zero function, which is not $f$. The remainder never goes to zero for $x \ne 0$.
+Every derivative of this function at 0 is 0. So its Taylor series about 0 is the zero series, which converges everywhere - to the zero function, which is not $f$. The remainder never goes to zero for $x \ne 0$.
 
 That example is the reason **smooth** and **analytic** are different words. A function is smooth if it has derivatives of all orders; it is analytic at $a$ if it also equals its Taylor series near $a$. Analytic implies smooth, and this function shows the converse fails.
 
@@ -266,7 +266,7 @@ If $f''$ is continuous at $a$ and positive there, it stays positive on some inte
 **Error propagation in measurement.** Expanding a formula to first order in its inputs is exactly how uncertainty is propagated through a calculation; the second-order remainder is what tells you when the linear rule is inadequate.
 
 :::note[You've Got This]
-The one idea worth carrying out of this lesson: Taylor's theorem is an equality, not an approximation. The polynomial plus the remainder is exactly $f$, and all the work is in bounding one derivative on one interval. That reframing turns "≈" into a guarantee, which is the difference between using an approximation and trusting it. And if the $e^{-1/x^2}$ example bothered you, good — it should. It's the example that shows why analysis insists on checking that the remainder actually goes to zero.
+The one idea worth carrying out of this lesson: Taylor's theorem is an equality, not an approximation. The polynomial plus the remainder is exactly $f$, and all the work is in bounding one derivative on one interval. That reframing turns "≈" into a guarantee, which is the difference between using an approximation and trusting it. And if the $e^{-1/x^2}$ example bothered you, good - it should. It's the example that shows why analysis insists on checking that the remainder actually goes to zero.
 :::
 
 ## Quiz

@@ -1,5 +1,5 @@
 /**
- * Celebration module — confetti + dancing chicken nugget mascot + popup.
+ * Celebration module - confetti + dancing chicken nugget mascot + popup.
  * Call showCelebration(sectionName) when a user gets 100% on a review quiz.
  * Pure client-side, no dependencies. Self-contained.
  */

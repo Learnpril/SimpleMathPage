@@ -61,7 +61,7 @@ Everything in this lesson is phrased in terms of these. "Near $a$" always means 
 
 Every point of an open set has **room to wiggle**: you can move a little in either direction and stay inside.
 
-$(0,1)$ is open. Given $a \in (0,1)$, take $\delta = \min(a, 1-a)$, the distance to the nearer end. Note $\delta$ depends on $a$ and shrinks as you approach an endpoint — but it's always positive, which is all that's required.
+$(0,1)$ is open. Given $a \in (0,1)$, take $\delta = \min(a, 1-a)$, the distance to the nearer end. Note $\delta$ depends on $a$ and shrinks as you approach an endpoint - but it's always positive, which is all that's required.
 
 $[0,1]$ is **not** open, because the point 0 has no room: every neighbourhood of 0 contains negative numbers.
 
@@ -86,7 +86,7 @@ The most important thing here: **open and closed are not opposites.**
 - $[0,1)$ is **neither**.
 - $\mathbb{R}$ and $\emptyset$ are **both**.
 
-"Not open" does not mean closed. Sets called both open and closed are sometimes called _clopen_, and on the real line only $\mathbb{R}$ and $\emptyset$ are — a fact equivalent to $\mathbb{R}$ being connected.
+"Not open" does not mean closed. Sets called both open and closed are sometimes called _clopen_, and on the real line only $\mathbb{R}$ and $\emptyset$ are - a fact equivalent to $\mathbb{R}$ being connected.
 
 ### Limit points
 
@@ -94,7 +94,7 @@ The most important thing here: **open and closed are not opposites.**
 
 The exclusion matters. Without it every point of $S$ would trivially qualify.
 
-For $S = (0,1)$ the limit points are all of $[0,1]$. Both endpoints are limit points despite not belonging to $S$ — that's the whole point of the notion.
+For $S = (0,1)$ the limit points are all of $[0,1]$. Both endpoints are limit points despite not belonging to $S$ - that's the whole point of the notion.
 
 For $S = \{1, \frac12, \frac13, \dots\}$, the only limit point is **0**. Each $\frac1n$ is isolated: a small enough neighbourhood catches no other member of $S$.
 
@@ -116,7 +116,7 @@ It also explains why closedness keeps appearing as a hypothesis. Any argument th
 
 The **closure** $\bar S$ is $S$ together with all its limit points. It is the smallest closed set containing $S$.
 
-$\overline{(0,1)} = [0,1]$. And $\overline{\mathbb{Q}} = \mathbb{R}$, because every real is a limit of rationals — the density result from the completeness lesson, restated topologically.
+$\overline{(0,1)} = [0,1]$. And $\overline{\mathbb{Q}} = \mathbb{R}$, because every real is a limit of rationals - the density result from the completeness lesson, restated topologically.
 
 $S$ is closed exactly when $S = \bar S$.
 
@@ -172,7 +172,7 @@ So the only limit point is 0, and $\bar S = S \cup \{0\}$. Since $0 \notin S$, $
 
 Their intersection is $\{0\}$: clearly $0$ is in every $U_n$, and any $x \ne 0$ fails to be in $U_n$ once $\frac1n < |x|$, which happens by the Archimedean property.
 
-$\{0\}$ is **not open** — no neighbourhood of 0 is contained in a single point. So **infinite intersections of open sets need not be open**, which is why the axiom says finite.
+$\{0\}$ is **not open** - no neighbourhood of 0 is contained in a single point. So **infinite intersections of open sets need not be open**, which is why the axiom says finite.
 
 Dually, infinite unions of closed sets need not be closed: $\bigcup_n \left[\frac1n, 1\right] = (0,1]$.
 
@@ -209,7 +209,7 @@ $\mathbb{Z}$ has no limit points at all. **Having no limit points makes closedne
 **Domain of definition.** A function's natural domain is often open, such as $\ln$ on $(0,\infty)$, and open domains are exactly where you can differentiate, since a derivative needs limits from both sides.
 
 :::note[You've Got This]
-The trap in this lesson is treating open and closed as opposites. They are not: [0,1) is neither, and ℝ is both. Keep the two working pictures — open means every point has room to wiggle, closed means the set keeps the limits of its own sequences. That second one is what you'll actually reach for, and it explains why "closed" turns up as a hypothesis wherever a proof builds a point as a limit. The next lesson combines closed with bounded and gets something considerably more powerful than either alone.
+The trap in this lesson is treating open and closed as opposites. They are not: [0,1) is neither, and ℝ is both. Keep the two working pictures - open means every point has room to wiggle, closed means the set keeps the limits of its own sequences. That second one is what you'll actually reach for, and it explains why "closed" turns up as a hypothesis wherever a proof builds a point as a limit. The next lesson combines closed with bounded and gets something considerably more powerful than either alone.
 :::
 
 ## Quiz

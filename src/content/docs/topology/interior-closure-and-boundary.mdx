@@ -53,9 +53,9 @@ In this lesson you'll define interior, closure and boundary, learn their identit
 
 ### The three operations
 
-> **Interior.** $\operatorname{int}A$ is the union of all open sets contained in $A$ — equivalently the largest such set. A point is interior when some neighbourhood of it lies entirely inside $A$.
+> **Interior.** $\operatorname{int}A$ is the union of all open sets contained in $A$ - equivalently the largest such set. A point is interior when some neighbourhood of it lies entirely inside $A$.
 
-> **Closure.** $\bar A$ is the intersection of all closed sets containing $A$ — equivalently the smallest such set. Also $\bar A = A\cup A'$, the set together with its limit points.
+> **Closure.** $\bar A$ is the intersection of all closed sets containing $A$ - equivalently the smallest such set. Also $\bar A = A\cup A'$, the set together with its limit points.
 
 > **Boundary.** $\partial A = \bar A\setminus\operatorname{int}A$. A point is on the boundary when every neighbourhood meets both $A$ and its complement.
 
@@ -73,7 +73,7 @@ The figure classifies five test points against a set built from an open disc, on
 - $A$ is open $\iff A = \operatorname{int}A$
 - $A$ is closed $\iff A = \bar A$
 - $A$ is clopen $\iff \partial A = \varnothing$
-- $\partial A = \partial(X\setminus A)$ — a set and its complement share a boundary
+- $\partial A = \partial(X\setminus A)$ - a set and its complement share a boundary
 - $\bar A = A\cup\partial A$ and $X = \operatorname{int}A \sqcup \partial A \sqcup \operatorname{ext}A$
 - Both operations are **idempotent**: $\operatorname{int}(\operatorname{int}A) = \operatorname{int}A$ and $\overline{\bar A} = \bar A$
 - **Duality:** $\operatorname{int}(X\setminus A) = X\setminus\bar A$
@@ -112,7 +112,7 @@ The opposite extreme:
 
 > $A$ is **nowhere dense** if $\operatorname{int}\bar A = \varnothing$.
 
-$\mathbb{Z}$ is nowhere dense in $\mathbb{R}$; so is the Cantor set, despite being uncountable. Nowhere-dense sets are the "small" sets of topology, and the Baire category theorem — that a countable union of nowhere dense sets cannot fill a complete metric space — is the engine behind many existence proofs.
+$\mathbb{Z}$ is nowhere dense in $\mathbb{R}$; so is the Cantor set, despite being uncountable. Nowhere-dense sets are the "small" sets of topology, and the Baire category theorem - that a countable union of nowhere dense sets cannot fill a complete metric space - is the engine behind many existence proofs.
 
 ### The examples that break intuition
 
@@ -152,7 +152,7 @@ $$
 
 **Example 3: Find all three for $\mathbb{Z}$ in $\mathbb{R}$.**
 
-**Solution.** No interval fits inside $\mathbb{Z}$, so the interior is empty. $\mathbb{Z}$ has no limit points at all — each integer is isolated — so it is already closed.
+**Solution.** No interval fits inside $\mathbb{Z}$, so the interior is empty. $\mathbb{Z}$ has no limit points at all - each integer is isolated - so it is already closed.
 
 $$
 \operatorname{int} = \varnothing, \qquad \bar{\mathbb{Z}} = \mathbb{Z}, \qquad \partial\mathbb{Z} = \mathbb{Z}
@@ -235,7 +235,7 @@ And yet $C$ is uncountable. **Nowhere dense does not mean small in cardinality**
 **Sampling and density.** That a countable set can be dense justifies approximating continuous problems on a countable grid, and separability of the underlying space is the precise hypothesis those approximations need.
 
 :::note[You've Got This]
-Three operations, and the useful mental model is the trichotomy: every point of the space is interior, boundary, or exterior relative to your set. From that, the identities become obvious and the failures become memorable. The two facts most worth keeping are that membership in $A$ does not imply interiority — the isolated point in the figure — and that $\mathbb{Q}$ has all of $\mathbb{R}$ as its boundary. Both are cures for treating "boundary" as a picture of an edge.
+Three operations, and the useful mental model is the trichotomy: every point of the space is interior, boundary, or exterior relative to your set. From that, the identities become obvious and the failures become memorable. The two facts most worth keeping are that membership in $A$ does not imply interiority - the isolated point in the figure - and that $\mathbb{Q}$ has all of $\mathbb{R}$ as its boundary. Both are cures for treating "boundary" as a picture of an edge.
 :::
 
 ## Quiz

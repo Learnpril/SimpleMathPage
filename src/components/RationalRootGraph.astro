@@ -1,6 +1,6 @@
 ---
 /**
- * RationalRootGraph — plots y = 2x³ − 5x² − 4x + 3
+ * RationalRootGraph - plots y = 2x³ − 5x² − 4x + 3
  * Roots at x = −1, x = 1/2, x = 3. Labels clear of curve.
  */
 const pad = 55;
@@ -32,7 +32,7 @@ const yLabelTicks = [-10, -5, 5, 10];
 ---
 
 <figure class="rrg-diagram" role="img" aria-label="Graph of 2x³ − 5x² − 4x + 3 with roots at x = −1, 1/2, and 3">
-  <figcaption class="rrg-title">y = 2x³ − 5x² − 4x + 3 — the roots match our Rational Root Theorem results</figcaption>
+  <figcaption class="rrg-title">y = 2x³ − 5x² − 4x + 3 - the roots match our Rational Root Theorem results</figcaption>
   <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg">
     <rect class="rrg-bg" x="0" y="0" width={w} height={h} rx="8" />
 
@@ -57,15 +57,15 @@ const yLabelTicks = [-10, -5, 5, 10];
     {/* Curve */}
     <path class="rrg-curve" d={curveD} fill="none" stroke-width="2.5" />
 
-    {/* Root at x = −1 — label below-left, clear of curve */}
+    {/* Root at x = −1 - label below-left, clear of curve */}
     <circle class="rrg-root" cx={toX(-1)} cy={xAxisY} r="6" />
     <text class="rrg-root-label" x={toX(-1) - 16} y={xAxisY + 30} font-size="12" font-weight="bold" text-anchor="end">x = −1</text>
 
-    {/* Root at x = 1/2 — label below-right */}
+    {/* Root at x = 1/2 - label below-right */}
     <circle class="rrg-root" cx={toX(0.5)} cy={xAxisY} r="6" />
     <text class="rrg-root-label" x={toX(0.5) + 10} y={xAxisY - 12} font-size="12" font-weight="bold">x = ½</text>
 
-    {/* Root at x = 3 — label below-right */}
+    {/* Root at x = 3 - label below-right */}
     <circle class="rrg-root" cx={toX(3)} cy={xAxisY} r="6" />
     <text class="rrg-root-label" x={toX(3) + 10} y={xAxisY + 20} font-size="12" font-weight="bold">x = 3</text>
 

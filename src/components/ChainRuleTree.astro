@@ -1,6 +1,6 @@
 ---
 /**
- * ChainRuleTree — SVG tree diagram showing the dependency paths
+ * ChainRuleTree - SVG tree diagram showing the dependency paths
  * for the multivariable chain rule.
  * Left: z = f(x,y), x = x(t), y = y(t) → dz/dt
  * Right: z = f(x,y), x = x(s,t), y = y(s,t) → ∂z/∂s, ∂z/∂t
@@ -37,7 +37,7 @@ const rtX = rx + 70; const rtY = 230;
     <line x1={lxX} y1={lxY + 14} x2={ltX} y2={ltY - 14} class="crt-edge" stroke-width="1.5" />
     <line x1={lyX} y1={lyY + 14} x2={ltX} y2={ltY - 14} class="crt-edge" stroke-width="1.5" />
 
-    {/* Left edge labels — outside each edge */}
+    {/* Left edge labels - outside each edge */}
     <text class="crt-elabel" x={lzX - 58} y={lzY + 52} font-size="11" text-anchor="end">∂z/∂x</text>
     <text class="crt-elabel" x={lzX + 58} y={lzY + 52} font-size="11" text-anchor="start">∂z/∂y</text>
     <text class="crt-elabel" x={lxX - 16} y={lxY + 52} font-size="11" text-anchor="end">dx/dt</text>
