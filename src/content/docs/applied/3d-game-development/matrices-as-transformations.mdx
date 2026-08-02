@@ -1,0 +1,216 @@
+---
+title: Matrices as Transformations
+description: A matrix is not a grid of numbers to memorize - it is a record of where the axes land, and reading it that way lets you predict what it does before you multiply anything
+sidebar:
+  order: 6
+  label: "2.1  Matrices as Transformations"
+---
+
+import DemoPanel from "../../../../components/DemoPanel.astro";
+import CodePanel from "../../../../components/CodePanel.astro";
+import matricesSource from "../../../../lib/gamedev/matrices.ts?raw";
+
+## What You'll Learn
+
+What a matrix actually does, and the one idea that makes every matrix readable at a glance:
+**the columns are where the axes land.** How scaling, rotation and shearing all come from
+that. What the determinant measures, and what a negative one means. And why the row-versus-
+column convention from Part 1 reverses the order you write your multiplications in.
+
+## What a Matrix Is
+
+A matrix is a grid of numbers. That description is true and completely useless, so here is a
+better one.
+
+**A matrix is a machine that moves every point in space at once.** You feed it a position and
+it hands back a different position. Feed it every point of a square and you get a new shape.
+Feed it every vertex of a character model and the character has been scaled, rotated, or
+tipped over.
+
+The grid of numbers is just the machine's settings. A 2×2 matrix has four of them:
+
+$$
+M = \begin{bmatrix} a & c \\ b & d \end{bmatrix}
+$$
+
+and it transforms a point $(x, y)$ like this:
+
+$$
+M \begin{bmatrix} x \\ y \end{bmatrix}
+= \begin{bmatrix} ax + cy \\ bx + dy \end{bmatrix}
+$$
+
+Written out that way it looks like something to memorize. It is not, and the next section is
+the reason why.
+
+## The Columns Are Where the Axes Land
+
+Here is the whole idea. Put the point $(1, 0)$ - one step along the x axis, nothing else -
+into the formula above:
+
+$$
+M \begin{bmatrix} 1 \\ 0 \end{bmatrix}
+= \begin{bmatrix} a(1) + c(0) \\ b(1) + d(0) \end{bmatrix}
+= \begin{bmatrix} a \\ b \end{bmatrix}
+$$
+
+That is the **first column**, exactly. Now try $(0, 1)$ and you get $(c, d)$ - the second
+column.
+
+So the matrix is not an arbitrary grid. It is a **record of where the axes end up**:
+
+- The first column is where the **x axis** lands.
+- The second column is where the **y axis** lands.
+
+And every other point follows along. A point at $(3, 2)$ was always "3 steps along x plus 2
+steps along y", so after the transformation it is simply 3 steps along the _new_ x plus 2
+steps along the _new_ y. Nothing else needs to be worked out.
+
+Drag the sliders below. Each one moves the tip of one arrow, and the whole square follows.
+
+<DemoPanel name="matrix2d" />
+
+**The red arrow is where the x axis landed. The green arrow is where the y axis landed.** The
+dashed outline is where the square started, so you can see what changed.
+
+Try the preset buttons and watch what the columns are doing in each case:
+
+- **Identity** leaves both arrows where they started. The matrix does nothing, which is
+  exactly what a matrix of $(1,0)$ and $(0,1)$ should do.
+- **Scale** stretches both arrows to twice their length. The square gets bigger, and stays a
+  square.
+- **Rotate** swings both arrows around together, keeping them the same length and still at
+  right angles. That is all a rotation is.
+- **Shear** leaves the red arrow alone and tips the green one sideways. The square becomes a
+  parallelogram - this is how italic text works.
+- **Mirror** points the red arrow backwards. The shape turns purple, for a reason the next
+  section explains.
+- **Collapse** puts both arrows on the same line. The square has nowhere to be and flattens.
+
+<CodePanel
+  code={matricesSource}
+  lang="ts"
+  file="src/lib/gamedev/matrices.ts"
+  label="The code the scene above runs on"
+/>
+
+Notice how the type is written. Rather than four loose numbers, a `Mat2` holds `i` and `j` -
+the two columns - so the code says what the maths means. And `applyMat2` reads as one
+sentence: the result is `x` copies of where `i` landed, plus `y` copies of where `j` landed.
+
+:::note[One thing a 2×2 matrix cannot do]
+Move the origin. Put $(0, 0)$ into the formula and every term multiplies by zero, so the
+origin always maps to itself no matter what the four numbers are. You can scale, rotate,
+shear and mirror around the origin - but you cannot **translate**, which is to say you cannot
+slide the whole thing sideways.
+
+That is a real limitation and it is why the next section adds a fourth number.
+:::
+
+## The Determinant
+
+The scene has a number in the readout labelled **determinant**. It answers one question:
+**how much bigger did the area get?**
+
+For a 2×2 matrix it is one subtraction:
+
+$$
+\det M = ad - bc
+$$
+
+which, in terms of the columns, is the 2D cross product of $\hat{\imath}$ and $\hat{\jmath}$
+from Part 1. That is not a coincidence. The cross product gave you the area of the
+parallelogram two vectors span, and the transformed square _is_ that parallelogram.
+
+Read the value like this:
+
+| Determinant | What happened                                             |
+| :---------- | :-------------------------------------------------------- |
+| $1$         | Area unchanged. Every rotation has this.                  |
+| $2$         | Area doubled.                                             |
+| $0.5$       | Area halved.                                              |
+| $0$         | The shape collapsed onto a line and lost all of its area. |
+| $-1$        | Area unchanged, but the shape was **mirrored**.           |
+
+Sweep the sliders and watch the number. A rotation holds it at exactly `1.00` at every
+angle. A shear also holds it at `1.00`, which is worth noticing - sliding a shape sideways
+changes how it looks but not how much of it there is.
+
+**A negative determinant means the space was turned over**, which is why the scene switches
+to purple. It is not a smaller or a larger transformation, it is a mirrored one, and no
+amount of rotating will reproduce it. This matters in practice: a model scaled by $-1$ on
+one axis has all of its surfaces facing inward, and it will render inside-out for exactly
+the reason Part 1's winding demo showed.
+
+**A determinant of zero is the one to fear.** The shape has been flattened, and flattening
+throws information away permanently. There is no way to un-flatten it, which means the
+matrix has no inverse - you cannot undo the transformation. Section 2.4 comes back to this.
+
+## The Same Machine in 3D
+
+Nothing new happens with a third axis, there is just one more column. A 3×3 matrix records
+where **x**, **y** and **z** land, and the determinant measures **volume** instead of area.
+
+<DemoPanel name="matrix3d" />
+
+Same story, one dimension up. **Double** multiplies every axis by 2, and the volume goes up
+by $2 \times 2 \times 2 = 8$. **Squash** flattens one axis and the volume shrinks with it.
+**Mirror** turns the determinant negative and the cube inside out. **Flatten** takes one axis
+to zero and the whole cube becomes a flat sheet with no volume at all.
+
+The determinant formula is longer in 3D, but it is built from Part 1's tools: cross two of the
+columns and dot the result with the third. That is the scalar triple product, and it is the
+signed volume of the box the three columns span.
+
+## Row Vectors and Column Vectors
+
+Part 1's conventions table had a column that has not mattered until now. Here is where it
+starts to.
+
+Everything above assumed the vector is a **column**, standing upright, with the matrix on its
+left:
+
+$$
+\vec{v}' = M\vec{v}
+$$
+
+Three.js, Godot, Unity and OpenGL all work this way. Unreal does not - it treats vectors as
+**rows**, lying flat, with the matrix on the right:
+
+$$
+\vec{v}' = \vec{v}M
+$$
+
+Both describe the same transformations. The consequence is about **order**. With column
+vectors, applying $A$ and then $B$ is written $BA$ - right to left, which reads backwards
+from how you would say it aloud. With row vectors it is written $AB$, left to right.
+
+So a chain of transformations copied from an Unreal tutorial into Three.js needs its order
+reversed, and the symptom is not an error. It is a model in the wrong place, or spinning
+around the wrong point. Section 2.3 is entirely about this.
+
+:::note[In an engine]
+Three.js exposes `Matrix3` and `Matrix4`, and both store their numbers in **column-major**
+order - meaning the array runs down each column, not across each row. So
+`m.elements[0..2]` is the first column, and the visual layout of `m.set(...)` in source code
+is the transpose of the memory layout. Godot's `Transform3D` sidesteps the confusion by
+naming its columns outright: `basis.x`, `basis.y` and `basis.z`, which are exactly the
+`i`, `j`, `k` of this section.
+:::
+
+## Where This Shows Up
+
+- **Every object in a scene**, which carries a matrix describing where it sits and how it is
+  turned relative to its parent.
+- **Squashed and stretched models**, where a non-uniform scale is a matrix whose columns have
+  different lengths - and the reason surface normals need special treatment in Section 2.4.
+- **Mirrored assets.** Flipping a prop to make a left-handed version negates a determinant,
+  and the renderer has to be told to reverse its winding or the prop turns inside out.
+- **Debugging a broken transform.** When something is in the wrong place, print the matrix
+  and read its columns. Three numbers you recognize tell you far more than a determinant does.
+
+:::note[The one thing to take away]
+Do not read a matrix as a grid. Read it as a list of destinations: this is where x goes, this
+is where y goes, this is where z goes. Every transformation in this module is that one idea
+with more columns or an extra row, and a matrix you can read is a matrix you can debug.
+:::

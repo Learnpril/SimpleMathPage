@@ -219,6 +219,31 @@ const source = key ? sources[key].trimEnd() : "";
     accent-color: #39d3c3;
   }
 
+  /* A live matrix under the scene. Regions are coloured so a reader can see which numbers
+     belong to the rotation-and-scale block and which are the translation. */
+  .demo-stage :global(.demo-matrix) {
+    display: grid;
+    grid-template-columns: repeat(var(--demo-matrix-cols, 4), 3.1rem);
+    gap: 0.1rem 0.2rem;
+    margin: 0.6rem 0 0.2rem;
+    padding: 0.4rem 0.55rem;
+    border-left: 2px solid #30363d;
+    border-right: 2px solid #30363d;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 0.74rem;
+  }
+  .demo-stage :global(.demo-cell) {
+    text-align: right;
+    color: #9198a1;
+  }
+  .demo-stage :global(.demo-cell[data-region="translate"]) {
+    color: #f0883e;
+    font-weight: 700;
+  }
+  .demo-stage :global(.demo-cell[data-region="fixed"]) {
+    color: #545d68;
+  }
+
   .demo-stage :global(.demo-readout) {
     margin: 0.45rem 0 0;
     font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
@@ -230,6 +255,18 @@ const source = key ? sources[key].trimEnd() : "";
   .demo-stage :global(.demo-btn:focus-visible) {
     outline: 2px solid #39d3c3;
     outline-offset: 2px;
+  }
+  /* Preset buttons sit in one wrapping row rather than a column. */
+  .demo-stage :global(.demo-presets) {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.35rem;
+    max-width: 28rem;
+    margin: 0.6rem 0 0.2rem;
+  }
+  .demo-stage :global(.demo-presets .demo-btn) {
+    margin: 0;
   }
   .demo-stage :global(.demo-btn) {
     margin: 0.5rem 0 0;

@@ -5,6 +5,36 @@ fileMatchPattern: "src/content/docs/applied/**"
 
 # Applied Mathematics: visual standards
 
+## Vocabulary, in order of nesting
+
+Four levels, and each has exactly one name. An earlier rename used "Module" at two levels
+at once, which confused a reader looking at a topic map: the page was a Module and the boxes
+inside it were also Modules.
+
+| Level | Name        | Example                               | Has its own page?            |
+| :---- | :---------- | :------------------------------------ | :--------------------------- |
+| 1     | (the hub)   | Applied Mathematics                   | yes, `/applied-mathematics/` |
+| 2     | **Module**  | Math for 3D Game Development          | yes, an about page           |
+| 3     | **Part**    | Part 2 - Matrices and Transformations | no, a grouping only          |
+| 4     | **Section** | `the-dot-product`                     | yes, one page                |
+
+So: a Module contains Parts, and a Part contains Sections. Never write "lesson" or "track"
+in Applied copy.
+
+**A Part has no page of its own**, which means it is invisible unless you label it. Two
+places do that, and a new Section needs both:
+
+1. **A numbered `sidebar.label`** in the Section's frontmatter, as `PART.SECTION` - so
+   `label: "1.3  The Dot Product"` for the third Section of Part 1. Two spaces after the
+   number. This is what makes the grouping legible in a flat sidebar without adding a fourth
+   level of nesting, which was rejected as too deep.
+2. **An entry in the `partOf` map** in `astro.config.mjs`, keyed by module then slug, giving
+   `[partNumber, partName]`. That appends `Part 1: Vectors and Spatial Reasoning` to the
+   badge above the page title, so a reader arriving from search knows where they landed.
+
+Keep `sidebar.order` as the flat 1-24 sequence. It drives ordering; the label only drives
+display, and the two are deliberately separate.
+
 Applied is a **guide and reference**, not a lesson sequence. No quizzes, no
 `## Quiz` section, no `SUBJECTS` entry unless progress tracking is wanted. The
 default unit is "here is the thing, here is the math that makes it work", and the
@@ -170,7 +200,7 @@ twenty-row value table and a Run button was rejected as overwhelming, and correc
 ## Never hand-write expected output: use DemoPanel
 
 Any "what you should see" block written by hand is a liability. Two such blocks in
-Module 1 were wrong when first written - `lerpAngle` at t=1 prints 370, not 10, and the
+Part 1 were wrong when first written - `lerpAngle` at t=1 prints 370, not 10, and the
 vision-cone edge returns `true` at 140 degrees where the text claimed `false`. Both were
 caught only by going looking.
 

@@ -3,6 +3,7 @@ title: Angles, atan2 and Shortest Rotation
 description: Getting a signed angle out of two vectors, wrapping it into a sensible range, and turning toward a target without spinning the long way round
 sidebar:
   order: 5
+  label: "1.5  Angles, atan2, Shortest Rotation"
 ---
 
 import SymbolKey from "../../../../components/SymbolKey.astro";
@@ -16,7 +17,7 @@ import DemoPanel from "../../../../components/DemoPanel.astro";
 Why `atan2` is the function you want and plain `atan` almost never is. How to get a
 **signed** angle, since `acos` can only ever give you a positive one. How to wrap an
 angle difference so a turret turns 10 degrees instead of 350. this section closes out
-Module 1 by turning the dot and cross products into a working "turn toward that" routine.
+Part 1 by turning the dot and cross products into a working "turn toward that" routine.
 
 ## First, What These Functions Are
 
@@ -223,7 +224,7 @@ writing `lerp(currentAngle, targetAngle, t)` in any language, that is the bug - 
 version is the fix.
 :::
 
-## Putting Module 1 Together
+## Putting Part 1 Together
 
 A turret that tracks a target, at a limited turn rate, using every idea from this module:
 

@@ -27,6 +27,8 @@ import {
   diagonalCheck,
   lookatCheck,
   displacementCheck,
+  matrixCheck,
+  homogeneousCheck,
 } from "./checks.ts";
 
 export const DEMOS: Record<string, DemoEntry> = {
@@ -41,6 +43,28 @@ export const DEMOS: Record<string, DemoEntry> = {
     visual: () => import("./displacement.scene.ts"),
     visualFile: "lib/gamedev/demos/displacement.scene.ts",
     check: displacementCheck,
+  },
+  matrix2d: {
+    title: "A matrix, and the two places its columns send the axes",
+    visual: () => import("./matrix2d.scene.ts"),
+    visualFile: "lib/gamedev/demos/matrix2d.scene.ts",
+    check: matrixCheck,
+  },
+  matrix3d: {
+    title: "The same machine in three dimensions",
+    visual: () => import("./matrix3d.scene.ts"),
+    visualFile: "lib/gamedev/demos/matrix3d.scene.ts",
+  },
+  wcomponent: {
+    title: "One value, sent through the same matrix twice",
+    visual: () => import("./wcomponent.scene.ts"),
+    visualFile: "lib/gamedev/demos/wcomponent.scene.ts",
+    check: homogeneousCheck,
+  },
+  matrix4: {
+    title: "A 4x4 matrix, and the sixteen numbers behind it",
+    visual: () => import("./matrix4.scene.ts"),
+    visualFile: "lib/gamedev/demos/matrix4.scene.ts",
   },
   basis: {
     title: "An object's own axes, and where forward points",

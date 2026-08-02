@@ -21,7 +21,7 @@ standards live in `applied-math-visuals.md`, which also governs this track.
   naming methods - `move_and_slide()`, `Vector3.slide()`, `look_at()`,
   `signed_angle_to()` - because method names churn far less than project setup and
   signatures. Do not write Godot project instructions, node trees or Inspector steps.
-- **Modules 6, 7 and the capstone build from scratch.** Three.js has no physics, no
+- **Parts 6, 7 and the capstone build from scratch.** Three.js has no physics, no
   collision and no character controller, so those lessons implement the maths directly
   rather than calling an engine method. This is a feature for a maths track: you cannot
   hide behind `move_and_slide` if you have to write it.
@@ -55,14 +55,14 @@ standards live in `applied-math-visuals.md`, which also governs this track.
 required - the maths here stands on its own - but it is strongly recommended, and the about
 page should say so plainly rather than burying it.
 
-Then: Trigonometry throughout; Linear Algebra for Modules 2 and 3; Algebra 2 quadratics for
+Then: Trigonometry throughout; Linear Algebra for Parts 2 and 3; Algebra 2 quadratics for
 jump arcs; Calculus 1 optional, for velocity and acceleration as derivatives.
 
 ## Lesson list
 
 Slugs are final. `order` matches the number.
 
-### Module 1 - Vectors and Spatial Reasoning
+### Part 1 - Vectors and Spatial Reasoning
 
 1. `points-vectors-and-coordinate-conventions` - points vs vectors, basis vectors,
    handedness, up axis, forward axis, degrees vs radians. **Hosts the conventions
@@ -84,7 +84,7 @@ Slugs are final. `order` matches the number.
    only after the math is established. Visual: top-down turret with signed error and
    wrapped delta.
 
-### Module 2 - Matrices and Transformations
+### Part 2 - Matrices and Transformations
 
 6. `matrices-as-transformations` - columns as transformed basis vectors, scale,
    rotation, shear in 2×2 and 3×3, determinant as area/volume scale and negative
@@ -100,7 +100,7 @@ Slugs are final. `order` matches the number.
    transforms, **normals transform by the inverse transpose** under non-uniform scale.
    Visual: parented objects in 3D plus a wrong vs correct normal on a squashed sphere.
 
-### Module 3 - Rotations Done Right
+### Part 3 - Rotations Done Right
 
 10. `euler-angles-and-gimbal-lock` - order conventions, gimbal lock shown rather than
     asserted, where Euler angles are still right (designer-facing values, turrets).
@@ -113,7 +113,7 @@ Slugs are final. `order` matches the number.
     fine, quaternion/matrix/Euler conversions and where precision goes. Visual: three
     objects rotating the same start to end, one per method, paths traced.
 
-### Module 4 - Time, Interpolation and Feel
+### Part 4 - Time, Interpolation and Feel
 
 13. `delta-time-and-frame-rate-independence` - **the highest-value lesson in the
     track.** Why `lerp(current, target, 0.1)` per frame is a bug: it converges faster at
@@ -132,7 +132,7 @@ Slugs are final. `order` matches the number.
     speed, so an even-rate camera needs a lookup table. Visual: two dots on one spline,
     uniform `t` vs uniform arc length, visibly separating.
 
-### Module 5 - Cameras and Screen Space
+### Part 5 - Cameras and Screen Space
 
 17. `projection-fov-and-the-view-frustum` - perspective vs orthographic, vertical vs
     horizontal FOV, aspect ratio, near/far planes and why a tiny near plane destroys
@@ -145,7 +145,7 @@ Slugs are final. `order` matches the number.
     spherical coordinates for orbit cameras, which the capstone needs. Visual:
     click-to-pick with the generated ray drawn in 3D.
 
-### Module 6 - Geometry and Collision
+### Part 6 - Geometry and Collision
 
 19. `rays-planes-and-closest-points` - parametric rays, plane equations, ray-plane
     intersection and the parallel case where the denominator vanishes, closest point on
@@ -163,7 +163,7 @@ Slugs are final. `order` matches the number.
     RigidBody. Visual: velocity decomposing against a wall into blocked and sliding
     parts, wall angle on a slider.
 
-### Module 7 - Physics Integration
+### Part 7 - Physics Integration
 
 22. `velocity-acceleration-and-forces` - position/velocity/acceleration, gravity, drag,
     impulse vs continuous force, jump height and time-to-apex solved backwards from the

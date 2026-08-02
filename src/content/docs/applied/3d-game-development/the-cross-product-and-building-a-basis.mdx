@@ -3,6 +3,7 @@ title: The Cross Product and Building a Basis
 description: The perpendicular vector, why its direction depends on handedness, and how two cross products give you a complete orientation
 sidebar:
   order: 4
+  label: "1.4  The Cross Product and a Basis"
 ---
 
 import CrossProductHanded3D from "../../../../components/CrossProductHanded3D.astro";
@@ -217,7 +218,7 @@ if (Math.abs(f.dot(new THREE.Vector3(0, 1, 0))) > 0.999) {
     .crossVectors(f, new THREE.Vector3(0, 1, 0))
     .normalize();
   const u = new THREE.Vector3().crossVectors(r, f);
-  // r, u, f are now an orthonormal basis. In Module 2 they become matrix columns.
+  // r, u, f are now an orthonormal basis. In Part 2 they become matrix columns.
 }
 
 // Or let the library do it, with the same restriction:
@@ -290,7 +291,7 @@ up. Cross right with forward and you get the up that belongs to _this_ orientati
 that keeps the picture level when the camera is looking upward at something.
 
 Three perpendicular arrows, from one direction and two cross products. Those three become the
-columns of a rotation matrix in Module 2, and then the whole thing is a single multiply.
+columns of a rotation matrix in Part 2, and then the whole thing is a single multiply.
 
 #### Now drag the height slider all the way to the top
 

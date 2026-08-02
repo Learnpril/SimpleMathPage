@@ -1,0 +1,204 @@
+---
+title: Homogeneous Coordinates and 4x4 Matrices
+description: Why moving something needs a fourth number, and how that same number finally makes the difference between a place and a direction something the math enforces instead of something you remember
+sidebar:
+  order: 7
+  label: "2.2  Homogeneous Coordinates"
+---
+
+import DemoPanel from "../../../../components/DemoPanel.astro";
+import CodePanel from "../../../../components/CodePanel.astro";
+import matricesSource from "../../../../lib/gamedev/matrices.ts?raw";
+
+## What You'll Learn
+
+Why a 3×3 matrix can rotate and scale but can never _move_ anything, and what adding a fourth
+number fixes. What the fourth column of a 4×4 matrix holds. And the payoff: **`w = 1` for a
+place, `w = 0` for a direction**, which turns Part 1's careful naming discipline into something
+the arithmetic does for you.
+
+## The Problem: Matrices Cannot Move Things
+
+Section 2.1 ended on a limitation. Here it is again, because everything in this section exists
+to solve it.
+
+A matrix transforms a point by scaling its columns and adding them up. Put the origin in:
+
+$$
+M \begin{bmatrix} 0 \\ 0 \\ 0 \end{bmatrix}
+= 0 \cdot \hat{\imath} + 0 \cdot \hat{\jmath} + 0 \cdot \hat{k}
+= \begin{bmatrix} 0 \\ 0 \\ 0 \end{bmatrix}
+$$
+
+Every term gets multiplied by zero, so the answer is zero. **The origin always stays put**, no
+matter which nine numbers you choose. And if the origin cannot move, nothing can be slid
+sideways as a whole - you can spin a model, squash it, or mirror it, but always _around the
+origin_, never away from it.
+
+That is useless for a game. Objects need positions.
+
+## The Fix: One More Number
+
+The trick is almost silly. Give every point a fourth component and set it to **1**:
+
+$$
+\begin{bmatrix} x \\ y \\ z \end{bmatrix}
+\quad\longrightarrow\quad
+\begin{bmatrix} x \\ y \\ z \\ 1 \end{bmatrix}
+$$
+
+Now the matrix needs a fourth column to multiply that 1 against. And since the 1 is always
+there and always exactly 1, whatever sits in that fourth column gets added on unconditionally:
+
+$$
+\begin{bmatrix}
+\; & \; & \; & t_x \\
+\; & R & \; & t_y \\
+\; & \; & \; & t_z \\
+0 & 0 & 0 & 1
+\end{bmatrix}
+\begin{bmatrix} x \\ y \\ z \\ 1 \end{bmatrix}
+= R\begin{bmatrix} x \\ y \\ z \end{bmatrix} + \begin{bmatrix} t_x \\ t_y \\ t_z \end{bmatrix}
+$$
+
+That $\vec{t}$ is the **translation**, and it lives in the fourth column. The 3×3 block
+labelled $R$ is the rotation-and-scale part from Section 2.1, unchanged. The bottom row is
+$(0, 0, 0, 1)$ for every transform in this module.
+
+Coordinates carrying that extra component are called **homogeneous coordinates**. The name is
+unhelpful and the idea is small: one padding number, so translation has somewhere to live.
+
+The fourth column keeps the meaning it had in 2.1. It is still "where something lands" - it is
+just **where the origin lands**. Drag the sliders and watch the orange dot.
+
+<DemoPanel name="matrix4" />
+
+The sixteen numbers under the scene are the matrix, live. The orange column on the right is
+the translation, and the orange dot in the scene is sitting at exactly those three numbers.
+The grey bottom row never changes.
+
+Watch what each slider touches. **Translate** only ever changes the orange column. **Rotate**
+and **scale** only ever change the 3×3 block on the left. The two halves of a transform do not
+interfere, which is why you can read a matrix by looking at its parts.
+
+## The Payoff: `w = 1` and `w = 0`
+
+Now the part worth the whole detour.
+
+Part 1 spent a long time on the difference between a **place** and a **direction**, and ended
+by admitting that the compiler will not help you - `Vector3(3, 2, 0)` could be either, and
+only the variable name says which. With a fourth component, the distinction becomes real:
+
+- A **place** has $w = 1$. It picks up the translation.
+- A **direction** has $w = 0$. It does not.
+
+And that follows automatically, because the translation column is multiplied by $w$. Set $w$
+to zero and the translation contributes nothing at all.
+
+This is exactly what you want. Move a character 10 meters east and its _position_ changes;
+the direction it is _facing_ does not. "North" is still north wherever you stand.
+
+Below, the same three numbers $(2, 0, -2)$ go through the same translation matrix twice - once
+as a place, once as a direction.
+
+<DemoPanel name="wcomponent" />
+
+**The orange ball is the place. The blue arrow is the direction.** Faint copies show where
+each started.
+
+Drag any slider. The ball moves. The arrow does not budge - it cannot, because its $w$ is
+zero and the translation column never gets a chance to apply. Same three numbers, same matrix,
+different result, and the _only_ difference is the fourth one.
+
+<CodePanel
+  code={matricesSource}
+  lang="ts"
+  file="src/lib/gamedev/matrices.ts"
+  label="The code both scenes run on"
+/>
+
+Look at `applyMat4`. Every line has four terms, and the last one is multiplied by `v.w`. That
+is the entire mechanism - there is no branch, no `if`, no special case for directions. And the
+constructors say what they are for: `point()` sets `w` to 1, `direction()` sets it to 0.
+
+:::tip[A bug this catches for free]
+Suppose you compute a direction by subtracting two positions, then transform it into another
+space using the object's matrix. If you forget and transform it as a _place_, the direction
+picks up the translation and comes out wrong - pointing at some arbitrary spot rather than the
+way you meant.
+
+The symptom is a character that aims correctly at the origin and progressively worse the
+further it walks from it, which is a genuinely confusing thing to debug. Carry `w` and the
+problem cannot happen.
+:::
+
+## Reading a 4×4 in the Wild
+
+Put together, a 4×4 matrix has four readable pieces:
+
+| Piece                   | Where        | What it holds                                       |
+| :---------------------- | :----------- | :-------------------------------------------------- |
+| Columns 1-3, top 3 rows | left block   | where the x, y and z axes land - rotation and scale |
+| Column 4, top 3 rows    | right column | where the origin lands - the translation            |
+| Bottom row              | last row     | $(0, 0, 0, 1)$ for everything in this Part          |
+| Bottom-right            | corner       | 1, so that places stay places                       |
+
+So when a transform misbehaves, print the matrix and read the right-hand column first. If the
+object is in the wrong place, the answer is usually sitting right there in three numbers you
+can recognize.
+
+:::caution[Watch the transpose]
+The translation belongs in the right-hand **column**. Some references and some file formats
+store it in the bottom **row** instead, which is the transposed layout that goes with row
+vectors.
+
+Get it the wrong way round and the matrix does not error - it translates along the wrong axes,
+or it corrupts the bottom row and starts scaling things by distance. Section 2.3 covers the
+row-versus-column convention properly.
+:::
+
+:::note[In an engine]
+Three.js uses `Matrix4` for everything, and stores its numbers **column-major** - so
+`m.elements[12]`, `[13]` and `[14]` are the translation. Confusingly, the `m.set()` method
+takes arguments in _row_ order so that source code looks like the written matrix, which means
+the layout you type is the transpose of the layout in memory.
+
+`Vector3.applyMatrix4()` treats the vector as a place, with `w = 1` implied.
+`Vector3.transformDirection()` treats it as a direction and skips the translation - that pair
+of methods is exactly this section's distinction.
+
+Godot splits the two apart instead of overloading a single type: `Transform3D` holds a `basis`
+(the 3×3 part) and an `origin` (the translation) as separate named fields, and
+`basis * vector` deliberately excludes the translation.
+:::
+
+## Why "Homogeneous", and What the Bottom Row Is Really For
+
+A fair question: if the bottom row is always $(0, 0, 0, 1)$ and $w$ is always 1 or 0, why keep
+them around at all?
+
+Because one transform breaks that pattern, and it is the one that makes 3D look 3D.
+**Perspective projection** puts numbers in the bottom row on purpose. It sets $w$ to something
+that depends on how far away the point is, and then everything gets divided by $w$ - which is
+what makes distant objects smaller. That division is the whole reason the fourth component
+exists as a general idea rather than a padding trick.
+
+Part 5 covers it. For now it is enough to know that the bottom row is not dead weight, and
+that a transform which quietly modifies it is doing something other than moving an object.
+
+## Where This Shows Up
+
+- **Every object's transform**, which is a 4×4 combining where it sits, how it is turned, and
+  how big it is - all in one thing you can multiply.
+- **Skinning and animation**, where a vertex is transformed by several bone matrices and the
+  results blended. Bones translate, so 3×3 will not do.
+- **Normals and directions**, which must be transformed with $w = 0$ or they end up in the
+  wrong place. Section 2.4 shows a second, subtler thing that goes wrong with normals.
+- **Importing model files**, where a transform stored in the transposed layout produces an
+  object translated along strange axes rather than a clean error.
+
+:::note[The one thing to take away]
+The fourth column is where the origin lands. The fourth component says whether you are a place
+or a direction, and it is what stops a translation from moving something that has no position
+to move. Every 4×4 you meet is that, plus perspective.
+:::

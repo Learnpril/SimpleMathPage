@@ -55,7 +55,7 @@ for sine, cosine and the unit circle. Nothing else. No Linear Algebra, no Calcul
 
 Slugs are final. `order` matches the number. Nothing here is written yet.
 
-### Module 1 - The Screen and Its Coordinates
+### Part 1 - The Screen and Its Coordinates
 
 1. `pixels-coordinates-and-the-y-axis` - screen space versus world space, the origin in
    the top-left, **why Y points down** and what that does to every angle and every
@@ -71,7 +71,7 @@ Slugs are final. `order` matches the number. Nothing here is written yet.
 4. `the-dot-product` - sign as a facing test, projection, angle between. Clamping before
    `acos`. Visual: a guard's vision cone in plan view.
 
-### Module 2 - Turning and Aiming
+### Part 2 - Turning and Aiming
 
 5. `the-2d-cross-product-and-which-side` - the single number $a_x b_y - a_y b_x$, its sign
    as "which side of this line", its magnitude as parallelogram area, and winding order for
@@ -84,7 +84,7 @@ Slugs are final. `order` matches the number. Nothing here is written yet.
    arbitrary pivot, wrapping an angle difference to $\pm 180$, turning the short way at a
    limited rate. Visual: the turret again, with wrapping on a checkbox.
 
-### Module 3 - Transforms and Cameras
+### Part 3 - Transforms and Cameras
 
 8. `translate-rotate-and-scale` - the three operations, why order matters, and the 3×3
    matrix that packages them. Introduces homogeneous coordinates in the setting where the
@@ -97,7 +97,7 @@ Slugs are final. `order` matches the number. Nothing here is written yet.
     and parallax layers. Visual: a pannable, zoomable scene with the cursor's world
     position shown.
 
-### Module 4 - Time, Motion and Feel
+### Part 4 - Time, Motion and Feel
 
 11. `delta-time-and-frame-rate-independence` - **the highest-value lesson in the track**,
     same as in 3D and easier to see here. Why `lerp(current, target, 0.1)` per frame
@@ -110,7 +110,7 @@ Slugs are final. `order` matches the number. Nothing here is written yet.
     Casteljau, using the tangent as a facing direction, and chaining curves. Visual:
     draggable control points with a sprite travelling the path.
 
-### Module 5 - Collision
+### Part 5 - Collision
 
 14. `circles-and-boxes` - circle-circle, AABB-AABB, circle-AABB. The two shapes almost
     every 2D game actually ships. Visual: two draggable shapes with the overlap drawn.
@@ -125,7 +125,7 @@ Slugs are final. `order` matches the number. Nothing here is written yet.
     wall, and tunneling at speed. Visual: velocity splitting against a wall, angle on a
     slider.
 
-### Module 6 - Physics
+### Part 6 - Physics
 
 18. `velocity-gravity-and-jump-arcs` - position, velocity and acceleration without
     calculus, gravity, terminal velocity, and solving a jump backwards from the height and

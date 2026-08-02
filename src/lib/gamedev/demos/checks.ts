@@ -27,6 +27,25 @@ import {
 } from "./winding-shared.ts";
 import { targetAt, anglesOf } from "./lookat-shared.ts";
 import { PLAYER, displacement, travel } from "./displacement-shared.ts";
+import {
+  IDENTITY2,
+  IDENTITY3,
+  applyMat2,
+  applyMat4,
+  determinant2,
+  determinant3,
+  direction,
+  multiplyMat2,
+  multiplyMat4,
+  point,
+  rotation2,
+  rotationY4,
+  scale2,
+  shear2,
+  translation4,
+  type Mat2,
+  type Mat3,
+} from "../matrices.ts";
 import { FORWARD, dirFromBearing, coneTest } from "./cone-shared.ts";
 
 const near = (a: number, b: number, tol = 1e-9) => Math.abs(a - b) < tol;
@@ -152,6 +171,165 @@ export const diagonalCheck: Demo = () => {
   assert(
     len2(velocityFrom({ x: 0, y: 0 }, 6, true)) === 0,
     "zero input did not stay zero",
+  );
+};
+
+/**
+ * A matrix's columns really are where the axes land, and the determinant really is the
+ * area scale.
+ *
+ * The first claim is the one the scene rests on: it draws two arrows for the columns and
+ * expects the reader to believe the shape follows from them. So check it directly - push
+ * the x axis through the matrix and assert you get column one back.
+ */
+export const matrixCheck: Demo = () => {
+  const cases: Mat2[] = [
+    IDENTITY2,
+    scale2(2, 3),
+    rotation2(45),
+    shear2(1),
+    scale2(-1, 1),
+  ];
+
+  for (const m of cases) {
+    // Transforming the x axis gives the first column. Same for y and the second.
+    const fromX = applyMat2(m, { x: 1, y: 0 });
+    const fromY = applyMat2(m, { x: 0, y: 1 });
+    assert(
+      near(fromX.x, m.i.x) && near(fromX.y, m.i.y),
+      "x axis is not column one",
+    );
+    assert(
+      near(fromY.x, m.j.x) && near(fromY.y, m.j.y),
+      "y axis is not column two",
+    );
+
+    // The origin never moves. A 2x2 matrix cannot translate, which is why Section 2.2 exists.
+    const o = applyMat2(m, { x: 0, y: 0 });
+    assert(o.x === 0 && o.y === 0, "the origin moved");
+  }
+
+  // A rotation preserves area, so its determinant is 1 at every angle.
+  for (let deg = 0; deg < 360; deg += 1) {
+    assert(
+      near(determinant2(rotation2(deg)), 1),
+      `rotation by ${deg} changed area`,
+    );
+  }
+
+  // Scaling multiplies area by the product of the two scales.
+  assert(
+    near(determinant2(scale2(2, 3)), 6),
+    "2 by 3 scale should sextuple area",
+  );
+  // A shear slides the shape but does not change how much of it there is.
+  assert(near(determinant2(shear2(1)), 1), "shear should preserve area");
+  // Mirroring one axis flips the sign and nothing else.
+  assert(near(determinant2(scale2(-1, 1)), -1), "mirror should give -1");
+  // Two columns pointing the same way span nothing.
+  assert(
+    near(determinant2({ i: { x: 1, y: 2 }, j: { x: 2, y: 4 } }), 0),
+    "parallel columns should collapse",
+  );
+
+  // Composing is multiplying, and the determinants multiply with it.
+  const a = scale2(2, 2);
+  const b = rotation2(30);
+  assert(
+    near(determinant2(multiplyMat2(a, b)), determinant2(a) * determinant2(b)),
+    "determinants should multiply",
+  );
+
+  // In 3D the determinant is a volume, and the same three facts hold.
+  assert(near(determinant3(IDENTITY3), 1), "identity volume should be 1");
+  const doubled: Mat3 = {
+    i: { x: 2, y: 0, z: 0 },
+    j: { x: 0, y: 2, z: 0 },
+    k: { x: 0, y: 0, z: 2 },
+  };
+  assert(near(determinant3(doubled), 8), "doubling every axis should give 8");
+  const flattened: Mat3 = {
+    i: { x: 1, y: 0, z: 0 },
+    j: { x: 0, y: 0, z: 0 },
+    k: { x: 0, y: 0, z: 1 },
+  };
+  assert(
+    near(determinant3(flattened), 0),
+    "a flattened cube should have no volume",
+  );
+};
+
+/**
+ * The fourth component does what the section claims: places translate, directions do not.
+ *
+ * This is the whole payoff of homogeneous coordinates, and it is a claim about two values
+ * that hold the *same three numbers*. So check both against the same matrix and assert they
+ * disagree in exactly the intended way.
+ */
+export const homogeneousCheck: Demo = () => {
+  const T = translation4(3, -2, 5);
+
+  for (const v of [
+    [1, 2, 3],
+    [0, 0, 0],
+    [-4, 0.5, 2],
+  ]) {
+    const asPlace = applyMat4(T, point(v[0], v[1], v[2]));
+    const asDir = applyMat4(T, direction(v[0], v[1], v[2]));
+
+    // A place picks up the whole translation.
+    assert(near(asPlace.x, v[0] + 3), "place did not translate on x");
+    assert(near(asPlace.y, v[1] - 2), "place did not translate on y");
+    assert(near(asPlace.z, v[2] + 5), "place did not translate on z");
+    // A direction picks up none of it, and stays a direction.
+    assert(near(asDir.x, v[0]), "direction moved on x");
+    assert(near(asDir.y, v[1]), "direction moved on y");
+    assert(near(asDir.z, v[2]), "direction moved on z");
+    // w survives the trip, so the value is still the kind of thing it started as.
+    assert(asPlace.w === 1, "a place stopped being a place");
+    assert(asDir.w === 0, "a direction stopped being a direction");
+  }
+
+  // The translation column is literally where the origin lands.
+  const originGoes = applyMat4(T, point(0, 0, 0));
+  assert(
+    near(originGoes.x, T.t.x) &&
+      near(originGoes.y, T.t.y) &&
+      near(originGoes.z, T.t.z),
+    "the fourth column is not where the origin lands",
+  );
+
+  // Rotation still leaves the origin alone, so its translation column stays zero.
+  for (let deg = 0; deg < 360; deg += 15) {
+    const R = rotationY4(deg);
+    assert(
+      near(R.t.x, 0) && near(R.t.y, 0) && near(R.t.z, 0),
+      `rotation by ${deg} should not translate`,
+    );
+    // And a rotation must not change how long a direction is.
+    const d = applyMat4(R, direction(1, 0, 0));
+    assert(
+      near(Math.hypot(d.x, d.y, d.z), 1),
+      `rotation by ${deg} changed a length`,
+    );
+  }
+
+  // Order matters, and this is the pair that proves it - the subject of Section 2.3.
+  const moveThenTurn = multiplyMat4(rotationY4(90), translation4(2, 0, 0));
+  const turnThenMove = multiplyMat4(translation4(2, 0, 0), rotationY4(90));
+  const a = applyMat4(moveThenTurn, point(0, 0, 0));
+  const b = applyMat4(turnThenMove, point(0, 0, 0));
+  assert(
+    !(near(a.x, b.x) && near(a.z, b.z)),
+    "the two orderings should not agree - if they do, the demo has stopped teaching",
+  );
+
+  // Undoing a translation gets you back exactly where you were.
+  const there = applyMat4(translation4(4, 5, 6), point(1, 1, 1));
+  const back = applyMat4(translation4(-4, -5, -6), there);
+  assert(
+    near(back.x, 1) && near(back.y, 1) && near(back.z, 1),
+    "translating back did not return to the start",
   );
 };
 

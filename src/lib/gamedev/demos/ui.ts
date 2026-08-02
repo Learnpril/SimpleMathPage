@@ -27,7 +27,15 @@ export function makeCanvas(el: HTMLElement, height = 300) {
   };
 }
 
-/** A labelled slider with a live numeric readout. Returns a getter for its value. */
+/**
+ * A labelled slider with a live numeric readout.
+ *
+ * Returns a getter for its value, with a `.set()` attached so a preset button can move it.
+ * Setting does not fire the input event, so the caller redraws once after setting them all
+ * rather than once per slider.
+ */
+export type Slider = (() => number) & { set: (v: number) => void };
+
 export function addSlider(
   el: HTMLElement,
   label: string,
@@ -36,7 +44,8 @@ export function addSlider(
   value: number,
   onInput: () => void,
   suffix = "\u00B0",
-): () => number {
+  step = 1,
+): Slider {
   const row = document.createElement("div");
   row.className = "demo-row";
   const id = `demo-${label.replace(/\W+/g, "-").toLowerCase()}`;
@@ -50,7 +59,7 @@ export function addSlider(
   input.id = id;
   input.min = String(min);
   input.max = String(max);
-  input.step = "1";
+  input.step = String(step);
   input.value = String(value);
 
   const out = document.createElement("output");
@@ -65,7 +74,13 @@ export function addSlider(
 
   row.append(text, input, out);
   el.appendChild(row);
-  return () => parseFloat(input.value);
+
+  const get = (() => parseFloat(input.value)) as Slider;
+  get.set = (v: number) => {
+    input.value = String(v);
+    show();
+  };
+  return get;
 }
 
 /** A labelled checkbox. Returns a getter for its state. */
@@ -88,6 +103,47 @@ export function addCheckbox(
   return () => input.checked;
 }
 
+/**
+ * A grid of numbers under the scene, for showing a matrix as it changes.
+ *
+ * Cells are tagged by region so CSS can colour the translation column separately from the
+ * rotation-and-scale block. Seeing which numbers move when you drag a slider is most of
+ * what makes a matrix stop feeling arbitrary.
+ */
+export function addMatrixGrid(
+  el: HTMLElement,
+  cols: number,
+  regionOf: (row: number, col: number) => string,
+): (rows: number[][]) => void {
+  const wrap = document.createElement("div");
+  wrap.className = "demo-matrix";
+  wrap.style.setProperty("--demo-matrix-cols", String(cols));
+  el.appendChild(wrap);
+
+  const cells: HTMLElement[] = [];
+  return (rows: number[][]) => {
+    if (cells.length === 0) {
+      rows.forEach((r, ri) =>
+        r.forEach((_, ci) => {
+          const cell = document.createElement("span");
+          cell.className = "demo-cell";
+          cell.dataset.region = regionOf(ri, ci);
+          wrap.appendChild(cell);
+          cells.push(cell);
+        }),
+      );
+    }
+    let n = 0;
+    for (const r of rows) {
+      for (const v of r) {
+        // Round away the dust so a rotation reads as 0.71 rather than 0.7071067811865476.
+        cells[n].textContent = (Math.abs(v) < 5e-3 ? 0 : v).toFixed(2);
+        n += 1;
+      }
+    }
+  };
+}
+
 /** One line of text under the picture. Returns a setter. */
 export function addReadout(el: HTMLElement): (text: string) => void {
   const div = document.createElement("div");
@@ -96,6 +152,29 @@ export function addReadout(el: HTMLElement): (text: string) => void {
   return (text: string) => {
     div.textContent = text;
   };
+}
+
+/**
+ * A row of preset buttons, for jumping a scene to an interesting configuration.
+ *
+ * Worth having when a scene has several sliders: finding "a rotation by 45 degrees" by
+ * dragging four of them is not a thing anyone will do, so hand it over directly.
+ */
+export function addButtonRow(
+  el: HTMLElement,
+  presets: Array<{ label: string; apply: () => void }>,
+): void {
+  const row = document.createElement("div");
+  row.className = "demo-presets";
+  for (const p of presets) {
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = "demo-btn";
+    b.textContent = p.label;
+    b.addEventListener("click", p.apply);
+    row.appendChild(b);
+  }
+  el.appendChild(row);
 }
 
 /**

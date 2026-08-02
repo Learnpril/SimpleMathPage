@@ -170,6 +170,35 @@ export default defineConfig({
               var badge = document.createElement('div');
               badge.className = 'section-badge';
               badge.textContent = label;
+
+              /* Applied modules group their sections into numbered Parts. The grouping has
+                 no page of its own, so name it here - otherwise a reader landing mid-module
+                 has no way to tell which Part they are in. Keyed by the section slug so a
+                 new section only needs one line. */
+              var partOf = {
+                'applied/3d-game-development': {
+                  'points-vectors-and-coordinate-conventions': [1, 'Vectors and Spatial Reasoning'],
+                  'length-normalization-and-distance':         [1, 'Vectors and Spatial Reasoning'],
+                  'the-dot-product':                          [1, 'Vectors and Spatial Reasoning'],
+                  'the-cross-product-and-building-a-basis':    [1, 'Vectors and Spatial Reasoning'],
+                  'angles-atan2-and-shortest-rotation':        [1, 'Vectors and Spatial Reasoning'],
+                  'matrices-as-transformations':               [2, 'Matrices and Transformations'],
+                  'homogeneous-coordinates-and-4x4-matrices':  [2, 'Matrices and Transformations']
+                }
+              };
+              var partMap = partOf[section];
+              var slug = parts[parts.length - 1];
+              if (partMap && partMap[slug]) {
+                var sep = document.createElement('span');
+                sep.className = 'part-badge-sep';
+                sep.textContent = '\\u00B7';
+                var part = document.createElement('span');
+                part.className = 'part-badge';
+                part.textContent = 'Part ' + partMap[slug][0] + ': ' + partMap[slug][1];
+                badge.appendChild(sep);
+                badge.appendChild(part);
+              }
+
               heading.parentNode.insertBefore(badge, heading);
 
               // Also inject section labels into pagination links

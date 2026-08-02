@@ -670,6 +670,19 @@ starlight-toc {
   font-family: 'Libre Baskerville', Georgia, serif;
 }
 
+/* The Part a section belongs to, appended to the badge. Applied modules only: a Part is a
+   grouping with no page of its own, so this is the only place it can be named. */
+.part-badge-sep {
+  margin: 0 0.45rem;
+  opacity: 0.5;
+}
+.part-badge {
+  color: #39d3c3;
+}
+[data-theme='light'] .part-badge {
+  color: #0d7d72;
+}
+
 /* Section label in pagination links */
 .pagination-section {
   display: block;

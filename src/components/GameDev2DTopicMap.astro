@@ -1,13 +1,13 @@
 ---
 /**
- * GameDev2DTopicMap - the six modules of the 2D Game Development track, and the 3D track
+ * GameDev2DTopicMap - the six parts of the Math for 2D Game Development module and what
  * they lead into. Laid out as a dependency flow rather than a list, because the ordering
  * is the argument: the screen's coordinates come first, time comes before collision.
  *
  * Coordinates are absolute. The figure auditor does not apply SVG transforms, so a
  * translate() here would produce phantom clipping reports.
  */
-const modules = [
+const parts = [
   { n: 1, label: "The Screen", sub: "pixels, vectors, dot", col: 0, row: 0 },
   { n: 2, label: "Turning", sub: "cross, atan2, rotate", col: 1, row: 0 },
   { n: 3, label: "Transforms", sub: "TRS, parents, camera", col: 2, row: 0 },
@@ -18,7 +18,7 @@ const modules = [
 
 const W = 560;
 const boxW = 150;
-const boxH = 52;
+const boxH = 62;
 const gapX = 25;
 const gapY = 58;
 const originX = (W - (3 * boxW + 2 * gapX)) / 2;
@@ -29,12 +29,12 @@ const at = (m: { col: number; row: number }) => ({
   y: originY + m.row * (boxH + gapY),
 });
 
-const placed = modules.map((m) => ({ ...m, ...at(m) }));
+const placed = parts.map((m) => ({ ...m, ...at(m) }));
 const capY = originY + 2 * (boxH + gapY);
 const H = capY + boxH + 20;
 
 // Prerequisites worth drawing. Not every true dependency - only the ones where taking
-// the modules out of order would leave you stuck.
+// the parts out of order would leave you stuck.
 const flows = [
   [1, 2],
   [2, 3],
@@ -51,8 +51,8 @@ const capW = 3 * boxW + 2 * gapX;
 <figure
   class="g2tm"
   role="img"
-  aria-label={`Map of the 2D Game Development track: six modules in two rows, then a capstone. ${placed
-    .map((p) => `Module ${p.n}, ${p.label}: ${p.sub}`)
+  aria-label={`Map of the 2D Game Development track: six parts in two rows, then a capstone. ${placed
+    .map((p) => `Part ${p.n}, ${p.label}: ${p.sub}`)
     .join(
       ". ",
     )}. Arrows run from the screen to turning, time and collision; from turning to transforms; and from time and collision to physics. Below them sits the capstone, a 2D platformer character.`}
@@ -66,16 +66,34 @@ const capW = 3 * boxW + 2 * gapX;
         const y1 = from.y + boxH;
         const x2 = to.x + boxW / 2;
         const y2 = to.y;
-        const sideways = from.row === to.row;
-        return sideways ? (
-          <line
-            x1={from.x + boxW}
-            y1={from.y + boxH / 2}
-            x2={to.x - 4}
-            y2={to.y + boxH / 2}
-            class="g2tm-flow"
-          />
-        ) : (
+
+        // Same row, next column along: a short straight line through the gap.
+        if (from.row === to.row && Math.abs(from.col - to.col) === 1) {
+          return (
+            <line
+              x1={from.x + boxW}
+              y1={from.y + boxH / 2}
+              x2={to.x - 4}
+              y2={to.y + boxH / 2}
+              class="g2tm-flow"
+            />
+          );
+        }
+
+        // Same row but skipping a column: dip below, or the line would be drawn straight
+        // through the box in between.
+        if (from.row === to.row) {
+          const dip = from.y + boxH + 18;
+          return (
+            <path
+              d={`M ${x1} ${y1} C ${x1} ${dip}, ${x2} ${dip}, ${x2} ${y2 + boxH + 4}`}
+              class="g2tm-flow"
+              fill="none"
+            />
+          );
+        }
+
+        return (
           <path
             d={`M ${x1} ${y1} C ${x1} ${y1 + 24}, ${x2} ${y2 - 24}, ${x2} ${y2 - 4}`}
             class="g2tm-flow"
@@ -95,13 +113,13 @@ const capW = 3 * boxW + 2 * gapX;
             rx="6"
             class={`g2tm-box g2tm-m${p.n}`}
           />
-          <text x={p.x + 11} y={p.y + 21} class="g2tm-num">
-            {p.n}
+          <text x={p.x + 11} y={p.y + 17} class="g2tm-part">
+            PART {p.n}
           </text>
-          <text x={p.x + 30} y={p.y + 21} class="g2tm-label">
+          <text x={p.x + 11} y={p.y + 35} class="g2tm-label">
             {p.label}
           </text>
-          <text x={p.x + 30} y={p.y + 38} class="g2tm-sub">
+          <text x={p.x + 11} y={p.y + 51} class="g2tm-sub">
             {p.sub}
           </text>
         </>
@@ -117,7 +135,7 @@ const capW = 3 * boxW + 2 * gapX;
     </text>
   </svg>
   <figcaption class="g2tm-cap-text">
-    Six modules, then a capstone. <strong>The screen's coordinates come first</strong>
+    Six parts, then a capstone. <strong>The screen's coordinates come first</strong>
     because everything else is measured in them, and <strong>delta time comes before
     collision</strong> because a shape that moves too far in one frame passes straight
     through a wall.
@@ -133,10 +151,13 @@ const capW = 3 * boxW + 2 * gapX;
   .g2tm-m3, .g2tm-m6 { stroke: #d2a8ff; }
   .g2tm-cap { stroke: #39d3c3; stroke-width: 2; }
   .g2tm-flow { stroke: #6e7681; stroke-width: 1.2; }
-  .g2tm-num, .g2tm-label, .g2tm-sub, .g2tm-caplabel {
+  .g2tm-part, .g2tm-label, .g2tm-sub, .g2tm-caplabel {
     font-family: 'Libre Baskerville', Georgia, serif;
   }
-  .g2tm-num { font-size: 15px; font-weight: 700; fill: #6e7681; }
+  .g2tm-part {
+    font-size: 9.5px; font-weight: 700; fill: #6e7681;
+    letter-spacing: 0.08em;
+  }
   .g2tm-label { font-size: 13.5px; font-weight: 700; fill: #e6edf3; }
   .g2tm-caplabel { font-size: 15px; font-weight: 700; fill: #39d3c3; }
   .g2tm-sub { font-size: 10.5px; fill: #9198a1; }
