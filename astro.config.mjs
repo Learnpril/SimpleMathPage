@@ -114,7 +114,28 @@ export default defineConfig({
             },
             {
               label: "3D Game Development",
-              autogenerate: { directory: "applied/3d-game-development" },
+              items: [
+                { slug: "applied/3d-game-development/about-3d-game-development" },
+                {
+                  label: "Part 1: Vectors",
+                  collapsed: false,
+                  items: [
+                    { slug: "applied/3d-game-development/points-vectors-and-coordinate-conventions" },
+                    { slug: "applied/3d-game-development/length-normalization-and-distance" },
+                    { slug: "applied/3d-game-development/the-dot-product" },
+                    { slug: "applied/3d-game-development/the-cross-product-and-building-a-basis" },
+                    { slug: "applied/3d-game-development/angles-atan2-and-shortest-rotation" },
+                  ],
+                },
+                {
+                  label: "Part 2: Transforms",
+                  collapsed: false,
+                  items: [
+                    { slug: "applied/3d-game-development/matrices-as-transformations" },
+                    { slug: "applied/3d-game-development/homogeneous-coordinates-and-4x4-matrices" },
+                  ],
+                },
+              ],
             },
           ],
         },
