@@ -98,12 +98,9 @@ const ty0 = oy - R * Math.sin(rad(DEFAULT_TARGET_DEG));
   const R = 105;
   const FACING = 40;
 
-  /** Fold any angle difference into the range (-180, 180]. */
-  function wrapDeg(d: number) {
-    let x = ((d + 180) % 360 + 360) % 360 - 180;
-    if (x === -180) x = 180;
-    return x;
-  }
+  // wrapDeg comes from the module shown under this figure, so the readouts and the code
+  // the reader is told to write resolve the exactly-opposite tie the same way.
+  import { wrapDeg } from "../lib/gamedev/angles";
 
   function wire(fig: HTMLElement) {
     const input = fig.querySelector<HTMLInputElement>("[data-target-input]");

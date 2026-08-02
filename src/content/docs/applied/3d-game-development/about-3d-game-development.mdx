@@ -1,0 +1,178 @@
+---
+title: About Math for 3D Game Development
+description: The exact math needed to write gameplay, cameras, physics and tools - engine-agnostic, with every example running in the page
+sidebar:
+  order: 0
+---
+
+## What This Module Is
+
+The math you actually need to make a 3D game move.
+
+Not a survey of mathematics that happens to mention games. This Module starts from
+things you want to build - a character that walks up a slope, a camera that follows
+without jitter, a jump that feels right, a click that selects the thing under the
+cursor - and works backwards to the math that makes each one possible.
+
+import GameDev3DTopicMap from "../../../../components/GameDev3DTopicMap.astro";
+
+<GameDev3DTopicMap />
+
+Every section is built the same way: the mathematics first, on its own terms, with a
+figure you can look at. Then the same idea as code you can watch run on the page. Then,
+where it matters, a note on how another engine differs.
+
+:::tip[New to game math?]
+[Math for 2D Game Development](/applied/2d-game-development/about-2d-game-development/)
+covers the same core ideas - vectors, dot products, turning, collision - with one fewer axis
+and no handedness or quaternions to worry about. It is not required, but it is a gentler
+starting point if This Module feels like a lot on page one.
+:::
+
+## Engine-Agnostic, With Runnable Examples
+
+The math belongs to nobody. Vectors, matrices and quaternions behave identically in
+Three.js, Godot, Unity, Unreal and an engine you wrote yourself over a weekend.
+
+The examples here use **Three.js**, which runs in your browser. That is a deliberate
+choice and not a small one: every example is already running on the page you are reading,
+and every exercise runs there too. No download, no project to create, no editor to learn
+before you get to a dot product.
+
+It also removes a whole category of rot. Tutorials built on a specific engine version go
+stale when that engine renames a method or moves a panel. The Three.js version used here
+is pinned by the site, so the code you read is the code that runs, and it will still run
+later.
+
+Three.js happens to share Godot's conventions exactly - right-handed, $+Y$ up, $-Z$
+forward, column vectors - so anything you build here transfers to Godot without a single
+sign change. Unity and Unreal differ, and section 1 says exactly how.
+
+Where an engine has a built-in shortcut for something you have just built by hand, a short
+**In an engine** aside names it - `move_and_slide()`, `look_at()`,
+`Vector3.signed_angle_to()`. Those names change far less often than project setup does, so
+they stay useful.
+
+:::note[What Three.js is not]
+Three.js is a rendering library, not a game engine. It has no physics, no collision
+detection and no character controller.
+
+That is a feature here rather than a gap. In the collision and physics modules you will
+write those things instead of calling them, which is the point of a maths module - you
+cannot learn how sliding along a wall works if `move_and_slide` does it for you. The
+capstone builds a character controller from parts you made yourself.
+:::
+
+## This Is a Guide, Not a Course
+
+Applied Mathematics is reference material. There are no quizzes here, and no
+requirement to go in order - though the ordering is not arbitrary, and the map above
+shows what depends on what.
+
+Two orderings are worth respecting. **Time before curves**, because everything from
+rotations onward moves once per frame, and the most common bug in gameplay code is
+interpolation that behaves differently at 60 and 144 frames per second. And
+**collision response before the capstone**, because detecting a wall and walking along
+it are separate problems, and only one of them is in most tutorials.
+
+## How to Run the Examples
+
+There is nothing to install, nothing to download, and nothing to open a console for.
+Everything runs on the page you are already reading.
+
+**1. Play with the figures.** Every diagram with a slider is live. Where a slider exists,
+the slider is the section - reading that a dot product goes negative behind you is worth
+much less than sweeping a vector past 90 degrees and watching the sign flip.
+
+**2. Read the code that drew it.** Under most figures is a collapsible
+**The code doing this** panel. That is not a transcription: the panel and the figure import
+the same file, so what you read is what ran. If one were wrong, both would be.
+
+**3. Watch the demos.** Each section has a bordered panel or two. Where the idea has something
+to show, the panel opens with a scene you can drive - a turret tracking your pointer, a
+triangle whose normal flips when you tick a box, a movement bug that turns out to be a square
+where a circle should be - with the code that draws it underneath. A slider or a checkbox is
+all any of them needs, so a mouse or a keyboard both work.
+
+Where the point is a number rather than a picture, the panel is the code and a short list of
+what it produced. Those values were computed **while this site was built**, using that exact
+code, so they are what happened rather than what should happen. There is no button to press
+and nothing to set up.
+
+Three.js is pinned to one version for the whole site, so no figure here can break because
+of a release you did not ask for. If you install it yourself, pin yours too.
+
+:::note[A note on floating point]
+Numbers that should be clean often are not. A value that ought to print as `0` may appear
+as `6.1e-17`, which is 0.000000000000000061 - zero with dust on it. Similarly `1` can
+arrive as `0.9999999999999998`.
+
+This is normal, it happens in every language and every engine, and it is worth getting used
+to now. It is also why section 3 insists on clamping a value before handing it to `acos`.
+:::
+
+## What You Should Already Know
+
+- **[Math for 2D Game Development](/applied/2d-game-development/about-2d-game-development/)**,
+  or equivalent experience. Recommended rather than required, for the reasons above.
+- **Trigonometry** - sine, cosine, tangent, and the unit circle. Used constantly.
+- **Linear Algebra** - vectors and matrices, for the transforms and rotations modules.
+  You can start without it, but section 6 onward will be smoother with it.
+- **Algebra 2** - quadratics, for jump arcs and projectile motion.
+- **Calculus 1** - optional. Velocity and acceleration are derivatives, and knowing
+  that makes integration methods obvious rather than arbitrary. Everything here is
+  written so you do not need it.
+
+Links to each are in [Core Mathematics](/core-mathematics/). If a section here leans on
+something you have not met, it says so and links to the Core section that builds it.
+
+## What You'll Learn
+
+- **Vectors and spatial reasoning** - dot and cross products as tools rather than
+  formulas: facing checks, projections, surface normals, look-at, and turning toward a
+  target along the shortest path.
+- **Matrices and transformations** - what a matrix does to space, homogeneous
+  coordinates, why TRS order matters, and the local-world-view-clip pipeline.
+- **Rotations** - gimbal lock demonstrated rather than described, quaternions built up
+  from axis and angle, and interpolating rotations without taking the long way round.
+- **Time, interpolation and feel** - frame-rate independence, easing, Bézier curves,
+  splines, and moving along a path at constant speed.
+- **Cameras and screen space** - field of view, the frustum, and converting between
+  screen pixels and world rays for picking and aiming.
+- **Geometry and collision** - rays, planes, closest points, bounding volumes,
+  intersection tests, and resolving a collision once you have found one.
+- **Physics integration** - forces, semi-implicit Euler, and the fixed timestep.
+
+It ends with a **capstone**: a third-person character controller and camera, assembled
+from the pieces, with each piece traced back to the section that built it.
+
+## What Comes After
+
+**Math for 3D Artists &amp; Technical Art** continues where this module leaves off. It
+picks up quaternions, advanced rotation interpolation, skinning and rigging math, UVs,
+normals and the pipeline that gets a model from a DCC tool into an engine correctly.
+If you finish this module and want to go deeper into the spatial math side rather than the
+physics side, that is the next step.
+
+## How to Get the Most Out of This Module
+
+**Play with the figures.** Where a slider exists, the slider is the section. Reading
+that a dot product goes negative behind you is worth less than sweeping a vector past
+90 degrees and watching the sign flip.
+
+**Build the small thing immediately.** Every section has something you can implement in
+under twenty lines. A working `look_at` you wrote yourself teaches more than a chapter
+about cross products.
+
+**Trust your eyes for bugs and the math for correctness.** Games are unusually
+forgiving: a wrong sign is visible instantly because the character walks backwards. Use
+that. But when something almost works, go back to the math rather than adding another
+minus sign until it looks right.
+
+:::note[You've Got This]
+Most game math is a handful of ideas reused constantly. Dot product, cross product,
+matrix multiply, lerp - that short list carries an enormous fraction of everything a
+game does, and none of it is harder than the trigonometry you have already met. The
+hard part was never the math; it was that nobody told you which parts mattered or why.
+That is what This Module is for.
+:::

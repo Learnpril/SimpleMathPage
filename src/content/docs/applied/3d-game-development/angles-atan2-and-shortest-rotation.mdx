@@ -1,0 +1,362 @@
+---
+title: Angles, atan2 and Shortest Rotation
+description: Getting a signed angle out of two vectors, wrapping it into a sensible range, and turning toward a target without spinning the long way round
+sidebar:
+  order: 5
+---
+
+import SymbolKey from "../../../../components/SymbolKey.astro";
+import ShortestRotationDial from "../../../../components/ShortestRotationDial.astro";
+import CodePanel from "../../../../components/CodePanel.astro";
+import anglesSource from "../../../../lib/gamedev/angles.ts?raw";
+import DemoPanel from "../../../../components/DemoPanel.astro";
+
+## What You'll Learn
+
+Why `atan2` is the function you want and plain `atan` almost never is. How to get a
+**signed** angle, since `acos` can only ever give you a positive one. How to wrap an
+angle difference so a turret turns 10 degrees instead of 350. this section closes out
+Module 1 by turning the dot and cross products into a working "turn toward that" routine.
+
+## First, What These Functions Are
+
+`sin`, `cos` and `tan` go **from an angle to a ratio**. The three functions in this
+section go the other way, **from a ratio back to an angle**, which is why they are called
+the _inverse_ trigonometric functions. The `a` prefix is short for _arc_, and each one
+reads as "the angle whose ... is this".
+
+<SymbolKey
+  title="The three functions this section uses"
+  items={[
+    {
+      sym: "acos(x)",
+      read: "arc cosine of x: the angle whose cosine is x",
+      note: "input must be between −1 and 1. Output is 0° to 180°, never negative - which is exactly why it cannot tell you which way to turn",
+    },
+    {
+      sym: "atan(x)",
+      read: "arc tangent of x: the angle whose tangent is x",
+      note: "input is a single ratio, usually y divided by x. Output is only −90° to 90°, so it covers half the circle and cannot tell +x from −x",
+    },
+    {
+      sym: "atan2(y, x)",
+      read: "the angle of the vector (x, y), measured from the +x axis",
+      note: "takes the two components separately rather than their ratio. Output is −180° to 180°, covering the whole circle. Note the argument order: y first",
+    },
+  ]}
+/>
+
+The **output range** of each is the whole story of this section. `acos` can only return
+0° to 180°, so it can measure how far apart two directions are but never which side.
+`atan` can only return −90° to 90°, so it covers half the circle. `atan2` returns the
+full −180° to 180°, which is why it is the one you want.
+
+The same three appear in every engine and language under these names, occasionally
+written `arccos`, `arctan` and `arctan2` in mathematical notation. They mean the same
+things.
+
+## atan2, Not atan
+
+Given a vector, its angle from the positive $x$ axis is:
+
+$$
+\theta = \operatorname{atan2}(v_y, v_x)
+$$
+
+Note the argument order: **y first**. Almost every language and engine agrees on this,
+and almost everybody gets it wrong the first time.
+
+Why not $\arctan(v_y / v_x)$? Two reasons, both fatal.
+
+**It loses the quadrant.** The vectors $(1, 1)$ and $(-1, -1)$ point in opposite
+directions, but $y/x$ is $1$ for both, so plain `atan` returns $45^\circ$ for each. It
+cannot distinguish them, because the division threw the information away.
+
+**It divides by zero.** A vector pointing straight up is $(0, 1)$, and $1/0$ is
+infinity.
+
+`atan2` takes the two components separately, so it keeps the signs and handles zero. It
+returns a value in $(-180^\circ, 180^\circ]$, covering the full circle.
+
+That is `angleOf` in the panel above:
+
+```js
+const angle = Math.atan2(v.y, v.x); // radians, y first
+
+// In 3D there is no single angle, so pick a plane. For a yaw on the ground
+// plane, feed atan2 the x and z components:
+const toTarget = new THREE.Vector3().subVectors(target.position, mesh.position);
+const yaw = Math.atan2(toTarget.x, toTarget.z);
+```
+
+Note the ground-plane version passes `(x, z)`, not `(z, x)`. Which order you want depends
+on where you measure yaw from; check the sign once against a known direction and write it
+down rather than guessing.
+
+:::note[In an engine]
+Godot: `atan2(v.y, v.x)`, or the clearer `Vector2.angle()`, with `angle_to_point()` going
+straight from one position to another.
+
+Unity: `Mathf.Atan2(v.y, v.x)`, returning radians even though most of Unity's rotation API
+is in degrees.
+:::
+
+## Signed Angles
+
+The previous section used `acos` for the angle between two vectors. It has a limitation
+worth stating plainly: **`acos` always returns a value between 0 and 180 degrees.** It
+tells you _how far apart_ two directions are, never which side.
+
+That is useless for turning. "The target is 40 degrees away" does not say whether to turn
+left or right.
+
+The fix combines both products from the last two sections. The **dot** product gives the
+cosine, the **cross** product gives the sine, and `atan2` of the two gives a signed
+angle:
+
+$$
+\theta = \operatorname{atan2}\big((\vec{a} \times \vec{b}) \cdot \hat{n},\;
+\vec{a} \cdot \vec{b}\big)
+$$
+
+In 2D it is simpler, because the cross product is already a scalar:
+
+$$
+\theta = \operatorname{atan2}(a_x b_y - a_y b_x,\; a_x b_x + a_y b_y)
+$$
+
+Now the sign carries the direction. The dot product answers "how aligned", the cross
+answers "which side", and `atan2` combines them into one number that says both.
+
+Those are `signedAngle2` and `signedAngle3` in the panel above. Three.js has no built-in
+for either, so this is one you genuinely write yourself:
+
+```js
+// 2D: the 2D cross gives the sine, the dot gives the cosine.
+const signed2 = Math.atan2(a.x * b.y - a.y * b.x, a.dot(b));
+
+// 3D: measured about an axis, because "which side" needs a plane.
+const c = new THREE.Vector3().crossVectors(a, b);
+const axis = new THREE.Vector3(0, 1, 0);
+const signed3 = Math.atan2(c.dot(axis), a.dot(b));
+```
+
+Three.js's `a.angleTo(b)` is **unsigned** - it is the clamped arccosine from the previous section, and it cannot tell you which way to turn.
+
+:::note[In an engine]
+Godot has both, with an inconsistency worth knowing: `Vector2.angle_to()` returns a
+**signed** angle while `Vector3.angle_to()` returns an **unsigned** one. For 3D you need
+`Vector3.signed_angle_to(b, axis)`.
+
+Unity: `Vector3.SignedAngle(from, to, axis)`, which returns **degrees** rather than radians.
+Mixing that up with a radians-based rotation gives you an error of about 57x, which is
+obvious the moment you run it.
+:::
+
+## Wrapping, and the Long Way Round
+
+Here is the bug this section exists to prevent.
+
+An enemy faces $350^\circ$. The player is at $10^\circ$. The difference is:
+
+$$
+10 - 350 = -340^\circ
+$$
+
+So the enemy rotates 340 degrees clockwise, spinning almost all the way round, to look at
+something 20 degrees away.
+
+<ShortestRotationDial />
+
+<CodePanel
+  code={anglesSource}
+  lang="ts"
+  file="src/lib/gamedev/angles.ts"
+  label="The code doing this, and everything else in this section"
+/>
+
+The figure imports `wrapDeg` from that file. That matters at exactly half a turn, where
+clockwise and counter-clockwise are equally short and there is no right answer - the figure
+and the code you are told to write resolve that tie the same way because they are the same
+function.
+
+The problem is that $-340^\circ$ and $+20^\circ$ describe the **same final heading**.
+Angles are only defined up to full turns, so an angle difference has infinitely many
+representations, and subtraction hands you an arbitrary one.
+
+You want the representative in $(-180^\circ, 180^\circ]$, which is always the short way.
+Add half a turn, take the remainder, subtract half a turn:
+
+$$
+\text{wrap}(d) = \big((d + 180) \bmod 360\big) - 180
+$$
+
+There is a trap in writing that directly. JavaScript's `%` is a **remainder**, not a
+modulo, so it keeps the sign of the left operand: `-160 % 360` is `-160`, not `200`. Add
+360 and take the remainder again to force a non-negative result:
+
+```js
+// wrapDeg from the panel above.
+const wrapDeg = (degrees) => {
+  const m = (degrees + 180) % 360;
+  return (m < 0 ? m + 360 : m) - 180;
+};
+
+wrapDeg(-340); // 20     not -340
+wrapDeg(370); // 10
+wrapDeg(180); // -180   the tie, resolved clockwise
+```
+
+The radian version replaces 180 with `Math.PI` and 360 with `TAU`, and is `wrapRad` in the
+panel.
+
+:::note[In an engine]
+Godot ships these and you should use them rather than rolling your own:
+`angle_difference(from, to)` returns the shortest signed difference,
+`rotate_toward(current, target, max_step)` turns by at most a given amount the short way,
+and `lerp_angle()` interpolates the short way round.
+
+Unity has `Mathf.DeltaAngle(a, b)` and `Mathf.LerpAngle`, both in degrees.
+
+Three.js has none of these, which is why this section writes them. If you ever find yourself
+writing `lerp(currentAngle, targetAngle, t)` in any language, that is the bug - the angle
+version is the fix.
+:::
+
+## Putting Module 1 Together
+
+A turret that tracks a target, at a limited turn rate, using every idea from this module:
+
+```js
+const TURN_RATE = 2.0; // radians per second
+const RANGE = 30;
+const rangeSq = RANGE * RANGE; // section 2: compare squares, computed once
+
+const UP = new THREE.Vector3(0, 1, 0);
+const toTarget = new THREE.Vector3();
+const forward = new THREE.Vector3();
+const perp = new THREE.Vector3();
+
+function updateTurret(turret, target, dt) {
+  toTarget.subVectors(target.position, turret.position);
+
+  // section 2: cheap range check, no square root taken
+  if (toTarget.lengthSq() > rangeSq) return;
+
+  // Flatten to the ground plane so the turret yaws without tilting.
+  toTarget.y = 0;
+
+  // section 2: a zero-length direction has no answer, so bail out
+  if (toTarget.lengthSq() < 1e-6) return;
+  toTarget.normalize();
+
+  // section 1: -Z is forward, which getWorldDirection already accounts for
+  turret.getWorldDirection(forward);
+  forward.y = 0;
+  if (forward.lengthSq() < 1e-6) return;
+  forward.normalize();
+
+  // sections 3, 4 and 5 together: dot gives the cosine, cross gives the sine,
+  // atan2 of the pair gives a signed angle that says how far AND which way.
+  perp.crossVectors(forward, toTarget);
+  const signed = Math.atan2(perp.dot(UP), forward.dot(toTarget));
+
+  // Turn the short way, capped by the turn rate so it looks mechanical.
+  const maxStep = TURN_RATE * dt;
+  turret.rotateY(Math.min(maxStep, Math.max(-maxStep, signed)));
+}
+```
+
+Every line traces back to a section. The squared-distance check is section 2, the zero
+guard is section 2, the forward vector convention is section 1, the signed angle is sections
+3 through 5, and the clamp is the turn-rate limit that makes it look mechanical instead of
+instant.
+
+## Worked Example
+
+A guard faces $170^\circ$. A noise comes from $200^\circ$. Which way, and how far?
+
+**Raw difference.** $200 - 170 = 30^\circ$. Already inside $\pm 180$, so no wrapping
+needed. Turn 30 degrees counter-clockwise.
+
+Now the noise comes from $-170^\circ$ (equivalently $190^\circ$, but suppose your code
+produced the negative form).
+
+**Raw difference.** $-170 - 170 = -340^\circ$.
+
+**Wrapped.** $(-340 + 180) \bmod 360 - 180$. Using a non-negative modulo,
+$-160 \bmod 360 = 200$, so the result is $200 - 180 = 20^\circ$.
+
+**Verdict.** Turn 20 degrees counter-clockwise, not 340 clockwise. Same destination,
+seventeen times less rotation.
+
+## See It Work
+
+### A turret that turns the short way
+
+Move your pointer and the turret follows, turning at a limited rate. Then **untick the box**
+and sweep the pointer across the screen behind it.
+
+<DemoPanel name="turret" />
+
+With wrapping on it always takes the short way, however fast you move. With it off, crossing
+behind makes it swing almost all the way round, because the raw difference is telling it to
+rotate 350 degrees instead of 10. The line under the scene shows the difference actually being
+used - watch it jump past 180 the moment the box is unticked.
+
+That is the entire bug, with an on/off switch.
+
+:::caution[The sign that catches everyone]
+The barrel points along the turret's local $-Z$, so the yaw that faces a target at $(x, z)$ is
+`atan2(-x, -z)` with **both** components negated. Writing `atan2(x, z)` looks perfectly
+reasonable and aims exactly half a turn wrong. This scene had that bug.
+:::
+
+### Raw versus wrapped, in numbers
+
+<DemoPanel name="wrapping" />
+
+Read the middle rows first: raw and wrapped agree, so code using the raw difference works fine
+there. Now the top row - raw says $-340^\circ$ where the honest answer is $+20^\circ$. Same
+destination, seventeen times the rotation, wrong direction.
+
+That is why this bug survives testing. It behaves perfectly across most of the circle and
+misbehaves only in a region you may never have walked through.
+
+The last rows cover the awkward cases. `wrapDeg(180)` and `wrapDeg(-180)` return the same
+value, which matters more than which value it is: half a turn is equally short either way, so
+a function that answered inconsistently would make a turret facing directly away from its
+target flip direction every frame and judder.
+
+### Interpolating an angle
+
+<DemoPanel name="lerp-angles" />
+
+Both journeys start at 350 and end on the same heading, but look at the middle. Plain `lerp`
+sits at 180 halfway through - it is blending the _numbers_ 350 and 10 and has no idea they are
+angles, so it sweeps 340 degrees the long way. `lerpAngle` wraps the difference first and
+travels 20.
+
+Note `lerpAngle` ends on **370**, not 10. Those are the same heading, and the difference is
+deliberate: snapping to 10 on the last step would jump backwards a full turn, which is exactly
+the discontinuity the function exists to prevent. Wrap an angle when you **display** it, not
+while you are interpolating it.
+
+## Where This Shows Up
+
+- **Turrets, enemies and NPC heads**, every time something tracks something else.
+- **Steering behaviours**, where the sign of the angle decides the direction of the
+  correction.
+- **Vehicle steering and boids**, whose whole model is "turn toward this by at most that".
+- **Compass and minimap arrows**, which are `atan2` of a relative position, wrapped for
+  display.
+- **Animation blending**, choosing a turn-left or turn-right animation from the sign of the
+  difference.
+- **Any rotation that occasionally spins the wrong way**, which is nearly always an unwrapped
+  angle difference.
+
+:::note[The one thing to take away]
+Never subtract two angles and use the result directly. Wrap it. And when you need to know
+_which way_ to turn, `acos` cannot tell you - you need the cross product's sign, or `atan2`,
+or a helper like Godot's `angle_difference` that already does both.
+:::

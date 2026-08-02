@@ -1,0 +1,92 @@
+---
+title: About Math for 2D Game Development
+description: The math behind a 2D game - one fewer axis, every idea visible on screen, and the on-ramp to the 3D module
+sidebar:
+  order: 0
+---
+
+## What This Module Is
+
+The math you need to make a 2D game move, aimed at someone who has not written one before.
+
+Two dimensions are not a simplified version of anything. They are where the ideas are
+**visible**. A direction is two numbers you can see on screen. A rotation is one angle. A
+collision is two shapes overlapping in a picture. Nothing is hidden behind a convention you
+have to take on trust.
+
+import GameDev2DTopicMap from "../../../../components/GameDev2DTopicMap.astro";
+
+<GameDev2DTopicMap />
+
+Every section is built the same way: the mathematics first, on its own terms, with a figure
+you can drive. Then the same idea as code you can watch run on the page. Then, where it
+matters, a short note on what an engine calls it.
+
+## Everything Runs on This Page
+
+There is nothing to install, nothing to download, and nothing to open a console for.
+
+The demos use the browser's **2D canvas**, which is deliberate. It is the plainest drawing
+API there is - `moveTo`, `lineTo`, `fillRect` - so the code under each scene reads as
+arithmetic and a few drawing calls rather than as a graphics library. You can follow it
+without knowing what a scene graph or a mesh is.
+
+Each section has a bordered panel or two. Where the idea has something to show, the panel
+opens with a scene you can drive with a slider or a checkbox, and the code that draws it
+sits underneath. Where the point is a number rather than a picture, the panel is the code
+and a short list of what it produced - computed **while this site was built**, using that
+exact code, so it is what happened rather than what should happen.
+
+## What You Should Already Know
+
+Deliberately little, and that is the point of starting here.
+
+- **Algebra Basics** - rearranging and solving an equation.
+- **Geometry** - coordinates, and the Pythagorean theorem. Used constantly.
+- **Trigonometry**, the first half - sine, cosine, tangent, and the unit circle. Needed from
+  Module 2 onward. You can start Module 1 without it.
+
+That is all. No Linear Algebra, no Calculus. Links to each are in
+[Core Mathematics](/core-mathematics/), and any section that leans on something says so and
+links to the Core section that builds it.
+
+## What You'll Learn
+
+- **The screen and its coordinates** - world space versus screen space, why Y usually
+  points down, and how that one convention flips half your intuitions about "up".
+- **Vectors** - a place versus a displacement, length, distance, normalizing, and the dot
+  product as a facing test.
+- **Turning and aiming** - the 2D cross product and which side of a line something is on,
+  `atan2`, rotating a point, and turning the short way round instead of the long way.
+- **Transforms and cameras** - translate, rotate and scale, why the order matters, parent
+  and child spaces, and converting a mouse click into a world position.
+- **Time and feel** - frame-rate independence, easing, and moving along a curve. This is
+  where a game stops feeling stiff.
+- **Collision** - circles, boxes, segments and convex polygons, then what to do once you
+  have found an overlap.
+- **Physics** - velocity and gravity without calculus, and a jump solved backwards from the
+  height and airtime you actually want.
+
+It ends with a **capstone**: a 2D platformer character with a camera that follows properly,
+assembled from the pieces, with each piece traced back to the section that built it.
+
+## How to Get the Most Out of This Module
+
+**Move the sliders.** Where a control exists, the control is the section. Reading that a dot
+product goes negative behind you is worth less than sweeping a vector past 90 degrees and
+watching the sign flip.
+
+**Build the small thing immediately.** Every section has something you can write in under
+twenty lines. A working "turn toward the target" that you wrote yourself teaches more than a
+chapter about angles.
+
+**Trust your eyes for bugs and the math for correctness.** 2D is unusually forgiving here: a
+wrong sign is visible instantly, because the sprite goes the wrong way. Use that. But when
+something almost works, go back to the math rather than adding another minus sign until it
+looks right.
+
+:::note[You've Got This]
+Most 2D game math is a handful of ideas reused constantly. Subtract two positions,
+normalize, dot, `atan2`, lerp. That short list carries an enormous fraction of everything a 2D game does, and none of it is harder than the trigonometry you have already met. The hard
+part was never the math; it was that nobody told you which five things mattered.
+:::

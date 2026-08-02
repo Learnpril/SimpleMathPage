@@ -77,22 +77,210 @@ site:
 - `<figure role="img" aria-label="...">` with a scoped `<style>`, and
   `svg { width:100%; max-width:100%; height:auto; }`.
 
-## Engine-agnostic, with concrete examples
+## Engine-agnostic, with runnable examples
 
-The math belongs to nobody. Godot and Blender are the worked examples because they are
-free and good to learn in, not because the material is about them. A reader on Unity,
-Unreal or a custom engine must never feel this track is not for them.
+The math belongs to nobody. **Three.js is the example environment** because it runs
+embedded in the page: no download, no project setup, and the version is pinned by us so
+the reader never has one to mismatch. A reader on Godot, Unity, Unreal or a custom engine
+must never feel this track is not for them.
 
 **Lesson shape, in this order:**
 
-1. **The mathematics.** Stated and shown on its own terms, with a figure. No tool
+1. **The mathematics.** Stated and shown on its own terms, with a figure. No library
    mentioned yet. This part must stand alone.
-2. **The same thing in a tool.** A `:::note[In Godot]` or `:::note[In Blender]` aside.
-   Use that exact naming so readers can seek it or skip it, and so the boundary
-   between math and tool is visible at a glance.
-3. **Cross-engine note, only where the difference bites.** A
-   `:::note[In other engines]` aside. Do not add one out of habit - add it where a
-   reader would otherwise get a wrong sign or a sideways object.
+2. **The same thing in code.** Plain JavaScript or Three.js, inline. Where the figure
+   above is driven by a real module, show it with `CodePanel`.
+3. **Engine aside, naming methods only.** A `:::note[In an engine]` aside giving the
+   Godot and Unity spellings - `move_and_slide()`, `Vector3.slide()`,
+   `signed_angle_to()`. Method names are far more stable than project setup, so they age
+   well. **Do not** write engine install steps, node trees or Inspector instructions.
+   Add the aside where a reader would otherwise get a wrong sign, not out of habit.
+
+**Show the code that ran, not a copy of it.** Lesson maths goes in
+`src/lib/gamedev/*.ts`. The figure imports it; the page displays it with `CodePanel` fed
+by a Vite `?raw` import of the same file. That way the panel cannot drift from the
+behaviour above it, and the lesson can say so honestly. Never pass `CodePanel` a
+hand-typed string.
+
+## Visual first. This is the governing rule.
+
+**Whenever a piece of code can be shown as something moving on screen, show it that way.**
+Text output is the exception, not the default, and it has to earn its place.
+
+The audience is not assumed to be fluent in JavaScript. They are here for the maths. A
+column of printed numbers asks them to simulate the program in their head; a moving picture
+does that work for them. The turret demo is the reference: a scene they can point at, a
+checkbox that switches the bug on and off, and the code beside it.
+
+Reach for text output only when:
+
+- the point **is** a value - a NaN appearing, a sign flipping, two numbers that should
+  agree and do not
+- you are describing what a specific function or block does, line by line
+- the idea has no spatial meaning at all
+
+Everything else gets a scene. Concretely, prefer:
+
+| Instead of printing    | Show                                    |
+| :--------------------- | :-------------------------------------- |
+| a vector's components  | the arrow, with a slider                |
+| a length or distance   | the arrow changing length               |
+| a dot product's sign   | a shape crossing the perpendicular line |
+| a cross product        | the perpendicular arrow in 3D           |
+| an angle or a rotation | the thing rotating                      |
+| an interpolation table | the object moving along the path        |
+| a collision result     | the shapes overlapping                  |
+
+**Two things on screen beat one plus a paragraph.** The strongest pattern found so far is a
+correct version and a broken version side by side, or one object with a toggle that
+introduces the bug. The reader sees the difference rather than being told about it.
+
+**Give every scene a control.** A slider or a checkbox turns a picture into an experiment.
+Native `<input>` elements only, with visible labels, so they work by keyboard.
+
+**Never ask the reader to leave the page.** No "save this as index.html". This is a
+Three.js site; the demo belongs in the lesson. If a scene is worth describing, it is worth
+mounting.
+
+## Restraint is the point. Read this before adding to a panel.
+
+The instinct to show everything that was verified is wrong for a reader. A panel that
+carried a scene, the scene's source, a second "the maths, checked at build time" source, a
+twenty-row value table and a Run button was rejected as overwhelming, and correctly.
+**This material gets complicated fast, so the page has to stay simple.** Settled rules:
+
+- **No Run button.** Everything executes during the build. A button asking the reader to
+  confirm that taught nothing and added a step.
+- **No "open the console" or F12 instructions.** Every exercise runs in the page.
+- **A visual demo shows no numbers.** Scene, then the one file that drew it. That is all.
+  The picture is the explanation; a value table under it competes with the thing it was
+  meant to support.
+- **A values demo is under about eight rows.** If it wants more, it is two ideas.
+- **Explanation lives in the prose, not in the code block.** A ten-line doc comment at the
+  top of a demo file fills the viewport before a reader reaches a line of code. Demo files
+  get a one-line comment; the lesson does the explaining.
+- **Exhaustive sweeps go in `demos/checks.ts`**, run via a registry `check`, and are never
+  displayed. Checking 90,601 points is worth doing and not worth reading. A single summary
+  row is the most a sweep should ever cost the reader.
+- **Scene boilerplate goes in `demos/ui.ts`** - `makeCanvas`, `addSlider`, `addCheckbox`,
+  `addReadout`, `addArrowPad`, `addButton`. A scene file should read as maths and meshes,
+  not as `document.createElement`.
+- Section heading is `## See It Work`, not `## Try It Yourself`. Nothing is being assigned.
+
+## Never hand-write expected output: use DemoPanel
+
+Any "what you should see" block written by hand is a liability. Two such blocks in
+Module 1 were wrong when first written - `lerpAngle` at t=1 prints 370, not 10, and the
+vision-cone edge returns `true` at 140 degrees where the text claimed `false`. Both were
+caught only by going looking.
+
+`DemoPanel` removes the whole class of error. Write the example as a demo module and it is
+**executed during the build**, so the output on the page is the output the code produced:
+
+1. Add `src/lib/gamedev/demos/<name>.ts` exporting a default `Demo` - a function taking
+   `log(expr, value, note?)`.
+2. Register it in `src/lib/gamedev/demos/index.ts` with a title and file path.
+3. Drop `<DemoPanel name="<name>" />` into the lesson. Nothing else.
+
+**A values panel is code first, then its rows.** The source is the thing being taught and is
+always visible; the values sit under it. An early version had this inverted - output
+prominent, source collapsed - which put the conclusion before the premise.
+
+Guarantees this buys, all verified:
+
+- **A broken demo fails the build.** `runDemo` and `runCheck` deliberately let exceptions
+  escape, so a throwing demo aborts `astro build` with a non-zero exit rather than
+  publishing a page that documents its own failure. Tested by breaking one on purpose.
+- **Output cannot drift.** Change `wrapDeg` and every panel using it changes with it.
+- **No `eval`, no iframe, no sandbox, no button.** A demo is a module we wrote and Vite
+  bundled, executed at build time, so there is nothing to isolate and nothing to trigger.
+- **Values work without JavaScript**, because the rows are static HTML. Only a scene needs
+  script, and it carries a `<noscript>` pointing at the code below it.
+
+**Demos must be deterministic.** Their output is committed to the repository, so
+`Math.random`, `Date.now` and Map iteration order will churn the diff on every build.
+Seed randomness or keep it out.
+
+**Show the whole file, but make the file worth showing.** Do not trim displayed code down to
+its "interesting" lines - the plumbing is not noise to someone who wants to build one of
+these, and hiding it makes the demo feel like a magic trick. The right lever is the other
+one: keep the file short. Push DOM boilerplate to `ui.ts`, push assertions to `checks.ts`,
+and keep the header comment to one line.
+
+## DemoPanel can also host a live scene
+
+A demo may add a **visual** as well as values, which is how a lesson shows something
+moving without asking the reader to save an `index.html` and open it themselves. Never
+tell a reader to save a file: this is a Three.js site, so the demo belongs on the page.
+
+Structure, using the turret as the reference. **A visual demo displays exactly two things:
+the scene and the file that drew it.** Three files, only one of them shown:
+
+- `demos/<name>.scene.ts` - the `MountFn`, `(el, { reduced }) => teardown`. The only file
+  that imports Three.js, and **the only one the reader sees**. Keep it short: canvas and
+  controls come from `ui.ts`, and the header comment is one line.
+- `demos/<name>-shared.ts` - the pure geometry and any conversion the scene relies on. No
+  Three.js, so the build can exercise it.
+- `demos/checks.ts` - the assertions over that shared module, exported as a named `check`.
+  Runs during the build, never rendered.
+
+Registry entry is `visual`, `visualFile`, an optional `hint`, and `check`. No `demo` and no
+`file`: a scene with a value table under it was the arrangement that got rejected. The
+**lazy** `visual` import matters - it keeps Three.js out of the build-time module graph and
+gives the scene its own chunk, fetched only when the panel scrolls into view.
+
+Requirements for a scene:
+
+- Lazy-mount behind an `IntersectionObserver`, return a teardown, and dispose on
+  `astro:before-swap`. DemoPanel handles all three; the mount just returns the cleanup.
+- Honour the `reduced` flag: render one frame and let interaction drive updates. A scene
+  driven only by sliders needs nothing here, since it never animates on its own.
+- Include a `<noscript>` fallback pointing at the code below. DemoPanel supplies one.
+- Build controls with `ui.ts`, which gives every one of them a label and a keyboard path.
+- **One control at a time, and never a held one.** A reader with a mouse has a single pointer,
+  so "hold two arrow keys" is impossible for most of them. The movement demo originally shipped
+  an on-screen arrow pad for exactly that and it could not be used; it became a single
+  direction slider, which turned out to teach better anyway. A slider or a checkbox is enough
+  for any scene in this track.
+- **Put the live numbers in the scene, not under the panel.** One `addReadout` line showing
+  the value that decides what you are looking at - `dot 0.42 vs threshold 0.71 → not seen` -
+  does the job a whole table was failing to do.
+
+**The scene itself is not verified and cannot be**, because a build step has no GPU. Say so
+if a lesson makes a claim that depends on appearance. What _is_ verified is the arithmetic
+that positions everything, via `checks.ts`.
+
+**Push coordinate mapping out of the scene so it becomes testable.** The turret's first
+version aimed exactly backwards: forward is local `-Z`, so facing a target at `(x, z)`
+needs `atan2(-x, -z)`, and `atan2(x, z)` is half a turn wrong. Every build-time row passed,
+because the bug was in the mapping rather than the maths being logged.
+
+The fix generalises. Any time a scene converts between a direction and an angle, or between
+world and local space, put that conversion in a pure function in the shared file and add a
+**round-trip assertion** in `checks.ts`: aim at a target, then measure where you ended up
+pointing, and assert the alignment is 1. The old code scored -1 on every case, so the check
+has teeth. A test only catches what it looks at, so when the visible thing cannot be tested,
+test the arithmetic that positions it.
+
+**Orthonormal is not the same as right-handed, and only one of them is easy to check.**
+`buildBasis` in `cross.ts` shipped with `right = cross(worldUp, forward)`, which for a
+-Z-forward system returns the object's **left**. All six obvious checks passed - three unit
+lengths, three zero dot products - because the triple was still orthonormal. It was just
+left-handed, so anything oriented by it came out mirrored, with no error and no NaN. The
+correct form is `right = cross(forward, worldUp)` then `up = cross(right, forward)`, verified
+by a **determinant row**: `dot(cross(right, up), -forward)` must be `+1`, checked across a
+grid of directions rather than one. Add that row to any basis-building demo. Symptoms that
+are neither a crash nor a wrong number are the ones a build cannot catch by accident.
+
+**Give a scene a `hint` only when it needs one.** `DemoEntry.hint` renders one line under the
+canvas. Use it when the control is not visible - pointer movement, arrow keys - and omit it
+when there is a labelled `<input>` doing the explaining, because a redundant instruction reads
+as clutter. Do not hard-code a hint in `DemoPanel`; an early version told every scene's reader
+to move their pointer, including one driven by a slider.
+
+**Exercises need nothing installed and nothing opened.** Everything is a `DemoPanel` on the
+page - a scene where the idea moves, a short value list where the idea is a number. No
+`index.html` to save, no console to open, no button to press.
 
 **Handedness makes this load-bearing, not decorative.** Godot is right-handed, Y-up,
 −Z forward. Unity is left-handed, Y-up, +Z forward. Blender is Z-up. So any lesson
@@ -101,10 +289,10 @@ Unity reader unless the convention is stated. Keep one conventions reference tab
 (handedness, up axis, forward axis, row vs column vectors) in the transforms module and
 link back to it rather than repeating the caveat in every lesson.
 
-**Pin the versions.** Godot 3 and 4 differ enough to invalidate examples - node names,
-`Transform2D`/`Transform3D`, the `move_and_slide` signature - and Blender moves its UI
-between releases. State the version a track's examples were written against on its
-about page, so material that has rotted is identifiable instead of merely confusing.
+**Pin the versions.** Three.js is churnier than most libraries: revisions remove APIs and
+move `examples/jsm` paths. Site figures are safe because `package.json` pins the version,
+but any Three.js URL written into lesson prose must be pinned too - never `three@latest`.
+State the pinned revision on the about page.
 
 **Hub copy stays generic.** `/applied-mathematics/` and `/about/` name no tools in the
 card, tagline or description; the hub body carries the engine-agnostic positioning

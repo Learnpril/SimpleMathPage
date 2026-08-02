@@ -4,24 +4,40 @@ description: Math you can use - games, 3D, shaders, AI and more
 ---
 
 Math aimed at a craft. Where [Core Mathematics](/core-mathematics/) builds the
-subject from the ground up and proves things, this track starts from a thing you
+subject from the ground up and proves things, Applied Mathematics starts from a thing you
 want to build and works backwards to the math that makes it possible.
 
 The difference is real, not cosmetic. Expect fewer proofs, fewer quizzes, and more
 worked projects. Formulas show up here because something on screen needs them, and
-every track says plainly which Core subjects it leans on.
+every module says plainly which Core subjects it leans on.
 
 You do not need to finish Core first. Most tracks need arithmetic, some algebra and
 comfortable trigonometry, and they name any heavier prerequisite where it comes up.
 
-## Tracks
+## Modules
 
 {/* prettier-ignore */}
 <div class="subject-grid">
-  <a href="/applied/game-development/about-game-development/" class="subject-card" data-level="applied" data-slug="game-development">
-    <svg class="subject-icon" viewBox="0 0 200 90" xmlns="http://www.w3.org/2000/svg"><line x1="20" y1="78" x2="180" y2="78" class="si-axis" /><path d="M30,78 Q70,10 110,78" class="si-graph" fill="none" stroke-dasharray="5 4" /><circle cx="30" cy="78" r="5" class="si-dot" /><circle cx="70" cy="44" r="4" class="si-shape" fill="none" /><line x1="70" y1="44" x2="104" y2="44" class="si-accent-line" /><polygon points="108,40 118,44 108,48" class="si-arrow" /><rect x="140" y="52" width="26" height="26" class="si-shape" fill="none" /></svg>
-    <span class="subject-title">Math for Game Development</span>
-    <span class="subject-desc">Vectors, transforms, collision, interpolation, and the frame-by-frame math a game loop runs on.</span>
+  <a href="/applied/2d-game-development/about-2d-game-development/" class="subject-card" data-level="applied" data-slug="2d-game-development">
+    <svg class="subject-icon" viewBox="0 0 200 90" xmlns="http://www.w3.org/2000/svg"><line x1="20" y1="76" x2="180" y2="76" class="si-axis" /><line x1="20" y1="76" x2="20" y2="12" class="si-axis" /><path d="M34,76 Q76,4 118,76" class="si-graph" fill="none" stroke-dasharray="5 4" /><rect x="28" y="66" width="16" height="16" class="si-shape" fill="none" /><circle cx="76" cy="40" r="5" class="si-dot" /><line x1="76" y1="40" x2="112" y2="40" class="si-accent-line" /><polygon points="116,36 126,40 116,44" class="si-arrow" /><rect x="146" y="60" width="22" height="22" class="si-shape" fill="none" /></svg>
+    <span class="subject-title">Math for 2D Game Development</span>
+    <span class="subject-desc">Vectors, angles, collision and game feel with one fewer axis - where every idea is visible on screen. The place to start.</span>
+    <span class="subject-footer"><span class="subject-lessons-badge">In Progress</span></span>
+  </a>
+  <a href="/applied/3d-game-development/about-3d-game-development/" class="subject-card" data-level="applied" data-slug="3d-game-development">
+    <svg class="subject-icon" viewBox="0 0 200 90" xmlns="http://www.w3.org/2000/svg">
+      <polygon points="100,14 148,38 100,62 52,38" class="si-shape" fill="none" />
+      <polygon points="100,62 148,38 148,62 100,86" class="si-shape" fill="none" opacity="0.5" />
+      <polygon points="100,62 52,38 52,62 100,86" class="si-shape" fill="none" opacity="0.35" />
+      <line x1="100" y1="50" x2="150" y2="74" class="si-accent-line" />
+      <polygon points="152,72 146,78 144,70" class="si-arrow" />
+      <line x1="100" y1="50" x2="100" y2="10" class="si-accent-line" />
+      <polygon points="96,10 100,2 104,10" class="si-arrow" />
+      <line x1="100" y1="50" x2="56" y2="72" class="si-accent-line" />
+      <polygon points="54,68 50,76 58,74" class="si-arrow" />
+    </svg>
+    <span class="subject-title">Math for 3D Game Development</span>
+    <span class="subject-desc">Transforms, rotations, cameras, collision response and physics integration - the frame-by-frame math a 3D game loop runs on.</span>
     <span class="subject-footer"><span class="subject-lessons-badge">In Progress</span></span>
   </a>
   <div class="subject-card coming-soon" data-level="applied" data-slug="technical-art">
@@ -56,24 +72,25 @@ comfortable trigonometry, and they name any heavier prerequisite where it comes 
   </div>
 </div>
 
-## How this track is different
+## How Applied Mathematics is different
 
-**Projects instead of problem sets.** A lesson ends with something running, not with
+**Projects instead of problem sets.** A section ends with something running, not with
 twenty exercises. The check on your understanding is whether the thing behaves.
 
-**Engine-agnostic math, concrete examples.** The mathematics in these tracks does not
-belong to any one program. Vectors, matrices, quaternions, noise and lighting models
-work the same everywhere. Godot and Blender are used as the main examples because they
-are free, easy to get hold of, and good to learn in, but everything here transfers
-directly to Unity, Unreal, or an engine you wrote yourself.
+**Engine-agnostic math, examples that run here.** The mathematics in these modules does
+not belong to any one program. Vectors, matrices, quaternions, noise and lighting models
+work the same everywhere. The worked examples run in your browser rather than in a tool
+you have to install first, so there is no download and no version of anything to
+mismatch - and everything transfers directly to Godot, Unity, Unreal, Blender, or an
+engine you wrote yourself.
 
-Each idea is taught as mathematics first, then shown in a tool, with a note on where
-another engine differs when the difference actually matters. Engines come and go; the
-math does not.
+Each idea is taught as mathematics first, then as code you can watch run, with a note
+naming the equivalent method in the major engines where a difference would actually
+mislead you. Engines come and go; the math does not.
 
-**Prerequisites stated, not assumed.** Each track opens with the Core subjects it
-depends on and links straight to them. If a shader lesson needs the dot product, it
-links to the lesson that builds the dot product.
+**Prerequisites stated, not assumed.** Each module opens with the Core subjects it
+depends on and links straight to them. If a shader section needs the dot product, it
+links to the section that builds the dot product.
 
 :::note[Want the rigorous version?]
 Every technique here rests on something proved in

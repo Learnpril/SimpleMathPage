@@ -1,0 +1,311 @@
+---
+title: The Dot Product
+description: One multiply-and-add that answers "is it in front of me", "how much of this lies along that", and "what is the angle" - plus the acos clamp that prevents NaN
+sidebar:
+  order: 3
+---
+
+import DotProductDial from "../../../../components/DotProductDial.astro";
+import CodePanel from "../../../../components/CodePanel.astro";
+import DemoPanel from "../../../../components/DemoPanel.astro";
+import dotSource from "../../../../lib/gamedev/dot.ts?raw";
+
+## What You'll Learn
+
+The dot product as three tools wearing one hat: a facing test, a projection, and an
+angle. Which of the three you actually want most of the time (the first). And the
+floating-point guard that stops the third from producing `NaN`.
+
+## The Formula, and What It Means
+
+Multiply matching components, add the results:
+
+$$
+\vec{a} \cdot \vec{b} = a_x b_x + a_y b_y + a_z b_z
+$$
+
+The output is a single number, not a vector. That is worth saying out loud, because it
+is the difference between the dot product and the cross product and the source of a lot
+of confusion.
+
+The reason it is useful is the second identity:
+
+$$
+\vec{a} \cdot \vec{b} = |\vec{a}|\,|\vec{b}| \cos\theta
+$$
+
+where $\theta$ is the angle between them. Two very different-looking expressions for the
+same number: one you can compute with three multiplies, one that tells you what it
+means.
+
+<DotProductDial />
+
+<CodePanel
+  code={dotSource}
+  lang="ts"
+  file="src/lib/gamedev/dot.ts"
+  label="The code doing this, and everything else in this section"
+/>
+
+The figure imports `dot` and `angleBetween` from that file. The angle readout is a real
+clamped arccosine, not the slider value relabelled, which is why it folds back after half
+a turn.
+
+## Use One: Is It In Front Of Me?
+
+This is the one you will reach for constantly, and it does not need the angle at all -
+only the **sign**.
+
+Since $|\vec{a}|$ and $|\vec{b}|$ are always positive, the sign of the dot product is
+the sign of $\cos\theta$:
+
+| Dot product | Angle                | Meaning                       |
+| :---------- | :------------------- | :---------------------------- |
+| positive    | less than $90^\circ$ | pointing broadly the same way |
+| zero        | exactly $90^\circ$   | perpendicular                 |
+| negative    | more than $90^\circ$ | pointing broadly opposite     |
+
+So to ask "is the player in front of this guard", take the guard's forward vector, take
+the vector from guard to player, and check the sign. No angle, no trigonometry, no
+square roots.
+
+That is `isInFront` in the panel above. In Three.js:
+
+```js
+const forward = new THREE.Vector3();
+guard.getWorldDirection(forward); // -Z forward, from section 1
+
+const toPlayer = new THREE.Vector3().subVectors(
+  player.position,
+  guard.position,
+);
+
+if (forward.dot(toPlayer) > 0) {
+  console.log("player is somewhere ahead");
+}
+```
+
+Neither vector needs normalizing for a **sign** test, because normalizing only divides by
+a positive length and cannot change a sign. Skip it and save two square roots per check.
+
+:::note[In an engine]
+Godot: `(-global_transform.basis.z).dot(to_player) > 0.0`.
+Unity: `Vector3.Dot(transform.forward, toPlayer) > 0f`, with no minus sign because Unity's
+forward is +Z.
+:::
+
+### A field of view test
+
+Narrowing "ahead" to "within a 60 degree cone" needs one more step. A 60 degree cone
+means 30 degrees either side of forward, so compare the dot product against
+$\cos 30^\circ \approx 0.866$:
+
+$$
+\hat{f} \cdot \hat{d} > \cos\left(\tfrac{\text{fov}}{2}\right)
+$$
+
+Here both vectors **must** be normalized first - meaning you divide each one by its own
+length so it becomes a unit vector of length 1 (see the previous section). If you skip
+this, the dot product's value depends on how far away the target is, not just the angle,
+and the comparison against the threshold becomes meaningless. Normalizing strips out the
+distance and leaves only the direction, which is all the cone test cares about.
+
+Note that a wider cone means a _smaller_ threshold, which reads backwards at first:
+$\cos$ decreases as the angle grows. A 60 degree cone uses $\cos 30° \approx 0.87$ as
+its threshold, while a 140 degree cone uses $\cos 70° \approx 0.34$. The wider the
+opening, the lower the bar the dot product has to clear.
+
+That is `isInCone` in the panel above. Here it is running - drag the sliders and watch
+the comparison happen:
+
+<DemoPanel name="cone" />
+
+The guard is the grey dot, looking up the screen. The blue wedge is its field of view.
+Move the **target bearing** and the dot turns green the moment `forward.dot(toPlayer)`
+climbs above the threshold, and red when it drops below. Widen the **field of view** and
+the threshold falls - which is the $\cos$ decreasing as the angle grows.
+
+In Three.js the same thing is four lines:
+
+```js
+const FOV_DEG = 60;
+const threshold = Math.cos(THREE.MathUtils.degToRad(FOV_DEG * 0.5)); // 0.866, once
+
+const toPlayer = new THREE.Vector3()
+  .subVectors(player.position, guard.position)
+  .normalize();
+
+if (forward.dot(toPlayer) > threshold) {
+  console.log("player is in the guard's cone of vision");
+}
+```
+
+Compare the cosine, not the angle. Calling `Math.acos` per enemy per frame just to compare
+against 30 degrees does the same job and throws away the arccosine's cost for nothing.
+
+:::note[In an engine]
+Identical in Godot and Unity, with `cos(deg_to_rad(...))` and `Mathf.Cos(... * Mathf.Deg2Rad)`
+respectively. Unity also has `Vector3.Angle`, which returns degrees and is convenient but
+computes the arccosine you were trying to avoid.
+:::
+
+## Use Two: How Much Of This Lies Along That?
+
+The **projection** of $\vec{b}$ onto $\vec{a}$ is the part of $\vec{b}$ that points
+along $\vec{a}$:
+
+$$
+\text{proj}_{\vec{a}}\vec{b} = \frac{\vec{a} \cdot \vec{b}}{|\vec{a}|^2}\,\vec{a}
+$$
+
+If $\vec{a}$ is already normalized this collapses to the pleasant form
+$(\vec{a} \cdot \vec{b})\,\vec{a}$, which is the teal bar in the figure above.
+
+Two immediate uses. **Speed in a direction**: the dot product of velocity with forward
+tells you how fast you are going forwards, ignoring any sideways drift. And
+**decomposition**: any vector splits into a part along a direction and a part
+perpendicular to it, and subtracting the projection leaves the perpendicular part:
+
+$$
+\vec{b}_{\perp} = \vec{b} - (\hat{a} \cdot \vec{b})\,\hat{a}
+$$
+
+Hold on to that last equation. It is exactly how sliding along a wall works, and it
+comes back in the collision response section: remove the component of velocity going
+into the wall, keep the rest, and the character slides instead of sticking.
+
+Those are `project` and `slide` in the panel above. Three.js gives you the first and not
+the second:
+
+```js
+// The part going into the wall.
+const along = velocity.clone().projectOnVector(wallNormal);
+
+// Everything except that part, which is the sliding motion.
+const sliding = velocity.clone().sub(along);
+```
+
+Three.js has `projectOnVector` and `projectOnPlane`; `projectOnPlane` is the slide, so
+`velocity.clone().projectOnPlane(wallNormal)` does it in one call. Both expect the normal
+to be normalized.
+
+:::note[In an engine]
+Godot has both directly: `velocity.project(n)` and `velocity.slide(n)`. Unity has
+`Vector3.Project` and `Vector3.ProjectOnPlane`. All three are this one formula with
+different names, and `move_and_slide` in the collision section is built on it.
+:::
+
+## Use Three: The Actual Angle
+
+Rearranging the second identity gives the angle:
+
+$$
+\theta = \arccos\left(\frac{\vec{a} \cdot \vec{b}}{|\vec{a}|\,|\vec{b}|}\right)
+$$
+
+Here $\arccos$ - spelled `acos` in most languages - is the **inverse** of cosine: where
+$\cos$ turns an angle into a ratio, $\arccos$ turns a ratio back into an angle. It reads
+as "the angle whose cosine is this". Its input must lie between $-1$ and $1$, and its
+output is always between $0^\circ$ and $180^\circ$. The next section leans on that output
+range, because an always-positive angle cannot tell you which way to turn.
+
+Use this when you genuinely need a number of degrees - to display it, or to feed a
+rotation speed. Prefer the sign test or the cosine comparison when you do not.
+
+### The clamp that prevents NaN
+
+`arccos` is only defined on $[-1, 1]$. Mathematically the fraction above can never
+leave that range. In floating point it absolutely can, because a normalized vector's
+length is not exactly 1 and the division can land on `1.0000001`.
+
+`acos(1.0000001)` is `NaN`, and once `NaN` is in a rotation it stays there.
+
+So clamp, always:
+
+$$
+\theta = \arccos\big(\text{clamp}(x, -1, 1)\big)
+$$
+
+That is `angleBetween` in the panel above, and the clamp is the reason it exists as a
+function rather than a one-liner:
+
+```js
+const c = a.dot(b) / (a.length() * b.length());
+const angle = Math.acos(THREE.MathUtils.clamp(c, -1, 1)); // the clamp is not optional
+```
+
+Three.js's `a.angleTo(b)` already clamps internally, so prefer it when you can:
+
+```js
+const angle = a.angleTo(b); // safe, and shorter
+```
+
+The clamp matters when you write the arithmetic yourself, which you will as soon as you
+need a signed angle - the subject of section 5, since `angleTo` always returns a positive
+value and cannot tell you which way to turn.
+
+:::note[In an engine]
+Godot's `Vector3.angle_to()` and Unity's `Vector3.Angle()` also clamp internally. Every
+library does, because every library has been bitten by it.
+:::
+
+## Worked Example
+
+A guard faces $\hat{f} = (0, 0, -1)$, Godot's forward. The player is at
+$(3, 0, -4)$ relative to the guard. Is the player within a 90 degree cone?
+
+**Distance and direction.** $|\vec{d}| = \sqrt{9 + 16} = 5$, so
+$\hat{d} = (0.6, 0, -0.8)$.
+
+**Dot product.** $\hat{f} \cdot \hat{d} = (0)(0.6) + (0)(0) + (-1)(-0.8) = 0.8$.
+
+**Threshold.** A 90 degree cone is 45 degrees each side, and
+$\cos 45^\circ \approx 0.707$.
+
+**Verdict.** $0.8 > 0.707$, so yes, just inside. The actual angle is
+$\arccos(0.8) \approx 36.9^\circ$ from forward, comfortably under 45.
+
+Notice we answered the question with a comparison and only computed the angle afterwards
+to check the work.
+
+## See It Work
+
+### The NaN hiding inside `acos`
+
+Nothing to look at here - the whole event is one number going a single bit too far.
+
+<DemoPanel name="acos-clamp" />
+
+What is the angle between a vector and itself? Zero, obviously. But a normalized vector dotted
+with itself comes out as `1.00000000000000022` rather than `1`, and `Math.acos` of anything
+above 1 is `NaN`.
+
+The clamp fixes it in one line and costs nothing when it is not needed - the 90-degree case
+still answers 90. That is why `angleBetween` above applies it unconditionally instead of
+checking whether it looks necessary.
+
+:::note[In an engine]
+Three.js does this for you: `a.angleTo(b)` clamps internally, as do Godot's
+`Vector3.angle_to()` and Unity's `Vector3.Angle()`. The clamp becomes yours to write when you
+compute the cosine yourself - which you will, because the cosine is the cheap part and the
+arccosine is the expensive one you usually want to skip.
+:::
+
+## Where This Shows Up
+
+- **Enemy perception** - facing tests and vision cones, exactly as above.
+- **Lighting.** Diffuse shading is $\max(0, \hat{n} \cdot \hat{l})$: how much a surface
+  faces the light. The `max` is a facing test, throwing away the surfaces pointing away.
+- **Backface culling.** A triangle is skipped when its normal points away from the
+  camera, which is one dot product per triangle.
+- **Wall sliding and surface friction**, decomposing velocity into "into the surface"
+  and "along the surface".
+- **Audio panning**, using the dot product of the listener's right vector with the
+  direction to a sound source to decide left versus right.
+
+:::note[The one thing to take away]
+Reach for the **sign** first. Most questions that sound like they need an angle - in
+front, behind, facing away, within a cone - are answered by a dot product's sign or by
+comparing it to a precomputed cosine. Computing the actual angle is the slow, fragile
+option, and it needs a clamp.
+:::

@@ -1,0 +1,346 @@
+---
+/**
+ * DemoPanel - a scene with the code that drew it, or a short list of values with the code
+ * that produced them.
+ *
+ * There is no Run button. Everything here is executed while the site is built, so the rows
+ * on the page are the rows the code produced; asking a reader to press a button to find
+ * that out added a step and taught nothing. If a demo throws, `runDemo` lets the exception
+ * escape and the build fails, so a broken example cannot ship.
+ *
+ * Two layouts, chosen by whether the entry has a `visual`:
+ *
+ *   <DemoPanel name="turret" />   scene, then the source that drew it. No value table.
+ *   <DemoPanel name="wrapping" /> source, then a short table of values.
+ *
+ * A visual demo shows no numbers at all. The picture is the explanation and the prose
+ * around it does the pointing; a table of intermediate values underneath was competing
+ * with the thing it was meant to support. Exhaustive checks still run at build time via
+ * the entry's `check`, they are simply not printed.
+ */
+import { Code } from "astro:components";
+import { DEMOS } from "../lib/gamedev/demos";
+import { runDemo, runCheck } from "../lib/gamedev/demos/runner";
+
+interface Props {
+  name: string;
+}
+
+const { name } = Astro.props;
+
+const entry = DEMOS[name];
+if (!entry) {
+  throw new Error(
+    `DemoPanel: no demo registered as "${name}". Known: ${Object.keys(DEMOS).join(", ")}`,
+  );
+}
+
+const hasVisual = Boolean(entry.visual);
+
+// Both run now, during the build. An exception here is intentional and fatal.
+if (entry.check) runCheck(entry.check);
+const rows = !hasVisual && entry.demo ? runDemo(entry.demo) : [];
+
+// Vite reads the demo sources once, eagerly, so the panel can show the file it ran.
+const sources = import.meta.glob("../lib/gamedev/demos/*.ts", {
+  query: "?raw",
+  import: "default",
+  eager: true,
+}) as Record<string, string>;
+const shown = hasVisual ? entry.visualFile : entry.file;
+const key = shown
+  ? Object.keys(sources).find((k) =>
+      k.endsWith(shown.replace("lib/gamedev/demos/", "")),
+    )
+  : undefined;
+const source = key ? sources[key].trimEnd() : "";
+---
+
+<div class="demo" data-demo-panel data-demo={name} data-visual={hasVisual ? "true" : undefined}>
+  <div class="demo-bar">
+    <span class="demo-title">{entry.title}</span>
+  </div>
+
+  {
+    hasVisual && (
+      <div class="demo-stage" data-stage>
+        <noscript>
+          <p class="demo-noscript">
+            This demo needs JavaScript. The code that draws it is below.
+          </p>
+        </noscript>
+      </div>
+    )
+  }
+
+  {hasVisual && entry.hint && <div class="demo-hint">{entry.hint}</div>}
+
+  {
+    source && (
+      <>
+        <div class="demo-sublabel">
+          {hasVisual ? "The code that draws it" : "The code"}
+          <code class="demo-file">src/{shown}</code>
+        </div>
+        <div class="demo-code">
+          <Code code={source} lang="ts" theme="github-dark" />
+        </div>
+      </>
+    )
+  }
+
+  {
+    rows.length > 0 && (
+      <div class="demo-out">
+        {rows.map((r) => (
+          <div class={`demo-line${r.value === "" ? " demo-head" : ""}`}>
+            <span class="demo-expr">{r.expr}</span>
+            {r.value !== "" && <span class="demo-arrow">&rarr;</span>}
+            {r.value !== "" && <span class="demo-val">{r.value}</span>}
+            {r.note && <span class="demo-note">// {r.note}</span>}
+          </div>
+        ))}
+      </div>
+    )
+  }
+</div>
+
+<script>
+  import { DEMOS } from "../lib/gamedev/demos";
+
+  /** Live scenes, so they can be disposed on client-side navigation. */
+  const teardowns = new Map<HTMLElement, () => void>();
+
+  function mount(panel: HTMLElement) {
+    if (panel.dataset.wired) return;
+    panel.dataset.wired = "true";
+    if (panel.dataset.visual !== "true") return;
+
+    const stage = panel.querySelector<HTMLElement>("[data-stage]");
+    const entry = DEMOS[panel.dataset.demo ?? ""];
+    if (!stage || !entry?.visual || stage.querySelector("canvas")) return;
+
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const obs = new IntersectionObserver(
+      (entries) => {
+        if (!entries[0].isIntersecting) return;
+        obs.disconnect();
+        entry.visual!().then((mod) => {
+          teardowns.set(stage, mod.default(stage, { reduced }));
+        });
+      },
+      { threshold: 0.05 },
+    );
+    obs.observe(stage);
+  }
+
+  function setup() {
+    document.querySelectorAll<HTMLElement>("[data-demo-panel]").forEach(mount);
+  }
+
+  document.addEventListener("astro:before-swap", () => {
+    teardowns.forEach((fn) => fn());
+    teardowns.clear();
+  });
+
+  setup();
+  document.addEventListener("astro:page-load", setup);
+</script>
+
+<style>
+  .demo {
+    margin: 1.25rem 0 1.75rem;
+    border: 1px solid var(--sl-color-gray-5, #30363d);
+    border-radius: 6px;
+    overflow: hidden;
+    background: #0d1117;
+  }
+
+  .demo-bar {
+    padding: 0.45rem 0.75rem;
+    background: rgba(57, 211, 195, 0.07);
+    border-bottom: 1px solid var(--sl-color-gray-5, #30363d);
+  }
+  .demo-title {
+    font-family: "Libre Baskerville", Georgia, serif;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #39d3c3;
+  }
+
+  /* The scene, and whatever controls it added for itself. */
+  .demo-stage {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-bottom: 0.4rem;
+    min-height: 300px;
+  }
+  .demo-stage :global(canvas) {
+    display: block;
+    max-width: 100%;
+  }
+
+  /* One labelled slider per row, with its value on the right. */
+  .demo-stage :global(.demo-row) {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    width: 100%;
+    max-width: 26rem;
+    margin: 0.35rem 0 0;
+    font-family: "Libre Baskerville", Georgia, serif;
+    font-size: 0.8rem;
+    color: #9198a1;
+  }
+  .demo-stage :global(.demo-row label) {
+    min-width: 7.5rem;
+  }
+  .demo-stage :global(.demo-row input) {
+    flex: 1;
+    accent-color: #39d3c3;
+  }
+  .demo-stage :global(.demo-row output) {
+    min-width: 3rem;
+    text-align: right;
+    font-weight: 700;
+    color: #39d3c3;
+  }
+
+  .demo-stage :global(.demo-check) {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    margin: 0.5rem 0 0;
+    font-family: "Libre Baskerville", Georgia, serif;
+    font-size: 0.8rem;
+    color: #9198a1;
+    cursor: pointer;
+    accent-color: #39d3c3;
+  }
+
+  .demo-stage :global(.demo-readout) {
+    margin: 0.45rem 0 0;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 0.74rem;
+    color: #7d8590;
+    text-align: center;
+  }
+
+  .demo-stage :global(.demo-btn:focus-visible) {
+    outline: 2px solid #39d3c3;
+    outline-offset: 2px;
+  }
+  .demo-stage :global(.demo-btn) {
+    margin: 0.5rem 0 0;
+    padding: 0.2rem 0.7rem;
+    border-radius: 0.3rem;
+    border: 1px solid #30363d;
+    background: transparent;
+    color: #7d8590;
+    font-family: var(--sl-font);
+    font-size: 0.72rem;
+    cursor: pointer;
+  }
+
+  .demo-hint {
+    padding: 0 0.75rem 0.6rem;
+    font-family: "Libre Baskerville", Georgia, serif;
+    font-size: 0.75rem;
+    color: #7d8590;
+    text-align: center;
+  }
+  .demo-noscript {
+    padding: 1.5rem 1rem;
+    font-family: "Libre Baskerville", Georgia, serif;
+    font-size: 0.82rem;
+    font-style: italic;
+    color: #7d8590;
+    text-align: center;
+  }
+
+  /* The value rows, for a values demo. */
+  .demo-out {
+    padding: 0.6rem 0.75rem;
+    border-top: 1px solid var(--sl-color-gray-5, #30363d);
+    overflow-x: auto;
+  }
+  .demo-line {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 0.78rem;
+    line-height: 1.8;
+    white-space: pre;
+  }
+  .demo-head {
+    margin-top: 0.4rem;
+    color: #7d8590;
+  }
+  .demo-head:first-child {
+    margin-top: 0;
+  }
+  .demo-expr {
+    color: #9198a1;
+  }
+  .demo-arrow {
+    color: #545d68;
+  }
+  .demo-val {
+    color: #7ee787;
+    font-weight: 700;
+  }
+  .demo-note {
+    color: #7d8590;
+    font-style: italic;
+    white-space: normal;
+  }
+
+  /* One label above the source, naming the file so it is findable in the repository. */
+  .demo-sublabel {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+    padding: 0.4rem 0.75rem;
+    border-top: 1px solid var(--sl-color-gray-5, #30363d);
+    background: rgba(255, 255, 255, 0.02);
+    font-family: "Libre Baskerville", Georgia, serif;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #7d8590;
+  }
+  .demo-file {
+    text-transform: none;
+    letter-spacing: 0;
+    font-weight: 400;
+    font-size: 0.72rem;
+    color: #7d8590;
+    background: transparent;
+  }
+  .demo-code :global(pre) {
+    margin: 0;
+    border-radius: 0;
+    font-size: 0.76rem;
+    max-height: 24rem;
+    overflow: auto;
+  }
+
+  /* The panel keeps its dark terminal look in light mode, which is what code looks like
+     everywhere, but the chrome around it follows the theme. */
+  :global([data-theme="light"]) .demo {
+    border-color: #d0d7de;
+  }
+  :global([data-theme="light"]) .demo-bar {
+    background: rgba(13, 125, 114, 0.08);
+    border-bottom-color: #30363d;
+  }
+  :global([data-theme="light"]) .demo-title {
+    color: #0d7d72;
+  }
+</style>

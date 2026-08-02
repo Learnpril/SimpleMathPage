@@ -119,6 +119,10 @@ const initLen = baseLen * Math.abs(DEFAULT_K);
 </figure>
 
 <script>
+  // Imported from the module the lesson displays under this figure, so the readouts
+  // below are produced by the code the reader can see.
+  import { length, lengthSq, normalize } from "../lib/gamedev/vectors";
+
   const BASE = { x: 3, y: 4 };
   const OX = 170;
   const OY = 230;
@@ -141,36 +145,33 @@ const initLen = baseLen * Math.abs(DEFAULT_K);
 
     function update() {
       const k = parseFloat(input!.value);
-      const x = BASE.x * k;
-      const y = BASE.y * k;
-      const L = Math.hypot(x, y);
+      const v = [BASE.x * k, BASE.y * k];
+      const L = length(v);
 
-      vec!.setAttribute("x2", (OX + x * S).toFixed(2));
-      vec!.setAttribute("y2", (OY - y * S).toFixed(2));
+      vec!.setAttribute("x2", (OX + v[0] * S).toFixed(2));
+      vec!.setAttribute("y2", (OY - v[1] * S).toFixed(2));
 
-      comp!.textContent = `(${x.toFixed(2)}, ${y.toFixed(2)})`;
+      comp!.textContent = `(${v[0].toFixed(2)}, ${v[1].toFixed(2)})`;
       len!.textContent = L.toFixed(3);
-      // Computed from components, not from L, so the squared value is independently
-      // derived rather than a restatement.
-      len2!.textContent = (x * x + y * y).toFixed(3);
+      // lengthSq is computed from the components independently, so the squared row is
+      // a second derivation rather than a restatement of the row above it.
+      len2!.textContent = lengthSq(v).toFixed(3);
 
-      // Guarding the zero-length case is the practical lesson here: dividing by a
-      // length of zero yields NaN and silently poisons everything downstream.
-      const EPS = 1e-6;
-      if (L < EPS) {
+      // normalize() returns null for a zero-length input rather than NaN. Reporting
+      // that honestly is the practical lesson of this figure.
+      const unit = normalize(v);
+      if (unit === null) {
         norm!.textContent = "undefined";
         normLen!.textContent = "-";
         warn!.textContent = "length 0: cannot normalize";
         uvec!.setAttribute("x2", OX.toFixed(2));
         uvec!.setAttribute("y2", OY.toFixed(2));
       } else {
-        const nx = x / L;
-        const ny = y / L;
-        norm!.textContent = `(${nx.toFixed(3)}, ${ny.toFixed(3)})`;
-        normLen!.textContent = Math.hypot(nx, ny).toFixed(3);
+        norm!.textContent = `(${unit[0].toFixed(3)}, ${unit[1].toFixed(3)})`;
+        normLen!.textContent = length(unit).toFixed(3);
         warn!.textContent = "";
-        uvec!.setAttribute("x2", (OX + nx * S).toFixed(2));
-        uvec!.setAttribute("y2", (OY - ny * S).toFixed(2));
+        uvec!.setAttribute("x2", (OX + unit[0] * S).toFixed(2));
+        uvec!.setAttribute("y2", (OY - unit[1] * S).toFixed(2));
       }
 
       out!.textContent = `\u00D7${k.toFixed(2)}`;

@@ -1,0 +1,348 @@
+---
+title: Points, Vectors and Coordinate Conventions
+description: The difference between a place and a displacement, and the axis conventions that make the same math produce different signs in different engines
+sidebar:
+  order: 1
+---
+
+import PointVsVector from "../../../../components/PointVsVector.astro";
+import HandednessTriads3D from "../../../../components/HandednessTriads3D.astro";
+import AngleUnitsDial from "../../../../components/AngleUnitsDial.astro";
+import CodePanel from "../../../../components/CodePanel.astro";
+import DemoPanel from "../../../../components/DemoPanel.astro";
+import conventionsSource from "../../../../lib/gamedev/conventions.ts?raw";
+
+## What You'll Learn
+
+The difference between a point and a vector and why storing both as `(x, y, z)` hides
+a real distinction. What basis vectors are. Which way is up and which way is forward in
+Godot, Unity and Blender, and why that single table prevents most sign errors. Degrees
+versus radians, and why every engine function wants radians.
+
+## Three Dimensions and Three Axes
+
+In 2D you needed two numbers to place something on screen - how far right and how far up.
+A game world that has depth needs a third number: how far _in front of_ or _behind_ the
+screen. That is what "3D" means. Three independent directions, each measured by one number.
+
+Those directions are called **axes**, and they are labelled **X**, **Y** and **Z**. Each
+axis is a straight line running through the origin - the single point in space where all
+three numbers are zero.
+
+- **X** typically runs left to right.
+- **Y** typically runs down to up.
+- **Z** runs into or out of the screen, depending on the engine. More on this shortly.
+
+Any location in 3D space is written as three numbers in that order: `(x, y, z)`. The
+numbers say "go this far along X, this far along Y, and this far along Z, starting from
+the origin."
+
+Drag the sliders below and watch the orange dot move. Each slider controls exactly one
+axis, so you can feel what each number does independently.
+
+<DemoPanel name="axes-intro" />
+
+A few things to notice while you drag:
+
+- Setting all three to zero puts the dot at the origin, where the arrows meet.
+- Changing X moves the dot along the red arrow only. Y and Z do not change.
+- Negative values move the dot in the opposite direction along that axis.
+- The grid lies on the X-Z plane (where Y is zero). Raising Y lifts the dot above it.
+
+That grid, those three arrows and that origin are the **coordinate system**. Everything in
+a 3D game - every mesh, every camera, every collision shape - is placed by three numbers
+measured against the same set of axes. What differs between engines is **which axis points
+which way**, and the rest of this section is about that.
+
+## Points and Vectors Are Not the Same Thing
+
+Both are three numbers. They mean different things.
+
+A **point** is a location. $(3, 2, 0)$ as a point is a specific spot - 3 along the X axis,
+2 along the Y axis, and 0 along the Z axis. The numbers are always written in that order:
+X first, Y second, Z third. It only means anything once you have agreed where the origin is.
+
+A **vector** is a displacement - a direction with a length, and no location at all.
+$\langle 3, 2, 0 \rangle$ as a vector means _three right and two up_, starting from wherever
+you happen to be.
+
+:::note[A note on notation]
+Some textbooks use parentheses for points - $(3, 2)$ - and angle brackets for vectors -
+$\langle 3, 2 \rangle$ - specifically so you can tell which one you are holding. This is a
+real convention and a useful one.
+
+In code, however, there is no angle-bracket type. Three.js, Godot and Unity all write
+`Vector3(3, 2, 0)` for both, and the only thing distinguishing a position from a direction
+is the name you give the variable. That is why the distinction is worth holding in your head
+even though the compiler will not enforce it for you.
+:::
+
+<PointVsVector />
+
+All three arrows in that figure are the same vector. They are drawn in different places
+because a vector does not have a place. Their tips are three different points.
+
+This is not pedantry, and here is the practical test:
+
+- **Point minus point is a vector.** Enemy position minus player position gives the
+  displacement from you to the enemy. Subtracting two places gives a journey.
+- **Point plus vector is a point.** Your position plus your velocity times delta time
+  gives your new position. Applying a journey to a place gives a place.
+- **Point plus point is nothing.** There is no meaningful sum of two locations. If you
+  find yourself adding positions, something is wrong - except when you are averaging
+  them, which is really a weighted sum of displacements from the origin.
+
+Nearly every library uses one type for both. Three.js has `Vector3` and so does Godot;
+you decide per variable whether it holds a place or a displacement. The compiler will not
+help you, which is exactly why the distinction is worth holding in your head.
+
+```js
+// Three.js. The naming is the only thing keeping the two ideas apart, so name
+// displacements after what they do and points after what they are.
+const toTarget = new THREE.Vector3().subVectors(target.position, mesh.position);
+const nextPos = mesh.position.clone().addScaledVector(velocity, dt);
+```
+
+Note `subVectors(a, b)` rather than `a.sub(b)`: the second form modifies `a` in place,
+which is a common early surprise. Three.js methods mutate by default, and `.clone()`
+is how you opt out.
+
+Later, in the transforms module, the point-versus-direction distinction becomes
+mechanical rather than a matter of discipline: points carry a fourth component of 1 and
+directions carry 0.
+
+:::note[In an engine]
+Godot spells these `target.position - self.position` and
+`self.position + velocity * delta`, with operators instead of methods, and its vectors
+are immutable value types so there is no in-place trap. Unity is
+`target.position - transform.position`. The arithmetic is identical everywhere; only the
+spelling and the mutability differ.
+:::
+
+## Basis Vectors: What the Numbers Are Counting
+
+Writing a vector as `(3, 2)` is shorthand. In full it means:
+
+$$
+(3, 2) = 3\,\hat{\imath} + 2\,\hat{\jmath}
+$$
+
+where $\hat{\imath}$ and $\hat{\jmath}$ are the **basis vectors** - one unit along x
+and one unit along y. The numbers are counts of basis vectors, not the vector itself.
+
+That sounds like a technicality until you realise the basis can be anything. A
+character's own right, up and forward directions form a basis, and the same physical
+arrow has different numbers in that basis than in the world's. "Move me one meter to my
+right" and "move me one meter along world x" are different instructions that happen to
+coincide only when the character faces down the world axis. Everything the transforms
+module does is bookkeeping for changing which basis the numbers refer to.
+
+## The Conventions Table
+
+Here is where engines genuinely disagree, and where a wrong assumption produces a model
+lying on its side or a character walking backwards.
+
+<HandednessTriads3D />
+
+<CodePanel
+  code={conventionsSource}
+  lang="ts"
+  file="src/lib/gamedev/conventions.ts"
+  label="The code doing this, and the source of the table below"
+/>
+
+That panel is not a transcription. The figure above imports `CONVENTIONS` and
+`axisVector` from that exact file, so the triads you just rotated were drawn from the
+same data the table below reports. If one were wrong, both would be.
+
+Two independent choices are being made. **Which axis points up**, and **whether the
+coordinate system is left- or right-handed**.
+
+|                   | Handedness   | Up axis | Forward axis | Vector convention          |
+| :---------------- | :----------- | :------ | :----------- | :------------------------- |
+| **Three.js**      | right-handed | $+Y$    | $-Z$         | column vectors, $M\vec{v}$ |
+| **Godot 4**       | right-handed | $+Y$    | $-Z$         | column vectors, $M\vec{v}$ |
+| **Unity**         | left-handed  | $+Y$    | $+Z$         | column vectors, $M\vec{v}$ |
+| **Unreal**        | left-handed  | $+Z$    | $+X$         | row vectors, $\vec{v}M$    |
+| **Blender**       | right-handed | $+Z$    | $-Y$         | column vectors, $M\vec{v}$ |
+| **OpenGL / glTF** | right-handed | $+Y$    | $-Z$         | column vectors, $M\vec{v}$ |
+
+Bookmark this. Six later sections refer back to it.
+
+### Handedness, and why it flips your cross products
+
+Point the fingers of your **right** hand along $+X$, curl them toward $+Y$, and your
+thumb points along $+Z$. If that matches the engine, it is right-handed. Do the same
+with your left hand and you have the left-handed convention.
+
+The consequence is concrete: **the cross product changes sign**. In a right-handed
+system $\hat{x} \times \hat{y} = +\hat{z}$; in a left-handed one the same formula
+applied to the same numbers gives a vector pointing the other way. So a "which side of
+this wall am I on" test written for Unity gives the opposite answer in Godot unless you
+account for it. This is dealt with properly in the cross product section; for now, just
+know the two are not interchangeable.
+
+### Up axis, and why exported models lie down
+
+Godot and Unity treat $+Y$ as up. Blender treats $+Z$ as up. So a model that stands
+correctly in Blender arrives in Godot rotated 90 degrees about the x axis, face-planted
+on the floor.
+
+Both tools know this and will convert on export. The reason to understand it anyway is
+that the conversion sometimes fails silently, and when a rig arrives rotated it is much
+faster to recognise a known axis swap than to hunt for a broken bone.
+
+### Forward, which is the arbitrary one
+
+Handedness and up-axis are mathematical facts about the coordinate system. Forward is
+pure convention - somebody decided which way a camera looks by default.
+
+Three.js, Godot and OpenGL all use $-Z$ as forward, which surprises people: a camera at
+the origin looks toward _negative_ z, so things in front of it have negative z
+coordinates. Unity picked $+Z$. Neither is wrong; they simply disagree.
+
+Rather than writing axis constants by hand, ask the object for its own axes. Every
+library exposes them as the three columns of its rotation matrix:
+
+```js
+// Three.js. matrixWorld holds the object's basis; extract the columns.
+const right = new THREE.Vector3();
+const up = new THREE.Vector3();
+const back = new THREE.Vector3();
+mesh.matrixWorld.extractBasis(right, up, back);
+
+const forward = back.clone().negate(); // the minus IS the -Z convention
+```
+
+That negation is the whole convention in one operator. Three.js also gives you the
+shortcut `mesh.getWorldDirection(v)`, which fills `v` with the forward direction and
+applies the negation for you.
+
+:::note[In an engine]
+Godot: `-global_transform.basis.z` for forward, `basis.x` and `basis.y` for right and up,
+with `Vector3.FORWARD` as the constant `(0, 0, -1)`. Same minus sign, same reason.
+
+Unity: `transform.forward`, `transform.right`, `transform.up`, and `forward` is `+Z` with
+**no** minus sign. Porting between them means checking every place a forward vector is
+built from raw axis numbers - anywhere you see a literal `(0, 0, -1)` or `(0, 0, 1)`,
+expect to change it.
+:::
+
+## Degrees and Radians
+
+Humans think in degrees. Every trigonometric function in every engine expects radians.
+
+A **radian** is not an arbitrary unit. It is defined so that the angle equals the arc
+length it sweeps on a circle of radius 1:
+
+<AngleUnitsDial />
+
+Sweep the slider and watch the bottom two rows. The radian measure and the arc length
+are always the same number, because the radius is 1. That is the whole definition.
+
+Since a full circle has circumference $2\pi r$, a full turn is $2\pi$ radians:
+
+$$
+360^\circ = 2\pi \text{ rad}, \qquad
+1 \text{ rad} = \frac{180^\circ}{\pi} \approx 57.296^\circ
+$$
+
+The conversions are worth memorising in this direction, because this is the direction
+you need when a designer hands you a number in degrees:
+
+$$
+\text{radians} = \text{degrees} \times \frac{\pi}{180}
+$$
+
+The values worth knowing on sight: $\pi/6 = 30^\circ$, $\pi/4 = 45^\circ$,
+$\pi/3 = 60^\circ$, $\pi/2 = 90^\circ$, $\pi = 180^\circ$.
+
+JavaScript has no degree-to-radian helper, so the conversion is one you write once:
+
+```js
+// Also in src/lib/gamedev/conventions.ts, shown in the panel above.
+const degToRad = (deg) => (deg * Math.PI) / 180;
+const radToDeg = (rad) => (rad * 180) / Math.PI;
+
+Math.sin(degToRad(90)); // 1
+Math.sin(90); // 0.8939966636005579  <-- the bug
+```
+
+`Math.sin`, `Math.cos`, `Math.atan2` and every rotation value in Three.js are in radians.
+The bug this causes is passing a degree value straight in and getting a plausible-looking
+wrong answer. `Math.sin(90)` is not 1; it is about `0.894`, because 90 radians is roughly
+fourteen full turns plus a bit. Nothing warns you.
+
+:::note[In an engine]
+Godot has `deg_to_rad()` and `rad_to_deg()` built in, and exposes `rotation_degrees`
+alongside `rotation` because the editor shows degrees to designers. Unity is the odd one
+out: its `transform.eulerAngles` and most of its rotation API are in **degrees**, while
+`Mathf.Sin` still wants radians, so Unity code mixes both units in a single file more
+often than you would like.
+:::
+
+## See It Work
+
+### An object's own axes
+
+Drag the slider and the cube turns.
+
+<DemoPanel name="basis" />
+
+**Two sets of axes are drawn.** The faint ones on the grid are the **world**, and they never
+move. The bright ones belong to the cube and turn with it - that is its basis. The white
+arrow is its forward direction, which is local $-Z$.
+
+At $0^\circ$ the two sets sit on top of each other, which is exactly why local and world
+space are easy to confuse before anything has been rotated. Move the slider and they come
+apart. The cube's red X stops pointing along the world's red X immediately, so "one meter
+along world x" and "one meter to my right" stop being the same instruction.
+
+The line under the scene shows forward as you drag. At $0^\circ$ it reads $(0, 0, -1)$ - the
+convention from the table above, on screen instead of on paper. At $90^\circ$ it is
+$(-1, 0, 0)$, facing down negative world X. At $180^\circ$ it is $(0, 0, 1)$, pointing back
+the way it started.
+
+### Subtracting one place from another
+
+The teal ball is the player. Move the orange one - the enemy - and watch the white arrow.
+
+<DemoPanel name="displacement" />
+
+**That arrow is what "point minus point" gives you.** Two places went in, and what came out
+was a journey: a direction to travel and a distance to travel it. It is the single most
+common calculation in gameplay code, because "which way is the enemy, and how far?" is the
+question everything else is built on.
+
+Watch the readout as you drag. The three numbers are just the enemy's coordinates minus the
+player's, one axis at a time. Put the enemy on the same spot as the player and the arrow
+vanishes: there is no journey to make, and no direction to report.
+
+**Now untick the checkbox and tick it again.** The faint second arrow is the _same vector_
+drawn starting at the origin instead of at the player. Same three numbers, same length, same
+direction - just drawn somewhere else. That is the thing that makes it a vector rather than a
+point. It has a direction and a length, but no home.
+
+And the rule runs in reverse. If you add that journey back onto the player's position, you
+land exactly on the enemy. Point plus vector is a point. Point minus point is a vector. Those
+two sentences are the whole of this section, and every direction you compute for the rest of
+the module is one of them.
+
+## Where This Shows Up
+
+- **Every gameplay script**, whenever you compute a direction from one thing to another
+  and have to decide whether you are holding a place or a displacement.
+- **Asset pipelines**, where the up-axis mismatch between Blender and a game engine is
+  the single most common import problem.
+- **Porting and tutorials.** Most game-math material online is written for Unity. Being
+  able to spot which parts are convention rather than mathematics is what makes it
+  usable in Godot.
+- **Networking**, where sending a position and sending a velocity have different
+  precision and prediction requirements, and conflating them causes rubber-banding.
+
+:::note[The one thing to take away]
+When something is mirrored, upside down, or facing backwards, do not start flipping
+signs until it looks right. Come back to the table above and work out _which_
+convention you assumed wrongly. A sign error you understand is fixed once; a sign error
+you guessed at comes back in the next system you write.
+:::

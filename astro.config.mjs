@@ -7,6 +7,23 @@ import rehypeBoldHeading from "./src/lib/rehype-bold-heading.mjs";
 
 export default defineConfig({
   site: "https://momsbasementuniversity.com",
+  // The game development track was split into a 2D prerequisite and a 3D track, so its
+  // pages moved from /applied/game-development/ to /applied/3d-game-development/. These
+  // keep the already-published URLs working rather than leaving six dead links.
+  redirects: {
+    "/applied/game-development/about-game-development":
+      "/applied/3d-game-development/about-3d-game-development/",
+    "/applied/game-development/points-vectors-and-coordinate-conventions":
+      "/applied/3d-game-development/points-vectors-and-coordinate-conventions/",
+    "/applied/game-development/length-normalization-and-distance":
+      "/applied/3d-game-development/length-normalization-and-distance/",
+    "/applied/game-development/the-dot-product":
+      "/applied/3d-game-development/the-dot-product/",
+    "/applied/game-development/the-cross-product-and-building-a-basis":
+      "/applied/3d-game-development/the-cross-product-and-building-a-basis/",
+    "/applied/game-development/angles-atan2-and-shortest-rotation":
+      "/applied/3d-game-development/angles-atan2-and-shortest-rotation/",
+  },
   markdown: {
     remarkPlugins: [remarkMath],
     rehypePlugins: [rehypeKatex, rehypeBoldHeading],
@@ -87,10 +104,17 @@ export default defineConfig({
           label: "Applied Mathematics",
           collapsed: true,
           items: [
-            { label: "All Applied Tracks", link: "/applied-mathematics/" },
+            { label: "All Applied Modules", link: "/applied-mathematics/" },
+            // 2D first, deliberately. It is the prerequisite: the same ideas with one
+            // fewer axis, where a sign error is visible on screen instead of hidden
+            // inside a rotation.
             {
-              label: "Game Development",
-              autogenerate: { directory: "applied/game-development" },
+              label: "2D Game Development",
+              autogenerate: { directory: "applied/2d-game-development" },
+            },
+            {
+              label: "3D Game Development",
+              autogenerate: { directory: "applied/3d-game-development" },
             },
           ],
         },
@@ -118,7 +142,8 @@ export default defineConfig({
               }
               var section = sectionKey(parts);
               var map = {
-                'applied/game-development': 'Game Development',
+                'applied/2d-game-development': '2D Game Development',
+                'applied/3d-game-development': '3D Game Development',
                 'arithmetic': 'Arithmetic',
                 'pre-algebra': 'Pre-Algebra',
                 'algebra-basics': 'Algebra Basics',
@@ -172,7 +197,8 @@ export default defineConfig({
             document.addEventListener('DOMContentLoaded', function() {
               if (window.innerWidth >= 800) return;
               var subjects = [
-                {slug:'applied/game-development', label:'Game Development', about:'about-game-development'},
+                {slug:'applied/2d-game-development', label:'2D Game Development', about:'about-2d-game-development'},
+                {slug:'applied/3d-game-development', label:'3D Game Development', about:'about-3d-game-development'},
                 {slug:'arithmetic', label:'Arithmetic', about:'about-arithmetic'},
                 {slug:'pre-algebra', label:'Pre-Algebra', about:'about-pre-algebra'},
                 {slug:'algebra-basics', label:'Algebra Basics', about:'about-algebra-basics'},
@@ -439,7 +465,8 @@ export default defineConfig({
                 ? parts[0] + '/' + parts[1]
                 : parts[0];
               var sectionMap = {
-                'applied/game-development': 'Game Development',
+                'applied/2d-game-development': '2D Game Development',
+                'applied/3d-game-development': '3D Game Development',
                 'arithmetic': 'Arithmetic',
                 'pre-algebra': 'Pre-Algebra',
                 'algebra-basics': 'Algebra Basics',

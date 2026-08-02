@@ -1,29 +1,61 @@
 ---
 inclusion: fileMatch
-fileMatchPattern: "src/content/docs/applied/game-development/**"
+fileMatchPattern: "src/content/docs/applied/3d-game-development/**"
 ---
 
-# Math for Game Development: settled curriculum
+# Math for 3D Game Development: settled curriculum
 
 Reviewed and agreed. Build from this rather than re-deriving it. Visual and figure
 standards live in `applied-math-visuals.md`, which also governs this track.
 
 ## Settled decisions
 
-- **Godot 4.x** for every code example. State the version on the about page and again
-  in the first lesson containing code. Godot 3 examples age badly: node names,
-  `Transform2D`/`Transform3D` and the `move_and_slide` signature all changed.
+- **Three.js is the example environment**, not Godot. Superseded the earlier Godot 4.x
+  decision. Reasons: examples run embedded in the page so there is no download, project
+  setup or editor tour before a reader sees a dot product; the figure and the example
+  become one artifact instead of two implementations of the same idea; and the version is
+  pinned by us, so the reader never has a version to mismatch. Three.js agrees with Godot
+  on every convention (right-handed, +Y up, -Z forward, `M * v` column vectors), so
+  nothing already written became wrong.
+- **Engine names stay, engine setup goes.** Keep short `:::note[In an engine]` asides
+  naming methods - `move_and_slide()`, `Vector3.slide()`, `look_at()`,
+  `signed_angle_to()` - because method names churn far less than project setup and
+  signatures. Do not write Godot project instructions, node trees or Inspector steps.
+- **Modules 6, 7 and the capstone build from scratch.** Three.js has no physics, no
+  collision and no character controller, so those lessons implement the maths directly
+  rather than calling an engine method. This is a feature for a maths track: you cannot
+  hide behind `move_and_slide` if you have to write it.
+- **Exercises run in the browser console** where they are print-based, and as a pinned
+  single-file Three.js page where they are visual. Zero install either way.
+- **Code shown must be code that ran.** Put lesson maths in `src/lib/gamedev/*.ts`, have
+  the figure import it, and display it with `CodePanel` fed by a Vite `?raw` import.
+  Never hand `CodePanel` a hand-typed string; drift is the thing it exists to prevent.
 - **25 pages**: about + 23 lessons + capstone. Not compressed to 21; the added
   material is the high-value part. In line with Arithmetic (28) and Algebra 2 (37).
-- **3D only.** 2D gets asides, not coverage. A dedicated 2D track may come later,
-  after the other Applied tracks are underway.
+- **3D only, and 2D is now a separate track that comes first.** Superseded the earlier
+  "2D gets asides, not coverage" decision. This track was judged to move too fast for a
+  reader who has never written a movement loop - page one asks for handedness, basis
+  vectors and the $-Z$ convention at once - so `applied/2d-game-development` was created
+  as the prerequisite. See `2d-game-dev-curriculum.md`.
+
+  What that changes here: keep the existing 2D asides, but treat 2D as **assumed
+  background** rather than a digression. Where a lesson has a 2D counterpart, link back to
+  it instead of re-teaching the idea. Do not add new 2D coverage to this track.
+
+- **This track is `applied/3d-game-development`**, moved from `applied/game-development`
+  when the split happened. Redirects for the six original URLs live in `astro.config.mjs`;
+  leave them in place.
 - **No quizzes.** Applied is a guide and reference. Expect `check-section.mjs` to
   report zero quizzes and do not "fix" it.
 - The capstone occupies the slot where Core sections put a review page.
 
 ## Prerequisites, to state on the about page
 
-Trigonometry throughout; Linear Algebra for Modules 2 and 3; Algebra 2 quadratics for
+**Math for 2D Game Development** first, or equivalent experience. It is not formally
+required - the maths here stands on its own - but it is strongly recommended, and the about
+page should say so plainly rather than burying it.
+
+Then: Trigonometry throughout; Linear Algebra for Modules 2 and 3; Algebra 2 quadratics for
 jump arcs; Calculus 1 optional, for velocity and acceleration as derivatives.
 
 ## Lesson list
@@ -156,15 +188,15 @@ Slugs are final. `order` matches the number.
 
 Applied tracks are new, so registration differs from Core's seven points:
 
-1. Sidebar group under the existing `Applied Mathematics` block in `astro.config.mjs`,
-   replacing the commented-out placeholder:
-   `{ label: "Game Development", autogenerate: { directory: "applied/game-development" } }`
-2. Turn the `game-development` card on `/applied-mathematics/` from a
-   `subject-card coming-soon` `<div>` into a real `<a>` and drop the
-   `coming-soon-badge`.
-3. Section-label maps in `astro.config.mjs` key off `path.split('/')[0]`, which is
-   `applied` for every track. Either add `applied` handling that reads the **second**
-   segment, or accept no section badge on Applied pages. Decide before writing lessons.
-4. Level map: Applied uses `data-level="applied"` (teal `#39d3c3`).
+All done, and recorded here so the next Applied track does not have to rediscover it.
+
+1. Sidebar group in `astro.config.mjs`, after the 2D group.
+2. A real `<a>` card on `/applied-mathematics/`, not a `coming-soon` `<div>`.
+3. Section-label maps key off the **second** segment for Applied, via `sectionKey()`.
+   There are three such maps - the badge map, the pagination map, and the mobile FAB's
+   `subjects` array - and all three need the track's key.
+4. Level map: Applied uses `data-level="applied"` (teal `#39d3c3`), keyed off the first
+   segment, so a new track needs no change there.
 5. `SUBJECTS` in `src/lib/progress-map.ts` only if progress tracking is wanted for a
-   track with no quizzes.
+   track with no quizzes. Not done, deliberately.
+6. Redirects if a track's URLs ever move. Six are in place from the 2D/3D split.

@@ -1,0 +1,156 @@
+---
+/**
+ * GameDev2DTopicMap - the six modules of the 2D Game Development track, and the 3D track
+ * they lead into. Laid out as a dependency flow rather than a list, because the ordering
+ * is the argument: the screen's coordinates come first, time comes before collision.
+ *
+ * Coordinates are absolute. The figure auditor does not apply SVG transforms, so a
+ * translate() here would produce phantom clipping reports.
+ */
+const modules = [
+  { n: 1, label: "The Screen", sub: "pixels, vectors, dot", col: 0, row: 0 },
+  { n: 2, label: "Turning", sub: "cross, atan2, rotate", col: 1, row: 0 },
+  { n: 3, label: "Transforms", sub: "TRS, parents, camera", col: 2, row: 0 },
+  { n: 4, label: "Time & Feel", sub: "dt, easing, paths", col: 0, row: 1 },
+  { n: 5, label: "Collision", sub: "circles, boxes, SAT", col: 1, row: 1 },
+  { n: 6, label: "Physics", sub: "gravity, jump arcs", col: 2, row: 1 },
+];
+
+const W = 560;
+const boxW = 150;
+const boxH = 52;
+const gapX = 25;
+const gapY = 58;
+const originX = (W - (3 * boxW + 2 * gapX)) / 2;
+const originY = 16;
+
+const at = (m: { col: number; row: number }) => ({
+  x: originX + m.col * (boxW + gapX),
+  y: originY + m.row * (boxH + gapY),
+});
+
+const placed = modules.map((m) => ({ ...m, ...at(m) }));
+const capY = originY + 2 * (boxH + gapY);
+const H = capY + boxH + 20;
+
+// Prerequisites worth drawing. Not every true dependency - only the ones where taking
+// the modules out of order would leave you stuck.
+const flows = [
+  [1, 2],
+  [2, 3],
+  [1, 4],
+  [1, 5],
+  [4, 6],
+  [5, 6],
+];
+
+const box = (n: number) => placed.find((p) => p.n === n)!;
+const capW = 3 * boxW + 2 * gapX;
+---
+
+<figure
+  class="g2tm"
+  role="img"
+  aria-label={`Map of the 2D Game Development track: six modules in two rows, then a capstone. ${placed
+    .map((p) => `Module ${p.n}, ${p.label}: ${p.sub}`)
+    .join(
+      ". ",
+    )}. Arrows run from the screen to turning, time and collision; from turning to transforms; and from time and collision to physics. Below them sits the capstone, a 2D platformer character.`}
+>
+  <svg viewBox={`0 0 ${W} ${H}`} xmlns="http://www.w3.org/2000/svg">
+    {
+      flows.map(([a, b]) => {
+        const from = box(a);
+        const to = box(b);
+        const x1 = from.x + boxW / 2;
+        const y1 = from.y + boxH;
+        const x2 = to.x + boxW / 2;
+        const y2 = to.y;
+        const sideways = from.row === to.row;
+        return sideways ? (
+          <line
+            x1={from.x + boxW}
+            y1={from.y + boxH / 2}
+            x2={to.x - 4}
+            y2={to.y + boxH / 2}
+            class="g2tm-flow"
+          />
+        ) : (
+          <path
+            d={`M ${x1} ${y1} C ${x1} ${y1 + 24}, ${x2} ${y2 - 24}, ${x2} ${y2 - 4}`}
+            class="g2tm-flow"
+            fill="none"
+          />
+        );
+      })
+    }
+    {
+      placed.map((p) => (
+        <>
+          <rect
+            x={p.x}
+            y={p.y}
+            width={boxW}
+            height={boxH}
+            rx="6"
+            class={`g2tm-box g2tm-m${p.n}`}
+          />
+          <text x={p.x + 11} y={p.y + 21} class="g2tm-num">
+            {p.n}
+          </text>
+          <text x={p.x + 30} y={p.y + 21} class="g2tm-label">
+            {p.label}
+          </text>
+          <text x={p.x + 30} y={p.y + 38} class="g2tm-sub">
+            {p.sub}
+          </text>
+        </>
+      ))
+    }
+
+    <rect x={originX} y={capY} width={capW} height={boxH} rx="6" class="g2tm-box g2tm-cap" />
+    <text x={W / 2} y={capY + 22} class="g2tm-caplabel" text-anchor="middle">
+      Capstone
+    </text>
+    <text x={W / 2} y={capY + 39} class="g2tm-sub" text-anchor="middle">
+      a 2D platformer character
+    </text>
+  </svg>
+  <figcaption class="g2tm-cap-text">
+    Six modules, then a capstone. <strong>The screen's coordinates come first</strong>
+    because everything else is measured in them, and <strong>delta time comes before
+    collision</strong> because a shape that moves too far in one frame passes straight
+    through a wall.
+  </figcaption>
+</figure>
+
+<style>
+  .g2tm { margin: 1.5rem 0; }
+  .g2tm svg { width: 100%; max-width: 100%; height: auto; display: block; }
+  .g2tm-box { fill: none; stroke-width: 1.5; stroke: #39d3c3; }
+  .g2tm-m1, .g2tm-m4 { stroke: #7ee787; }
+  .g2tm-m2, .g2tm-m5 { stroke: #58a6ff; }
+  .g2tm-m3, .g2tm-m6 { stroke: #d2a8ff; }
+  .g2tm-cap { stroke: #39d3c3; stroke-width: 2; }
+  .g2tm-flow { stroke: #6e7681; stroke-width: 1.2; }
+  .g2tm-num, .g2tm-label, .g2tm-sub, .g2tm-caplabel {
+    font-family: 'Libre Baskerville', Georgia, serif;
+  }
+  .g2tm-num { font-size: 15px; font-weight: 700; fill: #6e7681; }
+  .g2tm-label { font-size: 13.5px; font-weight: 700; fill: #e6edf3; }
+  .g2tm-caplabel { font-size: 15px; font-weight: 700; fill: #39d3c3; }
+  .g2tm-sub { font-size: 10.5px; fill: #9198a1; }
+  .g2tm-cap-text {
+    font-family: 'Libre Baskerville', Georgia, serif; font-size: 0.85rem;
+    color: #9198a1; font-style: italic; text-align: center; max-width: 520px;
+    margin: 0.6rem auto 0; line-height: 1.5;
+  }
+  :global([data-theme="light"]) .g2tm-label { fill: #1f2328; }
+  :global([data-theme="light"]) .g2tm-sub { fill: #57606a; }
+  :global([data-theme="light"]) .g2tm-cap-text { color: #57606a; }
+  :global([data-theme="light"]) .g2tm-caplabel { fill: #0d7d72; }
+  :global([data-theme="light"]) .g2tm-box { stroke: #0d7d72; }
+  :global([data-theme="light"]) .g2tm-m1, :global([data-theme="light"]) .g2tm-m4 { stroke: #116329; }
+  :global([data-theme="light"]) .g2tm-m2, :global([data-theme="light"]) .g2tm-m5 { stroke: #0550ae; }
+  :global([data-theme="light"]) .g2tm-m3, :global([data-theme="light"]) .g2tm-m6 { stroke: #6639ba; }
+</style>

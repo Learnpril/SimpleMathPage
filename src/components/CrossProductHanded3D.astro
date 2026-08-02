@@ -63,9 +63,13 @@ const angDeg = (Math.asin(Math.min(1, Math.max(-1, sinT))) * 180) / Math.PI;
   import * as THREE from "three";
   import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 
+  // The cross product comes from the module shown under this figure, not from
+  // THREE.Vector3.crossVectors, so the arrow you see is drawn by the code you can read.
+  import { cross } from "../lib/gamedev/cross";
+
   const A = new THREE.Vector3(1.1, 0, 0);
   const B = new THREE.Vector3(0.35, 0.95, 0);
-  const C = new THREE.Vector3().crossVectors(A, B);
+  const C = new THREE.Vector3(...cross(A.toArray(), B.toArray()));
 
   function arrow(dir: THREE.Vector3, colour: number, thickness = 0.024) {
     const g = new THREE.Group();

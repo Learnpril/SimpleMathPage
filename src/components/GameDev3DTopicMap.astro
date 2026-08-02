@@ -1,8 +1,10 @@
 ---
 /**
- * GameDevTopicMap - the seven modules of the Game Development track and what each
+ * GameDev3DTopicMap - the seven modules of the 3D Game Development track and what each
  * one feeds. Laid out as a dependency flow rather than a list, because the ordering
  * is the argument: time comes before curves, collision response before the capstone.
+ *
+ * The 2D track has its own map in GameDev2DTopicMap.astro, which ends by pointing here.
  *
  * Coordinates are absolute. The figure auditor does not apply SVG transforms, so a
  * translate() here would produce phantom collision reports.
@@ -34,14 +36,22 @@ const placed = modules.map((m) => ({ ...m, ...at(m) }));
 const capY = originY + 3 * (boxH + gapY);
 const H = capY + boxH + 20;
 
-// Every module feeds the capstone; these are the extra ordering constraints worth
-// drawing, as pairs of module numbers.
+// Prerequisites between modules, as pairs of module numbers. Not every true dependency -
+// only the ones where taking the modules out of order would actually leave you stuck.
+//
+// 4 -> 5 because a camera that follows without jitter needs frame-rate independence, and
+// 5 -> 6 because module 5 turns a cursor into a ray and module 6 is what intersects it.
+//
+// The capstone is drawn detached on purpose. It draws on all seven, so seven arrows into
+// one box would say less than the caption does.
 const flows = [
   [1, 2],
   [2, 3],
   [1, 4],
   [2, 5],
   [1, 6],
+  [4, 5],
+  [5, 6],
   [4, 7],
   [6, 7],
 ];
@@ -52,9 +62,9 @@ const box = (n: number) => placed.find((p) => p.n === n)!;
 <figure
   class="gdtm"
   role="img"
-  aria-label={`Dependency map of the Game Development track: seven modules. ${placed
+  aria-label={`Dependency map of the 3D Game Development track: seven modules in three rows, with a capstone below them. ${placed
     .map((p) => `Module ${p.n}, ${p.label}: ${p.sub}`)
-    .join(". ")}. Vectors feeds transforms, time and collision. Transforms feeds rotations and cameras. Time and collision both feed physics. All seven feed the capstone character controller.`}
+    .join(". ")}. Arrows run from vectors to transforms, time and collision; from transforms to rotations and cameras; from time to cameras and physics; from cameras to collision; and from collision to physics. The capstone, a third-person character controller and camera, is drawn separately below because it draws on all seven modules rather than on any one of them.`}
 >
   <svg viewBox={`0 0 ${W} ${H}`} xmlns="http://www.w3.org/2000/svg">
     {
@@ -123,10 +133,13 @@ const box = (n: number) => placed.find((p) => p.n === n)!;
     </text>
   </svg>
   <figcaption class="gdtm-cap-text">
-    The seven modules and what depends on what. <strong>Time</strong> comes before
-    curves and physics because everything after module 3 moves once per frame, and
-    <strong>collision response</strong> comes before the capstone because a character
-    that only detects walls cannot walk along them.
+    The seven modules and what depends on what. Inside module 4,
+    <strong>delta time comes before the curves</strong>, because everything from module 3
+    onward moves once per frame and interpolation written without it behaves differently
+    at 60 and 144 frames per second. The capstone sits on its own because it draws on all
+    seven rather than following from any one of them - including
+    <strong>collision response</strong>, since a character that only detects walls still
+    cannot walk along them.
   </figcaption>
 </figure>
 

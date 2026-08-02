@@ -1,0 +1,129 @@
+---
+/**
+ * CodePanel - a collapsible "here is the code doing that" panel, meant to sit directly
+ * under a figure.
+ *
+ * The point of this component is that the source it shows is imported from a real
+ * module with Vite's `?raw`, and the figure above it imports the same module. So the
+ * code on the page cannot drift away from the code that ran. Never hand it a string
+ * you typed out separately; that is the thing this is designed to prevent.
+ *
+ * Usage:
+ *   import source from "../lib/gamedev/conventions.ts?raw";
+ *   <CodePanel code={source} lang="ts" label="The conventions module" />
+ *
+ * Collapsed by default: readers who want the maths are not made to scroll past an
+ * implementation, and readers who want the implementation are one click away.
+ */
+import { Code } from "astro:components";
+
+interface Props {
+  code: string;
+  lang?: string;
+  label?: string;
+  /** Path shown as a hint, so a reader can find the file in the repository. */
+  file?: string;
+  open?: boolean;
+}
+
+const {
+  code,
+  lang = "ts",
+  label = "The code doing this",
+  file,
+  open = false,
+} = Astro.props;
+
+const lineCount = code.trimEnd().split("\n").length;
+---
+
+<details class="cpanel" open={open}>
+  <summary class="cpanel-summary">
+    <span class="cpanel-label">{label}</span>
+    <span class="cpanel-meta">
+      {file && <code class="cpanel-file">{file}</code>}
+      <span class="cpanel-lines">{lineCount} lines</span>
+    </span>
+  </summary>
+  <div class="cpanel-body">
+    <Code code={code.trimEnd()} lang={lang as any} theme="github-dark" />
+  </div>
+</details>
+
+<style>
+  .cpanel {
+    margin: 0.5rem auto 1.75rem;
+    max-width: 100%;
+    border: 1px solid var(--sl-color-gray-5, #30363d);
+    border-radius: 6px;
+    background: rgba(57, 211, 195, 0.04);
+  }
+  .cpanel-summary {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+    padding: 0.6rem 0.9rem;
+    cursor: pointer;
+    font-family: "Libre Baskerville", Georgia, serif;
+    list-style: none;
+  }
+  .cpanel-summary::-webkit-details-marker {
+    display: none;
+  }
+  /* A rotating caret, so the control reads as expandable without an icon font. */
+  .cpanel-summary::before {
+    content: "\25B8";
+    display: inline-block;
+    margin-right: 0.5rem;
+    color: #39d3c3;
+    transition: transform 0.15s ease;
+  }
+  .cpanel[open] > .cpanel-summary::before {
+    transform: rotate(90deg);
+  }
+  .cpanel-label {
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: #39d3c3;
+    flex: 1;
+  }
+  .cpanel-meta {
+    display: flex;
+    align-items: baseline;
+    gap: 0.7rem;
+    font-size: 0.75rem;
+    color: #6e7681;
+  }
+  .cpanel-file {
+    font-size: 0.75rem;
+    background: transparent;
+    color: #9198a1;
+  }
+  .cpanel-body {
+    padding: 0 0.9rem 0.9rem;
+  }
+  .cpanel-body :global(pre) {
+    margin: 0;
+    border-radius: 5px;
+    font-size: 0.8rem;
+    max-height: 30rem;
+    overflow: auto;
+  }
+
+  :global([data-theme="light"]) .cpanel {
+    border-color: #d0d7de;
+    background: rgba(13, 125, 114, 0.04);
+  }
+  :global([data-theme="light"]) .cpanel-label {
+    color: #0d7d72;
+  }
+  :global([data-theme="light"]) .cpanel-summary::before {
+    color: #0d7d72;
+  }
+  :global([data-theme="light"]) .cpanel-meta,
+  :global([data-theme="light"]) .cpanel-file {
+    color: #57606a;
+  }
+</style>

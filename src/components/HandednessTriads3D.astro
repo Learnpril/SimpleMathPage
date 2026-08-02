@@ -46,21 +46,23 @@ const tools = [
 <script>
   import * as THREE from "three";
   import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+  // The convention data comes from the module the lesson displays underneath this
+  // figure, so what a reader sees in the code panel is what draws these triads.
+  import { CONVENTIONS, axisVector } from "../lib/gamedev/conventions";
 
   type Triad = {
     name: string;
-    /** Signed axis for "up" and "forward", as [axisIndex, sign]. */
     up: [number, number];
     fwd: [number, number];
-    /** false for a left-handed frame, which flips the drawn Z axis. */
     right: boolean;
   };
 
-  const TRIADS: Triad[] = [
-    { name: "Godot 4", up: [1, 1], fwd: [2, -1], right: true },
-    { name: "Unity", up: [1, 1], fwd: [2, 1], right: false },
-    { name: "Blender", up: [2, 1], fwd: [1, -1], right: true },
-  ];
+  // Godot, Unity and Blender, in that order. Three.js is omitted from the drawing
+  // because it is identical to Godot and a fourth identical triad teaches nothing.
+  const TRIADS: Triad[] = ["Godot 4", "Unity", "Blender"].map((name) => {
+    const c = CONVENTIONS.find((k) => k.name === name)!;
+    return { name: c.name, up: c.up, fwd: c.forward, right: c.rightHanded };
+  });
 
   const AXIS_COLOURS = [0xff7b72, 0x7ee787, 0x58a6ff]; // X, Y, Z
 
@@ -92,10 +94,9 @@ const tools = [
     return g;
   }
 
+  /** Wraps the module's axisVector as a THREE.Vector3. */
   function unit(axis: number, sign: number) {
-    const v = new THREE.Vector3();
-    v.setComponent(axis, sign);
-    return v;
+    return new THREE.Vector3(...axisVector([axis, sign]));
   }
 
   function buildTriad(t: Triad) {

@@ -1,0 +1,290 @@
+---
+title: Length, Normalization and Distance
+description: Magnitude, unit vectors, the squared-distance trick, and guarding the zero-length case that quietly produces NaN
+sidebar:
+  order: 2
+---
+
+import VectorLengthDial from "../../../../components/VectorLengthDial.astro";
+import CodePanel from "../../../../components/CodePanel.astro";
+import vectorsSource from "../../../../lib/gamedev/vectors.ts?raw";
+import DemoPanel from "../../../../components/DemoPanel.astro";
+
+## What You'll Learn
+
+How to get a length out of a vector, how to strip the length off and keep only the
+direction, why comparing squared distances is faster and just as correct, and the one
+edge case that turns a working movement script into a character that vanishes.
+
+## Length
+
+The length of a vector is the Pythagorean theorem, once per dimension:
+
+$$
+|\vec{v}| = \sqrt{v_x^2 + v_y^2}, \qquad
+|\vec{v}| = \sqrt{v_x^2 + v_y^2 + v_z^2}
+$$
+
+That is it. Three dimensions is the same formula with one more term, and so is four.
+Length is also called **magnitude** or **norm**, and all three words mean this.
+
+<VectorLengthDial />
+
+<CodePanel
+  code={vectorsSource}
+  lang="ts"
+  file="src/lib/gamedev/vectors.ts"
+  label="The code doing this, and everything else in this section"
+/>
+
+The figure above imports `length`, `lengthSq` and `normalize` from that file, so every
+readout you just swept was produced by the code in the panel. The rest of the section
+explains the same functions.
+
+## Normalization
+
+A **unit vector** has length exactly 1. Normalizing means scaling a vector down (or up)
+until it has length 1, keeping its direction:
+
+$$
+\hat{v} = \frac{\vec{v}}{|\vec{v}|}
+$$
+
+Divide each component by the length. The result answers "which way?" with no answer to
+"how far?".
+
+This matters because **direction and speed are separate decisions**, and most bugs in
+movement code come from conflating them. If a player holds two arrow keys, the raw input
+vector is $(1, 1)$ with length $1.414$, so a diagonal-walking character moves 41%
+faster than one walking straight - the classic diagonal speed bug. Normalize the input
+first, then multiply by the speed you meant:
+
+$$
+\vec{velocity} = \hat{input} \times speed
+$$
+
+That is `velocityFromInput` in the panel above. In Three.js the same thing reads:
+
+```js
+// input is whatever the keys gave you, e.g. (1, 1) for two keys held.
+const dir =
+  input.lengthSq() > 1e-12 ? input.clone().normalize() : new THREE.Vector3();
+velocity.copy(dir).multiplyScalar(SPEED);
+```
+
+Note `input.clone().normalize()` rather than `input.normalize()`. Three.js normalizes in
+place, so the second form destroys your input vector, and the next line that reads it gets
+a unit vector instead of the raw keys. This mutability is the most common early Three.js
+surprise.
+
+:::note[In an engine]
+Godot: `input.normalized() * SPEED`, and its vectors are immutable value types so there
+is no in-place trap. It also provides `length()`, `length_squared()` and `distance_to()`.
+
+Unity: `input.normalized * speed`, also non-mutating, with `sqrMagnitude` for the squared
+length.
+:::
+
+## The Zero-Length Trap
+
+Look at the normalization formula again and ask what happens when $|\vec{v}| = 0$.
+
+You divide by zero. In floating-point arithmetic that does not crash - it produces
+`NaN`, which then contaminates everything it touches. `NaN + 1` is `NaN`. `NaN > 0` is
+false, and so is `NaN < 0`, and so is `NaN == NaN`. A position that becomes `NaN` puts
+your character nowhere, and the node usually just disappears with no error message.
+
+The trigger is mundane: the player lets go of the keys, so input is $(0, 0)$, so
+normalizing it is a division by zero. Or an enemy reaches the player exactly, so the
+"direction to target" vector is zero length.
+
+Drag the slider above to exactly zero and the readout tells you it is undefined rather
+than pretending.
+
+Guard it by checking the length first, and compare against a small **epsilon** rather than
+exactly zero, because floating point rarely lands on exact values.
+
+An **epsilon** ($\varepsilon$) is just a very small number you choose as a threshold -
+typically something like `0.000001` (written `1e-6` in code). You are saying: "anything
+smaller than this is close enough to zero that I will treat it as zero." You need it because
+computers store numbers in floating point, and the result of a calculation that should be
+exactly zero might come back as `0.0000000000000004` instead. Checking `=== 0` would miss
+it, so you check `< epsilon` instead.
+
+$$
+\hat{v} = \begin{cases}
+\dfrac{\vec{v}}{|\vec{v}|} & |\vec{v}| > \varepsilon \\[6pt]
+\vec{0} \text{ or some sensible default} & \text{otherwise}
+\end{cases}
+$$
+
+The `normalize` in the panel above returns **`null`** in that case rather than a vector
+full of `NaN`. That is a deliberate choice: a zero-length vector has no direction, so
+there is no honest answer, and forcing the caller to handle it is better than handing back
+something that merely looks like one.
+
+```js
+const toTarget = new THREE.Vector3().subVectors(target.position, mesh.position);
+
+// Three.js is unusually kind: normalize() on a zero vector leaves it at (0,0,0)
+// rather than producing NaN. Do not rely on that when you write the maths yourself.
+if (toTarget.lengthSq() > 1e-6) {
+  mesh.lookAt(target.position);
+}
+```
+
+`lookAt` on a zero-length direction, or one exactly parallel to the up vector, is the
+same edge case wearing a different hat. The cross product section explains why.
+
+:::note[In an engine]
+Godot's `Vector2.normalized()` and `Vector3.normalized()` also return the zero vector
+rather than `NaN`, and so does Unity's `.normalized`. But raw division -
+`vector / vector.magnitude` - does not, and neither does hand-written GLSL or HLSL.
+
+Shader code is where this bites hardest, because a `NaN` pixel is usually just black or
+missing rather than an error you can find.
+:::
+
+## Distance
+
+Distance between two points is the length of the vector between them, which is why the
+point-minus-point rule from the previous section matters:
+
+$$
+d(A, B) = |B - A| = \sqrt{(B_x - A_x)^2 + (B_y - A_y)^2 + (B_z - A_z)^2}
+$$
+
+## Skip the Square Root
+
+Square roots are the expensive part of that formula, and often you do not need one.
+
+Suppose you want to know whether an enemy is within 10 meters. The obvious test is
+$d < 10$. But since both sides are non-negative, and squaring preserves order for
+non-negative numbers, this is equivalent:
+
+$$
+d < 10 \iff d^2 < 100
+$$
+
+So compare squared distance against squared radius and never take the root. The
+comparison gives an identical answer, and the sqrt is gone.
+
+$$
+|B - A|^2 = (B_x - A_x)^2 + (B_y - A_y)^2 + (B_z - A_z)^2
+$$
+
+This works for **any comparison**: nearest enemy, inside a radius, which of two things
+is closer. It does not work when you need the actual number - a distance to display, or
+a value to divide by - because $d^2$ is not $d$.
+
+The rule: **if you are comparing, square the other side. If you are reporting, take the
+root.**
+
+That is `isWithin` in the panel above. In Three.js:
+
+```js
+const AGGRO_RANGE = 10;
+const aggroSq = AGGRO_RANGE * AGGRO_RANGE; // compute once, not per frame
+
+for (const enemy of enemies) {
+  if (player.position.distanceToSquared(enemy.position) < aggroSq) {
+    enemy.notice(player);
+  }
+}
+```
+
+`distanceToSquared` and `lengthSq` exist precisely for this. On a handful of enemies it
+will not matter; in a loop over a few thousand, every frame, it does.
+
+:::note[In an engine]
+Godot: `position.distance_squared_to(other)` and `length_squared()`.
+Unity: `(a - b).sqrMagnitude`. Same trick, three spellings.
+:::
+
+## See It Work
+
+### The diagonal speed bug
+
+Sweep the slider through every direction a character could move. Each dot sits at the speed
+it would travel in that direction, so the outline each one traces is the set of all speeds
+available.
+
+<DemoPanel name="diagonal" />
+
+**The teal outline is a circle. The red one is a square.** That is the entire bug, and it is
+a shape rather than a special case.
+
+Both come from the same function; the only difference is whether the input was normalized
+first. A two-axis control pushes each axis to its limit independently, so the raw input lands
+on the edge of a square: $(1, 0)$ going straight, but $(1, 1)$ going diagonally, and that
+corner is $\sqrt{2} \approx 1.41$ from the centre instead of 1. Use it as a velocity and the
+extra length becomes an accidental speed multiplier.
+
+Watch the readout as you sweep. Teal holds at `6.0` everywhere. Red reads `6.0` on the axes -
+so the bug is invisible if you only ever test straight lines - and climbs to `8.5` at the
+corners, 41% too fast.
+
+The small red dots mark the eight directions a keyboard can produce. Four of them are on the
+axes and correct; the four diagonals are the fast ones. A thumbstick clamped per axis gives
+you the whole square outline, so the error varies smoothly with the angle instead.
+
+Dividing by the length pulls every one of those points back onto the circle. That is what
+`normalize` is for, and it is the whole fix.
+
+### Why a range check needs no square root
+
+<DemoPanel name="squared-distance" />
+
+Comparing $d^2 < r^2$ gives the same answer as $d < r$, because squaring cannot change the
+order of two non-negative numbers. The last line checks that across a grid of 90,601 points
+and finds zero disagreements, so the cheaper test is safe to use everywhere.
+
+One catch: the equivalence needs the **same** comparison on both sides. Mixing `<` on one
+side with `<=` on the other disagrees for every point landing exactly on the circle.
+
+### What `NaN` is, and why it matters here
+
+**`NaN`** stands for **"Not a Number"**. It is a special value that JavaScript (and every
+other language using floating point) produces when a calculation has no meaningful numeric
+result. Dividing zero by zero gives `NaN`. Taking the square root of a negative number
+gives `NaN`. And dividing each component of a zero-length vector by its length - which is
+zero - gives `NaN` in every component.
+
+The dangerous thing about `NaN` is that it does not crash your program. It does not throw
+an error. It just quietly poisons every calculation it touches from that point forward:
+
+<DemoPanel name="nan-guard" />
+
+`NaN` is neither greater than, less than, nor equal to anything - not even itself. That
+last one is the strangest part: `NaN === NaN` is `false`. The only way to detect it is
+`Number.isNaN(value)`.
+
+That is why the last two lines in the panel matter. `if (speed > 0) move()` and
+`if (speed <= 0) return` look like the same guard to any reviewer - but they disagree when
+`speed` is `NaN`. One treats the object as stopped, the other as moving. Clamping does not
+help either: `Math.max(0, NaN)` is still `NaN`.
+
+In a game, the result is an object whose position becomes `NaN`, which means it has no
+position at all. It simply disappears from the screen with no error message to tell you
+what happened. This is why `normalize` in the code above returns `null` instead of a vector
+full of `NaN`: it forces the caller to handle the empty case explicitly, right where the
+decision can actually be made.
+
+## Where This Shows Up
+
+- **Movement**, every time you separate a direction from a speed.
+- **Aggro and interaction ranges**, which are squared-distance comparisons in almost
+  every shipped game.
+- **Sorting by proximity** - nearest cover, nearest pickup, nearest enemy - where
+  sorting by squared distance gives the same order for free.
+- **Lighting falloff**, where inverse-square attenuation wants $d^2$ directly, so
+  taking a root and squaring it again is pure waste.
+- **Anywhere a character disappears without an error**, which is very often a `NaN`
+  that started as a zero-length normalize.
+
+:::note[The one thing to take away]
+Normalizing answers "which way", length answers "how far", and keeping those two
+questions separate in your code prevents a whole family of bugs. When you do combine
+them, do it explicitly: `direction * speed`, never a raw input vector used as a
+velocity.
+:::

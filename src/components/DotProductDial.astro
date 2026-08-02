@@ -94,6 +94,9 @@ const DEFAULT_DEG = 50;
 </figure>
 
 <script>
+  // Imported from the module shown under this figure.
+  import { dot, angleBetween } from "../lib/gamedev/dot";
+
   const OX = 190;
   const OY = 175;
   const R = 108;
@@ -119,9 +122,11 @@ const DEFAULT_DEG = 50;
       const rad = (deg * Math.PI) / 180;
 
       // a is the unit vector (1, 0); b is the unit vector at this angle.
+      const a = [1, 0];
       const bx = Math.cos(rad);
       const by = Math.sin(rad);
-      const dot = 1 * bx + 0 * by; // computed as a genuine dot product, not as cos
+      // A genuine dot product from the module, not cos(angle) relabelled.
+      const dotValue = dot(a, [bx, by]);
 
       const ex = OX + bx * R;
       const ey = OY - by * R;
@@ -131,27 +136,27 @@ const DEFAULT_DEG = 50;
       label!.setAttribute("y", (OY - by * (R + 16) + 5).toFixed(2));
 
       // Projection of b onto a, which for unit a is just the dot product.
-      proj!.setAttribute("x2", (OX + dot * R).toFixed(2));
+      proj!.setAttribute("x2", (OX + dotValue * R).toFixed(2));
       proj!.setAttribute("y2", OY.toFixed(2));
       // Dashed drop line from b's tip down to the reference axis.
       drop!.setAttribute("x1", ex.toFixed(2));
       drop!.setAttribute("y1", ey.toFixed(2));
-      drop!.setAttribute("x2", (OX + dot * R).toFixed(2));
+      drop!.setAttribute("x2", (OX + dotValue * R).toFixed(2));
       drop!.setAttribute("y2", OY.toFixed(2));
 
-      // The reported angle is the unsigned angle between the vectors, so it folds
-      // back after half a turn: 350 degrees of sweep is 10 degrees of separation.
-      const between = deg <= 180 ? deg : 360 - deg;
+      // angleBetween is the module's clamped acos, so it is the unsigned angle and
+      // folds back after half a turn: 350 degrees of sweep is 10 degrees of separation.
+      const between = (angleBetween(a, [bx, by]) * 180) / Math.PI;
 
       angOut!.textContent = `${between.toFixed(1)}\u00B0`;
-      dotOut!.textContent = dot.toFixed(3);
-      projOut!.textContent = dot.toFixed(3);
+      dotOut!.textContent = dotValue.toFixed(3);
+      projOut!.textContent = dotValue.toFixed(3);
 
-      if (Math.abs(dot) < 0.005) {
+      if (Math.abs(dotValue) < 0.005) {
         verdict!.textContent = "perpendicular";
         verdict!.setAttribute("class", "dpd-verdict dpd-zeroed");
         foot!.textContent = "exactly 90\u00B0";
-      } else if (dot > 0) {
+      } else if (dotValue > 0) {
         verdict!.textContent = "in front";
         verdict!.setAttribute("class", "dpd-verdict dpd-pos");
         foot!.textContent = "angle under 90\u00B0";
