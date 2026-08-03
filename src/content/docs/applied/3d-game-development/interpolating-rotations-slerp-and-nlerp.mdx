@@ -1,0 +1,273 @@
+---
+title: Interpolating Rotations - Slerp and Nlerp
+description: What slerp actually fixes and what it does not, why the cheap version is fine more often than people admit, and where precision really goes when you convert between quaternions, matrices and angles
+sidebar:
+  order: 12
+  label: "3.3  Interpolating Rotations"
+---
+
+import DemoPanel from "../../../../components/DemoPanel.astro";
+import CodePanel from "../../../../components/CodePanel.astro";
+import quatSource from "../../../../lib/gamedev/quaternions.ts?raw";
+
+## What You'll Learn
+
+The three ways to blend between two orientations, and the fact that two of them **follow the
+identical path** - so the choice is about speed, not route. How big the difference actually is,
+in degrees, so "cheap is fine" becomes a rule with a number in it. And where precision goes when
+you convert between quaternions, matrices and Euler angles, which is not where you might guess.
+
+## Three Methods, One Arc
+
+Say you want a character to turn from one orientation to another over half a second. You have
+the two quaternions. You need the ones in between.
+
+All three methods below are built on **linear interpolation**, universally shortened to
+**lerp**, so it is worth writing down before anything is built on top of it:
+
+$$
+\operatorname{lerp}(a, b, t) = a + (b - a)\,t
+$$
+
+Read it as "start at $a$, then go a fraction $t$ of the way towards $b$". At $t = 0$ it is
+exactly $a$, at $t = 1$ it is exactly $b$, and at $t = 0.5$ it is the midpoint. Equivalently it
+is the weighted average $(1-t)a + tb$, which is the form that generalises.
+
+Two things worth knowing now. It works on anything you can subtract and scale - numbers,
+positions, colours, and the four components of a quaternion. And nothing stops $t$ leaving
+$[0, 1]$: at $t = 2$ you get a point twice as far as $b$, which is extrapolation rather than an
+error, and is occasionally what you want and more often a bug.
+
+`lerpQuat` in the code panel further down is exactly the formula above, applied four times -
+once per component. That is the entire function.
+
+:::note[The scalar family comes in Part 4]
+Lerp travels with a small group of relatives - inverse lerp, remap, clamp, smoothstep - and
+Section 4.2 introduces them together, in `src/lib/gamedev/interpolation.ts`. Here it is only
+needed as the thing the three rotation methods are made from.
+:::
+
+| Method    | What it does                             | Cost                         |
+| :-------- | :--------------------------------------- | :--------------------------- |
+| **lerp**  | blend the four numbers                   | 4 multiplies, 4 adds         |
+| **nlerp** | blend the four numbers, then renormalize | the above plus a square root |
+| **slerp** | walk the arc at a constant rate          | two `sin`, one `acos`        |
+
+The names are acronyms: **nlerp** is Normalized Linear Interpolation (lerp, then normalize),
+and **slerp** is Spherical Linear Interpolation (linear along the surface of the sphere rather
+than through its interior).
+
+The usual telling is that these take three different routes. That is wrong, and the correction
+matters because it tells you what you are actually choosing between.
+
+**nlerp and slerp trace the same arc.** Normalizing a straight line between two points on a
+sphere lands you on the great circle through them - the chord and the arc pass through the same
+directions, just at different rates. The build check proves this by showing every sample from
+both methods lies in the two-dimensional plane spanned by the endpoints, to $10^{-16}$.
+
+So slerp does not fix the path. It fixes the **speed**.
+
+## The Difference Is Rate, Not Route
+
+Below, one 150-degree turn, done twice. The dots mark every tenth of the way through the blend.
+
+<DemoPanel name="slerpspeed" />
+
+Look at the dot spacing. Teal slerp dots are evenly spread along the arc, because equal steps in
+$t$ mean equal steps in angle. Purple nlerp dots bunch up at both ends and spread out in the
+middle - it starts slow, overtakes, then slows again.
+
+Drag the slider and the readout gives both. They agree exactly at $t = 0$, $t = 0.5$ and
+$t = 1$, and disagree everywhere else.
+
+The formula is what you would expect once you know the arc is shared:
+
+$$
+\text{slerp}(q_1, q_2, t) = \frac{\sin\left((1-t)\Omega\right)}{\sin \Omega} q_1 \;+\; \frac{\sin\left(t\Omega\right)}{\sin \Omega} q_2
+\qquad \Omega = \arccos(q_1 \cdot q_2)
+$$
+
+Two weights that sum along the arc rather than across the chord.
+
+### What $\Omega$ is
+
+$\Omega$ is capital omega, and it is nothing more than a **name for one angle** - the traditional
+letter for it in this formula, not a new operation.
+
+Which angle? The one **between the two quaternions**, obtained from their dot product exactly the
+way Part 1 got the angle between two 3D directions. Same idea, two more components: treat each
+quaternion as a unit vector in four dimensions, dot them together, take the arccosine.
+
+One catch, and it comes straight from Section 3.2's half-angle. Because a quaternion stores
+$\theta/2$, the angle between two quaternions is **half** the rotation angle you would see on
+screen:
+
+$$
+\Omega = \frac{\theta}{2}
+$$
+
+So the 150-degree turn in the scene above has $\Omega = 75°$. That factor of two is also why
+`angleBetweenQuats` multiplies by 2 before reporting anything - it converts from quaternion space
+back to the angle a person would measure.
+
+Sanity check the formula with it. At $t = 0$ the weights become $\sin\Omega / \sin\Omega = 1$ and
+$\sin 0 / \sin \Omega = 0$, so you get $q_1$ exactly. At $t = 1$ they swap and you get $q_2$. In
+between, $\sin\Omega$ in the denominator is what scales the pair so the result lands **on** the
+arc rather than short of it - which is precisely the job nlerp hands to a renormalize instead.
+
+The check asserts that slerp's angle from the start is exactly $t \times \text{total}$, to within
+$10^{-6}$ degrees, at every step of four different turn sizes.
+
+:::caution[The denominator vanishes]
+Now that $\Omega$ has a meaning, the failure case is easy to see. When the two orientations are
+nearly the same, $\Omega \to 0$ and so does $\sin\Omega$, so both
+weights become $0/0$. The guard is not optional - `slerpQuat` falls back to nlerp above a dot
+product of $0.9995$, which is $\Omega < 1.81°$, so a rotation of less than about $3.6°$. That
+is safe precisely because the table above shows the two methods agreeing to a hundredth of a
+degree over turns far larger than that.
+
+That is the same shape of problem as clamping `acos` in Part 1 and the pole case in Section 3.1:
+a formula that is correct everywhere except at one point you will definitely hit.
+:::
+
+## When Cheap Is Fine
+
+Here is the useful part, because "always use slerp" is advice that ignores the cost.
+
+nlerp's error depends entirely on **how big the turn is**. Measured as the worst gap between
+where nlerp is and where a constant rate would put it:
+
+| Turn | Worst nlerp error | Verdict                                      |
+| :--- | :---------------- | :------------------------------------------- |
+| 20°  | 0.01°             | nobody will ever see this                    |
+| 60°  | 0.27°             | invisible in motion                          |
+| 120° | 2.2°              | detectable if you are looking for it         |
+| 170° | 6.8°              | visible: the turn lurches through the middle |
+
+Those numbers are asserted by the build check, including that the error grows monotonically with
+the turn size - which is what makes the rule below trustworthy rather than a guess.
+
+**So: use nlerp for small blends, slerp for large ones.** And note which case dominates in
+practice. Animation blending, camera smoothing and per-frame turn-towards-target all interpolate
+tiny angles many times per second, where nlerp is both cheaper and indistinguishable. Slerp earns
+its keep on deliberate large moves - a scripted camera swinging around, a cutscene, a long
+reorientation.
+
+Most engines slerp everywhere anyway, because a couple of trig calls per bone per frame stopped
+mattering some time ago. The reason to know the difference is that when it _does_ matter - a
+thousand-bone crowd, a physics substep - you can tell which one you can afford to drop.
+
+## Raw Lerp, and the Model That Shrinks
+
+The third method is the one people write first: blend the four numbers and use the result.
+
+The problem is that a straight line between two points on a sphere passes **inside** the sphere,
+so the result is not a unit quaternion. Over a 150-degree turn its length dips to $0.7934$ at
+the midpoint.
+
+And an un-normalized quaternion does not just rotate. The sandwich $q v q^{*}$ scales by
+$|q|^2$, so at that midpoint everything comes out at $0.63$ of its proper size.
+
+<DemoPanel name="lerpdrift" />
+
+The dashed grey box is the size the object should be. Drag the blend and watch the orange one
+shrink away from it, then tick the checkbox to put the normalize back.
+
+That is the whole difference between lerp and nlerp - one square root. It is also why this is
+rarely a bug you meet in the wild: the shrinking is so obvious that it gets caught immediately.
+The subtle bugs in rotation code are the double cover from Section 3.2 and the speed difference
+above, not this one.
+
+<CodePanel
+  code={quatSource}
+  lang="ts"
+  file="src/lib/gamedev/quaternions.ts"
+  label="All three methods, and the guard"
+/>
+
+:::tip[Both still need the sign flip]
+Neither `nlerpQuat` nor `slerpQuat` applies the double-cover flip, deliberately, so Section 3.2's
+scene could show what happens without it.
+
+In real code, call `shortWayFrom` first. A perfectly constant-speed slerp along the 320-degree
+route is not an improvement on a lumpy nlerp along the 40-degree one.
+:::
+
+## Where Precision Goes
+
+The other half of this Section. You now have three representations and six conversions between
+them, and it is worth knowing which ones lose something.
+
+<DemoPanel name="precision" />
+
+Read the first four rows together, because they tell one story.
+
+Angles out to a matrix and back are accurate to about $10^{-15}$ degrees at pitch 30 - which is
+to say exact. At pitch 89.999 that has degraded to $10^{-11}$, and **at pitch 90 the angles come
+back 25 degrees different**, because `toEulerYXZ` hits the degenerate case, sets roll to zero and
+hands the whole rotation to yaw.
+
+And yet the fourth row shows the matrix rebuilt from those "wrong" angles is identical to the
+original to $10^{-16}$.
+
+That is the precise statement of what Euler conversion costs: **the orientation survives, the
+three numbers do not.** Near the pole there are many triples describing the same orientation, and
+the conversion has to pick one. If you are storing orientations, that is harmless. If you are
+storing _angles_ - incrementing them, diffing them, driving an animation curve with them - it is
+not, because the value you read back is not the value you wrote.
+
+:::note[This is the Unity trap, explained]
+Section 3.1 mentioned that reading `Transform.eulerAngles` gives you _an_ answer rather than the
+one you set. The rows above are why: the underlying storage is a quaternion, the read is a
+conversion, and the conversion is not unique.
+
+Nothing is broken. The orientation is exactly what you set. Only the decomposition into three
+numbers is a choice, and near a pole it is a fairly arbitrary one.
+:::
+
+### Drift under repeated composition
+
+The last two rows cover the other kind of loss. Compose a small rotation ten thousand times and
+error accumulates in both representations - at a broadly similar rate, around $10^{-13}$.
+
+So the honest comparison is not that one drifts less. It is what the **repair** costs:
+
+- A quaternion drifts in **one** quantity, its length. Renormalizing is four divisions.
+- A matrix drifts in **nine** entries, losing both unit axis lengths and their right angles.
+  Repairing it means re-orthonormalizing - Gram-Schmidt or similar - which is more work and more
+  code to get wrong.
+
+That, plus the absence of poles, is the real case for holding orientation as a quaternion and
+converting to a matrix only when something needs to be transformed.
+
+:::note[In an engine]
+Three.js has `Quaternion.slerp` and the static `Quaternion.slerpFlat` for buffers; both handle the
+sign flip. `Quaternion.rotateTowards` clamps the step, which is what a turn-towards-target wants.
+
+Godot's `Quaternion.slerp()` handles the flip and errors if either operand is not normalized -
+a good design, since it turns a silent shrink into a loud complaint. `Quaternion.slerpni()` is the
+non-flipping variant, for when you genuinely want the long way.
+
+Unity's `Quaternion.Slerp` clamps `t` to $[0, 1]$ where `SlerpUnclamped` does not, and
+`Quaternion.Lerp` is really nlerp - it normalizes. So Unity has no raw-lerp footgun to step on.
+:::
+
+## Where This Shows Up
+
+- **Animation blending**, which is thousands of small slerps a frame between bone orientations,
+  and the main reason skeletons store quaternions.
+- **Turn-towards-target**, where the target moves every frame so the blend restarts constantly
+  and the angle is always small. nlerp territory.
+- **Cutscene and scripted cameras**, which make deliberate large moves where constant speed is
+  the whole point.
+- **Network interpolation**, smoothing between orientation snapshots that arrive late.
+- **Anything storing rotation as three angles and incrementing them**, which is the precision
+  trap above and the reason engines expose angles as a convenience rather than as storage.
+
+:::note[The one thing to take away]
+nlerp and slerp follow the same arc, so the choice is only about rate. slerp advances at exactly
+$t$ times the total angle; nlerp is off by $0.01°$ over a $20°$ turn and $6.8°$ over $170°$, so
+cheap is genuinely fine for small blends. Raw lerp additionally shrinks the object, and both real
+methods still need Section 3.2's sign flip. Converting to a matrix loses nothing; converting to
+three angles loses the numbers but not the orientation.
+:::

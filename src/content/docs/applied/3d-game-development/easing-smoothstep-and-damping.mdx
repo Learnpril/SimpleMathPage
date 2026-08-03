@@ -1,0 +1,245 @@
+---
+title: Easing, Smoothstep and Damping
+description: The small family of functions every game touches constantly - inverse lerp, remap, clamp, smoothstep - what each easing curve communicates about mass and intent, and the critically damped spring that eases out of rest as well as into the target
+sidebar:
+  order: 14
+  label: "4.2  Easing, Smoothstep and Damping"
+---
+
+import DemoPanel from "../../../../components/DemoPanel.astro";
+import CodePanel from "../../../../components/CodePanel.astro";
+import interpSource from "../../../../lib/gamedev/interpolation.ts?raw";
+import easingSource from "../../../../lib/gamedev/easings.ts?raw";
+
+## What You'll Learn
+
+The handful of one-line functions that appear everywhere once you know their names - **inverse
+lerp**, **remap**, **clamp**, **smoothstep** - and why the guard inside one of them stops a `NaN`.
+Then the easing curves, treated as **claims about mass and intent** rather than decoration. And
+finally the **critically damped spring**, which fixes the one thing Section 4.1's decay gets
+visibly wrong.
+
+## Rate Versus Shape
+
+Section 4.1 answered "how much of the gap should close this frame". This Section answers a
+different question, and it is worth keeping them apart:
+
+- **Rate** - the move has no fixed end. It approaches forever, getting closer. This is `damp`, and
+  the parameter is a half-life.
+- **Shape** - the move takes a **fixed duration**, and you decide how progress is distributed
+  across it. This is easing, and the parameter is a curve.
+
+Rate suits anything chasing a moving target: a camera following a player, a turret tracking. Shape
+suits anything with a defined beginning and end: a door opening, a menu sliding in, a card being
+dealt. Reaching for the wrong one is the usual cause of animation code that fights itself.
+
+## The Small Functions
+
+Before curves, four functions that are each one line and each carry more weight than their size
+suggests.
+
+`lerp` and `clamp` came in Section 4.1. The two new ones are inverses and companions of `lerp`:
+
+- **`inverseLerp(a, b, v)`** - lerp run backwards. Given a value, what `t` produced it? This is how
+  a raw quantity becomes a fraction you can drive something with.
+- **`remap(v, inMin, inMax, outMin, outMax)`** - `inverseLerp` then `lerp`. Carry a value from one
+  range into another.
+
+<DemoPanel name="remapping" />
+
+Two rows there are worth reading twice.
+
+**`inverseLerp` does not clamp**, and that is deliberate. A value past the end of the range reports
+`1.5` rather than `1`, because silently flattening out-of-range data hides bugs. Clamp when you
+mean to clamp - which is why `clamp01` is a separate call.
+
+**A zero-width range is guarded.** `inverseLerp(5, 5, 5)` would divide zero by zero and produce
+`NaN`, and Part 1 established what happens next: `NaN` compares false against everything, spreads
+through every arithmetic operation it touches, and surfaces somewhere far from the cause. So it
+returns 0 instead. That guard is three tokens and it is the difference between a wrong number and
+an unfindable one.
+
+The everyday use is turning game state into presentation:
+
+```ts
+const t = inverseLerp(0, maxHealth, health); // 0..1
+barWidth = remap(health, 0, maxHealth, 0, 200); // pixels
+```
+
+## Smoothstep
+
+The most useful single easing function, and the one worth understanding rather than just calling.
+
+$$
+\text{smoothstep}(t) = t^2(3 - 2t) = 3t^2 - 2t^3
+$$
+
+What makes it good is not the polynomial, it is the **slope at the ends**. At $t = 0$ and $t = 1$
+the slope is exactly zero, so anything driven by it leaves rest gently and settles rather than
+stopping dead. Compare with linear, whose slope is 1 the whole way and therefore starts and stops
+abruptly.
+
+It also takes **edges** rather than a bare $t$, matching the shader function of the same name, so
+it doubles as a clamped remap:
+
+```ts
+smoothstep(10, 20, 15); // 0.5  - and anything below 10 gives 0, above 20 gives 1
+```
+
+### Why smootherstep exists
+
+There is a second version, due to Ken Perlin:
+
+$$
+\text{smootherstep}(t) = 6t^5 - 15t^4 + 10t^3
+$$
+
+Its slope is zero at the ends too. The difference is the **curvature** - the second derivative:
+
+| Curve        | Slope at ends | Curvature at ends |
+| :----------- | :------------ | :---------------- |
+| linear       | $1$           | $0$               |
+| smoothstep   | $0$           | $6$               |
+| smootherstep | $0$           | $0$               |
+
+Smoothstep's curvature jumps from 0 to 6 the instant the move begins. You cannot see that in a
+position, but you can see it in anything that gets differentiated - a camera path shows it as a
+snap, a normal map shows it as a crease. Smootherstep costs two more multiplies and removes it.
+
+The build check measures both by finite differences rather than taking the algebra on trust: 6.0
+for smoothstep, 0 for smootherstep.
+
+## The Gallery
+
+Now the curves together. Every faint line is one of them; the teal one is whichever you have
+selected, the orange dot rides the curve, and the teal dot below shows the movement it actually
+produces.
+
+<DemoPanel name="easing" />
+
+Try `linear`, then `easeOutQuad`, then `easeOutBack`. Same duration, same start, same end - three
+completely different impressions of what the moving thing is made of.
+
+That is the real content of this section. **An easing curve is a claim about mass and intent:**
+
+| Curve            | Reads as                 | Use for                                        |
+| :--------------- | :----------------------- | :--------------------------------------------- |
+| `linear`         | mechanical, no mass      | conveyor belts, timers, loading bars           |
+| `easeInQuad`     | heavy, getting going     | something starting to move under its own power |
+| `easeOutQuad`    | arriving deliberately    | UI elements landing, a door settling shut      |
+| `easeInOutCubic` | purposeful at both ends  | camera cuts, menu transitions                  |
+| `smoothstep`     | the default S curve      | anything, when in doubt                        |
+| `easeOutBack`    | snappy, slight overshoot | buttons, pickups, anything wanting attention   |
+| `easeOutElastic` | cartoonish, springy      | sparingly, and never on something frequent     |
+
+The slope at $t = 0$ is a good numerical proxy for "how abruptly does this begin". The check pins a
+few: `easeInQuad` starts at 0, `linear` at 1, `easeOutQuad` at 2, `easeOutBack` at 4.7.
+
+:::caution[Two of these leave the range]
+`easeOutBack` peaks at $1.10$ and `easeOutElastic` at $1.37$. Both are asserted, because the
+overshoot is the entire point and a regression that quietly removed it would otherwise pass.
+
+Which means anything consuming them has to tolerate values above 1. Clamp the output and you have
+paid for the curve and thrown away what you bought - and if you are feeding a colour channel or an
+array index, the overshoot is a genuine bug rather than a style.
+:::
+
+<CodePanel
+  code={easingSource}
+  lang="ts"
+  file="src/lib/gamedev/easings.ts"
+  label="The curves, and the spring"
+/>
+
+## The Critically Damped Spring
+
+Back to rate-based motion, and the thing Section 4.1's `damp` gets wrong.
+
+Exponential decay's speed depends only on **distance from the target**. So the moment a target
+appears, the follower is already at maximum speed. It has no history and no momentum - it lurches.
+
+A spring does not, because it carries **velocity** between frames. It has to accelerate before it
+can move, so it eases out of rest as well as into the target.
+
+Below, the same move both ways. Orange is decay, teal is the spring.
+
+<DemoPanel name="spring" />
+
+Scrub to the very beginning. At **one hundredth of a second** the decay has already closed 6.7% of
+the gap while the spring has managed 0.2% - more than thirty times further, from the same standing
+start. Look at where each curve meets the left edge: orange arrives at an angle, teal arrives flat.
+
+### What "critically damped" means
+
+A spring has a damping amount, and three regimes:
+
+| Damping      | Behaviour                                      |
+| :----------- | :--------------------------------------------- |
+| Under-damped | overshoots and oscillates around the target    |
+| **Critical** | the fastest approach that **never** overshoots |
+| Over-damped  | no overshoot, but crawls                       |
+
+Critical is the boundary, and it is the right default precisely because it is the fastest motion
+that can never look like a mistake. The check runs 3,000 steps and asserts the peak never exceeds
+the target - measured overshoot is exactly zero.
+
+`springStep` uses the **exact** solution of the spring equation rather than stepping an
+approximation, which means it inherits Section 4.1's frame-rate independence for the same reason:
+composing exact solutions over consecutive intervals gives the exact solution over the whole. The
+check confirms it agrees to within $10^{-15}$ from 15 fps to 240 fps, and the value at half a
+second is identical to twelve decimal places even at **one** frame per second.
+
+<CodePanel
+  code={interpSource}
+  lang="ts"
+  file="src/lib/gamedev/interpolation.ts"
+  label="The rate-based side, grown since Section 4.1"
+/>
+
+## Choosing
+
+A short decision procedure, since there are now several tools:
+
+1. **Does the move have a fixed duration?** Use an easing curve. Pick it by what you want the thing
+   to feel like it is made of.
+2. **Is it chasing something that moves?** Use a rate. `damp` if you want it to react instantly to
+   a new target, `springStep` if you want weight and momentum.
+3. **In doubt on a curve?** `smoothstep`.
+4. **In doubt on a camera?** `springStep` with a smooth time around $0.3$ s.
+5. **Is the value feeding something differentiated - a path, a normal, another velocity?**
+   `smootherstep`.
+
+:::note[In an engine]
+Three.js has `MathUtils.smoothstep` and `MathUtils.smootherstep`, both taking edges, plus
+`MathUtils.damp`. No spring and no easing library - `Tween.js` is the usual companion, and its
+`Easing` object is the same family of names used above.
+
+Godot exposes `smoothstep()`, `lerp()`, `inverse_lerp()` and `remap()` as global functions, so the
+whole small-function set is built in. `Tween` with `set_trans()` and `set_ease()` covers the curves,
+and `PhysicsBody3D` is where you would build the spring.
+
+Unity has `Mathf.SmoothStep`, `Mathf.InverseLerp` and `Mathf.Clamp01`. `Mathf.SmoothDamp` is a
+critically damped spring, the same idea as `springStep`, with `smoothTime` meaning roughly the time
+to arrive. It keeps velocity in a `ref` parameter for exactly the reason above - a spring needs
+somewhere to remember its momentum.
+:::
+
+## Where This Shows Up
+
+- **Every UI transition**, where the curve choice is most of what makes an interface feel considered
+  or cheap.
+- **Camera behaviour**, where a spring reads as a real camera operator and decay reads as a
+  mechanism.
+- **Health bars, meters and any gauge**, which is `remap` plus a curve.
+- **Procedural blending** - terrain masks, shader thresholds, fog falloff - which is smoothstep with
+  real edges rather than 0 and 1.
+- **Animation curve editors**, which are this Section's list exposed as a dropdown.
+
+:::note[The one thing to take away]
+Rate and shape are different problems: rate for chasing a moving target, shape for a move with a
+fixed duration. `inverseLerp` and `remap` turn quantities into fractions and back, and the zero-width
+guard exists to stop a `NaN`. Smoothstep is flat at both ends, which is what makes it read as easing;
+smootherstep also has zero curvature there, which matters when the value gets differentiated. A
+critically damped spring is the fastest approach that never overshoots, and unlike decay it leaves
+rest gently because it carries velocity.
+:::

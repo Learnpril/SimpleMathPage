@@ -1,0 +1,230 @@
+---
+title: Local, World, View and Clip Space
+description: The chain of spaces a vertex passes through on its way to the screen, how parenting is one multiplication, why getting back needs an inverse, and the one case where a normal must not use the object's own matrix
+sidebar:
+  order: 9
+  label: "2.4  Local, World and View Space"
+---
+
+import DemoPanel from "../../../../components/DemoPanel.astro";
+import CodePanel from "../../../../components/CodePanel.astro";
+import spacesSource from "../../../../lib/gamedev/spaces.ts?raw";
+
+## What You'll Learn
+
+That "where is this thing" has no single answer, because there are several spaces and a
+position only means something once you say which one you meant. How parent-child hierarchies
+fall out of one multiplication. How to get **back**, which needs an inverse. And the one
+genuine exception in this whole Part: **a normal must not be transformed by the object's own
+matrix**, and what goes wrong when it is.
+
+## The Same Point, Several Answers
+
+A vertex on a character's hand has a position. That position is a different set of three
+numbers depending on who is asking.
+
+| Space     | Origin is at                 | Set by                           | Used for                                |
+| :-------- | :--------------------------- | :------------------------------- | :-------------------------------------- |
+| **Local** | the object's own pivot       | whoever made the model           | the mesh as it was authored             |
+| **World** | an agreed point in the level | the object's transform           | positions, distances, physics, gameplay |
+| **View**  | the camera                   | the camera's transform, inverted | what is in front of you and how far     |
+| **Clip**  | the middle of the screen     | the projection matrix            | deciding what is on screen at all       |
+
+Each arrow between two rows is a matrix, and the whole trip is those matrices multiplied
+together - which is Section 2.3's machinery with nothing new added:
+
+$$
+\vec{v}_{\text{clip}} = P \cdot V \cdot M \cdot \vec{v}_{\text{local}}
+$$
+
+Read right to left, as always. $M$ is the object's own transform, usually called the **model**
+matrix, and it is exactly the $T \cdot R \cdot S$ from Section 2.3. $V$ is the **view** matrix.
+$P$ is the **projection** matrix, and it is the one thing here that Part 5 covers rather than
+this Section.
+
+Here is one point making that trip. The numbers below ran during the build.
+
+<DemoPanel name="pipeline" />
+
+The last row is the one worth pausing on. In view space **the camera is always at the origin**,
+because that is the definition of view space rather than a coincidence. And the point in front
+of it has a negative $z$, since forward is $-Z$.
+
+## World Space Is a Choice, Not a Fact
+
+Local and view space have obvious origins - the model's pivot, the camera. World space does
+not. Somebody picked it.
+
+That matters more than it sounds, because **floating point precision gets worse the further
+you are from the origin**. A 32-bit float has about seven significant digits, so at 10 meters
+from the origin you can resolve about a micrometer, and at 10,000 kilometers you can resolve
+about a meter. Objects visibly jitter.
+
+Which is why large games do not use a single world space. They re-centre it on the player
+periodically, or store positions relative to a nearby chunk. If you have ever seen a
+space game wobble as you fly away from the start, that is this.
+
+## Parenting Is One Multiplication
+
+A hierarchy - a turret on a tank, a hand on an arm, a camera on a rig - is not a new feature.
+It is the child's transform multiplied by the parent's.
+
+$$
+M_{\text{child, world}} = M_{\text{parent, world}} \cdot M_{\text{child, local}}
+$$
+
+The child's matrix goes on the right because the child's own transform happens **first**, and
+the parent's is applied to the result. Same right-to-left reading as ever.
+
+Below, the blue box is a parent and the teal box is its child. The child's local position is
+fixed at $(0, 0.6, 1.3)$ and never changes, no matter what you do with the sliders. The
+dashed orange box is that same child drawn as though its local transform were a world
+transform - parent ignored.
+
+<DemoPanel name="parenting" />
+
+Drag the parent sliders. The teal child follows, because its world matrix is being rebuilt
+from the parent's. The orange one sits still, because nothing multiplied it.
+
+That gap between teal and orange is what "local space" means. The child's numbers did not
+change; what they are measured against did.
+
+:::tip[The question to ask when something is in the wrong place]
+"Which space are these numbers in?" is the first thing to check, and it resolves a
+surprising fraction of transform bugs on its own.
+
+Comparing a local position to a world position produces no error and no NaN - just an object
+in a strange place, or a distance check that fires from the wrong spot. Two of the values are
+perfectly valid; they are simply answers to different questions.
+:::
+
+## Going Back Needs an Inverse
+
+Every arrow in that table runs the other way too, and running it backwards means inverting
+the matrix.
+
+- **World to local** to ask "is that point inside my box?" - far easier in the box's own
+  space, where the box is axis-aligned.
+- **World to view**, which is the view matrix, and is literally the camera's transform
+  inverted. Moving the camera two meters right is the same as moving the entire world two
+  meters left.
+- **Parent to child** when re-parenting something without letting it move.
+
+For the transforms in this Part the inverse has a shortcut. Split the matrix into its 3×3
+basis $A$ and its translation $\vec{t}$; then
+
+$$
+M^{-1} = \begin{bmatrix} A^{-1} & -A^{-1}\vec{t} \\ 0 & 1 \end{bmatrix}
+$$
+
+The translation is $-A^{-1}\vec{t}$ rather than just $-\vec{t}$, because you have to undo the
+rotation and scale before an offset means anything in the original space.
+
+:::note[The cheap case worth knowing]
+If a transform is a rotation and a translation with **no scale**, then $A$ is orthonormal and
+$A^{-1} = A^{\mathsf{T}}$ - the inverse is just the transpose. No division, no determinant.
+
+That is why engines separate rigid transforms from scaled ones, and why a view matrix is
+usually built directly from the camera's basis vectors rather than by inverting anything.
+Section 1.4's `buildBasis` produces exactly the three rows needed.
+:::
+
+## Normals Are the Exception
+
+Everything so far transforms with the object's own matrix. Here is the one thing that does
+not, and it is the most commonly gotten-wrong item in this Part.
+
+A **normal** is perpendicular to a surface. That word - perpendicular - is the problem,
+because perpendicularity is not preserved by uneven scaling.
+
+Squash a sphere vertically. Every direction **along** the surface tips towards horizontal. So
+a direction **perpendicular** to the surface has to tip the other way, towards vertical. Push
+a normal through the object's own matrix and it tips along with the surface, which is exactly
+backwards.
+
+The correct matrix is the **inverse transpose** of the basis:
+
+$$
+N = \left(A^{-1}\right)^{\mathsf{T}}
+$$
+
+Below, both are drawn. Orange normals went through the object's matrix. Teal normals went
+through the inverse transpose.
+
+<DemoPanel name="normals" />
+
+Drag the squash slider. The teal arrows stay perpendicular to the surface at every point. The
+orange ones lean over, and at the default squash they are more than fifty degrees off.
+
+The readout is not a claim about the picture - it is the measured angle between each normal
+and the surface directions at that point, so a normal that is correct reads zero by
+construction rather than by assertion.
+
+:::caution[Why this ships broken so often]
+Look at the two ends of the slider. At $1.0\times$ the orange and teal arrows lie exactly on
+top of each other.
+
+For a **rotation**, the inverse transpose is the rotation itself, so there is no difference at
+all. For a **uniform** scale, the two point in the same direction and differ only in length -
+and normals get normalized anyway, so still no difference. The naive version is correct for
+every rigid and uniformly-scaled object, which is nearly all of them.
+
+Then somebody stretches one model on one axis and its lighting goes wrong, and the shading
+looks _slightly_ off rather than obviously broken. Exactly the same shape of bug as
+Section 2.3's ordering: invisible until a non-uniform scale appears.
+:::
+
+<CodePanel
+  code={spacesSource}
+  lang="ts"
+  file="src/lib/gamedev/spaces.ts"
+  label="Inverses, parent chains and the normal matrix"
+/>
+
+:::note[In an engine]
+Three.js keeps `Object3D.matrix` (local) and `Object3D.matrixWorld` (after parents), and
+`add()` is what builds the chain. `Camera.matrixWorldInverse` is the view matrix, under a name
+that says what it is. For normals it exposes `normalMatrix` on the material's shader as
+`normalMatrix`, computed as the inverse transpose for you.
+
+Godot separates `Node3D.transform` (local) from `global_transform` (world), with
+`to_local()` and `to_global()` for the conversions, and `Transform3D.affine_inverse()` for the
+general inverse - `inverse()` assumes no scale and is wrong if there is any.
+
+Unity's spelling is `Transform.localPosition` against `Transform.position`, with
+`InverseTransformPoint()` going the other way. Its shaders provide the normal matrix as
+`unity_WorldToObject` transposed, which is the same quantity arrived at from the other side.
+:::
+
+## Clip Space, Briefly
+
+The last matrix in the chain is the projection, and it does something the others do not: it
+writes to the bottom row, so $w$ stops being 1.
+
+That is the loose end from Section 2.2. Once $w$ carries depth, dividing everything by it is
+what makes distant things smaller, and the result lands in a cube where anything outside the
+range is off screen and gets clipped. Hence the name.
+
+Part 5 does it properly. What matters here is that clip space is the end of the same chain,
+reached by one more multiplication, and that it is the point where the fourth component
+finally earns the generality it was given.
+
+## Where This Shows Up
+
+- **Anything attached to anything.** Weapons in hands, wheels on cars, cameras on rigs.
+- **Wrong-place bugs**, which are usually a local position used where a world position was
+  wanted, or the reverse.
+- **Collision tests**, which are far cheaper in an object's local space where its box is
+  axis-aligned. Part 6 leans on this constantly.
+- **Lighting on stretched models**, which is the normal matrix, every time.
+- **Jitter far from the origin**, which is world space precision rather than a bug in your
+  maths.
+- **Billboards and UI markers**, which need a world position projected all the way to screen
+  space. Section 3.2 of Part 5.
+
+:::note[The one thing to take away]
+A position is meaningless without a space. Getting from one to the next is a matrix, getting
+back is its inverse, and parenting is one more multiplication on the left. Everything
+transforms by the object's matrix except normals, which need its inverse transpose - and that
+distinction is invisible until something is scaled unevenly.
+:::

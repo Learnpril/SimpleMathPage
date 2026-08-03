@@ -1,0 +1,217 @@
+---
+title: Bezier Curves
+description: Curves built from nothing but repeated lerp, why de Casteljau's construction hands you the tangent for free, the three grades of smooth when you chain two together, and a jump arc as a quadratic
+sidebar:
+  order: 15
+  label: "4.3  Bezier Curves"
+---
+
+import DemoPanel from "../../../../components/DemoPanel.astro";
+import CodePanel from "../../../../components/CodePanel.astro";
+import bezierSource from "../../../../lib/gamedev/bezier.ts?raw";
+
+## What You'll Learn
+
+That a Bezier curve is **repeated `lerp` and nothing else** - no new machinery, just Section 4.2's
+smallest function applied over and over. That the construction hands you the **tangent for free**,
+with no calculus. What the control points actually control, and the one property that makes them
+safe to hand to a designer. Then the three grades of smooth when you join two curves, only two of
+which are any good. And a jump arc, which is a quadratic with one control point in a slightly
+surprising place.
+
+## Repeated Lerp
+
+Take three points. Lerp between the first pair, lerp between the second pair, then lerp between
+those two results. That final point is on a **quadratic Bezier**.
+
+Take four points and do it again - three lerps, then two, then one. That is a **cubic Bezier**, the
+one used almost everywhere.
+
+$$
+n \text{ points} \;\longrightarrow\; n-1 \;\longrightarrow\; \cdots \;\longrightarrow\; 1
+$$
+
+This is **de Casteljau's algorithm**, and it is worth taking as the definition rather than the
+polynomial that follows from it. Everything useful about Bezier curves is easier to see this way.
+
+Below, the four orange dots are the control points. The dashed line joins them, the blue segments
+are the first round of lerps, and the purple segment is the second. The teal dot is where they end
+up.
+
+<DemoPanel name="bezier" />
+
+Drag a control point and watch. Then drag the `t` slider and watch the construction slide along.
+
+Three things worth noticing while you do.
+
+**The curve touches the first and last control point exactly, and no others.** The middle two pull
+the curve towards themselves without ever being reached. That is why editors call them handles
+rather than points on the path.
+
+**The curve never leaves the region its control points span.** This is the _convex hull property_,
+and it is the reason a Bezier is safe: you can hand the handles to a designer knowing the path
+cannot wander somewhere unplanned. The build check samples a thousand points and asserts none of
+them escapes the control points' box.
+
+**The purple segment is the tangent.** Not approximately - exactly, up to a factor of the degree.
+More on that in a moment.
+
+## The Polynomial Form
+
+Expand all that lerping algebraically and the lerps collapse into four weights on the four control
+points:
+
+$$
+B(t) = \underbrace{(1-t)^3}_{P_0} + \underbrace{3(1-t)^2 t}_{P_1} + \underbrace{3(1-t)t^2}_{P_2} + \underbrace{t^3}_{P_3}
+$$
+
+These are the **Bernstein basis** functions, and the useful fact about them is that they always
+**sum to 1** and are never negative on $[0, 1]$. Which means every point on the curve is a
+_weighted average_ of the control points - and that is precisely why the convex hull property
+holds. It is not a separate fact, it is the same fact stated twice.
+
+Both forms are in the code, and the build check runs 401 values of $t$ through each and asserts
+they agree to $10^{-12}$. The polynomial is faster; de Casteljau is clearer and gives you more.
+
+## The Tangent Comes for Free
+
+Here is the part that seems too convenient.
+
+The **last segment** of the de Casteljau construction - the purple one - points along the curve's
+direction of travel. Multiply its length by the degree and you have the derivative exactly:
+
+$$
+B'(t) = n \cdot \left(\text{the final segment}\right)
+$$
+
+So you can get the tangent without differentiating anything. Just run the construction you were
+already running and read off the last step.
+
+This is checked three ways, because a claim that convenient deserves it: `tangentFromLevels` reads
+it off the construction, `cubicTangent` differentiates the polynomial, and a finite difference
+approximates it numerically. All three agree across 400 values of $t$.
+
+The derivative has a nice shape of its own. Differentiating a cubic Bezier gives a **quadratic
+Bezier** on the gaps between control points:
+
+$$
+B'(t) = \text{Bezier}\Big(3(P_1 - P_0),\; 3(P_2 - P_1),\; 3(P_3 - P_2)\Big)
+$$
+
+One consequence you can see in the scene: at $t = 0$ the tangent is $3(P_1 - P_0)$, so the curve
+leaves $P_0$ heading straight at $P_1$. That is why dragging a handle rotates the end of the curve
+the way it does.
+
+:::tip[Why tangents matter here]
+A tangent is the direction of travel, so anything that has to _face_ where it is going needs it - a
+camera on a rail, a character following a path, a projectile that should point along its arc.
+
+Combine it with Part 1: normalize the tangent to get a forward direction, then Section 1.4's
+`buildBasis` turns that into a full orientation. Part 4 and Part 1 meet exactly here.
+:::
+
+<CodePanel
+  code={bezierSource}
+  lang="ts"
+  file="src/lib/gamedev/bezier.ts"
+  label="Everything built on lerp2"
+/>
+
+## Joining Two Curves
+
+One cubic can only bend so much. Real paths are several joined end to end, and the joint is where
+it goes wrong.
+
+There are three grades, and the middle one is the trap.
+
+<DemoPanel name="bezierjoin" />
+
+Only **one** control point differs between the three buttons - the second curve's first handle.
+Everything else is held fixed.
+
+| Grade  | Requirement                                       | Looks          | Travels      |
+| :----- | :------------------------------------------------ | :------------- | :----------- |
+| **C0** | the curves touch                                  | visible corner | badly        |
+| **G1** | tangents point the same **direction**             | smooth         | changes pace |
+| **C1** | tangents are the **same vector**, length included | smooth         | smoothly     |
+
+Switch between `Looks smooth` and `Actually smooth`. The curves are nearly indistinguishable - and
+the readout is not. The G1 join arrives at the seam with a speed of $3.19$ and leaves it at
+$0.96$, a drop to under a third, while looking perfectly continuous.
+
+That is the whole point of the distinction. **G1 is enough for something you look at. C1 is what
+you need for something you travel along.** A camera on a G1 path visibly stumbles at every seam,
+and the geometry gives you no clue why.
+
+The requirement is easy to state: for the tangents to match in length as well as direction, the
+handle leaving the joint must be the **mirror** of the handle arriving at it. Which is exactly what
+the "unify handles" button does in every vector editor and animation curve editor you have used.
+
+:::note[There is a C2 as well]
+Matching curvature too, not just direction and speed. Chained cubic Beziers cannot generally manage
+it without giving up local control - moving one handle would have to ripple down the chain.
+
+That is what Catmull-Rom splines and B-splines are for, and Section 4.4 covers them. It also
+covers the other thing this Section quietly leaves broken: **equal steps in $t$ are not equal
+distances along the curve.**
+:::
+
+## A Jump Arc Is a Quadratic
+
+A quadratic Bezier with the two ends on the ground is a parabola, which is the shape of a jump. So
+you can author a jump by placing three points rather than by tuning gravity.
+
+There is one wrinkle worth knowing, and it is the reason this gets a value list.
+
+<DemoPanel name="jumparc" />
+
+To get an apex of 2, the control point goes at height **4**. Because at the midpoint a quadratic
+evaluates to
+
+$$
+B(0.5) = \frac{P_0 + 2P_1 + P_2}{4}
+$$
+
+so the middle point only gets half the vote. It has to reach twice as high to pull the curve where
+you asked.
+
+The check confirms it for three different arcs, and finds the peak by sampling rather than assuming:
+exactly the requested height, at exactly $t = 0.5$.
+
+Section 7.1 builds the same arc from the other end - given a jump height and an airtime, it solves
+backwards for the gravity and launch velocity that produce them. Same curve, two ways in, depending
+on whether a designer is placing points or tuning feel.
+
+:::note[In an engine]
+Three.js has `QuadraticBezierCurve3` and `CubicBezierCurve3`, with `getPoint(t)`, `getTangent(t)`,
+and `CurvePath` for chaining. `getSpacedPoints()` is the arc-length version, which is Section 4.4's
+subject.
+
+Godot's `Curve3D` stores points with `in` and `out` handles - which is the C1 pairing above made
+into the data model - and `Path3D` plus `PathFollow3D` walk it for you.
+
+Unity's `AnimationCurve` is Bezier-based, and its `Keyframe` struct holds `inTangent` and
+`outTangent` separately, so setting them unequal is how you deliberately break C1. Its
+`WeightedMode` controls handle lengths, which is the G1-versus-C1 difference exposed as an enum.
+:::
+
+## Where This Shows Up
+
+- **Camera rails and cutscene paths**, where the convex hull property is what stops a camera
+  clipping through a wall you never expected it near.
+- **Animation curve editors**, which are cubic Beziers with the handles exposed - and the C1 pairing
+  is the "smooth" toggle on each keyframe.
+- **Fonts and vector art**, which are almost entirely cubic Beziers with C1 joints.
+- **UI motion**, where CSS `cubic-bezier(...)` is a cubic with $P_0$ and $P_3$ pinned to the
+  corners, so you only supply the two handles.
+- **Jump arcs and thrown-object trajectories**, either authored as here or derived from physics in
+  Part 7.
+- **Aiming reticles and grenade indicators**, which draw the arc the projectile will follow.
+
+:::note[The one thing to take away]
+A Bezier is repeated `lerp`, and de Casteljau's last segment is the tangent times the degree, so the
+direction of travel costs you nothing. The weights sum to 1 and never go negative, so the curve
+cannot escape its control points - which is what makes handles safe to expose. When chaining,
+matching tangent _directions_ looks smooth but changes speed at the seam; matching the tangent
+_vectors_ is what a camera needs.
+:::

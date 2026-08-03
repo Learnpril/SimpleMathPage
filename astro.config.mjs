@@ -115,24 +115,70 @@ export default defineConfig({
             {
               label: "3D Game Development",
               items: [
-                { slug: "applied/3d-game-development/about-3d-game-development" },
+                {
+                  slug: "applied/3d-game-development/about-3d-game-development",
+                },
                 {
                   label: "Part 1: Vectors",
                   collapsed: false,
                   items: [
-                    { slug: "applied/3d-game-development/points-vectors-and-coordinate-conventions" },
-                    { slug: "applied/3d-game-development/length-normalization-and-distance" },
+                    {
+                      slug: "applied/3d-game-development/points-vectors-and-coordinate-conventions",
+                    },
+                    {
+                      slug: "applied/3d-game-development/length-normalization-and-distance",
+                    },
                     { slug: "applied/3d-game-development/the-dot-product" },
-                    { slug: "applied/3d-game-development/the-cross-product-and-building-a-basis" },
-                    { slug: "applied/3d-game-development/angles-atan2-and-shortest-rotation" },
+                    {
+                      slug: "applied/3d-game-development/the-cross-product-and-building-a-basis",
+                    },
+                    {
+                      slug: "applied/3d-game-development/angles-atan2-and-shortest-rotation",
+                    },
                   ],
                 },
                 {
                   label: "Part 2: Transforms",
                   collapsed: false,
                   items: [
-                    { slug: "applied/3d-game-development/matrices-as-transformations" },
-                    { slug: "applied/3d-game-development/homogeneous-coordinates-and-4x4-matrices" },
+                    {
+                      slug: "applied/3d-game-development/matrices-as-transformations",
+                    },
+                    {
+                      slug: "applied/3d-game-development/homogeneous-coordinates-and-4x4-matrices",
+                    },
+                    {
+                      slug: "applied/3d-game-development/trs-order-and-composing-transforms",
+                    },
+                    {
+                      slug: "applied/3d-game-development/local-world-view-and-clip-space",
+                    },
+                  ],
+                },
+                {
+                  label: "Part 3: Rotations",
+                  collapsed: false,
+                  items: [
+                    {
+                      slug: "applied/3d-game-development/euler-angles-and-gimbal-lock",
+                    },
+                    { slug: "applied/3d-game-development/quaternions" },
+                    {
+                      slug: "applied/3d-game-development/interpolating-rotations-slerp-and-nlerp",
+                    },
+                  ],
+                },
+                {
+                  label: "Part 4: Time and Feel",
+                  collapsed: false,
+                  items: [
+                    {
+                      slug: "applied/3d-game-development/delta-time-and-frame-rate-independence",
+                    },
+                    {
+                      slug: "applied/3d-game-development/easing-smoothstep-and-damping",
+                    },
+                    { slug: "applied/3d-game-development/bezier-curves" },
                   ],
                 },
               ],
@@ -204,7 +250,15 @@ export default defineConfig({
                   'the-cross-product-and-building-a-basis':    [1, 'Vectors and Spatial Reasoning'],
                   'angles-atan2-and-shortest-rotation':        [1, 'Vectors and Spatial Reasoning'],
                   'matrices-as-transformations':               [2, 'Matrices and Transformations'],
-                  'homogeneous-coordinates-and-4x4-matrices':  [2, 'Matrices and Transformations']
+                  'homogeneous-coordinates-and-4x4-matrices':  [2, 'Matrices and Transformations'],
+                  'trs-order-and-composing-transforms':        [2, 'Matrices and Transformations'],
+                  'local-world-view-and-clip-space':           [2, 'Matrices and Transformations'],
+                  'euler-angles-and-gimbal-lock':              [3, 'Rotations Done Right'],
+                  'quaternions':                               [3, 'Rotations Done Right'],
+                  'interpolating-rotations-slerp-and-nlerp':   [3, 'Rotations Done Right'],
+                  'delta-time-and-frame-rate-independence':    [4, 'Time, Interpolation and Feel'],
+                  'easing-smoothstep-and-damping':             [4, 'Time, Interpolation and Feel'],
+                  'bezier-curves':                             [4, 'Time, Interpolation and Feel']
                 }
               };
               var partMap = partOf[section];

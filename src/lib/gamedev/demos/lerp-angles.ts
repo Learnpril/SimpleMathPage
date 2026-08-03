@@ -1,11 +1,12 @@
 /** Interpolating 350 degrees to 10 degrees, blending numbers versus blending angles. */
 import { wrapDeg } from "../angles.ts";
+import { lerp } from "../interpolation.ts";
 import { HEADING, type Demo } from "./runner.ts";
 
 const FROM = 350;
 const TO = 10;
 
-const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
+/** Plain lerp walks straight through the numbers. This one walks through the angles. */
 const lerpAngle = (a: number, b: number, t: number) => a + wrapDeg(b - a) * t;
 
 const demo: Demo = (log) => {

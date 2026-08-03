@@ -268,6 +268,13 @@ const source = key ? sources[key].trimEnd() : "";
   .demo-stage :global(.demo-presets .demo-btn) {
     margin: 0;
   }
+  /* A preset row that represents a choice rather than a one-shot action marks the current
+     one, so a reader can tell which of six things they are looking at. */
+  .demo-stage :global(.demo-btn[aria-pressed="true"]) {
+    border-color: #39d3c3;
+    color: #39d3c3;
+    background: rgba(57, 211, 195, 0.1);
+  }
   .demo-stage :global(.demo-btn) {
     margin: 0.5rem 0 0;
     padding: 0.2rem 0.7rem;

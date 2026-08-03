@@ -1,0 +1,230 @@
+---
+title: Quaternions
+description: Four numbers that hold an orientation with no poles and nothing to lock, built from an axis and half an angle, plus the one thing they ask in return - the double cover, and the sign flip that keeps a turn from going the long way round
+sidebar:
+  order: 11
+  label: "3.2  Quaternions"
+---
+
+import DemoPanel from "../../../../components/DemoPanel.astro";
+import CodePanel from "../../../../components/CodePanel.astro";
+import quatSource from "../../../../lib/gamedev/quaternions.ts?raw";
+
+## What You'll Learn
+
+That a rotation is really **an axis and an angle**, that storing it that way removes gimbal lock
+entirely, and why the stored angle is **half** the one you asked for. Then multiplication as
+composition, the conjugate as a free inverse, and rotating a vector by sandwiching it. And
+finally the one genuine cost: every orientation has **two** quaternions, and blending towards
+the wrong one of the pair sends your object 320 degrees to travel 40.
+
+## Start With the Axis, Not the Numbers
+
+Section 3.1 built orientations out of three separate turns and found that the third one
+collapses into the first. The fix is to stop stacking turns.
+
+**Any rotation in 3D is a single turn about a single axis.** That is not a simplification, it is
+a theorem - Euler's rotation theorem - and it means one axis plus one angle is enough. No
+sequence, no order convention, no nesting, so nothing to lock.
+
+Four numbers hold it:
+
+$$
+q = \left(\;\underbrace{\hat{a}\,\sin\tfrac{\theta}{2}}_{x,\;y,\;z}\;,\;\; \underbrace{\cos\tfrac{\theta}{2}}_{w}\;\right)
+$$
+
+The axis $\hat{a}$ is a unit vector, and it lives in $x, y, z$ scaled by something. The angle
+lives in $w$. Notice what that something is, because it is the one surprise in the whole
+construction: **the angle is halved**.
+
+Drag the sliders. The purple line is the axis, the grey circle is every place the marked corner
+could go, and the orange dot is where it is now.
+
+<DemoPanel name="quatspin" />
+
+Tilt the axis anywhere you like. There is nothing special about $X$, $Y$ or $Z$ - the axis is
+just a direction, and the box turns about it. That freedom is what three separate angles never
+had.
+
+Watch $w$ as you drag the angle. At 90 degrees it reads $0.71$, which is $\cos 45°$. At 180 it
+reads $0$. The readout says so live.
+
+### Why half
+
+The halving looks arbitrary and is not. It is what makes multiplication work.
+
+Rotating a vector uses the quaternion **twice** - once on each side:
+
+$$
+v' = q \, v \, q^{*}
+$$
+
+Two applications, each carrying half the angle, add up to the whole angle. If $w$ stored the
+full angle the sandwich would rotate twice as far as you asked.
+
+That is the trade. You accept a factor of two in the storage, and in exchange composition
+becomes plain multiplication, the inverse becomes three sign flips, and there are no poles. It
+is a very good trade, and it is also why a quaternion is not a thing to read with your eyes -
+$w = 0.71$ does not look like "a quarter turn" to anybody.
+
+## Everything Else Is Ordinary
+
+With the half-angle in place, the rest of the operations are unremarkable, which is the point.
+
+| To do this                | You do this            | Cost                    |
+| :------------------------ | :--------------------- | :---------------------- |
+| Combine two rotations     | $q_2 \, q_1$           | 16 multiplies           |
+| Undo a rotation           | $q^{*}$, the conjugate | negate three numbers    |
+| Rotate a vector           | $q \, v \, q^{*}$      | two quaternion products |
+| Check nothing has drifted | is the length still 1  | one square root         |
+
+Two of those deserve a note.
+
+**Multiplication composes, and does not commute.** $q_2 q_1$ means apply $q_1$ then $q_2$ -
+the same right-to-left reading as `multiplyMat4` in Part 2, deliberately, so the two are
+interchangeable. And $q_2 q_1 \neq q_1 q_2$, which it had better not be, since rotations do not
+commute and Section 2.3 spent a whole page on that.
+
+**The conjugate is the inverse.** Negate $x, y, z$ and you have the same axis with the opposite
+angle. No determinant, no division, no special case - compare that with inverting a matrix in
+Section 2.4.
+
+:::note[These are the same rotations, reached another way]
+Quaternions are not a parallel theory. A quaternion built about $X$, $Y$ or $Z$ produces
+**exactly** the matrix `rotationX4`, `rotationY4` or `rotationZ4` from Part 2 - the build check
+asserts that across 121 angles per axis, to within $10^{-12}$.
+
+So `quatToMat4` is a genuine conversion, not an approximation, and you can hold an orientation
+as a quaternion, hand a matrix to the renderer, and lose nothing. That is exactly what engines
+do.
+:::
+
+## The Double Cover
+
+Here is the bill.
+
+Negate all four numbers and you get a different quaternion that describes the **identical**
+orientation. Not approximately - the matrices come out bit-for-bit equal, because every entry
+is a product of two components and both signs cancel.
+
+$$
+q \quad\text{and}\quad -q \quad\text{are the same rotation}
+$$
+
+Which makes sense from the half-angle: turning $\theta$ about $\hat{a}$ and turning
+$\theta - 360°$ about $-\hat{a}$ land in the same place, and halving turns that into a sign.
+
+Nothing you can measure about the object distinguishes them. But **interpolation is arithmetic
+on the four numbers**, and those are not the same at all. Blend towards the far twin and the
+object takes the scenic route.
+
+Below, two objects. Both start at the same heading and end at the same heading, only 40 degrees
+apart. Orange blends towards the quaternion as written. Teal flips its sign first.
+
+<DemoPanel name="doublecover" />
+
+Drag the blend slider and watch the trails. Teal takes the 40 degrees. Orange goes **320
+degrees the other way round** to reach the same place.
+
+The signal is a single number. The dot product of the two quaternions is $-0.94$, and
+
+$$
+q_1 \cdot q_2 < 0 \quad\Longrightarrow\quad \text{you have the far twin}
+$$
+
+So flip it. That is the entire fix:
+
+```ts
+if (dot(from, to) < 0) to = negate(to);
+```
+
+<CodePanel
+  code={quatSource}
+  lang="ts"
+  file="src/lib/gamedev/quaternions.ts"
+  label="The code both scenes run on"
+/>
+
+:::caution[This is the bug, not a footnote]
+If you write rotation blending yourself and skip those two lines, you get a character who
+occasionally spins almost the whole way around to turn a few degrees. It is intermittent,
+because it only happens when the two quaternions land on opposite twins, which depends on how
+they were produced.
+
+The build check pins the numbers down: without the flip the blend sweeps 320 degrees, with it 40,
+and both arrive at the same orientation. It also asserts that flipping never changes the
+destination and that an already-close pair is left alone.
+:::
+
+## No Poles
+
+The payoff against Section 3.1, stated as a property rather than a claim.
+
+Blend from looking straight up to looking straight down - through the exact orientations where
+Euler angles are undefined and where the separation formula reads zero. Every intermediate step
+stays a unit quaternion, stays finite, and moves monotonically further from the start, ending at
+exactly 180 degrees. The check walks 201 steps of it and asserts all four properties.
+
+There is no configuration to avoid, no angle to clamp, and no `atan2` whose arguments both
+vanish. The reason is structural: a quaternion never decomposes an orientation into nested
+turns, so there is no inner axis to collapse into an outer one.
+
+:::tip[What they do not fix]
+Quaternions remove gimbal lock. They do not remove the **order** problem - $q_2 q_1$ is still
+not $q_1 q_2$, because that is a fact about rotations rather than about any way of writing them.
+
+They also do not remove drift. Repeated multiplication accumulates floating point error and the
+length creeps away from 1, which shows up as an object that slowly scales. Renormalize
+periodically. This is cheaper and better-behaved than the matrix equivalent, where drift
+degrades orthogonality and you have to re-orthonormalize.
+:::
+
+## When to Use Which
+
+Three representations now, with honest jobs:
+
+| Use              | For                                                            |
+| :--------------- | :------------------------------------------------------------- |
+| **Euler angles** | anything a person reads or types. Section 3.1                  |
+| **Quaternion**   | storing, composing and interpolating orientation. This Section |
+| **Matrix**       | transforming vertices, and combining with position and scale   |
+
+The usual pipeline: accept Euler angles at the edges, hold quaternions while you compute, and
+convert to a matrix once per object per frame for the renderer. Each conversion is exact, so
+nothing is lost by moving between them - only by picking the wrong one to compute in.
+
+:::note[In an engine]
+Three.js has `Quaternion` with `setFromAxisAngle`, `multiply` and `slerp`, and every `Object3D`
+stores a quaternion internally - `Object3D.rotation` is a convenience that writes through to it.
+`Quaternion.slerp` handles the sign flip for you.
+
+Godot's `Quaternion` is a first-class type with `*` for composition and `slerp`; `Basis` and
+`Transform3D` convert both ways, and `Quaternion.dot()` is there for exactly the test above.
+
+Unity's `Quaternion` is what `Transform.rotation` actually is, with `Quaternion.AngleAxis`,
+`Quaternion.Slerp` and `Quaternion.Inverse`. Its `Slerp` also handles the flip; if you write
+your own blend you own that `if`.
+
+All three store the components in $(x, y, z, w)$ order. Some maths references put $w$ first,
+which is worth checking before you copy a formula off a page.
+:::
+
+## Where This Shows Up
+
+- **Every animated skeleton.** Bone rotations are stored as quaternions because they get blended
+  constantly and must not gimbal lock mid-animation.
+- **Turning a character towards a direction**, which is a blend from the current orientation to a
+  target one, and which needs the sign flip.
+- **Camera orbits and free-look in space games**, where there is no up axis to privilege and no
+  pitch to clamp.
+- **Networked orientation**, where four numbers compress better than nine and can be sent as
+  three, reconstructing $w$ from the other three since the length is known to be 1.
+- **Physics angular velocity**, which integrates onto an orientation as a quaternion product.
+
+:::note[The one thing to take away]
+A rotation is one axis and one angle, and a quaternion stores exactly that - with the angle
+halved, because rotating a vector uses the quaternion twice. Multiplication composes,
+the conjugate inverts, and there are no poles. In exchange, every orientation has two
+quaternions, so before you blend towards one, check the dot product and flip the sign if it is
+negative.
+:::

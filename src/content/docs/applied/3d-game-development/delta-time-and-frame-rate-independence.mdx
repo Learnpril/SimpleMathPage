@@ -1,0 +1,302 @@
+---
+title: Delta Time and Frame Rate Independence
+description: Why lerp towards a target every frame is a bug that ties the feel of your game to the player's hardware, what exponential decay fixes, and why half-life is the number to put in front of a designer
+sidebar:
+  order: 13
+  label: "4.1  Delta Time and Frame Rate"
+---
+
+import DemoPanel from "../../../../components/DemoPanel.astro";
+import CodePanel from "../../../../components/CodePanel.astro";
+import interpSource from "../../../../lib/gamedev/interpolation.ts?raw";
+
+## What You'll Learn
+
+That the single most commonly written smoothing line in game code is wrong, and **wrong in a way
+that makes your game feel different on different computers**. Why multiplying by delta time does
+not fix it. What exponential decay is and why it is the actual answer. And **half-life**, which
+turns an unreadable tuning constant into a sentence a designer can say out loud.
+
+This Section comes before anything else in Part 4 because everything that moves depends on it.
+
+## The Line Everybody Writes
+
+Something needs to follow something else smoothly - a camera trailing the player, a turret easing
+onto a target, a health bar sliding down. The obvious code is:
+
+```ts
+// Every frame:
+current = lerp(current, target, 0.1);
+```
+
+Ten percent of the remaining distance, every frame. It works. It looks good on your machine. It
+is also a bug, and here is the shape of it.
+
+That line closes a fixed fraction **per frame**. So the number of frames it needs is fixed, which
+means the number of **seconds** it needs is whatever your hardware decides:
+
+$$
+\text{frames to close } 90\% = \frac{\ln(0.1)}{\ln(1 - 0.1)} \approx 21.9
+$$
+
+Twenty-two frames, always. On a 30 fps laptop that is nearly three quarters of a second. On a
+144 Hz monitor it is a sixth of a second.
+
+<DemoPanel name="dtmath" />
+
+**4.8 times quicker, from identical code.** The camera that felt weighty and cinematic while you
+were building it feels twitchy and instant to somebody with a better monitor - or the reverse,
+which is worse, because sluggish controls read as broken.
+
+## What `dt` Is
+
+Everything from here on is written in terms of `dt`, so it is worth being exact about what that
+is before leaning on it.
+
+**`dt` is how long the last frame took, in seconds.** The name is short for **delta time**, and
+"delta" is the standard word for a change in a quantity - the Greek letter $\Delta$ is used the
+same way in maths, so $\Delta t$ and `dt` mean the same thing: a change in time, an interval.
+
+The important part is that it is **measured, not chosen**. A game loop runs as fast as it can and
+each pass round takes however long it takes, so at the top of every frame the engine looks at the
+clock, subtracts the last reading, and hands you the difference:
+
+```ts
+let previous = now();
+
+function frame() {
+  const current = now();
+  const dt = (current - previous) / 1000; // seconds, not milliseconds
+  previous = current;
+
+  update(dt); // your code gets told how much time passed
+  render();
+  requestAnimationFrame(frame);
+}
+```
+
+So `dt` is a small number, and which small number depends entirely on the player's machine:
+
+| Frame rate  | `dt`              |
+| :---------- | :---------------- |
+| 30 fps      | $0.0333$ s        |
+| 60 fps      | $0.0167$ s        |
+| 120 fps     | $0.0083$ s        |
+| 144 fps     | $0.0069$ s        |
+| a bad frame | $0.25$ s or worse |
+
+That last row matters. `dt` is **not a constant** - it changes every single frame, and
+occasionally it changes a lot, because something had to be loaded or the operating system went
+away for a moment. Any code that assumes a steady frame time is making a promise the hardware
+never gave.
+
+:::tip[Why `dt` is normally the right tool]
+For anything expressed as a **rate**, multiplying by `dt` is exactly correct. A speed is meters
+per second, so distance travelled this frame is:
+
+```ts
+position += velocity * dt; // meters per second, times seconds, gives meters
+```
+
+The units cancel and the answer is right regardless of frame rate. This works, it is standard,
+and it is the habit that makes the next section's mistake so easy to fall into - because
+`lerp(current, target, 0.1)` looks like it should submit to the same treatment, and it does not.
+:::
+
+## Delta Time Alone Does Not Fix It
+
+The standard first attempt is to reach for `dt`:
+
+```ts
+current = lerp(current, target, 0.1 * dt); // still not right
+```
+
+This is better, and it is still wrong. The reason is that $0.1$ is not a rate - it is a
+**proportion**, and proportions do not scale by multiplication the way distances do. Closing 10%
+twice does not close 20%, it closes 19%.
+
+So the `velocity * dt` reasoning does not transfer. It is right in the limit of very small frames
+and drifts away as frames get longer, because the errors compound: each frame's blend is applied
+to the result of the last one, so what accumulates is a **product**, not a sum.
+
+Multiplying by `dt` treats the approach as if it were linear. It is not - it is a fraction of a
+fraction of a fraction, which is exponential. And there is a second problem: with a long enough
+frame, `0.1 * dt` can exceed 1, and the value shoots straight past the target and oscillates.
+
+So the fix is not a patch on the factor. It is computing the factor correctly in the first place.
+
+## Exponential Decay
+
+Ask the right question. Not "what fraction should I close this frame" but "**what fraction should
+be left after this much time**".
+
+If a fixed proportion of the gap survives each second, the amount left after time $t$ is an
+exponential:
+
+$$
+\text{remaining}(t) = e^{-k t}
+$$
+
+### What $k$ is
+
+$k$ is the **decay rate**: one number saying how aggressively the gap closes. Bigger $k$ means
+faster. It is the same constant that appears in radioactive decay, a capacitor discharging and a
+cup of coffee cooling - this is the standard shape those all share, and $k$ is the standard letter
+for the knob on it.
+
+Its units are **per second**, and there is a tidy reason why. An exponent has to be a plain
+number - $e^{\text{2 seconds}}$ is meaningless - so if $t$ is in seconds then $k$ must be in
+$1/\text{seconds}$ for the product $k t$ to cancel down to nothing. Any time you are unsure
+whether a rate belongs on the top or the bottom, that check settles it.
+
+Two ways to get a feel for a particular $k$:
+
+- After $1/k$ seconds, the amount left is $e^{-1} \approx 0.368$, so **63% of the gap has
+  closed**. That duration $1/k$ is called the _time constant_.
+- $k = 0$ means the object never moves at all. Large $k$ means it snaps to the target almost
+  immediately. Nothing in between is special.
+
+The trouble is the direction of the relationship. $k$ is a rate sitting inside an exponent, so its
+value is inversely related to the duration you actually care about, and reading a felt duration off
+it requires dividing:
+
+| $k$    | Time constant $1/k$ | Half-life | Feels like        |
+| :----- | :------------------ | :-------- | :---------------- |
+| $13.9$ | $0.07$ s            | $0.05$ s  | snappy            |
+| $4.62$ | $0.22$ s            | $0.15$ s  | a weighted camera |
+| $1.39$ | $0.72$ s            | $0.50$ s  | sluggish          |
+
+Which is exactly why the section after next hands you a different knob for the same dial.
+
+Whatever $k$ you pick, the fraction to close in a frame of length $dt$ is whatever is not left:
+
+$$
+t_{\text{blend}} = 1 - e^{-k \cdot dt}
+$$
+
+And that is the whole fix. One line, in `decayFactor` below.
+
+Why it works is worth a sentence, because it is the reason this is exactly right rather than
+merely better. The amount left after a step is $e^{-k \cdot dt}$. Two steps multiply, and
+multiplying exponentials **adds the exponents**:
+
+$$
+e^{-k \cdot dt_1} \cdot e^{-k \cdot dt_2} = e^{-k(dt_1 + dt_2)}
+$$
+
+So the result depends only on the **total** time, never on how that time was divided into frames.
+Sixty frames or six or one enormous one - same answer. The value list above shows exactly that:
+$0.0625$ left after one second, identically at 30 fps, 144 fps, and in a single step.
+
+## See It Fail, Then Not Fail
+
+Both rows below are the same chase from left to right. Orange is 30 fps, blue is 144 fps, and the
+grey line joins them so you can see whether they agree - **vertical means they agree, slanted
+means they do not.**
+
+The top row uses the fixed factor. The bottom row computes the factor from the timestep.
+
+<DemoPanel name="framerate" />
+
+Scrub the slider. The top pair pulls apart immediately and at one point sits over three units
+apart on a six-unit track - the 144 Hz follower has essentially arrived while the 30 fps one is
+still halfway. The bottom pair stays vertical the whole way.
+
+Not approximately vertical. Across eight frame rates from 24 to 240 and forty different
+durations, the build check measures the worst spread at $8 \times 10^{-15}$, which is floating
+point noise rather than disagreement.
+
+<CodePanel
+  code={interpSource}
+  lang="ts"
+  file="src/lib/gamedev/interpolation.ts"
+  label="The fix, and the small functions it is built from"
+/>
+
+:::tip[A bonus you get for free]
+Look at what `decayFactor` does with a very long frame. As $dt$ grows, $e^{-k \cdot dt}$ heads
+for zero, so the factor heads for **1** and stops there.
+
+Which means a frame hitch cannot make anything overshoot or explode. The object closes the whole
+gap and sits on the target, which is the correct behaviour and exactly what `0.1 * dt` fails to
+do. The check verifies `damp` never leaves the interval for any timestep from a tenth of a
+millisecond to five seconds.
+:::
+
+## Half-Life Is the Number to Expose
+
+There is still a $k$ in there, and as the table above showed, $k$ is a poor thing to hand somebody.
+"Set the camera rate to $4.62$ per second" is not a sentence anybody can act on - you have to
+compute $1/k$ or $\ln 2 / k$ before it means a duration.
+
+So do not expose it. Keep $k$ as the thing the maths uses, and expose the **half-life** instead:
+the time to close half the remaining distance.
+
+$$
+k = \frac{\ln 2}{h}
+$$
+
+Now the tuning parameter is a sentence. _"The camera closes half the distance every 0.15
+seconds."_ That is something you can discuss, compare between two cameras, and put in a config
+file that still makes sense in a year.
+
+It also makes the behaviour easy to predict in your head, since the remaining fraction is just
+repeated halving:
+
+| Time elapsed | Half-lives | Gap remaining |
+| :----------- | :--------- | :------------ |
+| $h$          | 1          | $1/2$         |
+| $2h$         | 2          | $1/4$         |
+| $3h$         | 3          | $1/8$         |
+| $4h$         | 4          | $1/16$        |
+
+With a half-life of $0.25$ s, one second is four half-lives, so a sixteenth of the gap is left -
+the $0.0625$ from the value list, which is not a coincidence but the closed form.
+
+Rough guide for picking one: around $0.05$ s feels snappy and responsive, $0.15$ s reads as a
+weighted camera, and past $0.5$ s starts to feel like the controls are not connected to anything.
+
+:::caution[Never `if (dt > something) return`]
+A tempting way to handle a frame hitch is to skip the update. Do not - it makes the simulation
+diverge from wall-clock time, and it is unnecessary here, because decay already handles arbitrary
+timesteps gracefully.
+
+The place where large frames genuinely do need special handling is physics, where a big step can
+tunnel an object straight through a wall. That is a different problem with a different fix, and
+Section 7.2 covers it with a fixed timestep and an accumulator.
+:::
+
+:::note[In an engine]
+Three.js gives you `Clock.getDelta()`. There is no built-in damp, so the function above is the
+one to write - but `MathUtils.damp(x, y, lambda, dt)` exists and is exactly this, with `lambda`
+being the rate rather than the half-life.
+
+Godot passes `delta` into `_process()` and `_physics_process()`, and `lerp()` there takes a raw
+weight, so the same trap applies. `Node3D.global_position.lerp(target, weight)` needs the same
+treatment.
+
+Unity's `Time.deltaTime` is the usual source, and `Vector3.Lerp(a, b, 0.1f)` in an `Update` is
+this exact bug - common enough that it is a standard code review catch. `Mathf.SmoothDamp` is a
+different and also frame-rate-correct approach, using a critically damped spring, which
+Section 4.2 covers.
+:::
+
+## Where This Shows Up
+
+- **Camera follow**, the most visible case, and the one players describe as the game feeling
+  "floaty" or "stiff" without being able to say why.
+- **Turning towards a target**, which is Section 3.3's slerp with this Section's blend factor.
+  The two combine directly: compute the factor from `dt`, hand it to slerp.
+- **Health bars, ammo counters and any UI that eases**, where the bug is harmless but the fix
+  costs nothing.
+- **Audio fades and volume ducking**, which are exactly this maths with a different unit.
+- **Any tuning constant a designer touches**, which should be a half-life rather than a rate, so
+  a conversation about it can happen in seconds rather than in $k$.
+
+:::note[The one thing to take away]
+`lerp(current, target, 0.1)` closes a fixed fraction per **frame**, so its settling time is
+inversely proportional to the frame rate and the feel of your game changes with the hardware.
+Multiplying by `dt` is not the fix. Computing the factor as $1 - e^{-k \cdot dt}$ is, because
+multiplying exponentials adds their exponents, so only the total elapsed time matters. Expose the
+rate as a half-life, because that is the version a person can talk about.
+:::

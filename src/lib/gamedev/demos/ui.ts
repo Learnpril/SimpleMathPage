@@ -163,9 +163,10 @@ export function addReadout(el: HTMLElement): (text: string) => void {
 export function addButtonRow(
   el: HTMLElement,
   presets: Array<{ label: string; apply: () => void }>,
-): void {
+): (active: number) => void {
   const row = document.createElement("div");
   row.className = "demo-presets";
+  const buttons: HTMLButtonElement[] = [];
   for (const p of presets) {
     const b = document.createElement("button");
     b.type = "button";
@@ -173,8 +174,17 @@ export function addButtonRow(
     b.textContent = p.label;
     b.addEventListener("click", p.apply);
     row.appendChild(b);
+    buttons.push(b);
   }
   el.appendChild(row);
+
+  /* Only a caller that uses this gets `aria-pressed`, because on a row of one-shot presets
+     a permanently-false pressed state would be a lie told to a screen reader. */
+  return (active: number) => {
+    buttons.forEach((b, i) =>
+      b.setAttribute("aria-pressed", String(i === active)),
+    );
+  };
 }
 
 /**
@@ -195,4 +205,78 @@ export function addButton(
   b.textContent = label;
   b.addEventListener("click", onClick);
   el.appendChild(b);
+}
+
+/** The eight corners of a unit cube centred on the origin. */
+const BOX_CORNERS: ReadonlyArray<readonly [number, number, number]> = [
+  [-0.5, -0.5, -0.5],
+  [0.5, -0.5, -0.5],
+  [0.5, -0.5, 0.5],
+  [-0.5, -0.5, 0.5],
+  [-0.5, 0.5, -0.5],
+  [0.5, 0.5, -0.5],
+  [0.5, 0.5, 0.5],
+  [-0.5, 0.5, 0.5],
+];
+
+/** Its twelve edges, as pairs of corner indices. */
+const BOX_EDGES: ReadonlyArray<readonly [number, number]> = [
+  [0, 1],
+  [1, 2],
+  [2, 3],
+  [3, 0],
+  [4, 5],
+  [5, 6],
+  [6, 7],
+  [7, 4],
+  [0, 4],
+  [1, 5],
+  [2, 6],
+  [3, 7],
+];
+
+/** Where a corner of the box ends up once a transform has been applied to it. */
+export type Place = (
+  corner: readonly [number, number, number],
+) => [number, number, number];
+
+/**
+ * A wireframe box in a scene, redrawn by handing it a function that places its corners.
+ *
+ * Keeping the corner list here rather than in each scene means a scene file reads as the
+ * transform it is demonstrating instead of twenty lines of cube vertices.
+ */
+export function addBoxWire(
+  scene: THREE.Scene,
+  color: number,
+  opts: { dashed?: boolean } = {},
+): (place: Place) => void {
+  const geom = new THREE.BufferGeometry();
+  geom.setAttribute(
+    "position",
+    new THREE.BufferAttribute(new Float32Array(BOX_EDGES.length * 6), 3),
+  );
+  const mesh = new THREE.LineSegments(
+    geom,
+    opts.dashed
+      ? new THREE.LineDashedMaterial({
+          color,
+          dashSize: 0.12,
+          gapSize: 0.1,
+        })
+      : new THREE.LineBasicMaterial({ color }),
+  );
+  scene.add(mesh);
+
+  return (place: Place) => {
+    const pts: THREE.Vector3[] = [];
+    for (const [a, b] of BOX_EDGES) {
+      pts.push(
+        new THREE.Vector3(...place(BOX_CORNERS[a])),
+        new THREE.Vector3(...place(BOX_CORNERS[b])),
+      );
+    }
+    geom.setFromPoints(pts);
+    if (opts.dashed) mesh.computeLineDistances();
+  };
 }

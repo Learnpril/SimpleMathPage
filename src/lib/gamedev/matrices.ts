@@ -194,6 +194,32 @@ export function rotationY4(degrees: number): Mat4 {
   };
 }
 
+/** Turn about the x axis. Nose up and nose down, for something facing -Z. */
+export function rotationX4(degrees: number): Mat4 {
+  const a = (degrees * Math.PI) / 180;
+  const c = Math.cos(a);
+  const s = Math.sin(a);
+  return {
+    i: direction(1, 0, 0),
+    j: direction(0, c, s),
+    k: direction(0, -s, c),
+    t: point(0, 0, 0),
+  };
+}
+
+/** Turn about the z axis. Tilting sideways without changing where you face. */
+export function rotationZ4(degrees: number): Mat4 {
+  const a = (degrees * Math.PI) / 180;
+  const c = Math.cos(a);
+  const s = Math.sin(a);
+  return {
+    i: direction(c, s, 0),
+    j: direction(-s, c, 0),
+    k: direction(0, 0, 1),
+    t: point(0, 0, 0),
+  };
+}
+
 /** Apply `second` after `first`. Same right-to-left reading as the 2x2 version. */
 export function multiplyMat4(second: Mat4, first: Mat4): Mat4 {
   return {
@@ -218,4 +244,81 @@ export function rowsOf(m: Mat4): number[][] {
     [m.i.z, m.j.z, m.k.z, m.t.z],
     [m.i.w, m.j.w, m.k.w, m.t.w],
   ];
+}
+
+// ---- Composing: the order is the whole problem -------------------------------------------
+
+/** The three ingredients of an object's transform, before any decision about order. */
+export type TRS = {
+  /** Per-axis scale. Equal values behave very differently from unequal ones. */
+  scale: Vec3;
+  /** Yaw in degrees. One rotation axis is enough to show what ordering does. */
+  degrees: number;
+  translate: Vec3;
+};
+
+/** One of the three operations. */
+export type Step = "scale" | "rotate" | "translate";
+
+/** An order to apply them in, read left to right as "do this, then this, then this". */
+export type Sequence = readonly [Step, Step, Step];
+
+/** All six orders, so a demo can walk them and a check can compare them. */
+export const SEQUENCES: readonly Sequence[] = [
+  ["scale", "rotate", "translate"],
+  ["scale", "translate", "rotate"],
+  ["rotate", "scale", "translate"],
+  ["rotate", "translate", "scale"],
+  ["translate", "scale", "rotate"],
+  ["translate", "rotate", "scale"],
+];
+
+/** The matrix for one step on its own. */
+export function matrixFor(v: TRS, step: Step): Mat4 {
+  if (step === "scale") return scale4(v.scale.x, v.scale.y, v.scale.z);
+  if (step === "rotate") return rotationY4(v.degrees);
+  return translation4(v.translate.x, v.translate.y, v.translate.z);
+}
+
+/**
+ * Build one matrix that applies the three steps in the order given.
+ *
+ * Each new step multiplies on the **left**, because that is what "after" means for column
+ * vectors: whichever matrix sits nearest the vector acts first. So the sequence
+ * `["scale", "rotate", "translate"]` accumulates into `T * R * S` - written in the reverse
+ * of the order it happens in, which is the single most confusing thing about transforms.
+ */
+export function composeSequence(v: TRS, seq: Sequence): Mat4 {
+  let m = IDENTITY4;
+  for (const step of seq) m = multiplyMat4(matrixFor(v, step), m);
+  return m;
+}
+
+// ---- The other convention ----------------------------------------------------------------
+
+/** Swap rows and columns. The bridge between the two conventions. */
+export function transpose4(m: Mat4): Mat4 {
+  return {
+    i: { x: m.i.x, y: m.j.x, z: m.k.x, w: m.t.x },
+    j: { x: m.i.y, y: m.j.y, z: m.k.y, w: m.t.y },
+    k: { x: m.i.z, y: m.j.z, z: m.k.z, w: m.t.z },
+    t: { x: m.i.w, y: m.j.w, z: m.k.w, w: m.t.w },
+  };
+}
+
+/**
+ * The row-vector convention: the vector sits on the **left** of the matrix.
+ *
+ * Same arithmetic, transposed layout, and - the part that bites - reversed composition
+ * order. `demos/checks.ts` asserts that column-order `T * R * S` and row-order `S * R * T`
+ * describe the very same transform.
+ */
+export function applyRow4(v: Vec4, m: Mat4): Vec4 {
+  const rows = rowsOf(m);
+  const c = [v.x, v.y, v.z, v.w];
+  const out = [0, 0, 0, 0];
+  for (let col = 0; col < 4; col += 1) {
+    for (let row = 0; row < 4; row += 1) out[col] += c[row] * rows[row][col];
+  }
+  return { x: out[0], y: out[1], z: out[2], w: out[3] };
 }

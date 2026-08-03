@@ -1,0 +1,248 @@
+---
+title: TRS Order and Composing Transforms
+description: Why the same scale, the same rotation and the same translation give six different answers, how two short rules pick the one you want, and why the matrix product is written backwards from the order it happens in
+sidebar:
+  order: 8
+  label: "2.3  TRS Order and Composing"
+---
+
+import DemoPanel from "../../../../components/DemoPanel.astro";
+import CodePanel from "../../../../components/CodePanel.astro";
+import matricesSource from "../../../../lib/gamedev/matrices.ts?raw";
+
+## What You'll Learn
+
+That combining transforms is just multiplying their matrices, that the order changes the
+answer, and that **six orderings of scale, rotate and translate give six different results**.
+Then the two rules that pick the right one, each derived rather than announced. And finally
+why the product is written in the reverse of the order it happens in, which is where the
+row-versus-column convention finally gets settled.
+
+## Order Changes the Answer
+
+Start with the smallest possible case: one rotation, one translation.
+
+Both boxes below get the same turn and the same move. The teal one **turns, then moves**. The
+orange one **moves, then turns**.
+
+<DemoPanel name="spinorbit" />
+
+Drag the turn slider. The teal box spins where it stands. The orange box travels around the
+grey circle instead, because by the time the rotation happens it is no longer at the origin,
+and a rotation about the origin swings everything that is away from it.
+
+That is the whole problem in one picture. Neither box is broken. They are answers to two
+different questions:
+
+- **Turn then move** is "face this way, and stand over there." What you want for an object
+  with a position and a facing.
+- **Move then turn** is "stand over there, then swing the whole arrangement around the
+  origin." What you want for something in orbit, and almost never what you want otherwise.
+
+In algebra, matrix multiplication is **not commutative**: $AB \neq BA$ in general. That is
+usually stated as a dry fact about matrices. It is really a statement about the two boxes
+above.
+
+## Six Orderings
+
+Add scale and there are three operations, so there are $3! = 6$ orders to apply them in.
+
+Pick each one and watch. The dashed box is always the standard ordering, so there is
+something to compare against. The grey dot is the position you asked for and the orange dot
+is where the box actually ended up.
+
+<DemoPanel name="trsorder" />
+
+Six buttons, six different boxes. Only one of them does what a person setting a position, a
+rotation and a size would expect, and two short rules are enough to find it.
+
+### Rule one: translate last
+
+Look at the two dots. For four of the six orderings the orange dot is not sitting on the grey
+one - the object is not where you asked it to be.
+
+The reason is Section 2.2's fourth column. Translation puts the object's position into that
+column, and anything applied **afterwards** transforms that position along with everything
+else. Rotate after translating and your position gets rotated. Scale after translating and
+your position gets scaled, so an object at $x = 2$ with a scale of 2 ends up at $x = 4$.
+
+$$
+\underbrace{S \, T}_{\text{scale after moving}} \begin{bmatrix} 0 \\ 0 \\ 0 \\ 1 \end{bmatrix}
+= S \begin{bmatrix} t_x \\ t_y \\ t_z \\ 1 \end{bmatrix}
+= \begin{bmatrix} s_x t_x \\ s_y t_y \\ s_z t_z \\ 1 \end{bmatrix}
+$$
+
+Rotation and scale both leave the origin exactly where it is - that was the limitation the
+whole of 2.2 was written to escape. So if translation goes last, nothing is left to disturb
+it, and the number you typed is the position you get. **Four orderings eliminated, two left.**
+
+### Rule two: scale before rotate
+
+The two survivors are scale-rotate-translate and rotate-scale-translate. Both put the box in
+the right place. Only one leaves it a box.
+
+Set the stretch slider away from $1\times$ and compare `S→R→T` with `R→S→T`. The first stays
+a rectangular box, turned. The second comes out as a slanted parallelepiped, and the readout
+says `corners sheared`.
+
+Here is why, and it is a statement about columns. Section 2.1 established that a matrix's
+columns are where the axes land, so the box's own edges **are** those columns.
+
+- **Scale then rotate.** Scaling stretches the axes but keeps them perpendicular. Rotating
+  turns a perpendicular set into another perpendicular set. Right angles survive both, so the
+  box stays a box.
+- **Rotate then scale.** The box turns first, so its edges now point along some diagonal.
+  Scaling only the world's $x$ axis then stretches those diagonal edges by different amounts
+  depending on how much of each one happens to lie along $x$ - and unequal stretching of
+  edges that were at right angles leaves them at some other angle. **That is a shear.**
+
+Scale belongs in the object's **own** axes, which means it has to happen while those axes are
+still the world's axes - before the rotation turns them. **One ordering left.**
+
+$$
+M = T \cdot R \cdot S
+$$
+
+That is the standard, and it is what every engine builds for you when you set position,
+rotation and scale on an object.
+
+:::caution[The bug that hides until an artist touches it]
+Rule two only bites under **non-uniform** scale. If all three scale factors are equal, scaling
+and rotating commute, and scale-rotate-translate and rotate-scale-translate produce the
+identical matrix. Set the stretch slider to exactly $1.0\times$ and the two orderings become
+indistinguishable.
+
+So transform code with the scale and rotation the wrong way round works perfectly through
+every test where things are scaled evenly, and starts shearing the moment somebody types
+`(1, 2, 1)` into a scale field. The build check for this section asserts both halves: that
+uniform scale commutes and that uneven scale does not.
+:::
+
+## Why the Product Is Written Backwards
+
+Composing transforms is multiplying their matrices. The awkward part is which side.
+
+For column vectors, the matrix nearest the vector acts first:
+
+$$
+T (R (S \vec{v})) = (T \cdot R \cdot S)\, \vec{v}
+$$
+
+So "scale, then rotate, then translate" is written $T \cdot R \cdot S$ - **right to left**,
+the reverse of how you say it. Nothing deep is going on; it is a consequence of writing the
+vector on the right. But it is the source of an enormous number of transform bugs, because
+the code reads as the opposite of the intent.
+
+`composeSequence` below builds a matrix from a list of steps in the order they happen, and it
+has to multiply each new step onto the **left** to do it.
+
+<CodePanel
+  code={matricesSource}
+  lang="ts"
+  file="src/lib/gamedev/matrices.ts"
+  label="The code both scenes run on"
+/>
+
+:::note[A naming trap worth knowing]
+A matrix built as $T \cdot R \cdot S$ is universally called a **TRS matrix**, after the order
+the letters appear in the product. But the order it _applies_ things in is scale, then
+rotate, then translate - exactly backwards from its name.
+
+So "TRS order" and "scale-rotate-translate order" are the same thing described from opposite
+ends. Both phrases are in common use and neither is wrong. When someone says TRS, they mean
+the product; when a tool shows you Position / Rotation / Scale fields, it means the sequence.
+:::
+
+## Row Vectors Reverse All of It
+
+Section 2.2 promised this one, and here it is.
+
+Everything above assumes **column vectors**: the vector is a tall column and the matrix goes
+on its left. The other convention writes the vector as a flat **row** and puts the matrix on
+its right:
+
+$$
+\text{column: } \; \vec{v}' = M \vec{v}
+\qquad\qquad
+\text{row: } \; \vec{v}' = \vec{v} M
+$$
+
+Three things change together, and they are a package - you cannot mix and match:
+
+| Thing                 | Column convention                  | Row convention                         |
+| :-------------------- | :--------------------------------- | :------------------------------------- |
+| Vector goes           | on the right of the matrix         | on the left                            |
+| Translation lives in  | the fourth **column**              | the fourth **row**                     |
+| Matrices are          | the transpose of the row form      | the transpose of the column form       |
+| "Scale, rotate, move" | $T \cdot R \cdot S$, right to left | $S \cdot R \cdot T$, **left to right** |
+
+That last line is the one that matters in practice: **in row convention the product reads in
+the same order as the sentence.** Which is arguably nicer, and is why the convention exists.
+
+The two describe the same transform. The build check for this section proves it, by running
+one value through the column form and the transposed row form and asserting the results
+match, then asserting that $S^\mathsf{T} R^\mathsf{T} T^\mathsf{T}$ is exactly
+$(T R S)^\mathsf{T}$.
+
+The failure mode is nasty precisely because it is not an error. A transposed matrix is still a
+perfectly valid matrix, so nothing throws. Your object translates along the wrong axes, or
+picks up a scale that grows with distance from the origin, and you go looking for a bug in
+your maths when the bug is in your layout. See the
+[conventions reference table](/applied/3d-game-development/points-vectors-and-coordinate-conventions/)
+for which tool uses which.
+
+:::note[In an engine]
+Three.js, Godot and Unreal use **column** vectors. Unity and older Direct3D documentation use
+**row** vectors, which is why Unity code says `matrix * vector` in HLSL but composes in the
+opposite order from Godot in places.
+
+Three.js gives you the composition directly: `Matrix4.compose(position, quaternion, scale)`
+builds $T \cdot R \cdot S$ for you, and `Object3D.updateMatrix()` calls it. `Matrix4.multiply(m)`
+post-multiplies, so `a.multiply(b)` means "apply `b` first".
+
+Godot's `Transform3D` composes with `*` in the same right-to-left order, and its 2D
+counterpart `Transform2D` behaves identically with a 2x2 basis and a `Vector2` origin - the
+non-commutativity and the two rules above carry over to 2D unchanged, since neither depends on
+the number of axes.
+:::
+
+## Composing More Than Three
+
+Nothing above is special to three transforms. A matrix product can be as long as you like,
+and it is still built the same way: each new step multiplies onto the left.
+
+This matters because it is how the entire rendering pipeline is expressed. An object's
+world matrix, the camera's view matrix and the projection matrix are three transforms
+multiplied into one, and a vertex passes through the product in a single multiply rather than
+three. Section 2.4 walks that chain.
+
+It also matters for **undoing** a transform. The inverse of a product reverses the order:
+
+$$
+(T \cdot R \cdot S)^{-1} = S^{-1} \cdot R^{-1} \cdot T^{-1}
+$$
+
+Which reads naturally once you think about it physically: to get back, you undo the last thing
+you did first. The check for this section runs a point out through $T \cdot R \cdot S$ and back
+through the reversed inverses, and asserts it lands where it started.
+
+## Where This Shows Up
+
+- **Every object in every scene.** Position, rotation and scale fields in any editor are the
+  three ingredients, and the engine composes them as $T \cdot R \cdot S$.
+- **Sheared characters.** A model that looks fine at uniform scale and skews when stretched is
+  rule two, almost every time.
+- **Objects flying off to the wrong place** when you scale a parent, which is rule one applied
+  one level up the hierarchy. Section 2.4.
+- **Pivot points.** Rotating around a corner instead of the centre is done by translating the
+  pivot to the origin, rotating, then translating back - three transforms whose order is the
+  entire trick.
+- **Importing models**, where a file written for the row convention arrives transposed and
+  translates along strange axes rather than failing.
+
+:::note[The one thing to take away]
+Translate last, or your position gets transformed. Scale before you rotate, or unequal scale
+shears the object. Written as a product for column vectors that is $T \cdot R \cdot S$, which
+is the reverse of the order it happens in - and the reverse again if you are working in the row
+convention.
+:::

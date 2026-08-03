@@ -30,6 +30,21 @@ standards live in `applied-math-visuals.md`, which also governs this track.
 - **Code shown must be code that ran.** Put lesson maths in `src/lib/gamedev/*.ts`, have
   the figure import it, and display it with `CodePanel` fed by a Vite `?raw` import.
   Never hand `CodePanel` a hand-typed string; drift is the thing it exists to prevent.
+- **The scalar interpolation family lives in `src/lib/gamedev/interpolation.ts`**, to be
+  created in Part 4. It hosts `lerp`, `inverseLerp`, `remap`, `clamp`, `smoothstep`,
+  `smootherstep` and the exponential-decay helper, and Section 14 is where it is displayed
+  with `CodePanel`.
+
+  Two things to fix when creating it. Section 13 comes **first** and needs `lerp` for its
+  headline bug, so the module has to exist by then rather than at 14. And
+  `demos/lerp-angles.ts` currently defines a private one-line `lerp` of its own, from Part 1
+  - point it at the shared module so the same formula is not sitting in two places with only
+    one of them explained.
+
+  Scalar `lerp` is **defined in prose** in Section 12, because that page names lerp, nlerp and
+  slerp in a table and previously never said what lerp was. Keep that definition even once
+  the module exists; a reader hitting Part 3 should not have to wait for Part 4.
+
 - **25 pages**: about + 23 lessons + capstone. Not compressed to 21; the added
   material is the high-value part. In line with Arithmetic (28) and Algebra 2 (37).
 - **3D only, and 2D is now a separate track that comes first.** Superseded the earlier

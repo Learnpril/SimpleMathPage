@@ -1,0 +1,221 @@
+---
+title: Euler Angles and Gimbal Lock
+description: Why three angles are the friendliest way to describe an orientation and the worst way to compute with one, what gimbal lock actually is when you measure it, and the places three angles are still the right answer
+sidebar:
+  order: 10
+  label: "3.1  Euler Angles and Gimbal Lock"
+---
+
+import DemoPanel from "../../../../components/DemoPanel.astro";
+import CodePanel from "../../../../components/CodePanel.astro";
+import eulerSource from "../../../../lib/gamedev/euler.ts?raw";
+
+## What You'll Learn
+
+That three angles do not describe an orientation until you also say what **order** to apply
+them in, and that there are six reasonable choices which disagree. Then **gimbal lock**, shown
+and measured rather than asserted - including the exact number that says how much trouble you
+are in. And finally the honest part: three angles are still the right answer in several
+places, and this Section says which.
+
+## Three Angles Feels Like Enough
+
+An orientation in 3D has three degrees of freedom, and three angles is three numbers, so the
+obvious thing to do is give each axis its own.
+
+| Name      | Axis, for something facing $-Z$ | Everyday meaning                          |
+| :-------- | :------------------------------ | :---------------------------------------- |
+| **Yaw**   | about $Y$                       | which way you are facing. Turning left    |
+| **Pitch** | about $X$                       | nose up, nose down. Looking up            |
+| **Roll**  | about $Z$                       | tilting sideways without changing heading |
+
+These are called **Euler angles**, and their appeal is real: a human can read them. `yaw 90,
+pitch 0, roll 0` is a fact you can picture. A 3×3 matrix with nine entries is not, and a
+quaternion with four is worse.
+
+That readability is why they survive in every tool's inspector panel, and it is the reason
+Section 3.2 does not simply replace them.
+
+## Three Numbers Are Not Enough
+
+Here is the first problem. Three angles are meaningless on their own, because rotations do not
+commute - which Section 2.3 established with boxes and applies just as hard here.
+
+Yaw 90 then pitch 90 does not leave you where pitch 90 then yaw 90 does. So a set of three
+angles needs a fourth piece of information: the **order**. There are six ways to sequence three
+distinct axes, and every one of them is in use somewhere.
+
+Below is the same triple - pitch 30, yaw 60, roll 45 - read under all six, with the resulting
+forward directions compared against the first.
+
+<DemoPanel name="eulerorders" />
+
+Forty degrees apart, from identical numbers. Which means Euler angles are not portable: a
+triple copied from one tool into another that assumes a different order does not land close,
+it lands somewhere else entirely.
+
+:::caution[The order string is written backwards, again]
+By convention the order is named as a three-letter string, and **the letters name the matrix
+product, left to right**. So `"XYZ"` means $R_x \cdot R_y \cdot R_z$, and by Section 2.3's rule
+that puts $R_z$ nearest the vector - so the $Z$ rotation is applied **first**.
+
+The name reads in the opposite order from the sequence it describes. This trips people up
+constantly, and it is the same reversal as `T · R · S`, for the same reason.
+
+`fromEuler` in the code below follows this convention. It was checked against Three.js's own
+`Matrix4.makeRotationFromEuler` for all six orders before it was written down here, and it
+agrees to the last bit.
+:::
+
+For a $Y$-up world with things facing $-Z$, the useful order is **`"YXZ"`** - yaw, then pitch,
+then roll, reading the product outward. That puts yaw in world space where a player expects it,
+and roll innermost where it belongs. It is what cameras and characters use, and it is what the
+scene below uses.
+
+## Gimbal Lock
+
+Now the real problem, and the one worth seeing rather than reading about.
+
+The three rotations are nested. The outer one turns about a **fixed world axis**. The inner one
+turns about an axis that has been **carried around** by the two outside it. That is not an
+analogy - it is what the matrix product does, and it is what a physical gimbal does, which is
+where the name comes from.
+
+Below, three rings. Blue is yaw about world $Y$ and never moves. Green is pitch, carried by
+yaw. Purple is roll, carried by both. The dashed lines are the yaw axis and the roll axis.
+
+<DemoPanel name="gimbal" />
+
+Start level and drag the pitch slider up. Watch the purple dashed line swing towards the blue
+one. At pitch 90 they lie on top of each other, and at that point **yaw and roll turn the
+object about the same axis**. Two controls, one effect. You have three numbers and only two
+degrees of freedom left.
+
+That is gimbal lock. The orientation you cannot reach is not exotic - it is any orientation
+that needed those two axes to be different.
+
+### It has a number
+
+Most explanations stop at "things go wrong near the poles." They do not have to, because the
+severity is measurable: take the angle between the outer rotation axis and the inner one.
+Ninety degrees means fully independent. Zero means locked.
+
+For yaw-pitch-roll that angle turns out to be exactly
+
+$$
+\text{separation} = 90^\circ - |\text{pitch}|
+$$
+
+independent of what the yaw and roll happen to be. Which is a much sharper statement than a
+warning:
+
+| Pitch | Separation | What it means                                |
+| :---- | :--------- | :------------------------------------------- |
+| 0°    | 90°        | yaw and roll fully independent               |
+| 30°   | 60°        | fine                                         |
+| 60°   | 30°        | roll is starting to duplicate yaw            |
+| 85°   | 5°         | nearly one control                           |
+| 89°   | 1°         | effectively locked already                   |
+| 90°   | 0°         | locked. One degree of freedom is simply gone |
+
+Note the third-to-last row. The problem does not arrive suddenly at 90 - it degrades linearly
+the whole way up, and you are in trouble well before the singularity. The build check for this
+Section asserts that formula across a grid of pitch, yaw and roll values.
+
+### The degeneracy, stated exactly
+
+At pitch $+90$ the yaw and roll axes are not merely close, they are **anti-parallel**. So
+adding ten degrees to yaw and ten to roll produces the identical orientation you started with.
+
+The check asserts that directly - two different triples, one matrix - and asserts that the same
+trick does nothing at all away from the pole. That is what "one degree of freedom is gone"
+means, and it is a claim about matrices rather than about how a picture looks.
+
+:::note[Apollo 11 had this problem, physically]
+The lunar module's inertial platform was a real mechanical gimbal, and if it reached lock the
+platform tumbled and lost its reference - which meant re-aligning by hand against stars.
+
+The onboard display included a warning when the middle gimbal angle got large, and the crew
+flew to avoid it. Adding a fourth ring would have fixed it and was considered too heavy.
+Software has no such excuse, which is what Section 3.2 is about.
+:::
+
+## What Goes Wrong in a Game
+
+Three concrete failures, all downstream of the above.
+
+- **A camera that flips when you look straight up.** A first-person camera with yaw and pitch
+  hits separation zero at pitch $\pm 90$; go past it and yaw effectively reverses, so the view
+  spins. The standard fix is to clamp pitch, and it is worth being precise about why: clamping
+  does **not** restore independence - at pitch 89 you are already 1° from locked. It prevents
+  the camera reaching the point where the mapping is degenerate and can flip. That is enough,
+  because a first-person camera never rolls, so losing roll independence costs nothing.
+- **Interpolating between two orientations.** Blend the angles and the object does not take the
+  short path; it can swing wide, or spin on an axis you never asked about. Section 3.3.
+- **Converting a matrix back into angles.** The reverse trip needs an `atan2` whose arguments
+  both go to zero at lock, so the answer is genuinely undefined - not imprecise, undefined. Any
+  code doing that round trip needs a special case, and the special case has to pick an answer
+  arbitrarily.
+
+<CodePanel
+  code={eulerSource}
+  lang="ts"
+  file="src/lib/gamedev/euler.ts"
+  label="The code the scene and the value list both run on"
+/>
+
+`axisSeparation` is the whole argument in six lines: get the outer axis, get the inner axis,
+measure the angle between them. The absolute value is there because two controls that spin an
+object in exactly opposite directions are still only one control.
+
+## Where Euler Angles Are Still Right
+
+This Section is not an argument for never using them. It is an argument for knowing where the
+edge is.
+
+- **Anything a person types or reads.** Inspector fields, config files, level data, animation
+  curves an artist edits. Nobody hand-authors a quaternion.
+- **Turrets and turntables**, which have genuinely fewer than three degrees of freedom. A
+  turret with yaw and pitch and no roll cannot gimbal lock, because there is no third axis to
+  collapse into the first. Two angles are exactly right and a quaternion would be overkill.
+- **First-person cameras**, for the reason above: yaw and pitch, roll clamped to zero, pitch
+  clamped short of the pole. This is the most common camera in games and it is Euler angles all
+  the way down.
+- **Designer-facing parameters** like "spawn this facing 45 degrees", which want to stay
+  readable in a text diff.
+
+The rule that falls out: **Euler angles are a good interface and a bad intermediate
+representation.** Accept them at the edges, convert once, compute with something else, and
+convert back only if a human needs to read the result.
+
+:::note[In an engine]
+Three.js has `Euler` with an `order` property defaulting to `"XYZ"`, and `Object3D.rotation` is
+one of these. Setting `rotation` writes through to the object's quaternion immediately, so the
+engine is already following the advice above.
+
+Godot exposes `Node3D.rotation` as a `Vector3` of radians using `YXZ`, settable per axis, with
+`rotation_order` configurable. `Basis.from_euler()` and `Basis.get_euler()` do the conversions,
+and `get_euler()` is the one with the degenerate case.
+
+Unity's `Transform.eulerAngles` is famously a trap: reading it gives you _an_ answer rather than
+the one you set, because the underlying storage is a quaternion and the conversion is not
+unique. Its documentation says not to increment the components, and it means it.
+:::
+
+## Where This Shows Up
+
+- **Every inspector panel** in every 3D tool, which is why the format persists.
+- **Camera controllers**, with a pitch clamp that exists because of this Section.
+- **Flight and space games**, which cannot clamp pitch because the whole point is to fly
+  through the pole, and which therefore cannot use Euler angles for the craft's orientation.
+- **Animation import**, where a curve authored as three angles in one order and read in another
+  gives limbs that bend the wrong way.
+- **Anything reading angles back out of a matrix**, which is where the undefined case lives.
+
+:::note[The one thing to take away]
+Three angles need a fourth thing - the order - and six orders give six different orientations.
+The outer axis is fixed and the inner one is carried, so as pitch approaches $\pm 90$ the two
+converge and one degree of freedom disappears. The separation is exactly $90^\circ - |\text{pitch}|$,
+so the problem is gradual, not sudden. Keep Euler angles at the edges where people read them,
+and compute with something that has no poles.
+:::
