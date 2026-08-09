@@ -349,6 +349,30 @@ most of the value, and the math figure above it is doing the explaining.
 
 ## Verification
 
+**The dev server on port 4325 is the review surface.** Not `astro preview`. Get the order
+right, because it caused a long false hunt once:
+
+1. `npx astro build` first - it runs the build-time `check`s, and it also runs **Prettier over
+   the source files**.
+2. Restart the dev server _after_ that, so it starts from already-formatted files.
+
+Reverse those and Prettier rewrites files while the dev server is watching them. HMR
+invalidates the module, the browser re-fetches it as
+`/src/lib/gamedev/demos/<name>.scene.ts?t=<timestamp>`, the fetch lands mid-rewrite and fails,
+and the scene never mounts. The symptom is a panel that looks exactly like one that has not
+scrolled into view yet.
+
+Two tells that a blank panel is this and not a broken scene: the failing URL is an
+**unbundled `/src/...` path with a `?t=` query** (only the dev server serves those - preview
+serves hashed `_astro/*.js`), and the port is the dev server's rather than preview's. Confirm
+by requesting the module directly: `Invoke-WebRequest http://127.0.0.1:4325/src/lib/gamedev/demos/<name>.scene.ts`
+should return 200 and contain identifiers from the current version of the file.
+
+`DemoPanel` catches mount failures and prints them in the panel. Before that it swallowed
+them, and since `.demo-stage` has `min-height: 300px` a dead scene was pixel-identical to an
+unmounted one. Keep that `catch`: a scene throwing in a real browser is the one class of
+broken demo the build genuinely cannot catch, because checking it needs a GPU.
+
 - `node scripts/audit-figures.mjs dist/<section> 3` only parses **static SVG
   geometry**. Three.js and canvas figures are invisible to it, so a clean audit is not
   evidence an interactive figure is correct.

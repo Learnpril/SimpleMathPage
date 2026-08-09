@@ -1,0 +1,200 @@
+---
+title: Hermite, Catmull-Rom and Constant-Speed Paths
+description: Curves that pass through the points you place instead of being steered by handles beside them, and the lookup table that turns even steps in t into even steps in distance
+sidebar:
+  order: 16
+  label: "4.4  Splines and Constant Speed"
+---
+
+import DemoPanel from "../../../../components/DemoPanel.astro";
+import CodePanel from "../../../../components/CodePanel.astro";
+import splineSource from "../../../../lib/gamedev/splines.ts?raw";
+
+## What You'll Learn
+
+How to get a smooth curve **through** a set of placed points rather than one steered by handles
+beside them - which is what a path through waypoints actually needs. Where the tangents come from
+when nobody authors them. And then the loose end Section 4.3 left: **equal steps in $t$ are not
+equal distances along a curve**, which is why a camera moving at "constant speed" along a spline
+speeds up and slows down until you fix it.
+
+## The Problem With Handles
+
+A cubic Bezier touches its first and last control point and only pulls towards the middle two. For
+drawing a shape that is exactly right. For a path through waypoints it is backwards: you want the
+curve to **visit** the points, and you do not want to author handles for each one.
+
+**Hermite** curves reframe the same cubic. Instead of four points, they take two points and two
+**tangents** - a position and a velocity at each end:
+
+$$
+H(t) = h_{00}(t)\,P_0 + h_{10}(t)\,\vec{m}_0 + h_{01}(t)\,P_1 + h_{11}(t)\,\vec{m}_1
+$$
+
+The four weights are chosen so that the curve starts at $P_0$ with velocity $\vec{m}_0$ and ends
+at $P_1$ with velocity $\vec{m}_1$ - all four exactly. The build check confirms it: the endpoints
+come back bit-identical, and the tangents to $10^{-12}$.
+
+It is the same family of curve as before, just parameterised differently. A Hermite segment
+converted to a Bezier puts the handles **one third** of the way along each tangent:
+
+$$
+B_1 = P_0 + \tfrac{1}{3}\vec{m}_0 \qquad B_2 = P_1 - \tfrac{1}{3}\vec{m}_1
+$$
+
+That is the same factor of three that showed up in Section 4.3's derivative, seen from the other
+side. The check runs 401 values of $t$ through both forms and asserts they agree.
+
+## Catmull-Rom: Guessing the Tangents
+
+Hermite still needs tangents from somewhere. **Catmull-Rom** supplies them with one rule:
+
+$$
+\vec{m}_i = \frac{P_{i+1} - P_{i-1}}{2}
+$$
+
+The direction a waypoint is "heading" is the direction from the point before it to the point after
+it. That is the obvious guess, and it turns out to be a good one - it is the entire algorithm.
+
+The result passes through every point, is smooth at every joint, and needs **nothing** authored
+beyond the points themselves.
+
+<DemoPanel name="spline" />
+
+Drag a waypoint and watch two things. The path always goes through every orange dot - the build
+check asserts that to $10^{-12}$ at all five. And the purple segment at each waypoint is the
+tangent Catmull-Rom chose, drawn at a third of its length so it sits where the equivalent Bezier
+handle would.
+
+Notice that moving one waypoint only disturbs the curve near it. That is **local control**, and it
+is why this is the format for a designer-authored path: nudging one point cannot ripple down the
+whole spline.
+
+The tension slider scales those tangents. At 0 every tangent is zero, so the path collapses to
+straight lines with a stop at each corner. The standard $0.5$ is what makes $\vec{m}_i$ come out
+as _half_ the neighbour gap - which is where the division by two in the formula comes from.
+
+| Continuity | Catmull-Rom | Why                                              |
+| :--------- | :---------- | :----------------------------------------------- |
+| **C0**     | yes         | consecutive segments share a waypoint            |
+| **C1**     | yes         | both segments use the same tangent at that point |
+| **C2**     | no          | curvature can jump at a joint                    |
+
+C1 is what Section 4.3 said a camera needs, and Catmull-Rom gives it for free. C2 needs B-splines,
+which buy it by giving up passing through the points at all - a trade worth knowing about and
+rarely worth making for a waypoint path.
+
+:::caution[Uneven spacing can make it loop]
+The tangent at a waypoint is half the gap between its neighbours, so if one neighbour is far away
+that tangent gets long - long enough that the curve can overshoot, and with badly uneven spacing it
+can form a small loop or a cusp near a tight corner.
+
+The fix is **centripetal** Catmull-Rom, which spaces the parameter by the square root of the
+distance between points rather than uniformly. Three.js exposes it as
+`curveType: "centripetal"`, and it is the default there for exactly this reason. The uniform
+version above is the one worth understanding first; reach for centripetal when a path with clustered
+points starts misbehaving.
+:::
+
+<CodePanel
+  code={splineSource}
+  lang="ts"
+  file="src/lib/gamedev/splines.ts"
+  label="Hermite, Catmull-Rom, and the arc-length table"
+/>
+
+## Equal Steps in t Are Not Equal Distances
+
+Now the loose end, and it catches almost everybody once.
+
+A path is a function of $t$. Nothing in that function promises that a given change in $t$ covers a
+given amount of ground. Segments spanning far-apart waypoints get the same slice of $t$ as segments
+spanning close-together ones, so a dot advancing $t$ at a steady rate **races through the long
+stretches and crawls through the short ones**.
+
+Below, two dots on one path. Orange steps $t$ evenly. Teal steps **distance** evenly. The small
+dots are ticks at even steps of each dot's own input.
+
+<DemoPanel name="arclength" />
+
+Look at the orange ticks: bunched where the waypoints are close together, spread out where they are
+far apart. The teal ticks are evenly spread along the whole path, which is what "constant speed"
+should mean. Drag the slider and the two dots pull apart by a large fraction of the path.
+
+Here is the size of it:
+
+<DemoPanel name="arcmath" />
+
+**Nearly eight times.** Stepping $t$ evenly, the longest hop is 7.8 times the shortest, so a camera
+on this path would visibly surge and stall. After reparametrizing, that ratio is 1.08.
+
+:::note[Why not exactly 1.00]
+The residual is not the method falling short, and it is worth being precise about. The measurement
+walks the path in steps and compares **straight-line** hops. A fixed amount of arc spans a slightly
+shorter chord where the curve bends harder, so even a perfect arc-length parametrization shows a
+little variation under that ruler. Increasing the table from 256 samples to 4096 moves the ratio
+from 1.076 to 1.070 and no further - it converges to the geometry, not to 1.
+:::
+
+### The lookup table
+
+There is no closed form for the arc length of a cubic worth using, so the honest approach is the
+one every engine takes:
+
+1. **Walk the curve** in many small steps, summing straight-line distances.
+2. **Store** the running total against each $t$.
+3. To move a distance $s$, **binary search** the table for $s$ and interpolate between the two
+   straddling entries.
+
+That is `buildArcTable` and `tAtDistance`. Build it once when the path is created, not per frame.
+
+The table has one bias worth knowing: chords cut corners, so it always **underestimates** the true
+length, and the estimate rises as you add samples. Measured on this path: 8.074 at 32 samples,
+8.096 at 128, 8.0974 at 1024. The check asserts that ordering, and that it has all but converged by
+128 - which is why a few hundred samples is the usual choice.
+
+With the table in place, moving at a genuine speed becomes what you would want to write:
+
+```ts
+travelled += speed * dt; // Section 4.1's dt, doing its job
+const t = tAtDistance(table, travelled);
+object.position = pathAt(t);
+```
+
+And that is Part 4 assembled: a frame-rate-independent step, a distance, a table, and a curve.
+
+:::note[In an engine]
+Three.js has `CatmullRomCurve3` with `curveType` of `"centripetal"`, `"chordal"` or `"uniform"`,
+plus `tension`. Its `getPoint(t)` is parameter space and **`getPointAt(u)` is arc length** - two
+methods one character apart that mean different things, which is worth reading twice.
+`getSpacedPoints()` and `getLength()` build the same table internally.
+
+Godot's `Curve3D` has `sample()` for parameter space and `sample_baked()` for arc length, with
+`bake_interval` controlling the table resolution. `PathFollow3D.progress` is measured in distance,
+so it is already doing the right thing.
+
+Unity has no built-in spline in the old API; the Splines package added `SplineUtility.GetPointAtLinearDistance`
+and `SplineUtility.EvaluatePosition`, again the arc-length and parameter versions of the same idea.
+:::
+
+## Where This Shows Up
+
+- **Camera rails in cutscenes**, which need both C1 continuity and arc-length parametrization or the
+  shot lurches at every waypoint.
+- **Patrol routes and rail shooters**, where a guard should walk at a steady pace regardless of how
+  the level designer spaced the nodes.
+- **Racing lines and track splines**, where distance along the path is the primary coordinate - lap
+  position, checkpoints, opponent placement.
+- **Placing objects evenly along a curve** - fence posts, road markings - which is the same lookup
+  table used at authoring time rather than at runtime.
+- **Animation retiming**, where an easing curve from Section 4.2 gets applied to the _distance_
+  rather than to $t$, so the easing means what it says.
+
+:::note[The one thing to take away]
+Hermite takes two points and two tangents, so the curve passes through both ends with the velocity
+you asked for. Catmull-Rom picks those tangents as half the gap between each point's neighbours,
+giving a C1 path through every waypoint with nothing to author and local control retained. And a
+curve's $t$ is not its distance: stepping $t$ evenly on this path varies the speed by almost eight
+times, so anything travelling at a real speed needs an arc-length table built once and searched per
+frame.
+:::

@@ -1,0 +1,204 @@
+---
+title: Screen Space to World Space
+description: Turning a cursor into a ray for clicking and aiming, turning a world position into a pixel for health bars, and the two angles that make an orbit camera behave
+sidebar:
+  order: 18
+  label: "5.2  Screen Space to World Space"
+---
+
+import DemoPanel from "../../../../components/DemoPanel.astro";
+import CodePanel from "../../../../components/CodePanel.astro";
+import projSource from "../../../../lib/gamedev/projection.ts?raw";
+
+## What You'll Learn
+
+How to run Section 5.1's pipeline **backwards**: from a pixel the player clicked to a ray in the
+world, which is how clicking, picking and aiming all work. How to run it **forwards** for a single
+point, to put a health bar above someone's head - and the one check that stops markers appearing
+for things behind you. And **spherical coordinates**, the two angles that make an orbit camera
+behave, which the capstone needs.
+
+## A Pixel Is Not a Position
+
+Click on the screen and you have selected a pixel. A pixel is two numbers; a position in the world
+is three. The missing number is depth, and the screen has no opinion about it.
+
+So a click does not name a point. It names a **ray** - every point in the world that would land on
+that pixel, which is a line running away from the camera. Finding out what was clicked means
+intersecting that ray with the scene.
+
+Getting to the ray takes two steps.
+
+### Pixels to NDC
+
+Section 5.1's normalised device coordinates run $-1$ to $1$ in both directions. Pixels run 0 to
+width and 0 to height. And they disagree about which way is up:
+
+$$
+\text{ndc}_x = \frac{p_x}{w} \cdot 2 - 1
+\qquad
+\text{ndc}_y = -\left(\frac{p_y}{h} \cdot 2 - 1\right)
+$$
+
+**Screen Y counts downward from the top; NDC Y counts upward from the middle.** That minus sign is
+the single most common bug in this whole area, and it is invisible when you test by clicking near
+the centre of the screen.
+
+### NDC to a ray
+
+Now use the frustum. Section 5.1 established that at distance $d$ the frustum is
+$d \tan(\theta/2)$ tall and that times the aspect ratio wide. A cursor at NDC $(x, y)$ is that
+fraction of the way across it:
+
+$$
+\text{point} = \big(x \cdot d\tan(\theta/2)\cdot a,\;\; y \cdot d\tan(\theta/2),\;\; -d\big)
+$$
+
+Set $d = 1$, normalise, and that is the ray direction. **No matrix inverse required** - the
+geometry gives it directly.
+
+That is worth checking rather than trusting, because it is a shortcut. `unprojectAt` derives the
+point from the frustum and `ndcOf` puts it back through the projection matrix; the two share no
+code. Across a grid of cursor positions at four different depths they agree to $10^{-15}$, so the
+shortcut really is the matrix inverse.
+
+:::note[Why engines invert the matrix anyway]
+The shortcut assumes a symmetric frustum centred on the view direction. Engines support
+projections where that fails - off-centre frusta for each eye in VR, oblique projections for
+portals and mirrors, sheared frusta for cascaded shadow maps - so they invert the matrix and
+handle every case with one code path.
+
+The geometry above is what the inverse _is_ for the ordinary case, which is why it is the version
+worth understanding.
+:::
+
+## Picking
+
+Below, the orange dot is a camera, the purple rectangle is its screen, and the purple dot is a
+cursor on it. The orange line is the ray that cursor becomes.
+
+<DemoPanel name="picking" />
+
+Move the cursor sliders and the ray sweeps the scene. When it meets a sphere, that sphere turns
+teal, a white dot marks the entry point, and the ray stops there.
+
+Two details that matter in real code. The ray stops at the **nearest** hit, not the first one
+tested - which is why an intersection test returns a distance rather than a boolean. And the test
+runs in the camera's own **view space**, where the camera sits at the origin looking down $-Z$, so
+the ray needs no transforming at all.
+
+The check pins the arithmetic: the centre ray meets a sphere of radius 1 at $z = -10$ at exactly
+$t = 9$, its near face. A ray aimed into a corner misses it. A ray starting inside a sphere still
+reports a hit.
+
+Part 6 does intersection properly - planes, boxes, capsules, and the cases `raySphere` glosses
+over. This Section only needs enough to show the ray doing its job.
+
+## The Other Direction, and the Trap
+
+Now forwards: given something's position in the world, which pixel do you draw its health bar at?
+
+That is just Section 5.1's pipeline followed by the pixel mapping in reverse. And it contains a
+trap that everyone hits once.
+
+<DemoPanel name="screenmath" />
+
+Look at the middle two rows. A point **5 metres in front** of the camera and a point **5 metres
+behind** it both project to pixel $(400, 225)$ — dead centre of an $800 \times 450$ screen. The
+same pixel. Nothing about the pixel coordinates distinguishes them.
+
+The reason is Section 5.1's divide. Clip $w$ is the point's distance in front of the camera, so it
+goes **negative** behind - and dividing by a negative number mirrors the result through the
+origin. Points behind you land back on screen, mirrored, at plausible-looking coordinates.
+
+$$
+w > 0 \;\;\text{is not optional}
+$$
+
+<DemoPanel name="marker" />
+
+Turn the camera and watch the markers. With the check on, markers appear only for objects actually
+in view. Tick the checkbox to skip it and red markers show up for objects behind the camera -
+drifting across the screen in the wrong direction as you turn, which is exactly how this bug looks
+when you ship it.
+
+The build check asserts the ugly part directly: that the in-front and behind points land on the
+same pixel, so the prose above cannot quietly become false. It also sweeps the camera through a
+full turn and confirms the careless path really does over-draw.
+
+<CodePanel
+  code={projSource}
+  lang="ts"
+  file="src/lib/gamedev/projection.ts"
+  label="Projection, both directions, and spherical coordinates"
+/>
+
+## Spherical Coordinates for an Orbit Camera
+
+An orbit camera goes round a target. The naive way to store it is a position plus a look-at, and
+then dragging means rotating that position, which drifts and tangles the controls together.
+
+Store **two angles and a radius** instead:
+
+| Control           | Parameter                              |
+| :---------------- | :------------------------------------- |
+| Drag horizontally | azimuth, the angle around $Y$          |
+| Drag vertically   | elevation, the angle above the horizon |
+| Scroll            | radius                                 |
+
+$$
+\begin{aligned}
+y &= r\sin(\text{el}) \\
+x &= r\cos(\text{el})\sin(\text{az}) \\
+z &= r\cos(\text{el})\cos(\text{az})
+\end{aligned}
+$$
+
+Now each input drives exactly one number, nothing accumulates error, and clamping is trivial. The
+round trip is exact: the check sweeps azimuth and elevation and recovers both to $10^{-9}$.
+
+**Clamp the elevation short of $\pm 90°$.** At the poles $\cos(\text{el})$ is zero, so $x$ and $z$
+vanish and the azimuth stops meaning anything - every value gives the same point. The value list
+above shows it: at elevation 89 the azimuth comes back as 137 as set; at elevation 90 it comes back
+as 0, because there is nothing to recover.
+
+That is the same degeneracy as Section 3.1's gimbal lock, arriving from a different direction, and
+it has the same fix for the same reason.
+
+:::note[In an engine]
+Three.js has `Raycaster` with `setFromCamera(ndcCoords, camera)` - and it wants **NDC**, so you do
+the pixel conversion above yourself, Y flip included. `Vector3.project(camera)` and
+`Vector3.unproject(camera)` are the two directions. `Spherical` and `Vector3.setFromSpherical()`
+exist, and `OrbitControls` is spherical coordinates with `minPolarAngle` and `maxPolarAngle` as the
+clamp.
+
+Godot's `Camera3D` has `project_ray_origin()` and `project_ray_normal()` taking **pixels** rather
+than NDC, plus `unproject_position()` for the forward direction. `is_position_behind()` is the
+`inFront` check as a named method, which tells you how often it is needed.
+
+Unity's `Camera.ScreenPointToRay` takes pixels with the origin at the **bottom left**, not the top
+left - so its Y is already flipped relative to most mouse APIs. `WorldToScreenPoint` returns a
+`Vector3` whose `z` is the distance in front of the camera, and checking `z > 0` is exactly the
+trap above.
+:::
+
+## Where This Shows Up
+
+- **Clicking on anything** in a strategy game, an editor, or an inventory in 3D.
+- **Aiming**, where a crosshair at the centre of the screen becomes a ray down $-Z$ and the shot
+  is whatever it meets first.
+- **Health bars, name plates, objective markers and damage numbers**, all of which are a world
+  position projected to a pixel, and all of which need the depth check.
+- **Off-screen indicators**, which use the projected position _and_ the fact that it is off screen
+  to point an arrow toward it.
+- **Drag and drop in 3D**, which unprojects at a fixed depth each frame rather than taking a ray.
+- **Orbit cameras** in editors, model viewers and strategy games - and the capstone's third-person
+  camera, which is this plus Section 4.1's damping.
+
+:::note[The one thing to take away]
+A click is a ray, not a point, because the screen never had the depth. Pixels to NDC needs a Y
+flip, and NDC to a ray is the frustum's own geometry rather than a matrix inverse. Going the other
+way, a point behind the camera projects to a perfectly plausible pixel - the same one as a point in
+front - so check that clip $w$ is positive before drawing anything. And store an orbit camera as
+azimuth, elevation and radius, clamped short of the poles where the azimuth stops existing.
+:::

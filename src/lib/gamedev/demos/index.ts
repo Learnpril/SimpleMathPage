@@ -13,6 +13,9 @@
  */
 import type { DemoEntry } from "./runner.ts";
 
+import arcmath from "./arcmath.ts";
+import depthprec from "./depthprec.ts";
+import screenmath from "./screenmath.ts";
 import dtmath from "./dtmath.ts";
 import eulerorders from "./eulerorders.ts";
 import jumparc from "./jumparc.ts";
@@ -44,6 +47,9 @@ import {
   dtCheck,
   easingCheck,
   bezierCheck,
+  splineCheck,
+  projectionCheck,
+  screenCheck,
 } from "./checks.ts";
 
 export const DEMOS: Record<string, DemoEntry> = {
@@ -161,6 +167,41 @@ export const DEMOS: Record<string, DemoEntry> = {
     visual: () => import("./bezierjoin.scene.ts"),
     visualFile: "lib/gamedev/demos/bezierjoin.scene.ts",
   },
+  spline: {
+    title: "A path through the points, with the tangents it picked",
+    visual: () => import("./spline.scene.ts"),
+    visualFile: "lib/gamedev/demos/spline.scene.ts",
+    hint: "Drag a waypoint, or pick one with the buttons and use the x and y sliders.",
+    check: splineCheck,
+  },
+  arclength: {
+    title: "Even steps in t against even steps in distance",
+    visual: () => import("./arclength.scene.ts"),
+    visualFile: "lib/gamedev/demos/arclength.scene.ts",
+  },
+  projcompare: {
+    title: "One corridor, with and without the divide by w",
+    visual: () => import("./projcompare.scene.ts"),
+    visualFile: "lib/gamedev/demos/projcompare.scene.ts",
+  },
+  frustum: {
+    title: "The frustum as a solid, and what survives culling",
+    visual: () => import("./frustum.scene.ts"),
+    visualFile: "lib/gamedev/demos/frustum.scene.ts",
+    check: projectionCheck,
+  },
+  picking: {
+    title: "A cursor becomes a ray, and the ray finds something",
+    visual: () => import("./picking.scene.ts"),
+    visualFile: "lib/gamedev/demos/picking.scene.ts",
+    check: screenCheck,
+  },
+  marker: {
+    title:
+      "World positions turned into pixels, with and without the depth check",
+    visual: () => import("./marker.scene.ts"),
+    visualFile: "lib/gamedev/demos/marker.scene.ts",
+  },
   basis: {
     title: "An object's own axes, and where forward points",
     visual: () => import("./basis.scene.ts"),
@@ -230,6 +271,21 @@ export const DEMOS: Record<string, DemoEntry> = {
     title: "A jump arc, and why its control point sits twice as high",
     demo: jumparc,
     file: "lib/gamedev/demos/jumparc.ts",
+  },
+  arcmath: {
+    title: "How uneven a uniform-t walk actually is",
+    demo: arcmath,
+    file: "lib/gamedev/demos/arcmath.ts",
+  },
+  depthprec: {
+    title: "What the near plane costs, and what the far plane does not",
+    demo: depthprec,
+    file: "lib/gamedev/demos/depthprec.ts",
+  },
+  screenmath: {
+    title: "Pixels, the behind-you trap, and the pole to avoid",
+    demo: screenmath,
+    file: "lib/gamedev/demos/screenmath.ts",
   },
   "nan-guard": {
     title: "A NaN walks past the check meant to stop it",

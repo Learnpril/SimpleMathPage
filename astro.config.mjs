@@ -179,6 +179,21 @@ export default defineConfig({
                       slug: "applied/3d-game-development/easing-smoothstep-and-damping",
                     },
                     { slug: "applied/3d-game-development/bezier-curves" },
+                    {
+                      slug: "applied/3d-game-development/hermite-catmull-rom-and-constant-speed-paths",
+                    },
+                  ],
+                },
+                {
+                  label: "Part 5: Cameras and Screen Space",
+                  collapsed: false,
+                  items: [
+                    {
+                      slug: "applied/3d-game-development/projection-fov-and-the-view-frustum",
+                    },
+                    {
+                      slug: "applied/3d-game-development/screen-space-to-world-space",
+                    },
                   ],
                 },
               ],
@@ -258,7 +273,10 @@ export default defineConfig({
                   'interpolating-rotations-slerp-and-nlerp':   [3, 'Rotations Done Right'],
                   'delta-time-and-frame-rate-independence':    [4, 'Time, Interpolation and Feel'],
                   'easing-smoothstep-and-damping':             [4, 'Time, Interpolation and Feel'],
-                  'bezier-curves':                             [4, 'Time, Interpolation and Feel']
+                  'bezier-curves':                             [4, 'Time, Interpolation and Feel'],
+                  'hermite-catmull-rom-and-constant-speed-paths': [4, 'Time, Interpolation and Feel'],
+                  'projection-fov-and-the-view-frustum':       [5, 'Cameras and Screen Space'],
+                  'screen-space-to-world-space':               [5, 'Cameras and Screen Space']
                 }
               };
               var partMap = partOf[section];

@@ -1,0 +1,220 @@
+---
+title: Projection, FOV and the View Frustum
+description: The matrix that finally uses the fourth component for what it was built for, why vertical field of view is the one to set, and why your near plane matters ten times more than your far plane
+sidebar:
+  order: 17
+  label: "5.1  Projection, FOV and the Frustum"
+---
+
+import DemoPanel from "../../../../components/DemoPanel.astro";
+import CodePanel from "../../../../components/CodePanel.astro";
+import projSource from "../../../../lib/gamedev/projection.ts?raw";
+
+## What You'll Learn
+
+What the projection matrix actually does, which is the loose end Sections 2.2 and 2.4 both left
+hanging: it **writes depth into $w$**, and the divide that follows is what makes distant things
+small. Why **vertical** field of view is the one to set and horizontal is the one to derive. What the
+frustum is, and the neat fact that its six planes are already sitting in the matrix. And then the
+practical payoff: **a tiny near plane wrecks your depth buffer**, by a factor you can calculate.
+
+## The Divide Is the Whole Trick
+
+Every matrix in Part 2 kept its bottom row at $(0, 0, 0, 1)$, so $w$ came out as 1 and a point
+stayed a point. Section 2.2 flagged that as a deliberate restriction and said one transform breaks
+it. This is that transform.
+
+A perspective matrix puts $-1$ in the bottom row, under $z$:
+
+$$
+P = \begin{bmatrix}
+\frac{1}{a\tan(\theta/2)} & 0 & 0 & 0 \\
+0 & \frac{1}{\tan(\theta/2)} & 0 & 0 \\
+0 & 0 & -\frac{f+n}{f-n} & -\frac{2fn}{f-n} \\
+0 & 0 & -1 & 0
+\end{bmatrix}
+$$
+
+That $-1$ copies the point's view-space depth into $w$. Then the hardware divides $x$, $y$ and $z$
+by $w$ - and dividing by depth is exactly what perspective is. Something twice as far away comes out
+half as wide, because it was divided by twice as much.
+
+**Orthographic projection is the same thing with the bottom row left alone.** No $w$, no divide, no
+convergence. Which means an orthographic projection is an ordinary affine transform of the kind Part
+2 already covered, and that is the real difference between the two - not the look, the $w$.
+
+Below is one corridor of posts, projected by the code in this Section rather than by the renderer.
+The square is the NDC box; anything outside it is off screen.
+
+<DemoPanel name="projcompare" />
+
+Both projections are set up to frame the same amount of world at the middle of the corridor, so the
+only difference you are seeing is the divide. Tick the checkbox and the rails snap parallel.
+
+The build check pins the ratio: a point at 50 metres comes out at exactly one tenth the screen
+offset of the same point at 5 metres. Ten times further, ten times narrower, because it was divided
+by ten times more.
+
+|                | Perspective            | Orthographic                         |
+| :------------- | :--------------------- | :----------------------------------- |
+| Bottom row     | $(0,0,-1,0)$           | $(0,0,0,1)$                          |
+| Distant things | shrink                 | do not                               |
+| Depth in NDC   | non-linear             | linear                               |
+| Used for       | first and third person | strategy, isometric, shadow maps, UI |
+
+## Field of View, and Which One to Set
+
+Field of view is the angle the frustum opens out at. There are two of them, and they are not
+independent - the aspect ratio ties them together:
+
+$$
+\tan\frac{\theta_x}{2} = a \cdot \tan\frac{\theta_y}{2}
+$$
+
+**Set the vertical one.** This matters more than it sounds. If you set vertical FOV and the player
+widens their window, the extra pixels show _more world to the left and right_ while the top and
+bottom stay put. If you set horizontal FOV instead, a wider window keeps the same horizontal view
+and **crops the top and bottom off**, which is a genuinely bad experience on an ultrawide monitor.
+
+At 16:9, a vertical 60° works out to a horizontal 91°. The check confirms horizontal always exceeds
+vertical on a wide aspect, that the conversion round-trips, and that on a square viewport the two
+are identical.
+
+## The Frustum
+
+The visible region is a box with a slanted side and a smaller near face - a **frustum**, which is
+just the word for a pyramid with its tip cut off. Six planes bound it: four sides from the FOV and
+the aspect ratio, plus the near and far planes.
+
+<DemoPanel name="frustum" />
+
+Walk around it with the last slider. Teal objects are inside the frustum and have to be drawn; grey
+ones are outside and can be skipped entirely.
+
+That skipping is **frustum culling**, and it is the cheapest large optimisation in rendering: a
+handful of dot products per object decides whether to touch it at all. Drag the FOV down and watch
+the count fall.
+
+### The six planes are already in the matrix
+
+Here is the part worth knowing rather than deriving with trigonometry.
+
+"Inside the frustum" means all three NDC coordinates lie in $[-1, 1]$. Write out any one of those
+six inequalities in terms of the clip-space coordinates - $-w \le x \le w$ and so on - and each one
+is a **row of the projection matrix added to or subtracted from the bottom row**.
+
+$$
+\text{left} = r_3 + r_0 \qquad \text{right} = r_3 - r_0 \qquad \text{near} = r_3 + r_2 \quad \dots
+$$
+
+So the planes are not extra information you compute alongside the matrix. They were in the matrix
+the whole time. `frustumPlanes` reads them off, normalises them so the signed distances are real
+distances, and that is the entire implementation.
+
+The build check verifies this the strongest way available: it asks 20,000 points whether they are
+visible, once by dividing by $w$ and testing the NDC box, and once by testing the six planes. Two
+different pieces of arithmetic, **zero disagreements** - and the sample is checked to straddle the
+boundary, since agreement on points that are all inside would prove nothing.
+
+<CodePanel
+  code={projSource}
+  lang="ts"
+  file="src/lib/gamedev/projection.ts"
+  label="Projection, the frustum, and depth precision"
+/>
+
+## Your Near Plane Is Wrecking Your Depth Buffer
+
+Now the practical part, and the reason this Section is more than definitions.
+
+The divide by $w$ makes depth **non-linear** in NDC. Almost all of the available depth range gets
+spent close to the camera, and almost none far away. So the depth buffer can distinguish surfaces a
+fraction of a millimetre apart near the camera and metres apart in the distance.
+
+How badly depends almost entirely on the **near** plane:
+
+<DemoPanel name="depthprec" />
+
+Read the first four rows. With a 24-bit depth buffer at 100 metres out:
+
+| Near plane | Depth precision at 100 m |
+| :--------- | :----------------------- |
+| 1 mm       | 596 mm                   |
+| 1 cm       | 59.6 mm                  |
+| 10 cm      | 5.96 mm                  |
+| 1 m        | 0.60 mm                  |
+
+A near plane of one millimetre leaves you **half a metre** of depth uncertainty at 100 metres. Two
+surfaces closer together than that cannot be told apart, and they flicker against each other as the
+camera moves - z-fighting.
+
+The relationship is exact, and the check verifies the numeric result against it:
+
+$$
+\text{precision} \approx \frac{q\,(f - n)\,d^2}{2\,f\,n}
+$$
+
+Two things fall out of that $n$ in the denominator and $d^2$ on top. **Precision degrades with the
+square of distance.** And **the near plane is a direct multiplier**: ten times larger is ten times
+better, which the check confirms as $10.0009$.
+
+Meanwhile the far plane is in there too, but only inside $(f-n)/f$, which barely moves. Pushing the
+far plane from 100 m to 1000 m - ten times the view distance - costs $1.0009\times$ the precision.
+Essentially nothing.
+
+:::tip[The rule this gives you]
+**Push the near plane out as far as you can stand.** It is nearly free precision, and the usual limit
+is that geometry starts clipping when the camera gets close to a wall.
+
+Do not fret about the far plane. The instinct to shorten view distance "to help the depth buffer" is
+backwards - it buys almost nothing, and it costs you the thing players actually notice.
+:::
+
+:::note[What modern engines really do]
+The proper fix is **reverse-Z**: map the near plane to 1 and the far plane to 0, and store depth in a
+floating-point buffer. Floats are dense near zero, and reversing puts that dense region where the
+non-linear depth distribution is sparsest. The two effects cancel almost exactly, and precision
+becomes near-uniform across the whole range - good enough that an **infinite far plane** becomes
+practical, removing the far clip entirely.
+
+This is engine-internal plumbing rather than gameplay code: it changes the projection matrix, the
+depth comparison direction and the buffer format together. Worth knowing it exists so the numbers
+above read as "why this was a problem" rather than "why this is still a problem". The maths above is
+still what your near plane is doing in any engine that has not done this.
+:::
+
+:::note[In an engine]
+Three.js has `PerspectiveCamera(fov, aspect, near, far)` where **`fov` is vertical in degrees**, and
+`OrthographicCamera(left, right, top, bottom, near, far)`. Changing any of them needs
+`updateProjectionMatrix()`. `Frustum.setFromProjectionMatrix()` does exactly what `frustumPlanes`
+does above, and `Frustum.intersectsObject()` is the culling test.
+
+Godot's `Camera3D` has `fov`, `near` and `far`, with a `keep_aspect` property that chooses whether
+`fov` means vertical or horizontal - the setting this Section is about. `projection` switches to
+orthogonal. Culling is automatic.
+
+Unity's `Camera.fieldOfView` is vertical, with `Camera.orthographic` as the toggle.
+`GeometryUtility.CalculateFrustumPlanes` returns the six planes, and `TestPlanesAABB` tests against
+them. Its default near plane of `0.3` is deliberately large for precisely the reason above.
+:::
+
+## Where This Shows Up
+
+- **Z-fighting on distant geometry** - decals, floor tiles, coplanar walls - which is this Section's
+  table and is usually fixed at the near plane rather than in the geometry.
+- **Frustum culling**, the first thing any renderer does per frame, using planes it already has.
+- **Field of view settings in an options menu**, which should be vertical FOV even when the label
+  says something friendlier.
+- **Ultrawide support**, where a horizontal-FOV camera crops the view instead of extending it.
+- **Shadow maps**, which are orthographic projections from the light's point of view, with their own
+  near and far planes and their own precision problems.
+- **Weapon viewmodels**, often drawn with a second, narrower projection so a first-person gun does
+  not clip through walls or look distorted.
+
+:::note[The one thing to take away]
+Projection writes depth into $w$ and the divide that follows is perspective - orthographic is the
+same matrix with the bottom row left as Part 2 had it. Set vertical field of view so a wider window
+shows more rather than cropping. The frustum's six planes are the matrix rows combined with its
+bottom row, which is why culling is cheap. And depth precision scales with $d^2 / n$, so push the
+near plane out and stop worrying about the far one.
+:::

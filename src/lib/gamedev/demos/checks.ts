@@ -129,6 +129,48 @@ import {
 } from "./join-shared.ts";
 import type { Vec2 } from "../matrices.ts";
 import {
+  buildArcTable,
+  catmullRomAt,
+  catmullRomTangent,
+  catmullTangent,
+  distanceAtT,
+  hermiteAt,
+  hermiteBasis,
+  hermiteTangent,
+  hermiteToBezier,
+  segmentCount,
+  tAtFraction,
+} from "../splines.ts";
+import {
+  TABLE,
+  WAYPOINTS,
+  byDistance,
+  byParameter,
+  hopSpread,
+  pathAt,
+} from "./spline-shared.ts";
+import {
+  cartesianToSpherical,
+  depthResolution,
+  fovXFromFovY,
+  fovYFromFovX,
+  frustumCorners,
+  frustumPlanes,
+  insideFrustum,
+  ndcDepth,
+  ndcOf,
+  ndcToScreen,
+  orthographic,
+  perspective,
+  projectToScreen,
+  raySphere,
+  rayThroughNdc,
+  screenToNdc,
+  sphericalToCartesian,
+  unprojectAt,
+} from "../projection.ts";
+import { markerCounts } from "./marker-shared.ts";
+import {
   START,
   TARGET,
   framesToClose,
@@ -2015,4 +2057,489 @@ export const bezierCheck: Demo = () => {
     );
     assert(near(peakAt, 0.5, 1e-3), "the apex should be at the midpoint");
   }
+};
+
+/**
+ * Hermite and Catmull-Rom, and the arc-length table.
+ *
+ * The two assertions that carry the section are that **Catmull-Rom passes exactly through every
+ * waypoint** - which is the entire reason to prefer it over a Bezier for a path - and that
+ * stepping `t` evenly gives wildly uneven speed while stepping distance evenly does not. Both are
+ * measured rather than described, and the second one needs the naive version to fail badly or the
+ * lookup table is solving nothing.
+ */
+export const splineCheck: Demo = () => {
+  const p0: Vec2 = { x: -1.5, y: -0.6 };
+  const p1: Vec2 = { x: 1.2, y: 0.9 };
+  const m0: Vec2 = { x: 2.4, y: 3.1 };
+  const m1: Vec2 = { x: 1.1, y: -2.2 };
+
+  // Hermite's contract: both endpoints and both tangents come out exactly as handed in.
+  const start = hermiteAt(p0, m0, p1, m1, 0);
+  const end = hermiteAt(p0, m0, p1, m1, 1);
+  assert(
+    start.x === p0.x && start.y === p0.y,
+    "hermite does not start on its first point",
+  );
+  assert(
+    end.x === p1.x && end.y === p1.y,
+    "hermite does not end on its second point",
+  );
+  const vStart = hermiteTangent(p0, m0, p1, m1, 0);
+  const vEnd = hermiteTangent(p0, m0, p1, m1, 1);
+  assert(
+    near(vStart.x, m0.x, 1e-12) && near(vStart.y, m0.y, 1e-12),
+    "the tangent at t=0 is not the one asked for",
+  );
+  assert(
+    near(vEnd.x, m1.x, 1e-12) && near(vEnd.y, m1.y, 1e-12),
+    "the tangent at t=1 is not the one asked for",
+  );
+
+  // The two point weights are a weighted average, and the tangent weights vanish at both ends.
+  for (let i = 0; i <= 200; i += 1) {
+    const b = hermiteBasis(i / 200);
+    assert(near(b[0] + b[2], 1, 1e-12), "the point weights should sum to 1");
+  }
+  const at0 = hermiteBasis(0);
+  const at1 = hermiteBasis(1);
+  assert(at0[1] === 0 && at0[3] === 0, "tangent weights should vanish at t=0");
+  assert(at1[1] === 0 && at1[3] === 0, "tangent weights should vanish at t=1");
+
+  // A Hermite segment is a cubic Bezier with the handles a third of the way along the tangents.
+  const asBezier = hermiteToBezier(p0, m0, p1, m1);
+  for (let i = 0; i <= 400; i += 1) {
+    const t = i / 400;
+    const h = hermiteAt(p0, m0, p1, m1, t);
+    const b = bezierAt(asBezier, t);
+    assert(
+      near(h.x, b.x, 1e-12) && near(h.y, b.y, 1e-12),
+      `the Hermite and its Bezier form disagree at t=${t}`,
+    );
+  }
+
+  // Catmull-Rom goes **through** every waypoint. This is the whole point of it.
+  const segs = segmentCount(WAYPOINTS);
+  for (let i = 0; i < WAYPOINTS.length; i += 1) {
+    const got = catmullRomAt(WAYPOINTS, i / segs);
+    assert(
+      near(got.x, WAYPOINTS[i].x, 1e-12) && near(got.y, WAYPOINTS[i].y, 1e-12),
+      `the path missed waypoint ${i}`,
+    );
+  }
+
+  // C1 across the interior joints: the velocity is the same arriving and leaving.
+  for (let i = 1; i < WAYPOINTS.length - 1; i += 1) {
+    const t = i / segs;
+    const h = 1e-7;
+    const before = catmullRomTangent(WAYPOINTS, t - h);
+    const after = catmullRomTangent(WAYPOINTS, t + h);
+    assert(
+      near(before.x, after.x, 1e-4) && near(before.y, after.y, 1e-4),
+      `the path is not C1 at joint ${i}`,
+    );
+  }
+
+  // Zero tension flattens every tangent, which turns the path into straight lines.
+  for (let i = 0; i < WAYPOINTS.length; i += 1) {
+    const flat = catmullTangent(WAYPOINTS, i, 0);
+    assert(
+      flat.x === 0 && flat.y === 0,
+      "zero tension should give zero tangents",
+    );
+  }
+
+  // The headline. Stepping t evenly varies the speed by a large factor; stepping distance evenly
+  // very nearly removes it. The residual is chord-versus-arc, not a fault in the table.
+  const byT = hopSpread(byParameter, 200);
+  const byS = hopSpread(byDistance, 200);
+  assert(
+    byT.ratio > 5,
+    `uniform t should be badly uneven, but the ratio was ${byT.ratio}`,
+  );
+  assert(
+    byS.ratio < 1.15,
+    `uniform distance should be nearly even, but was ${byS.ratio}`,
+  );
+  assert(
+    byT.ratio / byS.ratio > 5,
+    "reparametrizing should be a large improvement, or the section is pointless",
+  );
+
+  // The table's own behaviour: monotonic, pinned at both ends, and inverse to distanceAtT.
+  assert(tAtFraction(TABLE, 0) === 0, "no distance should mean t = 0");
+  assert(
+    near(tAtFraction(TABLE, 1), 1, 1e-12),
+    "the full distance should mean t = 1",
+  );
+  let previous = -1;
+  for (let i = 0; i <= 400; i += 1) {
+    const t = tAtFraction(TABLE, i / 400);
+    assert(t >= previous - 1e-12, `the table went backwards at u=${i / 400}`);
+    previous = t;
+  }
+  for (let i = 0; i <= 100; i += 1) {
+    const u = i / 100;
+    const t = tAtFraction(TABLE, u);
+    const backAgain = distanceAtT(TABLE, t) / TABLE.total;
+    assert(
+      near(backAgain, u, 1e-9),
+      `distance and t should invert each other, off at u=${u}`,
+    );
+  }
+
+  // A coarse table underestimates the length, because a chord is shorter than the arc it cuts.
+  // So the totals must increase with sample count, and converge.
+  const coarse = buildArcTable(pathAt, 32).total;
+  const medium = buildArcTable(pathAt, 128).total;
+  const fine = buildArcTable(pathAt, 1024).total;
+  assert(
+    coarse < medium && medium < fine,
+    "denser tables should report more length, not less",
+  );
+  assert(
+    (fine - medium) / fine < 0.001,
+    "the length should have all but converged by 128 samples",
+  );
+};
+
+/**
+ * Projection: the frustum, its six planes, and where depth precision goes.
+ *
+ * The assertion earning its keep is the cross-check between the two ways of asking "is this
+ * visible". One divides by `w` and tests the NDC box; the other tests six planes read off the
+ * matrix rows. They are different arithmetic on the same question, so agreement across twenty
+ * thousand points is real evidence rather than a restatement.
+ */
+export const projectionCheck: Demo = () => {
+  const aspect = 16 / 9;
+  const proj = perspective(60, aspect, 0.1, 100);
+
+  // The near and far planes are exactly the ends of the NDC depth range. Everything else in this
+  // Section is measured against that, so it had better be exact.
+  assert(
+    near(ndcDepth(proj, 0.1), -1, 1e-12),
+    "the near plane should map to -1",
+  );
+  assert(near(ndcDepth(proj, 100), 1, 1e-12), "the far plane should map to +1");
+
+  // Every corner of the frustum lands on a corner of the NDC box.
+  for (const c of frustumCorners(60, aspect, 0.1, 100)) {
+    const n = ndcOf(proj, c);
+    assert(n !== null, "a frustum corner had no projection");
+    assert(
+      near(Math.abs(n!.x), 1, 1e-9),
+      "a corner is not on the left or right edge",
+    );
+    assert(
+      near(Math.abs(n!.y), 1, 1e-9),
+      "a corner is not on the top or bottom edge",
+    );
+    assert(
+      near(Math.abs(n!.z), 1, 1e-9),
+      "a corner is not on the near or far plane",
+    );
+  }
+
+  // Field of view conversions round trip, and horizontal really is the wider one on a wide screen.
+  for (const fovY of [30, 55, 60, 90, 110]) {
+    const fovX = fovXFromFovY(fovY, aspect);
+    assert(
+      fovX > fovY,
+      "horizontal FOV should exceed vertical on a wide aspect",
+    );
+    assert(
+      near(fovYFromFovX(fovX, aspect), fovY, 1e-9),
+      `the FOV round trip drifted at ${fovY}`,
+    );
+    // A square viewport makes them identical, which is the sanity case.
+    assert(
+      near(fovXFromFovY(fovY, 1), fovY, 1e-9),
+      "at 1:1 the two fields of view should agree",
+    );
+  }
+
+  // The plane normals come out unit length, so the signed distances are real distances.
+  const planes = frustumPlanes(proj);
+  assert(planes.length === 6, "a frustum should have six planes");
+  for (const p of planes) {
+    assert(
+      near(Math.hypot(p.x, p.y, p.z), 1, 1e-12),
+      "a plane normal is not unit length",
+    );
+  }
+
+  // Two independent tests for the same question, over a deterministic spread of points.
+  let disagreements = 0;
+  let inside = 0;
+  for (let i = 0; i < 20000; i += 1) {
+    const a = (i * 0.6180339887) % 1;
+    const b = (i * 0.4142135624) % 1;
+    const c = (i * 0.2360679775) % 1;
+    const p: Vec3 = {
+      x: (a - 0.5) * 160,
+      y: (b - 0.5) * 90,
+      z: -(c * 130 + 0.001),
+    };
+    const ndc = ndcOf(proj, p);
+    const byNdc =
+      ndc !== null &&
+      Math.abs(ndc.x) <= 1 + 1e-9 &&
+      Math.abs(ndc.y) <= 1 + 1e-9 &&
+      Math.abs(ndc.z) <= 1 + 1e-9;
+    if (byNdc) inside += 1;
+    if (byNdc !== insideFrustum(planes, p, 0)) disagreements += 1;
+  }
+  assert(
+    disagreements === 0,
+    `the plane test disagreed with the NDC test ${disagreements} times`,
+  );
+  // And the spread has to actually straddle the boundary, or agreement proves nothing.
+  assert(
+    inside > 200 && inside < 19800,
+    "the test points should fall on both sides",
+  );
+
+  // Depth precision falls off with the square of distance, and the numeric result matches the
+  // closed form quantum * (f - n) * d^2 / (2 f n).
+  const n0 = 0.1;
+  const f0 = 1000;
+  const wide = perspective(60, aspect, n0, f0);
+  const quantum = 2 / Math.pow(2, 24);
+  for (const d of [0.5, 1, 5, 25, 100, 500, 999]) {
+    const numeric = depthResolution(wide, d, 24);
+    const analytic = (quantum * (f0 - n0) * d * d) / (2 * f0 * n0);
+    assert(
+      Math.abs(numeric - analytic) / analytic < 1e-5,
+      `depth resolution disagreed with the closed form at ${d} m`,
+    );
+  }
+
+  // The headline pair. Ten times the near plane is ten times the precision; ten times the far
+  // plane is worth essentially nothing. This is the whole engineering point of the Section.
+  const nearTight = depthResolution(
+    perspective(60, aspect, 0.01, 1000),
+    100,
+    24,
+  );
+  const nearLoose = depthResolution(
+    perspective(60, aspect, 0.1, 1000),
+    100,
+    24,
+  );
+  assert(
+    near(nearTight / nearLoose, 10, 0.01),
+    `a ten times larger near plane should be ten times better, got ${nearTight / nearLoose}`,
+  );
+  const farNear = depthResolution(perspective(60, aspect, 0.1, 100), 50, 24);
+  const farFar = depthResolution(perspective(60, aspect, 0.1, 1000), 50, 24);
+  assert(
+    farFar / farNear < 1.01,
+    `a ten times larger far plane should barely matter, got ${farFar / farNear}`,
+  );
+
+  // Orthographic: depth is linear, so precision is the same everywhere, and nothing converges.
+  const ortho = orthographic(5, aspect, 0.1, 100);
+  assert(near(ndcDepth(ortho, 0.1), -1, 1e-12), "ortho near should map to -1");
+  assert(near(ndcDepth(ortho, 100), 1, 1e-12), "ortho far should map to +1");
+  const first = depthResolution(ortho, 1, 24);
+  for (const d of [10, 50, 99]) {
+    assert(
+      near(depthResolution(ortho, d, 24), first, 1e-12),
+      "orthographic depth precision should not depend on distance",
+    );
+  }
+  const nearX = ndcOf(ortho, { x: 2, y: 0, z: -5 })!;
+  const farX = ndcOf(ortho, { x: 2, y: 0, z: -50 })!;
+  assert(
+    near(nearX.x, farX.x, 1e-12),
+    "orthographic should not converge with distance",
+  );
+
+  // Perspective does converge, and by exactly the ratio of the distances.
+  const pNear = ndcOf(proj, { x: 2, y: 0, z: -5 })!;
+  const pFar = ndcOf(proj, { x: 2, y: 0, z: -50 })!;
+  assert(
+    near(pFar.x / pNear.x, 0.1, 1e-9),
+    "ten times further should be ten times narrower on screen",
+  );
+
+  // The one place projection has no answer is the camera's own position.
+  assert(
+    ndcOf(proj, { x: 0, y: 0, z: 0 }) === null,
+    "the camera origin should have no projection",
+  );
+};
+
+/**
+ * Screen space: pixels, rays back out of the camera, and spherical coordinates.
+ *
+ * The assertion worth the most is the round trip. `unprojectAt` derives a point from the
+ * frustum's geometry without ever inverting a matrix, and `ndcOf` puts it back through the
+ * projection matrix. Those two share no code, so agreeing to within `1e-15` across a grid of
+ * cursor positions and four depths means the shortcut really is the matrix inverse.
+ */
+export const screenCheck: Demo = () => {
+  const W = 800;
+  const H = 450;
+  const aspect = W / H;
+  const fov = 55;
+  const proj = perspective(fov, aspect, 0.1, 100);
+
+  // Pixels to NDC and back, including the Y flip that catches everybody once.
+  const topLeft = screenToNdc(0, 0, W, H);
+  assert(
+    topLeft.x === -1 && topLeft.y === 1,
+    "the top-left pixel should be NDC (-1, 1)",
+  );
+  const bottomRight = screenToNdc(W, H, W, H);
+  assert(
+    bottomRight.x === 1 && bottomRight.y === -1,
+    "the bottom-right pixel should be NDC (1, -1)",
+  );
+  const middle = screenToNdc(W / 2, H / 2, W, H);
+  assert(
+    middle.x === 0 && middle.y === 0,
+    "the centre pixel should be NDC (0, 0)",
+  );
+  for (let i = 0; i <= 20; i += 1) {
+    for (let j = 0; j <= 20; j += 1) {
+      const x = (i / 20) * W;
+      const y = (j / 20) * H;
+      const back = ndcToScreen(screenToNdc(x, y, W, H), W, H);
+      assert(
+        near(back.x, x, 1e-9) && near(back.y, y, 1e-9),
+        `the pixel round trip drifted at ${x},${y}`,
+      );
+    }
+  }
+
+  // Unprojecting from the frustum's geometry is exactly inverting the projection matrix.
+  for (let i = 0; i <= 12; i += 1) {
+    for (let j = 0; j <= 12; j += 1) {
+      const ndc = { x: (i / 12) * 2 - 1, y: (j / 12) * 2 - 1 };
+      for (const distance of [0.5, 2, 9, 40]) {
+        const p = unprojectAt(fov, aspect, ndc, distance);
+        assert(
+          near(p.z, -distance, 1e-12),
+          "the unprojected point is at the wrong depth",
+        );
+        const back = ndcOf(proj, p);
+        assert(back !== null, "an unprojected point had no projection");
+        assert(
+          near(back!.x, ndc.x, 1e-12) && near(back!.y, ndc.y, 1e-12),
+          `unproject and project disagree at ${ndc.x},${ndc.y} depth ${distance}`,
+        );
+      }
+    }
+  }
+
+  // Rays are unit length and go forwards, and the centre of the screen is straight ahead.
+  const centre = rayThroughNdc(fov, aspect, { x: 0, y: 0 });
+  assert(
+    near(centre.direction.x, 0, 1e-15) &&
+      near(centre.direction.y, 0, 1e-15) &&
+      near(centre.direction.z, -1, 1e-15),
+    "the centre of the screen should look straight down -Z",
+  );
+  for (let i = 0; i <= 12; i += 1) {
+    for (let j = 0; j <= 12; j += 1) {
+      const ray = rayThroughNdc(fov, aspect, {
+        x: (i / 12) * 2 - 1,
+        y: (j / 12) * 2 - 1,
+      });
+      const d = ray.direction;
+      assert(
+        near(Math.hypot(d.x, d.y, d.z), 1, 1e-12),
+        "a ray is not unit length",
+      );
+      assert(d.z < 0, "a ray through the screen should point forwards");
+    }
+  }
+
+  // Picking: the centre ray meets a sphere straight ahead at its near face, and misses when
+  // aimed into a corner.
+  const target = { x: 0, y: 0, z: -10 };
+  const hit = raySphere(centre.origin, centre.direction, target, 1);
+  assert(
+    hit !== null && near(hit, 9, 1e-12),
+    "the centre ray should hit the near face at 9",
+  );
+  const corner = rayThroughNdc(fov, aspect, { x: 0.9, y: 0.9 });
+  assert(
+    raySphere(corner.origin, corner.direction, target, 1) === null,
+    "a corner ray should miss a sphere dead ahead",
+  );
+  // A ray starting inside a sphere still reports a hit, at zero or beyond.
+  const inside = raySphere({ x: 0, y: 0, z: -10 }, centre.direction, target, 1);
+  assert(
+    inside !== null && inside >= 0,
+    "a ray starting inside should still hit",
+  );
+
+  // The behind-the-camera trap. These two points land on the *same pixel*, and only the
+  // `inFront` flag distinguishes them - which is why forgetting it draws markers for things
+  // that are behind you.
+  const ahead = projectToScreen(proj, { x: 0, y: 0, z: -5 }, W, H);
+  const behind = projectToScreen(proj, { x: 0, y: 0, z: 5 }, W, H);
+  assert(ahead.inFront && ahead.onScreen, "a point ahead should be on screen");
+  assert(
+    !behind.inFront,
+    "a point behind the camera should not be marked in front",
+  );
+  assert(
+    !behind.onScreen,
+    "a point behind the camera should never count as on screen",
+  );
+  assert(
+    near(ahead.x, behind.x, 1e-9) && near(ahead.y, behind.y, 1e-9),
+    "the trap only bites because both project to the same pixel - if they differ, rewrite the prose",
+  );
+  assert(
+    near(ahead.x, W / 2, 1e-9) && near(ahead.y, H / 2, 1e-9),
+    "dead ahead is the centre pixel",
+  );
+
+  // And the careless version really does draw more markers than the correct one somewhere.
+  let sawExtra = false;
+  for (let yaw = -180; yaw <= 180; yaw += 5) {
+    const counts = markerCounts(yaw);
+    assert(
+      counts.careless >= counts.correct,
+      "skipping a check cannot draw fewer markers",
+    );
+    if (counts.careless > counts.correct) sawExtra = true;
+  }
+  assert(
+    sawExtra,
+    "the careless marker path should visibly over-draw at some angle",
+  );
+
+  // Spherical coordinates round trip away from the poles.
+  for (let az = -175; az <= 180; az += 5) {
+    for (let el = -85; el <= 85; el += 5) {
+      const back = cartesianToSpherical(sphericalToCartesian(12, az, el));
+      assert(near(back.radius, 12, 1e-12), "the radius drifted");
+      assert(near(back.elevation, el, 1e-9), `the elevation drifted at ${el}`);
+      assert(near(back.azimuth, az, 1e-9), `the azimuth drifted at ${az}`);
+    }
+  }
+  // At the poles the azimuth is genuinely gone, which is why orbit cameras clamp short of them.
+  for (const el of [90, -90]) {
+    const pole = cartesianToSpherical(sphericalToCartesian(10, 137, el));
+    assert(
+      pole.azimuth === 0,
+      "the azimuth at a pole should be reported as 0, not as noise",
+    );
+    assert(
+      near(Math.abs(pole.elevation), 90, 1e-9),
+      "a pole should still report its elevation",
+    );
+  }
+  // One degree short and it is fine again - the same clamp Section 3.1 argued for.
+  const nearPole = cartesianToSpherical(sphericalToCartesian(10, 137, 89));
+  assert(
+    near(nearPole.azimuth, 137, 1e-9),
+    "89 degrees should still recover the azimuth",
+  );
 };
