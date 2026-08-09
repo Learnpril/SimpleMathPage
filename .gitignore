@@ -4,3 +4,11 @@ dist
 
 # Local Netlify folder
 .netlify
+
+# Local environment files. The values currently in .env are all PUBLIC_ prefixed, so
+# Astro ships them to the client anyway and nothing here was ever secret - but an
+# untracked file means a server-side key added later cannot be committed by accident.
+# .env.example is tracked on purpose, as the record of what a fresh clone needs.
+.env
+.env.*
+!.env.example
