@@ -39,6 +39,9 @@ const lineCount = code.trimEnd().split("\n").length;
 
 <details class="cpanel" open={open}>
   <summary class="cpanel-summary">
+    {/* Says outright that this is source. Without it the panel reads as a figure title,
+        and a reader expands it expecting a picture. That happened. */}
+    <span class="cpanel-kind">source</span>
     <span class="cpanel-label">{label}</span>
     <span class="cpanel-meta">
       {file && <code class="cpanel-file">{file}</code>}
@@ -83,6 +86,16 @@ const lineCount = code.trimEnd().split("\n").length;
   .cpanel[open] > .cpanel-summary::before {
     transform: rotate(90deg);
   }
+  .cpanel-kind {
+    padding: 0.05rem 0.4rem;
+    border: 1px solid #30363d;
+    border-radius: 0.2rem;
+    font-size: 0.62rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #7d8590;
+  }
   .cpanel-label {
     font-size: 0.88rem;
     font-weight: 700;
@@ -123,7 +136,11 @@ const lineCount = code.trimEnd().split("\n").length;
     color: #0d7d72;
   }
   :global([data-theme="light"]) .cpanel-meta,
-  :global([data-theme="light"]) .cpanel-file {
+  :global([data-theme="light"]) .cpanel-file,
+  :global([data-theme="light"]) .cpanel-kind {
     color: #57606a;
+  }
+  :global([data-theme="light"]) .cpanel-kind {
+    border-color: #d0d7de;
   }
 </style>

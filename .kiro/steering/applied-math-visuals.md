@@ -370,8 +370,27 @@ should return 200 and contain identifiers from the current version of the file.
 
 `DemoPanel` catches mount failures and prints them in the panel. Before that it swallowed
 them, and since `.demo-stage` has `min-height: 300px` a dead scene was pixel-identical to an
-unmounted one. Keep that `catch`: a scene throwing in a real browser is the one class of
-broken demo the build genuinely cannot catch, because checking it needs a GPU.
+unmounted one. Keep that `catch`: a scene throwing in a real browser is still worth surfacing.
+
+**`npm test` mounts every scene, and it is not optional.** `src/lib/gamedev/demos/scenes.test.ts`
+loads every `*.scene.ts` under jsdom with a stubbed WebGL context, asserts a canvas appeared,
+then **drives every control** - each slider to both ends and back, each checkbox both ways, each
+button pressed - and fails if Three.js logs anything. Run it along`astro build` when adding or
+editing a scene.
+
+Mounting is the easy half; the bugs live in the redraws. It found one on its first run:
+`rayplane.scene.ts` hid a line by handing `setFromPoints` an empty array, which allocates a
+zero-length buffer that can never be filled again, so the dashed ray silently stopped drawing
+as soon as the reader moved the slider past the first hit. No exception, nothing in the console
+on the default frame, and invisible to the build.
+
+So: **hide a line with `mesh.visible = false`, never by passing an empty point list.** An empty
+list either poisons the buffer as above, or - if the buffer was already sized - leaves the
+previous vertices in place and still drawn.
+
+Note that three of the existing Supabase progress tests fail and have done for a while; they are
+unrelated to Applied. Do not read a red `npm test` summary as a scene problem without checking
+which files failed.
 
 - `node scripts/audit-figures.mjs dist/<section> 3` only parses **static SVG
   geometry**. Three.js and canvas figures are invisible to it, so a clean audit is not

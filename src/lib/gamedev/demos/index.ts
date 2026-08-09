@@ -16,6 +16,13 @@ import type { DemoEntry } from "./runner.ts";
 import arcmath from "./arcmath.ts";
 import depthprec from "./depthprec.ts";
 import screenmath from "./screenmath.ts";
+import signeddist from "./signeddist.ts";
+import satmath from "./satmath.ts";
+import mtv from "./mtv.ts";
+import bouncing from "./bouncing.ts";
+import impulse from "./impulse.ts";
+import accumulator from "./accumulator.ts";
+import determinism from "./determinism.ts";
 import dtmath from "./dtmath.ts";
 import eulerorders from "./eulerorders.ts";
 import jumparc from "./jumparc.ts";
@@ -50,6 +57,12 @@ import {
   splineCheck,
   projectionCheck,
   screenCheck,
+  geometryCheck,
+  collisionCheck,
+  responseCheck,
+  dynamicsCheck,
+  integratorCheck,
+  capstoneCheck,
 } from "./checks.ts";
 
 export const DEMOS: Record<string, DemoEntry> = {
@@ -202,6 +215,75 @@ export const DEMOS: Record<string, DemoEntry> = {
     visual: () => import("./marker.scene.ts"),
     visualFile: "lib/gamedev/demos/marker.scene.ts",
   },
+  rayplane: {
+    title: "A ray meeting the floor, and the distance running away with itself",
+    visual: () => import("./rayplane.scene.ts"),
+    visualFile: "lib/gamedev/demos/rayplane.scene.ts",
+    check: geometryCheck,
+  },
+  closest: {
+    title: "One point, and the nearest spot on four different shapes",
+    visual: () => import("./closest.scene.ts"),
+    visualFile: "lib/gamedev/demos/closest.scene.ts",
+  },
+  overlap: {
+    title: "Four pairs of volumes, one number deciding all four",
+    visual: () => import("./overlap.scene.ts"),
+    visualFile: "lib/gamedev/demos/overlap.scene.ts",
+    check: collisionCheck,
+  },
+  slabs: {
+    title: "A box as three overlapping stretches of the ray",
+    visual: () => import("./slabs.scene.ts"),
+    visualFile: "lib/gamedev/demos/slabs.scene.ts",
+  },
+  slide: {
+    title:
+      "One velocity, split into the part a surface blocks and the part that slides",
+    visual: () => import("./slide.scene.ts"),
+    visualFile: "lib/gamedev/demos/slide.scene.ts",
+    check: responseCheck,
+  },
+  tunnel: {
+    title: "A sphere fast enough to skip straight over a wall",
+    visual: () => import("./tunnel.scene.ts"),
+    visualFile: "lib/gamedev/demos/tunnel.scene.ts",
+  },
+  jump: {
+    title:
+      "A jump asked for as a height and a duration, with the gravity that gives it",
+    visual: () => import("./jump.scene.ts"),
+    visualFile: "lib/gamedev/demos/jump.scene.ts",
+    check: dynamicsCheck,
+  },
+  drag: {
+    title: "The same shot through vacuum and through air",
+    visual: () => import("./drag.scene.ts"),
+    visualFile: "lib/gamedev/demos/drag.scene.ts",
+  },
+  integrators: {
+    title: "One throw stepped three ways, against the answer we already know",
+    visual: () => import("./integrators.scene.ts"),
+    visualFile: "lib/gamedev/demos/integrators.scene.ts",
+    check: integratorCheck,
+  },
+  stability: {
+    title:
+      "A spring drawn as position against velocity, where added energy shows",
+    visual: () => import("./stability.scene.ts"),
+    visualFile: "lib/gamedev/demos/stability.scene.ts",
+  },
+  capstone: {
+    title: "The whole controller, with each piece switchable off",
+    visual: () => import("./capstone.scene.ts"),
+    visualFile: "lib/gamedev/demos/capstone.scene.ts",
+    check: capstoneCheck,
+  },
+  capstonecam: {
+    title: "Three ways to point a camera at the same character",
+    visual: () => import("./capstonecam.scene.ts"),
+    visualFile: "lib/gamedev/demos/capstonecam.scene.ts",
+  },
   basis: {
     title: "An object's own axes, and where forward points",
     visual: () => import("./basis.scene.ts"),
@@ -286,6 +368,41 @@ export const DEMOS: Record<string, DemoEntry> = {
     title: "Pixels, the behind-you trap, and the pole to avoid",
     demo: screenmath,
     file: "lib/gamedev/demos/screenmath.ts",
+  },
+  signeddist: {
+    title: "Walking out of a box, one number reporting both side and distance",
+    demo: signeddist,
+    file: "lib/gamedev/demos/signeddist.ts",
+  },
+  satmath: {
+    title: "Two boxes that pass six tests and fail the seventh",
+    demo: satmath,
+    file: "lib/gamedev/demos/satmath.ts",
+  },
+  mtv: {
+    title: "Three ways out of one overlap, and the only usable one",
+    demo: mtv,
+    file: "lib/gamedev/demos/mtv.ts",
+  },
+  bouncing: {
+    title: "What restitution and friction each take away",
+    demo: bouncing,
+    file: "lib/gamedev/demos/bouncing.ts",
+  },
+  impulse: {
+    title: "The same push, given all at once or spread over a moment",
+    demo: impulse,
+    file: "lib/gamedev/demos/impulse.ts",
+  },
+  accumulator: {
+    title: "Which frames get a physics tick, and what is left over",
+    demo: accumulator,
+    file: "lib/gamedev/demos/accumulator.ts",
+  },
+  determinism: {
+    title: "What a fixed timestep promises, and what it does not",
+    demo: determinism,
+    file: "lib/gamedev/demos/determinism.ts",
   },
   "nan-guard": {
     title: "A NaN walks past the check meant to stop it",

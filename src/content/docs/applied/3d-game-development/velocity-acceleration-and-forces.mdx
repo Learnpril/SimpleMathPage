@@ -1,0 +1,239 @@
+---
+title: Velocity, Acceleration and Forces
+description: Position, velocity and acceleration, gravity and drag, impulses against continuous forces, and solving a jump backwards from the height and the timing a designer actually wants
+sidebar:
+  order: 22
+  label: "7.1  Velocity, Acceleration and Forces"
+---
+
+import DemoPanel from "../../../../components/DemoPanel.astro";
+import CodePanel from "../../../../components/CodePanel.astro";
+import dynamicsSource from "../../../../lib/gamedev/dynamics.ts?raw";
+
+## What You'll Learn
+
+The three quantities everything moves by — **position, velocity, acceleration** — and how each one
+gets to the next. **Gravity and drag**, where drag turns out to be Section 4.1's exponential decay
+pointed at a velocity. **Impulses against continuous forces**, which differ only in how long they
+last and yet feel completely different. And the technique this Section exists for: **solving a jump
+backwards**, from the height and the timing you want to the gravity that produces them.
+
+## Three Quantities, Two Rules
+
+$$
+\text{acceleration} \xrightarrow{\;\times\, dt\;} \text{velocity} \xrightarrow{\;\times\, dt\;} \text{position}
+$$
+
+Acceleration changes velocity. Velocity changes position. Both by multiplying by $dt$, which
+Section 4.1 established is correct for a rate, and which is why `velocity * dt` was the one thing
+that page said you _should_ write.
+
+Everything a game does to a moving object is a rule for the acceleration. Gravity is a constant
+one. Drag is one that depends on the current velocity. A thruster is one that switches on and off.
+The two multiplications never change.
+
+If you have met calculus, velocity is the derivative of position and acceleration the derivative of
+velocity, and none of the rest of this page needs that.
+
+## Gravity: Stop Copying 9.81
+
+Earth's gravity is $9.81\ \text{m/s}^2$, and putting that number in a platformer produces a jump
+that feels like the moon. The reason is worth seeing rather than being told.
+
+A designer does not have an opinion about gravity. They have two other opinions, both concrete:
+
+- **How high?** High enough to reach that ledge.
+- **How long?** Snappy, not floaty.
+
+Those are a height and a duration. So take them as the inputs and let gravity be the output. At the
+apex the rise has been cancelled, and the two standard formulas invert in one line each:
+
+$$
+g = \frac{2h}{t^2}
+\qquad\qquad
+v_0 = \frac{2h}{t}
+$$
+
+<DemoPanel name="jump" />
+
+The dashed line is the height asked for, teal is the exact arc, and the readout gives the gravity
+and launch speed that produce it. Drag the sliders and watch the derived numbers move.
+
+**Notice the square.** Halving the time to apex quadruples the gravity while only doubling the
+launch speed. A 1.2 m jump reaching its peak in 0.4 s needs $g = 15$; ask for 0.2 s and it needs 60. That is the whole reason 9.81 feels wrong — under Earth gravity, a 1.2 m jump takes 0.49 s just
+to get to the top, and half a second of rise reads as floating.
+
+The build check round-trips every combination it tries: derive $g$ and $v_0$ from a height and a
+time, then run the ordinary forwards formulas and require the same height and time back. The two
+directions share no code, so agreeing to $10^{-12}$ means the algebra is right rather than merely
+consistent with itself.
+
+### Falling faster than you rose
+
+The third slider is not physics. Multiply gravity once the velocity turns over and the character
+falls faster than it rose.
+
+Almost every platformer does this. The rise is what the player asked for and wants to watch; the
+fall is dead time. A multiplier of 2 cuts a 0.80 s jump to 0.68 s **without losing any height**,
+and it reads as responsiveness rather than as a cheat. Four times the gravity halves the fall
+exactly, which the check pins.
+
+:::caution[The height you solved for is not the height you get]
+Solve the jump exactly, then simulate it at 60 fps, and it comes up **short**. The second readout
+says by how much: the default 1.2 m jump only reaches 1.15 m.
+
+That is not a rounding artifact, it is a systematic shortfall, and it has an exact size:
+
+$$
+\frac{\text{shortfall}}{h} = \frac{dt}{t_{\text{apex}}}
+$$
+
+At 60 fps with a 0.4 s rise that is 4.2%. At 30 fps it is 8.3%. And a **snappier jump is
+proportionally worse** — ask for the same 1.2 m in 0.15 s and you lose 11%, which is 13 cm, which
+is a player not clearing the ledge you sized for them.
+
+The check verifies this law at three frame rates, exactly where the apex lands on a step boundary
+and to within a fraction of a percent where it does not.
+
+Section 7.2 is about why this happens and what to do. For now: **if you tune against the formula,
+test against the simulation.**
+:::
+
+## Impulses and Forces
+
+Both change velocity. They differ in how long they take, and that turns out to matter enormously.
+
+- An **impulse** changes the velocity _now_. A jump, a bullet hit, an explosion.
+- A **force** changes it _while it is applied_. A thruster, a conveyor, a wind zone.
+
+$$
+\Delta v = \frac{J}{m}
+\qquad\qquad
+\Delta v = \frac{F}{m}\,dt
+$$
+
+Divide by mass in both, because the same shove moves a heavy thing less.
+
+<DemoPanel name="impulse" />
+
+Here is the part that is easy to miss. The force is chosen to deliver exactly the same total change
+in velocity, over a tenth of a second. At the moment it finishes, both are travelling at the same
+6 m/s — and the force-driven one is **0.225 m lower**, because it spent that tenth of a second
+getting up to speed from nothing.
+
+Same final velocity, less distance covered. Which is why a jump has to be an impulse: spread it out
+even slightly and the jump loses its snap, because the character is still accelerating when it
+should already be rising. The check confirms the two converge as the push gets shorter, which is
+the sense in which an impulse _is_ a force over no time at all.
+
+## Drag, and Terminal Speed
+
+Drag is a force that depends on how fast you are already going, which makes it a decay:
+
+$$
+v \mathrel{{*}{=}} e^{-k\,dt}
+$$
+
+That is Section 4.1's exponential decay, applied to velocity instead of position, and for the same
+reason: multiplying by a constant each frame would make drag depend on the frame rate. The check
+runs one second of drag at 1, 30, 60, 144 and 1000 fps and requires the results to agree to
+$10^{-12}$.
+
+Fall long enough and drag exactly cancels gravity. The speed stops changing:
+
+$$
+-g - k\,v = 0 \;\Longrightarrow\; v_{\text{terminal}} = \frac{g}{k}
+$$
+
+<DemoPanel name="drag" />
+
+Dashed grey is the shot through vacuum, teal is the same shot through air.
+
+Drag **shortens the range**, obviously. It also makes the arc **lopsided**, and the way it does
+that is worth reading carefully, because the two obvious measurements disagree.
+
+In vacuum the peak sits at halfway by both clocks: halfway through the flight time, and halfway
+along the ground. With drag they come apart, and in opposite directions:
+
+| Where is the peak?          | Vacuum | With drag |
+| :-------------------------- | :----: | :-------: |
+| through the **flight time** |  50%   | **early** |
+| along the **distance**      |  50%   | **late**  |
+
+At 66° with heavy air, the peak arrives at 40% of the flight time but 69% of the distance. The climb
+is fast and covers ground; then drag has taken the horizontal speed away and the thing drops almost
+straight down, slowly. Most of the flight is spent falling, and almost none of the forward travel
+happens during it.
+
+**That contradiction is the "heavy" feeling.** And the readout gives both numbers on purpose: quoting
+only the time fraction next to a picture looks like a bug, because your eye measures distance and the
+clock does not.
+
+There is also a hard ceiling. Horizontal motion under linear drag is pure decay, so the shot can
+never travel further than $v_{x0}/k$ however you aim it — 3.25 m for the numbers above, which is why
+it lands at 2.96 m and looks like it ran out of road. The check pins all of it: both fractions at
+50% in vacuum, opposite sides of 50% with any drag, both moving further out as drag rises, and the
+range under the ceiling.
+
+It also breaks a rule everyone learns at school. **45° is the farthest angle only in vacuum.** With
+drag it is not, which is why artillery aims lower than you would expect. The check confirms 45°
+wins with no drag and that range falls monotonically as drag rises.
+
+:::note[Linear against quadratic drag]
+Real air resistance goes as the **square** of speed, which makes terminal speed $\sqrt{g/k}$ rather
+than $g/k$. Games mostly use the linear form anyway: it is stable at any timestep, it has a closed
+form, and in a two-second projectile flight nobody can tell.
+
+Quadratic drag is worth reaching for when the difference is the point — a skydiver, a car's top
+speed, a plane.
+
+One detail the check pins because it surprised me: a _stepped_ fall settles slightly **faster** than
+$g/k$, overshooting by about $k\,dt/2$, because a stepped drag removes a little less than a
+continuous one. At $k = 4$ and 60 fps that is 3.3%. It has its own exact fixed point, and it is not
+the analytic one.
+:::
+
+<CodePanel
+  code={dynamicsSource}
+  lang="ts"
+  file="src/lib/gamedev/dynamics.ts"
+  label="Motion, forces, drag, and the backwards jump solve"
+/>
+
+:::note[In an engine]
+Godot's `RigidBody3D` takes `apply_impulse()` and `apply_central_force()` — the two above, named
+apart. `linear_damp` is the drag coefficient, `gravity_scale` multiplies the project's gravity per
+body, and `CharacterBody3D` ignores all of it because you write the integration yourself, which is
+what this Section is for.
+
+Unity has `Rigidbody.AddForce(force, ForceMode.Impulse)` versus `ForceMode.Force`, with
+`ForceMode.VelocityChange` as an impulse that ignores mass. `Rigidbody.linearDamping` is the drag,
+and `Physics.gravity` is a project-wide vector.
+
+Both default to something near Earth gravity, and in both the first thing most projects do is turn
+it up.
+:::
+
+## Where This Shows Up
+
+- **Every jump in every platformer**, tuned as a height and a duration rather than a gravity.
+- **Double jumps and variable-height jumps**, which are the same solve with a second impulse or a
+  shortened rise.
+- **Coyote time and jump buffering**, which are forgiveness windows around the impulse, not physics.
+- **Thrown grenades and lobbed projectiles**, where the arc has to clear something, so you solve
+  for the launch velocity that does.
+- **Explosion knockback**, an impulse scaled by distance and divided by mass.
+- **Anything with a top speed** — a car, a falling player, a sprint — which is drag against a
+  constant force.
+- **Section 7.2**, which is where the shortfall above gets fixed properly.
+
+:::note[The one thing to take away]
+Acceleration changes velocity, velocity changes position, both by multiplying by $dt$. Do not pick
+a gravity: pick the height and the time you want and let $g = 2h/t^2$ and $v_0 = 2h/t$ tell you the
+gravity, because the square in there is why Earth's 9.81 feels floaty at human scale. An impulse
+changes velocity now and a force changes it over time, and the same total change spread over a
+tenth of a second ends up measurably lower even though it ends at the same speed. Drag is Section
+4.1's exponential decay applied to velocity, giving a terminal speed of $g/k$ and a lopsided arc
+whose peak comes before halfway. And a jump solved exactly then stepped at a real frame rate falls
+short by $dt / t_{\text{apex}}$ — so tune against the formula, but test against the simulation.
+:::

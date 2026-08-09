@@ -1,0 +1,249 @@
+---
+title: Collision Response, Penetration and Sliding
+description: Penetration depth and the minimum translation vector, sliding by removing the blocked part of a velocity, restitution and friction, the slope limit, and why fast objects pass through walls
+sidebar:
+  order: 21
+  label: "6.3  Collision Response, Penetration and Sliding"
+---
+
+import DemoPanel from "../../../../components/DemoPanel.astro";
+import CodePanel from "../../../../components/CodePanel.astro";
+import responseSource from "../../../../lib/gamedev/response.ts?raw";
+
+## What You'll Learn
+
+Detection was half the job. This Section is the other half: what to **do** once a test says two
+things are touching.
+
+**Penetration depth** and the **minimum translation vector**, which fix a position that is already
+wrong. **Sliding**, which is one subtraction and is what makes running into a wall at an angle
+carry you along it — the thing `move_and_slide` does. **Restitution and friction**, which turn out
+to be two dials on the same split. The **slope limit**, which is the only thing separating a floor
+from a wall. And **tunneling**: why something fast enough goes straight through a wall, and why
+that bug is never reproducible.
+
+## Two Wrong Things, Not One
+
+By the time a test reports a contact, two separate things are wrong.
+
+- **The position is wrong.** The shapes overlap. Something has to move out.
+- **The velocity is wrong.** It is still pointing into the surface, so next frame will overlap
+  again by about the same amount.
+
+Fix only the position and the object buzzes against the wall — pushed out, driven back in, pushed
+out. Fix only the velocity and it sinks in and stays there, because nothing ever removed the
+overlap that already exists.
+
+They need different fixes, and it is worth keeping them separate in your head, because they use
+different numbers: the position fix uses the **depth**, the velocity fix uses the **normal**.
+
+## Getting Out: the Minimum Translation Vector
+
+Section 6.2's tests already hand you the depth. Section 6.1's signed distance is the depth for a
+shape against a plane or a box. So the push-out is:
+
+$$
+\text{position} \;\mathrel{+}= n \cdot \text{depth}
+$$
+
+The interesting part is choosing $n$. For two overlapping boxes, _any_ of the three axes would
+separate them, and the answers are not equally good:
+
+<DemoPanel name="mtv" />
+
+A character has sunk 30 cm into the floor. Pushing along $y$ moves them 30 cm. Pushing along $x$ or
+$z$ moves them **5.4 meters** — eighteen times further — and reads on screen as being flung
+sideways for no reason.
+
+So you always take the shortest one, and it has a name: the **minimum translation vector**. And it
+is free, because Section 6.2's `aabbAabb` already reports the axis with the shallowest overlap. The
+test that found the contact also told you the way out.
+
+:::note[Why the push-out overshoots on purpose]
+`pushOut` adds a millimeter beyond the depth. That is not sloppiness.
+
+Pushing out to _exactly_ zero separation leaves the object on the boundary, where the next frame's
+test can round either way. It reports a contact, then no contact, then a contact, and the object
+buzzes at the frame rate. A **skin** of a millimeter or two is invisible and removes the problem
+entirely.
+
+Unity exposes it as `CharacterController.skinWidth`, and the fact that it is exposed at all tells
+you how often it matters.
+:::
+
+## Staying Out: the Split
+
+Now the velocity. Everything from here rests on one decomposition — split it into the part heading
+along the surface normal and the part left over:
+
+$$
+\text{blocked} = (v \cdot n)\,n
+\qquad
+\text{sliding} = v - (v \cdot n)\,n
+$$
+
+That is Section 1.3's dot product doing its usual job, and Section 1.3's `slide` in three
+dimensions. Every response on this page is a decision about what to do with those two pieces.
+
+<DemoPanel name="slide" />
+
+The orange arrow is the velocity arriving at the surface. Red is the part the surface blocks, teal
+is the part that survives, and the dashed lines close the triangle: **blocked plus sliding is
+exactly the velocity you started with**, no more and no less.
+
+Tilt the surface flat and nothing is blocked. Tilt it upright and at 90° everything is, so the
+teal arrow vanishes and you stop dead. In between you keep some of your speed, and that is not a
+compromise — it is what running along a wall should feel like.
+
+Swing the aim past the surface and the split stops applying altogether. **A velocity already
+pointing away from the surface must be left alone.** Respond to it anyway and the object sticks to
+walls it was trying to walk away from, which is a bug with a very recognisable feel.
+
+### Sliding, bouncing and friction are one formula
+
+$$
+v' = v - (1 + e)(v \cdot n)\,n
+$$
+
+$e$ is the **restitution**, or bounciness. At $e = 1$ the blocked part flips completely and the
+speed is unchanged. At $e = 0$ it is removed, and the formula becomes exactly the sliding
+expression above.
+
+**Sliding is bouncing with no bounce.** There are not two behaviours here, only one number — which
+the build check enforces by asserting the two functions agree at every angle it tries.
+
+Friction is the other dial, acting on the other piece: it shrinks the sliding part while
+restitution scales the blocked one. Between them they cover the whole range from ice to glue.
+
+<DemoPanel name="bouncing" />
+
+Restitution scales **speed**, and height goes as the square of speed, so **each bounce keeps only
+$e^2$ of the height**. That squaring catches people out. A restitution of 0.95 sounds nearly
+lossless and still loses a quarter of the height in three bounces. And $e = 1$ bounces forever,
+which is why nothing ships with it.
+
+## Floor or Wall? Only a Threshold Says
+
+Nothing in the geometry distinguishes a floor from a wall. Both are surfaces with normals. The
+difference is a number somebody picked:
+
+$$
+\text{walkable} \iff \arccos(n \cdot \text{up}) \le \text{limit}
+$$
+
+Around 45° is typical, and the scene above uses 46°. Under the limit, the character stands on it.
+Over it, the surface is treated as a wall — they slide down instead of standing, which is what stops
+a player walking up a cliff by holding forward.
+
+Watch the readout flip as you tilt the surface past 46°. The maths did not change at that point;
+only the label did.
+
+## Tunneling: the Bug That Will Not Reproduce
+
+Here is the failure that all of the above still allows.
+
+Every test so far asks **"am I overlapping right now?"** — evaluated at frame positions. But an
+object does not exist only at frame positions. It jumps from one to the next, and if the jump is
+bigger than the wall, there is simply no frame at which it was ever inside.
+
+<DemoPanel name="tunnel" />
+
+The grey pane is a 10 cm wall, and the dashed lines mark the window the sphere's centre must land
+inside to be noticed — 70 cm, once you include the radius. The rings are the sphere's position at
+the start of each frame.
+
+Wind the speed up. At 60 m/s the sphere covers a meter per frame, already more than the window, and
+the wall turns red the moment no frame lands inside it.
+
+**Now move the second slider.** It only changes where in the stride the frames happen to fall — same
+speed, same wall, same everything. And the answer flips between caught and missed.
+
+That is the whole reason this bug is so unpleasant. The check sweeps forty offsets at 60 m/s and
+requires **both** outcomes to appear, so the claim cannot quietly stop being true. Nothing about the
+scene is unusual: a bullet at 60 m/s is slow for a bullet.
+
+### Sweeping asks a better question
+
+Tick the checkbox. Instead of "am I overlapping now", the test becomes **"did my movement this frame
+cross anything?"** — and the answer no longer depends on luck, because the movement is continuous
+even when the sampling is not.
+
+The implementation needs no new geometry at all. A sphere against a box is a **point against the box
+grown by the radius**, so sweeping a sphere is Section 6.2's `rayAabb` against a bigger box:
+
+$$
+\text{sweep a sphere of radius } r \;\equiv\; \text{cast a ray at the box grown by } r
+$$
+
+That is exact on the faces and slightly generous at the corners, where the grown shape should really
+be rounded off. It matters for a shape sliding along an edge and not at all for catching a bullet.
+
+The check confirms the contact lands exactly one radius from the wall — resting against it, not
+inside it — at every speed it tries, and that the swept test catches every speed and offset
+combination where the frame test is a coin flip.
+
+<CodePanel
+  code={responseSource}
+  lang="ts"
+  file="src/lib/gamedev/response.ts"
+  label="Penetration, sliding, bouncing and sweeping"
+/>
+
+:::note[Speculative contacts and continuous detection]
+Sweeping one object against one wall is the easy version. Doing it for everything against everything
+is **continuous collision detection**, and it is expensive: every pair needs a time of impact, the
+earliest one gets resolved, and then the rest of the frame has to be re-simulated from there,
+possibly several times over.
+
+So engines make it optional and per-object. Godot has `continuous_cd` on `RigidBody3D`; Unity has
+`Rigidbody.collisionDetectionMode` with `Continuous` and `ContinuousDynamic`. You turn it on for
+bullets and pinballs, and leave it off for crates.
+
+**Speculative contacts** are the cheaper alternative that most solvers use by default. Rather than
+finding the exact moment of impact, notice during the ordinary test that a contact is _about_ to
+happen, and add a constraint that stops the object from crossing the surface. No re-simulation, no
+time of impact, and it degrades gracefully. It is not as exact, and for most gameplay nobody can
+tell.
+
+The cheapest fix of all is to not have the problem: clamp maximum speeds, and do not build walls
+thinner than a frame's movement.
+:::
+
+:::note[In an engine]
+Godot's `CharacterBody3D.move_and_slide()` is this whole page in one call — it sweeps, resolves
+penetration, removes the blocked part of the velocity and repeats. `floor_max_angle` is the slope
+limit, `get_slide_collision_count()` exposes what it hit, and `Vector3.slide()` and
+`Vector3.bounce()` are the two responses above as standalone methods.
+
+Unity's `CharacterController.Move()` does the same job, with `slopeLimit`, `stepOffset` and
+`skinWidth` as the tuning. `Physics.ComputePenetration` gives you a direction and a depth for two
+arbitrary colliders — the MTV, by another name. `Vector3.Reflect` is `reflect` with $e = 1$.
+
+Three.js has none of this. It is a renderer, so Part 6 and the capstone build it, which is the
+point: you cannot hide behind `move_and_slide` if you have to write it.
+:::
+
+## Where This Shows Up
+
+- **Every character controller ever written**, which is push-out plus slide plus a slope limit,
+  iterated a few times per frame.
+- **Walking into a doorframe at an angle** and gliding through instead of stopping.
+- **Not walking up cliffs**, which is the slope limit and nothing else.
+- **Bullets and fast projectiles**, which need sweeping or they pass through everything thin.
+- **Bouncing grenades, pinballs and ragdolls**, which are restitution and friction.
+- **Objects that buzz, jitter or vibrate against geometry**, which is almost always a missing skin
+  or a push-out fighting a velocity that was never corrected.
+- **Section 7.2's fixed timestep**, which bounds how far anything moves in one step and therefore
+  how bad the tunneling can get.
+
+:::note[The one thing to take away]
+A contact means two things are wrong: the position already overlaps, and the velocity is still
+heading in. Fix the position by the shortest push that separates them — the minimum translation
+vector, which the detection test already told you — plus a millimeter of skin so the next frame is
+not a coin flip. Fix the velocity by splitting it against the normal: throw the blocked part away
+to slide, reverse it to bounce, and shrink the other part for friction. Sliding is bouncing with
+$e = 0$, and restitution costs $e^2$ of the height each landing. A floor is a wall under a slope
+threshold and nothing more. And a test done only at frame positions will miss anything that moves
+further in a frame than the wall is thick — intermittently, depending on nothing but where the
+frames landed, which is why sweeping asks about the movement instead of the moment.
+:::

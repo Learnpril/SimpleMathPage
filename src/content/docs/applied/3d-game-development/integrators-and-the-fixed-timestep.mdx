@@ -1,0 +1,230 @@
+---
+title: Integrators and the Fixed Timestep
+description: Explicit against semi-implicit Euler and why the ordering matters, velocity Verlet, the fixed timestep with an accumulator, and interpolating render state between physics ticks
+sidebar:
+  order: 23
+  label: "7.2  Integrators and the Fixed Timestep"
+---
+
+import DemoPanel from "../../../../components/DemoPanel.astro";
+import CodePanel from "../../../../components/CodePanel.astro";
+import integratorSource from "../../../../lib/gamedev/integrators.ts?raw";
+
+## What You'll Learn
+
+Section 7.1 ended with a problem: a jump solved exactly comes up 4% short once you step it at 60
+fps. This Section is about why, and about the two things that actually fix it.
+
+**Explicit against semi-implicit Euler** — two lines swapped, and the reason games use one and not
+the other, which turns out not to be accuracy. **Velocity Verlet**, which is exact for a constant
+acceleration at any timestep. The **fixed timestep** with an accumulator, so the simulation never
+sees a `dt` it has not seen before. And **interpolating between ticks**, without which a correct
+simulation still looks like it stutters.
+
+## Two Lines, and Their Order
+
+Every integrator answers the same question: given an acceleration, where is the object next frame?
+The simplest answer is two lines, and there are two ways to write them.
+
+```ts
+// Explicit Euler: move, then accelerate.
+position += velocity * dt;
+velocity += acceleration * dt;
+
+// Semi-implicit Euler: accelerate, then move.
+velocity += acceleration * dt;
+position += velocity * dt;
+```
+
+That is the entire difference. And it decides which side of the truth you land on.
+
+Explicit uses the velocity from the **start** of the step, so a falling object is credited with the
+speed it had before gravity sped it up — it travels too far. Semi-implicit uses the velocity from
+the **end**, so it is credited with the speed it has after speeding up, and travels too little.
+
+<DemoPanel name="integrators" />
+
+Wind the tick rate right down and watch them separate. The dashed grey line is the exact parabola.
+
+Two things fall out, both checked at every rate:
+
+- **The two Eulers are wrong by exactly the same amount, in opposite directions.** Their average is
+  the truth, to the last bit. At 60 Hz the 1.2 m apex becomes 1.25 and 1.15.
+- **All three get the velocity exactly right.** Velocity under a constant acceleration is a straight
+  line, and all three add `a * dt` once per step. Every disagreement here is about _position_, which
+  is worth knowing before blaming an integrator for the wrong symptom.
+
+### So why prefer semi-implicit?
+
+Not accuracy. Undershooting is no better than overshooting. The reason is **stability**, and it only
+shows up when the acceleration depends on where you are.
+
+Gravity does not. A spring does.
+
+<DemoPanel name="stability" />
+
+This is **phase space**: position across, velocity up. An undamped spring should hold its energy
+forever, so the exact answer is a closed circle — round and round, the same orbit every time.
+
+Explicit Euler spirals **outward**. It adds a little energy every step, from nothing, and the
+oscillation grows until the numbers blow up. Semi-implicit stays on the circle.
+
+The magnitudes are not subtle. At 60 Hz over twenty seconds, explicit Euler multiplies the spring's
+energy by **573,000**. Semi-implicit ends within 5% of where it started. Verlet within 0.2%.
+
+$$
+\text{explicit Euler: energy} \nearrow \text{without bound}
+\qquad
+\text{semi-implicit: bounded forever}
+$$
+
+**That is the whole argument.** Semi-implicit gives you a wrong answer that stays wrong by a fixed
+amount. Explicit gives you a wrong answer that becomes infinity. For anything with a spring in it —
+suspension, cloth, ragdolls, camera smoothing, a grappling hook — that is the difference between a
+game and a crash.
+
+The check runs the spring for forty oscillations at three rates and requires semi-implicit to stay
+between half and double its starting energy, while requiring explicit to keep growing every time it
+is asked.
+
+## Velocity Verlet
+
+There is a third option that costs one more evaluation and is worth knowing about:
+
+$$
+x_{n+1} = x_n + v_n\,dt + \tfrac{1}{2} a_n\,dt^2
+\qquad
+v_{n+1} = v_n + \tfrac{1}{2}(a_n + a_{n+1})\,dt
+$$
+
+The extra $\tfrac{1}{2} a\,dt^2$ is the term both Eulers are missing — it is the second half of the
+Taylor expansion the Eulers truncate. For a **constant** acceleration that makes Verlet **exact**.
+
+Not close. Exact. Set the tick rate to 5 Hz in the scene above and its error is still zero. Section
+7.1's shortfall simply does not happen, and the check asserts the samples sit on the parabola to
+$10^{-12}$ at rates from 5 Hz upward.
+
+:::note[Then why isn't it the default?]
+Because for a character controller the acceleration is gravity plus player input, and the Euler
+error is invisible at 60 Hz once you have tuned the jump against the simulation rather than the
+formula. Verlet costs a second acceleration evaluation per step, which for thousands of bodies is a
+real bill for a benefit nobody can see.
+
+Where it earns its keep is **cloth, rope and soft bodies**: the acceleration depends on position,
+the error compounds across thousands of connected particles, and energy drift shows up as fabric
+that slowly inflates or a rope that gets livelier every second.
+
+One trap in the scene worth naming, because it caught me while writing this. Verlet's _samples_ are
+exact, but its highest **sample** is only the true apex if a tick happens to land at 0.4 s. At 12 Hz
+none does, so the top of the arc falls between two ticks and the sampled peak is legitimately lower.
+That is not the integrator being wrong. It is why the readout shows distance from the curve rather
+than the apex.
+:::
+
+## The Fixed Timestep
+
+Now the second fix, and the more important one.
+
+Everything above assumed a single `dt`. In a real game `dt` is whatever the last frame took, and it
+varies — a garbage collection, a shader compile, someone dragging a window. And a variable `dt`
+makes physics **non-deterministic**: the same inputs give different results, so replays desync,
+networked clients disagree, and a bug that only happens on a slow machine cannot be reproduced on a
+fast one.
+
+Worse, a single long frame can step an object straight through a wall, which is Section 6.3's
+tunneling arriving from a different direction.
+
+The fix is to stop letting the simulation see the frame time at all:
+
+1. Add the frame's elapsed time to an **accumulator**.
+2. While the accumulator holds at least one fixed step, take one out and simulate exactly that.
+3. Keep the remainder for next frame.
+
+The simulation only ever sees one value of `dt`. Ever.
+
+<DemoPanel name="accumulator" />
+
+Read the tick patterns. At 60 Hz display against 60 Hz physics, every frame gets exactly one tick.
+At 30 Hz, every frame gets two. **At 144 Hz, most frames get none at all** — and over ten seconds
+every one of those rates runs the same number of ticks, within one, which is the entire promise.
+
+:::caution[Clamp the step count]
+If a frame takes longer to compute than the fixed step it is simulating, the accumulator grows. Next
+frame needs more steps, which takes longer, so it grows further. That is the **spiral of death**, and
+it locks up.
+
+So cap the steps per frame. The simulation then falls behind real time under load, which looks like
+slow motion and is survivable. The last row shows it: a one-second stall wants 60 ticks, runs the 5
+it is allowed, and leaves 917 ms unsimulated on purpose.
+:::
+
+## Interpolating Between Ticks
+
+Fixed ticks introduce a new problem. Look at the 144 Hz row again: most frames get no tick, so if
+you draw the latest simulated position, the object does not move on those frames. The physics is
+perfectly smooth and the picture stutters.
+
+The leftover in the accumulator is the answer. It is not waste — it says how far past the last tick
+the display currently is:
+
+$$
+\alpha = \frac{\text{leftover}}{dt_{\text{fixed}}}
+\qquad
+\text{draw} = \text{lerp}(\text{previous tick},\; \text{current tick},\; \alpha)
+$$
+
+So keep **two** states, the previous tick and the current one, and draw Section 4.2's `lerp` between
+them. The object then moves every frame, at whatever rate the display runs, from a simulation that
+never varied its step.
+
+This is why physics state and render state are separate things in every engine that gets this right.
+The check confirms the blend never leaves the interval between the two ticks, and that alpha is
+clamped at both ends rather than allowed to extrapolate.
+
+**Interpolating rotations needs Section 3.3's slerp, not lerp**, for all the reasons that page gave.
+
+<CodePanel
+  code={integratorSource}
+  lang="ts"
+  file="src/lib/gamedev/integrators.ts"
+  label="Three integrators, the accumulator, and the render blend"
+/>
+
+:::note[In an engine]
+Godot separates `_physics_process(delta)` from `_process(delta)`. The first runs on a fixed tick set
+by `physics/common/physics_ticks_per_second`, the second runs per frame. `physics_jitter_fix` and
+`Engine.physics_interpolation` handle the blending above.
+
+Unity has `FixedUpdate()` against `Update()`, with `Time.fixedDeltaTime` and
+`Time.maximumDeltaTime` as the tick and the clamp. `Rigidbody.interpolation` set to `Interpolate`
+does the render blend. Setting `Time.fixedDeltaTime` to `Time.deltaTime` is a mistake with a long
+history.
+
+Three.js has no loop of its own, so the accumulator above is yours to write — which is the point of
+the module.
+:::
+
+## Where This Shows Up
+
+- **Anything that must be reproducible**: replays, networked play, physics puzzles that have to
+  solve the same way twice.
+- **Springs of every kind** — suspension, camera arms, grappling hooks, ragdolls — where explicit
+  Euler is not a small error but an eventual crash.
+- **Cloth, rope and hair**, which is where Verlet becomes worth its extra evaluation.
+- **Stutter that survives a profiler**: a solid frame rate with visibly jerky motion is almost always
+  a missing render interpolation.
+- **Slowdown under load**, which is the step clamp doing its job rather than a bug.
+- **Section 6.3's tunneling**, which a fixed step bounds and a variable one does not.
+- **The capstone**, which runs its character on a fixed tick and interpolates the camera between.
+
+:::note[The one thing to take away]
+Accelerate then move, not move then accelerate. Both orderings are wrong by the same amount and in
+opposite directions, so their average is exact — but semi-implicit stays **bounded** on a spring
+where explicit Euler gains energy every step and eventually explodes, and that stability is the
+reason to choose it, not accuracy. Velocity Verlet adds the $\tfrac{1}{2}a\,dt^2$ term the Eulers
+drop and is exact under constant acceleration at any timestep, earning its extra cost for cloth
+rather than for characters. Run the simulation on a **fixed** step fed by an accumulator, clamped so
+a slow frame cannot spiral, and the physics becomes deterministic and immune to frame-rate. Then
+draw the blend between the previous tick and the current one, or a perfectly smooth simulation will
+still look like it stutters.
+:::

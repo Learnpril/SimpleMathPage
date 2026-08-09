@@ -85,9 +85,12 @@ const mount: MountFn = (el) => {
 
   const show = addReadout(el);
   const yaw = addSlider(el, "turn the camera", -180, 180, 25, draw);
-  const careless = addCheckbox(
+  /* Phrased so that ticking it does the *right* thing, and so it starts wrong. "Skip the
+     check" put three negatives in a row - a checkbox, the word skip, and a bug - and read as
+     though ticking it turned something on rather than off. */
+  const depthCheck = addCheckbox(
     el,
-    "skip the behind-the-camera check",
+    "only draw a marker if the object is in front of the camera",
     false,
     draw,
   );
@@ -100,7 +103,7 @@ const mount: MountFn = (el) => {
     list.forEach((m, i) => {
       const inBounds =
         m.x >= 0 && m.x <= SCREEN_W && m.y >= 0 && m.y <= SCREEN_H;
-      const shown = careless() ? inBounds : m.onScreen;
+      const shown = depthCheck() ? m.onScreen : inBounds;
       // A marker drawn for something behind the camera is the bug, so colour it as one.
       const isWrong = shown && !m.inFront;
       if (shown) drawn += 1;
@@ -109,10 +112,12 @@ const mount: MountFn = (el) => {
     });
 
     show(
-      `${drawn} marker${drawn === 1 ? "" : "s"} drawn` +
+      `${drawn} marker${drawn === 1 ? "" : "s"} drawn  \u00B7  ` +
         (wrong > 0
-          ? `  \u00B7  ${wrong} of them is behind the camera`
-          : "  \u00B7  none behind the camera"),
+          ? `${wrong} in red, for ${wrong === 1 ? "an object" : "objects"} behind the camera`
+          : depthCheck()
+            ? "none behind the camera, because w > 0 is being checked"
+            : "none behind the camera at this angle - keep turning"),
     );
     renderer.render(scene, camera);
   }

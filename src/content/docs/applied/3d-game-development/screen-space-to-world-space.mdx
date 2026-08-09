@@ -117,10 +117,12 @@ $$
 
 <DemoPanel name="marker" />
 
-Turn the camera and watch the markers. With the check on, markers appear only for objects actually
-in view. Tick the checkbox to skip it and red markers show up for objects behind the camera -
-drifting across the screen in the wrong direction as you turn, which is exactly how this bug looks
-when you ship it.
+It starts broken, so turn the camera and watch the red markers. Those are being drawn for objects
+**behind** the camera - and notice they drift the wrong way as you turn, which is exactly how this
+bug looks when you ship it.
+
+Now tick the checkbox to add the $w > 0$ test. The red markers disappear and only objects genuinely
+in view keep theirs.
 
 The build check asserts the ugly part directly: that the in-front and behind points land on the
 same pixel, so the prose above cannot quietly become false. It also sweeps the camera through a

@@ -1,0 +1,285 @@
+---
+title: Bounding Volumes and Intersection Tests
+description: Spheres, axis-aligned boxes, oriented boxes and capsules, the tests between them, ray against a box by slabs, the separating-axis idea, and why a broad phase has to exist
+sidebar:
+  order: 20
+  label: "6.2  Bounding Volumes and Intersection Tests"
+---
+
+import DemoPanel from "../../../../components/DemoPanel.astro";
+import CodePanel from "../../../../components/CodePanel.astro";
+import collisionSource from "../../../../lib/gamedev/collision.ts?raw";
+
+## What You'll Learn
+
+The four shapes collision is actually done with - **sphere**, **axis-aligned box**, **oriented
+box** and **capsule** - and what each one costs. The tests between them, all of which turn out to
+be the same subtraction. **Ray against a box by slabs**, which is three intervals and their
+overlap. The **separating-axis** idea, including a pair of boxes that proves you need more axes
+than you would guess. And why every engine has a **broad phase**, which is a fact about
+$n(n-1)/2$ rather than a fact about collision.
+
+## Nobody Collides the Real Shape
+
+A character model has thousands of triangles. Testing them against a level's thousands of
+triangles, sixty times a second, for every pair of objects, is not a thing that can be made fast
+enough. So nothing does it. Everything collides a **bounding volume** instead: a simple shape that
+contains the model, chosen because the test against it is cheap.
+
+| Volume                     | Turns? | Fits a person | Cost         |
+| :------------------------- | :----- | :------------ | :----------- |
+| **Sphere**                 | free   | badly         | trivial      |
+| **AABB**, axis-aligned box | no     | loosely       | trivial      |
+| **Capsule**                | yes    | well          | small        |
+| **OBB**, oriented box      | yes    | loosely       | fifteen axes |
+
+A sphere is rotation-proof: turning it changes nothing, so a rotating object needs no work at all.
+An AABB cannot turn - rotate the object and you have to rebuild the box, and the rebuilt box is
+bigger than the old one. A capsule can turn and fits a standing body far better than either, which
+is why it is what almost every character controller in every engine actually uses.
+
+**The capsule wins for a reason worth stating.** It has no corners. A box-shaped character catches
+its corners on stair edges and doorframes and needs special cases to stop it; a sphere-shaped one
+is either too wide at the shoulders or too short at the head. A capsule is a segment with a radius,
+so it slides over steps and around corners with no special handling, and it is barely more
+expensive than a sphere.
+
+## Every Test Is the Same Subtraction
+
+Here is the part that makes this Section short. Take Section 6.1's signed distance and apply it to
+a pair of shapes instead of to a point and a shape:
+
+$$
+\text{separation} = \text{distance between the shapes} - \text{radii}
+$$
+
+Negative means overlapping, zero means exactly touching, positive is the gap. So `separation < 0`
+is the collision test for **all** of them, and the number itself is what Section 6.3 needs in order
+to push things apart.
+
+| Pair             | Distance between what                | Then subtract |
+| :--------------- | :----------------------------------- | :------------ |
+| sphere, sphere   | the two centres                      | both radii    |
+| sphere, capsule  | the centre and the segment           | both radii    |
+| capsule, capsule | the two segments                     | both radii    |
+| sphere, AABB     | the centre and the closest box point | the radius    |
+
+Three of those four are Section 6.1's closest-point functions with a subtraction after them. Move
+the shapes and watch the one number decide all four cases:
+
+<DemoPanel name="overlap" />
+
+Pick a pairing, then move the second shape through the first. Red means overlapping, teal means
+clear, and the readout gives the separation and names what the test measured.
+
+Two things worth noticing while you do it. Sliding the sphere at the box, the separation stops
+changing once the centre is **inside** - `closestOnBox` returns the centre itself there, so the
+answer saturates at minus the radius. That is fine for a test against zero and wrong for a
+push-out depth, which is why Section 6.3 uses the signed distance instead. And on the capsule
+pairing, the shapes touch at whatever pair of points happens to be closest, which is the whole
+reason a capsule test needs a segment-to-segment routine rather than a distance between centres.
+
+:::note[The one genuinely fiddly routine]
+Closest points between two segments is the only thing in this Section that is not two lines.
+Solve it as though both segments were infinite lines, clamp one parameter into its range - and
+then **re-solve the other against the clamped value**. Skipping that re-solve is the classic bug:
+you get a point that is closest to the wrong line, and it is only wrong near the ends, so it
+survives casual testing and shows up as characters catching on the tips of things.
+
+The build check compares the result against a dense sample of both segments across six
+configurations, including parallel, collinear and degenerate ones. That is the only way to catch
+it: the wrong answer is still a point on the right segment.
+:::
+
+## Boxes: Gaps, and the Axis That Proves It
+
+Two axis-aligned boxes do not fit the distance-minus-radii pattern, and what they do instead turns
+out to be more interesting.
+
+Look at one axis at a time. The gap on that axis is whichever box starts after the other one ends:
+
+$$
+\text{gap}_x = \max(a_{\min x} - b_{\max x},\;\; b_{\min x} - a_{\max x})
+$$
+
+Do it three times and take the **largest**. If any axis has a positive gap the boxes cannot be
+touching, whatever the other two say — and that axis is the proof.
+
+That is a **separating axis**: a direction on which the two shapes' shadows do not overlap. One is
+enough. And this is not a trick specific to boxes, it is the general principle:
+
+> If you can find a direction along which two convex shapes' shadows are apart, the shapes are
+> apart. If no such direction exists, they touch.
+
+For axis-aligned boxes there are only three candidate directions, so the test is three
+comparisons. For **oriented** boxes there are more, and the number is not obvious.
+
+<DemoPanel name="satmath" />
+
+Those two boxes overlap on **all six** of their own face axes — the widest gap among the six is
+$-0.038$, comfortably negative. A test that checked only those six would report a collision. They
+are not touching: a direction perpendicular to one edge of each box separates them by $0.146$,
+and brute force confirms it, with no sampled point of either box inside the other.
+
+So the full test needs **fifteen** axes: three from each box, plus the nine cross products of one
+box's axis with the other's. Those nine catch exactly the case above, an edge of one crossing an
+edge of the other with a gap between them.
+
+Notice how small both numbers are — $-0.038$ against $+0.146$. An edge-edge separation is always a
+near miss, which is what makes the shortcut so dangerous: skipping the nine cross axes does not
+break anything obviously. It produces a rare false contact at particular angles, the kind of bug
+that gets closed as unreproducible.
+
+The good news is that finding one positive gap ends the test. Most pairs are separated by an
+obvious axis and the loop exits on the first or second try.
+
+## Ray Against a Box: Slabs
+
+A pair of parallel faces defines a **slab** — everything between two parallel planes. A box is
+three slabs overlapping, one per axis. So a ray is inside the box exactly where it is inside all
+three slabs at once.
+
+For each slab, work out where the ray crosses the two planes:
+
+$$
+t_1 = \frac{\text{lo} - o}{d}
+\qquad
+t_2 = \frac{\text{hi} - o}{d}
+$$
+
+Order them, and that stretch of the ray is inside that slab. Then intersect the three stretches:
+**`enter` is the largest of the three entries, `exit` is the smallest of the three exits.** If
+`enter` ends up past `exit`, the ray misses — it was inside two slabs at one moment and the third
+at another, never all three together.
+
+<DemoPanel name="slabs" />
+
+The orange line is the ray, starting at the orange dot. The bars underneath are the three
+stretches, all measured along that same ray and stacked so they can be compared directly:
+
+| Bar        | Slab              | Bounded by           |
+| :--------- | :---------------- | :------------------- |
+| **blue**   | the $x$ slab      | left and right faces |
+| **green**  | the $y$ slab      | top and bottom faces |
+| **purple** | the $z$ slab      | front and back faces |
+| **teal**   | all three at once | the box itself       |
+
+The axis under the bars is distance along the ray in meters, with a tick marking where the ray
+starts. **The teal bar is the overlap of the other three**, and the teal segment up in the scene is
+that same stretch drawn where it actually sits, with a dot at each end.
+
+Aim away from the box and watch the bars slide apart. The teal bar vanishes the moment any two of
+them stop overlapping, and the readout names which two, because a miss is never vague: it is always
+two specific stretches that failed to share any of the ray.
+
+**A stretch can begin before zero**, and the $y$ and $z$ ones usually do. The ray starts level with
+the middle of the box, so it is _already_ between the top and bottom faces when it sets off, and the
+crossing that would have put it there sits behind its start at a negative $t$. Those two slabs are
+not what stops this ray. The $x$ slab is, because the box is off to one side.
+
+Which is exactly how a miss happens here. Aim well below level and the $y$ stretch ends early — the
+ray has dropped below the bottom face — while the $x$ stretch does not begin until the ray is
+alongside the box. One ends before the other starts, so the ray passes underneath, and the readout
+says so in those words.
+
+Two cases the sliders will find. Set the pitch to exactly zero and the ray becomes **parallel** to
+the top and bottom faces. There is no crossing to compute, so that slab is either the whole ray or
+none of it depending on which side the ray started — and dividing anyway gives $\pm\infty$, or
+$0/0$ if it starts exactly on a face. Same guard as Section 6.1's ray-plane test, same reason.
+
+And a negative `enter` with a positive `exit` means the ray **started inside the box**. Callers
+usually want to know that rather than be handed a hit at a negative distance.
+
+The build check sweeps 729 rays through the box and compares the slab answer against walking along
+the ray and asking whether any step of it is inside — two completely different methods, zero
+disagreements, with the sweep verified to contain both hits and misses so it cannot pass by being
+trivial.
+
+<CodePanel
+  code={collisionSource}
+  lang="ts"
+  file="src/lib/gamedev/collision.ts"
+  label="Bounding volumes and the tests between them"
+/>
+
+Ray against a sphere is not in there. It was needed for picking in Section 5.2 and lives in
+`projection.ts`; the algebra is substituting the ray into $|p - c|^2 = r^2$ and solving the
+quadratic, where the discriminant's sign is the hit test.
+
+## Why a Broad Phase Has to Exist
+
+None of the tests above is slow. The problem is how many of them there are.
+
+$$
+\text{pairs} = \frac{n(n-1)}{2}
+$$
+
+| Objects |      Pairs |
+| ------: | ---------: |
+|      10 |         45 |
+|      50 |      1,225 |
+|     200 |     19,900 |
+|   1,000 |    499,500 |
+|   5,000 | 12,497,500 |
+
+**That growth is the problem, and making the narrow test faster does not solve it.** Halving the
+cost of a capsule test buys you a factor of two; going from 1,000 objects to 5,000 costs you a
+factor of twenty-five.
+
+So collision runs in two stages:
+
+- **Broad phase.** Cheaply rule out pairs that cannot possibly touch, using loose bounding boxes
+  and a spatial structure — a uniform grid, a sweep along one axis, or a bounding-volume
+  hierarchy. The output is a short list of candidate pairs.
+- **Narrow phase.** Run the real test on what survives.
+
+This is why `aabbOfSphere` and `aabbOfCapsule` are in the module. A broad phase stores one loose
+box per object regardless of the object's real shape, because a box is what a grid or a tree can
+index.
+
+**A broad phase must never miss a real contact.** It is allowed to pass through pairs that turn out
+not to touch — the narrow phase will reject those — but a bounding box that fails to contain its
+object drops real collisions, and that bug looks like objects occasionally passing through each
+other. The check asserts containment for exactly that reason.
+
+:::note[In an engine]
+Three.js gives you `Box3` (`intersectsBox`, `intersectsSphere`, `containsPoint`, `expandByPoint`),
+`Sphere`, and `Ray.intersectBox()` which is the slab method above. There is no capsule and no
+broad phase, because Three.js is a renderer — `Box3.setFromObject()` plus your own grid is the
+usual arrangement.
+
+Godot has `SphereShape3D`, `BoxShape3D`, `CapsuleShape3D` and `CylinderShape3D`, with
+`PhysicsDirectSpaceState3D` for queries. `CharacterBody3D` defaults to a capsule.
+
+Unity has `SphereCollider`, `BoxCollider`, `CapsuleCollider`, plus `Physics.OverlapSphere` and
+`Physics.ComputePenetration`. `CharacterController` is a capsule, and its `skinWidth` exists
+because contact at exactly zero separation is numerically awkward — something Section 6.3 has to
+deal with directly.
+
+All three separate broad phase from narrow phase internally, and all three let you set layers and
+masks, which is a broad phase you control by hand.
+:::
+
+## Where This Shows Up
+
+- **Any character touching any wall**, which is a capsule against level geometry.
+- **Hitscan weapons and line of sight**, which are rays against bounding volumes before anything
+  more expensive gets considered.
+- **Trigger volumes and pickup radii**, usually a sphere test with squared distance so no square
+  root is taken.
+- **Frustum culling**, which is Section 5.1's six planes against each object's bounding sphere or
+  box — the same separating-axis idea with the planes already chosen.
+- **Selection boxes** in a strategy game, an AABB against every unit's bounds.
+- **Spatial queries** like "everything within 20 meters", which is the broad phase used directly.
+- **Section 6.3**, which takes the separation and the direction and turns them into movement.
+
+:::note[The one thing to take away]
+Nothing collides its real shape; everything collides a bounding volume, and the capsule wins for
+characters because it turns, fits a body and has no corners to catch. Sphere-sphere,
+sphere-capsule, capsule-capsule and sphere-box are all one subtraction: the distance between the
+shapes minus the radii, negative when they overlap. Boxes use a separating axis instead — one
+direction whose shadows are apart is proof they do not touch — and oriented boxes need fifteen such
+directions, not six, because an edge of one can cross an edge of the other. Ray against a box is
+three slab intervals and their overlap, guarding the parallel case. And a broad phase exists
+because pairs grow as $n^2$, which no amount of making the narrow test faster will fix.
+:::

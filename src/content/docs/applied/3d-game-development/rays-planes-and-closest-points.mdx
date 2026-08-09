@@ -1,0 +1,277 @@
+---
+title: Rays, Planes and Closest Points
+description: Parametric rays, the plane equation, ray-plane intersection and the parallel case, the closest point on a line, segment, plane, box and sphere, and signed distance as the idea that ties them together
+sidebar:
+  order: 19
+  label: "6.1  Rays, Planes and Closest Points"
+---
+
+import DemoPanel from "../../../../components/DemoPanel.astro";
+import CodePanel from "../../../../components/CodePanel.astro";
+import geometrySource from "../../../../lib/gamedev/geometry.ts?raw";
+
+## What You'll Learn
+
+The arithmetic every collision test is built out of: a **ray** as a start plus a direction, a
+**plane** as one equation, and where the two meet - including the case where they never do, which
+is the one that ships bugs. Then the **closest point** on a line, a segment, a plane, a box and a
+sphere. And running under all of it, **signed distance**: one number that says both how far you
+are from a shape and which side of it you are on.
+
+Part 6 builds collision from scratch, because Three.js has no physics. This Section is the
+foundation the next two stand on.
+
+## A Ray Is a Point Plus a Direction
+
+$$
+P(t) = O + t\,D
+$$
+
+That is the whole idea. $O$ is where the ray starts, $D$ is the direction it goes, and $t$ picks a
+point along it. One number, one point - which is why this is called the **parametric** form.
+
+**Keep $D$ unit length and $t$ is a distance in meters.** Not "some amount along the ray": actual
+meters, directly comparable to any other distance in the scene. Skip the normalize and every $t$
+you get back is scaled by however long $D$ happened to be, and the two nearest hits from two
+different rays are no longer comparable.
+
+Three values of $t$ are worth naming:
+
+| $t$     | Where you are                                                  |
+| :------ | :------------------------------------------------------------- |
+| $t = 0$ | at the origin $O$                                              |
+| $t > 0$ | ahead of the start - the part a ray actually means             |
+| $t < 0$ | behind the start, which a **line** includes and a ray does not |
+
+A **line** is all of $t$. A **ray** is $t \ge 0$. A **segment** is $0 \le t \le 1$ with $D$ going
+all the way from one end to the other. Same equation, three different ranges, and the difference
+between them is a clamp.
+
+## A Plane Is One Equation
+
+A plane needs a direction to face and somewhere to sit. Store the facing as a unit normal $n$ and
+the position as a single number $d$:
+
+$$
+n \cdot p + d = 0
+$$
+
+Every point $p$ satisfying that is on the plane. Points off it do not give zero, and what they give
+is the useful part:
+
+$$
+\text{signed distance} = n \cdot p + d
+$$
+
+**Positive on the side the normal points to, negative on the other side, zero exactly on the
+surface.** Not the distance and a separate flag - one number carrying both.
+
+That only works if $n$ is unit length. Scale the normal by 3 and every distance the plane reports
+comes out three times too large, with nothing to indicate it. So `planeThrough` normalizes what it
+is handed, and the build check confirms it.
+
+:::note[The same type as a frustum plane]
+Section 5.1 stored the six frustum planes in exactly this form, and this Section reuses that type
+rather than declaring a second one. A wall and a frustum plane are not different kinds of thing -
+they are the same equation being asked the same question, and `distanceToPlane` answers it for both.
+:::
+
+## Where a Ray Meets a Plane
+
+Substitute the ray into the plane equation and solve for $t$. Two lines:
+
+$$
+n \cdot (O + tD) + d = 0
+$$
+
+$$
+t = -\,\frac{n \cdot O + d}{n \cdot D}
+$$
+
+The numerator is the signed distance from the plane to where the ray starts. The denominator,
+$n \cdot D$, is how steeply the ray heads into the plane - Section 1.3's dot product, doing the job
+it always does.
+
+**The denominator is the entire story.** Watch it, and $t$ with it:
+
+<DemoPanel name="rayplane" />
+
+The teal arrow is the plane's normal. Bring the pitch towards level and the denominator shrinks
+toward zero, so $t$ grows without bound - 6 meters at a 30 degree dive, 17 at 10 degrees, 172 at 1
+degree, and past 1700 at a tenth of a degree. The hit is still real. It is just somewhere out past
+the far edge of the world.
+
+At exactly level, there is no answer. The ray runs parallel and never meets the plane at all, so
+`rayPlane` returns `null`:
+
+$$
+n \cdot D = 0 \;\;\Longrightarrow\;\; \text{no intersection}
+$$
+
+Divide anyway and you get $\pm\infty$ - or `NaN`, if the ray happens to lie **in** the plane, where
+the numerator is zero too and the division is $0/0$. Section 1.2 covered how far a `NaN` travels
+before anybody notices: it survives every comparison, spreads through everything it touches, and
+surfaces three subsystems later as an object at no position at all.
+
+So the guard is not defensive tidiness. It is the difference between a miss and a corrupted scene.
+
+Turn the pitch upward and you get the other case: $t$ goes **negative**. That is still a solution -
+the grey dot behind the ray shows it sitting exactly on the plane - but it is behind where the ray
+started, so for anything that means "shoot forwards", it is a miss. **A negative $t$ and no
+intersection are different answers**, and code that treats them the same will happily let you shoot
+through the floor you are standing on.
+
+## Signed Distance, for Shapes That Are Not Planes
+
+A plane gets signed distance for free from its own equation. Other shapes need a formula, and it is
+worth having, because once a shape can answer "how far, and which side" the rest gets easy:
+
+- **Are we touching?** A comparison against zero.
+- **Which way do I push out?** The direction the number grows fastest.
+- **Is this whole object clear of that one?** Signed distance minus radius.
+
+A sphere is a one-liner: distance to the centre minus the radius. A box takes a little more, and
+the numbers are worth looking at directly.
+
+<DemoPanel name="signeddist" />
+
+Read down the list. Inside, it counts how far you are from the nearest face, as a negative. On the
+surface, exactly zero. Outside, it becomes an ordinary distance - and at $(2, 2, 0)$, past two
+faces at once, it gives $\sqrt{2}$ rather than 1, because the nearest part of the box is a **corner**
+and the corner is genuinely $\sqrt{2}$ away.
+
+Two halves do that. One measures how far past the box you are in each axis, ignoring the axes you
+are still inside, and takes the length of what is left - which is what handles corners. The other
+only bites when every axis is inside, and reports the nearest face as a negative.
+
+Part 6.3 comes back to this: the signed distance is how deep a penetration is, and the direction it
+grows is which way to push out.
+
+## The Closest Point
+
+Related question, different answer type. Not "how far" but "where".
+
+<DemoPanel name="closest" />
+
+Move the orange point with the three sliders. Each shape gets a dot on it and a line back to you,
+and whichever shape is actually nearest turns teal. That last part is the job a broad-phase does:
+four shapes answer the same question and something has to pick a winner.
+
+Each answer is a different amount of work.
+
+### On an infinite line
+
+Project the offset onto the line's direction, using Section 1.3's projection:
+
+$$
+u = \frac{(p - A) \cdot (B - A)}{(B - A) \cdot (B - A)}
+\qquad
+\text{closest} = A + u\,(B - A)
+$$
+
+$u$ comes out as a fraction of the way from $A$ to $B$. Nothing constrains it, so it can be $-3$ or
+$40$.
+
+### On a segment
+
+The same thing, then `clamp(u, 0, 1)`.
+
+**That clamp is the whole difference**, and forgetting it is a bug with a recognisable feel: a
+character gets pulled toward a point somewhere off the end of a wall rather than to the wall's
+corner, and it only shows up when they walk past the end. Between the endpoints the two functions
+are identical to the last bit, which is why it passes every test taken near the middle.
+
+### On a plane
+
+Step off the plane by exactly the signed distance, in the direction of the normal:
+
+$$
+\text{closest} = p - n\,(n \cdot p + d)
+$$
+
+One multiply-subtract per axis. This is why the signed-distance form is worth storing.
+
+### On a box
+
+Clamp each coordinate to its own interval. That is all:
+
+$$
+\text{closest} = \big(\text{clamp}(p_x, \text{min}_x, \text{max}_x),\; \dots \big)
+$$
+
+No cases, no working out which face is nearest, no branches. It works because an axis-aligned box
+is three independent intervals, so each axis can be decided on its own - and it lands on a face,
+an edge or a corner automatically depending on how many axes needed clamping. Section 6.2's
+sphere-versus-box test is this function plus one comparison.
+
+One thing to know about it: **for a point inside the box, the closest point is the point itself**,
+so the distance comes back as zero. The scene says so when you move inside. If you need a nearest
+_surface_ point from inside, that is a different function, and it needs the signed distance to tell
+it which face to push to.
+
+### On a sphere
+
+Go from the centre towards the point, and stop at the radius. Undefined at the exact centre, where
+every direction is equally close - so the code names one rather than dividing by zero and returning
+`NaN` for a position.
+
+<CodePanel
+  code={geometrySource}
+  lang="ts"
+  file="src/lib/gamedev/geometry.ts"
+  label="Rays, planes, closest points and signed distance"
+/>
+
+The build check does two things worth mentioning. Ray-plane distances are verified against
+$\text{height} / \sin(\text{pitch})$, which reaches the same number by a completely different route -
+the implementation solves a general plane equation and knows nothing about the ray starting 3 meters
+up. And every closest-point answer is checked by **brute force**: sample hundreds of points on the
+shape and confirm none of them is nearer. A function that returns a point on the right shape in the
+wrong place passes every residual test there is, so sampling is the only thing that catches it.
+
+Outside the box, the closest-point distance and the signed distance agree across 4,000 sample
+points to better than $10^{-12}$, which is the strongest cross-check here: the two are computed by
+formulas that share no code. The box those points sweep is deliberately **not a cube** - with equal
+extents on every axis, mixing up two of them inside `closestOnBox` produces a wrong answer that is
+also a right answer, and nothing catches it.
+
+:::note[In an engine]
+Three.js has `Ray` with `intersectPlane()`, `closestPointToPoint()` and `distanceToPlane()`, plus
+`Plane`, `Line3.closestPointToPoint()` (whose `clampToLine` argument is exactly the segment clamp
+above) and `Box3.clampPoint()`. `Plane.constant` is $d$.
+
+Godot exposes the plane as `Plane` with `distance_to()` and `intersects_ray()`, and
+`Geometry3D.get_closest_point_to_segment()` for the clamped version.
+
+Unity's `Plane` has `GetDistanceToPoint()` and a `Raycast()` that returns a `bool` plus an
+out-parameter distance - the `bool` is the parallel guard, made visible in the signature.
+`Bounds.ClosestPoint()` is the box clamp.
+
+All three return the parallel case as a failure rather than an infinity, which tells you how often
+that guard is needed.
+:::
+
+## Where This Shows Up
+
+- **Shooting at the ground or a wall**, which is a ray against a plane and nothing more.
+- **Placing things in an editor**, where a click becomes Section 5.2's ray and the ray meets the
+  ground plane.
+- **Character controllers**, which need the closest point on the geometry near them to work out
+  how far they can move - Section 6.3's whole job.
+- **Sphere-versus-box and capsule-versus-box tests**, which are `closestOnBox` followed by one
+  comparison. Section 6.2.
+- **Penetration depth and push-out direction**, which are the signed distance and its gradient.
+- **Snapping to a path or a rail**, which is the closest point on a segment, per segment, keeping
+  the winner.
+- **Water and lava planes**, where "am I under it" is a sign test on one number.
+
+:::note[The one thing to take away]
+A ray is $O + tD$, and keeping $D$ unit length makes $t$ a distance in meters. A plane is
+$n \cdot p + d = 0$, and that same expression evaluated off the plane is the signed distance -
+positive on the normal's side, negative on the other. Ray against plane is
+$t = -(n \cdot O + d) / (n \cdot D)$, and when the denominator is zero there is no answer at all,
+so guard it rather than shipping an `Infinity` or a `NaN`. A negative $t$ is a different answer from
+no intersection. Closest point on a segment is the line version plus one clamp; on a box it is three
+independent clamps and no cases at all. And signed distance - one number for both distance and
+side - is the idea the next two Sections are built on.
+:::

@@ -144,6 +144,179 @@ export function addMatrixGrid(
   };
 }
 
+/**
+ * A colour key, with room for a live value beside each entry.
+ *
+ * Needed whenever a scene draws several things in several colours. Each entry keeps its name in the
+ * text it is handed rather than only in its swatch, so it still reads for someone who cannot tell
+ * the colours apart - and so the numbers have something to attach to.
+ */
+export function addKey(
+  el: HTMLElement,
+  colors: number[],
+): (texts: string[]) => void {
+  const row = document.createElement("div");
+  row.className = "demo-key";
+  const labels = colors.map((color) => {
+    const item = document.createElement("span");
+    item.className = "demo-key-item";
+    const swatch = document.createElement("span");
+    swatch.className = "demo-swatch";
+    swatch.style.background = `#${color.toString(16).padStart(6, "0")}`;
+    const text = document.createElement("span");
+    item.append(swatch, text);
+    row.appendChild(item);
+    return text;
+  });
+  el.appendChild(row);
+  return (texts: string[]) => {
+    texts.forEach((t, i) => {
+      if (labels[i]) labels[i].textContent = t;
+    });
+  };
+}
+
+/**
+ * A line through a list of points, safe to hand a **different number of points** each redraw.
+ *
+ * That is the whole reason it exists. `BufferGeometry.setFromPoints` allocates its buffer on the
+ * first call and cannot grow it afterwards, so a path whose length changes - an arc that gets
+ * longer as a slider moves, a trajectory that lands sooner - silently stops updating and logs
+ * `Buffer size too small`. Reallocating when the count changes costs nothing at slider rates.
+ *
+ * Hiding is done with `visible`, never by passing an empty list: an empty list either poisons the
+ * buffer for good or leaves the previous points in place and still drawn.
+ */
+export function addPolyline(
+  scene: THREE.Scene,
+  color: number,
+  opts: { dashed?: boolean; dashSize?: number; gapSize?: number } = {},
+): (points: THREE.Vector3[]) => void {
+  const geom = new THREE.BufferGeometry();
+  const mesh = new THREE.Line(
+    geom,
+    opts.dashed
+      ? new THREE.LineDashedMaterial({
+          color,
+          dashSize: opts.dashSize ?? 0.2,
+          gapSize: opts.gapSize ?? 0.16,
+        })
+      : new THREE.LineBasicMaterial({ color }),
+  );
+  scene.add(mesh);
+
+  let capacity = 0;
+  return (points: THREE.Vector3[]) => {
+    mesh.visible = points.length > 1;
+    if (!mesh.visible) return;
+    if (points.length !== capacity) {
+      geom.setAttribute(
+        "position",
+        new THREE.Float32BufferAttribute(points.length * 3, 3),
+      );
+      capacity = points.length;
+    }
+    const position = geom.getAttribute("position") as THREE.BufferAttribute;
+    points.forEach((p, i) => position.setXYZ(i, p.x, p.y, p.z));
+    position.needsUpdate = true;
+    geom.setDrawRange(0, points.length);
+    geom.computeBoundingSphere();
+    if (opts.dashed) mesh.computeLineDistances();
+  };
+}
+
+/**
+ * Stacked intervals on one shared axis, drawn flat under the scene.
+ *
+ * For comparing ranges of a parameter this beats drawing them into the 3D scene, and the
+ * slab demo is why the helper exists: bars laid along the ray in 3D were foreshortened by
+ * whatever angle the camera happened to be at, and any part of an interval before zero
+ * appeared behind the ray's start, so three intervals that share an axis looked like three
+ * unrelated line segments. Flat and stacked, an overlap is impossible to misread.
+ *
+ * Each row's label carries its own name and numbers, so the picture is a bonus rather than
+ * the only way to read it.
+ */
+export function addTimeline(
+  el: HTMLElement,
+  title: string,
+  colors: number[],
+  from: number,
+  to: number,
+): (
+  rows: Array<{ text: string; span: { from: number; to: number } | null }>,
+) => void {
+  const span = to - from;
+  const at = (v: number) =>
+    `${((Math.min(Math.max(v, from), to) - from) / span) * 100}%`;
+
+  const wrap = document.createElement("div");
+  wrap.className = "demo-timeline";
+
+  const heading = document.createElement("div");
+  heading.className = "demo-tl-title";
+  heading.textContent = title;
+  wrap.appendChild(heading);
+
+  const items = colors.map((color) => {
+    const row = document.createElement("div");
+    row.className = "demo-tl-row";
+    const label = document.createElement("span");
+    label.className = "demo-tl-label";
+    const track = document.createElement("span");
+    track.className = "demo-tl-track";
+    const zero = document.createElement("span");
+    zero.className = "demo-tl-zero";
+    zero.style.left = at(0);
+    const bar = document.createElement("span");
+    bar.className = "demo-tl-bar";
+    bar.style.background = `#${color.toString(16).padStart(6, "0")}`;
+    track.append(zero, bar);
+    row.append(label, track);
+    wrap.appendChild(row);
+    return { label, bar };
+  });
+
+  // One axis under the stack, with a tick where the ray starts.
+  const axis = document.createElement("div");
+  axis.className = "demo-tl-row demo-tl-axis";
+  const axisPad = document.createElement("span");
+  axisPad.className = "demo-tl-label";
+  const axisTrack = document.createElement("span");
+  axisTrack.className = "demo-tl-track";
+  for (const [value, text] of [
+    [from, `${from} m`],
+    [0, "0, the start"],
+    [to, `${to} m`],
+  ] as const) {
+    const tick = document.createElement("span");
+    tick.className = "demo-tl-tick";
+    tick.style.left = at(value);
+    tick.textContent = text;
+    axisTrack.appendChild(tick);
+  }
+  axis.append(axisPad, axisTrack);
+  wrap.appendChild(axis);
+
+  el.appendChild(wrap);
+  return (rows) => {
+    rows.forEach((r, i) => {
+      if (!items[i]) return;
+      items[i].label.textContent = r.text;
+      const bar = items[i].bar;
+      if (r.span === null || r.span.to <= from || r.span.from >= to) {
+        bar.style.display = "none";
+        return;
+      }
+      const lo = Math.max(r.span.from, from);
+      const hi = Math.min(r.span.to, to);
+      bar.style.display = hi > lo ? "block" : "none";
+      bar.style.left = at(lo);
+      bar.style.width = `${((hi - lo) / span) * 100}%`;
+    });
+  };
+}
+
 /** One line of text under the picture. Returns a setter. */
 export function addReadout(el: HTMLElement): (text: string) => void {
   const div = document.createElement("div");

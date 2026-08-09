@@ -1,0 +1,244 @@
+---
+title: "Capstone: Third-Person Character Controller"
+description: Assembling the whole module into a working character controller, naming the Section each piece comes from, and the two things that only show up once everything runs together
+sidebar:
+  order: 24
+  label: "Capstone  Third-Person Character Controller"
+---
+
+import DemoPanel from "../../../../components/DemoPanel.astro";
+import CodePanel from "../../../../components/CodePanel.astro";
+import controllerSource from "../../../../lib/gamedev/controller.ts?raw";
+
+## What This Is
+
+Every other page in this Module taught one idea. This one puts them together into a thing that
+works: a third-person character that walks where the camera is facing, slides along walls, climbs
+ledges, jumps, and is followed by a camera.
+
+Almost no new mathematics appears here. That is the point — the pieces were all built already, and
+what remains is assembly. Where something new _was_ needed, it is called out.
+
+## Which Section Each Piece Comes From
+
+| Piece                                                   | Where it came from                |
+| :------------------------------------------------------ | :-------------------------------- |
+| Stick input to a world direction relative to the camera | 1.1 basis vectors, 5.2 camera yaw |
+| Diagonals not running 41% fast                          | 1.2 normalize                     |
+| Facing the way you are going, the short way round       | 1.5 shortest rotation             |
+| Jump sized by height and rise time, not gravity         | 7.1 the backwards solve           |
+| Jump as an impulse rather than a force                  | 7.1 impulses                      |
+| Velocity before position                                | 7.2 semi-implicit Euler           |
+| One fixed tick, whatever the frame rate                 | 7.2 the accumulator               |
+| Capsule as the body shape                               | 6.2 bounding volumes              |
+| Pushing out by the shortest distance                    | 6.3 minimum translation vector    |
+| Sliding along walls instead of stopping                 | 6.3 the split                     |
+| A millimeter of skin so contact does not flicker        | 6.3                               |
+| Floor against wall, decided by a threshold              | 6.3 slope limit                   |
+| Camera orbit as two angles and a radius                 | 5.2 spherical coordinates         |
+| Camera follow that lags and settles                     | 4.1 exponential decay             |
+| A scripted camera sweep through placed points           | 4.4 Catmull-Rom                   |
+| Drawing between physics ticks                           | 7.2 render interpolation          |
+
+## The Controller, Running
+
+<DemoPanel name="capstone" />
+
+Scrub through the run. The route is scripted rather than played, because a controller wants held
+keys and a reader has one pointer — Part 1's movement demo shipped an on-screen arrow pad for that
+problem and it turned out to be unusable. Scrubbing has a side benefit: you can stop on any single
+tick and look at it.
+
+What the route does, in order: walks diagonally into the wall and **slides** along it, turns hard
+left and **climbs** the ledge, **jumps** from the top of it, arcs back across the floor, and turns
+around to come back.
+
+Now switch the pieces off one at a time.
+
+- **No sliding.** The character stops dead at the wall instead of being carried along it. This is
+  the single most recognisable difference between a controller that feels good and one that does
+  not.
+- **No shortest turn.** The turn from walking-into-the-wall to walking-left is 233° written down and
+  127° travelled. Without folding the difference, the body spins the wrong way round the long
+  route.
+- **No normalize.** Diagonal input runs 25% fast for this stick position, and up to 41% for a full
+  diagonal.
+- **No interpolation between ticks.** The body only moves on tick boundaries. The physics is
+  unchanged and identical; only the drawing stutters.
+
+<CodePanel
+  code={controllerSource}
+  lang="ts"
+  file="src/lib/gamedev/controller.ts"
+  label="The whole controller"
+/>
+
+## The Two Things That Needed New Work
+
+Assembling a module's worth of parts turned up exactly two problems that none of the individual
+Sections had to face.
+
+### A capsule against a box, which is easy only because it is upright
+
+Section 6.2 built sphere-box, box-box, capsule-capsule and sphere-capsule, and stopped there. A
+capsule against a box is genuinely awkward in general — a **tilted** capsule against a box has no
+tidy closed form, which is why engines reach for GJK.
+
+Being upright changes it completely, and the reason is Section 6.1's: **both shapes are
+axis-aligned, so the three axes stay independent.** The capsule's axis only varies in $y$, so the
+box's nearest $x$ and $z$ do not depend on which point of the axis you pick. That leaves one
+interval-against-interval question in $y$, which is a comparison. Three clamps, no iteration, no
+approximation.
+
+That is a nice piece of luck worth noticing: **the shape that fits a person best is also the one
+that collides with level geometry cheaply.**
+
+The build check verifies it by brute force rather than against another formula — 8,125 placements
+around a box, walking the capsule's own axis at each one and requiring the same verdict and the same
+depth. Zero disagreements, depth exact.
+
+### Climbing a ledge, which a capsule will not do properly by accident
+
+Push-out alone cannot climb a step, and the way it fails is worse than failing.
+
+A capsule's lower hemisphere meets the top edge of a ledge at a steep angle. For a 0.35 m radius
+against a 0.2 m ledge the contact normal is **64° from vertical**, well past any sane slope limit,
+so it is treated as a wall. But then each resolution pass shoves the capsule out along a normal that
+has _some_ upward component — so over several ticks it **ratchets** up and pops onto the ledge
+anyway.
+
+Whether it manages that depends on the walking speed and the tick rate. That is the kind of accident
+that works on your machine and not on someone else's.
+
+So do it deliberately: lift by a step height, try the move up there, and settle onto whatever
+supports it. Unity spells this `stepOffset` and Godot folds it into `move_and_slide`; both exist for
+exactly this reason. The check confirms a 0.3 m ledge is climbed, a ledge taller than the step
+height is refused, and the character never ends up inside either one.
+
+:::note[The pass count was measured, not guessed]
+Push-out runs several passes, because resolving one contact creates another — sliding along a wall
+pushes you into the floor.
+
+Four passes is plenty for anything that arises from moving. It is not enough for a body that
+_starts_ buried: sweeping 1,134 overlapping placements around a box, 75 failed to clear in four
+passes, every one of them with the capsule's axis fully inside the box and up to 1.1 m deep. All 75
+settle by eight, because each pass can only move by the shallowest face and the shallowest face
+changes as it goes. So the default is eight.
+
+The cap itself stays. A character genuinely wedged between two surfaces will never settle, and a
+slightly wrong position is better than a frozen frame.
+:::
+
+## The Camera
+
+<DemoPanel name="capstonecam" />
+
+The orange dot is the camera being positioned, and the dashed line is what it is aimed at — the
+character's chest, not their feet, which is a one-line detail that makes an enormous difference to
+how a third-person game reads.
+
+Three modes, three Sections:
+
+- **Orbit** is Section 5.2's spherical coordinates. Azimuth, elevation and radius, so each drag axis
+  drives exactly one number and the elevation clamps short of the pole where the azimuth stops
+  meaning anything.
+- **Damped follow** is that same orbit position chased with Section 4.1's exponential decay. Wind
+  the half-life up and the camera drags behind; wind it down and it snaps. Because a damped camera
+  depends on where it has _been_, scrubbing backwards replays from the start — a stateful camera
+  cannot be evaluated at a single moment, which is worth knowing before you try to make one
+  rewindable.
+- **Scripted shot** is Section 4.4's Catmull-Rom through six placed waypoints, ignoring the
+  character entirely.
+
+:::note[Reusing a two-dimensional spline in three dimensions]
+Section 4.4's spline module takes 2D points, because that page's figures were flat. Rather than
+write a second copy, it is called twice here: once on the $(x, y)$ pairs and once on the $(z, y)$
+pairs.
+
+That works because Catmull-Rom is **componentwise** — every component is blended with the same
+weights — so the $y$ that comes back from both calls is identical and the third dimension is free.
+The check confirms the path hits all six waypoints to $10^{-9}$.
+
+It also confirms Section 4.4's warning still applies: even steps in the parameter give hops varying
+by 1.4×, so a camera that must move at a constant rate needs the arc-length table, not raw $t$.
+:::
+
+## What a Fixed Timestep Actually Promises
+
+Here is the finding that only appears once everything runs together, and it corrects something
+widely half-remembered.
+
+<DemoPanel name="determinism" />
+
+The same run, the same input, the same code, stepped at 30, 60 and 144 Hz — and the three end up
+**18 cm apart**.
+
+That is not a bug, and it is not the accumulator failing. Every discrete decision in a controller
+happens on a tick boundary: which tick first notices the wall, which tick the landing lands on,
+which tick the ledge climb fires. Different rates put those moments at different instants, and the
+paths separate by about **one tick of travel** — 1.08 ticks, measured.
+
+$$
+\text{a fixed timestep makes one tick rate } \textbf{reproducible} \text{, not two tick rates } \textbf{equal}
+$$
+
+The promise that _does_ hold is the one replays and networked play actually need: re-run at the same
+rate and you get the same result **bit for bit, every tick**. Which is why every engine that
+supports deterministic replay pins the tick rate as part of the format, and why changing
+`physics_ticks_per_second` invalidates old replays.
+
+The check asserts both halves — bit-for-bit equality at a fixed rate, and a spread of about one
+tick of travel across rates. It also asserts the character never ends up inside the level at **any**
+of five tick rates, which is the property that actually matters.
+
+:::caution[Mirroring a function is a liability]
+The demo needs to break one piece at a time, so it has a copy of the tick loop with switches in it.
+That copy silently fell behind: step climbing was added to the real controller and not to the copy,
+and the scripted run stopped dead against a ledge with no error anywhere.
+
+The fix was to make the copy **hand over to the real function** whenever nothing is switched off, so
+the correct path is the shipped code rather than a lookalike. There is now a check that steps both
+side by side for 200 ticks and requires bit-for-bit agreement, because the next drift would be just
+as quiet.
+:::
+
+## What This Controller Does Not Do
+
+Being honest about the edges, because a capstone that pretends to be finished teaches the wrong
+lesson:
+
+- **No ledge detection**, so it will walk off an edge without hesitating.
+- **No crouching, no ceilings**, so nothing stops it standing up inside geometry.
+- **No moving platforms**, which need the platform's motion added to the character's frame.
+- **No coyote time or jump buffering** — the forgiveness windows that make a jump feel fair rather
+  than accurate. Neither is physics; both are input timing.
+- **No acceleration on the ground.** Horizontal speed is set outright, which is what makes an action
+  game feel sharp and a heavier game feel wrong. Section 4.1's `damp` is the swap.
+- **No animation**, which in a real game drives some of the movement rather than following it.
+- **No network prediction**, which needs the determinism above plus a way to rewind and replay.
+- **Boxes only.** Real levels are triangle meshes, which needs a broad phase over triangles and
+  capsule-against-triangle rather than capsule-against-box.
+
+Each of those is a known problem with a known shape. None of them changes the maths on this page.
+
+:::note[In an engine]
+Godot's `CharacterBody3D` plus `move_and_slide()` is this whole page in one call, with
+`floor_max_angle` as the slope limit and the step behaviour built in. Unity's `CharacterController`
+is the same job with `slopeLimit`, `stepOffset` and `skinWidth` exposed — and now you know what all
+three are for.
+
+Three.js has none of it, which is why this Module builds it. You cannot hide behind
+`move_and_slide` if you have written it.
+:::
+
+:::note[The one thing to take away]
+A character controller is not one clever algorithm; it is fifteen small pieces from all seven Parts,
+wired together in an order that matters. Input becomes a world direction through a basis and a
+normalize, velocity updates before position, collision pushes out by the shortest distance and
+removes only the blocked part of the velocity, and the whole thing runs on a fixed tick that gets
+drawn between its own steps. The two things assembly forced were an upright-capsule-against-box test
+— easy only because both shapes are axis-aligned — and a deliberate step-up, because push-out
+climbs ledges by an accident that depends on your frame rate. And a fixed timestep makes one tick
+rate reproducible bit for bit; it does not make two tick rates agree, which is why replays pin the
+rate.
+:::

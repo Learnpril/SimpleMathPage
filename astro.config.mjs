@@ -196,6 +196,42 @@ export default defineConfig({
                     },
                   ],
                 },
+                {
+                  label: "Part 6: Geometry and Collision",
+                  collapsed: false,
+                  items: [
+                    {
+                      slug: "applied/3d-game-development/rays-planes-and-closest-points",
+                    },
+                    {
+                      slug: "applied/3d-game-development/bounding-volumes-and-intersection-tests",
+                    },
+                    {
+                      slug: "applied/3d-game-development/collision-response-penetration-and-sliding",
+                    },
+                  ],
+                },
+                {
+                  label: "Part 7: Physics Integration",
+                  collapsed: false,
+                  items: [
+                    {
+                      slug: "applied/3d-game-development/velocity-acceleration-and-forces",
+                    },
+                    {
+                      slug: "applied/3d-game-development/integrators-and-the-fixed-timestep",
+                    },
+                  ],
+                },
+                {
+                  label: "Capstone",
+                  collapsed: false,
+                  items: [
+                    {
+                      slug: "applied/3d-game-development/capstone-third-person-character-controller",
+                    },
+                  ],
+                },
               ],
             },
           ],
@@ -276,7 +312,14 @@ export default defineConfig({
                   'bezier-curves':                             [4, 'Time, Interpolation and Feel'],
                   'hermite-catmull-rom-and-constant-speed-paths': [4, 'Time, Interpolation and Feel'],
                   'projection-fov-and-the-view-frustum':       [5, 'Cameras and Screen Space'],
-                  'screen-space-to-world-space':               [5, 'Cameras and Screen Space']
+                  'screen-space-to-world-space':               [5, 'Cameras and Screen Space'],
+                  'rays-planes-and-closest-points':            [6, 'Geometry and Collision'],
+                  'bounding-volumes-and-intersection-tests':   [6, 'Geometry and Collision'],
+                  'collision-response-penetration-and-sliding': [6, 'Geometry and Collision'],
+                  'velocity-acceleration-and-forces':          [7, 'Physics Integration'],
+                  'integrators-and-the-fixed-timestep':        [7, 'Physics Integration']
+                  /* The capstone is deliberately absent: it belongs to no Part, and the badge
+                     reads better without a Part number it would have to invent. */
                 }
               };
               var partMap = partOf[section];
