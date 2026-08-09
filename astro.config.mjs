@@ -110,7 +110,29 @@ export default defineConfig({
             // inside a rotation.
             {
               label: "2D Game Development",
-              autogenerate: { directory: "applied/2d-game-development" },
+              items: [
+                {
+                  slug: "applied/2d-game-development/about-2d-game-development",
+                },
+                {
+                  label: "Part 1: The Screen and Its Coordinates",
+                  collapsed: false,
+                  items: [
+                    {
+                      slug: "applied/2d-game-development/pixels-coordinates-and-the-y-axis",
+                    },
+                    {
+                      slug: "applied/2d-game-development/points-vectors-and-directions",
+                    },
+                    {
+                      slug: "applied/2d-game-development/length-distance-and-normalizing",
+                    },
+                    {
+                      slug: "applied/2d-game-development/the-dot-product",
+                    },
+                  ],
+                },
+              ],
             },
             {
               label: "3D Game Development",
@@ -294,6 +316,12 @@ export default defineConfig({
                  has no way to tell which Part they are in. Keyed by the section slug so a
                  new section only needs one line. */
               var partOf = {
+                'applied/2d-game-development': {
+                  'pixels-coordinates-and-the-y-axis':         [1, 'The Screen and Its Coordinates'],
+                  'points-vectors-and-directions':             [1, 'The Screen and Its Coordinates'],
+                  'length-distance-and-normalizing':           [1, 'The Screen and Its Coordinates'],
+                  'the-dot-product':                           [1, 'The Screen and Its Coordinates']
+                },
                 'applied/3d-game-development': {
                   'points-vectors-and-coordinate-conventions': [1, 'Vectors and Spatial Reasoning'],
                   'length-normalization-and-distance':         [1, 'Vectors and Spatial Reasoning'],

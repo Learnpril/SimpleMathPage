@@ -23,6 +23,18 @@ import bouncing from "./bouncing.ts";
 import impulse from "./impulse.ts";
 import accumulator from "./accumulator.ts";
 import determinism from "./determinism.ts";
+
+// ---- 2D module. Its demos live in `2d/` and never import Three.js. ----
+import resolution2d from "./2d/resolution.ts";
+import kinds2d from "./2d/kinds.ts";
+import range2d from "./2d/range.ts";
+import acos2d from "./2d/acos.ts";
+import {
+  dotCheck2d,
+  lengthCheck2d,
+  screenCheck2d,
+  vectorCheck2d,
+} from "./2d/checks2d.ts";
 import dtmath from "./dtmath.ts";
 import eulerorders from "./eulerorders.ts";
 import jumparc from "./jumparc.ts";
@@ -403,6 +415,71 @@ export const DEMOS: Record<string, DemoEntry> = {
     title: "What a fixed timestep promises, and what it does not",
     demo: determinism,
     file: "lib/gamedev/demos/determinism.ts",
+  },
+
+  // ---- 2D module ----------------------------------------------------------------
+
+  "2d-axes": {
+    title: "One point, read as world units and as canvas pixels at once",
+    visual: () => import("./2d/axes.scene.ts"),
+    visualFile: "lib/gamedev/demos/2d/axes.scene.ts",
+    check: screenCheck2d,
+  },
+  "2d-spin": {
+    title:
+      "The same angle, turning one way in the maths and the other on the canvas",
+    visual: () => import("./2d/spin.scene.ts"),
+    visualFile: "lib/gamedev/demos/2d/spin.scene.ts",
+  },
+  "2d-resolution": {
+    title: "One world point on three canvases",
+    demo: resolution2d,
+    file: "lib/gamedev/demos/2d/resolution.ts",
+  },
+  "2d-arrow": {
+    title: "Two places, the arrow between them, and an origin that moves",
+    visual: () => import("./2d/arrow.scene.ts"),
+    visualFile: "lib/gamedev/demos/2d/arrow.scene.ts",
+    hint: "Drag either place, or pick one with the buttons and use the sliders.",
+    check: vectorCheck2d,
+  },
+  "2d-kinds": {
+    title:
+      "Which combinations mean something, and which only look like they do",
+    demo: kinds2d,
+    file: "lib/gamedev/demos/2d/kinds.ts",
+  },
+  "2d-diagonal": {
+    title: "Every direction a player can hold, and the two shapes they trace",
+    visual: () => import("./2d/diagonal.scene.ts"),
+    visualFile: "lib/gamedev/demos/2d/diagonal.scene.ts",
+    hint: "Sweep the direction slider and watch the red arrow's length change while the teal one does not.",
+    check: lengthCheck2d,
+  },
+  "2d-range": {
+    title:
+      "Range checks without the square root, and the two ways to break one",
+    demo: range2d,
+    file: "lib/gamedev/demos/2d/range.ts",
+  },
+  "2d-cone": {
+    title:
+      "A guard's vision cone, and the same test with the normalize removed",
+    visual: () => import("./2d/cone.scene.ts"),
+    visualFile: "lib/gamedev/demos/2d/cone.scene.ts",
+    hint: "Hold the target angle at 60° and sweep the distance with the checkbox off.",
+    check: dotCheck2d,
+  },
+  "2d-project": {
+    title:
+      "One vector split into the part along a direction and the part across it",
+    visual: () => import("./2d/project.scene.ts"),
+    visualFile: "lib/gamedev/demos/2d/project.scene.ts",
+  },
+  "2d-acos": {
+    title: "The clamp before acos, and what leaving it out costs",
+    demo: acos2d,
+    file: "lib/gamedev/demos/2d/acos.ts",
   },
   "nan-guard": {
     title: "A NaN walks past the check meant to stop it",

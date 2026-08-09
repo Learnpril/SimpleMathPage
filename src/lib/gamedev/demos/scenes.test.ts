@@ -15,9 +15,16 @@
 import { describe, expect, it, vi } from "vitest";
 import type { MountFn } from "./runner.ts";
 
-const scenes = import.meta.glob<{ default: MountFn }>("./*.scene.ts");
+// Recurses, so the 2D module's scenes in `2d/` are covered by the same sweep.
+const scenes = import.meta.glob<{ default: MountFn }>("./**/*.scene.ts");
 
-/** A WebGL context that answers everything harmlessly, so Three.js will initialise. */
+/**
+ * A context that answers everything harmlessly, so a scene can run without a GPU.
+ *
+ * jsdom implements no drawing context at all, so this stands in for both: Three.js gets the WebGL
+ * constants it probes for, and a 2D scene's `fillRect`, `arc` and friends become no-ops. Nothing is
+ * rendered either way - the question is only whether the code runs.
+ */
 function stubWebGl() {
   return new Proxy(
     {},

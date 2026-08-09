@@ -41,8 +41,10 @@ const hasVisual = Boolean(entry.visual);
 if (entry.check) runCheck(entry.check);
 const rows = !hasVisual && entry.demo ? runDemo(entry.demo) : [];
 
-// Vite reads the demo sources once, eagerly, so the panel can show the file it ran.
-const sources = import.meta.glob("../lib/gamedev/demos/*.ts", {
+/* Vite reads the demo sources once, eagerly, so the panel can show the file it ran. The glob
+   recurses, because the 2D module keeps its demos in a `2d/` subfolder to stay clearly separate
+   from the 3D ones. */
+const sources = import.meta.glob("../lib/gamedev/demos/**/*.ts", {
   query: "?raw",
   import: "default",
   eager: true,

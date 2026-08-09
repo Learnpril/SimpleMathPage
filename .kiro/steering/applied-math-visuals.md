@@ -368,6 +368,13 @@ serves hashed `_astro/*.js`), and the port is the dev server's rather than previ
 by requesting the module directly: `Invoke-WebRequest http://127.0.0.1:4325/src/lib/gamedev/demos/<name>.scene.ts`
 should return 200 and contain identifiers from the current version of the file.
 
+**A dev server started immediately after a build sometimes dies on startup** with
+`EPERM: operation not permitted, rename '.astro/data-store.json.tmp'`, followed by a libuv
+assertion. It is a Windows file lock the previous instance has not released yet, not a code
+problem. The symptom is `ERR_CONNECTION_REFUSED` on 4325 when the process claims to be running.
+Just stop it and start it again; the second attempt has always worked. Check the process output
+before hunting for anything else.
+
 `DemoPanel` catches mount failures and prints them in the panel. Before that it swallowed
 them, and since `.demo-stage` has `min-height: 300px` a dead scene was pixel-identical to an
 unmounted one. Keep that `catch`: a scene throwing in a real browser is still worth surfacing.
@@ -391,6 +398,13 @@ previous vertices in place and still drawn.
 Note that three of the existing Supabase progress tests fail and have done for a while; they are
 unrelated to Applied. Do not read a red `npm test` summary as a scene problem without checking
 which files failed.
+
+**Chunk names collide between the 2D and 3D modules, so check the file before believing the
+grep.** `demos/2d/` and `demos/` both hold a `cone.scene.ts` and a `diagonal.scene.ts`, and Rollup
+names a chunk after the module, not its folder - so `dist/_astro/` ends up with two
+`cone.scene.<hash>.js`. Grepping them for `three` reports one hit, which looks exactly like a 2D
+scene having pulled in the 505 KB Three.js chunk. It has not; the hit is the 3D namesake. Confirm
+which is which by size and by an identifier only one of them has before starting a hunt.
 
 - `node scripts/audit-figures.mjs dist/<section> 3` only parses **static SVG
   geometry**. Three.js and canvas figures are invisible to it, so a clean audit is not

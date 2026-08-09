@@ -1,0 +1,187 @@
+---
+title: Length, Distance and Normalizing
+description: Magnitude by Pythagoras, distance as the length of a displacement, when to skip the square root, guarding a zero-length normalize, and the diagonal speed bug
+sidebar:
+  order: 3
+  label: "1.3  Length, Distance and Normalizing"
+---
+
+import DemoPanel from "../../../../components/DemoPanel.astro";
+import CodePanel from "../../../../components/CodePanel.astro";
+import lengthSource from "../../../../lib/gamedev2d/length2d.ts?raw";
+
+## What You'll Learn
+
+How long a displacement is, how far apart two places are, and how to throw away the length
+while keeping the direction. Then the most common movement bug in 2D games, which is all
+three of those ideas going wrong at once.
+
+## Length Is the Pythagorean Theorem
+
+A displacement of $(3, 4)$ is 3 across and 4 up. Those two legs and the displacement itself
+make a right triangle, so the length is the hypotenuse:
+
+$$
+|v| = \sqrt{v_x^2 + v_y^2}
+$$
+
+That is the whole idea. $(3, 4)$ is 5 long. There is nothing further to learn about magnitude
+in 2D.
+
+**Distance is the same formula, one step later.** The distance between two places is the
+length of the displacement between them, and Section 1.2 already gave us that displacement:
+
+$$
+\text{distance}(A, B) = |B - A|
+$$
+
+One idea, not two. Which also means distance doesn't care which way round you ask, because
+reversing a displacement doesn't change how long it is.
+
+## The Diagonal Speed Bug
+
+Here is the bug, and it has shipped in a great many games.
+
+Read the keyboard. Right adds $1$ to x, up adds $1$ to y. Multiply by your speed, add it to
+the position, done. It works. Then someone holds two keys at once, and moves faster.
+
+<DemoPanel name="2d-diagonal" />
+
+Sweep the slider all the way round and watch the two arrow tips.
+
+**The red tip traces a square.** Each axis is held or not, independently, so the furthest
+input you can produce is the corner $(1, 1)$ — and that corner is $\sqrt{2}$ long, not 1.
+
+**The teal tip traces a circle**, because it was normalized first. Length 1 at every angle.
+
+| Direction held | Raw input   | Its length | Too fast by |
+| :------------- | :---------- | ---------: | ----------: |
+| 0° (right)     | $(1, 0)$    |      1.000 |          0% |
+| 15°            | $(1, 0.27)$ |      1.035 |        3.5% |
+| 30°            | $(1, 0.58)$ |      1.155 |       15.5% |
+| 45°            | $(1, 1)$    |      1.414 |       41.4% |
+
+The reason this survives testing is the first row. **Along an axis the buggy version is
+exactly correct.** You walk right, the speed is right. You walk up, the speed is right. Only
+diagonals are wrong, and 41% is fast enough to feel unfair without being obviously broken.
+
+## Normalizing Is the Fix
+
+Divide a displacement by its own length and you get a **unit vector** — same direction,
+length exactly 1:
+
+$$
+\hat{v} = \frac{v}{|v|}
+$$
+
+Which turns movement into two separate decisions, and that separation is the real prize:
+
+$$
+\text{velocity} = \hat{v} \times \text{speed}
+$$
+
+**Direction says which way. Speed says how fast.** Neither one can leak into the other. The
+input square becomes the input circle, and 41% goes to 0%.
+
+## Skip the Square Root
+
+Square roots are the expensive part of all of this, and comparisons never need one.
+
+"Is the enemy within 5 meters?" You are comparing a distance against a radius. Both are
+lengths, so both are non-negative, and **squaring cannot reorder non-negative numbers**. So
+square the radius instead of rooting the distance:
+
+$$
+|B - A|^2 < r^2 \quad\Longleftrightarrow\quad |B - A| < r
+$$
+
+Same answer, always. Not an approximation and not a heuristic — the two tests agree at every
+point on the plane, which is why this is safe rather than merely fast.
+
+<DemoPanel name="2d-range" />
+
+The trap is on the fourth row, and it is worth staring at. A target at $(5, 5)$ is $3.61$
+meters from a player at $(3, 2)$, so it is comfortably inside a radius of 5. But its
+**squared** distance is 13, and $13 < 5$ is false.
+
+The check rejects a target that is well within range, and it will do it silently. No error,
+no NaN — just an enemy that never notices you. **A squared distance must be compared against
+a squared threshold**, and forgetting to square the radius is the one way to get this wrong.
+
+## The Zero-Length Guard
+
+Normalizing divides by the length. So what happens when the length is zero?
+
+$$
+\frac{0}{0} = \texttt{NaN}
+$$
+
+And a `NaN` position is the worst kind of bug, because it does not stop. It spreads: add
+anything to `NaN` and you get `NaN`, so the position stays broken forever, and every
+comparison against it returns `false`. The sprite simply vanishes and the console says
+nothing.
+
+**A displacement of zero length has no direction.** Not a default one, not "right" — none.
+So `normalize` returns `null` and makes the caller say what they meant:
+
+- For **input**, no keys held means stand still. `velocityFrom` returns $(0, 0)$.
+- For **aiming**, on top of the target means keep the current facing.
+- For **a surface normal**, it means the geometry is degenerate and something upstream is
+  wrong.
+
+Three different right answers, which is exactly why the function shouldn't pick one for you.
+
+<CodePanel
+  code={lengthSource}
+  lang="ts"
+  file="src/lib/gamedev2d/length2d.ts"
+  label="Length, distance, and the two guards worth having"
+/>
+
+The build-time check sweeps **every angle in quarter-degree steps** and requires the
+normalized version to be length 1 at all of them. Sampling would not do: the buggy version is
+correct along the axes, so a handful of tidy test values is precisely the set that misses it.
+It also compares the rooted and squared range tests at **40,000 positions** and requires zero
+disagreements, because "these two are always the same" is a claim, not a convention.
+
+:::tip[Why `Math.hypot`]
+`Math.hypot(x, y)` is the same formula, written more carefully. `Math.sqrt(x*x + y*y)`
+overflows when the components are enormous — squaring $10^{200}$ gives `Infinity`, so the
+length comes back as `Infinity` when the real answer is about $1.4 \times 10^{200}$.
+`Math.hypot` gets it right.
+
+Game coordinates are never that large, so use whichever reads better to you. It is worth
+knowing the difference exists.
+:::
+
+:::note[In an engine]
+Godot's `Vector2` has `length()`, `length_squared()`, `distance_to()`,
+`distance_squared_to()` and `normalized()`. `normalized()` on a zero vector returns
+`Vector2.ZERO` rather than an error, which is a reasonable default and still not a decision
+you want made silently.
+
+Unity's `Vector2` has `magnitude`, `sqrMagnitude` and `normalized`, plus
+`Vector2.Distance()`. Same story: `normalized` on a zero vector gives `Vector2.zero`.
+`Normalize()` with a capital N modifies in place, which is an easy one to mix up.
+
+Both give you `MoveTowards`, which normalizes internally — so if you are using it, the
+diagonal bug is already handled for you.
+:::
+
+## Where This Shows Up
+
+- **Every movement loop**, which is a direction and a speed kept apart.
+- **Range checks** — aggro radius, pickup radius, explosion radius — all cheaper squared.
+- **Nearest-target searches**, which compare many distances and need none of the roots.
+- **Section 1.4**, where the dot product needs unit vectors to give an angle back.
+- **Section 2.2**, which takes a direction and asks what angle it makes.
+
+:::note[The one thing to take away]
+Length is Pythagoras, and distance is the length of the displacement between two places.
+Normalizing divides by that length to leave a direction, which separates "which way" from
+"how fast" — and skipping it is the diagonal speed bug, worth 41% free speed on every
+diagonal. When you are only comparing, compare squared values and skip the square root, but
+square the threshold too or you will silently reject things that are in range. And a
+zero-length displacement has no direction at all, so guard it before it becomes a `NaN` that
+quietly deletes your sprite.
+:::

@@ -1,0 +1,149 @@
+---
+title: Points, Vectors and Directions
+description: A place against a displacement, why subtracting two places gives you an arrow, which combinations mean something, and the origin test that tells the two apart
+sidebar:
+  order: 2
+  label: "1.2  Points, Vectors and Directions"
+---
+
+import DemoPanel from "../../../../components/DemoPanel.astro";
+import CodePanel from "../../../../components/CodePanel.astro";
+import vectorSource from "../../../../lib/gamedev2d/vectors2d.ts?raw";
+
+## What You'll Learn
+
+Two different things that are both written as two numbers: a **place** and a **displacement**. Which
+combinations of them mean something, which one is the most used line of code in any game, and the
+test that tells them apart when the naming doesn't.
+
+## A Place and a Displacement
+
+"The player is at $(3, 2)$." That is a **point** — a place, measured from the origin.
+
+"Move 4 right and 1 up." That is a **vector** — a displacement. How far and which way, with no
+opinion about where you started.
+
+In code both are `{ x, y }`. TypeScript sees no difference between them and neither does any engine.
+**The compiler will not catch you mixing them up**, which is exactly why it is worth being deliberate
+about which one you are holding.
+
+## Four Sentences, One of Them Nonsense
+
+$$
+\begin{aligned}
+\text{place} - \text{place} &= \text{displacement} \\
+\text{place} + \text{displacement} &= \text{place} \\
+\text{displacement} + \text{displacement} &= \text{displacement} \\
+\text{place} + \text{place} &= \text{nothing at all}
+\end{aligned}
+$$
+
+The first one is the workhorse. **The displacement from A to B is `B - A`**, and it is probably the
+single most written line in game code: from a player to a target, from a bullet to a wall, from a
+camera to the thing it is following.
+
+$$
+\text{towards the target} = \text{target} - \text{player}
+$$
+
+Get the order backwards and you get $(-8, -4)$ instead of $(8, 4)$ — a displacement of exactly the
+same size pointing exactly the wrong way. It compiles, it runs, and the enemy runs away from you.
+
+The last one is the interesting one, and the reason this Section exists.
+
+## The Origin Test
+
+Why is adding two places meaningless? Not because a rule says so. Because **the answer depends on
+where you happen to have put the origin**, which means it was never a fact about the two places.
+
+<DemoPanel name="2d-arrow" />
+
+Drag A and B around, then slide the origin out from under them.
+
+Watch what happens. **Both places get new numbers.** They haven't moved — the origin did — but every
+reading changes, because a place is measured _from_ somewhere.
+
+**The arrow between them does not change.** Same length, same direction, same two numbers. It was
+never measured from anywhere; it only ever said how far and which way.
+
+That is the real difference between the two, and it is worth more than any naming convention:
+
+$$
+\text{a displacement survives moving the origin. A place does not.}
+$$
+
+<DemoPanel name="2d-kinds" />
+
+The numbers make it concrete. Measured from three different origins, `B - A` is $(8, 4)$ every single
+time. Meanwhile `A + B` goes from $(14, 8)$ to $(4, -2)$ to $(214, -72)$ — three different answers to
+the same question, which is how you know it wasn't a question.
+
+The check sweeps **400 origins** and requires the displacement to be identical at every one, and the
+sum to differ at essentially all of them. A claim like that shouldn't rest on the one origin a figure
+happened to use.
+
+:::tip[The midpoint is a real exception, and worth understanding]
+Averaging two places _does_ work. `(A + B) / 2` gives the point halfway between, and it survives the
+origin test — the check confirms it stays at $(7, 4)$ from every origin.
+
+Written that way it looks like it shouldn't. Written honestly, it does:
+
+$$
+\text{midpoint} = A + \tfrac{1}{2}(B - A)
+$$
+
+which is a place, plus half a displacement. A legal sentence, and it happens to give the same answer.
+
+The rule underneath: a weighted sum of places is meaningful **when the weights add up to one**.
+Halves add to one. A plain sum's weights add to two, which is why it drifts.
+:::
+
+## Scaling
+
+Multiplying a displacement does what you would hope: doubling it means going twice as far the same
+way, and multiplying by $-1$ turns it around. Scaling also survives the origin test, because it is
+built out of a displacement and nothing else.
+
+Multiplying a **place** by two does not mean anything useful. It doubles the distance from the origin,
+so the result depends entirely on where the origin is — the check shows the same point landing at
+$(6, 4)$ from one origin and $(1, -1)$ from another.
+
+If you ever find yourself scaling a position, what you almost certainly want is to scale the
+**displacement from something** and then apply it: `anchor + (p - anchor) * k`. Same shape as the
+midpoint, same reason it works.
+
+<CodePanel
+  code={vectorSource}
+  lang="ts"
+  file="src/lib/gamedev2d/vectors2d.ts"
+  label="Places, displacements, and the operations that mean something"
+/>
+
+:::note[In an engine]
+Godot has one `Vector2` used for both, with `+`, `-` and `*` as you would expect. `Vector2.direction_to()`
+is `(b - a)` normalised, which Section 1.3 covers, and `distance_to()` is its length.
+
+Unity splits them slightly: `Vector2` and `Vector3` are used for both places and displacements, but
+`Transform.position` and `Transform.localPosition` make clear which frame a place is measured in.
+
+Neither engine will stop you adding two positions together. No language does. The distinction is one
+you keep by naming things carefully, which is the entire reason to have read this Section.
+:::
+
+## Where This Shows Up
+
+- **Chasing, aiming and following**, all of which start with `target - self`.
+- **Anything that moves**, which is a place plus a displacement every single frame.
+- **Combining influences** — input plus knockback plus wind — which is displacements adding.
+- **Cameras**, which follow a place while thinking in displacements from it.
+- **Section 1.3**, which takes the displacement from here and asks how long it is.
+- **Section 1.4**, which asks what angle it makes.
+
+:::note[The one thing to take away]
+A place is measured from an origin; a displacement is not measured from anywhere. Subtract two places
+and you get the displacement between them — `B - A`, in that order, or your enemy walks away from you.
+Add a displacement to a place and you get a place. Add two displacements and you get a displacement.
+Add two places and you get a number that changes when you move the origin, which is how you know it
+means nothing. Both are `{ x, y }` and no compiler will help you, so the distinction is one you keep
+by hand.
+:::

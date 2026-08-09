@@ -1,0 +1,249 @@
+---
+title: The Dot Product
+description: One number that measures agreement between two directions, used as a facing test, a vision cone, and a projection, plus the clamp that stops acos returning NaN
+sidebar:
+  order: 4
+  label: "1.4  The Dot Product"
+---
+
+import DemoPanel from "../../../../components/DemoPanel.astro";
+import CodePanel from "../../../../components/CodePanel.astro";
+import dotSource from "../../../../lib/gamedev2d/dot2d.ts?raw";
+
+## What You'll Learn
+
+One number, built from two multiplications and an add, that answers "do these two directions
+agree?" It does three jobs that look unrelated: a facing test, a vision cone, and splitting a
+vector into two pieces. Then the two ways it goes wrong, both of which ship regularly.
+
+## Two Ways to Write the Same Number
+
+Multiply the matching components and add the results:
+
+$$
+a \cdot b = a_x b_x + a_y b_y
+$$
+
+That is the computation. This is what it means:
+
+$$
+a \cdot b = |a|\,|b|\cos\theta
+$$
+
+**Nothing in the code computes an angle**, and yet the answer contains one. That gap is the whole
+reason the dot product is everywhere in game code: it is the cheap way to ask an expensive question.
+
+Read the second form and everything else follows. The lengths are always positive, so the **sign
+comes entirely from $\cos\theta$**:
+
+| Angle between them | $\cos\theta$ | Dot product   | Meaning        |
+| :----------------- | :----------- | :------------ | :------------- |
+| $0°$               | $1$          | largest       | same direction |
+| under $90°$        | positive     | positive      | roughly agree  |
+| exactly $90°$      | $0$          | zero          | perpendicular  |
+| over $90°$         | negative     | negative      | roughly oppose |
+| $180°$             | $-1$         | most negative | opposite       |
+
+## The Sign Test, and What It Actually Says
+
+"Is the enemy in front of me?" Dot your facing with the displacement to the enemy. Positive means
+yes.
+
+This is the cheapest useful thing in the whole track. **No normalizing, no square root, no
+trigonometry** — lengths cannot change a sign, only a magnitude, so scaling either vector leaves the
+answer alone.
+
+The trap is what "in front" means here. Positive dot means **within 90°**, which is a $180°$ wedge —
+half the entire plane. Something directly at your shoulder passes this test. The build-time check
+counts it: of 360 directions around the guard, the sign test accepts **181 of them**.
+
+If you wanted a narrow cone, you need a threshold, not a sign.
+
+That count should be 180, and the extra one is worth a moment. At exactly $\pm 90°$ the dot product
+comes out as $2.4 \times 10^{-16}$ rather than $0$, because `Math.cos(Math.PI / 2)` is not exactly
+zero. So both perpendicular directions land on the positive side. **Exactly perpendicular is decided
+by rounding**, which is fine here — nothing depends on which way a knife edge falls — but it is worth
+knowing before you write a test that expects a dot product to equal zero.
+
+## A Vision Cone Is One Comparison
+
+Normalize both directions and the lengths drop out of $|a||b|\cos\theta$, leaving the cosine of the
+angle by itself. So compare it against the cosine of the angle you actually want:
+
+$$
+\hat{f} \cdot \hat{t} \ge \cos\phi
+$$
+
+where $\phi$ is the cone's half-angle. **Still no `acos`.** You wanted to know whether an angle is
+small enough, and comparing cosines answers that without ever producing the angle.
+
+One thing about this runs backwards from intuition. Cosine _falls_ as the angle grows, so **a wider
+cone is a smaller threshold**:
+
+| Half-angle | Threshold | Cone is       |
+| ---------: | --------: | :------------ |
+|      $15°$ |     0.966 | very narrow   |
+|      $45°$ |     0.707 | typical guard |
+|      $60°$ |     0.500 | generous      |
+|      $90°$ |     0.000 | the sign test |
+
+The last row is worth noticing: the sign test isn't a different technique, it is this one with the
+cone opened to its widest.
+
+<DemoPanel name="2d-cone" />
+
+Sweep the target's angle with the checkbox left on, and the answer changes exactly where the cone
+edge is. Sweep the distance and nothing changes at all — as it should not, because distance is not
+an angle.
+
+Now uncheck the box.
+
+## Forgetting to Normalize Is the Bug Worth Remembering
+
+With the normalize removed, the code compares the raw dot product against the threshold. That dot
+product is $d\cos\theta$, where $d$ is the distance — so **it grows as the target walks away**.
+
+Hold the angle at $60°$, well outside a $45°$ cone, and watch:
+
+| Distance | Raw dot | Passes $\ge 0.707$? | The honest answer |
+| -------: | ------: | :------------------ | :---------------- |
+|  $1.2$ m |   0.600 | no                  | no                |
+|    $2$ m |   1.000 | **yes**             | no                |
+|    $5$ m |   2.500 | **yes**             | no                |
+|   $12$ m |   6.000 | **yes**             | no                |
+
+The threshold has stopped meaning an angle. Solving $d\cos 60° \ge \cos 45°$ says the false
+positives begin at exactly $\sqrt{2}$ meters, which the check pins to 12 decimal places.
+
+**And it fails in the least helpful direction possible.** Close in it is correct, so it survives
+testing in a corridor. Far away it is wrong, and the further away the target gets the more certain
+the guard becomes that it can see them. A bug that improves under close inspection is the kind that
+reaches players.
+
+The correct version is verified against a genuinely different piece of arithmetic: an `acos`-based
+angle comparison, at **57,600 positions**, with zero disagreements and both answers appearing. Two
+implementations agreeing is worth more than one implementation matching my expectations.
+
+## Projection: The Part That Goes That Way
+
+Same formula, different question. **How far along a direction does this vector reach?**
+
+$$
+\text{along} = \frac{v \cdot d}{|d|}
+$$
+
+And when $d$ is already unit length the division vanishes, so the projection _is_ the dot product.
+That is the main practical reason to keep unit vectors around.
+
+<DemoPanel name="2d-project" />
+
+The green arrow is the part of the vector that goes along the direction. The purple arrow is
+everything left over. Notice two things as you move the sliders:
+
+- **The two parts always add back to the original vector.** Exactly, not approximately.
+- **They are always at a right angle to each other**, which is why their lengths satisfy
+  Pythagoras with the original.
+
+At $90°$ the green arrow disappears: the vector goes nowhere along the direction. Past $90°$ it
+flips and the number goes negative, which is the sign test again, arriving from a different door.
+
+This one split does more work later than anything else in Part 1. Sliding along a wall is throwing
+away the part that goes into the wall and keeping the part that goes along it. Section 5.4 is
+mostly this picture.
+
+:::tip[Why divide by $d \cdot d$]
+The vector projection is usually written
+
+$$
+\text{proj}_d\,v = \frac{v \cdot d}{d \cdot d}\,d
+$$
+
+which looks like a different formula but isn't. Dividing by $|d|$ once gives the length along $d$;
+dividing a second time turns the $d$ on the right into a unit vector. Two divisions by $|d|$ is one
+division by $|d|^2$, and $d \cdot d$ **is** $|d|^2$ — so this form gets you a normalized direction
+without calling `normalize`.
+
+Which means the projection doesn't care how long $d$ is. The check scales it by a million and the
+answer doesn't move.
+:::
+
+## The Angle, and the Clamp That Is Not Optional
+
+If you genuinely need the angle, rearrange the cosine form:
+
+$$
+\theta = \arccos\!\left(\frac{a \cdot b}{|a|\,|b|}\right)
+$$
+
+`Math.acos` is only defined on $[-1, 1]$. Outside that it returns `NaN`. And **rounding will put you
+outside it.**
+
+<DemoPanel name="2d-acos" />
+
+Normalize a direction, dot it with itself, and you get `1.0000000000000002`. That is a legitimate
+floating-point result and an impossible cosine, so `acos` gives up.
+
+How often? Over 200,000 directions swept around a circle, the unclamped version returns `NaN`
+**60,461 times — 30.2%**. This is not an edge case to guard against out of habit. It is the common
+case, and the situation that triggers it most reliably is the most innocent one imaginable: asking
+for the angle between a direction and itself.
+
+So clamp before you call it:
+
+```js
+const cosine = dot(a, b) / (length(a) * length(b));
+return Math.acos(Math.min(1, Math.max(-1, cosine)));
+```
+
+**A `NaN` is worse than a wrong number**, which is why this matters more than the size of the error
+suggests. A wrong angle gives you a visibly odd result you can chase. A `NaN` compares `false`
+against everything — `NaN > 0` and `NaN < 0` are both false — so every guard clause silently lets it
+through, and it spreads to every number it touches.
+
+<CodePanel
+  code={dotSource}
+  lang="ts"
+  file="src/lib/gamedev2d/dot2d.ts"
+  label="The dot product, and the three questions it answers"
+/>
+
+:::note[`acos` cannot tell left from right]
+The angle from `acos` runs from $0°$ to $180°$ and is **never signed**. A target $40°$ to your left
+and one $40°$ to your right give the same answer, which the check confirms is exact rather than
+approximate.
+
+That is fine for a vision cone, which is symmetric anyway. It is not fine for "which way should I
+turn", and no amount of care with `acos` will fix it — the information is not in the dot product.
+Section 2.1 introduces the 2D cross product, which is the number that knows.
+:::
+
+:::note[In an engine]
+Godot's `Vector2.dot()`, plus `angle_to()` which gives a **signed** angle and does the clamping for
+you. If you are reaching for `acos` in Godot, `angle_to()` is almost always what you wanted.
+
+Unity's `Vector2.Dot()`, with `Vector2.Angle()` for the unsigned angle and `Vector2.SignedAngle()`
+for the signed one. Both handle the clamp internally.
+
+`Vector3.Project` and `Vector3.ProjectOnPlane` in Unity are the projection and the leftover part,
+which are the two halves of the split above. Godot spells them `Vector2.project()` and
+`Vector2.slide()`.
+:::
+
+## Where This Shows Up
+
+- **Vision cones and aggro checks**, which are one comparison and no trigonometry.
+- **Facing tests** — is this behind me, is this wall pointing at me, is the door on my side.
+- **Sliding along walls**, which is the split with one part discarded. Section 5.4.
+- **Lighting**, where surface brightness is a dot product of a normal and a light direction.
+- **Section 2.1**, the cross product, which supplies the "which side" the dot product cannot.
+
+:::note[The one thing to take away]
+The dot product is $a_xb_x + a_yb_y$, and it equals $|a||b|\cos\theta$ — so it measures agreement in
+direction without computing an angle. Its sign alone answers "roughly the same way?", which is a
+$180°$ wedge and not a vision cone. For a real cone, normalize both directions and compare against
+$\cos$ of the half-angle, remembering that a wider cone means a smaller threshold. Skip that
+normalize and the test starts passing targets that are further away, which is exactly backwards. And
+if you ever call `acos` on a dot product, clamp it to $[-1, 1]$ first, because rounding pushes it
+outside that range about 30% of the time and hands you a `NaN` that quietly poisons everything
+downstream.
+:::

@@ -1,0 +1,184 @@
+---
+title: Pixels, Coordinates and the Y-Axis
+description: Screen space against world space, why the Y-axis points down on a canvas and what that does to every angle you write, and why a game should not be measured in pixels
+sidebar:
+  order: 1
+  label: "1.1  Pixels, Coordinates and the Y-Axis"
+---
+
+import DemoPanel from "../../../../components/DemoPanel.astro";
+import CodePanel from "../../../../components/CodePanel.astro";
+import screenSource from "../../../../lib/gamedev2d/screen.ts?raw";
+
+## What You'll Learn
+
+Two coordinate systems that disagree about which way is up, and the one line of code that moves
+between them. **Why Y points down** on a screen, what that does to every angle and every "up" you
+write, and the fix that is one minus sign in one place rather than a sign scattered through your
+maths. And why measuring a game in **pixels** quietly breaks it on a different screen.
+
+This is the first Section because it is the single most common source of confusion in 2D, and it has
+no equivalent in 3D. Get it settled once and it stops costing you anything.
+
+## Two Origins, Facing Opposite Ways
+
+Draw a graph in a maths class and the origin goes in the **bottom-left**, with Y counting upward.
+Every piece of trigonometry, every formula, every intuition you have about "up" assumes that.
+
+A canvas puts its origin in the **top-left** and counts Y **downward**. Not to be difficult — it is
+how screens have been drawn since television scanned lines from the top. Every 2D drawing API you
+will meet does the same.
+
+So the same dot has two different addresses, and both are correct.
+
+<DemoPanel name="2d-axes" />
+
+The teal axes at the bottom-left are the world's. The orange axes at the top-left are the canvas's.
+The dot is in one place, and the two labels next to it are two ways of saying where.
+
+Now tick the checkbox. **The slider hasn't changed and neither has its number — the dot moves to the
+other end.** That is the whole problem, in one control: "y = 2" means two different places depending
+on who is speaking.
+
+## The Conversion Is One Subtraction
+
+$$
+x_{\text{screen}} = x_{\text{world}} \cdot s
+\qquad
+y_{\text{screen}} = h - y_{\text{world}} \cdot s
+$$
+
+where $s$ is how many pixels one world unit is worth and $h$ is the canvas height in pixels. The $x$
+line is just a scale. **All of the difficulty is in that subtraction**, and once it is written down
+once you never think about it again.
+
+Going the other way — which every mouse click needs — undoes the two steps in reverse:
+
+$$
+y_{\text{world}} = \frac{h - y_{\text{screen}}}{s}
+$$
+
+The build check sweeps a grid of 3,721 points through both directions and requires them to come back
+where they started, to better than $10^{-12}$. That matters more than it sounds: **a flipped sign
+still draws a dot in a perfectly believable place.** It is only wrong by being upside down, which is
+precisely the bug a picture cannot rule out.
+
+:::tip[Do the maths right-side up, convert once]
+The temptation is to give in and do everything in the canvas's convention. Resist it. Then every
+angle, every sine, every "jump" needs a sign flipped somewhere, and you will spend the rest of the
+project guessing which ones.
+
+Keep your positions, velocities and angles in world units with Y up. Convert **at the moment you
+draw**, and nowhere else. One function, one minus sign, one place to be wrong.
+:::
+
+## What It Does to "Up"
+
+Here is the consequence that catches everyone at least once:
+
+$$
+\text{on a canvas, up is } (0, -1)
+$$
+
+To move something up the screen you **subtract** from Y. So a jump is `y -= speed` and gravity is
+`y += speed` — both of which read backwards to anyone who has done any physics, and both of which
+are correct if you are working in screen coordinates.
+
+Which is the argument for not working in screen coordinates.
+
+## What It Does to Every Angle
+
+The flip does something less obvious and more annoying: it reverses the direction of rotation.
+
+Trigonometry measures angles **counter-clockwise** from the positive X axis. That is what the unit
+circle means, and it is where $\cos$ and $\sin$ come from. Flip the Y axis and that same positive
+angle sweeps **clockwise**.
+
+<DemoPanel name="2d-spin" />
+
+Both arrows are being handed the identical angle. The teal one has its Y negated at the drawing step;
+the red one does not. Sweep the slider and they part company immediately.
+
+$$
+\theta_{\text{screen}} = -\,\theta_{\text{world}}
+$$
+
+This is why `ctx.rotate(0.5)` seems to turn the "wrong" way compared to the unit circle. It isn't
+wrong — it is measuring in a system where Y grows downward, and being perfectly consistent about it.
+
+**The fix is the same fix.** Compute the direction in world coordinates, where
+$(\cos\theta, \sin\theta)$ means what you expect, and negate the Y when you draw. The check verifies
+that a positive angle points up in the world **and** lands higher on the canvas once converted, which
+is the pair of facts that has to hold together.
+
+## Do Not Measure Your Game in Pixels
+
+The second half of this Section, and the half that shows up later as "the game plays differently on
+my laptop".
+
+Say a character moves 5 pixels a step. On a 320-pixel-wide canvas that is a substantial stride. On a
+1920-pixel-wide one it is a twitch. Same code, same number, different game.
+
+<DemoPanel name="2d-resolution" />
+
+Read the first three rows: one world point, three canvases, three completely different pixel
+positions — and **identical percentages**. Then the next three: the same 5 pixels is **exactly six
+times further** on the 320-wide canvas than on the 1920-wide one.
+
+So do not store pixels. Decide how much **world** fits across the screen — "16 units wide" — and
+derive the pixel scale from the canvas:
+
+$$
+s = \frac{\text{canvas width in pixels}}{\text{units across}}
+$$
+
+Everything in the game is then measured in units. A speed of 6 units per second, a jump 3 units high,
+a platform 4 units wide. Resize the window, run it on a phone, and none of those numbers need to
+change. Only $s$ does, and only at the point of drawing.
+
+**The vertical extent follows rather than being chosen.** Sixteen units across a 16:9 canvas is nine
+units down — the check pins that. It also pins the honest caveat: the percentages only match across
+canvases whose **shape** matches. Change the aspect ratio and a squarer canvas shows more world
+vertically, which is a real decision to make about your game rather than a bug.
+
+<CodePanel
+  code={screenSource}
+  lang="ts"
+  file="src/lib/gamedev2d/screen.ts"
+  label="Screen space, world space, and the conversion between them"
+/>
+
+:::note[In an engine]
+Godot puts the 2D origin at the top-left with Y down, same as a canvas, and gives you `Camera2D` plus
+a project-wide viewport size so you can work in world units. `Node2D.to_local()` and `to_global()`
+are the conversion, and `get_global_mouse_position()` hands you a click already in world coordinates.
+
+Unity's 2D world has Y **up**, which spares you the flip inside the engine — but its screen-space UI
+and `Input.mousePosition` count from the **bottom-left**, while most other systems count from the
+top, so the flip reappears at the boundary. `Camera.ScreenToWorldPoint` is the conversion, and
+`orthographicSize` sets how much world fits vertically.
+
+The pattern holds either way: whatever the engine's convention, pick one for your own maths and
+convert at the edges.
+:::
+
+## Where This Shows Up
+
+- **Every sprite you draw**, which is a world position converted once.
+- **Every mouse click**, which is a pixel converted the other way before it can mean anything.
+- **Anything that jumps**, where the sign of gravity depends entirely on which convention you chose.
+- **Anything that aims or rotates**, where a positive angle turns one way in your maths and the other
+  on screen.
+- **Supporting more than one screen size**, which is free if you work in units and a rewrite if you
+  work in pixels.
+- **Section 1.2**, which starts using these coordinates to talk about places and displacements.
+
+:::note[The one thing to take away]
+A canvas counts Y downward from the top-left; your maths counts it upward from the bottom-left. Both
+are right, and the conversion is one subtraction, $y_{\text{screen}} = h - y_{\text{world}} \cdot s$.
+Do everything in world units with Y up and convert only when you draw, because the alternative is a
+minus sign scattered through every formula you write. Remember that the flip also reverses rotation,
+so a positive angle turns counter-clockwise in the maths and clockwise on the canvas. And measure
+your world in units rather than pixels: 5 pixels is six times further on a small screen than a large
+one, while 0.1 units is 0.1 units everywhere.
+:::
