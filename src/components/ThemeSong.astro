@@ -1,0 +1,322 @@
+---
+/**
+ * The MBU alma mater, as an opt-in header toggle.
+ *
+ * Off on every page load, always. Nothing about playback is persisted, because a site that starts
+ * playing music because of something you did last week is a site people close. Only the volume is
+ * remembered.
+ *
+ * The audio element is created in JavaScript and deliberately kept **out of the DOM**. Starlight's view
+ * transitions replace `document.body` on navigation, which would destroy an in-markup `<audio>` and cut
+ * the song off mid-verse every time a link is clicked. An off-DOM object held on `window` survives, so
+ * the buttons on each new page re-bind to the player that is already going.
+ */
+interface Props {
+  /** `mobile` sits in the compact icon row; `desktop` sits in the nav group. */
+  variant?: "desktop" | "mobile";
+}
+const { variant = "desktop" } = Astro.props;
+---
+
+<div class="theme-song" data-theme-song data-variant={variant} hidden>
+  <button
+    type="button"
+    class="song-btn"
+    aria-pressed="false"
+    aria-label="Play the MBU alma mater"
+    title="MBU alma mater"
+  >
+    <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+      <path
+        fill="currentColor"
+        d="M12 3v10.55A4 4 0 1 0 14 17V7h4V3h-6zm0 14a2 2 0 1 1-2-2 2 2 0 0 1 2 2z"
+      ></path>
+    </svg>
+  </button>
+  <div class="song-panel" hidden>
+    <label class="song-label">
+      <span>Volume</span>
+      <input
+        type="range"
+        min="0"
+        max="100"
+        step="5"
+        value="35"
+        aria-label="Alma mater volume"
+      />
+      <output>35%</output>
+    </label>
+  </div>
+</div>
+
+<script>
+  const SRC = "/moms-basement-university.mp3";
+  const VOLUME_KEY = "mbu-theme-song-volume";
+  const DEFAULT_VOLUME = 0.35;
+
+  type SongWindow = Window & { __mbuSong?: HTMLAudioElement };
+
+  /**
+   * Whether the volume panel is showing, which is **not** the same as whether the song is playing.
+   *
+   * Clicking away dismisses the panel and leaves the music alone, so this has to be tracked separately.
+   * It is deliberately not persisted: a fresh page starts with the panel closed even if the song is
+   * still going, because a control that reappears on every navigation is clutter.
+   */
+  let panelOpen = false;
+  let documentWired = false;
+
+  function readVolume(): number {
+    try {
+      const raw = localStorage.getItem(VOLUME_KEY);
+      if (raw === null) return DEFAULT_VOLUME;
+      const value = Number(raw);
+      return Number.isFinite(value) && value >= 0 && value <= 1
+        ? value
+        : DEFAULT_VOLUME;
+    } catch {
+      // Private browsing can throw on localStorage. A missing preference is not an error.
+      return DEFAULT_VOLUME;
+    }
+  }
+
+  function saveVolume(value: number): void {
+    try {
+      localStorage.setItem(VOLUME_KEY, String(value));
+    } catch {
+      /* nothing to do; the volume just will not persist */
+    }
+  }
+
+  /**
+   * The one player, created on demand and kept off the DOM so a page swap cannot destroy it.
+   *
+   * `preload` is set before `src`, so nothing is fetched until someone actually presses play. The file
+   * is 3.6 MB, and a reader who never wants the song should never pay for it.
+   */
+  function getAudio(): HTMLAudioElement {
+    const scope = window as SongWindow;
+    if (!scope.__mbuSong) {
+      const audio = document.createElement("audio");
+      audio.preload = "none";
+      audio.src = SRC;
+      audio.volume = readVolume();
+      audio.addEventListener("play", sync);
+      audio.addEventListener("pause", sync);
+      // Reaching the end is the song stopping on its own, so it returns to the resting state too.
+      audio.addEventListener("ended", () => {
+        panelOpen = false;
+        sync();
+      });
+      audio.addEventListener("volumechange", sync);
+      audio.addEventListener("playing", sync);
+      audio.addEventListener("waiting", sync);
+      audio.addEventListener("error", sync);
+      scope.__mbuSong = audio;
+    }
+    return scope.__mbuSong;
+  }
+
+  /**
+   * Push the player's state onto every control on the page.
+   *
+   * There are two instances - one for the desktop nav, one for the mobile icon row - and only one is
+   * visible at a time, but both are kept in step so switching viewport size cannot show a stale button.
+   */
+  function sync(): void {
+    const scope = window as SongWindow;
+    const audio = scope.__mbuSong;
+    const playing = audio !== undefined && !audio.paused && !audio.ended;
+    const loading =
+      playing && audio !== undefined && audio.readyState < 3;
+    const volume = audio === undefined ? readVolume() : audio.volume;
+
+    document.querySelectorAll<HTMLElement>("[data-theme-song]").forEach((root) => {
+      const button = root.querySelector<HTMLButtonElement>(".song-btn");
+      const panel = root.querySelector<HTMLElement>(".song-panel");
+      const range = root.querySelector<HTMLInputElement>("input[type='range']");
+      const readout = root.querySelector("output");
+      if (!button || !panel || !range || !readout) return;
+
+      button.setAttribute("aria-pressed", String(playing));
+      button.classList.toggle("is-playing", playing);
+      button.classList.toggle("is-loading", loading);
+      button.setAttribute(
+        "aria-label",
+        playing ? "Stop the MBU alma mater" : "Play the MBU alma mater",
+      );
+      button.title = loading
+        ? "Loading\u2026"
+        : playing
+          ? "Stop the MBU alma mater"
+          : "MBU alma mater";
+
+      // Its own state: the panel opens with the music but can be dismissed while the song plays on.
+      panel.hidden = !panelOpen;
+
+      const percent = Math.round(volume * 100);
+      if (document.activeElement !== range) range.value = String(percent);
+      readout.textContent = `${percent}%`;
+    });
+  }
+
+  /** Dismiss the volume panel and leave the music exactly as it was. */
+  function closePanel(): void {
+    if (!panelOpen) return;
+    panelOpen = false;
+    sync();
+  }
+
+  /**
+   * The note button: start the song and show the volume, or stop it and put everything back.
+   *
+   * Pressing it always toggles the music, whether or not the panel happens to be open, so the control
+   * returns to its resting state in one press from wherever it was.
+   */
+  async function toggle(): Promise<void> {
+    const audio = getAudio();
+    if (audio.paused || audio.ended) {
+      audio.currentTime = 0;
+      try {
+        await audio.play();
+        panelOpen = true;
+      } catch {
+        // A blocked or failed play must not leave the button claiming to be on.
+        audio.pause();
+        panelOpen = false;
+      }
+    } else {
+      audio.pause();
+      panelOpen = false;
+    }
+    sync();
+  }
+
+  /**
+   * Close the panel on any interaction outside the control, and on Escape.
+   *
+   * Registered on the document once for the whole session rather than per page, since the listeners
+   * query the DOM fresh each time and a page swap would otherwise stack duplicates. `pointerdown`
+   * covers mouse and touch, and `focusin` covers tabbing away with a keyboard.
+   */
+  function wireDocument(): void {
+    if (documentWired) return;
+    documentWired = true;
+
+    const isOutside = (target: EventTarget | null) =>
+      !(target instanceof Node) ||
+      !(target as Element).closest?.("[data-theme-song]");
+
+    document.addEventListener("pointerdown", (event) => {
+      if (isOutside(event.target)) closePanel();
+    });
+    document.addEventListener("focusin", (event) => {
+      if (isOutside(event.target)) closePanel();
+    });
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") closePanel();
+    });
+  }
+
+  function wire(): void {
+    wireDocument();
+    // A new page starts with the panel closed, even if the song is still playing from the last one.
+    panelOpen = false;
+    document.querySelectorAll<HTMLElement>("[data-theme-song]").forEach((root) => {
+      // The button does nothing without script, so it stays hidden until script arrives.
+      root.hidden = false;
+      if (root.dataset.wired === "true") return;
+      root.dataset.wired = "true";
+
+      const button = root.querySelector<HTMLButtonElement>(".song-btn");
+      const range = root.querySelector<HTMLInputElement>("input[type='range']");
+      if (!button || !range) return;
+
+      button.addEventListener("click", () => {
+        void toggle();
+      });
+      range.addEventListener("input", () => {
+        const value = Math.min(Math.max(Number(range.value) / 100, 0), 1);
+        getAudio().volume = value;
+        saveVolume(value);
+        sync();
+      });
+    });
+    sync();
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", wire);
+  } else {
+    wire();
+  }
+  // A page swap replaces the buttons but not the player, so re-bind and re-sync rather than restart.
+  document.addEventListener("astro:page-load", wire);
+</script>
+
+<style>
+  .theme-song {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .song-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.3rem;
+    background: none;
+    border: none;
+    border-radius: 0.25rem;
+    color: var(--sl-color-gray-2);
+    cursor: pointer;
+    opacity: 0.7;
+    transition:
+      opacity 0.15s,
+      color 0.15s;
+  }
+  .song-btn:hover,
+  .song-btn:focus-visible {
+    opacity: 1;
+  }
+  .song-btn.is-playing {
+    color: var(--sl-color-text-accent);
+    opacity: 1;
+  }
+  .song-btn.is-loading {
+    opacity: 0.5;
+  }
+
+  .song-panel {
+    position: absolute;
+    top: calc(100% + 0.5rem);
+    right: 0;
+    z-index: 200;
+    padding: 0.5rem 0.7rem;
+    background: var(--sl-color-bg-nav);
+    border: 1px solid var(--sl-color-gray-5);
+    border-radius: 0.4rem;
+    box-shadow: 0 4px 14px rgb(0 0 0 / 25%);
+  }
+
+  .song-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.75rem;
+    color: var(--sl-color-gray-2);
+    white-space: nowrap;
+  }
+
+  .song-label input[type="range"] {
+    width: 6.5rem;
+    accent-color: var(--sl-color-text-accent);
+  }
+
+  .song-label output {
+    min-width: 2.5rem;
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+  }
+</style>

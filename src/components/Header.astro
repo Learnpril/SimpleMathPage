@@ -6,6 +6,7 @@ import Search from 'virtual:starlight/components/Search';
 import SiteTitle from 'virtual:starlight/components/SiteTitle';
 import SocialIcons from 'virtual:starlight/components/SocialIcons';
 import ThemeSelect from 'virtual:starlight/components/ThemeSelect';
+import ThemeSong from './ThemeSong.astro';
 
 /**
  * Render the `Search` component if Pagefind is enabled or the default search component has been overridden.
@@ -36,10 +37,12 @@ const shouldRenderSearch =
 		<div class="sl-flex social-icons">
 			<SocialIcons />
 		</div>
+		<ThemeSong variant="desktop" />
 		<ThemeSelect />
 		<LanguageSelect />
 	</div>
 	<div class="mobile-header-icons print:hidden">
+		<ThemeSong variant="mobile" />
 		<a href="/progress/" class="mobile-header-icon" aria-label="Progress" data-mobile-progress>
 			<svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M3 13h2v8H3zm4-4h2v12H7zm4-4h2v16h-2zm4 8h2v8h-2zm4-4h2v12h-2z"/></svg>
 		</a>
