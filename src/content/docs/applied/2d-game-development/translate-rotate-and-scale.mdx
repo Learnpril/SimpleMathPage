@@ -1,0 +1,227 @@
+---
+title: Translate, Rotate and Scale
+description: The three operations packaged as one 3x3 matrix, why the product reads right to left, what the third coordinate is for, and why transform order only bites once a scale becomes uneven
+sidebar:
+  order: 8
+  label: "3.1  Translate, Rotate and Scale"
+---
+
+import DemoPanel from "../../../../components/DemoPanel.astro";
+import CodePanel from "../../../../components/CodePanel.astro";
+import matrixSource from "../../../../lib/gamedev2d/matrix2d.ts?raw";
+
+## What You'll Learn
+
+Nothing new, at first. You can already translate a point, rotate one, and scale one. This Section puts
+those three in a single box so they can be **combined** — which is what makes a sprite on a turret on a
+tank possible, and what makes "why is my sprite in the wrong place" a question with one answer instead
+of five.
+
+Then the two things that go wrong: the order you apply them in, and forgetting that a matrix should not
+move a direction the way it moves a place.
+
+## Three Things You Have Already Done
+
+| Operation     | What it is                        | Where it came from |
+| :------------ | :-------------------------------- | :----------------- |
+| **translate** | point plus displacement           | Section 1.2        |
+| **rotate**    | $x\cos\theta - y\sin\theta$, etc. | Section 2.3        |
+| **scale**     | multiply each component           | new, and trivial   |
+
+Applied one at a time, in order, these are three lines of code and no matrix is needed. So the matrix
+has to earn its place, and it earns it in exactly two ways.
+
+**One transform instead of three.** Compose once, then apply the result to every corner of a sprite, or
+every tile in a chunk, or every particle. A composition costs a handful of multiplications and pays for
+itself immediately.
+
+**Composition becomes multiplication.** A turret's transform relative to its tank, times the tank's
+transform relative to the world, is the turret's transform relative to the world. That single sentence
+is the whole of Section 3.2, and it is only available because the three operations share a shape.
+
+## Why $3 \times 3$ and Not $2 \times 2$
+
+Rotation and scale are both multiplications, so a $2 \times 2$ matrix holds them comfortably.
+Translation is an **addition**, and no $2 \times 2$ matrix can add a constant — put $(0,0)$ in and any
+matrix gives $(0,0)$ back.
+
+The fix is to add a coordinate. Write a point as $(x, y, 1)$, and the extra $1$ has something to
+multiply against:
+
+$$
+\begin{bmatrix} a & b & t_x \\ c & d & t_y \\ 0 & 0 & 1 \end{bmatrix}
+\begin{bmatrix} x \\ y \\ 1 \end{bmatrix}
+=
+\begin{bmatrix} ax + by + t_x \\ cx + dy + t_y \\ 1 \end{bmatrix}
+$$
+
+That is all **homogeneous coordinates** are at this stage: a third coordinate carried along so that
+translation fits in the same box as the other two. It is worth meeting here, where the matrix is small
+enough to read every entry, rather than for the first time in a $4 \times 4$ where the same idea is
+buried in sixteen numbers.
+
+The bottom row stays $0\;0\;1$ for everything in this Section, and the build checks that it does for
+every matrix built here. Section 3.3 is where it finally does something.
+
+## Conventions, Stated Once
+
+Half of all matrix confusion is two sources disagreeing without saying so. This module makes these
+choices and keeps them:
+
+| Question                 | This module                    | The other convention |
+| :----------------------- | :----------------------------- | :------------------- |
+| points are               | **columns**                    | rows                 |
+| a point goes on the      | **right**: $p' = Mp$           | left: $p' = pM$      |
+| translation lives in the | **right-hand column**          | bottom row           |
+| a product reads          | **right to left**              | left to right        |
+| storage                  | **row-major**, a row at a time | column-major         |
+
+The consequences are worth spelling out, because they are what you actually trip over. In $T R S$ the
+**scale happens first** and the translation last, because $S$ is nearest the point. Reading a product
+left to right is the opposite of the order things happen in, which never stops feeling backwards and is
+forced by putting the point on the right.
+
+If you use the row-vector convention instead, every product in this module reverses and every matrix
+transposes. Neither is more correct; mixing them silently is what hurts. Sections 3.2 and 3.3 refer
+back to this table rather than repeating it.
+
+## The Columns Are Where the Axes Land
+
+This is the one idea that turns a matrix from nine arbitrary numbers into something you can read.
+
+$$
+(1, 0) \longmapsto \text{column 1} \qquad (0, 1) \longmapsto \text{column 2} \qquad
+\text{column 3} = \text{the translation}
+$$
+
+Which is Section 2.3's observation again: a transform moves the axes and lets the point ride along, with
+the point's own components as the weights. A rotation matrix is not a formula to memorise — it is
+$(\cos\theta, \sin\theta)$ and its quarter turn, written side by side.
+
+<DemoPanel name="2d-affine" />
+
+Move one slider at a time and watch which cells respond. The rotation slider stirs all four cells of the
+top-left block; the scale sliders each own a diagonal entry; translate x moves one number in the
+right-hand column and nothing else. The two arrows are the first two columns, drawn.
+
+That the matrix and Section 2.3's `rotate` agree is checked rather than claimed, at every degree from
+$-360°$ to $360°$ across four different vectors.
+
+## The Determinant Is an Area, and a Warning
+
+The top-left block has a determinant, $ad - bc$, and Section 2.1 already told you what that number
+means: it is the **cross product of the two columns**, so it is the area of the parallelogram the
+transformed axes span.
+
+| Transform             | Determinant | Meaning                      |
+| :-------------------- | ----------: | :--------------------------- |
+| rotation              |         $1$ | turning does not change area |
+| pure translation      |         $1$ | nor does moving              |
+| scale by $2$ and $3$  |         $6$ | six times the area           |
+| scale by $-1$ and $1$ |        $-1$ | **mirrored**, same area      |
+
+The negative case is the useful one. A sprite that comes out backwards, a polygon whose normals point
+inward, a shape that suddenly fails a winding test — check the determinant's sign before anything else.
+
+There is an exact identity behind this, and it is checked across eight different matrices: the
+**signed** polygon area from Section 2.1 is multiplied by the determinant, sign included. So a negative
+determinant is not merely associated with a flipped winding; it _is_ one.
+
+## The Third Coordinate Is the Type Tag Section 1.2 Wanted
+
+Section 1.2 made a distinction and then admitted the type checker could not enforce it: a place and a
+displacement are both two numbers, so nothing stops you passing one where the other belongs.
+
+Homogeneous coordinates enforce it. A place is $(x, y, 1)$ and a displacement is $(x, y, 0)$, and that
+third number decides whether translation reaches the thing:
+
+<DemoPanel name="2d-homogeneous" />
+
+Rotation and scale act on both, because turning the world really does turn your directions. Translation
+acts only on places, because moving the world leaves "four metres east" four metres east.
+
+The fourth row of that panel is the reason this is a fact rather than a rule to remember. Transforming a
+displacement has to equal transforming two places and subtracting them — that is what a displacement
+_is_ — and the $w = 0$ arithmetic is exactly what makes those agree. The build sweeps that identity over
+six matrices, three base points and three displacements.
+
+:::caution[The bug this prevents]
+Translating a normal, a velocity or a surface direction along with its owner. Nothing errors. At the
+origin it is even correct, so it survives being tested — and the further your object is from the origin,
+the more wrong it gets. Section 2.3's forgotten translate had the same shape, and so will Section 3.2's
+local-to-world conversion. The pattern is worth naming: **a bug that is exactly right at the origin is
+a bug that ships.**
+:::
+
+## Order Matters, and Only Sometimes
+
+$T R S$ and $S R T$ are different transforms. Not subtly — the sprite lands somewhere else.
+
+<DemoPanel name="2d-orders" />
+
+The left panel is always $T \cdot R \cdot S$, the order nearly every engine uses. Click through the six
+buttons and compare. At the panel's default settings all six land somewhere different, and the build
+asserts that none of the other five matches the standard.
+
+Now set the two scale factors equal and click through again. Because a **uniform** scale commutes with a
+rotation, several of the six collapse together:
+
+| Settings                  | Distinct results | What collapses                         |
+| :------------------------ | ---------------: | :------------------------------------- |
+| all three doing something |            **6** | nothing                                |
+| uniform scale             |            **4** | $TRS = TSR$ and $RST = SRT$            |
+| no translation            |            **2** | only "which of $R$ and $S$ went first" |
+| no rotation               |            **2** | only "was the translation scaled"      |
+| translation alone         |            **1** | nothing is left to order               |
+
+Every one of those counts is asserted, and so are the specific groupings — including that a uniform
+scale does _not_ collapse $R T S$ into $S T R$, because those two are the orders where a scale gets
+applied to a translation.
+
+**That middle row is why transform-order bugs reach players.** Uniform scale is the common case, and
+with it two of the wrong orders are indistinguishable from the right one. The code looks fine for as
+long as nobody sets a non-uniform scale. Then an artist squashes one sprite and a bug appears in code
+that has not been touched in months.
+
+<CodePanel
+  code={matrixSource}
+  lang="ts"
+  file="src/lib/gamedev2d/matrix2d.ts"
+  label="Three transforms, one shape, and the composition rule"
+/>
+
+:::note[In an engine]
+Unity's helper is called `Matrix4x4.TRS(position, rotation, scale)` — the name states the order, and it
+is the order above. A `Transform`'s `localScale`, `localRotation` and `localPosition` compose the same
+way.
+
+Godot's `Transform2D` stores exactly the interesting part of the matrix above: two basis columns, `x`
+and `y`, plus an `origin` for the translation. The bottom row is not stored at all, because it is always
+$0\;0\;1$ — which is a practical confirmation that ignoring it until Section 3.3 costs nothing.
+`Transform2D` also multiplies with the same right-to-left meaning, so `parent * child` is a child
+transform expressed in the parent's space.
+
+Both engines expose the determinant's consequence rather than the determinant: Godot's
+`Transform2D.determinant()` is there explicitly, and a negative scale on one axis in either engine is
+the mirroring case above.
+:::
+
+## Where This Shows Up
+
+- **Every sprite that is drawn**, whether or not you build the matrix yourself.
+- **Parent and child hierarchies**, where composition is multiplication. Section 3.2.
+- **Cameras**, which are this matrix inverted. Section 3.3.
+- **Normals and velocities**, which need the $w = 0$ rule to survive being transformed.
+- **Mirrored sprites and inverted polygons**, diagnosed by the determinant's sign.
+- **Section 5.3's separating axis test**, which needs a polygon's transformed axes — the columns above.
+
+:::note[The one thing to take away]
+A $3 \times 3$ matrix holds translation, rotation and scale in one object, and it needs the third row and
+column because translation is an addition rather than a multiplication. Read its **columns**: the first
+two are where the axes land, the third is the translation. Its determinant is the area factor, and a
+negative one means the shape was mirrored. A place carries a third coordinate of $1$ so translation
+reaches it, a displacement carries $0$ so it does not — which is Section 1.2's distinction finally
+enforced by arithmetic. And with points as columns on the right, a product applies right to left, so
+$TRS$ scales first; get that order wrong and it will look correct for as long as every scale stays
+uniform.
+:::

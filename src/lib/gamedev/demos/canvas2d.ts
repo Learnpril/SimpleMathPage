@@ -14,6 +14,21 @@
 const DARK_BG = "#0d1117";
 const LIGHT_BG = "#f8f9fa";
 
+/**
+ * The drawing space every 2D scene lays itself out in, whatever the screen is.
+ *
+ * This used to be the container's measured width, which quietly broke every scene on a phone. Some
+ * of them position things against a fixed view - `axes-shared.ts` declares a 620 by 340 canvas and
+ * maps world units into it - and others use a fixed pixels-per-unit. Hand either of those a 540
+ * pixel canvas and the layout is unchanged while the canvas is smaller, so the right-hand side is
+ * simply not drawn and the labels crowd into each other.
+ *
+ * So the drawing space is now **constant** and the canvas is scaled by CSS to fit its container.
+ * Geometry is identical at every width, nothing can fall off an edge, and text shrinks with the
+ * picture rather than growing relative to it. A scene never has to think about screen size.
+ */
+export const REFERENCE_WIDTH = 620;
+
 export type Canvas2D = {
   ctx: CanvasRenderingContext2D;
   canvas: HTMLCanvasElement;
@@ -26,17 +41,21 @@ export type Canvas2D = {
 };
 
 export function makeCanvas2D(el: HTMLElement, height = 300): Canvas2D {
-  const width = Math.min(el.clientWidth || 620, 620);
+  const width = REFERENCE_WIDTH;
   const isDark = document.documentElement.dataset.theme !== "light";
 
   const canvas = document.createElement("canvas");
   const ratio = Math.min(window.devicePixelRatio || 1, 2);
   canvas.width = Math.round(width * ratio);
   canvas.height = Math.round(height * ratio);
-  canvas.style.width = `${width}px`;
-  canvas.style.height = `${height}px`;
   canvas.style.display = "block";
+  /* Ask for the full drawing width but never insist on it. `height: auto` is what makes a narrow
+     container scale the picture down instead of squashing it: with a fixed pixel height and a
+     capped width, the same drawing was being crushed horizontally. The backing store is twice
+     the size on a high-DPI screen, which covers the sharpness lost when CSS scales it down. */
+  canvas.style.width = `${width}px`;
   canvas.style.maxWidth = "100%";
+  canvas.style.height = "auto";
   el.appendChild(canvas);
 
   const ctx = canvas.getContext("2d")!;
@@ -165,15 +184,36 @@ export function addDragTargets(
 ): () => void {
   let held: number | null = null;
 
+  /**
+   * Pointer position in the scene's **drawing space**, not in displayed pixels.
+   *
+   * The two are the same only at full width. Once CSS scales the canvas down to fit a phone, a
+   * pointer at the right-hand edge reports about 380 where the scene is thinking in 620, so a drag
+   * would land short of the finger by the ratio between them. Dividing by that ratio is the whole
+   * correction, and it is a no-op on a desktop.
+   */
+  /** How many drawing-space pixels one displayed pixel is worth. 1 at full width. */
+  const drawingScale = () => {
+    const box = canvas.getBoundingClientRect();
+    const drawn = parseFloat(canvas.style.width) || box.width;
+    return box.width > 0 ? drawn / box.width : 1;
+  };
+
   const positionOf = (event: PointerEvent) => {
     const box = canvas.getBoundingClientRect();
-    return { x: event.clientX - box.left, y: event.clientY - box.top };
+    const k = drawingScale();
+    return {
+      x: (event.clientX - box.left) * k,
+      y: (event.clientY - box.top) * k,
+    };
   };
 
   const down = (event: PointerEvent) => {
     const at = positionOf(event);
     let best: number | null = null;
-    let bestDistance = grabRadius;
+    /* Scaled with the canvas so the grab target stays the same size under a finger. Left in
+       drawing-space units it would shrink on exactly the devices with the least precise pointer. */
+    let bestDistance = grabRadius * drawingScale();
     handles().forEach((h, i) => {
       const d = Math.hypot(h.x - at.x, h.y - at.y);
       if (d <= bestDistance) {

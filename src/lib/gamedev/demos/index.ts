@@ -31,13 +31,17 @@ import range2d from "./2d/range.ts";
 import acos2d from "./2d/acos.ts";
 import shoelace2d from "./2d/shoelace.ts";
 import atan2d from "./2d/atan.ts";
+import homogeneous2d from "./2d/homogeneous.ts";
+import localworld2d from "./2d/localworld.ts";
 import {
   angleCheck2d,
   crossCheck2d,
   dotCheck2d,
   lengthCheck2d,
+  matrixCheck2d,
   rotateCheck2d,
   screenCheck2d,
+  spaceCheck2d,
   vectorCheck2d,
 } from "./2d/checks2d.ts";
 import dtmath from "./dtmath.ts";
@@ -522,6 +526,36 @@ export const DEMOS: Record<string, DemoEntry> = {
     visual: () => import("./2d/turn.scene.ts"),
     visualFile: "lib/gamedev/demos/2d/turn.scene.ts",
     hint: "Push the steps slider up and count, then uncheck the wrap and push it again.",
+  },
+  "2d-affine": {
+    title: "One sprite under T·R·S, with the matrix that did it printed live",
+    visual: () => import("./2d/affine.scene.ts"),
+    visualFile: "lib/gamedev/demos/2d/affine.scene.ts",
+    hint: "Drag one slider at a time and watch which cells of the matrix move.",
+    check: matrixCheck2d,
+  },
+  "2d-homogeneous": {
+    title: "A place and a displacement through the same matrix",
+    demo: homogeneous2d,
+    file: "lib/gamedev/demos/2d/homogeneous.ts",
+  },
+  "2d-orders": {
+    title: "T·R·S beside the five other orders",
+    visual: () => import("./2d/orders.scene.ts"),
+    visualFile: "lib/gamedev/demos/2d/orders.scene.ts",
+    hint: "Click through the six orders, then set the two scale factors equal and click through again.",
+  },
+  "2d-tank": {
+    title: "A turret on a tank, with both frames drawn",
+    visual: () => import("./2d/tank.scene.ts"),
+    visualFile: "lib/gamedev/demos/2d/tank.scene.ts",
+    hint: "Drive the tank and watch the turret's own numbers stay put, then stretch the hull.",
+    check: spaceCheck2d,
+  },
+  "2d-localworld": {
+    title: "Out to the world, back again, and what shear does on the way",
+    demo: localworld2d,
+    file: "lib/gamedev/demos/2d/localworld.ts",
   },
   "nan-guard": {
     title: "A NaN walks past the check meant to stop it",

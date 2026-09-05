@@ -147,6 +147,18 @@ export default defineConfig({
                     },
                   ],
                 },
+                {
+                  label: "Part 3: Transforms and Cameras",
+                  collapsed: false,
+                  items: [
+                    {
+                      slug: "applied/2d-game-development/translate-rotate-and-scale",
+                    },
+                    {
+                      slug: "applied/2d-game-development/parents-children-and-local-space",
+                    },
+                  ],
+                },
               ],
             },
             {
@@ -338,7 +350,9 @@ export default defineConfig({
                   'the-dot-product':                           [1, 'The Screen and Its Coordinates'],
                   'the-2d-cross-product-and-which-side':       [2, 'Turning and Aiming'],
                   'angles-radians-and-atan2':                  [2, 'Turning and Aiming'],
-                  'rotating-a-point-and-turning-smoothly':     [2, 'Turning and Aiming']
+                  'rotating-a-point-and-turning-smoothly':     [2, 'Turning and Aiming'],
+                  'translate-rotate-and-scale':                [3, 'Transforms and Cameras'],
+                  'parents-children-and-local-space':          [3, 'Transforms and Cameras']
                 },
                 'applied/3d-game-development': {
                   'points-vectors-and-coordinate-conventions': [1, 'Vectors and Spatial Reasoning'],
@@ -407,27 +421,34 @@ export default defineConfig({
           content: `
             document.addEventListener('DOMContentLoaded', function() {
               if (window.innerWidth >= 800) return;
+              /* Grouped by domain and listed Core first, matching the desktop nav's order. A single
+                 flat list put Applied's two modules above Core's eighteen with nothing to say why,
+                 which read as one mixed pile of twenty subjects. */
               var subjects = [
-                {slug:'applied/2d-game-development', label:'2D Game Development', about:'about-2d-game-development'},
-                {slug:'applied/3d-game-development', label:'3D Game Development', about:'about-3d-game-development'},
-                {slug:'arithmetic', label:'Arithmetic', about:'about-arithmetic'},
-                {slug:'pre-algebra', label:'Pre-Algebra', about:'about-pre-algebra'},
-                {slug:'algebra-basics', label:'Algebra Basics', about:'about-algebra-basics'},
-                {slug:'geometry', label:'Geometry', about:'about-geometry'},
-                {slug:'algebra-2', label:'Algebra 2', about:'about-algebra-2'},
-                {slug:'trigonometry', label:'Trigonometry', about:'about-trigonometry'},
-                {slug:'pre-calculus', label:'Pre-Calculus', about:'about-pre-calculus'},
-                {slug:'calculus-1', label:'Calculus 1', about:'about-calculus-1'},
-                {slug:'calculus-2', label:'Calculus 2', about:'about-calculus-2'},
-                {slug:'calculus-3', label:'Calculus 3', about:'about-calculus-3'},
-                {slug:'linear-algebra', label:'Linear Algebra', about:'about-linear-algebra'},
-                {slug:'differential-equations', label:'Differential Equations', about:'about-differential-equations'},
-                {slug:'discrete-mathematics', label:'Discrete Mathematics', about:'about-discrete-mathematics'},
-                {slug:'statistics', label:'Statistics', about:'about-statistics'},
-                {slug:'abstract-algebra', label:'Abstract Algebra', about:'about-abstract-algebra'},
-                {slug:'real-analysis', label:'Real Analysis', about:'about-real-analysis'},
-                {slug:'complex-analysis', label:'Complex Analysis', about:'about-complex-analysis'},
-                {slug:'topology', label:'Topology', about:'about-topology'}
+                {slug:'arithmetic', label:'Arithmetic', about:'about-arithmetic', domain:'core'},
+                {slug:'pre-algebra', label:'Pre-Algebra', about:'about-pre-algebra', domain:'core'},
+                {slug:'algebra-basics', label:'Algebra Basics', about:'about-algebra-basics', domain:'core'},
+                {slug:'geometry', label:'Geometry', about:'about-geometry', domain:'core'},
+                {slug:'algebra-2', label:'Algebra 2', about:'about-algebra-2', domain:'core'},
+                {slug:'trigonometry', label:'Trigonometry', about:'about-trigonometry', domain:'core'},
+                {slug:'pre-calculus', label:'Pre-Calculus', about:'about-pre-calculus', domain:'core'},
+                {slug:'calculus-1', label:'Calculus 1', about:'about-calculus-1', domain:'core'},
+                {slug:'calculus-2', label:'Calculus 2', about:'about-calculus-2', domain:'core'},
+                {slug:'calculus-3', label:'Calculus 3', about:'about-calculus-3', domain:'core'},
+                {slug:'linear-algebra', label:'Linear Algebra', about:'about-linear-algebra', domain:'core'},
+                {slug:'differential-equations', label:'Differential Equations', about:'about-differential-equations', domain:'core'},
+                {slug:'discrete-mathematics', label:'Discrete Mathematics', about:'about-discrete-mathematics', domain:'core'},
+                {slug:'statistics', label:'Statistics', about:'about-statistics', domain:'core'},
+                {slug:'abstract-algebra', label:'Abstract Algebra', about:'about-abstract-algebra', domain:'core'},
+                {slug:'real-analysis', label:'Real Analysis', about:'about-real-analysis', domain:'core'},
+                {slug:'complex-analysis', label:'Complex Analysis', about:'about-complex-analysis', domain:'core'},
+                {slug:'topology', label:'Topology', about:'about-topology', domain:'core'},
+                {slug:'applied/2d-game-development', label:'2D Game Development', about:'about-2d-game-development', domain:'applied'},
+                {slug:'applied/3d-game-development', label:'3D Game Development', about:'about-3d-game-development', domain:'applied'}
+              ];
+              var domains = [
+                {key:'core', label:'Core Mathematics', href:'/core-mathematics/'},
+                {key:'applied', label:'Applied Mathematics', href:'/applied-mathematics/'}
               ];
               var path = window.location.pathname.replace(/^\\//, '').replace(/\\/$/, '');
               var pathParts = path.split('/');
@@ -436,28 +457,32 @@ export default defineConfig({
                 ? pathParts[0] + '/' + pathParts[1]
                 : pathParts[0]) || '';
 
-              /* Scrape lessons from Starlight's sidebar nav */
+              /* Every link for one subject, in sidebar order, each appearing exactly once.
+
+                 This used to walk each <details> group in turn and collect the matching links inside
+                 it. That double-counts anything nested, because querySelectorAll searches all
+                 descendants: an Applied Section sits inside its Part group, which sits inside the
+                 module group, so every Section was collected once per ancestor and the panel listed
+                 the whole module twice. Core subjects autogenerate a single flat group and have no
+                 nesting, which is why only Applied looked wrong.
+
+                 One scan of the sidebar plus a set of hrefs already seen removes the whole class of
+                 problem, however deeply the sidebar nests. Scoped to the sidebar so the prev/next
+                 pagination links in the page body cannot be picked up as chapters. */
               function getLessons(slug) {
+                var scope = document.querySelector('nav.sidebar-content')
+                  || document.querySelector('nav[aria-label="Main"]')
+                  || document.querySelector('nav');
+                if (!scope) return [];
                 var items = [];
-                var groups = document.querySelectorAll('nav.sidebar-content details, nav[aria-label="Main"] details');
-                groups.forEach(function(det) {
-                  var summary = det.querySelector('summary');
-                  if (!summary) return;
-                  var links = det.querySelectorAll('a[href*="/' + slug + '/"]');
-                  links.forEach(function(a) {
-                    var href = a.getAttribute('href');
-                    var text = a.textContent.trim();
-                    if (text && href) items.push({href: href, text: text});
-                  });
+                var seen = {};
+                scope.querySelectorAll('a[href*="/' + slug + '/"]').forEach(function(a) {
+                  var href = a.getAttribute('href');
+                  var text = a.textContent.trim();
+                  if (!href || !text || seen[href]) return;
+                  seen[href] = true;
+                  items.push({href: href, text: text});
                 });
-                /* fallback: scan all sidebar links */
-                if (items.length === 0) {
-                  document.querySelectorAll('nav a[href*="/' + slug + '/"]').forEach(function(a) {
-                    var href = a.getAttribute('href');
-                    var text = a.textContent.trim();
-                    if (text && href) items.push({href: href, text: text});
-                  });
-                }
                 return items;
               }
 
@@ -491,8 +516,66 @@ export default defineConfig({
               panel.appendChild(hubs);
 
               var expandedSlug = null;
+              /* The row for the subject the reader is already inside, if any. */
+              var activeRow = null;
 
-              subjects.forEach(function(s) {
+              /* Build one subject's lesson links, once, by scraping Starlight's sidebar. */
+              function populateLessons(s, lessonList) {
+                if (lessonList.dataset.loaded) return;
+                var lessons = getLessons(s.slug);
+                if (lessons.length === 0) {
+                  var li = document.createElement('a');
+                  li.href = '/' + s.slug + '/' + s.about + '/';
+                  li.className = 'msw-lesson-link';
+                  var ts = document.createElement('span');
+                  ts.className = 'msw-link-text';
+                  ts.textContent = 'Go to ' + s.label;
+                  li.appendChild(ts);
+                  lessonList.appendChild(li);
+                } else {
+                  lessons.forEach(function(l) {
+                    var a = document.createElement('a');
+                    a.href = l.href;
+                    a.className = 'msw-lesson-link';
+                    if (path === l.href.replace(/^\\//, '').replace(/\\/$/, '')) a.classList.add('current');
+                    var textSpan = document.createElement('span');
+                    textSpan.className = 'msw-link-text';
+                    textSpan.textContent = l.text;
+                    a.appendChild(textSpan);
+                    /* Add checkmark if perfect score in localStorage */
+                    var lSlug = l.href.replace(/^\\//, '').replace(/\\/$/, '').split('/').pop();
+                    if (lSlug && localStorage.getItem('mbu-perfect-' + lSlug)) {
+                      var ck = document.createElement('span');
+                      ck.className = 'sidebar-check';
+                      ck.textContent = '\u2705';
+                      ck.title = 'Perfect score!';
+                      a.appendChild(ck);
+                    }
+                    a.addEventListener('click', function() { close(); });
+                    lessonList.appendChild(a);
+                  });
+                }
+                lessonList.dataset.loaded = '1';
+              }
+
+              function collapseAll() {
+                panel.querySelectorAll('.msw-lessons.open').forEach(function(el) { el.classList.remove('open'); });
+                panel.querySelectorAll('.msw-subject-btn.expanded').forEach(function(el) { el.classList.remove('expanded'); });
+              }
+
+              /* Open one subject, collapsing any other. The scroll flag is false during setup, when
+                 the panel is still display:none and scrolling it would do nothing useful.
+                 Note: no backticks in these comments - the whole script is a template literal. */
+              function expandRow(s, btn, lessonList, scroll) {
+                collapseAll();
+                populateLessons(s, lessonList);
+                lessonList.classList.add('open');
+                btn.classList.add('expanded');
+                expandedSlug = s.slug;
+                if (scroll) setTimeout(function() { btn.scrollIntoView({behavior:'smooth', block:'nearest'}); }, 50);
+              }
+
+              function addSubjectRow(s) {
                 var row = document.createElement('div');
                 row.className = 'msw-subject-row';
 
@@ -511,60 +594,36 @@ export default defineConfig({
                     expandedSlug = null;
                     return;
                   }
-                  /* collapse any other open */
-                  panel.querySelectorAll('.msw-lessons.open').forEach(function(el) { el.classList.remove('open'); });
-                  panel.querySelectorAll('.msw-subject-btn.expanded').forEach(function(el) { el.classList.remove('expanded'); });
-
-                  /* populate lessons on first expand */
-                  if (!lessonList.dataset.loaded) {
-                    var lessons = getLessons(s.slug);
-                    if (lessons.length === 0) {
-                      var li = document.createElement('a');
-                      li.href = '/' + s.slug + '/' + s.about + '/';
-                      li.className = 'msw-lesson-link';
-                      var ts = document.createElement('span');
-                      ts.className = 'msw-link-text';
-                      ts.textContent = 'Go to ' + s.label;
-                      li.appendChild(ts);
-                      lessonList.appendChild(li);
-                    } else {
-                      lessons.forEach(function(l) {
-                        var li = document.createElement('a');
-                        li.href = l.href;
-                        li.className = 'msw-lesson-link';
-                        if (path === l.href.replace(/^\\//, '').replace(/\\/$/, '')) li.classList.add('current');
-                        var textSpan = document.createElement('span');
-                        textSpan.className = 'msw-link-text';
-                        textSpan.textContent = l.text;
-                        li.appendChild(textSpan);
-                        /* Add checkmark if perfect score in localStorage */
-                        var lSlug = l.href.replace(/^\\//, '').replace(/\\/$/, '').split('/').pop();
-                        if (lSlug && localStorage.getItem('mbu-perfect-' + lSlug)) {
-                          var ck = document.createElement('span');
-                          ck.className = 'sidebar-check';
-                          ck.textContent = '\u2705';
-                          ck.title = 'Perfect score!';
-                          li.appendChild(ck);
-                        }
-                        li.addEventListener('click', function() { close(); });
-                        lessonList.appendChild(li);
-                      });
-                    }
-                    lessonList.dataset.loaded = '1';
-                  }
-
-                  lessonList.classList.add('open');
-                  btn.classList.add('expanded');
-                  expandedSlug = s.slug;
-
-                  /* scroll the expanded section into view */
-                  setTimeout(function() { btn.scrollIntoView({behavior:'smooth', block:'nearest'}); }, 50);
+                  expandRow(s, btn, lessonList, true);
                 });
 
                 row.appendChild(btn);
                 row.appendChild(lessonList);
                 panel.appendChild(row);
+
+                if (s.slug === currentSection) activeRow = {s: s, btn: btn, list: lessonList};
+              }
+
+              /* One heading per domain, so Core's subjects and Applied's modules read as two lists
+                 rather than one pile. A plain label rather than a link: the hub buttons at the top of
+                 the panel already go to those two pages, and a second identical link here would be
+                 both redundant and ambiguous about which one to press. */
+              domains.forEach(function(d) {
+                var heading = document.createElement('div');
+                heading.className = 'msw-group-heading';
+                heading.textContent = d.label;
+                panel.appendChild(heading);
+
+                subjects.forEach(function(s) {
+                  if (s.domain === d.key) addSubjectRow(s);
+                });
               });
+
+              /* Open the subject the reader is already in. Without this the panel always opened
+                 collapsed, so reaching the next chapter of the subject you are standing in meant
+                 finding that subject in a list of twenty and expanding it again, every time. */
+              if (activeRow) expandRow(activeRow.s, activeRow.btn, activeRow.list, false);
+
               document.body.appendChild(panel);
 
               var fab = document.createElement('button');
@@ -575,6 +634,21 @@ export default defineConfig({
               fab.innerHTML = menuIcon + '<span class="fab-label">Subjects</span>';
               document.body.appendChild(fab);
 
+              /* Scroll the panel so the reader's own chapter is the thing they see first.
+                 The expanded subject may sit well down a list of twenty, so opening at the top
+                 would still cost a scroll to find where you already are. */
+              function revealCurrent() {
+                var target = panel.querySelector('.msw-lesson-link.current')
+                  || panel.querySelector('.msw-subject-btn.active');
+                if (!target) return;
+                setTimeout(function() {
+                  var panelBox = panel.getBoundingClientRect();
+                  var targetBox = target.getBoundingClientRect();
+                  /* Leave a little above it so the subject heading stays in view for context. */
+                  panel.scrollTop += (targetBox.top - panelBox.top) - 90;
+                }, 40);
+              }
+
               var isOpen = false;
               function toggle() {
                 isOpen = !isOpen;
@@ -583,6 +657,7 @@ export default defineConfig({
                 fab.innerHTML = isOpen
                   ? closeIcon + '<span class="fab-label">Close</span>'
                   : menuIcon + '<span class="fab-label">Subjects</span>';
+                if (isOpen) revealCurrent();
               }
               function close() {
                 if (!isOpen) return;

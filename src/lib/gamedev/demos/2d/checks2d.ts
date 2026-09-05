@@ -123,6 +123,52 @@ import {
   transformed,
 } from "./pivot-shared.ts";
 import { START, simulate, stepsToArrive } from "./turn-shared.ts";
+import {
+  apply,
+  applyAll,
+  applyToDirection,
+  compose,
+  determinant,
+  identity,
+  multiply,
+  rotation,
+  sameMatrix,
+  scaling,
+  translation,
+} from "../../../gamedev2d/matrix2d.ts";
+import { inverse, translationOf } from "../../../gamedev2d/matrix2d.ts";
+import {
+  axisLengths,
+  directionToLocal,
+  directionToWorld,
+  isMirrored,
+  isSquare,
+  localUnderNewParent,
+  matrixOf,
+  placed,
+  pointToLocal,
+  pointToWorld,
+  shearOf,
+  worldOf as worldOfChain,
+} from "../../../gamedev2d/spaces2d.ts";
+import {
+  RANGE as TANK_RANGE,
+  extentBound as tankExtent,
+  fittingScale as tankScale,
+  hullShape,
+  turretShape,
+} from "./tank-shared.ts";
+import {
+  ORDERS,
+  RANGE as AFFINE_RANGE,
+  SHAPE as AFFINE_SHAPE,
+  distinctOutcomes,
+  extentBound,
+  fittingScale as fittingScale2d,
+  ordersAgree,
+  partsOf,
+  transformedShape,
+} from "./affine-shared.ts";
 
 const near = (a: number, b: number, tol = 1e-9) => Math.abs(a - b) < tol;
 
@@ -1883,6 +1929,776 @@ export const rotateCheck2d: Demo = () => {
         travelled <= 180 + 1e-9,
         `lerpAngle went the long way at t=${t} from ${from} to ${to}`,
       );
+    }
+  }
+};
+
+/**
+ * Matrices: the three transforms, the order they compose in, and what the third coordinate is for.
+ *
+ * Three rows carry most of the weight. The rotation matrix is compared against Section 2.3's `rotate`
+ * at every angle, so the claim that a matrix is only the same arithmetic in a box is checked rather
+ * than asserted. The `w = 0` rule is checked by an **identity** rather than by a rule - transforming a
+ * displacement must equal transforming two places and subtracting - so it cannot be satisfied by
+ * happening to ignore the right column. And the determinant is checked against Section 2.1's signed
+ * polygon area, including its sign, which is what makes "negative means mirrored" a fact.
+ */
+export const matrixCheck2d: Demo = () => {
+  const same = (a: Point, b: Point, tol = 1e-9) =>
+    Math.abs(a.x - b.x) < tol && Math.abs(a.y - b.y) < tol;
+
+  // ---- The three ingredients -------------------------------------------------------
+
+  assert(
+    sameMatrix(identity(), [1, 0, 0, 0, 1, 0, 0, 0, 1], 0),
+    "the identity should be the identity",
+  );
+  assert(
+    same(apply(identity(), { x: 3, y: -7 }), { x: 3, y: -7 }, 1e-15),
+    "and it should leave a point alone",
+  );
+  assert(
+    same(apply(translation(4, 1), { x: 3, y: 2 }), { x: 7, y: 3 }, 1e-15),
+    "translating (3, 2) by (4, 1) should give (7, 3)",
+  );
+  assert(
+    same(apply(scaling(2, 3), { x: 3, y: 2 }), { x: 6, y: 6 }, 1e-15),
+    "scaling should multiply each axis independently",
+  );
+  // The bottom row is what makes these affine, and nothing here should disturb it.
+  for (const m of [
+    identity(),
+    translation(3, -2),
+    rotation(0.7),
+    scaling(1.5, 0.5),
+    compose(translation(1, 2), rotation(0.3), scaling(2, 0.4)),
+  ]) {
+    assert(
+      m[6] === 0 && m[7] === 0 && m[8] === 1,
+      "the bottom row of an affine matrix should stay 0 0 1",
+    );
+  }
+
+  // ---- The rotation matrix is Section 2.3's formula ---------------------------------
+
+  for (let deg = -360; deg <= 360; deg += 1) {
+    const r = toRadians(deg);
+    const m = rotation(r);
+    for (const v of [
+      { x: 1, y: 0 },
+      { x: 0, y: 1 },
+      { x: 2.5, y: -1.25 },
+      { x: -3, y: 4 },
+    ]) {
+      assert(
+        same(apply(m, v), rotate(v, r), 1e-12),
+        `the rotation matrix disagreed with rotate() at ${deg} degrees`,
+      );
+    }
+    // Which means the columns are where the two axes land - the reason it is readable at all.
+    assert(
+      same({ x: m[0], y: m[3] }, applyToDirection(m, { x: 1, y: 0 }), 1e-15) &&
+        same({ x: m[1], y: m[4] }, applyToDirection(m, { x: 0, y: 1 }), 1e-15),
+      `the columns should be the transformed axes, failed at ${deg} degrees`,
+    );
+  }
+
+  // ---- Composition, and which side goes first --------------------------------------
+
+  const T = translation(3, -1);
+  const R = rotation(toRadians(35));
+  const S = scaling(1.8, 0.6);
+  for (const p of [
+    { x: 0, y: 0 },
+    { x: 1.2, y: 1.4 },
+    { x: -2, y: 0.5 },
+    { x: 4, y: -3 },
+  ]) {
+    // The right-hand matrix is applied first. This is the whole of transform order.
+    assert(
+      same(apply(multiply(T, R), p), apply(T, apply(R, p)), 1e-12),
+      "multiply(T, R) should apply R first",
+    );
+    assert(
+      same(apply(compose(T, R, S), p), apply(T, apply(R, apply(S, p))), 1e-12),
+      "compose(T, R, S) should apply S first and T last",
+    );
+  }
+  // Associative but not commutative, and the second half is the one that matters here.
+  assert(
+    sameMatrix(multiply(multiply(T, R), S), multiply(T, multiply(R, S)), 1e-12),
+    "matrix multiplication should be associative",
+  );
+  assert(
+    !sameMatrix(multiply(T, R), multiply(R, T), 1e-6),
+    "translation and rotation should not commute",
+  );
+  assert(
+    !sameMatrix(multiply(S, R), multiply(R, S), 1e-6),
+    "a non-uniform scale and a rotation should not commute",
+  );
+  // Uniform scale is the exception, which is exactly why order bugs hide.
+  const uniform = scaling(1.7, 1.7);
+  assert(
+    sameMatrix(multiply(uniform, R), multiply(R, uniform), 1e-12),
+    "a uniform scale and a rotation do commute",
+  );
+
+  // ---- The third coordinate, checked as an identity ---------------------------------
+
+  let worstDirection = 0;
+  for (const m of [
+    T,
+    R,
+    S,
+    compose(T, R, S),
+    compose(S, R, T),
+    translation(-40, 17),
+  ]) {
+    for (const base of [
+      { x: 0, y: 0 },
+      { x: 3, y: 2 },
+      { x: -9, y: 4.5 },
+    ]) {
+      for (const v of [
+        { x: 1, y: 0 },
+        { x: 0, y: -1 },
+        { x: 2.5, y: 3.5 },
+      ]) {
+        // Transforming a displacement must be transforming two places and subtracting.
+        const byPoints = displacement(
+          apply(m, base),
+          apply(m, movedBy(base, v)),
+        );
+        const direct = applyToDirection(m, v);
+        worstDirection = Math.max(
+          worstDirection,
+          Math.hypot(byPoints.x - direct.x, byPoints.y - direct.y),
+        );
+      }
+    }
+  }
+  assert(
+    worstDirection < 1e-9,
+    `transforming a displacement disagreed with subtracting two transformed places by ${worstDirection}`,
+  );
+  // And a pure translation must leave every displacement completely alone, however large.
+  for (const t of [
+    { x: 1, y: 1 },
+    { x: -250, y: 900 },
+  ]) {
+    assert(
+      same(
+        applyToDirection(translation(t.x, t.y), { x: 3, y: 2 }),
+        { x: 3, y: 2 },
+        1e-15,
+      ),
+      `a translation by ${t.x},${t.y} moved a displacement`,
+    );
+    // Whereas it certainly does move a place, or there would be nothing being distinguished.
+    assert(
+      !same(apply(translation(t.x, t.y), { x: 3, y: 2 }), { x: 3, y: 2 }, 1e-6),
+      "a translation should move a place",
+    );
+  }
+
+  // ---- The determinant, against Section 2.1's signed area --------------------------
+
+  assert(
+    near(determinant(scaling(2, 3)), 6, 1e-15),
+    "a scale by 2 and 3 should have determinant 6",
+  );
+  assert(
+    near(determinant(rotation(1.234)), 1, 1e-12),
+    "a rotation should have determinant 1",
+  );
+  assert(
+    near(determinant(translation(9, -4)), 1, 1e-15),
+    "so should a pure translation",
+  );
+  assert(
+    determinant(scaling(-1, 1)) < 0,
+    "a reflection should have a negative determinant",
+  );
+  const square: Point[] = [
+    { x: 0, y: 0 },
+    { x: 2, y: 0 },
+    { x: 2, y: 1 },
+    { x: 0, y: 1 },
+  ];
+  for (const m of [
+    identity(),
+    T,
+    R,
+    S,
+    compose(T, R, S),
+    scaling(-1, 1),
+    compose(R, scaling(1, -2.5)),
+    scaling(0.5, 0.5),
+  ]) {
+    const det = determinant(m);
+    const before = signedPolygonArea(square);
+    const after = signedPolygonArea(applyAll(m, square));
+    // The signed area scales by the determinant exactly, sign included.
+    assert(
+      near(after / before, det, 1e-9),
+      `the signed area changed by ${after / before} where the determinant said ${det}`,
+    );
+    // So a negative determinant is precisely a reversed winding, which is what "mirrored" means.
+    assert(
+      det < 0 === (windingOf(applyAll(m, square)) !== windingOf(square)),
+      "a negative determinant should be exactly a flipped winding",
+    );
+    // The determinant is the cross product of the two columns, which is where the area comes from.
+    assert(
+      near(cross({ x: m[0], y: m[3] }, { x: m[1], y: m[4] }), det, 1e-12),
+      "the determinant should be the cross product of the two columns",
+    );
+  }
+
+  // ---- The six orders --------------------------------------------------------------
+
+  const nonUniform = {
+    angleDegrees: 30,
+    scaleX: 1.4,
+    scaleY: 0.6,
+    translateX: 1.2,
+  };
+  const uniformParams = {
+    angleDegrees: 30,
+    scaleX: 1.4,
+    scaleY: 1.4,
+    translateX: 1.2,
+  };
+  assert(
+    !ordersAgree("TRS", "SRT", nonUniform),
+    "T·R·S and S·R·T should differ under a non-uniform scale",
+  );
+  // With all three operations doing something, every one of the six lands somewhere different.
+  assert(
+    distinctOutcomes(nonUniform) === 6,
+    `all six orders should differ here, got ${distinctOutcomes(nonUniform)} distinct`,
+  );
+  for (const order of ORDERS) {
+    if (order === "TRS") continue;
+    assert(
+      !ordersAgree("TRS", order, nonUniform),
+      `${order} should differ from T·R·S at these settings`,
+    );
+  }
+
+  // Uniform scale lets rotation and scale commute, collapsing six results into four. That collapse
+  // is the reason transform-order bugs survive: they are invisible until a scale becomes uneven.
+  assert(
+    distinctOutcomes(uniformParams) === 4,
+    `under a uniform scale it should collapse to 4, got ${distinctOutcomes(uniformParams)}`,
+  );
+  assert(
+    ordersAgree("TRS", "TSR", uniformParams) &&
+      ordersAgree("RST", "SRT", uniformParams),
+    "uniform scale should make T·R·S = T·S·R and R·S·T = S·R·T",
+  );
+  // But it does not collapse everything: the two that scale a translation still differ.
+  assert(
+    !ordersAgree("RTS", "STR", uniformParams),
+    "uniform scale should not make R·T·S the same as S·T·R",
+  );
+
+  // Drop the translation and only one question is left - did the scale or the rotation go first.
+  assert(
+    distinctOutcomes({ ...nonUniform, translateX: 0 }) === 2,
+    `with no translation there should be 2 results, got ${distinctOutcomes({ ...nonUniform, translateX: 0 })}`,
+  );
+  // Drop the rotation instead and the question becomes whether the translation was scaled.
+  const noRotation = {
+    angleDegrees: 0,
+    scaleX: 1.4,
+    scaleY: 0.6,
+    translateX: 1.2,
+  };
+  assert(
+    distinctOutcomes(noRotation) === 2,
+    `with no rotation there should be 2 results, got ${distinctOutcomes(noRotation)}`,
+  );
+  assert(
+    ordersAgree("TRS", "RTS", noRotation) &&
+      !ordersAgree("TRS", "SRT", noRotation),
+    "with no rotation the split should be about which side of the scale the translation sits",
+  );
+  // And with only a translation there is nothing left to order at all.
+  assert(
+    distinctOutcomes({
+      angleDegrees: 0,
+      scaleX: 1,
+      scaleY: 1,
+      translateX: 1.2,
+    }) === 1,
+    "a translation on its own has no ordering to get wrong",
+  );
+  // Every order is its own composition, so the shape must match applying the parts by hand.
+  for (const order of ORDERS) {
+    const parts = partsOf(nonUniform);
+    const byHand = order
+      .split("")
+      .reduceRight<
+        Point[]
+      >((points, letter) => points.map((p) => apply(parts[letter as "T"], p)), [...AFFINE_SHAPE]);
+    assert(
+      transformedShape(order, nonUniform).every((p, i) =>
+        same(p, byHand[i], 1e-12),
+      ),
+      `${order} did not match applying its parts one at a time`,
+    );
+  }
+
+  // ---- Everything both scenes draw has to fit on the canvas ------------------------
+
+  const bound = extentBound();
+  let worstReach = 0;
+  for (const order of ORDERS) {
+    for (let a = -180; a <= 180; a += 15) {
+      for (
+        let sx = AFFINE_RANGE.scale.min;
+        sx <= AFFINE_RANGE.scale.max + 1e-9;
+        sx += 0.1
+      ) {
+        for (
+          let sy = AFFINE_RANGE.scale.min;
+          sy <= AFFINE_RANGE.scale.max + 1e-9;
+          sy += 0.1
+        ) {
+          for (
+            let tx = AFFINE_RANGE.translate.min;
+            tx <= AFFINE_RANGE.translate.max + 1e-9;
+            tx += 0.25
+          ) {
+            for (const p of transformedShape(order, {
+              angleDegrees: a,
+              scaleX: sx,
+              scaleY: sy,
+              translateX: tx,
+            })) {
+              const reach = length(p);
+              worstReach = Math.max(worstReach, reach);
+              assert(
+                reach <= bound + 1e-9,
+                `${order} reached ${reach} beyond the bound ${bound}`,
+              );
+            }
+          }
+        }
+      }
+    }
+  }
+  // Loose enough to be safe, tight enough to be worth having.
+  assert(
+    worstReach > bound * 0.6,
+    `the bound ${bound} is loose against the sweep's ${worstReach}`,
+  );
+
+  // The single-panel layout, and the two-panel one, at several widths.
+  for (const [w, h, panels] of [
+    [620, 320, 1],
+    [620, 330, 2],
+    [380, 330, 2],
+    [280, 320, 1],
+  ] as const) {
+    const panelWidth = w / panels;
+    const unit = fittingScale2d(panelWidth / 2, h / 2);
+    assert(unit > 4, `the derived scale collapsed to ${unit} at ${w} by ${h}`);
+    for (const order of ORDERS) {
+      for (let a = -180; a <= 180; a += 30) {
+        for (const p of transformedShape(order, {
+          angleDegrees: a,
+          scaleX: AFFINE_RANGE.scale.max,
+          scaleY: AFFINE_RANGE.scale.max,
+          translateX: AFFINE_RANGE.translate.max,
+        })) {
+          const sx = panelWidth / 2 + p.x * unit;
+          const sy = h / 2 - p.y * unit;
+          assert(
+            sx >= 0 && sx <= panelWidth && sy >= 0 && sy <= h,
+            `a corner landed at ${sx.toFixed(0)},${sy.toFixed(0)} outside a ${panelWidth} by ${h} panel`,
+          );
+        }
+      }
+    }
+  }
+};
+
+/**
+ * Hierarchies: the order of the product, the inverse that undoes it, and shear.
+ *
+ * Three things here need checking rather than describing. The **round trip** through local and world
+ * space, swept over a grid of placements, because an inverse that is slightly wrong still returns a
+ * plausible point. The claim that a child's own numbers **never change** while its world position
+ * does, which is the entire promise of a hierarchy and is easy to break by writing the product the
+ * other way round. And **shear**, which is the one thing a parent can do to a child that neither of
+ * their own placements can express - a square child comes out a parallelogram with no number in the
+ * child reporting it, so the frame's own axes have to be measured.
+ */
+export const spaceCheck2d: Demo = () => {
+  const same = (a: Point, b: Point, tol = 1e-9) =>
+    Math.abs(a.x - b.x) < tol && Math.abs(a.y - b.y) < tol;
+
+  // ---- The inverse ------------------------------------------------------------------
+
+  assert(inverse(identity()) !== null, "the identity is invertible");
+  assert(
+    sameMatrix(inverse(identity())!, identity(), 1e-12),
+    "and it is its own inverse",
+  );
+  // A zero scale collapses the plane, and no matrix can undo that. Returning null says so.
+  assert(inverse(scaling(0, 1)) === null, "a zero x scale is not invertible");
+  assert(inverse(scaling(1, 0)) === null, "nor a zero y scale");
+  assert(
+    inverse(scaling(1e-20, 1e-20)) === null,
+    "nor one that is zero for practical purposes",
+  );
+
+  let worstInverse = 0;
+  for (let deg = -180; deg <= 180; deg += 5) {
+    for (const sx of [0.4, 1, 2.5]) {
+      for (const sy of [0.4, 1, 2.5]) {
+        const m = compose(
+          translation(3.5, -2),
+          rotation(toRadians(deg)),
+          scaling(sx, sy),
+        );
+        const back = inverse(m);
+        assert(back !== null, `should be invertible at ${deg} degrees`);
+        // The defining property, both ways round, since matrices do not commute in general.
+        assert(
+          sameMatrix(multiply(m, back!), identity(), 1e-9) &&
+            sameMatrix(multiply(back!, m), identity(), 1e-9),
+          `the inverse did not cancel at ${deg} degrees, scale ${sx} by ${sy}`,
+        );
+        for (const p of [
+          { x: 0, y: 0 },
+          { x: 1.15, y: 0 },
+          { x: -3, y: 2.5 },
+        ]) {
+          const there = apply(m, p);
+          worstInverse = Math.max(
+            worstInverse,
+            Math.hypot(
+              apply(back!, there).x - p.x,
+              apply(back!, there).y - p.y,
+            ),
+          );
+        }
+        // The translation is inverted through the linear part, not merely negated. Negating it is
+        // the common mistake and is only correct when there is no rotation or scale.
+        if (deg % 180 !== 0 || sx !== 1 || sy !== 1) {
+          assert(
+            !same(
+              translationOf(back!),
+              {
+                x: -translationOf(m).x,
+                y: -translationOf(m).y,
+              },
+              1e-6,
+            ),
+            `negating the translation should not be the inverse at ${deg} degrees`,
+          );
+        }
+      }
+    }
+  }
+  assert(
+    worstInverse < 1e-9,
+    `the local-world round trip drifted by ${worstInverse}`,
+  );
+
+  // ---- The order of the product ------------------------------------------------------
+
+  const hull = placed({ x: 3, y: 1 }, toRadians(90));
+  const turret = placed({ x: 0.25, y: 0 }, 0);
+  const right = worldOfChain([hull, turret]);
+  const wrong = worldOfChain([turret, hull]);
+  // Parent times child puts the mount a quarter turn round from the hull's origin.
+  assert(
+    same(translationOf(right), { x: 3, y: 1.25 }, 1e-9),
+    `the mount should be at (3, 1.25), was at ${translationOf(right).x},${translationOf(right).y}`,
+  );
+  assert(
+    !same(translationOf(right), translationOf(wrong), 1e-6),
+    "the two orders should put the mount in different places",
+  );
+  // And the wrong order is not a small error. Worth pinning, because "close enough" would hide it.
+  assert(
+    Math.hypot(
+      translationOf(right).x - translationOf(wrong).x,
+      translationOf(right).y - translationOf(wrong).y,
+    ) > 0.2,
+    "the wrong order should be badly wrong, not marginally wrong",
+  );
+  // Both orders agree when there is nothing to disagree about, which is why the bug ships.
+  const still = placed({ x: 0, y: 0 }, 0);
+  assert(
+    sameMatrix(worldOfChain([still, still]), worldOfChain([still, still]), 0) &&
+      sameMatrix(
+        worldOfChain([still, turret]),
+        worldOfChain([turret, still]),
+        1e-12,
+      ),
+    "against an identity parent the two orders are identical",
+  );
+  // A chain of three composes the same way, and grouping must not matter.
+  const grand = placed({ x: 0.9, y: 0 }, toRadians(20));
+  assert(
+    sameMatrix(
+      worldOfChain([hull, turret, grand]),
+      multiply(worldOfChain([hull, turret]), matrixOf(grand)),
+      1e-12,
+    ),
+    "a three-level chain should compose associatively",
+  );
+
+  // ---- A child's own numbers do not change -------------------------------------------
+
+  // The turret is mounted once and never touched. Move the hull however you like: the turret's
+  // local placement is identical every time, and only its world transform moves.
+  const barrelTip = { x: 1.15, y: 0 };
+  const worldSeen: Point[] = [];
+  for (let i = 0; i <= 20; i += 1) {
+    for (let deg = -180; deg <= 180; deg += 30) {
+      const moved = placed({ x: -4 + (i / 20) * 8, y: 0 }, toRadians(deg));
+      const world = worldOfChain([moved, turret]);
+      // The local coordinates are the same object every time - that is the point of a hierarchy.
+      assert(
+        turret.position.x === 0.25 && turret.position.y === 0,
+        "the child's local position must never be rewritten",
+      );
+      // Out to the world and back has to return exactly the point we started from.
+      const there = pointToWorld(world, barrelTip);
+      const back = pointToLocal(world, there);
+      assert(
+        back !== null && same(back, barrelTip, 1e-9),
+        `the barrel tip did not survive the round trip at ${deg} degrees`,
+      );
+      // A rigid parent cannot change how long the barrel is.
+      assert(
+        near(
+          distance(translationOf(world), there),
+          distance({ x: 0, y: 0 }, barrelTip),
+          1e-9,
+        ),
+        "a rigid hierarchy should not change the barrel's length",
+      );
+      worldSeen.push(there);
+    }
+  }
+  // And the world positions must genuinely differ, or the sweep proves nothing.
+  assert(
+    new Set(worldSeen.map((p) => `${p.x.toFixed(4)},${p.y.toFixed(4)}`)).size >
+      200,
+    `the barrel tip should land somewhere different for each hull pose, saw ${
+      new Set(worldSeen.map((p) => `${p.x.toFixed(4)},${p.y.toFixed(4)}`)).size
+    }`,
+  );
+
+  // Directions ride along rotated and scaled but never translated, which is Section 3.1's w = 0.
+  for (let deg = -180; deg <= 180; deg += 15) {
+    const world = worldOfChain([
+      placed({ x: 40, y: -25 }, toRadians(deg)),
+      turret,
+    ]);
+    const forward = directionToWorld(world, { x: 1, y: 0 });
+    assert(
+      near(length(forward), 1, 1e-9),
+      "a rigid chain should keep a direction unit length",
+    );
+    // Enormous translations must leave it completely alone.
+    assert(
+      same(
+        forward,
+        directionToWorld(
+          worldOfChain([placed({ x: 0, y: 0 }, toRadians(deg)), turret]),
+          { x: 1, y: 0 },
+        ),
+        1e-12,
+      ),
+      `translating the hull changed the turret's facing at ${deg} degrees`,
+    );
+    const back = directionToLocal(world, forward);
+    assert(
+      back !== null && same(back, { x: 1, y: 0 }, 1e-9),
+      "and the direction round trip should return the original",
+    );
+  }
+
+  // ---- Shear, the thing only a hierarchy can do ---------------------------------------
+
+  // A rigid or uniformly scaled chain keeps every frame square, at every angle.
+  for (let deg = -180; deg <= 180; deg += 5) {
+    for (const s of [0.5, 1, 2.2]) {
+      const uniform = worldOfChain([
+        placed({ x: 1, y: 2 }, toRadians(deg), { x: s, y: s }),
+        placed({ x: 0.25, y: 0 }, toRadians(deg / 2)),
+      ]);
+      assert(
+        isSquare(uniform),
+        `a uniform scale should not shear a child, failed at ${deg} degrees`,
+      );
+      const lengths = axisLengths(uniform);
+      assert(
+        near(lengths.x, s, 1e-9) && near(lengths.y, s, 1e-9),
+        "and both axes should carry exactly the parent's scale",
+      );
+    }
+  }
+  // An uneven parent scale shears a rotated child, and leaves an axis-aligned one alone.
+  const parent = placed({ x: 0, y: 0 }, 0, { x: 2, y: 1 });
+  assert(
+    isSquare(worldOfChain([parent, placed({ x: 0, y: 0 }, 0)])),
+    "an unrotated child is scaled, not sheared",
+  );
+  assert(
+    isSquare(worldOfChain([parent, placed({ x: 0, y: 0 }, toRadians(90))])),
+    "and a quarter turn is still square, because the axes only swap",
+  );
+  let shearedCases = 0;
+  for (let deg = 5; deg < 90; deg += 5) {
+    const child = worldOfChain([
+      parent,
+      placed({ x: 0, y: 0 }, toRadians(deg)),
+    ]);
+    assert(!isSquare(child), `a child turned ${deg} degrees should be sheared`);
+    shearedCases += 1;
+    // The child's own placement says nothing is wrong, which is why this needs measuring.
+    assert(
+      isSquare(matrixOf(placed({ x: 0, y: 0 }, toRadians(deg)))),
+      "the child's own transform is perfectly square on its own",
+    );
+  }
+  assert(shearedCases > 15, "the sweep should find plenty of sheared cases");
+  // 45 degrees under a 2 by 1 parent is the worst case, and it is a specific number.
+  const worst = worldOfChain([parent, placed({ x: 0, y: 0 }, toRadians(45))]);
+  assert(
+    near(Math.abs(shearOf(worst)), 0.6, 1e-9),
+    `the 45 degree case should shear to 0.6, gave ${shearOf(worst)}`,
+  );
+  // A negative scale mirrors rather than shears, which is the determinant test from Section 3.1.
+  assert(
+    isMirrored(
+      worldOfChain([placed({ x: 0, y: 0 }, 0, { x: -1, y: 1 }), turret]),
+    ),
+    "a negative parent scale should mirror the child",
+  );
+  assert(
+    !isMirrored(worldOfChain([hull, turret])),
+    "and a rigid chain should not",
+  );
+
+  // ---- Reparenting keeps the child exactly where it is --------------------------------
+
+  for (let deg = -180; deg <= 180; deg += 20) {
+    for (const s of [0.7, 1, 1.9]) {
+      const newParent = matrixOf(
+        placed({ x: -2, y: 4 }, toRadians(deg), { x: s, y: s }),
+      );
+      const local = localUnderNewParent(newParent, right);
+      assert(local !== null, `reparenting should succeed at ${deg} degrees`);
+      // The whole promise: recompose under the new parent and nothing has moved.
+      assert(
+        sameMatrix(multiply(newParent, local!), right, 1e-9),
+        `the child moved when re-homed at ${deg} degrees`,
+      );
+      // Which is worth stating as a point, not only as a matrix.
+      assert(
+        same(
+          pointToWorld(multiply(newParent, local!), barrelTip),
+          pointToWorld(right, barrelTip),
+          1e-9,
+        ),
+        "the barrel tip should not budge when the turret changes parent",
+      );
+    }
+  }
+  // A collapsed parent cannot be un-done, so reparenting under it has to refuse rather than guess.
+  assert(
+    localUnderNewParent(scaling(0, 1), right) === null,
+    "reparenting under a flattened parent should return null",
+  );
+  assert(
+    pointToLocal(scaling(0, 0), { x: 1, y: 1 }) === null,
+    "and so should converting a point into a collapsed space",
+  );
+
+  // ---- Everything the scene draws has to fit on the canvas ----------------------------
+
+  const bound = tankExtent();
+  let worstX = 0;
+  let worstY = 0;
+  for (let i = 0; i <= 12; i += 1) {
+    for (let deg = -180; deg <= 180; deg += 20) {
+      for (let td = -180; td <= 180; td += 45) {
+        for (const sx of [
+          TANK_RANGE.hullScaleX.min,
+          1,
+          TANK_RANGE.hullScaleX.max,
+        ]) {
+          const params = {
+            tankX:
+              TANK_RANGE.tankX.min +
+              (i / 12) * (TANK_RANGE.tankX.max - TANK_RANGE.tankX.min),
+            tankAngleDegrees: deg,
+            hullScaleX: sx,
+            turretAngleDegrees: td,
+          };
+          for (const wrongOrder of [false, true]) {
+            for (const p of [
+              ...hullShape(params, wrongOrder),
+              ...turretShape(params, wrongOrder),
+            ]) {
+              worstX = Math.max(worstX, Math.abs(p.x));
+              worstY = Math.max(worstY, Math.abs(p.y));
+              /* The wrong order is allowed to fly off: it is a bug being displayed, and framing the
+                 canvas for it would shrink the correct picture for nothing. Only the real hierarchy
+                 has to be guaranteed to fit. */
+              if (!wrongOrder) {
+                assert(
+                  Math.abs(p.x) <= bound.x + 1e-9 &&
+                    Math.abs(p.y) <= bound.y + 1e-9,
+                  `a corner reached ${p.x},${p.y} beyond the bound ${bound.x},${bound.y}`,
+                );
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  assert(
+    worstX > bound.x * 0.5 && worstY > bound.y * 0.5,
+    `the bound ${bound.x},${bound.y} is loose against the sweep's ${worstX},${worstY}`,
+  );
+  for (const [w, h] of [
+    [620, 330],
+    [380, 330],
+    [280, 330],
+  ] as const) {
+    const unit = tankScale(w / 2, h / 2);
+    assert(unit > 4, `the derived scale collapsed to ${unit} at ${w} by ${h}`);
+    for (let deg = -180; deg <= 180; deg += 30) {
+      const params = {
+        tankX: TANK_RANGE.tankX.max,
+        tankAngleDegrees: deg,
+        hullScaleX: TANK_RANGE.hullScaleX.max,
+        turretAngleDegrees: deg,
+      };
+      for (const p of [
+        ...hullShape(params, false),
+        ...turretShape(params, false),
+      ]) {
+        const sx = w / 2 + p.x * unit;
+        const sy = h / 2 - p.y * unit;
+        assert(
+          sx >= 0 && sx <= w && sy >= 0 && sy <= h,
+          `a corner landed at ${sx.toFixed(0)},${sy.toFixed(0)} outside a ${w} by ${h} canvas`,
+        );
+      }
     }
   }
 };

@@ -196,6 +196,9 @@ const source = key ? sources[key].trimEnd() : "";
   .demo-stage :global(canvas) {
     display: block;
     max-width: 100%;
+    /* Scale the whole picture down on a narrow screen rather than crushing it horizontally.
+       A capped width with a fixed height squashed every scene on a phone. */
+    height: auto;
   }
 
   /* One labelled slider per row, with its value on the right. */
@@ -486,6 +489,55 @@ const source = key ? sources[key].trimEnd() : "";
     font-size: 0.76rem;
     max-height: 24rem;
     overflow: auto;
+  }
+
+  /* ---------- Narrow screens ----------
+     The canvas scales itself, but the controls under it are laid out in rem and do not. A slider
+     row is a label of at least 7.5rem, a track, and a value of at least 3rem, which stops fitting
+     somewhere around a phone's width and pushes the value off the right-hand edge. Below 34rem the
+     label takes its own line and the track shares the next one with its value. */
+  @media (max-width: 34rem) {
+    /* The 300px min-height stays: the stage is what the IntersectionObserver watches, and a
+       zero-height target is not reliably reported as intersecting, which would stop scenes
+       mounting on exactly the screens this block is for. */
+    .demo-stage {
+      padding-inline: 0.4rem;
+    }
+    .demo-stage :global(.demo-row) {
+      flex-wrap: wrap;
+      gap: 0.15rem 0.5rem;
+    }
+    .demo-stage :global(.demo-row label) {
+      min-width: 0;
+      flex: 1 1 100%;
+    }
+    .demo-stage :global(.demo-row input) {
+      flex: 1 1 auto;
+      min-width: 0;
+    }
+    .demo-stage :global(.demo-row output) {
+      min-width: 2.5rem;
+    }
+    /* The timeline's fixed label column is wider than half a phone on its own. */
+    .demo-stage :global(.demo-tl-row) {
+      flex-wrap: wrap;
+    }
+    .demo-stage :global(.demo-tl-label) {
+      flex: 1 1 100%;
+      text-align: left;
+      white-space: normal;
+    }
+    .demo-stage :global(.demo-matrix) {
+      grid-template-columns: repeat(var(--demo-matrix-cols, 4), 2.6rem);
+      font-size: 0.68rem;
+    }
+    .demo-stage :global(.demo-readout) {
+      font-size: 0.7rem;
+    }
+    /* Long file paths in the header would otherwise force the panel wider than the screen. */
+    .demo-file {
+      overflow-wrap: anywhere;
+    }
   }
 
   /* The panel keeps its dark terminal look in light mode, which is what code looks like
