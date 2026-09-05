@@ -1,0 +1,191 @@
+---
+title: Cameras, Panning, Zooming and Screen to World
+description: A camera is an object's transform used backwards, so drawing is the view matrix and clicking is its inverse, zooming needs an anchor or it slides out from under you, and parallax is the same camera moved less
+sidebar:
+  order: 10
+  label: "3.3  Cameras, Panning, Zooming and Screen to World"
+---
+
+import DemoPanel from "../../../../components/DemoPanel.astro";
+import CodePanel from "../../../../components/CodePanel.astro";
+import cameraSource from "../../../../lib/gamedev2d/camera2d.ts?raw";
+
+## What You'll Learn
+
+There is no camera. There is a transform applied to everything else, and calling it a camera is a
+convenience.
+
+Once you accept that, the rest falls out: drawing is one matrix, clicking is its inverse, zooming toward
+a point is solving a one-line equation, and parallax is the same camera with its position scaled down.
+This Section closes Part 3, and it is where Section 3.2's inverse earns its place.
+
+## A Camera Is A Transform Used Backwards
+
+Put the camera at $(10, 4)$. Nothing about the world changes — what changes is that everything must be
+drawn $(-10, -4)$ from where it sits, to bring that spot to the middle of the screen. Zoom in twice and
+the world is drawn twice as large, not half.
+
+So the matrix you draw with is the **inverse of the camera's own placement**:
+
+$$
+V = S(\text{zoom}) \; R(-\theta) \; T(-\text{position})
+$$
+
+Every term is the opposite of the camera's. Read right to left, as
+[3.1's conventions](/applied/2d-game-development/translate-rotate-and-scale/#conventions-stated-once)
+require: move the world so the camera sits at the origin, un-rotate it, then scale it up.
+
+Writing it out like that avoids inverting a matrix every frame. But it also means there are now **two**
+expressions of the same idea, and they can drift — so the build asserts this hand-written form is
+exactly `inverse(cameraPlacement)`, entry by entry, across a range of positions, zooms and rotations.
+Each of those three terms could have its sign flipped independently and still produce a picture that
+looks like a camera.
+
+:::note[Zoom is pixels per world unit]
+Not an abstract multiplier. At $30$, a one-unit tile is $30$ pixels across, and a $620$ pixel canvas
+shows $620/30 \approx 20.7$ units of world.
+
+That framing is worth the extra word. It is the number that decides whether your art looks sharp, it is
+what `unitsPerPixel` inverts, and "what should the zoom be" becomes something you work out from your
+tile size rather than guess. It also makes the direction unmistakable: **bigger zoom, less world.**
+:::
+
+## The Two Halves
+
+The camera does not know a screen exists. It converts world to _view_ coordinates — origin at the
+middle, Y up. Turning those into pixels is a separate matrix:
+
+$$
+\text{viewport} = T\!\left(\tfrac{w}{2}, \tfrac{h}{2}\right) S(1, -1)
+$$
+
+Centre the origin, then flip Y. That is the whole of Section 1.1, in one place, and keeping it separate
+is what lets one camera drive a phone and a monitor without knowing which it is.
+
+<DemoPanel name="2d-camera" />
+
+Pan with the first two sliders. The three ridges move at different rates because each is drawn with the
+same camera scaled down — more on that below. Move your pointer over the canvas and the world coordinate
+under it is read back through the whole chain.
+
+## Screen To World Is Just The Inverse
+
+Every click, tap and hover needs the other direction, and there is nothing new to derive:
+
+$$
+p_{\text{world}} = \left(\text{viewport} \cdot V\right)^{-1} p_{\text{pixel}}
+$$
+
+<DemoPanel name="2d-screentoworld" />
+
+With the camera at $(8, 3)$ at $30$ pixels per unit, the middle pixel is exactly $(8, 3)$ — the camera's
+own position always lands at the centre of the screen, which is the first thing to check when a camera
+misbehaves. The top-left pixel is $(-2.33, 8.50)$: left of the camera and **above** it, because the
+canvas counts $y$ downward and the view matrix undid that.
+
+:::caution[Never derive screen-to-world by hand]
+The temptation is to write a second function with the signs and divisions reversed. Don't — invert the
+matrix you already have. Two hand-written formulas are two things to keep in step, and they will drift.
+
+This is the failure mode this module keeps meeting: **a screen-to-world conversion that is slightly
+wrong still returns a perfectly plausible world point.** Clicks land somewhere believable, nothing
+throws, and the only symptom is that taps feel a little off in a way nobody can pin down. So this
+Section's load-bearing assertion is the round trip — every pixel across the canvas, at four camera
+positions, four zooms and four rotations, over five thousand samples, back to the pixel it started from.
+:::
+
+## Zoom About A Point, Or It Slides Out From Under You
+
+Here is the bug everyone has felt. Change the zoom and leave the position alone, and you have zoomed
+about **the camera's centre** — so whatever you were reaching toward slides away as you zoom in.
+
+The fix is one line. Hold a world anchor's view coordinates fixed while the zoom changes:
+
+$$
+\text{position}' = a - \frac{\text{zoom}}{\text{zoom}'}\,(a - \text{position})
+$$
+
+The camera has to walk toward the anchor. With the camera at $(8, 3)$, a flag at $(14, 5)$, and the zoom
+going from $30$ to $60$:
+
+| Approach            | The flag's pixel                    | The camera ends at |
+| :------------------ | :---------------------------------- | :----------------- |
+| assign the zoom     | $(490, 105) \rightarrow (670, 45)$  | $(8, 3)$, unmoved  |
+| zoom about the flag | $(490, 105) \rightarrow (490, 105)$ | $(11, 4)$          |
+
+The first row slid the flag **off a 620-pixel canvas entirely**. The second did not move it by a
+hundredth of a pixel. And the camera's new position, $(11, 4)$, is exactly halfway to the flag — because
+the zoom doubled, so the distance had to halve.
+
+Try it in the scene above: uncheck the box and sweep the zoom. The rotation drops out of that formula,
+which is why it does not appear, and the build sweeps three anchors against twelve zoom pairs asserting
+the anchor holds its pixel — plus that the naive version genuinely moves it, so the assertion cannot
+pass by accident.
+
+## Parallax Is The Same Camera, Moved Less
+
+Distant things appear to move less. That is the entire effect, and it needs no new maths: draw the far
+layer with the same camera whose **position has been scaled down**.
+
+| Factor | Reads as     | Behaviour                     |
+| -----: | :----------- | :---------------------------- |
+|    $1$ | the action   | moves with the camera exactly |
+|  $0.6$ | middle trees | lags a little                 |
+| $0.25$ | far hills    | barely shifts                 |
+|    $0$ | the sky      | never moves at all            |
+
+**Only the translation is scaled.** Touching the zoom too would make distant layers change size as you
+pan, which is not what distance looks like — so the check asserts zoom and rotation come through
+untouched, and that a factor of $0.25$ shifts exactly a quarter as far as a factor of $1$.
+
+<CodePanel
+  code={cameraSource}
+  lang="ts"
+  file="src/lib/gamedev2d/camera2d.ts"
+  label="A camera, both conversions, an anchored zoom, and parallax"
+/>
+
+:::note[A framing mistake the build caught]
+The first version of the scene used a zoom range around $1$. On a $620$ pixel canvas that means showing
+$620$ world units of a world only $48$ units wide — everything was a speck in the middle, and the anchor
+question had no visible answer because the flag was never more than a few pixels from the centre.
+
+What caught it was the assertion that the _unanchored_ version visibly slides. That row exists to stop
+the checkbox demonstrating nothing, and it failed, which is how a badly framed scene turned into a
+failing build instead of a shipped page.
+:::
+
+:::note[In an engine]
+Godot's `Camera2D` has `zoom`, `offset` and `position`, and `Node2D` gives you
+`get_global_mouse_position()` — which is exactly the inverse chain above, done for you.
+`get_canvas_transform()` is the view matrix if you want it directly, and `ParallaxBackground` with
+`motion_scale` is the factor in the table above.
+
+Unity's `Camera.ScreenToWorldPoint` is the round trip, with the caveat that in 2D you must set the `z`
+of the input to the distance from the camera or you get the camera's own plane back. `orthographicSize`
+is half the visible **height** in world units, so it is the reciprocal of a pixels-per-unit zoom scaled
+by the canvas — worth converting deliberately rather than by trial.
+
+Both engines' mouse helpers return world positions, not view ones, so the viewport half is already
+applied. If you are compositing your own render targets, that is the part you have to redo yourself.
+:::
+
+## Where This Shows Up
+
+- **Every click and tap** in a game with a moving camera.
+- **Pinch and scroll zoom**, which is the anchored formula with the anchor at the gesture's centre.
+- **Culling**, using the visible world rectangle to skip what is off screen.
+- **Parallax backgrounds**, and minimaps, which are a second camera on the same world.
+- **Section 4.1**, where the camera stops snapping to a target and starts following it — and needs
+  frame-rate independence to do that without jitter.
+- **The capstone's camera**, which follows a character without shaking.
+
+:::note[The one thing to take away]
+A camera is an ordinary transform used backwards: the view matrix is the inverse of the camera's own
+placement, so every term in it is negated or reciprocal. Keep the viewport conversion — centre the
+origin, flip Y — as a separate matrix, so the camera never needs to know the screen size. Screen to
+world is the inverse of the composed chain and must never be re-derived by hand, because a wrong version
+still returns believable points. Changing zoom without moving the camera zooms about the camera's own
+centre, so anchor it on the point you are zooming toward and let the camera walk there. And parallax is
+the same camera with its position scaled down, translation only.
+:::

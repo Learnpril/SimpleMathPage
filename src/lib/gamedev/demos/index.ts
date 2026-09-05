@@ -33,15 +33,23 @@ import shoelace2d from "./2d/shoelace.ts";
 import atan2d from "./2d/atan.ts";
 import homogeneous2d from "./2d/homogeneous.ts";
 import localworld2d from "./2d/localworld.ts";
+import screentoworld2d from "./2d/screentoworld.ts";
+import timestep2d from "./2d/timestep.ts";
+import remap2d from "./2d/remap.ts";
+import joins2d from "./2d/joins.ts";
 import {
   angleCheck2d,
+  cameraCheck2d,
   crossCheck2d,
+  curveCheck2d,
   dotCheck2d,
+  easeCheck2d,
   lengthCheck2d,
   matrixCheck2d,
   rotateCheck2d,
   screenCheck2d,
   spaceCheck2d,
+  timeCheck2d,
   vectorCheck2d,
 } from "./2d/checks2d.ts";
 import dtmath from "./dtmath.ts";
@@ -556,6 +564,60 @@ export const DEMOS: Record<string, DemoEntry> = {
     title: "Out to the world, back again, and what shear does on the way",
     demo: localworld2d,
     file: "lib/gamedev/demos/2d/localworld.ts",
+  },
+  "2d-camera": {
+    title: "A pannable, zoomable world in three parallax layers",
+    visual: () => import("./2d/camera.scene.ts"),
+    visualFile: "lib/gamedev/demos/2d/camera.scene.ts",
+    hint: "Move your pointer over the scene to read the world position under it.",
+    check: cameraCheck2d,
+  },
+  "2d-screentoworld": {
+    title: "A pixel to a world point and back, and the two ways to change zoom",
+    demo: screentoworld2d,
+    file: "lib/gamedev/demos/2d/screentoworld.ts",
+  },
+  "2d-follow": {
+    title: "The same follower at 30 fps and at 144 fps, chasing one step",
+    visual: () => import("./2d/follow.scene.ts"),
+    visualFile: "lib/gamedev/demos/2d/follow.scene.ts",
+    hint: "Compare the two curves, then tick the box and compare them again.",
+    check: timeCheck2d,
+  },
+  "2d-timestep": {
+    title: "What a second of smoothing leaves behind, at two frame rates",
+    demo: timestep2d,
+    file: "lib/gamedev/demos/2d/timestep.ts",
+  },
+  "2d-gallery": {
+    title: "Six easings at one instant, with the speed profile marked",
+    visual: () => import("./2d/gallery.scene.ts"),
+    visualFile: "lib/gamedev/demos/2d/gallery.scene.ts",
+    hint: "Sweep t and watch which sprite is ahead, then compare the spacing of the faint marks.",
+    check: easeCheck2d,
+  },
+  "2d-remap": {
+    title: "The four functions that remove the arithmetic, and the one gotcha",
+    demo: remap2d,
+    file: "lib/gamedev/demos/2d/remap.ts",
+  },
+  "2d-path": {
+    title: "A Bezier with draggable handles, built by repeated lerping",
+    visual: () => import("./2d/path.scene.ts"),
+    visualFile: "lib/gamedev/demos/2d/path.scene.ts",
+    hint: "Drag the points, or pick a preset, then sweep t with the construction lines showing.",
+    check: curveCheck2d,
+  },
+  "2d-travel": {
+    title: "The same curve travelled by t, and travelled by distance",
+    visual: () => import("./2d/travel.scene.ts"),
+    visualFile: "lib/gamedev/demos/2d/travel.scene.ts",
+    hint: "Watch where the blue marks bunch up, then tick the box and watch them even out.",
+  },
+  "2d-joins": {
+    title: "Two curves sharing an endpoint, and still cornering",
+    demo: joins2d,
+    file: "lib/gamedev/demos/2d/joins.ts",
   },
   "nan-guard": {
     title: "A NaN walks past the check meant to stop it",

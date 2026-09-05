@@ -1,0 +1,215 @@
+---
+title: Lerp, Easing and Smoothing
+description: Four small functions do most of the arithmetic in a game, and a curve on top of them decides what the motion communicates - with the overshoots, the kinks and the peak speeds all measured rather than asserted
+sidebar:
+  order: 12
+  label: "4.2  Lerp, Easing and Smoothing"
+---
+
+import DemoPanel from "../../../../components/DemoPanel.astro";
+import CodePanel from "../../../../components/CodePanel.astro";
+import easingSource from "../../../../lib/gamedev2d/easing2d.ts?raw";
+
+## What You'll Learn
+
+Four functions do most of the arithmetic in a game: `lerp` to blend, `inverseLerp` to ask how far
+along, `remap` to move a value between ranges, and `clamp` to keep it in bounds. Everything else in
+this Section is a **shape** laid on top of them.
+
+The shape is not decoration. A menu that slides in at a constant speed and a menu that eases to a
+stop are the same movement over the same time, and readers describe one as cheap and the other as
+polished without being able to say why. The difference is a curve, and choosing it deliberately is
+most of what "feel" means.
+
+## Easing Is Not Damping, And The Difference Decides Which To Use
+
+Section 4.1 ended with exponential decay. This Section is not a nicer version of it — the two solve
+different problems, and reaching for the wrong one is the common mistake.
+
+|                     | Easing                                 | Decay (Section 4.1)                |
+| :------------------ | :------------------------------------- | :--------------------------------- |
+| You must know       | start, end **and** duration            | only the current target            |
+| The target can move | no, not without restarting             | yes, that is the point             |
+| Arrival             | **exact**, at exactly the stated time  | asymptotic, never quite            |
+| Can overshoot       | yes, on purpose                        | no                                 |
+| Natural use         | a menu, a door, a scripted camera move | a follow camera, a health bar, aim |
+
+The arrival row is the one that matters. With a $0.15$ s half-life, decay has closed $96.875\%$ of the
+gap after $0.75$ s, $99.902\%$ after $1.5$ s, and never all of it. A tween with a $0.75$ s duration is
+at the target at $0.75$ s exactly, and the build asserts that as an equality rather than a tolerance —
+for all eight curves, at five different frame rates.
+
+:::note[The one place "never" needs care]
+Decay never arriving is true of the mathematics and **false of a `double`**. The remaining gap stops
+being representable after $54$ half-lives, which is $8.1$ s at the half-life above, and from then on
+the value _is_ the target. That is long after anything a game waits for, so the useful phrasing is not
+"never" but "not at a time you can name" — which is exactly why you cannot schedule anything on it.
+:::
+
+## The Four Workhorses
+
+$$
+\text{lerp}(a, b, t) = a + (b - a)t
+\qquad
+\text{inverseLerp}(a, b, v) = \frac{v - a}{b - a}
+$$
+
+They are each other's inverse, and `remap` is simply the two composed:
+
+$$
+\text{remap}(v) = \text{lerp}\!\left(c, d, \text{inverseLerp}(a, b, v)\right)
+$$
+
+That one line removes most of the arithmetic from gameplay code. Stick position $-1 \ldots 1$ to a turn
+rate of $-180 \ldots 180$. Health $0 \ldots 100$ to a bar width in pixels. Distance $2 \ldots 20$ to a
+volume of $1 \ldots 0$, which is a fade-out written as one expression.
+
+<DemoPanel name="2d-remap" />
+
+:::caution[`lerp` is not clamped, and that is not a bug]
+`lerp(0, 100, 2)` is $200$. Sometimes that is exactly right — continuing a trajectory, predicting
+ahead of a target, extending a line. Sometimes it is a projectile leaving the level, a colour channel
+above $1$, or a health bar wider than its frame. Know which one you are asking for, and reach for
+`lerpClamped` or `remapClamped` when you meant the other.
+
+`inverseLerp` on a zero-width range returns $0$ rather than dividing. Every value is simultaneously at
+the start and the end of an empty range, so there is no right answer — but there is a wrong one, and
+it is an `Infinity` that propagates into a position and makes a sprite disappear with no error.
+:::
+
+## The Gallery
+
+One slider, six curves, one instant. The faint marks are **eleven equally spaced moments**, so their
+spacing along each track is that curve's speed: bunched where it is slow, spread where it is fast.
+
+<DemoPanel name="2d-gallery" />
+
+Read it by the marks rather than by the shapes. `easeInQuad` has covered $6.3\%$ of the distance in
+the first quarter of the time and $43.8\%$ in the last quarter; `easeOutQuad` is those two numbers
+swapped. `linear` is $25\%$ in every quarter, which is why it is the only one with a sudden stop.
+
+- **`easeOut` is the one to reach for by default.** Things that arrive and settle read as having mass.
+- **`easeIn` is for leaving**, not arriving. Something easing _in_ to a stop looks broken.
+- **`easeInOut` for anything that both starts and stops on screen.**
+- **`linear` on purpose, not by omission** — a conveyor belt, a clock hand, a health bar draining.
+
+## What "Smooth" Actually Means
+
+Here is a claim worth being careful about, because the first version of this Section got it wrong:
+smoothstep is often introduced as the curve with **zero slope at both ends**. It has that. So do
+`easeInOutQuad`, `easeInOutCubic` and `smootherstep`. Zero end slope separates none of them.
+
+What separates them is **curvature** — the second derivative, which is the acceleration a reader
+feels as a lurch. All four are measured against their closed forms across the interval at build time:
+
+| Curve            | Curvature at the ends | In the middle             | Peak speed    |
+| :--------------- | :-------------------- | :------------------------ | :------------ |
+| `linear`         | $0$                   | $0$                       | $1.0\times$   |
+| `easeInOutQuad`  | $4$                   | jumps $+4 \to -4$         | $2.0\times$   |
+| `easeInOutCubic` | $0$                   | jumps $+11.76 \to -11.76$ | $3.0\times$   |
+| `smoothstep`     | $6$                   | passes through $0$        | $1.5\times$   |
+| `smootherstep`   | $0$                   | passes through $0$        | $1.875\times$ |
+
+$$
+\text{smoothstep}(t) = 3t^2 - 2t^3
+\qquad
+\text{smootherstep}(t) = 6t^5 - 15t^4 + 10t^3
+$$
+
+Two things fall out of that table. **Smoothstep is a single polynomial**, so its curvature slides
+smoothly through zero in the middle instead of flipping sign, and its peak speed is $1.5\times$ the
+average rather than $2\times$ — the same distance in the same time with less of a surge. And
+**smootherstep is the one with zero curvature at the ends**; smoothstep's is exactly $6$, so its
+acceleration still arrives as a step even though its speed does not.
+
+Which to use: smoothstep, almost always. Smootherstep when the eased value is itself differentiated —
+a camera whose velocity feeds something else — and you are willing to pay $1.875\times$ peak speed for
+it. The gentler ends have to be paid for in the middle; there is no free smoothness.
+
+:::tip[The other reason smoothstep is worth knowing]
+It is the same function GLSL and HLSL provide, with the same name and the same definition, and it
+takes two edges rather than a plain $t$: `smoothstep(edge0, edge1, x)` does the `inverseLerp` and the
+clamp for you. So the shader version and the gameplay version of a fade can be the same curve, which
+matters more than it sounds like it should when they are meant to line up.
+:::
+
+## The Ones That Leave The Range
+
+Three curves overshoot, and the build measures each peak instead of quoting it from a reference:
+
+- **`easeOutBack` peaks at $1.100004$**, at $t = 0.580$. That $10\%$ is what the famous $1.70158$
+  constant is _for_: rounding it to $1.7$ gives $1.099843$, and $2$ gives $1.131687$. The digits buy a
+  round number in the output, which is the number somebody was actually choosing.
+- **`easeOutElastic` peaks at $1.373098$** and crosses the target seven times on its way to settling.
+  It is a strong effect and it wears out its welcome fast.
+- **`easeOutBounce` never exceeds $1$ at all.** It reaches the target four times — at $t = 0.3636$,
+  $0.7273$, $0.9091$ and $1$ — falling back by $0.25$, then $0.0625$, then $0.015625$ between them.
+  Each dip is **exactly a quarter** of the one before, which is where the dropped-object reading comes
+  from.
+
+So bounce is the safe one on a value with a hard ceiling: an opacity, a colour channel, a health
+fraction, a UI width that must not exceed its container. Back and elastic on any of those are a bug
+that only shows up at the moment the animation peaks.
+
+:::note[The endpoint case in elastic is load-bearing]
+`easeOutElastic` special-cases $t = 1$ and returns exactly $1$. That is not tidying. Left to the
+formula alone it returns $1.00048828125$ at $t = 1$ — and there is nothing after $t = 1$ to bring it
+back, so it stays there. The build keeps a copy of the bare formula next to the real one and asserts
+both facts: that the copy lands past the target, and that the real one lands on it exactly. Deleting
+the case on purpose is one of the ten sabotages this Section's check was tested against, and it was
+caught by that assertion.
+:::
+
+## Writing One, And Getting The Pair For Free
+
+An in and an out are mirror images:
+
+$$
+\text{out}(t) = 1 - \text{in}(1 - t)
+$$
+
+Worth having as a function rather than as a second hand-written formula. `reverse(easeInQuad)` and
+`easeOutQuad` agree to the last bit across two thousand samples, and reversing any curve twice returns
+the original — both asserted, so the pair can never drift apart under editing.
+
+<CodePanel
+  code={easingSource}
+  lang="ts"
+  file="src/lib/gamedev2d/easing2d.ts"
+  label="The four workhorses, the S-curves, and the ones that overshoot"
+/>
+
+:::note[In an engine]
+Godot has `lerp()`, `inverse_lerp()`, `remap()`, `clamp()` and `smoothstep()` as global functions, and
+`Tween` with `set_ease()` and `set_trans()` for the curve families — `Tween.TRANS_BACK`,
+`TRANS_ELASTIC`, `TRANS_BOUNCE` are the three above. `@export var curve: Curve` gives a designer a
+hand-drawn one.
+
+Unity has `Mathf.Lerp` (clamped), `Mathf.LerpUnclamped` (not), `Mathf.InverseLerp` and
+`Mathf.SmoothStep`. There is no built-in `remap`; it is two lines. `AnimationCurve` is the
+hand-authored equivalent, and `Mathf.SmoothDamp` is a spring rather than an easing — it belongs with
+Section 4.1's damping, not here, because it has no duration and no exact arrival.
+
+One sign trap worth naming: `Mathf.Lerp` clamps and `lerp` in most shader languages does not, so the
+same expression ported between the two behaves differently the moment $t$ leaves $0 \ldots 1$.
+:::
+
+## Where This Shows Up
+
+- **Section 4.3**, where a sprite travels a Bezier path and the easing decides its speed along it.
+- **Section 3.3's camera**, eased between two framings for a scripted move rather than following.
+- **Part 5's collision response**, where `clamp` keeps a penetration depth from going negative.
+- **Any UI at all**: panels, fades, bars, counters, damage numbers.
+- **The capstone**, where coyote time and jump buffering turn out to be interpolation problems.
+
+:::note[The one thing to take away]
+`lerp`, `inverseLerp`, `remap` and `clamp` remove most of the arithmetic from gameplay code, and
+`lerp` is unclamped, which is a feature until it is a projectile leaving the level. On top of them,
+the easing curve is what the motion _communicates_: `easeOut` to arrive with weight, `easeIn` to
+leave, `easeInOut` for both. Prefer `smoothstep` among the S-curves — not for its zero end slope,
+which three others share, but because it is one polynomial with no curvature kink in the middle and a
+peak speed of $1.5\times$ rather than $2\times$. Check before overshooting: `easeOutBack` reaches
+$1.1$ and `easeOutElastic` $1.37$, so neither belongs on an opacity, while `easeOutBounce` never
+leaves the range. And keep easing separate from Section 4.1's damping — easing needs a duration and
+lands exactly on time, damping chases a moving target and never quite arrives.
+:::

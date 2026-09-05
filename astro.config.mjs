@@ -157,6 +157,24 @@ export default defineConfig({
                     {
                       slug: "applied/2d-game-development/parents-children-and-local-space",
                     },
+                    {
+                      slug: "applied/2d-game-development/cameras-panning-zooming-and-screen-to-world",
+                    },
+                  ],
+                },
+                {
+                  label: "Part 4: Time, Motion and Feel",
+                  collapsed: false,
+                  items: [
+                    {
+                      slug: "applied/2d-game-development/delta-time-and-frame-rate-independence",
+                    },
+                    {
+                      slug: "applied/2d-game-development/lerp-easing-and-smoothing",
+                    },
+                    {
+                      slug: "applied/2d-game-development/bezier-curves-and-following-a-path",
+                    },
                   ],
                 },
               ],
@@ -352,7 +370,11 @@ export default defineConfig({
                   'angles-radians-and-atan2':                  [2, 'Turning and Aiming'],
                   'rotating-a-point-and-turning-smoothly':     [2, 'Turning and Aiming'],
                   'translate-rotate-and-scale':                [3, 'Transforms and Cameras'],
-                  'parents-children-and-local-space':          [3, 'Transforms and Cameras']
+                  'parents-children-and-local-space':          [3, 'Transforms and Cameras'],
+                  'cameras-panning-zooming-and-screen-to-world': [3, 'Transforms and Cameras'],
+                  'delta-time-and-frame-rate-independence':    [4, 'Time, Motion and Feel'],
+                  'lerp-easing-and-smoothing':                 [4, 'Time, Motion and Feel'],
+                  'bezier-curves-and-following-a-path':        [4, 'Time, Motion and Feel']
                 },
                 'applied/3d-game-development': {
                   'points-vectors-and-coordinate-conventions': [1, 'Vectors and Spatial Reasoning'],

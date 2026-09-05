@@ -138,6 +138,53 @@ import {
 } from "../../../gamedev2d/matrix2d.ts";
 import { inverse, translationOf } from "../../../gamedev2d/matrix2d.ts";
 import {
+  camera as camera2d,
+  cameraPlacement,
+  parallax as parallax2d,
+  screenToWorld as screenToWorld2d,
+  unitsPerPixel,
+  viewMatrix,
+  visibleWorld as visibleWorld2d,
+  withZoom,
+  worldToScreen as worldToScreen2d,
+  zoomAbout as zoomAbout2d,
+} from "../../../gamedev2d/camera2d.ts";
+import {
+  RANGE as CAMERA_RANGE,
+  flagOnScreen,
+  ridge,
+  visible,
+  worldUnderPixel,
+} from "./camera-shared.ts";
+import {
+  clampDt,
+  decay,
+  decayAfterOneSecond,
+  halfLifeFromRate,
+  lerpAfterOneSecond,
+  lerpPerFrame,
+  rateFromHalfLife,
+  rateFromLerpFactor,
+  remainingAfterFrames,
+  remainingAfterSeconds,
+  secondsPerFrame,
+  smooth,
+  step,
+  stepWithoutDt,
+} from "../../../gamedev2d/time2d.ts";
+import {
+  RANGE as FOLLOW_RANGE,
+  SHARED_PERIOD,
+  STEP_AT,
+  oneFrameOfDecay,
+  sharedPairs,
+  targetAt,
+  timeToClose,
+  traceFor,
+  transientGap,
+  worstSampledGap,
+} from "./follow-shared.ts";
+import {
   axisLengths,
   directionToLocal,
   directionToWorld,
@@ -169,6 +216,87 @@ import {
   partsOf,
   transformedShape,
 } from "./affine-shared.ts";
+import {
+  clamp,
+  clamp01,
+  easeInCubic,
+  easeInOutCubic,
+  easeInOutQuad,
+  easeInQuad,
+  easeOutBack,
+  easeOutBounce,
+  easeOutCubic,
+  easeOutElastic,
+  easeOutQuad,
+  inverseLerp,
+  lerp,
+  lerpClamped,
+  linear,
+  remap,
+  remapClamped,
+  reverse,
+  smootherstep,
+  smoothstep,
+  tween,
+  type Easing,
+} from "../../../gamedev2d/easing2d.ts";
+import {
+  ALL,
+  CAPTION_LIMIT,
+  GALLERY,
+  GHOSTS,
+  LAYOUT,
+  curvatureAt,
+  drawnRight,
+  extremes,
+  ghostTimes,
+  isMonotone,
+  peakSlope,
+  rowCentre,
+  slopeAt,
+  trackX,
+} from "./gallery-shared.ts";
+import {
+  LENGTH_SAMPLES,
+  arcTable,
+  chainPoints,
+  cubicAt,
+  curveLength,
+  deCasteljau,
+  distanceAtT,
+  elevate,
+  facingAt,
+  fractionAtT,
+  joinsSmoothly,
+  meetsAt,
+  pointAt,
+  quadraticAt,
+  seamAngle,
+  smoothedNext,
+  speedSpread,
+  splitAt,
+  tAtDistance,
+  tAtFraction,
+  tangentAt,
+} from "../../../gamedev2d/bezier2d.ts";
+/* Aliased on the way in: `screenOf`, `worldOf` and `VIEW` are already bound here by the aiming and
+   axes Sections, and two different mappings under one name is exactly the sort of thing that produces
+   a check which passes while testing the wrong geometry. */
+import {
+  BOUNDS as PATH_BOUNDS,
+  JOIN_A,
+  JOIN_NAIVE,
+  MARKS,
+  PRESETS,
+  UNIT as PATH_UNIT,
+  VIEW as PATH_VIEW,
+  clampToBounds,
+  markPoints,
+  outline,
+  screenOf as pathScreenOf,
+  travelReport,
+  worldOf as pathWorldOf,
+} from "./path-shared.ts";
 
 const near = (a: number, b: number, tol = 1e-9) => Math.abs(a - b) < tol;
 
@@ -2700,5 +2828,1961 @@ export const spaceCheck2d: Demo = () => {
         );
       }
     }
+  }
+};
+
+/**
+ * Cameras: the view as an inverse, the screen-to-world round trip, zooming about a point, and parallax.
+ *
+ * The round trip is the assertion this Section is built around, and it is swept over the whole canvas
+ * at a range of camera positions, zooms and rotations. The reason is the one that keeps recurring: a
+ * screen-to-world conversion that is slightly wrong still returns a perfectly plausible world point, so
+ * a click lands somewhere believable and nothing looks broken until someone notices their taps are
+ * consistently a little off. The second load-bearing row is that `viewMatrix` really is the inverse of
+ * the camera's own placement rather than something that resembles it - each of its three terms could
+ * have its sign flipped independently and still produce a picture.
+ */
+export const cameraCheck2d: Demo = () => {
+  const same = (a: Point, b: Point, tol = 1e-9) =>
+    Math.abs(a.x - b.x) < tol && Math.abs(a.y - b.y) < tol;
+  const W = 620;
+  const H = 330;
+
+  // ---- The view matrix is the camera's placement, inverted ----------------------------
+
+  let worstView = 0;
+  for (let deg = -180; deg <= 180; deg += 10) {
+    for (const z of [0.4, 1, 2.5]) {
+      for (const pos of [
+        { x: 0, y: 0 },
+        { x: 8, y: 3 },
+        { x: -12, y: -6 },
+      ]) {
+        const cam = camera2d(pos, z, toRadians(deg));
+        const placement = cameraPlacement(cam);
+        const view = viewMatrix(cam);
+        const inverted = inverse(placement);
+        assert(inverted !== null, "a camera's placement should be invertible");
+        // Written out by hand against computed by inversion. Two routes, one answer.
+        for (let i = 0; i < 9; i += 1) {
+          worstView = Math.max(worstView, Math.abs(view[i] - inverted![i]));
+        }
+        // And the defining property directly, so the row above cannot pass by coincidence.
+        assert(
+          sameMatrix(multiply(view, placement), identity(), 1e-9),
+          `the view did not cancel the placement at ${deg} degrees, zoom ${z}`,
+        );
+      }
+    }
+  }
+  assert(
+    worstView < 1e-9,
+    `the hand-written view matrix differs from the inverted placement by ${worstView}`,
+  );
+
+  // The camera's own position is always the middle of the screen. If this moves, nothing else matters.
+  for (const pos of [
+    { x: 0, y: 0 },
+    { x: 8, y: 3 },
+    { x: -11.5, y: 5.5 },
+  ]) {
+    for (const z of [0.4, 1, 3]) {
+      assert(
+        same(
+          worldToScreen2d(camera2d(pos, z), W, H, pos),
+          { x: W / 2, y: H / 2 },
+          1e-9,
+        ),
+        `the camera's own position should land at the centre, failed at zoom ${z}`,
+      );
+    }
+  }
+  // Raising world y must move something up the screen, whatever the camera is doing. Section 1.1.
+  for (const z of [0.5, 1, 2]) {
+    const cam = camera2d({ x: 2, y: 1 }, z);
+    assert(
+      worldToScreen2d(cam, W, H, { x: 2, y: 5 }).y <
+        worldToScreen2d(cam, W, H, { x: 2, y: 0 }).y,
+      `higher world y should be lower screen y at zoom ${z}`,
+    );
+  }
+
+  // ---- The round trip, swept over the whole canvas -------------------------------------
+
+  let worstTrip = 0;
+  let samples = 0;
+  for (const pos of [
+    { x: 0, y: 0 },
+    { x: 8, y: 3 },
+    { x: -12, y: -6 },
+  ]) {
+    for (const z of [0.4, 1, 1.7, 3]) {
+      for (const deg of [0, 35, -90, 175]) {
+        const cam = camera2d(pos, z, toRadians(deg));
+        for (let px = 0; px <= W; px += 31) {
+          for (let py = 0; py <= H; py += 17) {
+            const world = screenToWorld2d(cam, W, H, { x: px, y: py });
+            assert(
+              world !== null,
+              `a pixel should map to a world point at ${px},${py}`,
+            );
+            const back = worldToScreen2d(cam, W, H, world!);
+            worstTrip = Math.max(
+              worstTrip,
+              Math.hypot(back.x - px, back.y - py),
+            );
+            samples += 1;
+          }
+        }
+      }
+    }
+  }
+  assert(
+    worstTrip < 1e-9,
+    `the screen-world round trip drifted by ${worstTrip} pixels`,
+  );
+  assert(samples > 5000, `the sweep should be substantial, was ${samples}`);
+
+  // And the other direction: world to pixel and back, over a grid of world points.
+  for (const z of [0.4, 1, 2.5]) {
+    const cam = camera2d({ x: 8, y: 3 }, z, toRadians(20));
+    for (let x = -20; x <= 20; x += 2.5) {
+      for (let y = -10; y <= 10; y += 2.5) {
+        const there = worldToScreen2d(cam, W, H, { x, y });
+        const back = screenToWorld2d(cam, W, H, there);
+        assert(
+          back !== null && same(back, { x, y }, 1e-9),
+          `the world round trip failed at ${x},${y}, zoom ${z}`,
+        );
+      }
+    }
+  }
+
+  // ---- Zoom is a divisor on how much world you see -------------------------------------
+
+  for (const z of [0.5, 1, 2, 3]) {
+    const seen = visibleWorld2d(camera2d({ x: 0, y: 0 }, z), W, H);
+    assert(seen !== null, "something should be visible");
+    assert(
+      near(seen!.max.x - seen!.min.x, W / z, 1e-9) &&
+        near(seen!.max.y - seen!.min.y, H / z, 1e-9),
+      `the visible region at zoom ${z} should be the canvas divided by the zoom`,
+    );
+    assert(
+      near(unitsPerPixel(camera2d({ x: 0, y: 0 }, z)), 1 / z, 1e-12),
+      "one pixel should cover one over the zoom in world units",
+    );
+  }
+  // Doubling the zoom must halve what is on screen, which is the sanity check on the direction.
+  const wide = visibleWorld2d(camera2d({ x: 0, y: 0 }, 1), W, H)!;
+  const tight = visibleWorld2d(camera2d({ x: 0, y: 0 }, 2), W, H)!;
+  assert(
+    near((wide.max.x - wide.min.x) / (tight.max.x - tight.min.x), 2, 1e-9),
+    "zooming in twice should show half as much world, not twice as much",
+  );
+  // A rotated camera's bounding box is larger than the unrotated one, which is expected, not a bug.
+  const turned = visibleWorld2d(
+    camera2d({ x: 0, y: 0 }, 1, toRadians(45)),
+    W,
+    H,
+  )!;
+  assert(
+    turned.max.x - turned.min.x > wide.max.x - wide.min.x,
+    "a rotated camera should need a larger bounding box",
+  );
+
+  // ---- Zooming about a point holds that point still -------------------------------------
+
+  let anchoredCases = 0;
+  let naiveMoved = 0;
+  for (const anchor of [
+    { x: 11, y: 4 },
+    { x: -6, y: -3 },
+    { x: 0, y: 0 },
+  ]) {
+    for (const from of [0.5, 1, 2]) {
+      for (const to of [0.5, 1, 2, 3]) {
+        const cam = camera2d({ x: 8, y: 3 }, from);
+        const before = worldToScreen2d(cam, W, H, anchor);
+        const zoomed = zoomAbout2d(cam, anchor, to);
+        // The whole promise: the anchor keeps its pixel, to the last decimal place.
+        assert(
+          same(worldToScreen2d(zoomed, W, H, anchor), before, 1e-9),
+          `the anchor moved when zooming from ${from} to ${to}`,
+        );
+        assert(
+          near(zoomed.zoom, to, 1e-12),
+          "and the zoom should actually change",
+        );
+        anchoredCases += 1;
+
+        // Meanwhile, assigning the zoom does move it - unless the anchor is where the camera is,
+        // or the zoom did not change. Without this the row above could pass vacuously.
+        const naive = { ...cam, zoom: to };
+        const movedBy = Math.hypot(
+          worldToScreen2d(naive, W, H, anchor).x - before.x,
+          worldToScreen2d(naive, W, H, anchor).y - before.y,
+        );
+        const atCamera = same(anchor, cam.position, 1e-12);
+        if (!atCamera && Math.abs(from - to) > 1e-9) {
+          assert(
+            movedBy > 1,
+            `assigning the zoom should move the anchor from ${from} to ${to}, moved ${movedBy}`,
+          );
+          naiveMoved += 1;
+        } else {
+          assert(movedBy < 1e-9, "with nothing to change, both versions agree");
+        }
+      }
+    }
+  }
+  assert(anchoredCases > 30, "the anchor sweep should be substantial");
+  assert(
+    naiveMoved > 15,
+    `the naive version should visibly slide in plenty of cases, did in ${naiveMoved}`,
+  );
+  // Zooming about a point and back again returns the camera exactly where it started.
+  const there = zoomAbout2d(camera2d({ x: 8, y: 3 }, 1), { x: 11, y: 4 }, 2.5);
+  const andBack = zoomAbout2d(there, { x: 11, y: 4 }, 1);
+  assert(
+    same(andBack.position, { x: 8, y: 3 }, 1e-9) &&
+      near(andBack.zoom, 1, 1e-12),
+    "zooming about a point and back should restore the camera",
+  );
+  // Zoom cannot be driven to zero or negative, which would flatten or mirror the world.
+  assert(
+    zoomAbout2d(camera2d({ x: 0, y: 0 }, 1), { x: 1, y: 1 }, 0).zoom > 0,
+    "zoom should be clamped above zero",
+  );
+  assert(
+    withZoom(camera2d({ x: 0, y: 0 }, 1), -5).zoom > 0,
+    "and a negative zoom should be refused rather than mirroring everything",
+  );
+
+  // ---- Parallax ------------------------------------------------------------------------
+
+  for (const pos of [
+    { x: 0, y: 0 },
+    { x: 10, y: -4 },
+  ]) {
+    const cam = camera2d(pos, 1.5, toRadians(15));
+    // A factor of 1 is the layer the action is on: unchanged.
+    assert(
+      same(parallax2d(cam, 1).position, cam.position, 1e-12),
+      "a parallax factor of 1 should change nothing",
+    );
+    // A factor of 0 is a sky: it never moves, whatever the camera does.
+    assert(
+      same(parallax2d(cam, 0).position, { x: 0, y: 0 }, 1e-12),
+      "a parallax factor of 0 should never move",
+    );
+    // In between, it lags proportionally.
+    for (const f of [0.25, 0.6]) {
+      assert(
+        same(
+          parallax2d(cam, f).position,
+          { x: pos.x * f, y: pos.y * f },
+          1e-12,
+        ),
+        `a factor of ${f} should move that fraction of the way`,
+      );
+      /* Zoom and rotation must be untouched, or distant layers would change size as you pan.
+         Strict equality rather than a tolerance: these are copied, not recomputed, so anything
+         other than identical means the function is doing something it should not. */
+      assert(
+        parallax2d(cam, f).zoom === cam.zoom &&
+          parallax2d(cam, f).rotation === cam.rotation,
+        "parallax should only scale the translation",
+      );
+    }
+  }
+  // A far layer must move less on screen than a near one, which is the whole visual effect.
+  const still = camera2d({ x: 0, y: 0 }, 1);
+  const panned = camera2d({ x: 10, y: 0 }, 1);
+  const mark = { x: 4, y: 2 };
+  const nearShift = Math.abs(
+    worldToScreen2d(parallax2d(panned, 1), W, H, mark).x -
+      worldToScreen2d(parallax2d(still, 1), W, H, mark).x,
+  );
+  const farShift = Math.abs(
+    worldToScreen2d(parallax2d(panned, 0.25), W, H, mark).x -
+      worldToScreen2d(parallax2d(still, 0.25), W, H, mark).x,
+  );
+  assert(
+    farShift < nearShift && farShift > 0,
+    `a far layer should shift less than a near one, saw ${farShift} against ${nearShift}`,
+  );
+  assert(
+    near(nearShift / farShift, 4, 1e-9),
+    "and a factor of 0.25 should shift exactly a quarter as far",
+  );
+
+  // ---- The scene's own claims ----------------------------------------------------------
+
+  // With the anchor option on, the flag keeps its pixel across the whole zoom range.
+  for (let i = 0; i <= 20; i += 1) {
+    const z =
+      CAMERA_RANGE.zoom.min +
+      (i / 20) * (CAMERA_RANGE.zoom.max - CAMERA_RANGE.zoom.min);
+    const held = flagOnScreen(
+      { cameraX: 0, cameraY: 1, zoom: z, anchorZoom: true },
+      W,
+      H,
+    );
+    const first = flagOnScreen(
+      { cameraX: 0, cameraY: 1, zoom: CAMERA_RANGE.zoom.min, anchorZoom: true },
+      W,
+      H,
+    );
+    assert(
+      same(held, first, 1e-9),
+      `the flag should keep its pixel at zoom ${z.toFixed(2)}`,
+    );
+  }
+  // And with it off, it does not - or the checkbox would be showing nothing.
+  const slid = flagOnScreen(
+    { cameraX: 0, cameraY: 1, zoom: CAMERA_RANGE.zoom.max, anchorZoom: false },
+    W,
+    H,
+  );
+  const slidStart = flagOnScreen(
+    { cameraX: 0, cameraY: 1, zoom: CAMERA_RANGE.zoom.min, anchorZoom: false },
+    W,
+    H,
+  );
+  assert(
+    Math.hypot(slid.x - slidStart.x, slid.y - slidStart.y) > 50,
+    "without the anchor the flag should visibly slide across the zoom range",
+  );
+  // The ridge lines are deterministic, since their output is committed with the page.
+  assert(
+    ridge(0.25, 1.6).every((p) => Number.isFinite(p.x) && Number.isFinite(p.y)),
+    "the ridge should be finite everywhere",
+  );
+  assert(
+    ridge(0.25, 1.6)[10].y === ridge(0.25, 1.6)[10].y,
+    "and identical between calls",
+  );
+  // Every pixel of the scene's canvas has to resolve to a world point at every slider setting.
+  for (const z of [CAMERA_RANGE.zoom.min, 1, CAMERA_RANGE.zoom.max]) {
+    for (const [cx, cy] of [
+      [CAMERA_RANGE.cameraX.min, CAMERA_RANGE.cameraY.min],
+      [0, 0],
+      [CAMERA_RANGE.cameraX.max, CAMERA_RANGE.cameraY.max],
+    ] as const) {
+      for (const anchored of [true, false]) {
+        const p = { cameraX: cx, cameraY: cy, zoom: z, anchorZoom: anchored };
+        for (const pixel of [
+          { x: 0, y: 0 },
+          { x: W, y: 0 },
+          { x: W, y: H },
+          { x: 0, y: H },
+          { x: W / 2, y: H / 2 },
+        ]) {
+          assert(
+            worldUnderPixel(p, W, H, pixel) !== null,
+            `pixel ${pixel.x},${pixel.y} should resolve at zoom ${z}`,
+          );
+        }
+        assert(visible(p, W, H) !== null, "the visible rectangle should exist");
+      }
+    }
+  }
+};
+
+/**
+ * Delta time: the update that depends on the frame rate, and the one that does not.
+ *
+ * One assertion carries this Section, and it is the definition of the property rather than a symptom of
+ * it: **decaying over one second gives the same answer however many steps it is cut into.** Swept from
+ * 1 step to 1000, which spans every frame rate anyone will ever run and then some. Its companion is the
+ * one that must *fail* the same test - a per-frame lerp has to be shown genuinely frame-rate dependent,
+ * or the Section is arguing against nothing.
+ *
+ * The reason this needs a build-time check rather than a picture is that the wrong version looks
+ * perfect. On the machine it was written on it is smooth, responsive and correct; the bug is only
+ * visible on hardware the author does not have.
+ */
+export const timeCheck2d: Demo = () => {
+  // ---- Movement: the easy case ---------------------------------------------------------
+
+  // Velocity in units per second, times seconds, is units. Any frame rate, same distance covered.
+  for (const velocity of [1, 7.5, -3]) {
+    for (const fps of [24, 30, 60, 144, 240]) {
+      let p = 0;
+      const dt = secondsPerFrame(fps);
+      for (let i = 0; i < fps; i += 1) p = step(p, velocity, dt);
+      assert(
+        near(p, velocity, 1e-9),
+        `a second at ${velocity} per second should cover ${velocity}, covered ${p} at ${fps} fps`,
+      );
+    }
+  }
+  // Without the dt, the distance is the frame count - which is the bug, and it scales with hardware.
+  const noDt30 = (() => {
+    let p = 0;
+    for (let i = 0; i < 30; i += 1) p = stepWithoutDt(p, 1);
+    return p;
+  })();
+  const noDt144 = (() => {
+    let p = 0;
+    for (let i = 0; i < 144; i += 1) p = stepWithoutDt(p, 1);
+    return p;
+  })();
+  assert(
+    noDt30 === 30 && noDt144 === 144,
+    "without dt, distance is the frame count",
+  );
+  assert(
+    near(noDt144 / noDt30, 4.8, 1e-12),
+    "so a 144 Hz screen moves 4.8 times as far per second as a 30 Hz one",
+  );
+
+  // ---- The per-frame lerp is frame-rate dependent, and by a lot -------------------------
+
+  for (const factor of [0.05, 0.1, 0.2, 0.35]) {
+    const slow = lerpAfterOneSecond(factor, 30);
+    const fast = lerpAfterOneSecond(factor, 144);
+    // The closed form and the loop must agree, or one of them is lying about what the loop does.
+    assert(
+      near(slow, remainingAfterFrames(factor, 30), 1e-12),
+      "the closed form should match the loop at 30 fps",
+    );
+    assert(
+      near(fast, remainingAfterFrames(factor, 144), 1e-12),
+      "and at 144 fps",
+    );
+    // The faster screen converges much closer in the same wall-clock second.
+    assert(
+      fast < slow,
+      `a higher frame rate should converge further, ${fast} against ${slow}`,
+    );
+    assert(
+      slow / fast > 100,
+      `and by a wide margin at factor ${factor}, ratio was ${slow / fast}`,
+    );
+  }
+  // The headline pair, pinned exactly: 0.9^30 against 0.9^144.
+  assert(
+    near(lerpAfterOneSecond(0.1, 30), Math.pow(0.9, 30), 1e-15),
+    "one second of 0.1 at 30 fps is 0.9 to the thirtieth",
+  );
+  assert(
+    lerpAfterOneSecond(0.1, 30) / lerpAfterOneSecond(0.1, 144) > 100000,
+    "the 144 Hz screen should end up more than a hundred thousand times closer",
+  );
+
+  // ---- Decay is frame-rate independent, which is the whole Section ----------------------
+
+  let worstSpread = 0;
+  for (const halfLife of [0.05, 0.12, 0.3, 1]) {
+    const rate = rateFromHalfLife(halfLife);
+    const reference = remainingAfterSeconds(rate, 1);
+    for (const steps of [1, 2, 5, 24, 30, 60, 90, 144, 240, 500, 1000]) {
+      // Cut one second into `steps` pieces. The answer must not care how many.
+      let remaining = 1;
+      for (let i = 0; i < steps; i += 1) {
+        remaining = decay(remaining, 0, rate, 1 / steps);
+      }
+      worstSpread = Math.max(worstSpread, Math.abs(remaining - reference));
+      assert(
+        near(decayAfterOneSecond(rate, steps), reference, 1e-9),
+        `a second of decay in ${steps} steps disagreed with the closed form`,
+      );
+    }
+  }
+  assert(
+    worstSpread < 1e-12,
+    `decay varied with the step count by ${worstSpread}, which it must not`,
+  );
+
+  // Uneven steps too, since real frames are never uniform. Ten random-looking but fixed spans.
+  const spans = [
+    0.004, 0.021, 0.007, 0.033, 0.011, 0.002, 0.018, 0.05, 0.009, 0.045,
+  ];
+  const total = spans.reduce((a, b) => a + b, 0);
+  for (const halfLife of [0.08, 0.25]) {
+    const rate = rateFromHalfLife(halfLife);
+    let stepped = 1;
+    for (const dt of spans) stepped = decay(stepped, 0, rate, dt);
+    assert(
+      near(stepped, remainingAfterSeconds(rate, total), 1e-12),
+      "ten uneven steps should equal one step of their total",
+    );
+  }
+  // The property that makes it work, stated directly: the exponential composes with itself.
+  for (const rate of [1, 4.6, 20]) {
+    for (const [a, b] of [
+      [0.01, 0.02],
+      [0.1, 0.4],
+      [0.3, 0.7],
+    ] as const) {
+      assert(
+        near(
+          decay(decay(1, 0, rate, a), 0, rate, b),
+          decay(1, 0, rate, a + b),
+          1e-12,
+        ),
+        `decaying ${a} then ${b} should equal decaying ${a + b}`,
+      );
+    }
+  }
+
+  // ---- Half-life is exact, which is why it is the parameter to expose -------------------
+
+  for (const halfLife of [0.03, 0.15, 0.5, 2]) {
+    assert(
+      near(smooth(0, 1, halfLife, halfLife), 0.5, 1e-12),
+      `one half-life should close exactly half the gap, failed at ${halfLife}`,
+    );
+    assert(
+      near(smooth(0, 1, halfLife, halfLife * 2), 0.75, 1e-12),
+      "two half-lives should leave a quarter",
+    );
+    // And the two parameterisations must be the same curve, not merely similar.
+    const rate = rateFromHalfLife(halfLife);
+    assert(
+      near(halfLifeFromRate(rate), halfLife, 1e-12),
+      "the half-life round trip should be exact",
+    );
+    for (const dt of [0.001, 0.016, 0.033, 0.25]) {
+      assert(
+        near(smooth(0, 1, halfLife, dt), decay(0, 1, rate, dt), 1e-12),
+        `the half-life and rate forms disagreed at dt ${dt}`,
+      );
+    }
+  }
+  // Decay approaches the target and never overshoots it, at any step size.
+  for (const dt of [0.001, 0.016, 0.1, 1, 10]) {
+    const next = decay(0, 1, rateFromHalfLife(0.1), dt);
+    assert(
+      next >= 0 && next <= 1,
+      `decay overshot with a step of ${dt}, giving ${next}`,
+    );
+  }
+  // Which a per-frame lerp also manages, so long as the factor stays under 1. Worth knowing the limit.
+  assert(
+    lerpPerFrame(0, 1, 1.5) > 1,
+    "a lerp factor above 1 overshoots, which is why the range is capped",
+  );
+
+  // ---- Porting a tuned factor ------------------------------------------------------------
+
+  for (const fps of [30, 60, 144]) {
+    for (const factor of [0.05, 0.15, 0.3]) {
+      const rate = rateFromLerpFactor(factor, fps);
+      // Exact at the rate it was tuned at: one frame of each must land in the same place.
+      assert(
+        near(
+          decay(0, 1, rate, secondsPerFrame(fps)),
+          lerpPerFrame(0, 1, factor),
+          1e-12,
+        ),
+        `the converted rate should match the lerp exactly at ${fps} fps, factor ${factor}`,
+      );
+      // And a whole second must match too, which follows but is worth pinning.
+      assert(
+        near(
+          decayAfterOneSecond(rate, fps),
+          lerpAfterOneSecond(factor, fps),
+          1e-9,
+        ),
+        "and over a full second at that rate",
+      );
+      // But now it behaves the same at other rates, which the lerp did not.
+      assert(
+        near(
+          decayAfterOneSecond(rate, 17),
+          decayAfterOneSecond(rate, 313),
+          1e-12,
+        ),
+        "and it is frame-rate independent afterwards",
+      );
+    }
+  }
+
+  // ---- The clamp -------------------------------------------------------------------------
+
+  assert(clampDt(0.016) === 0.016, "an ordinary frame passes through");
+  assert(clampDt(3) === 0.1, "a three second hitch is clamped");
+  assert(
+    clampDt(-1) === 0,
+    "and a negative frame time cannot happen, so it is floored",
+  );
+  assert(clampDt(3, 0.25) === 0.25, "the maximum is adjustable");
+
+  // ---- The scene's own claims -------------------------------------------------------------
+
+  /* The right measure for a follower is **how long it takes to arrive**, not whether two traces agree
+     instant by instant. With a step target they cannot agree instant by instant, and it took measuring
+     to see why: both followers observe the step at the same moment, but then integrate the new target
+     over frames of different lengths - 33 ms against 7 ms - so the slow one has closed more of the gap
+     by the time its frame ends. That transient is bounded by one frame of catch-up, shrinks at every
+     boundary afterwards, and is asserted as such below rather than wished away.
+
+     Convergence time separates the two update rules exactly. */
+
+  /* The per-frame lerp takes the same number of FRAMES whatever the rate, so its wall-clock time scales
+     with the frame rate: 144/30 = 4.8 times faster on the faster screen, across the whole range. */
+  let ratiosSeen = 0;
+  let slowNeverArrived = 0;
+  for (let i = 0; i <= 10; i += 1) {
+    const factor =
+      FOLLOW_RANGE.factor.min +
+      (i / 10) * (FOLLOW_RANGE.factor.max - FOLLOW_RANGE.factor.min);
+    const p = { factor, halfLife: 0.12, useDecay: false };
+    const slow = timeToClose(p, 30, 0.8);
+    const fast = timeToClose(p, 144, 0.8);
+    assert(
+      fast !== null,
+      `the fast follower should arrive at factor ${factor.toFixed(3)}`,
+    );
+    if (slow === null) {
+      // Slower than the run is long: the same problem, in its most extreme form.
+      slowNeverArrived += 1;
+      continue;
+    }
+    assert(
+      near(slow / fast!, 144 / 30, 0.02),
+      `the lerp should be 4.8x slower at 30 fps, was ${(slow / fast!).toFixed(3)} at factor ${factor.toFixed(3)}`,
+    );
+    ratiosSeen += 1;
+  }
+  assert(
+    ratiosSeen > 7,
+    `the ratio should hold across most of the range, held at ${ratiosSeen} settings`,
+  );
+  assert(
+    slowNeverArrived > 0,
+    "and at the heaviest smoothing the slow screen should not arrive at all within the run",
+  );
+
+  /* Decay takes the same wall-clock time at either rate. What is left is frame quantisation: 30 fps can
+     only report an arrival in thirtieths of a second, which accounts for the whole of the spread. */
+  for (let i = 0; i <= 10; i += 1) {
+    const halfLife =
+      FOLLOW_RANGE.halfLife.min +
+      (i / 10) * (FOLLOW_RANGE.halfLife.max - FOLLOW_RANGE.halfLife.min);
+    const p = { factor: 0.1, halfLife, useDecay: true };
+    const slow = timeToClose(p, 30, 0.8);
+    const fast = timeToClose(p, 144, 0.8);
+    assert(
+      slow !== null && fast !== null,
+      `both followers should arrive at half-life ${halfLife.toFixed(3)}`,
+    );
+    assert(
+      Math.abs(slow! - fast!) <= 1 / 30 + 1e-9,
+      `they should arrive within one slow frame of each other, differed by ${Math.abs(slow! - fast!)}`,
+    );
+
+    // The transient is bounded by one frame of catch-up at the slower rate.
+    assert(
+      transientGap(p) <= oneFrameOfDecay(p, 30) + 1e-9,
+      `the transient ${transientGap(p)} exceeded one frame of decay ${oneFrameOfDecay(p, 30)}`,
+    );
+    /* And it decays away at the follower's **own** half-life. Once both are chasing a target that has
+       stopped changing, the difference between them is itself just a gap being closed by the same
+       exponential - so each successive shared boundary shrinks it by exactly one shared period's worth
+       of decay. An identity rather than a threshold, which is what took five attempts to see: every
+       version of this assertion written as "the gap is small" needed a constant that depended on the
+       half-life, because how far the transient gets inside a fixed run obviously does. */
+    const perBoundary = Math.pow(2, -SHARED_PERIOD / halfLife);
+    const gaps = sharedPairs(p)
+      .slice(1)
+      .map((q) => Math.abs(q.slow - q.fast));
+    gaps.forEach((gap, k) => {
+      if (k === 0) return;
+      assert(
+        near(gap, gaps[k - 1] * perBoundary, 1e-9),
+        `the gap should shrink by exactly ${perBoundary.toFixed(4)} per boundary, went ${gaps[k - 1]} to ${gap} at half-life ${halfLife.toFixed(3)}`,
+      );
+    });
+  }
+
+  /* Below one frame time the drawn curve goes coarse, and it is worth pinning why: the 30 fps follower
+     closes most of the gap in a single step, so it cannot draw a curve finer than its own frame time.
+     That is sampling, not frame-rate dependence - its arrival time is still right - and it is why the
+     scene's half-life floor sits above two frames at 30 fps. */
+  const subFrame = worstSampledGap({
+    factor: 0.1,
+    halfLife: 0.02,
+    useDecay: true,
+  });
+  assert(
+    subFrame > 0.3,
+    `a half-life under one frame should look coarse at 30 fps, gap was ${subFrame}`,
+  );
+  assert(
+    Math.abs(
+      timeToClose({ factor: 0.1, halfLife: 0.02, useDecay: true }, 30, 0.8)! -
+        timeToClose({ factor: 0.1, halfLife: 0.02, useDecay: true }, 144, 0.8)!,
+    ) <=
+      1 / 30 + 1e-9,
+    "while its arrival time is still within one slow frame of the fast one",
+  );
+  // The target really is a step, and the traces really do start at zero and end near one.
+  assert(
+    targetAt(0) === 0 && targetAt(STEP_AT) === 1,
+    "the target should step at STEP_AT",
+  );
+  for (const useDecay of [true, false]) {
+    for (const fps of [30, 144]) {
+      const trace = traceFor({ factor: 0.2, halfLife: 0.12, useDecay }, fps);
+      assert(trace[0].value === 0, "a follower starts at rest");
+      assert(
+        trace[trace.length - 1].value > 0.9,
+        `and should have caught up by the end at ${fps} fps`,
+      );
+      assert(
+        trace.every((q) => Number.isFinite(q.value)),
+        "with no NaN anywhere along the way",
+      );
+    }
+  }
+};
+
+/**
+ * Easing: the endpoints every curve must hit, the ones that leave the range, and by exactly how much.
+ *
+ * Every number this Section quotes is pinned here, because they are all properties of a **shape** and a
+ * shape is the one thing a build with no GPU cannot look at. Three of them contradicted what I first
+ * wrote down. The overshoot constant $1.70158$ turns out to be chosen to make the peak $1.100004$
+ * rather than being folklore; `easeOutElastic`'s endpoint case is load-bearing, because the formula
+ * alone lands $1.000488$ past the target and stays there; and "zero slope at the ends" does **not**
+ * separate `smoothstep` from `easeInOutQuad`, since both have it. Curvature separates them, so
+ * curvature is what is measured.
+ */
+export const easeCheck2d: Demo = () => {
+  // ---- lerp, inverseLerp, remap, clamp -------------------------------------------------
+
+  assert(lerp(10, 50, 0.25) === 20, "a quarter of the way from 10 to 50 is 20");
+  assert(
+    lerp(10, 50, 0) === 10 && lerp(10, 50, 1) === 50,
+    "and the ends are the ends",
+  );
+  assert(
+    inverseLerp(10, 50, 20) === 0.25,
+    "and asked backwards, 20 is a quarter along",
+  );
+
+  // The round trip, over a grid rather than at one convenient point.
+  for (const [a, b] of [
+    [0, 1],
+    [10, 50],
+    [-8, 3],
+    [100, -100],
+    [0.25, 0.75],
+  ] as const) {
+    for (let i = 0; i <= 40; i += 1) {
+      const value = lerp(a, b, i / 40 - 0.25);
+      assert(
+        near(lerp(a, b, inverseLerp(a, b, value)), value, 1e-9),
+        `lerp and inverseLerp should undo each other on [${a}, ${b}], failed at ${value}`,
+      );
+    }
+    // And `remap` really is the two composed, not a second implementation of the same idea.
+    for (const [c, d] of [
+      [0, 1],
+      [-180, 180],
+      [7, 7.5],
+    ] as const) {
+      for (let i = 0; i <= 20; i += 1) {
+        const value = lerp(a, b, i / 20);
+        assert(
+          near(
+            remap(value, a, b, c, d),
+            lerp(c, d, inverseLerp(a, b, value)),
+            1e-9,
+          ),
+          "remap should be lerp of inverseLerp",
+        );
+      }
+    }
+  }
+  /* Exact equality here, and it is worth saying why the arguments are what they are: a stick at 0.4
+     gives 72.00000000000003, because 0.7 is not a binary fraction. The maths is right and the last bit
+     is dust, but a values panel is committed to the repository, so the row would publish the dust.
+     Halves and quarters are exact, so the demo asks about a half. */
+  assert(
+    remap(0.5, -1, 1, -180, 180) === 90,
+    "a stick at 0.5 maps to 90 degrees per second",
+  );
+  assert(
+    remap(0.4, -1, 1, -180, 180) !== 72 &&
+      near(remap(0.4, -1, 1, -180, 180), 72, 1e-12),
+    "while 0.4 is correct to within floating-point dust rather than exactly",
+  );
+  assert(
+    remap(75, 0, 100, 0, 240) === 180,
+    "75 health fills 180 of 240 pixels",
+  );
+
+  /* A zero-width range has no honest answer, so `inverseLerp` returns 0 rather than dividing. Worth an
+     assertion because the alternative is an Infinity that propagates into a position and shows up as a
+     sprite that has vanished. */
+  assert(
+    inverseLerp(5, 5, 5) === 0,
+    "a zero-width range answers 0 rather than dividing by zero",
+  );
+  assert(
+    Number.isFinite(remap(5, 5, 5, 0, 100)),
+    "and remap through one stays finite",
+  );
+
+  // Unclamped on purpose, clamped on request. Both matter, and confusing them is the bug.
+  assert(lerp(0, 100, 2) === 200, "lerp extrapolates past the end");
+  assert(lerp(0, 100, -0.5) === -50, "and before the start");
+  assert(lerpClamped(0, 100, 2) === 100, "the clamped one refuses");
+  assert(lerpClamped(0, 100, -0.5) === 0, "at both ends");
+  assert(
+    remapClamped(25, 2, 20, 1, 0) === 0,
+    "and a listener past the far edge is silent, not negative",
+  );
+  assert(
+    clamp(1.4, 0, 1) === 1 && clamp(-3, 0, 1) === 0,
+    "clamp does what it says",
+  );
+  assert(clamp01(0.5) === 0.5, "and leaves an in-range value alone");
+
+  // ---- Every easing starts at 0 and ends at 1, exactly ----------------------------------
+
+  for (const entry of ALL) {
+    /* `easeOutBack(0)` is 2.22e-16 rather than 0 - three terms of a cubic that cancel, and floating
+       point does not cancel them perfectly. A tolerance rather than strict equality, therefore, and
+       stating the size of the dust is better than pretending it is not there. */
+    assert(
+      near(entry.easing(0), 0, 1e-12),
+      `${entry.name} should start at 0, started at ${entry.easing(0)}`,
+    );
+    assert(
+      entry.easing(1) === 1,
+      `${entry.name} must land exactly on the target, landed on ${entry.easing(1)}`,
+    );
+    // No NaN anywhere, including at the piecewise boundaries.
+    for (let i = 0; i <= 1000; i += 1) {
+      assert(
+        Number.isFinite(entry.easing(i / 1000)),
+        `${entry.name} produced a non-finite value at t = ${i / 1000}`,
+      );
+    }
+    // The caption has to fit the column it is drawn in, which is a fact about the picture.
+    assert(
+      entry.reads.length <= CAPTION_LIMIT,
+      `${entry.name}'s caption is ${entry.reads.length} characters, over the ${CAPTION_LIMIT} the column holds`,
+    );
+  }
+
+  /* The exact landing is what easing promises and decay cannot, so it is checked as an equality above
+     rather than a tolerance - and `easeOutElastic` only manages it because of its endpoint case. Left
+     to the formula it lands past the target and stays there, which is the thing that case is for. */
+  const elasticFormula = (t: number) =>
+    Math.pow(2, -10 * t) * Math.sin((t * 10 - 0.75) * ((2 * Math.PI) / 3)) + 1;
+  assert(
+    near(elasticFormula(1), 1.000488, 1e-6),
+    `the bare elastic formula should land 1.000488 past the target, landed ${elasticFormula(1)}`,
+  );
+  assert(
+    easeOutElastic(1) === 1 && elasticFormula(1) !== 1,
+    "so the endpoint case is load-bearing rather than tidying",
+  );
+
+  // ---- Which curves leave the range, and by how much -------------------------------------
+
+  for (const entry of ALL) {
+    const { min, max } = extremes(entry.easing, 200000);
+    const leavesRange = max > 1 + 1e-9;
+    // The declared flag has to match the measurement, or the page is documenting a wish.
+    assert(
+      entry.overshoots === leavesRange,
+      `${entry.name} declares overshoots=${entry.overshoots} but its maximum is ${max}`,
+    );
+    assert(min >= -1e-12, `${entry.name} dipped below 0, to ${min}`);
+    // Monotone exactly when it does not overshoot, for these eight - bounce being the exception.
+    assert(
+      isMonotone(entry.easing, 20000) ===
+        (max <= 1 + 1e-9 && entry.name !== "easeOutBounce"),
+      `${entry.name}'s monotonicity is not what its range implies`,
+    );
+  }
+
+  // The three figures the Section quotes, to six digits.
+  assert(
+    near(extremes(easeOutBack, 200000).max, 1.100004, 1e-6),
+    "easeOutBack should peak at 1.100004",
+  );
+  assert(
+    near(extremes(easeOutElastic, 200000).max, 1.373098, 1e-6),
+    "easeOutElastic should peak at 1.373098",
+  );
+  assert(
+    extremes(easeOutBounce, 400000).max <= 1,
+    "and easeOutBounce should never exceed 1 at all",
+  );
+
+  /* The 1.70158 is not folklore: it is the value that makes the overshoot 10%. Shown by pricing the
+     tidier alternatives, which is the only way to demonstrate that the digits are buying something. */
+  const backPeak = (c: number) => {
+    let peak = -Infinity;
+    for (let i = 0; i <= 200000; i += 1) {
+      const t = i / 200000;
+      peak = Math.max(
+        peak,
+        1 + (c + 1) * Math.pow(t - 1, 3) + c * Math.pow(t - 1, 2),
+      );
+    }
+    return peak;
+  };
+  assert(near(backPeak(1.70158), 1.1, 1e-5), "1.70158 buys a 10% overshoot");
+  assert(
+    Math.abs(backPeak(1.7) - 1.1) > Math.abs(backPeak(1.70158) - 1.1),
+    "and rounding it to 1.7 is measurably further off",
+  );
+  assert(near(backPeak(2), 1.131687, 1e-6), "while 2 overshoots by 13.2%");
+
+  /* Bounce lands four times and each dip is exactly a quarter of the one before, which is where the
+     dropped-object reading comes from. Found by looking for local minima rather than by reading the
+     piecewise constants back out of the function, so the two can disagree. */
+  const dips: number[] = [];
+  const landings: number[] = [];
+  const N = 400000;
+  for (let i = 1; i < N; i += 1) {
+    const a = easeOutBounce((i - 1) / N);
+    const b = easeOutBounce(i / N);
+    const c = easeOutBounce((i + 1) / N);
+    if (b < a && b <= c) dips.push(b);
+    if (b > a && b >= c) landings.push(i / N);
+  }
+  assert(
+    landings.length === 3,
+    `bounce should touch the target three times before the end, touched ${landings.length}`,
+  );
+  assert(dips.length === 3, `and dip back three times, dipped ${dips.length}`);
+  dips.forEach((dip, k) => {
+    assert(
+      near(1 - dip, Math.pow(0.25, k + 1), 1e-6),
+      `dip ${k + 1} should be ${Math.pow(0.25, k + 1)} below the target, was ${1 - dip}`,
+    );
+  });
+
+  // ---- What "smooth" actually means, which is curvature and not slope --------------------
+
+  const asCurve =
+    (f: (a: number, b: number, x: number) => number): Easing =>
+    (t) =>
+      f(0, 1, t);
+  const SMOOTH = asCurve(smoothstep);
+  const SMOOTHER = asCurve(smootherstep);
+
+  // Zero end slope is shared, so it separates nothing. Asserted as the negative result it is.
+  for (const easing of [easeInOutQuad, easeInOutCubic, SMOOTH, SMOOTHER]) {
+    assert(
+      Math.abs(slopeAt(easing, 0)) < 1e-3 &&
+        Math.abs(slopeAt(easing, 1)) < 1e-3,
+      "all four S-curves have zero slope at both ends, which is why slope cannot tell them apart",
+    );
+  }
+  assert(
+    near(slopeAt(linear, 0.5, 1e-6), 1, 1e-6),
+    "while linear's slope is 1 throughout",
+  );
+
+  /* Curvature does separate them. Matched against the closed forms across the interval rather than
+     sampled at one point near an end, which was the first attempt and was wrong: smoothstep's second
+     derivative is $6 - 12t$, so a reading at $t = 10^{-3}$ is 5.988 and not 6, and asserting 6 with a
+     tight tolerance failed on arithmetic that was perfectly correct. Comparing to the closed form
+     everywhere is both stronger and honest about the finite difference. */
+  const grid = Array.from({ length: 99 }, (_, i) => (i + 1) / 100);
+  for (const t of grid) {
+    assert(
+      near(curvatureAt(SMOOTH, t), 6 - 12 * t, 1e-6),
+      `smoothstep's curvature should be 6 - 12t, was ${curvatureAt(SMOOTH, t)} at t = ${t}`,
+    );
+    assert(
+      near(
+        curvatureAt(SMOOTHER, t),
+        120 * t * t * t - 180 * t * t + 60 * t,
+        1e-5,
+      ),
+      `smootherstep's curvature should be 120t³ - 180t² + 60t, was ${curvatureAt(SMOOTHER, t)} at t = ${t}`,
+    );
+    // The piecewise quadratic's is a constant on each half, which is the whole difference.
+    assert(
+      near(curvatureAt(easeInOutQuad, t), t < 0.5 ? 4 : -4, 1e-6) ||
+        Math.abs(t - 0.5) < 1e-9,
+      `easeInOutQuad's curvature should be ±4, was ${curvatureAt(easeInOutQuad, t)} at t = ${t}`,
+    );
+  }
+  /* So the values at the ends follow from the closed forms rather than from a measurement that cannot
+     quite reach them: 6 for smoothstep, 0 for smootherstep. Corroborated by watching the measurement
+     collapse tenfold for every tenfold step closer to the end, which a small constant would not do. */
+  const smootherCurvature = [1e-2, 1e-3, 1e-4].map((t) =>
+    curvatureAt(SMOOTHER, t, t / 10),
+  );
+  /* Near enough a tenth, not exactly: the leading term is $60t$, but at $t = 10^{-2}$ the $-180t^2$
+     term is still worth 3% of the reading, so the first ratio is 0.1028 rather than 0.1. A tolerance
+     that pretended otherwise would be asserting the wrong closed form. */
+  smootherCurvature.slice(1).forEach((value, k) => {
+    assert(
+      near(value / smootherCurvature[k], 0.1, 5e-3),
+      `smootherstep's end curvature should fall about tenfold each step closer, went ${smootherCurvature[k]} to ${value}`,
+    );
+  });
+  assert(
+    smootherCurvature[2] < 1e-2,
+    `and be negligible by t = 1e-4, was ${smootherCurvature[2]}`,
+  );
+  // While smoothstep's does not budge from 6, which is the contrast.
+  assert(
+    [1e-2, 1e-3, 1e-4].every((t) => curvatureAt(SMOOTH, t, t / 10) > 5.8),
+    "smoothstep's end curvature should stay near 6 however close to the end it is measured",
+  );
+
+  /* In the middle it is the other way round: the stitched pair flip sign discontinuously and the single
+     polynomials pass through zero. This is the kink smoothstep exists to avoid. */
+  for (const [name, easing, jump] of [
+    ["easeInOutQuad", easeInOutQuad, 4],
+    ["easeInOutCubic", easeInOutCubic, 11.76],
+  ] as const) {
+    assert(
+      near(curvatureAt(easing, 0.49), jump, 1e-2) &&
+        near(curvatureAt(easing, 0.51), -jump, 1e-2),
+      `${name} should flip its curvature from ${jump} to ${-jump} across the middle`,
+    );
+  }
+  for (const [name, easing] of [
+    ["smoothstep", SMOOTH],
+    ["smootherstep", SMOOTHER],
+  ] as const) {
+    assert(
+      Math.abs(curvatureAt(easing, 0.5)) < 1e-3,
+      `${name} should pass through zero curvature in the middle, had ${curvatureAt(easing, 0.5)}`,
+    );
+  }
+
+  // A gentler start is paid for in the middle. The exchange rate, to six digits.
+  for (const [name, easing, peak] of [
+    ["linear", linear, 1],
+    ["smoothstep", SMOOTH, 1.5],
+    ["smootherstep", SMOOTHER, 1.875],
+    ["easeInOutQuad", easeInOutQuad, 2],
+    ["easeInOutCubic", easeInOutCubic, 3],
+  ] as const) {
+    assert(
+      near(peakSlope(easing), peak, 1e-4),
+      `${name}'s peak speed should be ${peak} times the average, measured ${peakSlope(easing)}`,
+    );
+  }
+
+  // ---- The rest of the figures the Section quotes ---------------------------------------
+
+  // Linear and easeInOutCubic complete the curvature table, so they are pinned like the others.
+  for (const t of grid) {
+    assert(
+      Math.abs(curvatureAt(linear, t)) < 1e-6,
+      "a straight line has no curvature anywhere",
+    );
+  }
+  for (const t of [1e-2, 1e-3, 1e-4]) {
+    assert(
+      near(curvatureAt(easeInOutCubic, t, t / 10), 24 * t, 1e-3),
+      `easeInOutCubic's end curvature should be 24t and so go to zero, was ${curvatureAt(easeInOutCubic, t, t / 10)} at t = ${t}`,
+    );
+  }
+
+  // Where easeOutBack's peak sits, not just how high it is.
+  let backPeakAt = 0;
+  let backPeakValue = -Infinity;
+  for (let i = 0; i <= 200000; i += 1) {
+    const t = i / 200000;
+    if (easeOutBack(t) > backPeakValue) {
+      backPeakValue = easeOutBack(t);
+      backPeakAt = t;
+    }
+  }
+  assert(
+    near(backPeakAt, 0.58, 5e-4),
+    `easeOutBack should peak at t = 0.580, peaked at ${backPeakAt}`,
+  );
+
+  /* Elastic crosses the target seven times before landing. Counted with `>= 0` on the second side,
+     because the samples can land exactly on a zero of the sine - a first attempt using strict
+     inequalities reported zero crossings for a curve that plainly reaches 1.37, which is the sort of
+     result worth chasing rather than accepting. */
+  let crossings = 0;
+  let previous = easeOutElastic(0) - 1;
+  const steps = 400000;
+  for (let i = 1; i < steps; i += 1) {
+    const value = easeOutElastic(i / steps) - 1;
+    if ((previous < 0 && value >= 0) || (previous > 0 && value <= 0))
+      crossings += 1;
+    previous = value;
+  }
+  assert(
+    crossings === 7,
+    `easeOutElastic should cross the target seven times before the end, crossed ${crossings}`,
+  );
+
+  // The quarters the gallery's prose reads off. Percentages of the distance, per quarter of the time.
+  for (const [name, easing, first, last] of [
+    ["linear", linear, 0.25, 0.25],
+    ["easeInQuad", easeInQuad, 0.0625, 0.4375],
+    ["easeOutQuad", easeOutQuad, 0.4375, 0.0625],
+  ] as const) {
+    assert(
+      near(easing(0.25), first, 1e-12),
+      `${name} should cover ${first} of the distance in the first quarter of the time, covered ${easing(0.25)}`,
+    );
+    assert(
+      near(1 - easing(0.75), last, 1e-12),
+      `${name} should cover ${last} in the last quarter, covered ${1 - easing(0.75)}`,
+    );
+  }
+
+  // And the two damping figures the comparison table leans on.
+  assert(
+    near(1 - Math.pow(2, -1.5 / 0.15), 0.99902344, 1e-8),
+    "decay should have covered 99.902344% of the gap after ten half-lives",
+  );
+
+  // ---- reverse() is an identity, so an in and an out cannot drift apart -----------------
+
+  for (const [inward, outward] of [
+    [easeInQuad, easeOutQuad],
+    [easeInCubic, easeOutCubic],
+  ] as const) {
+    for (let i = 0; i <= 2000; i += 1) {
+      const t = i / 2000;
+      assert(
+        near(reverse(inward)(t), outward(t), 1e-15),
+        `reverse of the in should equal the out, differed at t = ${t}`,
+      );
+    }
+  }
+  // And reversing twice gets back to where it started, for every curve here.
+  for (const entry of ALL) {
+    for (let i = 0; i <= 500; i += 1) {
+      const t = i / 500;
+      assert(
+        near(reverse(reverse(entry.easing))(t), entry.easing(t), 1e-12),
+        `reversing ${entry.name} twice should be the identity`,
+      );
+    }
+  }
+
+  // ---- tween: frame-rate independent, and it lands exactly on time ----------------------
+
+  /* A different reason from Section 4.1's decay, and worth keeping the two apart. Decay is independent
+     because the exponential composes with itself; a tween is independent because the fraction is
+     `elapsed / duration` with both in seconds, so the frame rate never enters the arithmetic at all. */
+  for (const entry of ALL) {
+    const reference: number[] = [];
+    for (const fps of [24, 30, 60, 144, 1000]) {
+      const frames = Math.round(0.75 * fps);
+      let last = 0;
+      for (let i = 1; i <= frames; i += 1) {
+        last = tween(0, 100, i / fps, 0.75, entry.easing);
+      }
+      assert(
+        last === 100,
+        `${entry.name} should land exactly on 100 at 0.75 s, landed ${last} at ${fps} fps`,
+      );
+      reference.push(tween(0, 100, 0.3, 0.75, entry.easing));
+    }
+    assert(
+      reference.every((value) => value === reference[0]),
+      `${entry.name} at a fixed elapsed time should not depend on the frame rate`,
+    );
+  }
+  // Clamped past the end, so a late frame cannot carry it further.
+  assert(
+    tween(0, 100, 2, 0.75, easeOutQuad) === 100,
+    "a tween stops at its duration",
+  );
+  assert(
+    tween(0, 100, -1, 0.75, easeOutQuad) === 0,
+    "and does not start early",
+  );
+  assert(
+    tween(7, 9, 0.5, 0, linear) === 9,
+    "a zero duration arrives immediately",
+  );
+
+  /* And the contrast the Section is built on, priced: with a 0.15 s half-life, decay has covered
+     96.875% after 0.75 s and never reaches the target at all. Easing is the tool when the arrival has
+     to happen at a stated time. */
+  assert(
+    near(1 - Math.pow(2, -0.75 / 0.15), 0.96875, 1e-12),
+    "decay should have covered 96.875% of the gap after five half-lives",
+  );
+  for (const seconds of [0.75, 1.5, 3, 5]) {
+    assert(
+      1 - Math.pow(2, -seconds / 0.15) < 1,
+      `decay should still not have arrived after ${seconds} s`,
+    );
+  }
+  /* "Decay never arrives" is true of the mathematics and **false of a double**, which is worth being
+     exact about rather than repeating as a slogan. The remaining gap stops being representable after
+     54 half-lives - 8.1 s at 0.15 s - and from then on the value is the target. Long after anything a
+     game would wait for, which is why the practical statement is "not at a time you can name". */
+  let halfLivesToVanish = 0;
+  while (1 - Math.pow(2, -halfLivesToVanish) !== 1) halfLivesToVanish += 1;
+  assert(
+    halfLivesToVanish === 54,
+    `the gap should become unrepresentable at 54 half-lives, it was ${halfLivesToVanish}`,
+  );
+  assert(
+    near(halfLivesToVanish * 0.15, 8.1, 1e-9),
+    "which is 8.1 seconds at the half-life used above",
+  );
+
+  // ---- The gallery's own layout, which is arithmetic and so can be checked --------------
+
+  assert(
+    drawnRight() <= LAYOUT.width,
+    `the gallery draws out to ${drawnRight()} on a canvas ${LAYOUT.width} wide`,
+  );
+  assert(
+    trackX(0) > LAYOUT.curve.left + LAYOUT.curve.width,
+    "and the track has to start clear of the curve plots",
+  );
+  assert(
+    rowCentre(GALLERY.length - 1) + LAYOUT.rowHeight / 2 < LAYOUT.height,
+    "the last row has to fit above the bottom edge",
+  );
+  assert(
+    trackX(1) < LAYOUT.width && trackX(1) > trackX(0),
+    "the target mark has to be on the canvas and to the right of the start",
+  );
+  // The ghosts mark equal steps in **time**, which is the claim their spacing rests on.
+  const times = ghostTimes();
+  assert(
+    times.length === GHOSTS,
+    `there should be ${GHOSTS} ghosts, there were ${times.length}`,
+  );
+  assert(
+    times[0] === 0 && times[times.length - 1] === 1,
+    "spanning the whole interval",
+  );
+  times.slice(1).forEach((t, k) => {
+    assert(
+      near(t - times[k], 1 / (GHOSTS - 1), 1e-12),
+      "and equally spaced in time, since their spacing on the track is meant to be the speed",
+    );
+  });
+  /* Which is only informative if the spacing actually differs between curves. Linear's ghosts are
+     evenly spaced and easeOutQuad's are not, and if that ever stopped being true the picture would be
+     six identical rows. */
+  const spacings = (easing: Easing) =>
+    times.slice(1).map((t, k) => trackX(easing(t)) - trackX(easing(times[k])));
+  const spread = (values: number[]) =>
+    Math.max(...values) - Math.min(...values);
+  assert(
+    spread(spacings(linear)) < 1e-9,
+    "linear's ghosts should be evenly spaced",
+  );
+  assert(
+    spread(spacings(easeOutQuad)) > 20,
+    `easeOutQuad's should be visibly uneven, spread was ${spread(spacings(easeOutQuad))} px`,
+  );
+};
+
+/**
+ * Bezier curves: the two ways of evaluating one must agree, and `t` must be shown not to be distance.
+ *
+ * The load-bearing assertion is that de Casteljau's repeated lerping and the Bernstein polynomials
+ * produce the same point everywhere. They are genuinely different arithmetic - one is a loop of lerps,
+ * the other a weighted sum of four terms - so agreement to $10^{-15}$ across ten thousand samples means
+ * both are right rather than that one was copied from the other.
+ *
+ * The second job is honesty about the presets. The first draft used three symmetric curves, and every
+ * one of them put $t = 0.5$ at exactly $50\%$ of the arc length, which would have made the Section's
+ * central claim look like a rounding error. So the check now asserts both halves: that a symmetric
+ * curve **does** land on 50%, and that the asymmetric one is nowhere near it.
+ */
+export const curveCheck2d: Demo = () => {
+  const samePoint = (a: Point, b: Point, tol = 1e-9) =>
+    Math.hypot(a.x - b.x, a.y - b.y) < tol;
+
+  const QUADRATIC = PRESETS[2].points;
+  const SYMMETRIC = PRESETS[0].points;
+  const LOPSIDED = PRESETS[1].points;
+  const DEGENERATE = PRESETS[3].points;
+
+  /* Two extra curves with **no zero and no repeated coordinate anywhere**, used for the agreement
+     sweep below. The presets are chosen to be readable, which makes them symmetric or centred, and a
+     sabotage that deleted the 2 from the quadratic's middle weight passed every assertion here -
+     because the readable quadratic's handle sits at $x = 0$, so its weight could be anything at all.
+     Awkward numbers are what make a weight error visible. */
+  const AWKWARD_QUADRATIC: Point[] = [
+    { x: -4.3, y: -1.7 },
+    { x: 1.9, y: 2.3 },
+    { x: 5.1, y: -2.9 },
+  ];
+  const AWKWARD_CUBIC: Point[] = [
+    { x: -4.7, y: 2.1 },
+    { x: -1.3, y: -2.7 },
+    { x: 2.9, y: 3.1 },
+    { x: 5.3, y: -1.1 },
+  ];
+
+  // ---- The two evaluations must agree -----------------------------------------------------
+
+  let worstQuadratic = 0;
+  let worstCubic = 0;
+  for (let i = 0; i <= 10000; i += 1) {
+    const t = i / 10000;
+    worstQuadratic = Math.max(
+      worstQuadratic,
+      Math.hypot(
+        quadraticAt(QUADRATIC[0], QUADRATIC[1], QUADRATIC[2], t).x -
+          pointAt(QUADRATIC, t).x,
+        quadraticAt(QUADRATIC[0], QUADRATIC[1], QUADRATIC[2], t).y -
+          pointAt(QUADRATIC, t).y,
+      ),
+    );
+    const bernstein = cubicAt(
+      SYMMETRIC[0],
+      SYMMETRIC[1],
+      SYMMETRIC[2],
+      SYMMETRIC[3],
+      t,
+    );
+    worstCubic = Math.max(
+      worstCubic,
+      Math.hypot(
+        bernstein.x - pointAt(SYMMETRIC, t).x,
+        bernstein.y - pointAt(SYMMETRIC, t).y,
+      ),
+    );
+  }
+  assert(
+    worstQuadratic < 1e-13,
+    `de Casteljau and the quadratic polynomial disagreed by ${worstQuadratic}`,
+  );
+  assert(
+    worstCubic < 1e-13,
+    `de Casteljau and the cubic polynomial disagreed by ${worstCubic}`,
+  );
+
+  // The same sweep on the awkward pair, where every weight has a nonzero coordinate to get wrong.
+  let worstAwkward = 0;
+  for (let i = 0; i <= 10000; i += 1) {
+    const t = i / 10000;
+    const q = quadraticAt(
+      AWKWARD_QUADRATIC[0],
+      AWKWARD_QUADRATIC[1],
+      AWKWARD_QUADRATIC[2],
+      t,
+    );
+    const qd = pointAt(AWKWARD_QUADRATIC, t);
+    const c = cubicAt(
+      AWKWARD_CUBIC[0],
+      AWKWARD_CUBIC[1],
+      AWKWARD_CUBIC[2],
+      AWKWARD_CUBIC[3],
+      t,
+    );
+    const cd = pointAt(AWKWARD_CUBIC, t);
+    worstAwkward = Math.max(
+      worstAwkward,
+      Math.hypot(q.x - qd.x, q.y - qd.y),
+      Math.hypot(c.x - cd.x, c.y - cd.y),
+    );
+  }
+  assert(
+    worstAwkward < 1e-13,
+    `the polynomials and de Casteljau disagreed by ${worstAwkward} on awkward control points`,
+  );
+  /* And the weights themselves, spelled out at one point rather than left implicit in the loop. At
+     t = 0.5 a quadratic is 0.25, 0.5, 0.25 and a cubic is 0.125, 0.375, 0.375, 0.125. */
+  assert(
+    samePoint(
+      pointAt(AWKWARD_QUADRATIC, 0.5),
+      {
+        x:
+          0.25 * AWKWARD_QUADRATIC[0].x +
+          0.5 * AWKWARD_QUADRATIC[1].x +
+          0.25 * AWKWARD_QUADRATIC[2].x,
+        y:
+          0.25 * AWKWARD_QUADRATIC[0].y +
+          0.5 * AWKWARD_QUADRATIC[1].y +
+          0.25 * AWKWARD_QUADRATIC[2].y,
+      },
+      1e-14,
+    ),
+    "a quadratic at t = 0.5 is the 1:2:1 blend of its control points",
+  );
+  assert(
+    samePoint(
+      pointAt(AWKWARD_CUBIC, 0.5),
+      {
+        x:
+          0.125 * AWKWARD_CUBIC[0].x +
+          0.375 * AWKWARD_CUBIC[1].x +
+          0.375 * AWKWARD_CUBIC[2].x +
+          0.125 * AWKWARD_CUBIC[3].x,
+        y:
+          0.125 * AWKWARD_CUBIC[0].y +
+          0.375 * AWKWARD_CUBIC[1].y +
+          0.375 * AWKWARD_CUBIC[2].y +
+          0.125 * AWKWARD_CUBIC[3].y,
+      },
+      1e-14,
+    ),
+    "and a cubic is the 1:3:3:1 blend",
+  );
+  // The weights sum to one at every t, which is what keeps the curve inside its control points.
+  for (let i = 0; i <= 1000; i += 1) {
+    const t = i / 1000;
+    const u = 1 - t;
+    assert(
+      near(u * u + 2 * u * t + t * t, 1, 1e-12),
+      `the quadratic weights should sum to 1, summed to ${u * u + 2 * u * t + t * t} at t = ${t}`,
+    );
+    assert(
+      near(u * u * u + 3 * u * u * t + 3 * u * t * t + t * t * t, 1, 1e-12),
+      "and the cubic weights too",
+    );
+  }
+
+  // The endpoints are hit exactly, and only the endpoints are on the curve.
+  for (const curve of [QUADRATIC, SYMMETRIC, LOPSIDED]) {
+    assert(
+      samePoint(pointAt(curve, 0), curve[0], 1e-15),
+      "a Bezier starts at its first control point",
+    );
+    assert(
+      samePoint(pointAt(curve, 1), curve[curve.length - 1], 1e-15),
+      "and ends at its last",
+    );
+    // Every point lies inside the bounding box of the control points: the weights sum to one.
+    const xs = curve.map((p) => p.x);
+    const ys = curve.map((p) => p.y);
+    for (let i = 0; i <= 500; i += 1) {
+      const p = pointAt(curve, i / 500);
+      assert(
+        p.x >= Math.min(...xs) - 1e-9 &&
+          p.x <= Math.max(...xs) + 1e-9 &&
+          p.y >= Math.min(...ys) - 1e-9 &&
+          p.y <= Math.max(...ys) + 1e-9,
+        `the curve left its control points' bounding box at t = ${i / 500}`,
+      );
+    }
+  }
+
+  /* The middle control point is a handle, not a waypoint. Measured as a closest approach rather than
+     asserted, because "the curve does not reach it" is the single most common misreading of a Bezier. */
+  let closest = Infinity;
+  let closestAt = 0;
+  for (let i = 0; i <= 100000; i += 1) {
+    const t = i / 100000;
+    const gap = Math.hypot(
+      pointAt(QUADRATIC, t).x - QUADRATIC[1].x,
+      pointAt(QUADRATIC, t).y - QUADRATIC[1].y,
+    );
+    if (gap < closest) {
+      closest = gap;
+      closestAt = t;
+    }
+  }
+  assert(
+    near(closest, 2.6, 1e-4),
+    `the quadratic's closest approach to its handle should be 2.6 units, was ${closest}`,
+  );
+  assert(
+    near(closestAt, 0.5, 1e-4),
+    `and should happen at t = 0.5, happened at ${closestAt}`,
+  );
+  /* And it is closest by exactly the amount the weights predict: at t = 0.5 the blend is 0.25, 0.5,
+     0.25, so the point sits halfway between the handle and the midpoint of the chord. */
+  const chordMiddle = {
+    x: (QUADRATIC[0].x + QUADRATIC[2].x) / 2,
+    y: (QUADRATIC[0].y + QUADRATIC[2].y) / 2,
+  };
+  assert(
+    samePoint(
+      pointAt(QUADRATIC, 0.5),
+      {
+        x: (QUADRATIC[1].x + chordMiddle.x) / 2,
+        y: (QUADRATIC[1].y + chordMiddle.y) / 2,
+      },
+      1e-12,
+    ),
+    "at t = 0.5 a quadratic sits exactly halfway between its handle and the middle of its chord",
+  );
+
+  // ---- The tangent, and where it has no answer --------------------------------------------
+
+  /* The derivative, checked against a finite difference of the curve itself rather than against a
+     rearrangement of the same formula. n times a Bezier of the differences is a claim worth testing. */
+  for (const curve of [
+    QUADRATIC,
+    SYMMETRIC,
+    LOPSIDED,
+    AWKWARD_QUADRATIC,
+    AWKWARD_CUBIC,
+  ]) {
+    for (let i = 1; i < 200; i += 1) {
+      const t = i / 200;
+      const h = 1e-6;
+      const numerical = {
+        x: (pointAt(curve, t + h).x - pointAt(curve, t - h).x) / (2 * h),
+        y: (pointAt(curve, t + h).y - pointAt(curve, t - h).y) / (2 * h),
+      };
+      assert(
+        samePoint(tangentAt(curve, t), numerical, 1e-5),
+        `the tangent disagreed with a finite difference at t = ${t}`,
+      );
+    }
+  }
+  // The tangent at an end points along the handle, which is what makes handles steerable.
+  for (const curve of [QUADRATIC, SYMMETRIC, LOPSIDED]) {
+    const startDirection = normalize(tangentAt(curve, 0));
+    const towardHandle = normalize({
+      x: curve[1].x - curve[0].x,
+      y: curve[1].y - curve[0].y,
+    });
+    assert(
+      startDirection !== null &&
+        towardHandle !== null &&
+        near(dot(startDirection, towardHandle), 1, 1e-9),
+      "the tangent at t = 0 should point straight at the first handle",
+    );
+  }
+
+  /* The degenerate case, which is the reason `facingAt` can return null. A handle dropped on its own
+     endpoint gives a zero tangent, and `atan2(0, 0)` answers 0 without complaint - so a sprite would
+     snap to facing east for exactly one sample and then jump back. */
+  assert(
+    samePoint(DEGENERATE[0], DEGENERATE[1], 1e-15),
+    "the degenerate preset should have a handle sitting on its endpoint",
+  );
+  assert(
+    length(tangentAt(DEGENERATE, 0)) === 0,
+    `its tangent at t = 0 should be exactly zero, was ${length(tangentAt(DEGENERATE, 0))}`,
+  );
+  assert(facingAt(DEGENERATE, 0) === null, "so there is no facing angle there");
+  assert(
+    Math.atan2(0, 0) === 0,
+    "while atan2 of the zero vector answers 0, with no error and no NaN",
+  );
+  // Only at t = 0, though: the curve recovers immediately, which is why this is so hard to spot.
+  assert(
+    facingAt(DEGENERATE, 1e-5) !== null,
+    "the facing should be defined again by t = 1e-5",
+  );
+  assert(
+    near(
+      toDegrees(facingAt(DEGENERATE, 0.001)!),
+      toDegrees(facingAt(DEGENERATE, 0.05)!),
+      1.5,
+    ),
+    "and it is a perfectly ordinary angle either side of the hole",
+  );
+  // Every other preset has a facing everywhere, so the null is a real case and not the normal one.
+  for (const curve of [QUADRATIC, SYMMETRIC, LOPSIDED]) {
+    for (let i = 0; i <= 500; i += 1) {
+      assert(
+        facingAt(curve, i / 500) !== null,
+        `a well-formed curve should have a facing everywhere, missing at t = ${i / 500}`,
+      );
+    }
+  }
+
+  // ---- `t` is not distance, which is the Section -------------------------------------------
+
+  /* Both halves asserted, because only the pair is honest. A symmetric curve puts t = 0.5 at exactly
+     half the length and so proves nothing; the lopsided one is the demonstration. */
+  assert(
+    near(fractionAtT(SYMMETRIC, 0.5), 0.5, 1e-6),
+    `a symmetric curve should put t = 0.5 at half its length, put it at ${fractionAtT(SYMMETRIC, 0.5)}`,
+  );
+  assert(
+    near(fractionAtT(LOPSIDED, 0.5), 0.3294, 1e-3),
+    `the lopsided curve should put t = 0.5 at 32.94% of its length, put it at ${fractionAtT(LOPSIDED, 0.5)}`,
+  );
+  const lopsidedTable = arcTable(LOPSIDED);
+  assert(
+    near(tAtFraction(lopsidedTable, 0.5), 0.6829, 1e-3),
+    `and half its length should be at t = 0.6829, was ${tAtFraction(lopsidedTable, 0.5)}`,
+  );
+  assert(
+    near(speedSpread(LOPSIDED), 3.409, 1e-2),
+    `its fastest point should be 3.409 times its slowest, was ${speedSpread(LOPSIDED)}`,
+  );
+  // The symmetric curve still varies in speed, so "symmetric" is not "uniform".
+  assert(
+    near(speedSpread(SYMMETRIC), 1.485, 1e-2),
+    `even the symmetric curve's speed varies by 1.485, measured ${speedSpread(SYMMETRIC)}`,
+  );
+  // The other two rows of the Section's table.
+  assert(
+    near(fractionAtT(LOPSIDED, 0.25), 0.1649, 1e-3),
+    `t = 0.25 should have covered 16.49% of the lopsided curve, covered ${fractionAtT(LOPSIDED, 0.25)}`,
+  );
+  assert(
+    near(fractionAtT(LOPSIDED, 0.75), 0.5812, 1e-3),
+    `t = 0.75 should have covered 58.12%, covered ${fractionAtT(LOPSIDED, 0.75)}`,
+  );
+  // And the two mark ratios quoted beside them.
+  assert(
+    near(travelReport(LOPSIDED, false).evenness, 3.118, 1e-2),
+    `marks stepped by t should span a factor of 3.118, spanned ${travelReport(LOPSIDED, false).evenness}`,
+  );
+  assert(
+    near(travelReport(LOPSIDED, true).evenness, 1.009, 2e-3),
+    `and stepped by distance a factor of 1.009, spanned ${travelReport(LOPSIDED, true).evenness}`,
+  );
+
+  // Stepping by distance evens the marks out; stepping by t does not. Both measured on both curves.
+  for (const [name, curve] of [
+    ["symmetric", SYMMETRIC],
+    ["lopsided", LOPSIDED],
+    ["quadratic", QUADRATIC],
+  ] as const) {
+    const byT = travelReport(curve, false).evenness;
+    const byDistance = travelReport(curve, true).evenness;
+    assert(
+      byT > 1.25,
+      `${name}: marks stepped by t should be visibly uneven, ratio was ${byT}`,
+    );
+    assert(
+      byDistance < 1.02,
+      `${name}: marks stepped by distance should be even, ratio was ${byDistance}`,
+    );
+    assert(
+      byDistance < byT,
+      `${name}: stepping by distance should be the more even of the two`,
+    );
+  }
+
+  /* The table's two directions must agree on a round trip. They are not inverses by construction - one
+     is a binary search and the other a forward read - so this has teeth. */
+  for (const curve of [QUADRATIC, SYMMETRIC, LOPSIDED, DEGENERATE]) {
+    const table = arcTable(curve);
+    let worst = 0;
+    for (let i = 0; i <= 1000; i += 1) {
+      const t = i / 1000;
+      worst = Math.max(
+        worst,
+        Math.abs(tAtDistance(table, distanceAtT(table, t)) - t),
+      );
+    }
+    assert(
+      worst < 1e-12,
+      `the distance round trip should be exact, worst error ${worst}`,
+    );
+    // Monotone, or a binary search over it would be meaningless.
+    for (let i = 1; i < table.distances.length; i += 1) {
+      assert(
+        table.distances[i] >= table.distances[i - 1],
+        "cumulative distance must never decrease",
+      );
+    }
+    assert(
+      near(table.total, table.distances[table.distances.length - 1], 1e-15),
+      "and the total is the last entry",
+    );
+    assert(
+      tAtDistance(table, -5) === 0,
+      "asking for a negative distance clamps to the start",
+    );
+    assert(
+      near(tAtDistance(table, table.total * 2), 1, 1e-12),
+      "and past the end clamps to the finish",
+    );
+  }
+
+  /* Sampled length converges, and 256 samples is enough. Priced rather than assumed: the error against
+     a 8192-sample reference is under two thousandths of a pixel at this scale, so the default is not a
+     compromise anybody will see. */
+  for (const curve of [SYMMETRIC, LOPSIDED]) {
+    const reference = curveLength(curve, 8192);
+    let previousError = Infinity;
+    for (const samples of [16, 32, 64, 128, 256]) {
+      const error = Math.abs(curveLength(curve, samples) - reference);
+      assert(
+        error < previousError,
+        `more samples should mean less error, ${samples} was worse than the step before`,
+      );
+      previousError = error;
+    }
+    assert(
+      Math.abs(curveLength(curve, LENGTH_SAMPLES) - reference) * PATH_UNIT <
+        0.01,
+      `the default sample count should be accurate to well under a pixel, was off by ${
+        Math.abs(curveLength(curve, LENGTH_SAMPLES) - reference) * PATH_UNIT
+      }`,
+    );
+    // A polyline through the curve is always shorter than the curve, never longer.
+    assert(
+      curveLength(curve, 16) < reference,
+      "a coarse polyline underestimates a curve's length, it cannot overestimate it",
+    );
+  }
+  /* The pixel figures the Section tabulates, and the second-order behaviour they show: the error
+     quarters with every doubling of the sample count. That is the claim worth pinning, because it is
+     the reason 256 is enough rather than a number somebody liked. */
+  {
+    const reference = curveLength(LOPSIDED, 8192);
+    const errorAt = (samples: number) =>
+      Math.abs(curveLength(LOPSIDED, samples) - reference) * PATH_UNIT;
+    for (const [samples, pixels] of [
+      [8, 1.1554],
+      [16, 0.2887],
+      [64, 0.018],
+      [256, 0.0011],
+    ] as const) {
+      assert(
+        near(errorAt(samples), pixels, 5e-4),
+        `${samples} samples should be off by ${pixels} px, was off by ${errorAt(samples)}`,
+      );
+    }
+    for (const samples of [16, 32, 64, 128]) {
+      assert(
+        near(errorAt(samples) / errorAt(samples * 2), 4, 0.1),
+        `doubling the samples should quarter the error, went ${errorAt(samples)} to ${errorAt(samples * 2)}`,
+      );
+    }
+  }
+
+  // ---- Splitting and elevating, which must not change the shape ---------------------------
+
+  for (const curve of [
+    QUADRATIC,
+    SYMMETRIC,
+    LOPSIDED,
+    AWKWARD_QUADRATIC,
+    AWKWARD_CUBIC,
+  ]) {
+    for (const at of [0.15, 0.5, 0.9]) {
+      const { left, right } = splitAt(curve, at);
+      assert(
+        left.length === curve.length && right.length === curve.length,
+        "a split gives two curves of the same degree",
+      );
+      assert(
+        samePoint(left[left.length - 1], right[0], 1e-15),
+        "and they meet exactly at the split point",
+      );
+      for (let i = 0; i <= 2000; i += 1) {
+        const t = i / 2000;
+        assert(
+          samePoint(pointAt(curve, t * at), pointAt(left, t), 1e-12),
+          `the left half should retrace the original up to ${at}`,
+        );
+        assert(
+          samePoint(
+            pointAt(curve, at + t * (1 - at)),
+            pointAt(right, t),
+            1e-12,
+          ),
+          `and the right half should retrace the rest`,
+        );
+      }
+    }
+    // Degree elevation adds a control point and changes nothing else.
+    const raised = elevate(curve);
+    assert(
+      raised.length === curve.length + 1,
+      "elevating adds exactly one control point",
+    );
+    assert(
+      samePoint(raised[0], curve[0], 1e-15) &&
+        samePoint(raised[raised.length - 1], curve[curve.length - 1], 1e-15),
+      "and leaves the endpoints where they were",
+    );
+    for (let i = 0; i <= 5000; i += 1) {
+      const t = i / 5000;
+      assert(
+        samePoint(pointAt(curve, t), pointAt(raised, t), 1e-12),
+        `elevating must not move the curve, it moved at t = ${t}`,
+      );
+    }
+  }
+  // So every quadratic really is a cubic, and these are the four points it becomes.
+  const asCubic = elevate(QUADRATIC);
+  assert(asCubic.length === 4, "a quadratic elevates to four control points");
+  assert(
+    near(asCubic[1].x, -5 / 3, 1e-12) && near(asCubic[2].x, 5 / 3, 1e-12),
+    `the raised handles should sit a third of the way along, got ${asCubic[1].x} and ${asCubic[2].x}`,
+  );
+
+  // ---- The seam ----------------------------------------------------------------------------
+
+  assert(meetsAt(JOIN_A, JOIN_NAIVE), "the two curves share an endpoint");
+  assert(
+    !joinsSmoothly(JOIN_A, JOIN_NAIVE),
+    "and yet they do not join smoothly, which is the whole point of the example",
+  );
+  /* Exactly a right angle, by construction: the first curve arrives at -45 degrees and the second
+     leaves at +45. Chosen so the figure the page quotes is a number a reader can check by eye against
+     the picture rather than one they have to take on trust. */
+  assert(
+    near(seamAngle(JOIN_A, JOIN_NAIVE), 90, 1e-9),
+    `the naive seam should turn 90 degrees, turned ${seamAngle(JOIN_A, JOIN_NAIVE)}`,
+  );
+  const mended = smoothedNext(JOIN_A, JOIN_NAIVE);
+  assert(
+    joinsSmoothly(JOIN_A, mended),
+    "mirroring the handle should make the seam smooth",
+  );
+  assert(
+    Math.abs(seamAngle(JOIN_A, mended)) < 1e-12,
+    `and the seam angle should be zero, was ${seamAngle(JOIN_A, mended)}`,
+  );
+  // It moves exactly one point, which is what makes it usable in an editor.
+  assert(
+    samePoint(mended[0], JOIN_NAIVE[0], 1e-15),
+    "the shared point does not move",
+  );
+  assert(
+    samePoint(mended[2], JOIN_NAIVE[2], 1e-15) &&
+      samePoint(mended[3], JOIN_NAIVE[3], 1e-15),
+    "and neither does the rest of the second curve",
+  );
+  assert(
+    !samePoint(mended[1], JOIN_NAIVE[1], 1e-9),
+    "only the first handle moved, and it did move",
+  );
+  // The mirror is the arithmetic it claims to be: P1' = 2S - P(n-1).
+  assert(
+    samePoint(
+      mended[1],
+      {
+        x: 2 * JOIN_A[3].x - JOIN_A[2].x,
+        y: 2 * JOIN_A[3].y - JOIN_A[2].y,
+      },
+      1e-15,
+    ),
+    "the mended handle should be the previous one reflected through the shared point",
+  );
+  /* And mirroring is idempotent: mending an already-smooth seam changes nothing. Worth a row because an
+     editor will run this on every drag. */
+  assert(
+    samePoint(smoothedNext(JOIN_A, mended)[1], mended[1], 1e-15),
+    "mending a smooth seam should leave it alone",
+  );
+  // A curve does not join smoothly to one that starts somewhere else, however aligned the tangents.
+  assert(
+    !joinsSmoothly(JOIN_A, [
+      { x: 1, y: 1 },
+      { x: 2.5, y: -1.4 },
+      ...JOIN_NAIVE.slice(2),
+    ]),
+    "a shared endpoint is necessary as well as insufficient",
+  );
+
+  // A chain is drawn as one path with no duplicated seam point.
+  const chain = chainPoints([JOIN_A, mended], 48);
+  assert(
+    chain.length === 97,
+    `two curves at 48 steps should give 97 points, gave ${chain.length}`,
+  );
+  assert(
+    samePoint(chain[48], JOIN_A[3], 1e-12),
+    "with the seam appearing exactly once",
+  );
+
+  // ---- The scenes' own arithmetic ----------------------------------------------------------
+
+  // The world-to-screen round trip, since a drag depends on it and a sign error still draws a curve.
+  for (const curve of PRESETS) {
+    for (const p of curve.points) {
+      const screen = pathScreenOf(p);
+      assert(
+        samePoint(pathWorldOf(screen.x, screen.y), p, 1e-12),
+        `the screen round trip failed for (${p.x}, ${p.y})`,
+      );
+    }
+  }
+  // Y is flipped exactly once: a point above another in the world is drawn higher on the canvas.
+  assert(
+    pathScreenOf({ x: 0, y: 1 }).y < pathScreenOf({ x: 0, y: 0 }).y,
+    "a higher world point should be drawn nearer the top",
+  );
+  // Every preset, and everything reachable by dragging, stays on the canvas.
+  for (const preset of PRESETS) {
+    for (const p of preset.points) {
+      assert(
+        Math.abs(p.x) <= PATH_BOUNDS.x && Math.abs(p.y) <= PATH_BOUNDS.y,
+        `${preset.name} has a control point outside the draggable bounds`,
+      );
+    }
+    for (const p of outline(preset.points)) {
+      const q = pathScreenOf(p);
+      assert(
+        q.x >= 0 &&
+          q.x <= PATH_VIEW.width &&
+          q.y >= 0 &&
+          q.y <= PATH_VIEW.height,
+        `${preset.name} draws outside the canvas at (${q.x}, ${q.y})`,
+      );
+    }
+    // Including the corners of the bounds, which is where a drag can put a handle.
+    for (const sx of [-PATH_BOUNDS.x, PATH_BOUNDS.x]) {
+      for (const sy of [-PATH_BOUNDS.y, PATH_BOUNDS.y]) {
+        const q = pathScreenOf(clampToBounds({ x: sx, y: sy }));
+        assert(
+          q.x >= 0 &&
+            q.x <= PATH_VIEW.width &&
+            q.y >= 0 &&
+            q.y <= PATH_VIEW.height,
+          `a handle dragged to (${sx}, ${sy}) would land off the canvas`,
+        );
+      }
+    }
+  }
+  // And the clamp really clamps rather than merely existing.
+  assert(
+    clampToBounds({ x: 99, y: -99 }).x === PATH_BOUNDS.x &&
+      clampToBounds({ x: 99, y: -99 }).y === -PATH_BOUNDS.y,
+    "a handle dragged off the canvas is pulled back to the bounds",
+  );
+
+  // The construction the path scene draws: level counts, and the last pair being the tangent.
+  for (const curve of [QUADRATIC, SYMMETRIC]) {
+    for (const t of [0.2, 0.5, 0.77]) {
+      const { levels, point } = deCasteljau(curve, t);
+      assert(
+        levels.length === curve.length,
+        `there should be ${curve.length} levels for ${curve.length} control points`,
+      );
+      assert(
+        levels[levels.length - 1].length === 1,
+        "the last level is the single point on the curve",
+      );
+      assert(
+        samePoint(levels[levels.length - 1][0], point, 1e-15),
+        "which is what it returns",
+      );
+      /* The final pair of intermediate points lies **along the tangent**, which is why the facing
+         direction is not a separate construction. Checked as a direction, not a length. */
+      const pair = levels[levels.length - 2];
+      const alongPair = normalize({
+        x: pair[1].x - pair[0].x,
+        y: pair[1].y - pair[0].y,
+      });
+      const alongTangent = normalize(tangentAt(curve, t));
+      assert(
+        alongPair !== null &&
+          alongTangent !== null &&
+          near(dot(alongPair, alongTangent), 1, 1e-9),
+        `the last construction segment should lie along the tangent at t = ${t}`,
+      );
+    }
+  }
+  // The marks the travelling scene drops, at both ends and in the right number.
+  for (const byDistance of [false, true]) {
+    const marks = markPoints(LOPSIDED, byDistance);
+    assert(
+      marks.length === MARKS,
+      `there should be ${MARKS} marks, there were ${marks.length}`,
+    );
+    assert(
+      samePoint(marks[0], LOPSIDED[0], 1e-9) &&
+        samePoint(marks[MARKS - 1], LOPSIDED[3], 1e-9),
+      "and the first and last should sit on the curve's ends either way",
+    );
   }
 };

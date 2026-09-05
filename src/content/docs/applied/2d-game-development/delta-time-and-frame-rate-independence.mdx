@@ -1,0 +1,184 @@
+---
+title: Delta Time and Frame-Rate Independence
+description: A frame is not a unit of time, so anything updated per frame behaves differently on different hardware - and the per-frame lerp that fixes nothing, with exponential decay that does
+sidebar:
+  order: 11
+  label: "4.1  Delta Time and Frame-Rate Independence"
+---
+
+import DemoPanel from "../../../../components/DemoPanel.astro";
+import CodePanel from "../../../../components/CodePanel.astro";
+import timeSource from "../../../../lib/gamedev2d/time2d.ts?raw";
+
+## What You'll Learn
+
+**A frame is not a unit of time.** It is however long the machine happened to take — a thirtieth of a
+second on a tired tablet, a hundred and forty-fourth on a gaming monitor. So anything you update _per
+frame_ does a different amount of work _per second_ depending on the hardware.
+
+Two fixes, for two shapes of update. Anything that accumulates gets multiplied by the elapsed time,
+which is easy and which most people get right. Anything that **converges** toward a target needs
+exponential decay, which most people get wrong for years — because the wrong version looks perfect on
+the machine it was written on.
+
+This Section comes before anything that moves, on purpose. Everything in Parts 4, 5 and 6 runs in an
+update loop, and this is the Section that makes that loop behave the same for everybody.
+
+## The Easy Half
+
+$$
+p' = p + v\,\Delta t
+$$
+
+With velocity in units **per second**, this is frame-rate independent for free, and the units say so:
+units per second times seconds is units. That dimensional check is the fastest way to audit an update
+loop — anything added to a position without a `dt` beside it is suspect.
+
+Leave the `dt` out and the distance travelled becomes the _frame count_. A second at 30 fps covers 30,
+and at 144 fps covers 144 — the same code moving **4.8 times faster** on the better screen. That much is
+obvious once seen, which is why it is not the interesting half.
+
+## The Half That Looks Fine And Is Not
+
+Here is the line, and some version of it is in nearly every project:
+
+```js
+current = lerp(current, target, 0.1); // every frame
+```
+
+Smooth. Responsive. No `dt` anywhere, which is exactly what makes it feel safe — there is no time in it,
+so how could it depend on time?
+
+**The fraction is per frame, so it is per unknown amount of time.** After $n$ frames the remaining gap is
+$(1 - f)^n$, and that exponent is a frame count. One second of it:
+
+| Frame rate | Gap still remaining |
+| ---------: | ------------------: |
+|     24 fps |            $7.98\%$ |
+|     30 fps |            $4.24\%$ |
+|     60 fps |            $0.18\%$ |
+|    144 fps |        $0.000026\%$ |
+
+The 144 Hz screen ends up over **160,000 times closer** to the target in the same wall-clock second, on
+identical code. And notice the direction: it converges _faster_ on better hardware, so it looks tighter
+and more responsive on the developer's machine and floaty on a cheap laptop. A bug that improves under
+the conditions you test in is a bug that ships.
+
+<DemoPanel name="2d-follow" />
+
+Both followers run the same code with the same number. The only difference is how often it is called.
+Watch the two curves: the 30 fps follower needs $0.933$ s to close 95% of the gap and the 144 fps one
+needs $0.194$ s — and that ratio is **exactly 4.8**, the ratio of the frame rates, because the lerp
+takes the same number of _frames_ whatever a frame is worth.
+
+Now tick the box.
+
+## Exponential Decay
+
+Put the time back in the exponent:
+
+$$
+p' = \text{target} + (p - \text{target})\,e^{-\lambda \Delta t}
+$$
+
+Now a hundred small steps and one big step covering the same span give the same answer. That property
+_is_ frame-rate independence, and it holds for a specific reason:
+
+$$
+e^{-\lambda t_1}\,e^{-\lambda t_2} = e^{-\lambda(t_1 + t_2)}
+$$
+
+**The exponential composes with itself.** That is why this particular curve is the right one rather than
+a convenient one — no other shape of decay has it. Cutting a second into 24, 30, 60, 144, 240 or 1000
+steps all leave $0.9843\%$ of the gap, identically, and the build sweeps exactly that. It also checks ten
+deliberately uneven steps against one step of their total, because real frames are never uniform.
+
+:::tip[Expose a half-life, not a rate]
+
+$$
+p' = \text{target} + (p - \text{target})\,2^{-\Delta t / h}
+$$
+
+Same curve, better parameter. A half-life is **a duration with an obvious meaning**: "catch up halfway
+in a tenth of a second" is a sentence someone tuning the feel can hold in their head, and $\lambda = 6.93$
+is not. After exactly one half-life the gap left is $0.500000$, whatever step sizes got you there.
+:::
+
+## Porting Code Somebody Already Tuned
+
+You do not have to throw away an afternoon of someone's tuning. A factor $f$ at a known frame rate
+converts to a rate exactly:
+
+$$
+\lambda = -\,\text{fps}\,\ln(1 - f)
+$$
+
+So a factor of $0.15$ that felt right at 60 fps becomes a rate of $9.751$, or a half-life of $0.071$ s.
+It is exact at 60 fps — the build asserts one frame of each lands in the same place — and now behaves
+identically everywhere else too.
+
+<DemoPanel name="2d-timestep" />
+
+## What The Build Found, And What It Means
+
+Two honest caveats, both discovered by the checks rather than reasoned out in advance.
+
+**A step target leaves a one-frame transient, and that is not a bug.** Both followers observe the step at
+the same instant, but then integrate the new target over frames of different lengths — 33 ms against
+7 ms — so the slow one has closed more of the gap by the time its frame ends. It is bounded by exactly
+one frame of catch-up, and then it decays away _at the follower's own half-life_: each sixth of a second
+shrinks it by precisely $2^{-1/6h}$, which is asserted as an identity rather than as "the gap is small".
+
+**A slow frame rate still cannot draw a fast curve.** With a half-life shorter than a frame, the 30 fps
+follower closes most of the gap in one step and its curve looks coarse next to the smooth one. Its
+_arrival time_ is still correct to within one frame. That is sampling, not frame-rate dependence, and it
+is why the scene's half-life slider starts above two frames at 30 fps.
+
+<CodePanel
+  code={timeSource}
+  lang="ts"
+  file="src/lib/gamedev2d/time2d.ts"
+  label="Delta time, the lerp that fails, and the decay that does not"
+/>
+
+:::caution[Clamp the frame time. Never skip the frame.]
+A backgrounded tab, a garbage collection pause or a breakpoint can hand you a `dt` of several seconds,
+and every formula here will faithfully apply all of it — teleporting a character through a wall.
+
+So clamp it, to something like $0.1$ s. That loses real time on purpose, which is the right trade for one
+bad frame. What you must **not** do is `if (dt > limit) return`, because skipping makes the simulation
+drift out of step with the clock permanently. It is also unnecessary: decay handles any span correctly,
+so a clamped step is still a well-behaved one.
+:::
+
+:::note[In an engine]
+Godot hands you `delta` in `_process(delta)` and `_physics_process(delta)`, and the second one is already
+fixed — which is a different solution to the same problem, and Section 6.1 leans on it.
+`lerp(current, target, 1.0 - exp(-rate * delta))` is the decay above, written the way Godot's docs
+suggest. `Node.get_process_delta_time()` is the same number if you need it outside the callback.
+
+Unity's `Time.deltaTime` is the frame time and `Time.fixedDeltaTime` is the physics one.
+`Vector3.SmoothDamp` is a spring rather than a decay, and it _is_ frame-rate independent, so it is a
+reasonable thing to reach for — just know it is not the same curve. `Mathf.Lerp(a, b, t * Time.deltaTime)`
+is a common attempt at a fix and is **still wrong**, because scaling the factor is not the same as
+putting the time in the exponent; it is only a first-order approximation and it diverges at large steps.
+:::
+
+## Where This Shows Up
+
+- **Every camera that follows anything.** Section 3.3's camera becomes a follower here.
+- **Any value that eases toward another**: health bars, aim assist, turret tracking, UI panels.
+- **Section 4.2**, which is this idea with easing curves on top.
+- **Section 4.3**, where a sprite travels a path at a speed rather than a fraction per frame.
+- **Part 5's collision response**, which moves things by a velocity and needs the `dt` to be right.
+- **Section 6.1 and the capstone**, where a fixed timestep gives physics a `dt` that never varies.
+
+:::note[The one thing to take away]
+A frame is not a unit of time, so multiply anything that accumulates by `dt`. For anything that
+converges toward a target, `lerp(current, target, f)` once per frame is **not** frame-rate independent:
+the remaining gap is $(1-f)^n$ with $n$ a frame count, so a 144 Hz screen ends up over 160,000 times
+closer in the same second and the code feels tighter on exactly the machine you are testing on. The fix
+is exponential decay, $e^{-\lambda \Delta t}$, which works because the exponential composes with itself —
+so any number of small steps equals one big one. Expose it as a half-life, because that is a duration a
+human can reason about, and clamp a huge `dt` rather than skipping the frame.
+:::

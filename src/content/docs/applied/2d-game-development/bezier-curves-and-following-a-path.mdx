@@ -1,0 +1,255 @@
+---
+title: Bezier Curves and Following a Path
+description: A handful of control points, a curve that leans toward them without reaching them, and the parameter that looks like distance and is not - with the arc-length table that fixes it
+sidebar:
+  order: 13
+  label: "4.3  Bezier Curves and Following a Path"
+---
+
+import DemoPanel from "../../../../components/DemoPanel.astro";
+import CodePanel from "../../../../components/CodePanel.astro";
+import bezierSource from "../../../../lib/gamedev2d/bezier2d.ts?raw";
+
+## What You'll Learn
+
+A Bezier curve is a **weighted blend of a few control points**, where the weights depend on one
+parameter. Two points give a straight line, three give an arc, four give the cubic that every vector
+drawing tool and every animation editor is built on.
+
+Then there is the thing that catches everybody, and it is the reason this Section exists rather than
+being a footnote: **the parameter is not distance.** It runs from 0 to 1 and it looks like "how far
+along". Walk it at a constant rate and your sprite speeds up and slows down depending on where the
+handles happen to sit. On one of the curves below, $t = 0.5$ has covered only $32.94\%$ of the ground.
+
+## The Blend
+
+$$
+B(t) = (1-t)^2 P_0 + 2(1-t)t\,P_1 + t^2 P_2
+$$
+
+$$
+B(t) = (1-t)^3 P_0 + 3(1-t)^2t\,P_1 + 3(1-t)t^2 P_2 + t^3 P_3
+$$
+
+Quadratic and cubic. The coefficients are $1{:}2{:}1$ and $1{:}3{:}3{:}1$ — Pascal's triangle, which is
+where the pattern for any degree comes from.
+
+The property worth holding on to is that **the weights always sum to 1**, at every $t$, and the build
+sweeps a thousand values of $t$ to confirm it. That single fact explains most of a Bezier's behaviour:
+the curve can never leave the box its control points sit in, it cannot loop off somewhere surprising,
+and moving one control point moves the curve in a way you can predict.
+
+It also explains the part beginners trip on. At $t = 0.5$ a quadratic's weights are $0.25$, $0.5$,
+$0.25$ — so the middle point gets half the vote and the two ends split the other half. The curve
+therefore lands **exactly halfway between the handle and the midpoint of the chord**, which on the
+demo's quadratic is $2.6$ units short of the handle itself. A handle is something you steer with, not a
+waypoint you route through.
+
+## De Casteljau: The Same Answer, With Only `lerp`
+
+There is a second way to evaluate a Bezier, and it needs no formula at all. Take each neighbouring pair
+of control points and find the point $t$ of the way between them. You now have one fewer point. Repeat
+until one is left. That is the point on the curve.
+
+Nothing but `lerp`, all the way down — the function from Section 4.2, applied three times, then twice,
+then once. It is worth knowing even though the polynomial is faster, for three reasons: it works at any
+degree without a new formula, it is better behaved numerically, and it hands you two other operations
+for free (below).
+
+<DemoPanel name="2d-path" />
+
+The two are genuinely different arithmetic — a loop of lerps against a weighted sum of four terms — so
+the build sweeping ten thousand values of $t$ and finding them agree to $10^{-13}$ means both are right,
+rather than that one was copied from the other.
+
+:::tip[Look at the last orange segment]
+The final pair of intermediate points, the one just before the answer, lies **along the curve's
+tangent**. That is not a coincidence and it is not decoration: it means the direction to face while
+travelling the curve is already sitting in the construction. The build checks it as a direction, at
+several values of $t$, on both a quadratic and a cubic.
+:::
+
+## The Tangent, And Facing Along It
+
+The derivative of a degree-$n$ Bezier is $n$ times a degree-$(n-1)$ Bezier built on the **differences
+between neighbouring control points**. So the derivative of a cubic is a quadratic on three vectors,
+which is a pleasant thing rather than a chore. The build checks it against a finite difference of the
+curve itself at two hundred points on five different curves, so it is the derivative rather than a
+plausible rearrangement.
+
+One `atan2` on that gives the facing angle, and a car follows a road instead of sliding along it
+sideways. Two consequences worth knowing:
+
+**The tangent at an endpoint points straight at the neighbouring handle.** That is what makes handles
+feel steerable — you are aiming the departure, not just bending the middle.
+
+**The tangent's length is the speed**, in parameter terms, and it is not constant. Which brings us to
+the problem.
+
+## `t` Is Not Distance
+
+<DemoPanel name="2d-travel" />
+
+Eleven marks at equal steps of $t$. They bunch where the curve is slow and spread where it is fast, so
+the picture is the speed profile rather than a claim about one. Then tick the box, and the same eleven
+marks are placed at equal steps of **distance**.
+
+On the "slow start, fast finish" curve:
+
+| Parameter | Distance covered |
+| --------: | ---------------: |
+|  $t=0.25$ |        $16.49\%$ |
+|   $t=0.5$ |        $32.94\%$ |
+|  $t=0.75$ |        $58.12\%$ |
+
+Half the length is not reached until $t = 0.6829$. The fastest point on that curve moves **3.409 times**
+as fast as the slowest, and the widest gap between marks is $3.118$ times the narrowest. Step by
+distance instead and that ratio drops to $1.009$.
+
+:::caution[A symmetric curve hides this completely]
+The first preset is in the list as a control case. It is symmetric, so $t = 0.5$ lands on exactly
+$50.00\%$ of its length, and anyone testing on a curve like that would conclude there was nothing to
+fix. My first draft of this Section used three symmetric curves and every one reported a perfect half —
+which would have made the central claim look like a rounding error. The build now asserts **both**: that
+the symmetric curve does land on 50%, and that the lopsided one is nowhere near it.
+
+Note also that the symmetric curve's speed still varies by a factor of $1.485$. Symmetric is not
+uniform; it is only symmetric about the middle.
+:::
+
+### The Fix: An Arc-Length Table
+
+There is no closed form for the length of a cubic Bezier. This is not a gap in the library — it is a
+fact about the integral, and every engine samples instead. Walk the curve in small straight steps,
+accumulate the distances, and keep the running total against each $t$. Then to travel at a constant
+speed, ask for `distance = speed * elapsed` and binary-search the table for the $t$ that sits there.
+
+Sampling is a choice with a price, so the price is measured rather than waved at:
+
+| Samples | Length error, in pixels |
+| ------: | ----------------------: |
+|       8 |                $1.1554$ |
+|      16 |                $0.2887$ |
+|      64 |                $0.0180$ |
+|     256 |                $0.0011$ |
+
+Quartering with every doubling, which is what a second-order method should do. The default of $256$ is
+accurate to a thousandth of a pixel at this scale — built once when the path changes, not per frame.
+
+The table is read in both directions, and the build checks that the round trip is exact to $10^{-12}$
+across all four curves. That is a real check rather than an identity: one direction is a binary search
+and the other a forward interpolation, so they could disagree.
+
+## Two Things The Construction Gives You Free
+
+**Splitting.** The first point of every level of de Casteljau's construction is the left half's control
+points; the last point of every level, reversed, is the right half's. Two curves of the same degree that
+together retrace the original exactly — checked at three split points on five curves, to $10^{-12}$.
+Useful for trimming a path, for drawing only the part already travelled, and for subdividing until a
+curve is flat enough to draw as line segments.
+
+**Degree elevation.** Add a control point without changing the shape at all:
+
+$$
+Q_i = \frac{i}{n+1}P_{i-1} + \left(1 - \frac{i}{n+1}\right)P_i
+$$
+
+So **every quadratic is also a cubic**. The demo's quadratic becomes a cubic whose handles sit exactly a
+third of the way along each side. That is practically useful rather than trivia: a tool that only speaks
+cubics can accept a quadratic, and a chain of mixed degrees can be made uniform before anything else
+touches it.
+
+## Chaining: A Shared Endpoint Is Not A Smooth Join
+
+One cubic is rarely enough for a route. Chaining them is where a subtle bug lives, because the obvious
+check passes.
+
+<DemoPanel name="2d-joins" />
+
+Those two curves share an endpoint exactly. `meetsAt` returns `true`. And the seam still turns through
+**a right angle** — the first curve arrives at $-45°$ and the second leaves at $+45°$, so a sprite
+crossing it swings its facing $90°$ in a single frame.
+
+Sharing a point is $C^0$ continuity. Smooth means the **tangents** on either side point the same way,
+and the fix is one line:
+
+$$
+P_1' = 2S - P_{n-1}
+$$
+
+Reflect the previous curve's last handle through the shared point. That is the whole trick behind every
+smooth path editor — dragging a handle on one side of a node and watching its twin swing round on the
+other side is this arithmetic, and nothing else. It moves exactly one point, leaves the shared point and
+the rest of the second curve untouched, and running it on an already-smooth seam changes nothing.
+
+:::note[Direction, or direction and speed?]
+Matching tangent **directions** is $G^1$, and it is what a path usually needs — no visible kink, no
+facing snap. Matching direction **and length** is $C^1$, which additionally means the parameter speed
+does not jump at the seam. If you are travelling by arc length you have already stopped caring about
+parameter speed, so $G^1$ is normally the right target and $C^1$ is a constraint you are paying for
+without a reason.
+:::
+
+## The Facing That Has No Answer
+
+Put a handle exactly on its own endpoint — which is what happens when somebody wants a "straight" start
+— and the tangent there is the **zero vector**. The build confirms it is exactly zero, not merely small.
+
+`atan2(0, 0)` returns $0$. No error, no `NaN`, no warning. So the sprite snaps to facing east for one
+sample and then jumps back to its real heading of about $33°$. That is why `facingAt` returns `null`
+rather than an angle:
+
+- It is a hole of **exactly one point**. By $t = 10^{-5}$ the facing is defined and perfectly ordinary.
+- Which is precisely what makes it hard to find: a one-frame flick at the start of a movement, with
+  nothing in the console.
+- The build also confirms every well-formed curve has a facing at all $501$ sampled values of $t$, so
+  the `null` is a real case rather than the normal one.
+
+Handle it by carrying the previous frame's facing forward, or by reading the tangent slightly ahead. Do
+not let `atan2` answer a question that has no answer.
+
+<CodePanel
+  code={bezierSource}
+  lang="ts"
+  file="src/lib/gamedev2d/bezier2d.ts"
+  label="The blend, de Casteljau, the tangent, and the arc-length table"
+/>
+
+:::note[In an engine]
+Godot's `Curve2D` is the direct equivalent and it already does the arc-length work: `sample_baked()`
+takes a **distance**, not a parameter, which is the right default. `get_baked_length()` gives the total
+and `bake_interval` is the sampling resolution — the table above, exposed as a setting.
+`Path2D` plus `PathFollow2D` wraps the lot, and `PathFollow2D.rotates` is the tangent-facing trick.
+`Curve2D.sample()` is the raw parameter version, so reach for `sample_baked()` unless you specifically
+want uneven speed.
+
+Unity has no built-in Bezier for gameplay. `AnimationCurve` is a different thing — a scalar over time
+with tangents, not a path through space. `Vector3.Lerp` three times is de Casteljau, and it is common
+to write the four-term polynomial directly. `LineRenderer` draws the result. If you want the arc-length
+behaviour you will be building the table yourself, which is the second half of the file above.
+
+Both are affine-invariant, which is worth knowing: transforming the control points and then evaluating
+gives the same curve as evaluating and then transforming, so a Bezier drawn in local space survives
+Section 3.2's hierarchy untouched.
+:::
+
+## Where This Shows Up
+
+- **Patrol routes and scripted camera moves**, which is where the arc-length table earns its keep.
+- **Section 4.2's easing, composed with this**: ease the _distance_ along the path, not the parameter,
+  or you get two speed curves multiplied together and neither one is what you asked for.
+- **Section 2.2's `atan2`**, doing the facing, with the degenerate case above as its edge.
+- **Section 3.2's local space**, since a path defined in a parent's frame moves with the parent.
+- **The capstone**, where a moving platform follows a path and has to arrive on time.
+
+:::note[The one thing to take away]
+A Bezier is a weighted blend of its control points whose weights always sum to 1, which is why it stays
+inside them and why a handle pulls the curve without the curve ever reaching it. De Casteljau evaluates
+it with nothing but `lerp`, and throws in the tangent, the split and the subdivision for free. The
+parameter $t$ is **not** distance: on an asymmetric curve $t = 0.5$ can be a third of the way along, and
+the fastest stretch can be over three times the speed of the slowest. If you want constant speed, build
+an arc-length table once and ask it for distances. Chain curves by reflecting the previous handle
+through the shared point, $P_1' = 2S - P_{n-1}$, because sharing an endpoint alone leaves a corner. And
+guard the facing: a handle sitting on its endpoint gives a zero tangent, and `atan2(0, 0)` will answer
+$0$ without telling you it made that up.
+:::
