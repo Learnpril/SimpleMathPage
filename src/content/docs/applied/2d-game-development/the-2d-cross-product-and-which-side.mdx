@@ -1,0 +1,205 @@
+---
+title: The 2D Cross Product and Which Side
+description: One number whose sign says which side of a line a point is on and whose size is an area, plus winding order, the free quarter turn, and the point-in-triangle test built from three of them
+sidebar:
+  order: 5
+  label: "2.1  The 2D Cross Product and Which Side"
+---
+
+import DemoPanel from "../../../../components/DemoPanel.astro";
+import CodePanel from "../../../../components/CodePanel.astro";
+import crossSource from "../../../../lib/gamedev2d/cross2d.ts?raw";
+
+## What You'll Learn
+
+The number the dot product could not give you: which side. One subtraction of two products, and it
+answers left or right, how far off a line something is, how big a polygon is, and which way round its
+corners were listed. In three dimensions this is the operation people find hardest. Here it is a
+single number.
+
+## One Number, Two Readings
+
+$$
+a \times b = a_x b_y - a_y b_x
+$$
+
+Note what it is **not**: it is not a vector. The 3D cross product returns one, which is where its
+right-hand rules and handedness conventions come from. In two dimensions there is no third axis for
+the result to point along, so what you get back is a plain number.
+
+The meaning, as with the dot product, lives in the other way of writing it:
+
+$$
+a \times b = |a|\,|b|\sin\theta
+$$
+
+where $\theta$ is the angle **from $a$ to $b$**, counter-clockwise. Put the two side by side and the
+division of labour is exact:
+
+| Question                    | Operation    | Contains     | Symmetric?            |
+| :-------------------------- | :----------- | :----------- | :-------------------- |
+| do these agree in direction | $a \cdot b$  | $\cos\theta$ | yes, so no left/right |
+| which way would I turn      | $a \times b$ | $\sin\theta$ | no, so it knows       |
+
+Cosine is symmetric — $\cos(-\theta) = \cos\theta$ — which is precisely why Section 1.4 ended with
+`acos` unable to tell a target $40°$ to your left from one $40°$ to your right. Sine is not:
+$\sin(-\theta) = -\sin\theta$. **The asymmetry is the information.**
+
+So swapping the arguments flips the sign, and gets checked at every angle rather than asserted here:
+$1$ for $x \times y$, $-1$ for $y \times x$.
+
+## The Sign Is a Side
+
+Given a line running from $A$ to $B$, and a point $P$:
+
+$$
+(B - A) \times (P - A)
+$$
+
+Positive means $P$ is to the left of the direction of travel, negative means right, zero means on the
+line.
+
+<DemoPanel name="2d-side" />
+
+Sweep the point's $y$ and watch the sign change exactly as it crosses. Nothing about the crossing is
+special-cased; the number simply passes through zero.
+
+Two things this test is worth being careful about.
+
+**"Left" is relative to the line's direction, not to the world.** Tick the last box and every answer
+inverts, because the same two endpoints read backwards is a line pointing the other way. This is the
+first thing to check when a which-side test comes out consistently inverted — the geometry is
+probably fine and the edge is probably reversed.
+
+**Exactly zero is decided by rounding.** The same caveat as a dot product of zero: a sweep of
+**58,564** positions across four line angles put exactly **124** of them on the line. Do not build
+anything that needs the zero case to appear.
+
+The sign test is verified against a completely different piece of arithmetic — a signed angle from
+`atan2`, which Section 2.2 covers — over that whole sweep, with zero disagreements and a symmetric
+$29{,}220$ left against $29{,}220$ right. Two unrelated methods agreeing is worth more than one
+method matching what I expected.
+
+## A Quarter Turn, For Free
+
+Rotating by $90°$ needs no trigonometry at all. Swap the components, negate one:
+
+$$
+\text{perpLeft}(v) = (-v_y,\; v_x) \qquad \text{perpRight}(v) = (v_y,\; -v_x)
+$$
+
+Which one is which follows from the cross product: $v \times \text{perpLeft}(v)$ is positive, so
+`perpLeft` really is the counter-clockwise one. Section 2.3 derives the general rotation formula, and
+this is that formula with $\cos 90° = 0$ and $\sin 90° = 1$ substituted in — which is checked, because
+"obviously the same" is how sign errors survive.
+
+A wall's normal is this. So is the axis a separating-axis test needs in Section 5.3.
+
+## How Far Off the Line
+
+The cross product carries a distance too, once you divide out the line's length:
+
+$$
+d = \frac{(B - A) \times (P - A)}{|B - A|}
+$$
+
+The cross product is twice the area of triangle $ABP$; dividing by the base leaves the height. **One
+number that carries both the side and the distance**, which is why it turns up in every
+line-of-sight, lane-following and "is the player past the finish line" check.
+
+That formula is checked against a brute-force minimum over sixty thousand sampled points along the
+line rather than against itself rearranged, because a rearrangement of a wrong formula is still wrong.
+
+## The Magnitude Is an Area
+
+$|a \times b|$ is the area of the parallelogram the two vectors span, and half of it is the triangle:
+
+$$
+\text{parallelogram} = |a \times b| \qquad \text{triangle} = \frac{|a \times b|}{2}
+$$
+
+No square roots, no trigonometry, no separate base and height. Turn the shading on in the demo above
+and that parallelogram is the one being measured.
+
+Zero area means the two vectors are parallel, which sounds like a curiosity and is not: it is how you
+detect two segments that will never meet, and Section 5.2 leans on it directly.
+
+## Winding Order
+
+Extend the area idea around a closed shape and you get the **shoelace formula**: sum the cross
+products of consecutive corners and halve it.
+
+$$
+2A = \sum_i \left(x_i y_{i+1} - y_i x_{i+1}\right)
+$$
+
+Keep the sign and it tells you which way round the corners were listed. Positive is
+counter-clockwise.
+
+<DemoPanel name="2d-shoelace" />
+
+Every term is a triangle fanned out from the origin, with the parts outside the shape cancelling
+against the parts inside — so the origin can be anywhere at all, inside the polygon or a hundred units
+away, and the answer does not move. The panel shows that rather than claiming it.
+
+Winding matters more than it looks like it should. It decides which way a polygon's edge normals face,
+whether a separating-axis test finds the outside or the inside, and whether a shape ends up
+inside-out. **A wrongly wound shape usually does not error.** It just turns itself inside out, quietly,
+which is this module's version of the mirrored-basis problem the 3D module has.
+
+:::caution[The canvas reverses it]
+Counter-clockwise means counter-clockwise **in world coordinates, with Y up**. A canvas has Y down, so
+the same list of corners appears to wind the other way once drawn. Nothing about the shape changed.
+
+This is checked, and the check pins both halves of it: the rectangle that is counter-clockwise in the
+world comes out clockwise in pixels, and its area grows by exactly the square of the pixels-per-unit
+scale. If your winding tests pass on paper and fail on screen, this is why, and Section 1.1 is the
+Section that explains it.
+:::
+
+## Three Sides Make an Inside
+
+Ask "which side" of all three edges of a triangle. If the answers agree, the point is inside.
+
+That is three cross products, no division, and it works for either winding, because it only asks
+whether the three signs match rather than what they are. Checked against barycentric coordinates —
+different arithmetic, same question — over **32,361** grid cells with no disagreements. Counting the
+cells that came out inside gives an area of $16.05$ against the formula's exact $16$, which is a
+third, independent way of arriving at the same shape.
+
+<CodePanel
+  code={crossSource}
+  lang="ts"
+  file="src/lib/gamedev2d/cross2d.ts"
+  label="The cross product, and the four questions it answers"
+/>
+
+:::note[In an engine]
+Godot spells it `Vector2.cross()`, and it returns a float, exactly as above. `Vector2.orthogonal()` is
+the free quarter turn.
+
+Unity has no `Vector2.Cross`, which catches people out. Write it yourself as
+`a.x * b.y - a.y * b.x`, or use `Vector3.Cross(a, b).z`, which is the same number arrived at
+expensively. `Vector2.Perpendicular()` is the quarter turn.
+
+Both engines' polygon helpers care about winding — `Geometry2D.is_polygon_clockwise()` in Godot is
+worth knowing before you debug a triangulation that came out hollow.
+:::
+
+## Where This Shows Up
+
+- **Which side of a wall, a lane or a finish line** something is, which is one cross product.
+- **Turning the right way**: the sign says which direction to rotate, and Section 2.3 uses it.
+- **Polygon winding and convexity**, and therefore every collision routine in Part 5.
+- **Segment intersection**, which is four which-side tests. Section 5.2.
+- **The separating axis test**, whose axes are the free perpendiculars above. Section 5.3.
+- **Triangle areas and point-in-triangle**, used for hit testing and for navigation meshes.
+
+:::note[The one thing to take away]
+The 2D cross product is $a_xb_y - a_yb_x$, a single number, and it equals $|a||b|\sin\theta$. Because
+sine is not symmetric, the sign answers the question the dot product cannot: which side, or
+equivalently which way to turn. Left is relative to the line's direction, so reversing the endpoints
+inverts every answer. Divide by the line's length and the same number becomes a signed distance.
+Without dividing, its size is the area of a parallelogram — sum it around a polygon and you have the
+shoelace formula, whose sign is the winding, which the canvas's flipped Y-axis reverses on screen.
+:::

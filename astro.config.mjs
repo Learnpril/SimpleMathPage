@@ -132,6 +132,21 @@ export default defineConfig({
                     },
                   ],
                 },
+                {
+                  label: "Part 2: Turning and Aiming",
+                  collapsed: false,
+                  items: [
+                    {
+                      slug: "applied/2d-game-development/the-2d-cross-product-and-which-side",
+                    },
+                    {
+                      slug: "applied/2d-game-development/angles-radians-and-atan2",
+                    },
+                    {
+                      slug: "applied/2d-game-development/rotating-a-point-and-turning-smoothly",
+                    },
+                  ],
+                },
               ],
             },
             {
@@ -320,7 +335,10 @@ export default defineConfig({
                   'pixels-coordinates-and-the-y-axis':         [1, 'The Screen and Its Coordinates'],
                   'points-vectors-and-directions':             [1, 'The Screen and Its Coordinates'],
                   'length-distance-and-normalizing':           [1, 'The Screen and Its Coordinates'],
-                  'the-dot-product':                           [1, 'The Screen and Its Coordinates']
+                  'the-dot-product':                           [1, 'The Screen and Its Coordinates'],
+                  'the-2d-cross-product-and-which-side':       [2, 'Turning and Aiming'],
+                  'angles-radians-and-atan2':                  [2, 'Turning and Aiming'],
+                  'rotating-a-point-and-turning-smoothly':     [2, 'Turning and Aiming']
                 },
                 'applied/3d-game-development': {
                   'points-vectors-and-coordinate-conventions': [1, 'Vectors and Spatial Reasoning'],

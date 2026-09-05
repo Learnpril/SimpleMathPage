@@ -1,0 +1,197 @@
+---
+title: Angles, Radians and atan2
+description: Radians against degrees, turning an angle into a direction and back again, why plain atan is wrong for half the plane, the signed angle the dot product could not give you, and wrapping
+sidebar:
+  order: 6
+  label: "2.2  Angles, Radians and atan2"
+---
+
+import DemoPanel from "../../../../components/DemoPanel.astro";
+import CodePanel from "../../../../components/CodePanel.astro";
+import anglesSource from "../../../../lib/gamedev2d/angles2d.ts?raw";
+
+## What You'll Learn
+
+How to get from an angle to a direction, from a direction back to an angle, and why the obvious way to
+do the second one is wrong for exactly half of the plane. Then the wrap that makes two angles
+comparable, without which a turret turns almost all the way round to face something beside it.
+
+## Radians Are Not a Preference
+
+An angle in radians **is** the length of the arc it cuts on a unit circle. That is the definition, not
+a conversion factor, and it is why every trigonometric function in every language takes radians.
+
+| Turn        | Radians | Degrees |
+| :---------- | :------ | ------: |
+| none        | $0$     |    $0°$ |
+| an eighth   | $\pi/4$ |   $45°$ |
+| a quarter   | $\pi/2$ |   $90°$ |
+| a half      | $\pi$   |  $180°$ |
+| a full turn | $2\pi$  |  $360°$ |
+
+Degrees are for people: designers, inspector fields, dialogue with your team. So convert at the edges
+and keep radians everywhere in between. A codebase that converts in the middle is a codebase where
+somebody eventually calls `Math.cos` on a number of degrees, gets a plausible-looking wrong answer,
+and loses an afternoon.
+
+## From an Angle to a Direction
+
+$$
+\hat{d} = (\cos\theta,\; \sin\theta)
+$$
+
+That is the unit circle, and it is already length 1, so nothing needs normalizing. Section 1.1
+established the convention this assumes: angles counter-clockwise from the $+X$ axis, measured in
+**world** coordinates with Y up. On the canvas the same angle appears to turn the other way, and that
+is a drawing concern, fixed with one minus sign at the point of drawing.
+
+## From a Direction to an Angle
+
+The other way needs `atan2`:
+
+$$
+\theta = \operatorname{atan2}(v_y,\; v_x)
+$$
+
+**Y first.** Every language spells it in that order and it still catches people, because it reads
+backwards from the $(x, y)$ you are holding.
+
+<DemoPanel name="2d-aim" />
+
+Drag the target anywhere and the barrel follows, in all four quadrants, with the angle reported in
+both units.
+
+The readout also shows the number that decides whether this Section is telling the truth: the barrel's
+own direction dotted back against the direction to the target. That has to be $1$. It is worth
+explaining why that particular number is on screen. **The scene draws the barrel from the angle it
+computed**, so a barrel pointing exactly the wrong way still looks like a barrel — you get a picture
+with nothing visibly wrong in it. Aiming and then measuring where you actually ended up pointing turns
+"it looks right" into something a build can check, and the check sweeps **6,560** target positions.
+
+Now uncheck the box.
+
+## Plain `atan` Cannot Work, and Looks Like It Does
+
+The tempting version is the one from trigonometry class:
+
+$$
+\theta = \arctan\!\left(\frac{v_y}{v_x}\right)
+$$
+
+**The division is where the information goes.** $(1, 1)$ and $(-1, -1)$ are opposite directions, and
+both give a ratio of $1$. `atan` receives one number where there were two, and no amount of care
+afterwards can recover what the division discarded.
+
+<DemoPanel name="2d-atan" />
+
+The four rows are one target per quadrant. In the two where $x$ is positive the two functions agree
+exactly. In the two where $x$ is negative they are half a turn apart — and nothing in the code says
+which case you are in.
+
+The row underneath is the one that matters: aim a barrel with each answer, then dot it back against the
+target. `atan2` scores $1$ four times. `atan` scores $1, -1, -1, 1$. **A score of $-1$ is a barrel
+pointing exactly away from what it was aiming at.**
+
+Over the swept grid the damage is precisely the left half-plane: `atan` is exactly backwards at all
+**3,240** sampled targets with negative $x$, and exactly correct at all **3,240** with positive $x$.
+The 80 samples sitting on the vertical axis come out right, by luck — the division gives `Infinity`
+and `Math.atan(Infinity)` happens to be $\pi/2$ — so straight up and straight down work, which just
+concentrates the failure in the half you are least likely to test first.
+
+At the origin it is worse than wrong: $0/0$ is `NaN`, `Math.atan(NaN)` is `NaN`, and Section 1.4
+covered what a `NaN` does to every comparison downstream. `atan2(0, 0)` returns $0$ instead. Not
+meaningful, but finite.
+
+:::tip[There is one honest use for `atan`]
+If you already know the direction is in the right half-plane — a slope you built yourself, a
+guaranteed-positive $x$ — then `atan` is correct. That is a narrow enough case that reaching for
+`atan2` unconditionally costs nothing and removes a whole class of bug.
+:::
+
+## The Signed Angle, Which Closes Section 1.4
+
+Section 1.4 ended on a limitation: `acos` returns an angle from $0°$ to $180°$ and can never tell you
+which way to turn. Section 2.1 supplied the missing sign. Put both together:
+
+$$
+\theta = \operatorname{atan2}(a \times b,\; a \cdot b)
+$$
+
+Both readings, in one expression. The cross product supplies $|a||b|\sin\theta$, the dot product
+supplies $|a||b|\cos\theta$, and `atan2` divides out the lengths, leaving the angle **with its sign**.
+
+Three things this buys over `acos`:
+
+- **It is signed**, so it answers "which way should I turn" rather than only "how far off am I".
+- **It needs no clamp.** `atan2` accepts any two numbers, so the `NaN` that rounding forces out of
+  `acos` about 30% of the time cannot happen here.
+- **It is better conditioned near $0°$ and $180°$**, where `acos` loses precision because its slope
+  goes vertical.
+
+The build checks it against `angleBetween` from Section 1.4 across the full circle: same magnitude
+everywhere, sign supplied by the cross product. If you find yourself reaching for `acos`, this is
+almost always the function you actually wanted.
+
+## Wrapping
+
+Angles live on a circle, not on a line. $370°$ and $10°$ are the same heading, and $-190°$ is that
+heading too. Arithmetic does not know this, so you have to tell it:
+
+$$
+\operatorname{wrap}(\theta) = \left((\theta + 180°) \bmod 360°\right) - 180°
+$$
+
+with one wrinkle: **`%` in JavaScript keeps the sign of its left operand**, so a single modulo leaves
+negative inputs negative and outside the range you asked for. Adding a full turn and taking the modulo
+again fixes it, and the double modulo is checked over $\pm 900°$ rather than trusted.
+
+Two facts worth knowing before you write a test against this:
+
+- $370°$ wraps to $10°$, as expected.
+- **Exactly $180°$ comes back as $-180°$.** Same direction, other spelling. The range is
+  $[-180°, 180°)$, half-open at the top.
+
+Wrapping never changes the direction an angle describes, which is checked by comparing sines and
+cosines rather than the numbers themselves — the honest form of the claim.
+
+Section 2.3 is where this stops being housekeeping. Every "turn toward" and every "how far off am I"
+is a subtraction of two angles, and a subtraction of two angles is wrong without this.
+
+<CodePanel
+  code={anglesSource}
+  lang="ts"
+  file="src/lib/gamedev2d/angles2d.ts"
+  label="Angles, both directions, and the wrap"
+/>
+
+:::note[In an engine]
+Godot has `Vector2.angle()` for the angle of a vector and `Vector2.angle_to_point()` for aiming, both
+`atan2` underneath. `Vector2.angle_to()` is the **signed** angle between two vectors — the
+`atan2(cross, dot)` above, already written for you. `Vector2.from_angle()` goes the other way.
+
+Unity has `Mathf.Atan2(y, x)`, same argument order. `Vector2.SignedAngle()` is the signed version and
+`Vector2.Angle()` the unsigned one, both in degrees, which is a units boundary worth being deliberate
+about. `Mathf.DeltaAngle()` is the wrapped difference.
+
+Both engines return radians from the `atan2` family and degrees from the `Angle` helpers. That
+inconsistency is the source of a genuinely common bug, so check the return unit rather than assuming
+it.
+:::
+
+## Where This Shows Up
+
+- **Aiming**: turrets, homing projectiles, an enemy facing a player, a sprite's rotation.
+- **Turning toward a heading at a limited rate**, which is Section 2.3 and needs the wrap.
+- **Directions from input**: converting a stick's $(x, y)$ into a heading to compare against.
+- **Sorting things by bearing**, for a radial menu or a minimap arrow.
+- **Bezier tangents**, where a curve's derivative becomes a facing direction. Section 4.3.
+
+:::note[The one thing to take away]
+Radians are arc length, so keep them internally and convert to degrees only at the edges. Going from an
+angle to a direction is $(\cos\theta, \sin\theta)$; going back is `atan2(y, x)`, with Y first. Never
+`atan(y / x)` — the division discards the signs and returns an answer exactly half a turn wrong for
+every direction with negative $x$, which is half the plane, while being perfectly correct in the other
+half. For the angle between two vectors, `atan2(cross, dot)` gives it signed, needs no clamp, and is
+what `acos` should have been. And wrap any angle difference into $[-180°, 180°)$ before comparing,
+remembering that $180°$ itself comes back as $-180°$.
+:::

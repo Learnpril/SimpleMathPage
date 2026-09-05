@@ -1,0 +1,187 @@
+---
+title: Rotating a Point and Turning Smoothly
+description: The rotation formula and where it comes from, rotating about an arbitrary pivot and the translate everyone forgets, wrapping an angle difference, and turning the short way at a limited rate
+sidebar:
+  order: 7
+  label: "2.3  Rotating a Point and Turning Smoothly"
+---
+
+import DemoPanel from "../../../../components/DemoPanel.astro";
+import CodePanel from "../../../../components/CodePanel.astro";
+import rotateSource from "../../../../lib/gamedev2d/rotate2d.ts?raw";
+
+## What You'll Learn
+
+Two lines of arithmetic that turn a point about the origin, the third step needed to turn it about
+anything else, and the reason that third step is the most commonly forgotten line in 2D game code.
+Then turning **toward** a heading rather than snapping to it, which is where Section 2.2's wrap earns
+its place.
+
+## The Rotation Formula
+
+$$
+x' = x\cos\theta - y\sin\theta \qquad y' = x\sin\theta + y\cos\theta
+$$
+
+Counter-clockwise, about the origin, in world coordinates with Y up.
+
+Worth reading rather than memorising, because it is not arbitrary. Ask where the two axes go:
+
+$$
+(1, 0) \;\longmapsto\; (\cos\theta,\; \sin\theta) \qquad (0, 1) \;\longmapsto\; (-\sin\theta,\; \cos\theta)
+$$
+
+The first is the unit circle from Section 2.2. The second is that direction given a quarter turn, which
+Section 2.1 showed costs nothing: swap and negate. Now read the formula again — it is $x$ lots of the
+first plus $y$ lots of the second. **A rotation moves the axes and lets the point ride along.**
+
+That observation is the whole of Section 3.1, where those two destinations become the two columns of a
+matrix. Nothing new will be needed there; it is this, written down differently.
+
+The bug to know about is a sign. Writing $x\cos\theta + y\sin\theta$ for the first component rotates the
+other way, and on screen a rotation going the wrong way looks like a rotation right up until something
+has to line up with something else. The build checks that rotating and then unrotating returns the
+original, and that a $90°$ rotation is exactly the free quarter turn from Section 2.1.
+
+Two properties fall out that are worth relying on. **Length is preserved** — checked at every degree
+around the circle, drift under $10^{-12}$. And **rotations add**: turning by $30°$ then $40°$ is turning
+by $70°$, which is why a spinning object can accumulate an angle rather than a matrix.
+
+## Rotating About a Pivot
+
+The formula only turns things about the origin. For anything else, three steps:
+
+1. **Subtract** the pivot, so the pivot is at the origin.
+2. **Rotate.**
+3. **Add** the pivot back.
+
+<DemoPanel name="2d-pivot" />
+
+The dashed circle is the arrow's tip keeping its distance from the pivot, which is what rotating about a
+point means. The pivot itself never moves.
+
+Now uncheck the box, which drops step 3.
+
+## The Forgotten Translate Is Not a Crash
+
+Nothing errors. Nothing is `NaN`. The sprite rotates **perfectly correctly** and lands somewhere else,
+displaced by exactly the pivot — which the build asserts over **5,766** pivot-and-angle combinations
+rather than eyeballing on one. The faint outline is where it should have been.
+
+Watch what happens to the dashed circle when you uncheck the box. **It keeps its radius and changes its
+centre**, from the pivot to the origin. That is the most precise statement of the bug available: the
+shape is still turning, still rigid, still sweeping the same circle — around the wrong point. Both
+halves of that are asserted, because a circle drawn in the wrong place is exactly the kind of claim a
+picture makes silently.
+
+Then click **pivot at the origin** with the box still unchecked, and watch the bug vanish.
+
+That is the whole reason this is worth a section rather than a footnote. **With the pivot at the origin
+there is nothing to add back, so the broken version is exactly right.** Which is where things sit while
+you are writing the code, and while you are testing it, and right up until the first time an artist
+moves a sprite off the origin or you parent something to something else. The failure arrives later than
+the mistake, and by then the rotation code looks like the part that already works.
+
+A near relative of this shows up in Section 3.1 as transform order, and again in Section 3.2 where a
+turret on a tank has to rotate about its own mount rather than about the world's origin.
+
+:::tip[Compute the sine and cosine once]
+For a whole sprite, `Math.cos` and `Math.sin` belong outside the loop over corners. Forty corners is
+forty identical trigonometric calls otherwise. This is not a micro-optimisation worth distorting code
+for — the natural shape of the function is already the fast one, which is `rotateAll` below.
+:::
+
+## The Angle Difference, and Why It Needs Wrapping
+
+Facing $170°$, aiming at $-170°$. How far do you have to turn?
+
+Subtracting says $-170 - 170 = -340°$. The honest answer is $20°$, the other way. **Both describe the
+same final heading**, which is exactly why this bug is so quiet: nothing is wrong with $-340°$ except
+that it is the long way round.
+
+$$
+\Delta = \operatorname{wrap}(\theta_{\text{target}} - \theta_{\text{current}})
+$$
+
+One subtraction and one wrap, and the wrap is the entire function. The sign that comes out says which
+way to turn: positive is counter-clockwise. That sign is the same information Section 2.1's cross
+product carries, arriving by a different route.
+
+## Turning at a Limited Rate
+
+Snapping an angle to its target reads as teleportation. Real machinery has a turn rate: move toward the
+target by at most so much per step, and stop when you arrive.
+
+<DemoPanel name="2d-turn" />
+
+The turret starts at $170°$ and the target defaults to $-170°$, $20°$ away across the seam. Push the
+steps slider up and count.
+
+Then uncheck the wrap and push it again. At the default $4°$ per step:
+
+| Version                 | Difference it computes | Steps to arrive |
+| :---------------------- | ---------------------: | --------------: |
+| wrapped, the short way  |                  $20°$ |               5 |
+| unwrapped, the long way |                $-340°$ |              85 |
+
+Seventeen times the work to reach a heading that was $20°$ away, and both numbers are checked. **It
+still arrives**, which is the point worth dwelling on. Nothing hangs, nothing oscillates, no value
+becomes `NaN`. The turret simply takes the scenic route whenever the short way happens to cross the
+$\pm 180°$ seam — which means it looks like a bug in the AI's decision-making rather than a missing
+call to `wrap`, and that is where people go looking.
+
+The correct version is checked for three things beyond the step count: it never overshoots, it settles
+exactly on the target instead of oscillating around it, and its first step goes the direction the
+wrapped difference says. Sweeping six targets against five turn rates, the unwrapped version is never
+faster and is slower in most of them.
+
+:::caution[The same seam, in a follower]
+`lerp` between two headings has the identical problem and a more alarming symptom. Halfway from $170°$
+to $-170°$ should be $180°$, straight behind. Lerping the raw numbers gives $0°$ — pointing exactly the
+opposite way, through a heading nothing ever passed through.
+
+Both values are asserted at build time. The fix is the same as above: interpolate the **wrapped
+difference**, not the endpoints. Section 4.2 does the general version of this, and Section 4.1 explains
+why the interpolation factor itself needs care once frames stop being evenly spaced.
+:::
+
+<CodePanel
+  code={rotateSource}
+  lang="ts"
+  file="src/lib/gamedev2d/rotate2d.ts"
+  label="Rotation, a pivot, and turning the short way"
+/>
+
+:::note[In an engine]
+Godot: `Vector2.rotated()` for the formula, and `Node2D` has both `rotation` in radians and
+`rotation_degrees`, so pick one and stay with it. `Node2D` also has a `pivot_offset`-style concept
+through its transform origin, which is the three-step dance done for you. `lerp_angle()` is the
+wrapped interpolation and `rotate_toward()` the limited-rate turn.
+
+Unity: `Quaternion.Euler(0, 0, degrees)` for a 2D rotation, or `Transform.RotateAround()` for the pivot
+version. `Mathf.DeltaAngle()` is the wrapped difference and `Mathf.LerpAngle()` the wrapped lerp.
+`Mathf.MoveTowardsAngle()` is the limited-rate turn.
+
+The naming is the thing to carry across: any engine method with `Angle` in its name is very likely doing
+the wrap for you, and any that does not have it probably is not.
+:::
+
+## Where This Shows Up
+
+- **Anything that faces a direction**: turrets, vehicles, characters, a sprite's `rotation` field.
+- **Rotating a sprite about a point that is not its origin** — a wheel, a hinge, a swinging platform.
+- **Turning smoothly toward a target**, which is what makes a movement feel mechanical rather than
+  instant.
+- **Matrices in Section 3.1**, which package exactly this alongside translation and scale.
+- **Local space in Section 3.2**, where a child's rotation composes with its parent's.
+- **Angle interpolation in Section 4.2**, which is the wrapped difference with an easing curve on it.
+
+:::note[The one thing to take away]
+Rotating about the origin is $x' = x\cos\theta - y\sin\theta$ and $y' = x\sin\theta + y\cos\theta$,
+which is the point's own components used as weights on the two rotated axes. About any other point it is
+subtract the pivot, rotate, add it back — and forgetting that last step is exactly correct while the
+pivot sits at the origin, which is why it ships. To turn toward a heading, wrap the difference before
+you use it: unwrapped, a $20°$ turn across the $\pm 180°$ seam becomes a $340°$ one that still arrives,
+so it reads as bad AI rather than bad arithmetic. Interpolating between two headings has the same seam
+and needs the same wrap.
+:::

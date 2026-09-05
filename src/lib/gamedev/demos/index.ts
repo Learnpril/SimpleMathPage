@@ -29,9 +29,14 @@ import resolution2d from "./2d/resolution.ts";
 import kinds2d from "./2d/kinds.ts";
 import range2d from "./2d/range.ts";
 import acos2d from "./2d/acos.ts";
+import shoelace2d from "./2d/shoelace.ts";
+import atan2d from "./2d/atan.ts";
 import {
+  angleCheck2d,
+  crossCheck2d,
   dotCheck2d,
   lengthCheck2d,
+  rotateCheck2d,
   screenCheck2d,
   vectorCheck2d,
 } from "./2d/checks2d.ts";
@@ -480,6 +485,43 @@ export const DEMOS: Record<string, DemoEntry> = {
     title: "The clamp before acos, and what leaving it out costs",
     demo: acos2d,
     file: "lib/gamedev/demos/2d/acos.ts",
+  },
+  "2d-side": {
+    title:
+      "A point crossing a directed line, and the sign that flips as it does",
+    visual: () => import("./2d/side.scene.ts"),
+    visualFile: "lib/gamedev/demos/2d/side.scene.ts",
+    hint: "Sweep the point's y past the line, then tick the last box to read the line the other way.",
+    check: crossCheck2d,
+  },
+  "2d-shoelace": {
+    title: "The sign as a winding, the size as an area",
+    demo: shoelace2d,
+    file: "lib/gamedev/demos/2d/shoelace.ts",
+  },
+  "2d-aim": {
+    title: "A turret aiming at a target, with atan2 and without it",
+    visual: () => import("./2d/aim.scene.ts"),
+    visualFile: "lib/gamedev/demos/2d/aim.scene.ts",
+    hint: "Drag the target or use the sliders, then uncheck atan2 and move it to the left half.",
+    check: angleCheck2d,
+  },
+  "2d-atan": {
+    title: "The same four targets, read by atan2 and by plain atan",
+    demo: atan2d,
+    file: "lib/gamedev/demos/2d/atan.ts",
+  },
+  "2d-pivot": {
+    title: "One sprite, one pivot, and the translate that gets forgotten",
+    visual: () => import("./2d/pivot.scene.ts"),
+    visualFile: "lib/gamedev/demos/2d/pivot.scene.ts",
+    check: rotateCheck2d,
+  },
+  "2d-turn": {
+    title: "A turret turning toward a heading, the short way and the long way",
+    visual: () => import("./2d/turn.scene.ts"),
+    visualFile: "lib/gamedev/demos/2d/turn.scene.ts",
+    hint: "Push the steps slider up and count, then uncheck the wrap and push it again.",
   },
   "nan-guard": {
     title: "A NaN walks past the check meant to stop it",
