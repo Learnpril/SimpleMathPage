@@ -1,0 +1,232 @@
+---
+title: Collision Response and Sliding
+description: Detection was half the job - the position has to be fixed and the velocity has to stop carrying you into the wall, and both come down to one projection with a guard in front of it
+sidebar:
+  order: 17
+  label: "5.4  Collision Response and Sliding"
+---
+
+import DemoPanel from "../../../../components/DemoPanel.astro";
+import CodePanel from "../../../../components/CodePanel.astro";
+import responseSource from "../../../../lib/gamedev2d/response2d.ts?raw";
+
+## What You'll Learn
+
+Sections 5.1 to 5.3 answered "did they touch". This one answers "so what", and there are **two** wrong
+things to fix, which is worth separating before touching either:
+
+- **The position** is wrong. The shapes are inside each other and have to be moved apart.
+- **The velocity** is wrong. It is still carrying the object into the wall, so fixing only the position
+  means overlapping again next frame.
+
+Both come down to splitting a vector into the part along the wall's normal and the part along the wall —
+Section 1.4's projection doing the most useful work it will ever do. Keep the along-the-wall part and you
+slide. Reverse the into-the-wall part and you bounce. One split, two behaviours.
+
+## The Split
+
+$$
+v_n = (v \cdot \hat{n})\,\hat{n}
+\qquad
+v_t = v - v_n
+$$
+
+Perpendicular to each other, and they add back to $v$ — the build checks both across a few thousand
+angles. Then:
+
+$$
+\text{slide: } v' = v - (v \cdot \hat{n})\,\hat{n}
+\qquad
+\text{bounce: } v' = v - 2(v \cdot \hat{n})\,\hat{n}
+$$
+
+The only difference is the **2**, and it is worth seeing why: subtracting the normal part once removes it,
+and subtracting it twice sends it back the way it came. Both as one function, with `restitution` choosing:
+
+$$
+v' = v_t - e\,v_n
+$$
+
+<DemoPanel name="2d-deflect" />
+
+Note what a slide does to speed. What survives is $|v|\cos\theta$ where $\theta$ is the angle between the
+velocity and the wall:
+
+| Angle from the wall | Speed kept |
+| ------------------: | ---------: |
+|                $0°$ |    $100\%$ |
+|               $30°$ |  $86.60\%$ |
+|               $45°$ |  $70.71\%$ |
+|               $60°$ |  $50.00\%$ |
+|               $90°$ |      $0\%$ |
+
+Hit a wall square on and **all** of the speed goes. That is correct rather than unfortunate — it is why a
+character pressed into a wall stops — and it is why running along a wall at a shallow angle feels fast
+while a steep approach feels like stopping dead.
+
+:::caution[The normal must be unit length, and here it really matters]
+In Section 5.3 an unnormalized axis gave a perfectly correct verdict and only spoiled the depth. Not here.
+The honest projection divides by $|n|^2$, and dropping that division is only right at length 1 — so the
+correction is scaled by $|n|^2$.
+
+A normal of length $2$ removes **four times too much**. On a velocity of $(1, -1)$ against an upward
+normal, the slide should give $(1, 0)$; at length 2 it gives $(1, 3)$ — the sign has flipped and the
+object is flung _out_ of the wall at three times the speed it arrived with. The build pins that exact
+number, because "normalize your normals" is much easier to remember once you have seen what it buys.
+:::
+
+## The Guard That Stops You Sticking
+
+$$
+\text{apply the response only if } v \cdot \hat{n} < 0
+$$
+
+One dot product and a comparison, and it is the most commonly omitted line in this Section. Apply a slide
+unconditionally and an object already moving **away** from the wall has its outward velocity cancelled too
+— so it clings to the surface for as long as contact lasts. That reads as glue, not as a bug, which is why
+it survives.
+
+The build sweeps a full turn of velocities: for every inbound one the guard changes nothing, and for every
+outbound one it changes everything.
+
+## Fixing The Position, And Why Exactly Is Not Enough
+
+Push out along the normal by the depth — Section 5.3's minimum translation vector, finally used:
+
+$$
+p' = p + d\,\hat{n}
+$$
+
+Correct, and on its own not enough. Pushing out to **exactly** zero overlap leaves the two shapes
+touching, and whether touching counts as a collision then depends on the last bit of a float. So the next
+frame may detect the same contact, push by nothing, detect it again — a character that shivers against
+every wall it leans on.
+
+The fix is a sliver: push out by depth **plus a skin** of about a thousandth of a unit. Not a fudge — it
+puts the shapes a definite, known distance apart so the next test has an unambiguous answer instead of a
+coin flip.
+
+<DemoPanel name="2d-pushout" />
+
+## Corners
+
+Sliding along one wall can leave you heading into another, so a corner needs more than one pass. Repeat
+until nothing is being driven into any wall.
+
+That loop is **alternating projection**, and how it behaves is exactly predictable:
+
+| Angle between the normals | Residual shed per pass | Passes to settle |
+| ------------------------: | ---------------------: | ---------------: |
+|         $90°$ or **less** |                      — |   **1, exactly** |
+|                    $120°$ |        $\cos^2 = 0.25$ |         about 21 |
+|                    $150°$ |        $\cos^2 = 0.75$ |         about 97 |
+|                    $170°$ |      $\cos^2 = 0.9698$ |        about 866 |
+
+**The good news is the top row.** A right-angled corner — the case a tile-based game hits constantly — has
+perpendicular normals and settles in a single pass, to exactly zero. So does anything narrower. The build
+sweeps a full turn of velocities against normals from $15°$ to $90°$ apart and confirms every one settles
+first time.
+
+Beyond a right angle the two projections fight, and where the correct answer is "you cannot move at all"
+the loop **approaches** zero without reaching it. That is why real solvers cap their iterations and live
+with a residual, and why "it did not settle" almost always means _not yet_ rather than _never_.
+
+:::note[That exponent cost me an assertion]
+The rate is $\cos^2\phi$, not $|\cos\phi|$. I wrote the latter, and every measured ratio came back as its
+square — normals $120°$ apart shed a **quarter** of the residual per pass, not a half. One pass performs
+both projections, which is where the second factor comes from.
+
+I then asserted it "settles within 400 passes", which is simply false at $170°$ where it needs about 866.
+The check now predicts the pass count from the rate and confirms both that the prediction is enough and
+that two fewer is not.
+:::
+
+## Tunnelling
+
+A discrete step moves an object $v\,\Delta t$ in one go. If that is longer than a wall is thick, the object
+can begin one side and end the other with **no frame in between where the two overlap**. The test never
+fires. Nothing is wrong with the collision code; it was never asked.
+
+$$
+v_{\text{escape}} = \frac{\text{thickness}}{\Delta t}
+$$
+
+Which is unpleasantly small. A wall a tenth of a unit thick at 60 fps is defeated by **6 units per
+second** — and by 3 at 30 fps.
+
+<DemoPanel name="2d-substep" />
+
+But the threshold is only half the story, and the other half is what makes this bug so hard to find.
+**Above the escape speed, tunnelling is possible but not certain**: whether the wall is noticed depends on
+where the frame boundaries happen to fall. Samples spaced $v\,\Delta t$ apart miss an interval of width $w$
+for a fraction
+
+$$
+P = \max\!\left(0,\ 1 - \frac{v_{\text{escape}}}{v}\right)
+$$
+
+of the possible offsets. At twice the escape speed it happens **half** the time; at four times, **three
+quarters**. That closed form is checked against a sweep of two thousand start offsets at five speeds.
+
+So slide the start-offset control in the scene above and watch the collision blink in and out with nothing
+else changing. I found this out the way everyone does: my first measurement reported "detected" at every
+speed I happened to try, because the speeds I picked all landed a frame inside the wall.
+
+**The fix is substeps** — split the frame into pieces each shorter than the thinnest wall:
+
+$$
+n = \left\lceil \frac{v\,\Delta t}{\text{thinnest}} \right\rceil
+$$
+
+The build confirms that count is _tight_: at each speed, $n$ substeps drives the measured tunnel chance to
+exactly zero and $n-1$ does not. Note the parameter is the **thinnest** wall in the level, not the average
+— your flimsiest piece of geometry sets the budget for the whole simulation.
+
+Capping the speed also works, and it is worth naming as the different thing it is: a velocity of 40 capped
+for this wall becomes 15, which is $37.5\%$ of what was asked for. That is a design decision about how fast
+projectiles are allowed to be, not a bug fix.
+
+<CodePanel
+  code={responseSource}
+  lang="ts"
+  file="src/lib/gamedev2d/response2d.ts"
+  label="The split, slide and bounce, the guard, the skin, and tunnelling with its closed form"
+/>
+
+:::note[In an engine]
+Godot: `Vector2.slide(normal)` and `Vector2.bounce(normal)` are the two above, and `Vector2.project` gives
+you the normal part. `CharacterBody2D.move_and_slide()` wraps the whole loop including the iteration,
+with `max_slides` as the pass cap from the corner table. `safe_margin` is the skin. For tunnelling,
+`CharacterBody2D` sweeps rather than substepping, and `RigidBody2D` has
+`continuous_cd` for exactly this.
+
+Unity: `Vector3.Reflect` is the bounce and `Vector3.ProjectOnPlane` is the slide. `Rigidbody2D` has
+`collisionDetectionMode`, and setting it to `Continuous` is the tunnelling fix;
+`Physics2D.velocityIterations` is the pass cap. `Rigidbody2D.sharedMaterial.bounciness` is restitution.
+`CharacterController` (3D) exposes `skinWidth` directly, with a documented default of a few percent of
+the radius.
+
+Both engines' "continuous" modes are doing swept tests rather than substeps — a different solution to the
+same arithmetic above, and generally the better one when it is available.
+:::
+
+## Where This Shows Up
+
+- **Section 6.1**, where a fixed timestep makes $\Delta t$ constant, so the escape speed becomes a number
+  you can design against rather than one that varies with the frame rate.
+- **The capstone**, where move-and-slide against tiles is this Section applied per axis.
+- **Section 5.3's minimum translation vector**, which is the input to the push-out.
+- **Section 1.4's projection**, which is the whole of the split.
+- **Section 4.1's delta time**, which is what makes tunnelling a function of frame rate at all.
+
+:::note[The one thing to take away]
+Fix the position _and_ the velocity. The velocity fix is one projection: drop the into-the-wall part to
+slide, reverse it to bounce, and blend with restitution to get anything between. The normal must be unit
+length — at length 2 a slide flings the object out of the wall at three times its arrival speed — and the
+response must be **guarded** by $v \cdot \hat{n} < 0$, or an object already leaving the wall gets glued to
+it. Push out by depth **plus a skin**, because landing exactly on contact leaves the next frame's answer to
+a floating-point coin flip. A right-angled corner settles in one pass exactly; wider wedges only approach
+the answer, shedding $\cos^2\phi$ of the residual per pass. And watch the escape speed
+$\text{thickness}/\Delta t$: above it, tunnelling happens for $1 - v_{\text{escape}}/v$ of start offsets,
+so it is intermittent rather than reliable — which is precisely what makes it hard to find.
+:::

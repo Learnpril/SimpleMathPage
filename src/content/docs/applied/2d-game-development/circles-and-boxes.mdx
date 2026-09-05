@@ -1,0 +1,196 @@
+---
+title: Circles and Boxes
+description: The two shapes almost every 2D game ships, the three tests between them, and why circle-versus-box is really circle-versus-circle with two clamps in front of it
+sidebar:
+  order: 14
+  label: "5.1  Circles and Boxes"
+---
+
+import DemoPanel from "../../../../components/DemoPanel.astro";
+import CodePanel from "../../../../components/CodePanel.astro";
+import collideSource from "../../../../lib/gamedev2d/collide2d.ts?raw";
+
+## What You'll Learn
+
+Circles and axis-aligned boxes. Between them they cover almost every collision a 2D game actually
+ships, and there are only three pairings to learn: circle–circle, box–box, circle–box.
+
+The reason that is three lessons and not three formulas is that **all three are one distance and one
+comparison**, and the third reduces to the first by a single clamp. Once you see that, collision stops
+being a list of cases to memorise.
+
+This Section answers only "did they touch". Working out how deep the overlap is and which way to push
+is Section 5.4, and keeping the two questions apart is most of what makes collision code readable.
+
+## Circle Against Circle
+
+$$
+(b_x - a_x)^2 + (b_y - a_y)^2 < (r_a + r_b)^2
+$$
+
+Compare the distance between the centres against the sum of the radii. **Squared on both sides**, so
+there is no square root anywhere — Section 1.3's shortcut, and this is where it earns its keep, because
+a broad-phase check runs this thousands of times a frame.
+
+Strictly less than, so circles that touch at exactly one point are **not** overlapping. That is a
+decision rather than a fact, and it is the one to make: standing on the ground is touching, and a test
+that calls that a collision leaves a character permanently colliding with the floor it is resting on.
+
+:::caution[Square the sum, not the radii]
+
+$$
+(r_a + r_b)^2 = r_a^2 + 2r_ar_b + r_b^2
+$$
+
+Writing `ra*ra + rb*rb` drops the $2r_ar_b$, and that term is usually most of the total. For two circles
+of equal radius the reach shrinks from $2r$ to $r\sqrt{2}$ — a shortfall of **29.29%**, so contact is not
+reported until the circles are already well inside each other.
+
+It never crashes and it never produces a wrong-looking number. It reads as "collision feels late", which
+is why it survives.
+:::
+
+## Box Against Box
+
+Two axis-aligned boxes overlap only if they overlap on **both** axes. It is easier to get right stated
+negatively: they miss if there is **any** axis on which one lies entirely to one side of the other.
+
+$$
+\text{overlap} \iff (a_{\min x} < b_{\max x} \wedge b_{\min x} < a_{\max x}) \wedge (\text{same for } y)
+$$
+
+That sentence — one separating axis is enough to prove a miss — is the whole of Section 5.3, which does
+the same thing for shapes whose axes are not the world's. Seeing the box test as "check every axis"
+rather than as four inequalities makes that Section a small step instead of a new subject.
+
+<DemoPanel name="2d-shapes" />
+
+Note what "axis-aligned" is buying. The box's edges are always parallel to the axes, so no test here
+ever considers an angle. A box that can rotate costs a great deal more, and that is why so many games
+give a rotating sprite an upright collision box and accept the mismatch.
+
+:::caution[An inverted box collides with nothing, silently]
+Every test here assumes `min` really is the smaller corner. A box built from two dragged points often
+fails that, and then it reports **no collision with anything, ever**. A wall becomes a doorway, and
+there is no error, no `NaN` and nothing in the console. Run anything user-built or file-loaded through a
+normalizing step, which is two `Math.min` calls.
+
+Related, and just as quiet: min/max and centre/half-extents are both common ways to store a box and they
+are not interchangeable. Godot's `Rect2` is position and size, Unity's `Bounds` is centre and extents.
+Pass one where the other belongs and you get a box of the wrong size in the wrong place — which still
+looks exactly like a box.
+:::
+
+## Circle Against Box, Which Is Circle Against Circle
+
+Here is the good part. **Clamp the circle's centre into the box**, one axis at a time:
+
+$$
+q = \left(\text{clamp}(p_x, \min_x, \max_x),\ \text{clamp}(p_y, \min_y, \max_y)\right)
+$$
+
+That gives the point of the box nearest the circle's centre. Then it is a distance against a radius —
+test one, unchanged.
+
+Two clamps. That is the entire thing, and it is worth pausing on why it works: the axes are
+**independent**, so the nearest allowed $x$ cannot depend on $y$. It handles all three cases — nearest
+to a face, nearest to a corner, and the centre already inside the box — with no branch distinguishing
+them. The build checks it against a brute-force scan of the box's whole perimeter.
+
+<DemoPanel name="2d-hittest" />
+
+## The Corner Bug
+
+Now the mistake nearly everybody makes first, because it is simpler and it is nearly right: **grow the
+box by the radius and test whether the centre is inside it.**
+
+<DemoPanel name="2d-corners" />
+
+Growing a rectangle by $r$ gives you **square** corners. The region where a circle's centre can sit and
+actually touch the box has **rounded** ones, of radius exactly $r$. So the naive test reports a hit
+while the circle is still short of the corner, touching nothing: a shot that stops in mid-air near a
+crate, which usually gets blamed on the renderer.
+
+The size of the mistake is not a matter of opinion. The false region is four corner squares minus four
+quarter-discs:
+
+$$
+4r^2 - \pi r^2 = (4 - \pi)\,r^2 \approx 0.8584\,r^2
+$$
+
+**Independent of the box entirely.** The build measures that area by counting grid cells where the two
+tests disagree and compares the count against the formula — two completely different computations,
+agreeing to under half a percent.
+
+And at a corner specifically, the over-reach has a clean value. The grown box's corner sits $r\sqrt{2}$
+from the real corner while the true region reaches only $r$, so the naive test accepts circles up to
+
+$$
+r\left(\sqrt{2} - 1\right) \approx 0.4142\,r
+$$
+
+past the point of contact — **41.42% of the radius, whatever the radius, whatever the box.**
+
+Along a face the naive test is exactly right, which is precisely why it survives. If you test it by
+walking a circle straight at a wall, it passes.
+
+:::tip[It errs in one direction only]
+The naive test never misses a real overlap; it only invents ones that are not there. The build sweeps a
+grid confirming that, and it is worth knowing rather than assuming: it means the naive version is safe
+as a **broad phase** — a cheap first pass that may over-report, followed by the real test on whatever
+survives. Used that way it is not a bug at all. Used as the answer, it is.
+:::
+
+## Where The Square Roots Went
+
+None of the three tests needs one. Circle–circle squares the reach, box–box only compares coordinates,
+and circle–box squares the radius. That matters less than it used to for a handful of shapes and matters
+a great deal at the scale collision runs at — and it costs nothing in clarity once the habit is to
+square the threshold rather than root the distance.
+
+The trap is that **a squared distance is not a distance**. Compare it against a squared threshold or the
+numbers are nonsense, and it is nonsense that looks plausible: a radius of 5 quietly becomes a radius of
+25 rather than an error.
+
+<CodePanel
+  code={collideSource}
+  lang="ts"
+  file="src/lib/gamedev2d/collide2d.ts"
+  label="Three tests, two representations of a box, and the wrong versions kept for pricing"
+/>
+
+:::note[In an engine]
+Godot: `Rect2.intersects()` for box–box, `Rect2.has_point()` for containment, and `Rect2.grow()` is
+literally the naive expansion above — useful, and not a circle test. Real circle collision goes through
+`CircleShape2D` and the physics server, or `Geometry2D` helpers for one-off queries.
+`Rect2.abs()` is the normalizing step, and it exists because inverted rectangles are common enough to
+need it.
+
+Unity 2D: `Bounds.Intersects()`, `Bounds.Contains()`, and `Bounds.ClosestPoint()` — that last one is the
+two clamps, already written. `Physics2D.OverlapCircle` is the engine-side version.
+`Bounds` is centre-and-extents, and `extents` is the **half** size while `size` is the full one; mixing
+them up is the representation bug above with a specific name.
+
+Both engines separate a cheap bounding-volume pass from an exact one, which is the broad-phase idea in
+the tip above rather than an implementation detail.
+:::
+
+## Where This Shows Up
+
+- **Section 5.2**, where the same clamp idea gives the closest point on a line segment.
+- **Section 5.3**, which turns "one separating axis proves a miss" into a general algorithm.
+- **Section 5.4**, which needs the depth this Section only measures, and the push-out direction it
+  deliberately does not compute.
+- **Section 1.3's squared distance**, finally doing the job it was introduced for.
+- **The capstone**, whose character is an AABB moving against tiles.
+
+:::note[The one thing to take away]
+Three pairings, one idea. Circle–circle compares centre distance against the sum of the radii, squared on
+both sides so there is no square root — and square the **sum**, because dropping the $2r_ar_b$ costs
+29.29% of the reach for equal radii. Box–box is two range checks, and one separating axis is enough to
+prove a miss, which is Section 5.3 in a sentence. Circle–box is circle–circle with the centre clamped
+into the box first, two lines handling face, corner and inside with no branch. Do **not** instead grow
+the box by the radius: that gives square corners where the truth is rounded, over-reporting by
+$(4-\pi)r^2$ of area and reaching $0.4142\,r$ past contact at every corner. And normalize any box whose
+corners came from a drag, because an inverted box collides with nothing and says nothing.
+:::

@@ -1,0 +1,194 @@
+---
+title: Rays, Segments and Closest Points
+description: One parametric equation describes a line, a ray and a segment - the only difference is how far the parameter may go, and nearly every bug here is a place where the wrong one of the three was used
+sidebar:
+  order: 15
+  label: "5.2  Rays, Segments and Closest Points"
+---
+
+import DemoPanel from "../../../../components/DemoPanel.astro";
+import CodePanel from "../../../../components/CodePanel.astro";
+import segmentSource from "../../../../lib/gamedev2d/segment2d.ts?raw";
+
+## What You'll Learn
+
+$$
+P(t) = A + t\,(B - A)
+$$
+
+That is a line, a ray **and** a segment. The only difference between the three is how far $t$ is allowed
+to go:
+
+| Shape       | Range of $t$    | What it is                      |
+| :---------- | :-------------- | :------------------------------ |
+| **Line**    | anything        | infinite in both directions     |
+| **Ray**     | $t \ge 0$       | starts somewhere, never returns |
+| **Segment** | $0 \le t \le 1$ | two ends                        |
+
+Nearly every bug in this Section is a place where the wrong one of those three was used. A wall read as
+a line blocks a view from across the level. A ray read as a line hits things behind the shooter. A
+segment read as a line is nearest to a point that is nowhere near it.
+
+Notice also that this is `lerp` from Section 4.2, applied to points. A segment **is** an interpolation
+between its ends — and unlike Section 4.3's Bezier parameter, this one _is_ proportional to distance,
+which the build checks.
+
+## The Closest Point: Project, Then Clamp
+
+$$
+t = \frac{(P - A) \cdot (B - A)}{|B - A|^2}
+$$
+
+A dot product over a squared length — Section 1.4's projection, divided so the answer comes out as a
+fraction of the way along. Then **clamp $t$ into the shape's range** and evaluate.
+
+You have done this before. Section 5.1 found the nearest point on a box by clamping a **coordinate**
+into a range. This clamps a **parameter** into a range. Same move, one dimension over, and that is
+worth noticing because it is the shape of almost every closest-point problem.
+
+<DemoPanel name="2d-nearest" />
+
+The shaded regions are where $t$ leaves $0 \ldots 1$. Drag into one and the two answers come apart:
+green stays on the wall, red runs off up the wall's imaginary continuation.
+
+:::caution[Dropping the clamp gives a distance that is always too small]
+Never too large. The infinite line contains every point the segment does and more, so it can only tie
+or win — the build sweeps a grid confirming it never loses.
+
+That one-sidedness makes the failure specific. **The unclamped test reports things as closer than they
+are**, so it fires collisions that should not happen and passes range checks that should fail. Over the
+demo's own view the clamp changes the answer at more than **half** of all positions.
+
+And the worst case is not subtle. Step $0.01$ off the wall's line, well past its end, and the unclamped
+answer says $0.01$ — all but touching — while the nearest actual wall is over three units away. That is
+a factor of more than **300**, and it is what a bullet stopping in mid-air beyond the end of a wall
+actually is.
+:::
+
+## Where Two Of Them Cross
+
+With $r = B - A$ and $s = D - C$, both parameters come out of one division:
+
+$$
+t = \frac{(C - A) \times s}{r \times s}
+\qquad
+u = \frac{(C - A) \times r}{r \times s}
+$$
+
+That $\times$ is Section 2.1's 2D cross product — one number, $a_x b_y - a_y b_x$. Getting two answers
+from one denominator is why this is the standard form.
+
+**Then test both parameters against the ranges of the two shapes you actually have.** Two segments cross
+when $0 \le t \le 1$ _and_ $0 \le u \le 1$. A ray hits a wall when $t \ge 0$ and $0 \le u \le 1$ — the
+asymmetry is the whole point, and using the same test for both is how a ray ends up hitting things
+behind the shooter.
+
+<DemoPanel name="2d-param" />
+
+Testing only $t$ is the specific mistake worth naming, because it looks like it works. In the demo above
+a diagonal meets a short wall at $t = 0.667$ — comfortably in range — while $u = -1$, meaning the
+crossing is a whole wall-length short of the wall itself. Check $t$ alone and that wall blocks
+everything along its line, for ever.
+
+## Line Of Sight, And What Dropping `u` Costs
+
+<DemoPanel name="2d-sight" />
+
+Each spoke around the guard asks: can I see a target six units out this way? Then tick the box, which
+reads every wall as the infinite line it lies on.
+
+|                              |          Clear arc |
+| :--------------------------- | -----------------: |
+| Walls as segments, correctly |          $301.76°$ |
+| Walls as infinite lines      |          $172.34°$ |
+| **Wrongly blocked**          | $\mathbf{129.42°}$ |
+
+Three short walls, and reading them as lines throws away **129.42 degrees** of the guard's view — 43% of
+everything it could actually see.
+
+Those figures are derived in closed form and then checked against a sweep, which is worth doing rather
+than trusting either alone. At six units only the nearest wall is reachable as a segment, so the honestly
+blocked arc is simply the angle it subtends at the guard: $58.24°$. As lines, that wall's line blocks
+$2\arccos(3/6) = 120°$ exactly, the second's blocks $180° - 2\arcsin(4.75/6) = 75.32°$, and they overlap
+by $7.66°$ — a union of $187.66°$, leaving $172.34°$ clear.
+
+:::note[The figure is meaningless without the distance]
+That $129.42°$ is for targets **six units out**, which is why the scene gives you a slider for it. At
+three units the two tests agree **exactly**: nothing that close sits behind any wall's extension. Push
+the reach out and the arc grows.
+
+This is not measurement noise; it is a real property of the question. A direction can be clear at three
+units and blocked at six, so "how much of the view is blocked" has no answer until you say how far away
+the target is. The build sweeps every radius the slider can reach and asserts each one behaves.
+:::
+
+Like Section 5.1's grown box, the error is **one-sided**: reading a wall as a line can only ever block a
+view, never open one. The build sweeps 720 directions at four radii confirming it. So the wrong version
+is usable as a cheap first pass — if the line test says "clear", it really is clear — and fatal as an
+answer.
+
+## The Two Divisions That Need Guarding
+
+Both formulas above divide, and both denominators can be zero. Neither case throws.
+
+**A segment with no length.** Its direction is the zero vector, so the projection is $0/0$. `projectionT`
+returns `null` rather than `NaN`, because a `NaN` position propagates into everything it touches and
+surfaces as a sprite that has vanished, with nothing in the console.
+
+**Two parallel shapes.** The cross product $r \times s$ is zero, so `lineCrossing` returns `null`. Left
+unguarded it produces `NaN` — and `NaN` compares false against every range test, so the hit is silently
+**dropped** rather than reported. That matters most in the case that is not merely parallel but
+**collinear**:
+
+Two segments on the same line either share infinitely many points or none, and "where do they cross" has
+no single answer. So the general formula cannot help, and a sight line lying exactly along a wall gets
+reported as unblocked — a wall a character can walk through, but only when perfectly aligned with it.
+Rare, perfectly reproducible, and maddening to find.
+
+The fix is to ask a different question: project both onto the shared direction and compare the two
+ranges. Which is Section 5.1's range check, doing its third job in three Sections.
+
+<CodePanel
+  code={segmentSource}
+  lang="ts"
+  file="src/lib/gamedev2d/segment2d.ts"
+  label="Three domains for one parameter, the clamped projection, and the crossing with its guards"
+/>
+
+:::note[In an engine]
+Godot: `Geometry2D.get_closest_point_to_segment()` is the clamped version and
+`get_closest_point_to_segment_uncapped()` is the unclamped one — the two are separate functions with
+explicit names, which is the right design. `Geometry2D.segment_intersects_segment()` returns the point
+or `null`, matching the guard above. For line of sight against real colliders,
+`PhysicsDirectSpaceState2D.intersect_ray()` with `RayQueryParameters2D`, or a `RayCast2D` node.
+
+Unity 2D: `Physics2D.Linecast` is segment-shaped (start and end) and `Physics2D.Raycast` takes a
+direction with an optional `distance` — so the ray/segment distinction is in which function you call, and
+picking the wrong one is this Section's bug with an API attached. There is no built-in
+closest-point-on-segment for plain maths; `Vector3.Project` gives you the unclamped projection and the
+clamp is yours to add.
+
+Both engines' raycasts return the **nearest** hit by default, which is `firstBlocker` above. If you want
+all of them, that is a separate call — `RaycastAll`, or `intersect_ray` in a loop with exclusions.
+:::
+
+## Where This Shows Up
+
+- **Section 5.3**, where the separating axis test projects polygons onto axes — the same projection, used
+  to compare ranges rather than to find a point.
+- **Section 5.4**, which needs the nearest point on a wall to work out which way to push a character off
+  it, and needs it to be the nearest point on the **segment**.
+- **Section 5.1's clamp**, generalised from a coordinate to a parameter.
+- **Section 2.1's cross product**, doing the crossing arithmetic.
+- **The capstone**, where a character's swept motion is a segment against tile edges.
+
+:::note[The one thing to take away]
+One equation, $P(t) = A + t(B - A)$, and three shapes that differ only in how far $t$ may go: anything
+for a line, $t \ge 0$ for a ray, $0 \le t \le 1$ for a segment. The nearest point on a segment is the
+projection with $t$ **clamped**, which is Section 5.1's clamp moved from a coordinate to a parameter, and
+without it the answer is always too close — by a factor of 300 in the demo's worst case. Two shapes cross
+where $t$ and $u$ both fall in their own ranges, and testing only $t$ makes a short wall block its whole
+line: reading three walls as lines costs a guard $129.42°$ of view at six units out. Guard both divisions.
+A zero-length segment has no direction, and two parallel shapes have no crossing point — and if you let
+either produce a `NaN`, it will fail every comparison and drop the collision silently.
+:::

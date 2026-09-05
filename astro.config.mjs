@@ -177,6 +177,24 @@ export default defineConfig({
                     },
                   ],
                 },
+                {
+                  label: "Part 5: Collision",
+                  collapsed: false,
+                  items: [
+                    {
+                      slug: "applied/2d-game-development/circles-and-boxes",
+                    },
+                    {
+                      slug: "applied/2d-game-development/rays-segments-and-closest-points",
+                    },
+                    {
+                      slug: "applied/2d-game-development/polygons-and-the-separating-axis",
+                    },
+                    {
+                      slug: "applied/2d-game-development/collision-response-and-sliding",
+                    },
+                  ],
+                },
               ],
             },
             {
@@ -374,7 +392,11 @@ export default defineConfig({
                   'cameras-panning-zooming-and-screen-to-world': [3, 'Transforms and Cameras'],
                   'delta-time-and-frame-rate-independence':    [4, 'Time, Motion and Feel'],
                   'lerp-easing-and-smoothing':                 [4, 'Time, Motion and Feel'],
-                  'bezier-curves-and-following-a-path':        [4, 'Time, Motion and Feel']
+                  'bezier-curves-and-following-a-path':        [4, 'Time, Motion and Feel'],
+                  'circles-and-boxes':                         [5, 'Collision'],
+                  'rays-segments-and-closest-points':          [5, 'Collision'],
+                  'polygons-and-the-separating-axis':          [5, 'Collision'],
+                  'collision-response-and-sliding':            [5, 'Collision']
                 },
                 'applied/3d-game-development': {
                   'points-vectors-and-coordinate-conventions': [1, 'Vectors and Spatial Reasoning'],

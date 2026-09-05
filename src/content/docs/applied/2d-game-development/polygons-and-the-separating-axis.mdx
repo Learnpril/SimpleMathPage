@@ -1,0 +1,165 @@
+---
+title: Polygons and the Separating Axis
+description: One direction with a gap in it proves two convex shapes miss - and in 2D the directions worth trying are just the edges turned ninety degrees, which is why this is the place to learn the idea
+sidebar:
+  order: 16
+  label: "5.3  Polygons and the Separating Axis"
+---
+
+import DemoPanel from "../../../../components/DemoPanel.astro";
+import CodePanel from "../../../../components/CodePanel.astro";
+import satSource from "../../../../lib/gamedev2d/sat2d.ts?raw";
+
+## What You'll Learn
+
+**If you can find one direction along which two shapes do not overlap, they miss.**
+
+That is the entire algorithm, and you have used it twice already without it having a name. Section 5.1's
+box test is exactly this with the directions fixed to $x$ and $y$: a gap on either axis proves a miss.
+What changes here is only _which_ directions are worth trying.
+
+For convex polygons the answer is short — **the directions perpendicular to their edges** — and that is
+where 2D earns its place in this Module. In three dimensions the candidate axes are the face normals of
+both shapes _plus_ the cross product of every pair of edges: fifteen axes for two boxes, and the reason
+SAT has a reputation for being fiddly. In 2D there are no cross-product axes at all. Two triangles need
+six, and every one of them is an edge turned ninety degrees.
+
+## Shadows
+
+Project a polygon onto a direction and you get a **shadow**: the lowest and highest it reaches along that
+direction. Dot every corner against the axis, keep the smallest and largest.
+
+$$
+\text{shadow} = \left[\min_i (P_i \cdot \hat{n}),\ \max_i (P_i \cdot \hat{n})\right]
+$$
+
+Only the **corners** need testing, and that is convexity paying for itself: every point of a convex
+polygon is a blend of its corners, so no interior point can reach further along any direction than the
+furthest corner already does. The build checks that by projecting a grid of interior points and confirming
+none escapes the corners' shadow.
+
+Then compare the two shadows with a range check — the same `rangesOverlap` from Section 5.1, doing its
+fourth job in three Sections: two boxes, two collinear segments, and now two polygon shadows.
+
+<DemoPanel name="2d-separate" />
+
+Watch the readout as you drag. When the shapes are apart, the first axis tried is often enough and the
+loop stops — at the opening position it is settled by **axis 1 of 8**. When they overlap, all eight have
+to be checked before you can say so. **Overlapping is the expensive case**, which is the opposite of what
+most people guess.
+
+## Why The Edges Are Enough
+
+The claim deserves a reason rather than a rule. If two convex shapes are apart, there is a straight line
+you can draw between them. Slide that line toward one of the shapes until it cannot move any further and
+it ends up lying flush against an edge. So the direction perpendicular to _that_ edge separates them —
+which means some edge normal always works, and testing the edges is testing everything.
+
+Two practical notes fall out of that:
+
+**Opposite edges are redundant.** A rectangle's four normals point in only two directions, and a shadow
+does not care which way up its axis is. Two rectangles offer eight axes and **two** distinct directions.
+Skipping the duplicates is the first optimisation anyone makes, and it is worth knowing before you make
+it that the duplicates are harmless, only wasteful.
+
+**Winding decides which way the normals face.** For a counter-clockwise polygon the interior lies to the
+left of each edge, so the _right_ perpendicular points outward. The hit-or-miss answer does not care — an
+axis and its opposite cast identical shadows — but the push-out direction in Section 5.4 does, and a
+polygon loaded from a file can be wound either way. Normalizing the winding once is cheaper than reasoning
+about signs everywhere afterwards.
+
+<DemoPanel name="2d-normals" />
+
+:::caution[Normalize the axes, for a reason that is not the obvious one]
+Whether the shapes overlap does **not** depend on an axis's length. Scaling a direction scales both
+shadows by the same factor, so the sign of the overlap cannot change. Unnormalized axes give a perfectly
+correct hit test, always — the build asserts that across forty thousand configurations, and it is why this
+bug survives every test anyone writes for it.
+
+What breaks is the **depth**. Overlap along an axis comes out in units of that axis's length, so comparing
+depths across axes of different lengths compares different units — and "the shallowest overlap" then picks
+the wrong axis. With the demo's pentagon and triangle that happens at **47.56%** of overlapping
+configurations, and the chosen direction is out by as much as **81.41°**.
+
+So: a correct collision test, and a character shoved sideways out of a wall it should have been pushed off
+the front of. That is Section 5.4's problem arriving early.
+:::
+
+## The Minimum Translation Vector
+
+When no axis separates them, the axis with the **smallest** overlap is the shortest way to push them
+apart. Every axis measures a distance you could move one shape to end the overlap along that direction,
+and the smallest of those is the least disruptive.
+
+That is the minimum translation vector, and Section 5.4 is about what to do with it. Here it is only a
+measurement — drawn as the purple arrow when the shapes touch.
+
+## SAT Needs Convex Shapes, And Will Not Tell You Otherwise
+
+<DemoPanel name="2d-concave" />
+
+The square starts inside the notch. No corner of either shape is inside the other, no edges cross, and
+nothing whatsoever is touching. The test reports an overlap.
+
+That is not a bug in the code. `isConvex` comes from Section 2.1, and here it is a **precondition** — a
+test built on shadows can only ever describe a convex region, so handed a concave polygon it answers about
+something closer to the shape's convex hull. The dashed outline shows that hull, and the shaded cells are
+every probe position where the answer is measurably wrong: **1.307 square units, 3.19%** of the area
+sampled around the shape.
+
+:::note[The hull bounds the lie without being it]
+It is tempting to say SAT on a concave polygon just tests its convex hull. Not quite. A concave polygon
+offers normals from its **reflex** edges too, and those are not hull edges — so it has extra axes to try,
+and occasionally one of them does separate. The false region is therefore a _subset_ of hull-minus-shape,
+which is why the build measures it by sampling rather than computing the hull's area and calling it done.
+
+The same measurement on the chevron's own hull finds **zero** wrong positions, which is what makes the
+3.19% attributable to concavity rather than to the probe or the sampling.
+:::
+
+The fix is not to patch SAT. It is to **decompose** the shape into convex pieces — a chevron is two
+quadrilaterals — and test each. Every engine does this, and it is why a physics editor makes you draw
+convex collision shapes rather than tracing your sprite.
+
+<CodePanel
+  code={satSource}
+  lang="ts"
+  file="src/lib/gamedev2d/sat2d.ts"
+  label="Shadows, edge normals, the separating axis, and the unnormalized version kept for pricing"
+/>
+
+:::note[In an engine]
+Godot: `ConvexPolygonShape2D` is the shape SAT applies to, and the name is a warning rather than a
+description. `CollisionPolygon2D` has a `build_mode` of `Solids` or `Segments`, and a concave outline
+becomes multiple convex pieces internally. `Geometry2D.decompose_polygon_in_convex()` does that
+decomposition explicitly if you need it yourself, and
+`Geometry2D.convex_hull()` is the hull above.
+
+Unity 2D: `PolygonCollider2D` accepts concave outlines and splits them into convex paths behind the
+scenes; the `points` you set and the `pathCount` you get back are not the same thing, which is this
+Section's constraint showing through the API. `PhysicsShapeGroup2D` exposes the pieces.
+
+Both engines cap the number of vertices on a convex shape — the axis count grows with it, and so does the
+cost of the overlapping case. If you are hitting that cap, the answer is usually fewer, simpler shapes
+rather than one detailed one.
+:::
+
+## Where This Shows Up
+
+- **Section 5.4**, which takes the minimum translation vector and turns it into a push and a slide.
+- **Section 5.1's box test**, which is this algorithm with the axes fixed to $x$ and $y$.
+- **Section 5.1's range check**, still doing the comparison.
+- **Section 1.4's dot product**, doing every projection.
+- **Section 2.1's cross product**, deciding convexity and spotting parallel axes.
+- **Rotated hitboxes generally** — the moment a collision shape can turn, this is the test you need.
+
+:::note[The one thing to take away]
+One direction with a gap in it proves two convex shapes miss, and for polygons the directions worth trying
+are just the edge normals — no cross-product axes, which is why 2D is where this idea is learnable. Project
+by dotting the corners, compare the shadows with a range check, and stop at the first gap: missing is
+cheap, overlapping is what costs you every axis. Normalize the axes, not because the verdict needs it but
+because the **depth** does — unnormalized, the hit test stays perfectly correct while the shallowest-overlap
+direction goes wrong by up to $81.41°$. And check convexity, because SAT on a concave shape reports
+overlaps that are not there, silently, over $3.19\%$ of the area around it. Decompose into convex pieces
+instead of patching the test.
+:::

@@ -37,9 +37,14 @@ import screentoworld2d from "./2d/screentoworld.ts";
 import timestep2d from "./2d/timestep.ts";
 import remap2d from "./2d/remap.ts";
 import joins2d from "./2d/joins.ts";
+import hittest2d from "./2d/hittest.ts";
+import param2d from "./2d/param.ts";
+import normals2d from "./2d/normals.ts";
+import pushout2d from "./2d/pushout.ts";
 import {
   angleCheck2d,
   cameraCheck2d,
+  collideCheck2d,
   crossCheck2d,
   curveCheck2d,
   dotCheck2d,
@@ -47,7 +52,10 @@ import {
   lengthCheck2d,
   matrixCheck2d,
   rotateCheck2d,
+  responseCheck2d,
+  satCheck2d,
   screenCheck2d,
+  segmentCheck2d,
   spaceCheck2d,
   timeCheck2d,
   vectorCheck2d,
@@ -618,6 +626,80 @@ export const DEMOS: Record<string, DemoEntry> = {
     title: "Two curves sharing an endpoint, and still cornering",
     demo: joins2d,
     file: "lib/gamedev/demos/2d/joins.ts",
+  },
+  "2d-shapes": {
+    title: "Three pairings of circles and boxes, one test at a time",
+    visual: () => import("./2d/shapes.scene.ts"),
+    visualFile: "lib/gamedev/demos/2d/shapes.scene.ts",
+    hint: "Pick a pairing, drag the shape into the other one, then tick the box and head for a corner.",
+    check: collideCheck2d,
+  },
+  "2d-corners": {
+    title: "Where a circle's centre can be and still touch a box",
+    visual: () => import("./2d/corners.scene.ts"),
+    visualFile: "lib/gamedev/demos/2d/corners.scene.ts",
+    hint: "Grow the radius and watch the gap between the two outlines open up at the corners.",
+  },
+  "2d-hittest": {
+    title: "The clamp, and the two popular ways to get these tests wrong",
+    demo: hittest2d,
+    file: "lib/gamedev/demos/2d/hittest.ts",
+  },
+  "2d-nearest": {
+    title: "The nearest point on a wall, with the clamp and without it",
+    visual: () => import("./2d/nearest.scene.ts"),
+    visualFile: "lib/gamedev/demos/2d/nearest.scene.ts",
+    hint: "Drag into the shaded regions past either end, where the two answers come apart.",
+    check: segmentCheck2d,
+  },
+  "2d-sight": {
+    title: "A guard's line of sight, and the same walls read as infinite lines",
+    visual: () => import("./2d/sight.scene.ts"),
+    visualFile: "lib/gamedev/demos/2d/sight.scene.ts",
+    hint: "Watch the fan of spokes around the guard, then tick the box and watch a third of it turn red.",
+  },
+  "2d-param": {
+    title: "One equation, three domains, and the divisions that need a guard",
+    demo: param2d,
+    file: "lib/gamedev/demos/2d/param.ts",
+  },
+  "2d-separate": {
+    title: "Two polygons, every candidate axis, and the one that settles it",
+    visual: () => import("./2d/separate.scene.ts"),
+    visualFile: "lib/gamedev/demos/2d/separate.scene.ts",
+    hint: "Drag and turn the triangle, then tick the box to see all eight axes at once.",
+    check: satCheck2d,
+  },
+  "2d-concave": {
+    title:
+      "The same test on a concave shape, reporting hits that are not there",
+    visual: () => import("./2d/concave.scene.ts"),
+    visualFile: "lib/gamedev/demos/2d/concave.scene.ts",
+    hint: "The square starts in the notch, touching nothing, and the test says otherwise.",
+  },
+  "2d-normals": {
+    title: "Where the axes come from, and why they are normalized",
+    demo: normals2d,
+    file: "lib/gamedev/demos/2d/normals.ts",
+  },
+  "2d-deflect": {
+    title:
+      "A velocity split against a wall, sliding at one end and bouncing at the other",
+    visual: () => import("./2d/deflect.scene.ts"),
+    visualFile: "lib/gamedev/demos/2d/deflect.scene.ts",
+    hint: "Sweep the velocity past the wall's angle to see the guard, then raise restitution.",
+    check: responseCheck2d,
+  },
+  "2d-substep": {
+    title: "A thin wall, a fast mover, and the frame that steps over it",
+    visual: () => import("./2d/substep.scene.ts"),
+    visualFile: "lib/gamedev/demos/2d/substep.scene.ts",
+    hint: "Past the escape speed, slide the start offset and watch the hit appear and disappear.",
+  },
+  "2d-pushout": {
+    title: "The position fix, the guard, and what a corner costs",
+    demo: pushout2d,
+    file: "lib/gamedev/demos/2d/pushout.ts",
   },
   "nan-guard": {
     title: "A NaN walks past the check meant to stop it",

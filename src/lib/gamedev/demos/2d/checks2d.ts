@@ -297,6 +297,170 @@ import {
   travelReport,
   worldOf as pathWorldOf,
 } from "./path-shared.ts";
+import {
+  aabbContains,
+  aabbOverlapDepth,
+  aabbsOverlap,
+  boxHeight,
+  boxWidth,
+  circleAabbOverlap,
+  circleAabbOverlapNaive,
+  circleAabbSeparation,
+  circleSeparation,
+  circlesOverlap,
+  circlesOverlapWrongSquare,
+  closestPointInAabb,
+  cornerErrorArea,
+  isValidAabb,
+  normalized,
+  rangesOverlap,
+  toAabb,
+  toBox,
+  type Aabb,
+  type Circle,
+} from "../../../gamedev2d/collide2d.ts";
+/* `START` belongs to the turning Section already, and `screenOf`, `worldOf`, `VIEW`, `BOUNDS` and
+   `clampToBounds` are each bound by two earlier Sections. Aliasing rather than shadowing, because a
+   check that silently tests the wrong Section's geometry still passes. */
+import {
+  BOUNDS as SHAPES_BOUNDS,
+  CORNER_BOX,
+  KINDS,
+  MOVING_RADIUS,
+  RADIUS_RANGE,
+  START as SHAPES_START,
+  STATIC_BOX,
+  STATIC_CIRCLE,
+  VIEW as SHAPES_VIEW,
+  clampToBounds as shapesClampToBounds,
+  measuredErrorArea,
+  movingBoxAt,
+  naiveRegion,
+  reportAt,
+  screenOf as shapesScreenOf,
+  worldOf as shapesWorldOf,
+} from "./shapes-shared.ts";
+import {
+  areCollinear,
+  areParallel,
+  clampT,
+  closestPoint,
+  collinearOverlap,
+  containsT,
+  direction,
+  distanceToLine,
+  distanceToSegment,
+  firstBlocker,
+  firstBlockerWrong,
+  hasLineOfSight,
+  lineCrossing,
+  pointOn,
+  projectionT,
+  rayHitsSegment,
+  segmentCrossing,
+  segmentLength,
+  type Segment,
+} from "../../../gamedev2d/segment2d.ts";
+/* Aliased for the same reason as the last two Sections: `START`, `VIEW`, `BOUNDS`, `screenOf`,
+   `worldOf` and `clampToBounds` are each bound several times over by now, and a check quietly testing
+   an earlier Section's geometry would pass while proving nothing about this one. */
+import {
+  BOUNDS as SIGHT_BOUNDS,
+  GUARD_AT as SIGHT_GUARD,
+  NEAREST_WALL,
+  RADIUS_RANGE as SIGHT_RADIUS_RANGE,
+  SIGHT_RADIUS,
+  START as SIGHT_START,
+  VIEW as SIGHT_VIEW,
+  WALLS as SIGHT_WALLS,
+  clampToBounds as sightClampToBounds,
+  clearInDirection,
+  nearestReport,
+  screenOf as sightScreenOf,
+  sightReport,
+  sweepDisagreements,
+  worldOf as sightWorldOf,
+} from "./sight-shared.ts";
+/* Everything from the separating-axis Section is aliased. By this point in the file `fixedAt`, `project`,
+   `screenOf`, `worldOf`, `VIEW`, `BOUNDS` and `START` are each bound by an earlier Section, and a check
+   that silently exercises the wrong Section's geometry passes while proving nothing. */
+import {
+  candidateAxes as satCandidateAxes,
+  containsPoint as satContains,
+  counterClockwise as satCounterClockwise,
+  distinctAxisCount as satDistinctAxes,
+  edgeNormals as satEdgeNormals,
+  overlapOnAxis as satOverlapOnAxis,
+  polygonsOverlap as satOverlap,
+  project as satProject,
+  regularPolygon as satRegular,
+  separatingAxis as satSeparatingAxis,
+  smallestOverlap as satSmallestOverlap,
+  smallestOverlapRaw as satSmallestOverlapRaw,
+  suitableForSat as satSuitable,
+  type Polygon,
+} from "../../../gamedev2d/sat2d.ts";
+import {
+  BOUNDS as SAT_BOUNDS,
+  CHEVRON as SAT_CHEVRON,
+  CHEVRON_HULL as SAT_HULL,
+  FIXED as SAT_FIXED,
+  MOVING as SAT_MOVING,
+  PROBE_START as SAT_PROBE_START,
+  SPIN_RANGE as SAT_SPIN,
+  START as SAT_START,
+  VIEW as SAT_VIEW,
+  clampToBounds as satClamp,
+  concaveFalseArea as satFalseArea,
+  falseRegionCells as satFalseCells,
+  fixedAt as satFixedAt,
+  movingAt as satMovingAt,
+  probeAt as satProbeAt,
+  satIsWrongAt as satIsWrong,
+  satReport as satReportOf,
+  screenOf as satScreenOf,
+  worldOf as satWorldOf,
+} from "./separate-shared.ts";
+import {
+  SKIN,
+  cappedSpeed,
+  convergenceRate,
+  movingInto,
+  pushOut,
+  pushOutAll,
+  pushOutExactly,
+  reflect,
+  respond,
+  resolveVelocity,
+  settleVelocity,
+  slide,
+  slideSpeedFraction,
+  stepDistance,
+  substepsNeeded,
+  tunnellingChance,
+  tunnellingSpeed,
+} from "../../../gamedev2d/response2d.ts";
+/* Aliased where an earlier Section already owns the name: `screenOf`, `worldOf` and `VIEW` for the sixth
+   time now, and `THIN_WALL` is only unique because nothing else needed a wall of its own. */
+import {
+  CONTACT,
+  FRAME,
+  MOVER_SPEED,
+  THIN_WALL,
+  VELOCITY_RANGE,
+  VIEW as DEFLECT_VIEW,
+  WALL_DRAW_LENGTH,
+  WALL_RANGE,
+  WALL_THICKNESS,
+  deflectReport,
+  insideWall,
+  measuredTunnelChance,
+  screenOf as deflectScreenOf,
+  substepReport,
+  tipOf,
+  wallFrom,
+  worldOf as deflectWorldOf,
+} from "./deflect-shared.ts";
 
 const near = (a: number, b: number, tol = 1e-9) => Math.abs(a - b) < tol;
 
@@ -4783,6 +4947,2516 @@ export const curveCheck2d: Demo = () => {
       samePoint(marks[0], LOPSIDED[0], 1e-9) &&
         samePoint(marks[MARKS - 1], LOPSIDED[3], 1e-9),
       "and the first and last should sit on the curve's ends either way",
+    );
+  }
+};
+
+/**
+ * Circles and boxes: three tests, and the two wrong versions of them priced rather than described.
+ *
+ * The assertion carrying the most weight is the corner one, and it is worth saying why it is possible at
+ * all. The naive circle-versus-box test is wrong by an area, and that area has a closed form:
+ * $(4 - \pi)r^2$, four corner squares minus four quarter-discs. So the check can **count** disagreements
+ * over a grid and compare the count against a formula derived a completely different way. A bug in
+ * either one would break the agreement.
+ *
+ * Everything else here is the discipline that has earned its keep all through this Module: the three
+ * tests are swept against brute-force alternatives rather than against themselves rearranged, and the
+ * two shapes are checked at the corners of their draggable range, because that is where a picture goes
+ * wrong without anything throwing.
+ */
+export const collideCheck2d: Demo = () => {
+  const samePoint = (a: Point, b: Point, tol = 1e-9) =>
+    Math.hypot(a.x - b.x, a.y - b.y) < tol;
+
+  // ---- Two circles ------------------------------------------------------------------------
+
+  /* Two references, because one was not enough and the first attempt was itself wrong.
+     
+     I began by sampling points around each rim and asking whether any lay inside the other circle. That
+     tests whether the **outlines** cross, which is a different question: a small disc entirely inside a
+     big one overlaps it while their rims never meet. The check duly failed at exact internal tangency,
+     and the code was right. Worth keeping the note, because "write an independent reference" is only
+     good advice if the reference answers the same question.
+     
+     So: the criterion computed with an actual square root, which catches a mistake in the squaring, and
+     a grid search for a genuinely shared point, which catches a mistake in the criterion. */
+  const overlapUnsquared = (a: Circle, b: Circle) =>
+    Math.hypot(b.centre.x - a.centre.x, b.centre.y - a.centre.y) <
+    a.radius + b.radius;
+
+  /* Asserted in one direction only, and deliberately. Finding a shared point proves an overlap, but
+     failing to find one proves nothing - two discs can overlap in a lens far thinner than the grid. */
+  const sharesAPoint = (a: Circle, b: Circle, samples = 120) => {
+    for (let i = 0; i <= samples; i += 1) {
+      for (let j = 0; j <= samples; j += 1) {
+        const p = {
+          x: b.centre.x - b.radius + (i / samples) * 2 * b.radius,
+          y: b.centre.y - b.radius + (j / samples) * 2 * b.radius,
+        };
+        if (
+          distanceSquared(p, a.centre) < a.radius * a.radius &&
+          distanceSquared(p, b.centre) < b.radius * b.radius
+        ) {
+          return true;
+        }
+      }
+    }
+    return false;
+  };
+
+  for (const radius of [0.4, 1, 2.5]) {
+    for (let i = 0; i <= 40; i += 1) {
+      for (let j = 0; j <= 24; j += 1) {
+        const centre = { x: -6 + (i / 40) * 12, y: -3 + (j / 24) * 6 };
+        const moving = { centre, radius };
+        const byFormula = circlesOverlap(STATIC_CIRCLE, moving);
+        // Skip a whisker either side of exact contact, where floating point decides the answer.
+        if (Math.abs(circleSeparation(STATIC_CIRCLE, moving)) < 1e-9) continue;
+        assert(
+          byFormula === overlapUnsquared(STATIC_CIRCLE, moving),
+          `the squared test disagreed with the rooted one at (${centre.x.toFixed(2)}, ${centre.y.toFixed(2)}) r ${radius}`,
+        );
+        if (sharesAPoint(STATIC_CIRCLE, moving)) {
+          assert(
+            byFormula,
+            `a point lies in both discs at (${centre.x.toFixed(2)}, ${centre.y.toFixed(2)}) r ${radius}, so they overlap`,
+          );
+        }
+      }
+    }
+  }
+  /* And the containment case explicitly, since it is what the bad reference could not see: a small disc
+     wholly inside a large one overlaps it, at every offset up to internal tangency and beyond. */
+  for (const offset of [0, 0.25, 0.5, 0.49999]) {
+    const inside = {
+      centre: { x: STATIC_CIRCLE.centre.x + offset, y: 0 },
+      radius: 1,
+    };
+    assert(
+      circlesOverlap(STATIC_CIRCLE, inside),
+      `a disc inside another overlaps it, failed at offset ${offset}`,
+    );
+    assert(
+      sharesAPoint(STATIC_CIRCLE, inside),
+      "and they demonstrably share points",
+    );
+  }
+  // Touching exactly is not overlapping, which is a decision rather than a fact, so it is pinned.
+  const justTouching = {
+    centre: { x: STATIC_CIRCLE.centre.x + STATIC_CIRCLE.radius + 1, y: 0 },
+    radius: 1,
+  };
+  assert(
+    !circlesOverlap(STATIC_CIRCLE, justTouching),
+    "circles that touch at exactly one point are not overlapping",
+  );
+  assert(
+    near(circleSeparation(STATIC_CIRCLE, justTouching), 0, 1e-12),
+    "and their separation is exactly zero",
+  );
+  assert(
+    circlesOverlap(STATIC_CIRCLE, {
+      centre: {
+        x: STATIC_CIRCLE.centre.x + STATIC_CIRCLE.radius + 0.999,
+        y: 0,
+      },
+      radius: 1,
+    }),
+    "a thousandth closer and they are",
+  );
+  // A circle overlaps itself, and a zero-radius circle at another's centre is inside it.
+  assert(
+    circlesOverlap(STATIC_CIRCLE, STATIC_CIRCLE),
+    "a circle overlaps itself",
+  );
+  assert(
+    circlesOverlap(STATIC_CIRCLE, { centre: STATIC_CIRCLE.centre, radius: 0 }),
+    "and contains a point at its own centre",
+  );
+
+  /* The wrong version, priced. Squaring the radii separately drops the 2*ra*rb cross term, and for equal
+     radii that shrinks the reach from 2r to r*sqrt(2) - a shortfall of 29.29%, which is why it reads as
+     "collision feels late" rather than as an obvious break. */
+  for (const r of [0.5, 1, 3]) {
+    const a = { centre: { x: 0, y: 0 }, radius: r };
+    const correctReach = 2 * r;
+    const wrongReach = Math.sqrt(2 * r * r);
+    assert(
+      near(wrongReach / correctReach, Math.SQRT1_2, 1e-12),
+      "the wrong reach for equal radii should be 1/sqrt(2) of the right one",
+    );
+    // A position strictly between the two reaches: overlapping, and the wrong test says nothing.
+    const between = {
+      centre: { x: (correctReach + wrongReach) / 2, y: 0 },
+      radius: r,
+    };
+    assert(
+      circlesOverlap(a, between) && !circlesOverlapWrongSquare(a, between),
+      `the wrong square test should miss a real overlap at radius ${r}`,
+    );
+  }
+  assert(
+    near((1 - Math.SQRT1_2) * 100, 29.2893, 1e-3),
+    "the shortfall for equal radii should be 29.29%",
+  );
+  // The demo's own pair, whose figure the Section quotes.
+  {
+    const correctReach = STATIC_CIRCLE.radius + MOVING_RADIUS;
+    const wrongReach = Math.sqrt(
+      STATIC_CIRCLE.radius ** 2 + MOVING_RADIUS ** 2,
+    );
+    assert(
+      near((wrongReach / correctReach) * 100, 71.0022, 1e-3),
+      `the demo's pair should report contact at 71.00% of the right distance, got ${(wrongReach / correctReach) * 100}`,
+    );
+    /* The values panel puts its example circle a round 2.25 away rather than at the midpoint of the two
+       reaches, because that midpoint is irrational and printed as 0.8512812094883317 in output that gets
+       committed. So the roundness has to be paid for with an assertion that it still lands between them. */
+    assert(
+      wrongReach < 2.25 && 2.25 < correctReach,
+      `2.25 has to sit between the wrong reach ${wrongReach} and the right one ${correctReach}`,
+    );
+    const example = {
+      centre: { x: STATIC_CIRCLE.centre.x + 2.25, y: 0 },
+      radius: MOVING_RADIUS,
+    };
+    assert(
+      circlesOverlap(STATIC_CIRCLE, example) &&
+        !circlesOverlapWrongSquare(STATIC_CIRCLE, example),
+      "so the right test sees the overlap there and the wrong one does not",
+    );
+  }
+
+  // ---- Two boxes --------------------------------------------------------------------------
+
+  /* Against a brute-force version: sample a grid inside one box and ask whether any sample is in the
+     other. Independent of the range logic, so the two agreeing means both are right. */
+  const boxesOverlapByProbe = (a: Aabb, b: Aabb, samples = 140) => {
+    for (let i = 0; i <= samples; i += 1) {
+      for (let j = 0; j <= samples; j += 1) {
+        const p = {
+          x: a.min.x + (i / samples) * (a.max.x - a.min.x),
+          y: a.min.y + (j / samples) * (a.max.y - a.min.y),
+        };
+        if (aabbContains(b, p)) return true;
+      }
+    }
+    return false;
+  };
+  for (let i = 0; i <= 30; i += 1) {
+    for (let j = 0; j <= 18; j += 1) {
+      const centre = { x: -6 + (i / 30) * 12, y: -3 + (j / 18) * 6 };
+      const moving = movingBoxAt(centre);
+      const depth = aabbOverlapDepth(STATIC_BOX, moving);
+      // Skip near-exact contact, where a finite probe grid cannot resolve the answer.
+      if (Math.abs(depth.x) < 0.05 || Math.abs(depth.y) < 0.05) continue;
+      assert(
+        aabbsOverlap(STATIC_BOX, moving) ===
+          boxesOverlapByProbe(STATIC_BOX, moving),
+        `the box test disagreed with a probe at (${centre.x.toFixed(2)}, ${centre.y.toFixed(2)})`,
+      );
+      // Overlap on both axes is exactly the condition, restated so the two forms cannot drift.
+      assert(
+        aabbsOverlap(STATIC_BOX, moving) === (depth.x > 0 && depth.y > 0),
+        "overlapping should be the same as positive depth on both axes",
+      );
+    }
+  }
+  // The whole test is two range checks, and the range check is the piece Section 5.3 generalises.
+  assert(rangesOverlap(0, 2, 1, 3), "ranges that straddle overlap");
+  assert(rangesOverlap(0, 5, 1, 2), "and one inside the other overlaps");
+  assert(!rangesOverlap(0, 1, 1, 2), "ranges that meet at a point do not");
+  assert(!rangesOverlap(0, 1, 2, 3), "and ranges with a gap do not");
+  assert(
+    rangesOverlap(0, 2, 1, 3) === rangesOverlap(1, 3, 0, 2),
+    "and the check does not care which range is named first",
+  );
+  // Boxes that share an edge do not overlap, matching the circles' decision about touching.
+  const touchingBox = {
+    min: { x: STATIC_BOX.max.x, y: STATIC_BOX.min.y },
+    max: { x: STATIC_BOX.max.x + 2, y: STATIC_BOX.max.y },
+  };
+  assert(
+    !aabbsOverlap(STATIC_BOX, touchingBox),
+    "boxes sharing an edge are not overlapping, which keeps a resting character out of contact",
+  );
+  assert(
+    near(aabbOverlapDepth(STATIC_BOX, touchingBox).x, 0, 1e-12),
+    "and their depth on that axis is exactly zero",
+  );
+
+  /* An inverted box is the failure that produces no error at all: every test says "no collision", so a
+     wall becomes a doorway. Checked, along with the repair. */
+  const inverted: Aabb = { min: { x: 2, y: 1 }, max: { x: -2, y: -1 } };
+  assert(!isValidAabb(inverted), "a box with its corners swapped is not valid");
+  assert(isValidAabb(normalized(inverted)), "and normalizing fixes it");
+  assert(
+    !aabbsOverlap(inverted, movingBoxAt({ x: 0, y: 0 })),
+    "an inverted box collides with nothing, silently",
+  );
+  assert(
+    aabbsOverlap(normalized(inverted), movingBoxAt({ x: 0, y: 0 })),
+    "while the normalized one behaves",
+  );
+  assert(
+    isValidAabb(STATIC_BOX) && isValidAabb(CORNER_BOX),
+    "and the Section's own boxes are the right way round",
+  );
+
+  // The two representations, and the halving that is the reason to convert deliberately.
+  for (const box of [
+    STATIC_BOX,
+    CORNER_BOX,
+    movingBoxAt({ x: 1.5, y: -0.5 }),
+  ]) {
+    const asBox = toBox(box);
+    assert(
+      near(asBox.half.x * 2, boxWidth(box), 1e-12) &&
+        near(asBox.half.y * 2, boxHeight(box), 1e-12),
+      "half-extents are half the width and height, which is the trap",
+    );
+    assert(
+      samePoint(toAabb(asBox).min, box.min, 1e-12) &&
+        samePoint(toAabb(asBox).max, box.max, 1e-12),
+      "and the round trip between the two forms is exact",
+    );
+  }
+  // No float dust in the Section's coordinates, since they are printed in a committed values panel.
+  for (const value of [
+    STATIC_BOX.min.x,
+    STATIC_BOX.min.y,
+    STATIC_BOX.max.x,
+    STATIC_BOX.max.y,
+    CORNER_BOX.min.x,
+    CORNER_BOX.max.y,
+    toBox(STATIC_BOX).half.x,
+  ]) {
+    assert(
+      Number.isInteger(value * 16),
+      `${value} is not a sixteenth, so it will print with floating-point dust`,
+    );
+  }
+
+  // ---- A circle and a box -----------------------------------------------------------------
+
+  /* The clamp handles a face, a corner and the inside with no branch. Verified against a brute-force
+     nearest point found by scanning the box's boundary, which is a different computation entirely. */
+  const nearestByScan = (box: Aabb, p: Point, samples = 4000) => {
+    let best = { x: box.min.x, y: box.min.y };
+    let bestDistance = Infinity;
+    const perimeter: Array<[Point, Point]> = [
+      [box.min, { x: box.max.x, y: box.min.y }],
+      [{ x: box.max.x, y: box.min.y }, box.max],
+      [box.max, { x: box.min.x, y: box.max.y }],
+      [{ x: box.min.x, y: box.max.y }, box.min],
+    ];
+    for (const [a, b] of perimeter) {
+      for (let i = 0; i <= samples; i += 1) {
+        const q = {
+          x: a.x + (i / samples) * (b.x - a.x),
+          y: a.y + (i / samples) * (b.y - a.y),
+        };
+        const d = distanceSquared(p, q);
+        if (d < bestDistance) {
+          bestDistance = d;
+          best = q;
+        }
+      }
+    }
+    return best;
+  };
+  for (let i = 0; i <= 24; i += 1) {
+    for (let j = 0; j <= 14; j += 1) {
+      const p = { x: -6 + (i / 24) * 12, y: -3 + (j / 14) * 6 };
+      const clamped = closestPointInAabb(CORNER_BOX, p);
+      if (aabbContains(CORNER_BOX, p)) {
+        // Inside, the clamp returns the point itself. Correct for a containment test, and not a
+        // boundary point - which is exactly the distinction Section 5.4 has to make.
+        assert(
+          samePoint(clamped, p, 1e-15),
+          "inside the box, the clamp is the identity",
+        );
+        continue;
+      }
+      assert(
+        samePoint(clamped, nearestByScan(CORNER_BOX, p), 2e-3),
+        `the clamp disagreed with a boundary scan at (${p.x.toFixed(2)}, ${p.y.toFixed(2)})`,
+      );
+      // The clamped point is always on the boundary, and never outside the box.
+      assert(
+        aabbContains(CORNER_BOX, clamped),
+        "the clamped point is in the box",
+      );
+    }
+  }
+
+  /* The corner bug, measured against its closed form. Two completely different computations: one counts
+     grid cells where the tests disagree, the other is (4 - pi)r^2 from four squares minus four
+     quarter-discs. Agreement to a fraction of a percent means both are right. */
+  for (const radius of [0.3, 0.5, 0.8, 1.1, 1.4, 1.8]) {
+    const measured = measuredErrorArea(radius, 700);
+    const exact = cornerErrorArea(radius);
+    assert(
+      Math.abs(measured - exact) / exact < 0.005,
+      `the sampled corner error ${measured} should match (4-pi)r^2 = ${exact} at radius ${radius}`,
+    );
+  }
+  assert(
+    near(cornerErrorArea(1) / (4 - Math.PI), 1, 1e-12),
+    "the closed form should be exactly (4 - pi) at radius 1",
+  );
+  assert(
+    near(cornerErrorArea(2), 4 * cornerErrorArea(1), 1e-12),
+    "and it should scale with the square of the radius",
+  );
+  /* The naive test's over-reach at a corner is r*(sqrt(2) - 1), because its corner sits at r*sqrt(2)
+     from the box's while the true region reaches only r. 41.42% of the radius, whatever the radius. */
+  for (const radius of [0.3, 1.1, 1.8]) {
+    const worst = {
+      x: CORNER_BOX.max.x + radius,
+      y: CORNER_BOX.max.y + radius,
+    };
+    const circle = { centre: worst, radius };
+    assert(
+      circleAabbOverlapNaive(circle, CORNER_BOX),
+      "the naive test accepts a circle at the corner of the grown box",
+    );
+    assert(
+      !circleAabbOverlap(circle, CORNER_BOX),
+      "while the circle there is touching nothing",
+    );
+    assert(
+      near(
+        circleAabbSeparation(circle, CORNER_BOX),
+        radius * (Math.SQRT2 - 1),
+        1e-12,
+      ),
+      `and it clears the corner by r(sqrt(2)-1), not ${circleAabbSeparation(circle, CORNER_BOX)}`,
+    );
+  }
+  assert(
+    near((Math.SQRT2 - 1) * 100, 41.4214, 1e-3),
+    "which is 41.42% of the radius",
+  );
+  // Along a face the naive test is right, which is why the bug is hard to notice.
+  for (let i = 0; i <= 40; i += 1) {
+    const y = CORNER_BOX.min.y + (i / 40) * boxHeight(CORNER_BOX);
+    for (const radius of [0.4, 1.2]) {
+      for (const gap of [-0.1, 0.05, 0.5]) {
+        const circle = {
+          centre: { x: CORNER_BOX.max.x + radius + gap, y },
+          radius,
+        };
+        assert(
+          circleAabbOverlapNaive(circle, CORNER_BOX) ===
+            circleAabbOverlap(circle, CORNER_BOX),
+          "directly out from a face, the naive test agrees with the right one",
+        );
+      }
+    }
+  }
+  // And it is never the other way round: the naive test over-reports and never under-reports.
+  for (let i = 0; i <= 60; i += 1) {
+    for (let j = 0; j <= 36; j += 1) {
+      const centre = { x: -6 + (i / 60) * 12, y: -3.4 + (j / 36) * 6.8 };
+      const circle = { centre, radius: 1.1 };
+      if (circleAabbOverlap(circle, CORNER_BOX)) {
+        assert(
+          circleAabbOverlapNaive(circle, CORNER_BOX),
+          "the naive test must never miss a real overlap, only invent one",
+        );
+      }
+    }
+  }
+  // The circle test and the box test agree when the box has no size, since then it is a point.
+  for (const p of [
+    { x: 0, y: 0 },
+    { x: 2, y: 1 },
+    { x: -4, y: 2 },
+  ]) {
+    const pointBox: Aabb = { min: p, max: p };
+    const circle = { centre: { x: 0.5, y: 0.25 }, radius: 1.5 };
+    assert(
+      circleAabbOverlap(circle, pointBox) ===
+        circlesOverlap(circle, { centre: p, radius: 0 }),
+      "a box of no size behaves as a point for the circle test",
+    );
+  }
+
+  // ---- The scenes' own arithmetic ----------------------------------------------------------
+
+  for (const p of [
+    SHAPES_START,
+    { x: 0, y: 0 },
+    { x: -3.4, y: 1.1 },
+    { x: SHAPES_BOUNDS.x, y: SHAPES_BOUNDS.y },
+  ]) {
+    const screen = shapesScreenOf(p);
+    assert(
+      samePoint(shapesWorldOf(screen.x, screen.y), p, 1e-12),
+      `the screen round trip failed for (${p.x}, ${p.y})`,
+    );
+  }
+  assert(
+    shapesScreenOf({ x: 0, y: 1 }).y < shapesScreenOf({ x: 0, y: 0 }).y,
+    "a higher world point should be drawn nearer the top",
+  );
+  /* Everything reachable by dragging has to stay on the canvas, including the circle's rim and the
+     box's corners. The first version of BOUNDS put the circle's top edge a pixel off the canvas, which
+     is precisely the class of mistake a build with no GPU can still catch. */
+  for (const sx of [-SHAPES_BOUNDS.x, 0, SHAPES_BOUNDS.x]) {
+    for (const sy of [-SHAPES_BOUNDS.y, 0, SHAPES_BOUNDS.y]) {
+      const probes: Point[] = [
+        { x: sx - MOVING_RADIUS, y: sy },
+        { x: sx + MOVING_RADIUS, y: sy },
+        { x: sx, y: sy - MOVING_RADIUS },
+        { x: sx, y: sy + MOVING_RADIUS },
+        movingBoxAt({ x: sx, y: sy }).min,
+        movingBoxAt({ x: sx, y: sy }).max,
+      ];
+      for (const probe of probes) {
+        const q = shapesScreenOf(probe);
+        assert(
+          q.x >= 0 &&
+            q.x <= SHAPES_VIEW.width &&
+            q.y >= 0 &&
+            q.y <= SHAPES_VIEW.height,
+          `dragging to (${sx}, ${sy}) puts part of the shape at (${q.x.toFixed(1)}, ${q.y.toFixed(1)}), off a ${SHAPES_VIEW.width} by ${SHAPES_VIEW.height} canvas`,
+        );
+      }
+    }
+  }
+  assert(
+    shapesClampToBounds({ x: 40, y: -40 }).x === SHAPES_BOUNDS.x &&
+      shapesClampToBounds({ x: 40, y: -40 }).y === -SHAPES_BOUNDS.y,
+    "and the clamp pulls a far drag back to the bounds",
+  );
+  // The corner scene's widest region has to fit too, since the radius slider drives its size.
+  for (const radius of [RADIUS_RANGE.min, 1.1, RADIUS_RANGE.max]) {
+    const region = naiveRegion(radius);
+    for (const corner of [region.min, region.max]) {
+      const q = shapesScreenOf(corner);
+      assert(
+        q.x >= 0 &&
+          q.x <= SHAPES_VIEW.width &&
+          q.y >= 0 &&
+          q.y <= SHAPES_VIEW.height,
+        `the grown region at radius ${radius} reaches (${q.x.toFixed(1)}, ${q.y.toFixed(1)})`,
+      );
+    }
+  }
+  // The starting position is a miss in all three pairings, so the first thing a reader sees is a gap.
+  for (const kind of KINDS) {
+    const report = reportAt(kind, SHAPES_START);
+    assert(
+      !report.hit,
+      `${kind} should start apart, and it starts ${report.separation}`,
+    );
+    assert(
+      report.separation > 0,
+      "with a positive separation, since they are apart",
+    );
+    assert(
+      !report.naiveDisagrees,
+      "and with the wrong version agreeing, so the bug is something the reader has to go and find",
+    );
+  }
+  /* Each pairing's report has to actually flip as the shape moves, or a mode would be a still picture.
+     Swept over the draggable range rather than checked at two chosen points. */
+  for (const kind of KINDS) {
+    let hits = 0;
+    let misses = 0;
+    for (let i = 0; i <= 40; i += 1) {
+      for (let j = 0; j <= 24; j += 1) {
+        const p = {
+          x: -SHAPES_BOUNDS.x + (i / 40) * 2 * SHAPES_BOUNDS.x,
+          y: -SHAPES_BOUNDS.y + (j / 24) * 2 * SHAPES_BOUNDS.y,
+        };
+        const report = reportAt(kind, p);
+        if (report.hit) hits += 1;
+        else misses += 1;
+        // The separation's sign must always match the verdict, in every pairing.
+        assert(
+          report.hit === report.separation < 0,
+          `${kind} reported hit=${report.hit} with separation ${report.separation}`,
+        );
+      }
+    }
+    assert(
+      hits > 40 && misses > 40,
+      `${kind} should have plenty of both outcomes in range, had ${hits} hits and ${misses} misses`,
+    );
+  }
+  // And the circle-and-box pairing has to find positions where the naive test is visibly wrong.
+  let disagreements = 0;
+  for (let i = 0; i <= 60; i += 1) {
+    for (let j = 0; j <= 36; j += 1) {
+      const p = {
+        x: -SHAPES_BOUNDS.x + (i / 60) * 2 * SHAPES_BOUNDS.x,
+        y: -SHAPES_BOUNDS.y + (j / 36) * 2 * SHAPES_BOUNDS.y,
+      };
+      if (reportAt("circle and box", p).naiveDisagrees) disagreements += 1;
+    }
+  }
+  assert(
+    disagreements > 20,
+    `the reader should be able to find the corner bug by dragging, found it at ${disagreements} positions`,
+  );
+};
+
+/**
+ * Rays, segments and lines: three domains for one parameter, and the four divisions that need guarding.
+ *
+ * The load-bearing assertion is the closest point, swept against a brute-force scan **along the segment
+ * itself** rather than against the projection formula rearranged. A clamp that is missing, inverted or
+ * applied to the wrong quantity all still return a plausible point somewhere near the wall, so this is
+ * exactly the class of bug a picture will not settle.
+ *
+ * The second job is pricing the two mistakes the Section is about. Dropping the clamp gives the closest
+ * point on the infinite line, and dropping `u` gives a wall that reaches for ever - and the second one
+ * costs a measured $129.4°$ of a guard's view, which is a number rather than an opinion.
+ */
+export const segmentCheck2d: Demo = () => {
+  const samePoint = (a: Point, b: Point, tol = 1e-9) =>
+    Math.hypot(a.x - b.x, a.y - b.y) < tol;
+
+  const DIAGONAL: Segment = { a: { x: -3, y: -1 }, b: { x: 3, y: 2 } };
+  const TALL: Segment = { a: { x: 1, y: -2 }, b: { x: 1, y: 3 } };
+  const FLAT: Segment = { a: { x: 0, y: 0 }, b: { x: 4, y: 0 } };
+  const POINT_SEG: Segment = { a: { x: 1, y: 1 }, b: { x: 1, y: 1 } };
+
+  // ---- One equation, three domains --------------------------------------------------------
+
+  for (const t of [-2, -0.5, 0, 0.25, 1, 1.5, 40]) {
+    assert(clampT(t, "line") === t, "a line clamps nothing");
+    assert(clampT(t, "ray") === Math.max(t, 0), "a ray clamps below zero only");
+    assert(
+      clampT(t, "segment") === Math.min(Math.max(t, 0), 1),
+      "and a segment clamps at both ends",
+    );
+    // `containsT` is the same three cases asked as a question, so the two must never disagree.
+    assert(
+      containsT(t, "line") === (clampT(t, "line") === t),
+      "line membership should match its clamp",
+    );
+    assert(
+      containsT(t, "ray") === (clampT(t, "ray") === t),
+      "ray membership should match its clamp",
+    );
+    assert(
+      containsT(t, "segment") === (clampT(t, "segment") === t),
+      "segment membership should match its clamp",
+    );
+  }
+  // The endpoints are hit exactly, which is what makes `t` worth reasoning about.
+  for (const seg of [DIAGONAL, TALL, FLAT, NEAREST_WALL]) {
+    assert(samePoint(pointOn(seg, 0), seg.a, 1e-15), "t = 0 is the first end");
+    assert(samePoint(pointOn(seg, 1), seg.b, 1e-15), "and t = 1 is the second");
+    assert(
+      samePoint(pointOn(seg, 0.5), midpoint(seg.a, seg.b), 1e-12),
+      "and t = 0.5 is the midpoint, which is Section 1.2's average",
+    );
+    // A segment is a lerp between its ends, so travelling `t` is linear in distance along it.
+    for (let i = 0; i <= 20; i += 1) {
+      const t = i / 20;
+      assert(
+        near(distance(seg.a, pointOn(seg, t)), t * segmentLength(seg), 1e-12),
+        "distance along a segment is linear in t, unlike a Bezier's parameter",
+      );
+    }
+  }
+
+  // ---- The closest point, against a brute-force scan ---------------------------------------
+
+  const nearestByScan = (seg: Segment, p: Point, samples = 20000) => {
+    let best = seg.a;
+    let bestDistance = Infinity;
+    for (let i = 0; i <= samples; i += 1) {
+      const q = pointOn(seg, i / samples);
+      const d = distanceSquared(p, q);
+      if (d < bestDistance) {
+        bestDistance = d;
+        best = q;
+      }
+    }
+    return best;
+  };
+  for (const seg of [DIAGONAL, TALL, FLAT, NEAREST_WALL]) {
+    for (let i = 0; i <= 22; i += 1) {
+      for (let j = 0; j <= 14; j += 1) {
+        const p = { x: -7 + (i / 22) * 14, y: -4 + (j / 14) * 8 };
+        assert(
+          samePoint(
+            closestPoint(seg, p, "segment"),
+            nearestByScan(seg, p),
+            2e-3,
+          ),
+          `the clamped projection disagreed with a scan at (${p.x.toFixed(2)}, ${p.y.toFixed(2)})`,
+        );
+        // The answer is always on the segment, which a missing clamp would break immediately.
+        const t = projectionT(seg, closestPoint(seg, p, "segment"));
+        assert(
+          t !== null && t >= -1e-9 && t <= 1 + 1e-9,
+          `the nearest point should have t in [0, 1], had ${t}`,
+        );
+        /* And the segment is never nearer than its own line - the line has more points to choose
+           from, so it can only ever tie or win. Which means the unclamped version **understates**,
+           always, and can never invent a distance that is too large. */
+        assert(
+          distanceToLine(seg, p) <= distanceToSegment(seg, p) + 1e-12,
+          "the infinite line can never be further away than the segment",
+        );
+      }
+    }
+  }
+  // Between the ends the clamp changes nothing, so the two answers must agree exactly there.
+  for (let i = 0; i <= 50; i += 1) {
+    const t = i / 50;
+    const on = pointOn(NEAREST_WALL, t);
+    // Step off the wall perpendicularly, staying inside the slab where t is in range.
+    const along = normalize(displacement(NEAREST_WALL.a, NEAREST_WALL.b))!;
+    const across = { x: -along.y, y: along.x };
+    for (const offset of [-1.5, -0.25, 0.25, 1.5]) {
+      const p = { x: on.x + across.x * offset, y: on.y + across.y * offset };
+      assert(
+        near(
+          distanceToSegment(NEAREST_WALL, p),
+          distanceToLine(NEAREST_WALL, p),
+          1e-9,
+        ),
+        `inside the slab the two distances must agree, differed at t = ${t}`,
+      );
+      assert(
+        near(Math.abs(offset), distanceToSegment(NEAREST_WALL, p), 1e-9),
+        "and the distance should be exactly how far we stepped off",
+      );
+    }
+  }
+
+  /* The clamp's price, measured over the scene's own view rather than at a chosen point. The worst case
+     is what makes it concrete: a position where the unclamped test reports all but touching the wall
+     while the nearest part of it is metres away. */
+  {
+    let mattered = 0;
+    let total = 0;
+    let worstError = 0;
+    const samples = 240;
+    for (let i = 0; i <= samples; i += 1) {
+      for (let j = 0; j <= samples; j += 1) {
+        const p = {
+          x: -SIGHT_BOUNDS.x + (i / samples) * 2 * SIGHT_BOUNDS.x,
+          y: -SIGHT_BOUNDS.y + (j / samples) * 2 * SIGHT_BOUNDS.y,
+        };
+        total += 1;
+        const t = projectionT(NEAREST_WALL, p);
+        assert(t !== null, "the scene's wall has length, so t always exists");
+        if (t! < 0 || t! > 1) {
+          mattered += 1;
+          worstError = Math.max(
+            worstError,
+            distanceToSegment(NEAREST_WALL, p) -
+              distanceToLine(NEAREST_WALL, p),
+          );
+        }
+      }
+    }
+    assert(
+      mattered / total > 0.4,
+      `the clamp should matter over much of the view, mattered at ${((mattered / total) * 100).toFixed(2)}%`,
+    );
+    assert(
+      worstError > 4,
+      `the worst understatement should be several units, was ${worstError}`,
+    );
+  }
+
+  /* The case that actually bites has to be **constructed** rather than sampled, which took a failed
+     assertion to notice: a grid over the view never lands exactly on the wall's extended line, so the
+     grid's worst point is merely far away rather than misleadingly close. Step just off that line, well
+     past the end, and the unclamped test reports all but touching a wall that is metres behind you -
+     which is the shape of a bullet travelling along a wall's continuation and stopping in mid-air. */
+  {
+    const along = normalize(displacement(NEAREST_WALL.a, NEAREST_WALL.b))!;
+    const across = { x: -along.y, y: along.x };
+    const beyond = pointOn(NEAREST_WALL, 1.6);
+    const probe = {
+      x: beyond.x + across.x * 0.01,
+      y: beyond.y + across.y * 0.01,
+    };
+    assert(
+      Math.abs(probe.x) <= SIGHT_BOUNDS.x &&
+        Math.abs(probe.y) <= SIGHT_BOUNDS.y,
+      "the constructed probe has to be somewhere the reader can actually drag to",
+    );
+    assert(
+      near(distanceToLine(NEAREST_WALL, probe), 0.01, 1e-12),
+      `the unclamped distance should be the 0.01 we stepped off, was ${distanceToLine(NEAREST_WALL, probe)}`,
+    );
+    assert(
+      near(
+        distanceToSegment(NEAREST_WALL, probe),
+        0.6 * segmentLength(NEAREST_WALL),
+        1e-3,
+      ),
+      `while the real distance is 0.6 of the wall's length, ${distanceToSegment(NEAREST_WALL, probe)}`,
+    );
+    assert(
+      distanceToSegment(NEAREST_WALL, probe) /
+        distanceToLine(NEAREST_WALL, probe) >
+        300,
+      "so the unclamped answer is out by a factor of over three hundred",
+    );
+  }
+
+  // ---- Two parameters from one division ----------------------------------------------------
+
+  {
+    const crossing = lineCrossing(DIAGONAL, TALL);
+    assert(crossing !== null, "two non-parallel lines cross");
+    assert(
+      near(crossing!.t, 2 / 3, 1e-12) && near(crossing!.u, 0.6, 1e-12),
+      `the parameters should be 2/3 and 0.6, were ${crossing!.t} and ${crossing!.u}`,
+    );
+    /* The same point from either parameter, which is the check that catches a swapped numerator. Both
+       t and u are computed from one denominator, and getting one of them wrong still yields a plausible
+       crossing point from the other. */
+    assert(
+      samePoint(
+        pointOn(DIAGONAL, crossing!.t),
+        pointOn(TALL, crossing!.u),
+        1e-12,
+      ),
+      "t on the first and u on the second must name the same place",
+    );
+    assert(
+      samePoint(crossing!.point, { x: 1, y: 1 }, 1e-12),
+      "and it should be exactly (1, 1)",
+    );
+  }
+  // Swept: wherever the lines cross, both parameters must agree on the point.
+  for (let i = 0; i <= 30; i += 1) {
+    for (let j = 0; j <= 20; j += 1) {
+      const other: Segment = {
+        a: { x: -6 + (i / 30) * 12, y: -4 + (j / 20) * 8 },
+        b: { x: -6 + (i / 30) * 12 + 2.5, y: -4 + (j / 20) * 8 + 1.75 },
+      };
+      const crossing = lineCrossing(DIAGONAL, other);
+      if (crossing === null) continue;
+      assert(
+        samePoint(
+          pointOn(DIAGONAL, crossing.t),
+          pointOn(other, crossing.u),
+          1e-9,
+        ),
+        "the two parameters must always describe the same point",
+      );
+      // And a segment crossing is exactly a line crossing with both parameters in range.
+      assert(
+        (segmentCrossing(DIAGONAL, other) !== null) ===
+          (containsT(crossing.t, "segment") &&
+            containsT(crossing.u, "segment")),
+        "a segment crossing is a line crossing with both parameters in range",
+      );
+    }
+  }
+  /* Testing only `t` is the bug that makes a short wall block a whole level. Priced with a wall on the
+     same line as a longer one: the lines cross identically, the segments do not cross at all. */
+  {
+    const short: Segment = { a: { x: 1, y: 2 }, b: { x: 1, y: 3 } };
+    const asLines = lineCrossing(DIAGONAL, short);
+    assert(asLines !== null, "the lines still cross");
+    assert(
+      containsT(asLines!.t, "segment"),
+      "and t is still in range, so a t-only test would report a hit",
+    );
+    assert(
+      !containsT(asLines!.u, "segment"),
+      `while u is out of range at ${asLines!.u}`,
+    );
+    assert(
+      segmentCrossing(DIAGONAL, short) === null,
+      "so the segments do not cross",
+    );
+    assert(
+      near(asLines!.u, -1, 1e-12),
+      `u should be exactly -1 here, was ${asLines!.u}`,
+    );
+  }
+  // A ray reaches forward for ever and not at all backwards, which is the third domain doing work.
+  {
+    const wall: Segment = { a: { x: 2, y: -2 }, b: { x: 2, y: 2 } };
+    const ahead = rayHitsSegment({ x: 0, y: 0 }, { x: 1, y: 0 }, wall);
+    assert(
+      ahead !== null && near(ahead.t, 2, 1e-12),
+      "a ray hits a wall in front of it at t = 2",
+    );
+    assert(
+      rayHitsSegment({ x: 0, y: 0 }, { x: -1, y: 0 }, wall) === null,
+      "and misses the same wall when aimed away from it",
+    );
+    // The line through that ray does cross, at a negative parameter, which is what the ray rejects.
+    const asLine = lineCrossing(
+      { a: { x: 0, y: 0 }, b: { x: -1, y: 0 } },
+      wall,
+    );
+    assert(
+      asLine !== null && near(asLine.t, -2, 1e-12),
+      "the line crosses behind the origin, at t = -2",
+    );
+  }
+
+  // ---- Parallel and collinear, where the division cannot help ------------------------------
+
+  {
+    const parallelApart: Segment = { a: { x: 0, y: 1 }, b: { x: 4, y: 1 } };
+    const sameLineOver: Segment = { a: { x: 2, y: 0 }, b: { x: 6, y: 0 } };
+    const sameLineApart: Segment = { a: { x: 5, y: 0 }, b: { x: 9, y: 0 } };
+
+    assert(areParallel(FLAT, parallelApart), "these two are parallel");
+    assert(!areCollinear(FLAT, parallelApart), "but not on the same line");
+    assert(areCollinear(FLAT, sameLineOver), "while these are on one line");
+    assert(
+      lineCrossing(FLAT, parallelApart) === null &&
+        lineCrossing(FLAT, sameLineOver) === null &&
+        lineCrossing(FLAT, sameLineApart) === null,
+      "and none of the three can name a crossing point",
+    );
+    /* Which is the whole reason the guard is there. Without it the division is 0/0 and the result is
+       NaN - and NaN compares false against everything, so a wall lying exactly along a sight line is
+       silently reported as not blocking it. */
+    const denominator = cross(direction(FLAT), direction(sameLineOver));
+    assert(denominator === 0, "the denominator really is zero here");
+    assert(
+      Number.isNaN(
+        cross(displacement(FLAT.a, sameLineOver.a), direction(sameLineOver)) /
+          denominator,
+      ),
+      "so the unguarded parameter would be NaN",
+    );
+    assert(
+      !(Number.NaN >= 0) && !(Number.NaN <= 1),
+      "and NaN fails every range test, so the hit is dropped rather than reported",
+    );
+
+    // The overlap question, which is Section 5.1's range check doing its third job.
+    assert(collinearOverlap(FLAT, sameLineOver), "collinear and overlapping");
+    assert(!collinearOverlap(FLAT, sameLineApart), "collinear and disjoint");
+    assert(
+      !collinearOverlap(FLAT, parallelApart),
+      "and parallel but not collinear cannot overlap",
+    );
+    assert(collinearOverlap(FLAT, FLAT), "a segment overlaps itself");
+    // Meeting at exactly one shared endpoint counts, since that point is on both.
+    assert(
+      collinearOverlap(FLAT, { a: { x: 4, y: 0 }, b: { x: 8, y: 0 } }),
+      "and two collinear segments meeting at a single point do touch",
+    );
+    // A sight line lying along a wall is blocked, which is what folding that case in buys.
+    assert(
+      !hasLineOfSight({ x: 0, y: 0 }, { x: 3, y: 0 }, [FLAT]),
+      "a sight line running along a wall is blocked by it",
+    );
+  }
+
+  // ---- The zero-length segment -------------------------------------------------------------
+
+  assert(
+    projectionT(POINT_SEG, { x: 4, y: 5 }) === null,
+    "a segment with no length has no direction to project onto",
+  );
+  assert(
+    samePoint(closestPoint(POINT_SEG, { x: 4, y: 5 }), POINT_SEG.a, 1e-15),
+    "and its nearest point is the one point it has",
+  );
+  for (const p of [
+    { x: 4, y: 5 },
+    { x: 1, y: 1 },
+    { x: -100, y: 0.5 },
+  ]) {
+    assert(
+      Number.isFinite(distanceToSegment(POINT_SEG, p)) &&
+        Number.isFinite(distanceToLine(POINT_SEG, p)),
+      `both distances to a degenerate segment must be finite, at (${p.x}, ${p.y})`,
+    );
+    assert(
+      near(distanceToSegment(POINT_SEG, p), distance(POINT_SEG.a, p), 1e-12),
+      "and equal to the distance to that point",
+    );
+  }
+  assert(
+    lineCrossing(POINT_SEG, FLAT) === null,
+    "a degenerate segment has no direction, so it cannot cross anything",
+  );
+
+  // ---- Line of sight, and what dropping `u` costs ------------------------------------------
+
+  /* The headline, measured. Treating each wall as its infinite line blocks views that pass nowhere near
+     it, and the cost is a measured arc of the guard's turn. Both totals are asserted, because the
+     interesting number is the difference between them. */
+  {
+    /* Derived in closed form, then compared against the sweep. This is much stronger than pinning the
+       sampled figure, and it is what caught the scene displaying 129.5 where the page said 129.4: both
+       were sampling artefacts, and the true value is 129.4179.
+       
+       At six units only the first wall is in reach as a segment - the build asserts that below - so the
+       genuinely blocked arc is simply the angle it subtends at the guard. */
+    const wall = SIGHT_WALLS[0];
+    const toFirst = Math.atan2(
+      wall.a.y - SIGHT_GUARD.y,
+      wall.a.x - SIGHT_GUARD.x,
+    );
+    const toSecond = Math.atan2(
+      wall.b.y - SIGHT_GUARD.y,
+      wall.b.x - SIGHT_GUARD.x,
+    );
+    const subtended = Math.abs(toSecond - toFirst) * (180 / Math.PI);
+    const exactClear = 360 - subtended;
+    assert(
+      near(subtended, 58.24052, 1e-4),
+      `the reachable wall should subtend 58.24052 degrees, subtends ${subtended}`,
+    );
+
+    /* As lines it is the union of two arcs. The first wall's line is vertical and three units across, so
+       it blocks every direction whose reach carries it that far: |angle| <= acos(3/6) = 60 exactly. The
+       second is horizontal and 4.75 up, blocking asin(4.75/6) to its supplement. The third wall's line
+       is 6.4846 away, so at six units it blocks nothing at all. */
+    const acrossFirst = SIGHT_WALLS[0].a.x - SIGHT_GUARD.x;
+    const arcFirst =
+      2 * Math.acos(acrossFirst / SIGHT_RADIUS) * (180 / Math.PI);
+    const upSecond = SIGHT_WALLS[1].a.y - SIGHT_GUARD.y;
+    const lowSecond = Math.asin(upSecond / SIGHT_RADIUS) * (180 / Math.PI);
+    const arcSecond = 180 - 2 * lowSecond;
+    const shared = Math.max(0, arcFirst / 2 - lowSecond);
+    const exactWrongClear = 360 - (arcFirst + arcSecond - shared);
+    assert(
+      near(arcFirst, 120, 1e-9),
+      `the first wall's line should block exactly 120 degrees, blocked ${arcFirst}`,
+    );
+    assert(
+      near(arcSecond, 75.316924, 1e-4),
+      `the second's should block 75.316924, blocked ${arcSecond}`,
+    );
+    assert(
+      near(exactWrongClear, 172.341538, 1e-4),
+      `so 172.341538 should be clear as lines, not ${exactWrongClear}`,
+    );
+    assert(
+      near(exactClear - exactWrongClear, 129.417942, 1e-4),
+      `and 129.417942 wrongly blocked, not ${exactClear - exactWrongClear}`,
+    );
+
+    // Now the sampled sweep, which has to converge on all three.
+    const sweep = sweepDisagreements(SIGHT_RADIUS, 36000);
+    assert(
+      near(sweep.clearDegrees, exactClear, 0.01),
+      `the sweep should find ${exactClear} clear, found ${sweep.clearDegrees}`,
+    );
+    assert(
+      near(sweep.wrongClearDegrees, exactWrongClear, 0.01),
+      `and ${exactWrongClear} clear as lines, found ${sweep.wrongClearDegrees}`,
+    );
+    assert(
+      near(sweep.degrees, exactClear - exactWrongClear, 0.01),
+      `and ${exactClear - exactWrongClear} wrongly blocked, found ${sweep.degrees}`,
+    );
+    assert(
+      near(sweep.clearDegrees - sweep.wrongClearDegrees, sweep.degrees, 1e-9),
+      "and the difference has to be exactly the disagreement, since the error is one-sided",
+    );
+    /* The **default** resolution, called the way the scene calls it. This is the assertion that matters
+       for what a reader sees: at 1440 samples the scene printed 129.5 against the page's 129.4, and both
+       were wrong. Pinning the explicit 36000 above did not catch that, because the scene passes no sample
+       count at all. */
+    const asDisplayed = sweepDisagreements(SIGHT_RADIUS);
+    assert(
+      near(asDisplayed.clearDegrees, exactClear, 0.01) &&
+        near(asDisplayed.wrongClearDegrees, exactWrongClear, 0.01) &&
+        near(asDisplayed.degrees, exactClear - exactWrongClear, 0.01),
+      `the default sweep resolution is too coarse for the two decimals the scene shows: ` +
+        `${asDisplayed.clearDegrees}, ${asDisplayed.wrongClearDegrees}, ${asDisplayed.degrees}`,
+    );
+    /* The closed form above assumed only the first wall is reachable as a segment, and only the first two
+       as lines. Both assumptions are asserted rather than trusted, because the derivation is worthless
+       if a wall moves into range and it silently keeps the old arithmetic. */
+    assert(
+      distanceToSegment(SIGHT_WALLS[0], SIGHT_GUARD) < SIGHT_RADIUS,
+      "the first wall has to be within reach as a segment",
+    );
+    for (const other of [SIGHT_WALLS[1], SIGHT_WALLS[2]]) {
+      assert(
+        distanceToSegment(other, SIGHT_GUARD) > SIGHT_RADIUS,
+        "and the other two must be out of reach as segments at this radius",
+      );
+    }
+    assert(
+      distanceToLine(SIGHT_WALLS[2], SIGHT_GUARD) > SIGHT_RADIUS,
+      "while the third's line is out of reach too, so it contributes to neither figure",
+    );
+    assert(
+      distanceToLine(SIGHT_WALLS[1], SIGHT_GUARD) < SIGHT_RADIUS,
+      "and the second's line is in reach, which is what makes the union a union",
+    );
+  }
+  /* One-sided, and that is worth pinning separately: reading a wall as a line can only ever block a
+     view, never open one. So the wrong version is safe as a cheap first pass and fatal as an answer -
+     the same shape of conclusion as Section 5.1's grown box. */
+  for (let i = 0; i < 720; i += 1) {
+    const angle = (i / 720) * Math.PI * 2;
+    for (const radius of [2, 4, SIGHT_RADIUS, 9]) {
+      if (clearInDirection(angle, radius, true)) {
+        assert(
+          clearInDirection(angle, radius, false),
+          `the line version claimed a clear view that is really blocked, at ${((angle * 180) / Math.PI).toFixed(1)} degrees`,
+        );
+      }
+    }
+  }
+  /* And the answer depends on how far away the target is, which is a property of the question rather
+     than a wobble in the measurement. Worth asserting so nobody quotes the figure without the radius. */
+  {
+    const at3 = sweepDisagreements(3, 36000).degrees;
+    const at6 = sweepDisagreements(6, 36000).degrees;
+    const at10 = sweepDisagreements(10, 36000).degrees;
+    assert(
+      near(at3, 0, 1e-9),
+      `at three units out nothing disagrees, but ${at3} degrees did`,
+    );
+    assert(
+      at6 > 100 && at10 > at6,
+      `and it should grow with the reach, went ${at3}, ${at6}, ${at10}`,
+    );
+    /* The slider's range itself has to make sense before sweeping it is worth anything. A negative reach
+       still produces finite numbers - the ring simply mirrors - so "the sweep did not blow up" is not
+       enough, and a sabotage setting the minimum to -3 passed until this was added. */
+    assert(
+      SIGHT_RADIUS_RANGE.min > 0,
+      `a reach of ${SIGHT_RADIUS_RANGE.min} units is not a distance`,
+    );
+    assert(
+      SIGHT_RADIUS_RANGE.min < SIGHT_RADIUS &&
+        SIGHT_RADIUS < SIGHT_RADIUS_RANGE.max,
+      "and the slider has to be able to reach the default the page quotes",
+    );
+    assert(
+      SIGHT_RADIUS_RANGE.step > 0 &&
+        Number.isInteger(
+          (SIGHT_RADIUS - SIGHT_RADIUS_RANGE.min) / SIGHT_RADIUS_RANGE.step,
+        ),
+      "and land on it exactly, or the reader cannot get back to the quoted figure",
+    );
+
+    /* The scene's radius slider spans this whole range, so every value it can reach has to produce a
+       finite, sane figure - otherwise a reader could drag it somewhere the readout is nonsense. */
+    for (
+      let radius = SIGHT_RADIUS_RANGE.min;
+      radius <= SIGHT_RADIUS_RANGE.max + 1e-9;
+      radius += SIGHT_RADIUS_RANGE.step
+    ) {
+      const sweep = sweepDisagreements(radius, 3600);
+      assert(
+        Number.isFinite(sweep.degrees) &&
+          sweep.degrees >= -1e-9 &&
+          sweep.degrees <= 360,
+        `the sweep at radius ${radius} gave ${sweep.degrees}`,
+      );
+      assert(
+        sweep.clearDegrees >= sweep.wrongClearDegrees - 1e-9,
+        `the wrong version can never see more than the right one, at radius ${radius}`,
+      );
+    }
+  }
+  /* The first blocker is the **nearest** one, which is what makes the result usable for anything beyond
+     a boolean - a laser that stops at the right surface, a bullet hole on the right wall.
+     
+     This needs sight lines that cross two walls, and the first version of it had none: at six units out
+     the guard cannot reach past the first wall to any of the others, so a sabotage returning the *last*
+     blocker instead of the nearest passed. Sweeping further out fixes it, and the counter below makes
+     the test refuse to be vacuous again. */
+  let twoWallLines = 0;
+  for (const radius of [SIGHT_RADIUS, 10, 14]) {
+    for (let i = 0; i < 360; i += 1) {
+      const angle = (i / 360) * Math.PI * 2;
+      const target = {
+        x: SIGHT_GUARD.x + Math.cos(angle) * radius,
+        y: SIGHT_GUARD.y + Math.sin(angle) * radius,
+      };
+      const blocked = firstBlocker(SIGHT_GUARD, target, SIGHT_WALLS);
+      if (blocked === null) continue;
+      const sight: Segment = { a: SIGHT_GUARD, b: target };
+      let crossed = 0;
+      for (const wall of SIGHT_WALLS) {
+        const other = segmentCrossing(sight, wall);
+        if (other === null) continue;
+        crossed += 1;
+        assert(
+          blocked.crossing.t <= other.t + 1e-12,
+          `the reported blocker at t ${blocked.crossing.t} is not the nearest, ${other.t} is closer`,
+        );
+      }
+      if (crossed > 1) twoWallLines += 1;
+      // The reported hit really is on both the sight line and the wall it names.
+      if (blocked.crossing.t > 1e-9) {
+        assert(
+          distanceToSegment(sight, blocked.crossing.point) < 1e-9 &&
+            distanceToSegment(blocked.wall, blocked.crossing.point) < 1e-9,
+          "the crossing point has to lie on both segments",
+        );
+      }
+
+      /* And the same of the **wrong** version, which the scene now draws a marker at. Without this the
+         phantom blocker could be the furthest one rather than the nearest and the picture would point at
+         the wrong extension - a sabotage that passed until this was added. */
+      const phantom = firstBlockerWrong(SIGHT_GUARD, target, SIGHT_WALLS);
+      if (phantom !== null) {
+        for (const wall of SIGHT_WALLS) {
+          const other = lineCrossing(sight, wall);
+          if (other === null || !containsT(other.t, "segment")) continue;
+          assert(
+            phantom.crossing.t <= other.t + 1e-12,
+            `the phantom blocker at t ${phantom.crossing.t} is not the nearest, ${other.t} is closer`,
+          );
+        }
+        // Its point is on the sight line, and on the wall's **line** but not necessarily the wall.
+        assert(
+          distanceToSegment(sight, phantom.crossing.point) < 1e-9,
+          "the phantom crossing has to lie on the sight line",
+        );
+        assert(
+          distanceToLine(phantom.wall, phantom.crossing.point) < 1e-9,
+          "and on the line of the wall it blames",
+        );
+      }
+    }
+  }
+  assert(
+    twoWallLines > 20,
+    `the nearest-blocker test is only meaningful on lines crossing two walls, and found ${twoWallLines}`,
+  );
+  // And hasLineOfSight is exactly firstBlocker being null, so the two can never drift apart.
+  for (let i = 0; i < 720; i += 1) {
+    const angle = (i / 720) * Math.PI * 2;
+    const target = {
+      x: SIGHT_GUARD.x + Math.cos(angle) * 5,
+      y: SIGHT_GUARD.y + Math.sin(angle) * 5,
+    };
+    assert(
+      hasLineOfSight(SIGHT_GUARD, target, SIGHT_WALLS) ===
+        (firstBlocker(SIGHT_GUARD, target, SIGHT_WALLS) === null),
+      "the boolean and the detailed answer must agree",
+    );
+  }
+
+  // ---- The scenes' own arithmetic ----------------------------------------------------------
+
+  for (const p of [
+    SIGHT_START,
+    { x: 0, y: 0 },
+    SIGHT_GUARD,
+    { x: SIGHT_BOUNDS.x, y: -SIGHT_BOUNDS.y },
+  ]) {
+    const screen = sightScreenOf(p);
+    assert(
+      samePoint(sightWorldOf(screen.x, screen.y), p, 1e-12),
+      `the screen round trip failed for (${p.x}, ${p.y})`,
+    );
+  }
+  assert(
+    sightScreenOf({ x: 0, y: 1 }).y < sightScreenOf({ x: 0, y: 0 }).y,
+    "a higher world point should be drawn nearer the top",
+  );
+  // Everything drawn has to be on the canvas: the walls, the guard, its compass, and any dragged point.
+  for (const wall of SIGHT_WALLS) {
+    for (const end of [wall.a, wall.b]) {
+      const q = sightScreenOf(end);
+      assert(
+        q.x >= 0 &&
+          q.x <= SIGHT_VIEW.width &&
+          q.y >= 0 &&
+          q.y <= SIGHT_VIEW.height,
+        `a wall end is drawn off the canvas at (${q.x.toFixed(1)}, ${q.y.toFixed(1)})`,
+      );
+    }
+  }
+  for (const sx of [-SIGHT_BOUNDS.x, 0, SIGHT_BOUNDS.x]) {
+    for (const sy of [-SIGHT_BOUNDS.y, 0, SIGHT_BOUNDS.y]) {
+      const q = sightScreenOf({ x: sx, y: sy });
+      assert(
+        q.x >= 0 &&
+          q.x <= SIGHT_VIEW.width &&
+          q.y >= 0 &&
+          q.y <= SIGHT_VIEW.height,
+        `a dragged point at (${sx}, ${sy}) lands off the canvas`,
+      );
+    }
+  }
+  // The compass spokes run out to 1.35 units, and they have to fit too.
+  for (let i = 0; i < 360; i += 1) {
+    const angle = (i / 360) * Math.PI * 2;
+    const q = sightScreenOf({
+      x: SIGHT_GUARD.x + Math.cos(angle) * 1.35,
+      y: SIGHT_GUARD.y + Math.sin(angle) * 1.35,
+    });
+    assert(
+      q.x >= 0 &&
+        q.x <= SIGHT_VIEW.width &&
+        q.y >= 0 &&
+        q.y <= SIGHT_VIEW.height,
+      `a compass spoke reaches (${q.x.toFixed(1)}, ${q.y.toFixed(1)})`,
+    );
+  }
+  assert(
+    sightClampToBounds({ x: 30, y: -30 }).x === SIGHT_BOUNDS.x &&
+      sightClampToBounds({ x: 30, y: -30 }).y === -SIGHT_BOUNDS.y,
+    "and the clamp pulls a far drag back to the bounds",
+  );
+  // No float dust in coordinates that reach a readout or a committed values panel.
+  for (const value of [
+    SIGHT_GUARD.x,
+    SIGHT_GUARD.y,
+    SIGHT_START.x,
+    SIGHT_START.y,
+    NEAREST_WALL.a.x,
+    NEAREST_WALL.a.y,
+    NEAREST_WALL.b.x,
+    NEAREST_WALL.b.y,
+    ...SIGHT_WALLS.flatMap((w) => [w.a.x, w.a.y, w.b.x, w.b.y]),
+  ]) {
+    assert(
+      Number.isInteger(value * 4),
+      `${value} is not a quarter, so it risks printing with floating-point dust`,
+    );
+  }
+  // The two scenes' opening state, so the first thing a reader sees is worth looking at.
+  {
+    const opening = nearestReport(SIGHT_START);
+    assert(
+      opening.clampMattered,
+      "the nearest scene should open past an end, with the clamp visibly working",
+    );
+    assert(
+      opening.toSegment > opening.toLine + 0.5,
+      `and the two answers should differ visibly, ${opening.toSegment} against ${opening.toLine}`,
+    );
+    const sight = sightReport(SIGHT_START);
+    assert(!sight.clear, "the sight scene should open on a blocked view");
+    assert(
+      !sight.disagrees,
+      "with the wrong version agreeing, so the bug is something the reader goes and finds",
+    );
+    assert(
+      sight.hitAt !== null,
+      "and it should name where the view was blocked",
+    );
+    assert(
+      distanceToSegment(sight.blocker!, sight.hitAt!) < 1e-9,
+      "with that point lying on the wall it blames",
+    );
+  }
+  /* Both scenes have to show a range of outcomes as the point is dragged, or a control would be doing
+     nothing. Swept over the draggable area rather than sampled at two chosen spots. */
+  {
+    let clamped = 0;
+    let unclamped = 0;
+    let clear = 0;
+    let blocked = 0;
+    let disagreeing = 0;
+    for (let i = 0; i <= 40; i += 1) {
+      for (let j = 0; j <= 26; j += 1) {
+        const p = {
+          x: -SIGHT_BOUNDS.x + (i / 40) * 2 * SIGHT_BOUNDS.x,
+          y: -SIGHT_BOUNDS.y + (j / 26) * 2 * SIGHT_BOUNDS.y,
+        };
+        if (nearestReport(p).clampMattered) clamped += 1;
+        else unclamped += 1;
+        const sight = sightReport(p);
+        if (sight.clear) clear += 1;
+        else blocked += 1;
+        if (sight.disagrees) disagreeing += 1;
+      }
+    }
+    assert(
+      clamped > 50 && unclamped > 50,
+      `the nearest scene needs plenty of both cases, had ${clamped} and ${unclamped}`,
+    );
+    assert(
+      clear > 50 && blocked > 50,
+      `the sight scene needs plenty of both outcomes, had ${clear} and ${blocked}`,
+    );
+    assert(
+      disagreeing > 20,
+      `and the reader should be able to find the line bug by dragging, found it at ${disagreeing} spots`,
+    );
+  }
+};
+
+/**
+ * The separating axis test: swept against a brute-force overlap, and its two preconditions priced.
+ *
+ * The load-bearing assertion is SAT against an independent reference - corner containment by ray casting,
+ * plus edge sampling for the cross-shaped overlaps where no corner is inside anything. Nothing in that
+ * reference knows about axes or projections, so agreement across a few thousand configurations means both
+ * are right.
+ *
+ * Then the two things the algorithm quietly requires. **Convex**, or it reports overlaps that are not
+ * there and says nothing about it. And **normalized axes**, which do not affect the verdict at all but
+ * decide which axis wins the shallowest-overlap comparison - so getting it wrong gives a correct hit test
+ * and a push in the wrong direction, by up to 67 degrees here.
+ */
+export const satCheck2d: Demo = () => {
+  const sameVector = (a: Vector, b: Vector, tol = 1e-9) =>
+    Math.hypot(a.x - b.x, a.y - b.y) < tol;
+
+  const SQUARE: Polygon = [
+    { x: -1, y: -1 },
+    { x: 1, y: -1 },
+    { x: 1, y: 1 },
+    { x: -1, y: 1 },
+  ];
+
+  // ---- Projection: only the corners matter, and that is convexity doing the work ----------
+
+  for (const poly of [SQUARE, SAT_FIXED, SAT_MOVING, satRegular(7, 2.1)]) {
+    for (let deg = 0; deg < 180; deg += 11) {
+      const axis = {
+        x: Math.cos((deg * Math.PI) / 180),
+        y: Math.sin((deg * Math.PI) / 180),
+      };
+      const shadow = satProject(poly, axis);
+      /* No interior point may reach past the corners' shadow. Checked over a grid inside the polygon,
+         because "a convex shape is the blend of its corners" is the reason the projection is cheap, and
+         it deserves testing rather than quoting. */
+      for (let i = 0; i <= 12; i += 1) {
+        for (let j = 0; j <= 12; j += 1) {
+          const p = { x: -3 + (i / 12) * 6, y: -3 + (j / 12) * 6 };
+          if (!satContains(poly, p)) continue;
+          const along = dot(p, axis);
+          assert(
+            along >= shadow.min - 1e-9 && along <= shadow.max + 1e-9,
+            `an interior point projected outside the corners' shadow at ${deg} degrees`,
+          );
+        }
+      }
+      // A shadow is never empty, and its ends are the right way round.
+      assert(shadow.min <= shadow.max, "a shadow's min cannot exceed its max");
+    }
+  }
+
+  // ---- The axes: one per edge, unit length, pointing outward -------------------------------
+
+  /* Each shape **and its reverse**, which is what actually tests the winding normalization. Every polygon
+     here happens to be counter-clockwise already, so `counterClockwise` was a no-op on all of them and a
+     sabotage removing it passed. Reversing them is the only way to exercise it - and the assertion that
+     was supposed to catch it compared a square's normal set against itself, which is closed under
+     negation, so inward normals matched outward ones exactly. A triangle's is not. */
+  for (const base of [SQUARE, SAT_FIXED, SAT_MOVING, SAT_CHEVRON]) {
+    for (const poly of [base, [...base].reverse()]) {
+      const normals = satEdgeNormals(poly);
+      assert(
+        normals.length === poly.length,
+        `${poly.length} edges should give ${poly.length} normals, gave ${normals.length}`,
+      );
+      for (const n of normals) {
+        assert(
+          near(Math.hypot(n.x, n.y), 1, 1e-12),
+          `a candidate axis should be unit length, was ${Math.hypot(n.x, n.y)}`,
+        );
+      }
+      /* Outward, checked by stepping off each edge's midpoint: a short step along the normal must leave the
+       polygon and a short step against it must stay inside. The verdict does not care about the direction,
+       but Section 5.4's push does, so it is pinned here rather than discovered there. */
+      const wound = satCounterClockwise(poly);
+      const woundNormals = satEdgeNormals(wound);
+      for (let i = 0; i < wound.length; i += 1) {
+        const p = wound[i];
+        const q = wound[(i + 1) % wound.length];
+        const mid = { x: (p.x + q.x) / 2, y: (p.y + q.y) / 2 };
+        const n = woundNormals[i];
+        assert(
+          !satContains(wound, { x: mid.x + n.x * 0.02, y: mid.y + n.y * 0.02 }),
+          "a step along the normal should leave the polygon",
+        );
+        assert(
+          satContains(wound, { x: mid.x - n.x * 0.02, y: mid.y - n.y * 0.02 }),
+          "and a step against it should stay inside",
+        );
+      }
+      // Each normal really is its edge turned ninety degrees: perpendicular, so the dot product is zero.
+      for (let i = 0; i < wound.length; i += 1) {
+        const edge = displacement(wound[i], wound[(i + 1) % wound.length]);
+        assert(
+          Math.abs(dot(edge, woundNormals[i])) < 1e-9,
+          "a normal has to be perpendicular to its own edge",
+        );
+      }
+    }
+  }
+  /* Winding is normalized rather than assumed, so reversing a polygon gives the same outward normals.
+     Checked on a **triangle**, because a square's normal set is closed under negation and would match its
+     own inward normals - which is exactly how the first version of this assertion passed a sabotage that
+     removed the normalization entirely. */
+  {
+    const backwards = [...SAT_MOVING].reverse();
+    assert(
+      windingOf(SAT_MOVING) !== windingOf(backwards),
+      "reversing a polygon should reverse its winding",
+    );
+    const forwardNormals = satEdgeNormals(SAT_MOVING);
+    const backwardNormals = satEdgeNormals(backwards);
+    for (const n of backwardNormals) {
+      assert(
+        forwardNormals.some((m) => sameVector(n, m, 1e-12)),
+        "reversing a polygon should still yield the same set of outward normals",
+      );
+    }
+    // And the set really is not closed under negation, or the assertion above proves nothing.
+    assert(
+      !forwardNormals.some((n) =>
+        forwardNormals.some((m) => sameVector({ x: -n.x, y: -n.y }, m, 1e-9)),
+      ),
+      "a triangle's normals must not include any opposite pair, or this test is vacuous",
+    );
+    assert(
+      SQUARE.map(() => 0).length === 4 &&
+        satEdgeNormals(SQUARE).some((n) =>
+          satEdgeNormals(SQUARE).some((m) =>
+            sameVector({ x: -n.x, y: -n.y }, m, 1e-9),
+          ),
+        ),
+      "while a square's normals do come in opposite pairs, which is why it was the wrong shape to use",
+    );
+  }
+  // The counts the Section quotes, including the duplicates a rectangle brings.
+  assert(
+    satCandidateAxes(SAT_FIXED, SAT_MOVING).length === 8,
+    "a pentagon and a triangle offer eight axes",
+  );
+  assert(
+    satDistinctAxes(SAT_FIXED, SAT_MOVING) === 8,
+    "and here all eight point in different directions",
+  );
+  {
+    const shifted = SQUARE.map((p) => ({ x: p.x + 3, y: p.y }));
+    assert(
+      satCandidateAxes(SQUARE, shifted).length === 8,
+      "two squares also offer eight",
+    );
+    assert(
+      satDistinctAxes(SQUARE, shifted) === 2,
+      `but only two directions, not ${satDistinctAxes(SQUARE, shifted)}`,
+    );
+  }
+  // A repeated corner gives a zero-length edge, which contributes no axis rather than a NaN one.
+  {
+    const doubled: Polygon = [
+      { x: -1, y: -1 },
+      { x: -1, y: -1 },
+      { x: 1, y: -1 },
+      { x: 0, y: 1 },
+    ];
+    const normals = satEdgeNormals(doubled);
+    assert(
+      normals.length === 3,
+      `a repeated corner should be skipped, leaving 3 axes, not ${normals.length}`,
+    );
+    assert(
+      normals.every((n) => Number.isFinite(n.x) && Number.isFinite(n.y)),
+      "and certainly not a NaN axis, which would separate nothing",
+    );
+  }
+
+  // ---- SAT against a brute-force overlap ----------------------------------------------------
+
+  /* The reference knows nothing about axes: it asks whether any corner of either shape is inside the
+     other, and then samples along the edges to catch the cross-shaped overlaps where no corner is. */
+  const bruteOverlap = (p: Polygon, q: Polygon, samples = 140) => {
+    for (const c of p) if (satContains(q, c)) return true;
+    for (const c of q) if (satContains(p, c)) return true;
+    for (let i = 0; i < p.length; i += 1) {
+      const a1 = p[i];
+      const a2 = p[(i + 1) % p.length];
+      for (let k = 0; k <= samples; k += 1) {
+        const probe = {
+          x: a1.x + (k / samples) * (a2.x - a1.x),
+          y: a1.y + (k / samples) * (a2.y - a1.y),
+        };
+        if (satContains(q, probe)) return true;
+      }
+    }
+    return false;
+  };
+
+  let checked = 0;
+  let hits = 0;
+  let misses = 0;
+  for (const fixedSpin of [0, 41]) {
+    const a = satFixedAt(fixedSpin);
+    for (let i = 0; i <= 32; i += 1) {
+      for (let j = 0; j <= 20; j += 1) {
+        for (const spin of [0, 37, -80]) {
+          const p = {
+            x: -SAT_BOUNDS.x + (i / 32) * 2 * SAT_BOUNDS.x,
+            y: -SAT_BOUNDS.y + (j / 20) * 2 * SAT_BOUNDS.y,
+          };
+          const b = satMovingAt(p, spin);
+          const overlap = satOverlap(a, b);
+          if (overlap) hits += 1;
+          else misses += 1;
+          /* Skip near-tangency, where a sampled reference cannot decide either. Measured as the shallowest
+             overlap when they touch and the widest gap when they do not. */
+          const push = satSmallestOverlap(a, b);
+          const margin = push
+            ? push.depth
+            : Math.abs(
+                satCandidateAxes(a, b).reduce(
+                  (worst, axis) =>
+                    Math.min(worst, satOverlapOnAxis(a, b, axis)),
+                  Infinity,
+                ),
+              );
+          if (margin < 0.02) continue;
+          checked += 1;
+          assert(
+            overlap === bruteOverlap(a, b),
+            `SAT disagreed with a brute-force overlap at (${p.x.toFixed(2)}, ${p.y.toFixed(2)}) spin ${spin}`,
+          );
+        }
+      }
+    }
+  }
+  assert(
+    checked > 2000,
+    `the sweep should cover thousands of configurations, covered ${checked}`,
+  );
+  assert(
+    hits > 300 && misses > 300,
+    `and see plenty of both outcomes, saw ${hits} and ${misses}`,
+  );
+
+  // A separating axis, when one is reported, really does separate. And when none is, none does.
+  for (let i = 0; i <= 24; i += 1) {
+    for (let j = 0; j <= 16; j += 1) {
+      const p = {
+        x: -SAT_BOUNDS.x + (i / 24) * 2 * SAT_BOUNDS.x,
+        y: -SAT_BOUNDS.y + (j / 16) * 2 * SAT_BOUNDS.y,
+      };
+      const a = satFixedAt(0);
+      const b = satMovingAt(p, 15);
+      const proof = satSeparatingAxis(a, b);
+      if (proof !== null) {
+        assert(
+          satOverlapOnAxis(a, b, proof) <= 0,
+          "a reported separating axis has to actually show a gap",
+        );
+        assert(!satOverlap(a, b), "and the shapes must be reported apart");
+      } else {
+        // No axis separates, so every single one has to overlap.
+        for (const axis of satCandidateAxes(a, b)) {
+          assert(
+            satOverlapOnAxis(a, b, axis) > 0,
+            "with no separating axis, every axis must overlap",
+          );
+        }
+        assert(satOverlap(a, b), "and the shapes must be reported overlapping");
+      }
+      // A shape always overlaps itself, at every position and rotation.
+      assert(satOverlap(b, b), "a polygon overlaps itself");
+    }
+  }
+
+  // ---- Normalized axes: same verdict, different push ---------------------------------------
+
+  {
+    let overlapping = 0;
+    let differentAxis = 0;
+    let worstAngle = 0;
+    const a = satFixedAt(0);
+    // Swept over position **and** spin, because the figure the page quotes is the worst case anywhere in
+    // the scene's range, and a single spin gave a materially different answer.
+    for (let i = 0; i <= 48; i += 1) {
+      for (let j = 0; j <= 30; j += 1) {
+        for (let spin = SAT_SPIN.min; spin < SAT_SPIN.max; spin += 6) {
+          const p = {
+            x: -SAT_BOUNDS.x + (i / 48) * 2 * SAT_BOUNDS.x,
+            y: -SAT_BOUNDS.y + (j / 30) * 2 * SAT_BOUNDS.y,
+          };
+          const b = satMovingAt(p, spin);
+          const good = satSmallestOverlap(a, b);
+          const raw = satSmallestOverlapRaw(a, b);
+          /* The verdict is unaffected, always. Scaling an axis scales both shadows by the same factor, so
+             the sign of the overlap cannot change - which is why this bug survives every hit test. */
+          assert(
+            (good === null) === (raw === null),
+            `normalizing changed the verdict at (${p.x.toFixed(2)}, ${p.y.toFixed(2)}), which it must never do`,
+          );
+          if (good === null || raw === null) continue;
+          overlapping += 1;
+          const rawUnit = normalize(raw.axis)!;
+          const cosBetween = Math.min(1, Math.abs(dot(good.axis, rawUnit)));
+          const angle = (Math.acos(cosBetween) * 180) / Math.PI;
+          if (angle > 1e-6) {
+            differentAxis += 1;
+            worstAngle = Math.max(worstAngle, angle);
+          }
+        }
+      }
+    }
+    assert(
+      overlapping > 20000,
+      `there should be plenty of overlapping configurations to compare, had ${overlapping}`,
+    );
+    /* Just under half, and quoted as measured rather than rounded up to "most". An earlier draft asserted
+       "most of the time" from a single spin where it read 60%; sweeping the whole range gives 47.56%, and
+       the honest sentence is the one that survives the wider sweep. */
+    assert(
+      near(differentAxis / overlapping, 0.4756, 0.005),
+      `the unnormalized version should pick a different axis at 47.56% of configurations, did at ${((differentAxis / overlapping) * 100).toFixed(2)}%`,
+    );
+    assert(
+      near(worstAngle, 81.41, 0.05),
+      `and be out by up to 81.41 degrees, was ${worstAngle}`,
+    );
+    // The shallowest depth is genuinely the smallest across every axis, which is what makes it minimal.
+    const b = satMovingAt({ x: -1.6, y: 0.3 }, 25);
+    const push = satSmallestOverlap(a, b);
+    assert(push !== null, "these two overlap, so there is a push to compute");
+    for (const axis of satCandidateAxes(a, b)) {
+      assert(
+        satOverlapOnAxis(a, b, axis) >= push!.depth - 1e-12,
+        `no axis may be shallower than the reported minimum, ${satOverlapOnAxis(a, b, axis)} was`,
+      );
+    }
+    assert(
+      near(Math.hypot(push!.axis.x, push!.axis.y), 1, 1e-12),
+      "and the push direction has to be a unit vector, or its depth is in the wrong units",
+    );
+  }
+
+  // ---- Convexity is a precondition, not a formality ----------------------------------------
+
+  assert(satSuitable(SQUARE), "a square is fine");
+  assert(
+    satSuitable(SAT_FIXED) && satSuitable(SAT_MOVING),
+    "so are the scene's two shapes",
+  );
+  assert(
+    !satSuitable(SAT_CHEVRON),
+    "and the chevron is not, which is the point of it",
+  );
+  assert(
+    !satSuitable([
+      { x: 0, y: 0 },
+      { x: 1, y: 1 },
+    ]),
+    "two corners are not a polygon",
+  );
+
+  /* The cost of ignoring that, measured. Every position where SAT claims an overlap while no corner of
+     either shape is inside the other and no edge crosses - which is a false positive rather than a
+     boundary quibble. */
+  {
+    const area = satFalseArea(300);
+    assert(
+      near(area.fraction, 0.0319, 5e-4),
+      `the chevron's false-positive area should be 3.19% of the region sampled, was ${(area.fraction * 100).toFixed(3)}%`,
+    );
+    assert(
+      near(area.falseArea, 1.307, 5e-3),
+      `which is 1.307 square units, not ${area.falseArea}`,
+    );
+    // Converged, so the figure is a property of the shape rather than of the sampling.
+    assert(
+      Math.abs(satFalseArea(200).falseArea - satFalseArea(500).falseArea) <
+        2e-3,
+      "and the measurement has to have converged before it is worth quoting",
+    );
+    // The scene's opening position has to be one of them, or the scene opens on SAT being right.
+    assert(
+      satIsWrong(SAT_PROBE_START),
+      "the concave scene should open somewhere SAT is lying",
+    );
+    const probe = satProbeAt(SAT_PROBE_START);
+    assert(satOverlap(SAT_CHEVRON, probe), "SAT reports an overlap there");
+    assert(
+      !probe.some((c) => satContains(SAT_CHEVRON, c)),
+      "while no corner of the probe is inside the shape",
+    );
+    assert(
+      !SAT_CHEVRON.some((c) => satContains(probe, c)),
+      "and no corner of the shape is inside the probe",
+    );
+    assert(
+      !bruteOverlap(SAT_CHEVRON, probe),
+      "so an honest test says they are apart",
+    );
+    /* The false region has to be findable by dragging, not a sliver only a search can locate. Counted as
+       the cells the scene shades. */
+    const cells = satFalseCells();
+    assert(
+      cells.length > 60,
+      `the shaded region should be substantial, had ${cells.length} cells`,
+    );
+  }
+  /* And on a convex shape the same measurement finds nothing at all, which is what makes the previous
+     number attributable to concavity rather than to the probe or the sampling. */
+  {
+    let wrong = 0;
+    for (let i = 0; i <= 80; i += 1) {
+      for (let j = 0; j <= 80; j += 1) {
+        const centre = { x: -3.2 + (i / 80) * 6.4, y: -3.2 + (j / 80) * 6.4 };
+        const probe = satProbeAt(centre);
+        if (!satOverlap(SAT_HULL, probe)) continue;
+        if (
+          !probe.some((c) => satContains(SAT_HULL, c)) &&
+          !SAT_HULL.some((c) => satContains(probe, c)) &&
+          !bruteOverlap(SAT_HULL, probe)
+        ) {
+          wrong += 1;
+        }
+      }
+    }
+    assert(
+      wrong === 0,
+      `on the chevron's own convex hull SAT should never be wrong, was at ${wrong} positions`,
+    );
+  }
+  // The hull is convex, contains every original corner, and is not the original shape.
+  assert(
+    satSuitable(SAT_HULL),
+    "a convex hull is convex, which is the one thing it must be",
+  );
+  for (const corner of SAT_CHEVRON) {
+    assert(
+      satContains(SAT_HULL, corner) ||
+        SAT_HULL.some((h) => Math.hypot(h.x - corner.x, h.y - corner.y) < 1e-9),
+      "every corner of the shape has to be in or on its hull",
+    );
+  }
+  assert(
+    SAT_HULL.length < SAT_CHEVRON.length,
+    "and the chevron's hull should drop the reflex corner",
+  );
+
+  // ---- The scenes' own arithmetic ----------------------------------------------------------
+
+  for (const p of [
+    SAT_START,
+    SAT_PROBE_START,
+    { x: 0, y: 0 },
+    { x: SAT_BOUNDS.x, y: -SAT_BOUNDS.y },
+  ]) {
+    const screen = satScreenOf(p);
+    assert(
+      Math.hypot(
+        satWorldOf(screen.x, screen.y).x - p.x,
+        satWorldOf(screen.x, screen.y).y - p.y,
+      ) < 1e-12,
+      `the screen round trip failed for (${p.x}, ${p.y})`,
+    );
+  }
+  assert(
+    satScreenOf({ x: 0, y: 1 }).y < satScreenOf({ x: 0, y: 0 }).y,
+    "a higher world point should be drawn nearer the top",
+  );
+  /* Every corner of the moving triangle, at every bound and every five degrees of spin. The first version
+     of BOUNDS let a corner off the top of the canvas once the triangle was turned half a turn, which is
+     exactly the sort of thing a sweep catches and a glance does not. */
+  for (let i = 0; i <= 16; i += 1) {
+    for (let j = 0; j <= 16; j += 1) {
+      for (let spin = SAT_SPIN.min; spin <= SAT_SPIN.max; spin += 5) {
+        const p = {
+          x: -SAT_BOUNDS.x + (i / 16) * 2 * SAT_BOUNDS.x,
+          y: -SAT_BOUNDS.y + (j / 16) * 2 * SAT_BOUNDS.y,
+        };
+        for (const corner of satMovingAt(p, spin)) {
+          const q = satScreenOf(corner);
+          assert(
+            q.x >= 0 &&
+              q.x <= SAT_VIEW.width &&
+              q.y >= 0 &&
+              q.y <= SAT_VIEW.height,
+            `the triangle at (${p.x.toFixed(2)}, ${p.y.toFixed(2)}) spin ${spin} reaches (${q.x.toFixed(1)}, ${q.y.toFixed(1)})`,
+          );
+        }
+      }
+    }
+  }
+  for (let spin = SAT_SPIN.min; spin <= SAT_SPIN.max; spin += 5) {
+    for (const corner of satFixedAt(spin)) {
+      const q = satScreenOf(corner);
+      assert(
+        q.x >= 0 && q.x <= SAT_VIEW.width && q.y >= 0 && q.y <= SAT_VIEW.height,
+        `the pentagon at spin ${spin} reaches (${q.x.toFixed(1)}, ${q.y.toFixed(1)})`,
+      );
+    }
+  }
+  // The chevron, its hull and the probe at every bound have to fit too.
+  for (const poly of [SAT_CHEVRON, SAT_HULL]) {
+    for (const corner of poly) {
+      const q = satScreenOf(corner);
+      assert(
+        q.x >= 0 && q.x <= SAT_VIEW.width && q.y >= 0 && q.y <= SAT_VIEW.height,
+        "the concave scene's shape has to be on the canvas",
+      );
+    }
+  }
+  for (const sx of [-SAT_BOUNDS.x, 0, SAT_BOUNDS.x]) {
+    for (const sy of [-SAT_BOUNDS.y, 0, SAT_BOUNDS.y]) {
+      for (const corner of satProbeAt({ x: sx, y: sy })) {
+        const q = satScreenOf(corner);
+        assert(
+          q.x >= 0 &&
+            q.x <= SAT_VIEW.width &&
+            q.y >= 0 &&
+            q.y <= SAT_VIEW.height,
+          `the probe at (${sx}, ${sy}) reaches (${q.x.toFixed(1)}, ${q.y.toFixed(1)})`,
+        );
+      }
+    }
+  }
+  assert(
+    satClamp({ x: 40, y: -40 }).x === SAT_BOUNDS.x &&
+      satClamp({ x: 40, y: -40 }).y === -SAT_BOUNDS.y,
+    "and the clamp pulls a far drag back to the bounds",
+  );
+
+  // The opening configuration: apart, and settled by the very first axis tried.
+  {
+    const opening = satReportOf(satFixedAt(0), satMovingAt(SAT_START, 0));
+    assert(!opening.hit, "the separating scene should open on a miss");
+    assert(opening.proof !== null, "with an axis to point at");
+    assert(
+      opening.tried === 1,
+      `and the first axis should already settle it, took ${opening.tried}`,
+    );
+    assert(
+      satOverlapOnAxis(
+        satFixedAt(0),
+        satMovingAt(SAT_START, 0),
+        opening.proof!,
+      ) < 0,
+      "and that axis has to show a real gap",
+    );
+  }
+  /* Both outcomes have to be reachable by dragging, or a control is doing nothing - and there have to be
+     positions where the unnormalized push differs, or the scene's note never fires. */
+  {
+    let hit = 0;
+    let miss = 0;
+    let pushDiffers = 0;
+    for (let i = 0; i <= 40; i += 1) {
+      for (let j = 0; j <= 24; j += 1) {
+        const p = {
+          x: -SAT_BOUNDS.x + (i / 40) * 2 * SAT_BOUNDS.x,
+          y: -SAT_BOUNDS.y + (j / 24) * 2 * SAT_BOUNDS.y,
+        };
+        const report = satReportOf(satFixedAt(0), satMovingAt(p, 0));
+        if (report.hit) hit += 1;
+        else miss += 1;
+        if (report.pushDisagrees) pushDiffers += 1;
+        // The report's own fields have to stay consistent with each other.
+        assert(
+          report.hit === (report.proof === null),
+          "a hit is exactly the absence of a separating axis",
+        );
+        assert(
+          report.hit === (report.push !== null),
+          "and a push exists exactly when they overlap",
+        );
+      }
+    }
+    assert(
+      hit > 50 && miss > 50,
+      `both outcomes should be easy to find, had ${hit} and ${miss}`,
+    );
+    assert(
+      pushDiffers > 20,
+      `and the unnormalized note should fire somewhere, fired at ${pushDiffers} positions`,
+    );
+  }
+};
+
+/**
+ * Collision response: the split, the guards, and tunnelling priced in closed form against measurement.
+ *
+ * Two claims carry this Section and both are checked the same way - derived, then measured, then compared.
+ *
+ * **Tunnelling has a probability, not just a threshold.** Above the escape speed whether a wall is noticed
+ * depends on where the frame boundaries fall, and the fraction of alignments that slip past is
+ * $1 - v_{\text{escape}}/v$. My first attempt at measuring this reported "detected" at every speed I
+ * happened to try, because the speeds I chose all landed a frame inside the wall - which is exactly how the
+ * bug behaves in a real game, and exactly why the honest measure is a fraction.
+ *
+ * **A corner's residual decays at $\cos^2\phi$ per pass.** The first version of `convergenceRate` returned
+ * $|\cos\phi|$, and every measured ratio was its square. Normals $90°$ or less apart settle exactly in one
+ * pass; beyond that they only approach the answer.
+ */
+export const responseCheck2d: Demo = () => {
+  const sameVector = (a: Vector, b: Vector, tol = 1e-9) =>
+    Math.hypot(a.x - b.x, a.y - b.y) < tol;
+
+  // ---- The split is a right-angle decomposition ---------------------------------------------
+
+  for (let wall = WALL_RANGE.min; wall <= WALL_RANGE.max; wall += 4) {
+    for (let vel = VELOCITY_RANGE.min; vel <= VELOCITY_RANGE.max; vel += 7) {
+      const r = deflectReport(wall, vel, 0);
+      // The normal really is unit length, which every formula here depends on.
+      assert(
+        near(Math.hypot(r.normal.x, r.normal.y), 1, 1e-12),
+        `the wall normal must be unit length, was ${Math.hypot(r.normal.x, r.normal.y)}`,
+      );
+      assert(
+        Math.abs(dot(r.normal, r.along)) < 1e-12,
+        "and perpendicular to the wall it belongs to",
+      );
+      // The two parts add back to the whole, and they are perpendicular to each other.
+      assert(
+        sameVector(
+          combine(r.normalComponent, r.tangentComponent),
+          r.velocity,
+          1e-12,
+        ),
+        "normal part plus tangent part has to be the velocity",
+      );
+      assert(
+        Math.abs(dot(r.normalComponent, r.tangentComponent)) < 1e-12,
+        "and the two parts have to be perpendicular",
+      );
+      // A slide is exactly the tangent part, and it has nothing left pointing at the wall.
+      assert(
+        sameVector(r.slid, r.tangentComponent, 1e-12),
+        "a slide is the tangent part and nothing else",
+      );
+      assert(
+        Math.abs(dot(r.slid, r.normal)) < 1e-12,
+        "so a slid velocity has no component along the normal at all",
+      );
+      // A perfect bounce changes direction and not speed.
+      assert(
+        near(
+          Math.hypot(r.bounced.x, r.bounced.y),
+          Math.hypot(r.velocity.x, r.velocity.y),
+          1e-12,
+        ),
+        "a perfect bounce must preserve speed exactly",
+      );
+      /* And it reverses only the normal part: the tangent part is untouched, which is what makes a bounce a
+         reflection rather than a reversal. */
+      assert(
+        near(dot(r.bounced, r.along), dot(r.velocity, r.along), 1e-12),
+        "a bounce leaves the along-the-wall part alone",
+      );
+      assert(
+        near(dot(r.bounced, r.normal), -dot(r.velocity, r.normal), 1e-12),
+        "and flips the into-the-wall part",
+      );
+      // The speed a slide keeps is the cosine of the angle from the wall, which the page tabulates.
+      assert(
+        near(
+          Math.hypot(r.slid.x, r.slid.y) /
+            Math.hypot(r.velocity.x, r.velocity.y),
+          r.kept,
+          1e-12,
+        ),
+        "the surviving speed fraction should be cos of the angle from the wall",
+      );
+    }
+  }
+  // The table the page prints, to four places.
+  for (const [degrees, fraction] of [
+    [0, 1],
+    [30, 0.866],
+    [45, 0.7071],
+    [60, 0.5],
+    [90, 0],
+  ] as const) {
+    assert(
+      near(slideSpeedFraction(toRadians(degrees)), fraction, 5e-4),
+      `a slide at ${degrees} degrees from the wall should keep ${fraction}, keeps ${slideSpeedFraction(toRadians(degrees))}`,
+    );
+  }
+  // Restitution really does blend between the two, linearly in the normal component.
+  {
+    const r = deflectReport(0, -40, 0);
+    for (const e of [0, 0.25, 0.5, 0.75, 1]) {
+      const responded = respond(r.velocity, r.normal, e);
+      assert(
+        near(dot(responded, r.normal), -e * dot(r.velocity, r.normal), 1e-12),
+        `restitution ${e} should scale the reversed normal part by exactly ${e}`,
+      );
+      assert(
+        near(dot(responded, r.along), dot(r.velocity, r.along), 1e-12),
+        "and never touch the along-the-wall part",
+      );
+    }
+    assert(
+      sameVector(
+        respond(r.velocity, r.normal, 0),
+        slide(r.velocity, r.normal),
+        1e-12,
+      ),
+      "restitution 0 is a slide",
+    );
+    assert(
+      sameVector(
+        respond(r.velocity, r.normal, 1),
+        reflect(r.velocity, r.normal),
+        1e-12,
+      ),
+      "and restitution 1 is a reflection",
+    );
+  }
+
+  // ---- The unit-normal assumption, priced ---------------------------------------------------
+
+  /* Unlike Section 5.3's axes, where scaling changed nothing about the verdict, here it wrecks the answer:
+     the correction is scaled by the square of the normal's length. A normal of length 2 removes four times
+     too much and the result points the wrong way entirely. */
+  {
+    const v = { x: 1, y: -1 };
+    const unit = { x: 0, y: 1 };
+    assert(
+      sameVector(slide(v, unit), { x: 1, y: 0 }, 1e-12),
+      "with a unit normal the slide is clean",
+    );
+    for (const scale of [0.5, 2, 3]) {
+      const stretched = { x: 0, y: scale };
+      const wrong = slide(v, stretched);
+      // The removal is scaled by the square, so the surviving normal component is 1 - scale squared.
+      assert(
+        near(wrong.y, -1 + scale * scale, 1e-12),
+        `a normal of length ${scale} should leave ${-1 + scale * scale} on the normal axis, left ${wrong.y}`,
+      );
+      assert(
+        !sameVector(wrong, slide(v, unit), 1e-9),
+        "which is not the right answer",
+      );
+    }
+    // At length 2 the result points *into* the wall harder than the input did.
+    assert(
+      slide(v, { x: 0, y: 2 }).y > 0 && v.y < 0,
+      "at length 2 the sign flips, so the character is thrown out of the wall instead of sliding",
+    );
+  }
+
+  // ---- The one-sided guard ------------------------------------------------------------------
+
+  {
+    const n = { x: 0, y: 1 };
+    assert(
+      movingInto({ x: 1, y: -1 }, n),
+      "downward into an upward normal is moving in",
+    );
+    assert(!movingInto({ x: 1, y: 1 }, n), "upward is not");
+    assert(
+      !movingInto({ x: 1, y: 0 }, n),
+      "and exactly along the wall is not either",
+    );
+    // The guard is the whole difference between sliding and sticking.
+    assert(
+      sameVector(resolveVelocity({ x: 1, y: 1 }, n), { x: 1, y: 1 }, 1e-15),
+      "an outward velocity has to be left completely alone",
+    );
+    assert(
+      sameVector(slide({ x: 1, y: 1 }, n), { x: 1, y: 0 }, 1e-15),
+      "while an unguarded slide cancels its outward part, which is what sticking is",
+    );
+    // Swept: the guard never changes the answer for an inbound velocity, and always does for an outbound one.
+    for (let deg = 0; deg < 360; deg += 3) {
+      const v = {
+        x: Math.cos(toRadians(deg)) * 2,
+        y: Math.sin(toRadians(deg)) * 2,
+      };
+      if (movingInto(v, n)) {
+        assert(
+          sameVector(resolveVelocity(v, n), slide(v, n), 1e-12),
+          "for an inbound velocity the guard changes nothing",
+        );
+      } else {
+        assert(
+          sameVector(resolveVelocity(v, n), v, 1e-15),
+          "and for an outbound one it changes everything",
+        );
+      }
+    }
+  }
+
+  // ---- Push-out and the skin ----------------------------------------------------------------
+
+  {
+    const contact = { normal: { x: 0, y: 1 }, depth: 0.25 };
+    const p = { x: 0, y: -0.25 };
+    assert(
+      sameVector(pushOutExactly(p, contact), { x: 0, y: 0 }, 1e-15),
+      "an exact push-out removes the overlap and no more",
+    );
+    assert(
+      near(pushOut(p, contact).y, SKIN, 1e-15),
+      `and with the skin it clears by exactly ${SKIN}`,
+    );
+    assert(
+      SKIN > 0 && SKIN < 0.01,
+      "the skin has to be positive and invisible",
+    );
+    // Whatever the depth and whatever the normal, the result is clear of the surface by the skin.
+    for (let deg = 0; deg < 360; deg += 11) {
+      const normal = {
+        x: Math.cos(toRadians(deg)),
+        y: Math.sin(toRadians(deg)),
+      };
+      for (const depth of [0.001, 0.25, 3]) {
+        const from = { x: 1.5, y: -0.5 };
+        const to = pushOut(from, { normal, depth });
+        assert(
+          near(dot(displacement(from, to), normal), depth + SKIN, 1e-12),
+          "the push has to be exactly depth plus skin, along the normal",
+        );
+        assert(
+          Math.abs(cross(displacement(from, to), normal)) < 1e-12,
+          "and along the normal only, with no sideways drift",
+        );
+      }
+    }
+    // Several contacts push out along each in turn, and the order cannot matter for positions.
+    const contacts = [
+      { normal: { x: 1, y: 0 }, depth: 0.2 },
+      { normal: { x: 0, y: 1 }, depth: 0.3 },
+    ];
+    assert(
+      sameVector(
+        pushOutAll({ x: 0, y: 0 }, contacts),
+        pushOutAll({ x: 0, y: 0 }, [...contacts].reverse()),
+        1e-15,
+      ),
+      "pushing out of several contacts is order-independent, because it is just addition",
+    );
+  }
+
+  // ---- Corners: the residual, and how fast it decays ----------------------------------------
+
+  /* The right-angled corner is exact in one pass, which is worth pinning because it is the case a tile-based
+     game hits constantly and the expensive behaviour below never shows up there. */
+  {
+    const right = [
+      { x: 1, y: 0 },
+      { x: 0, y: 1 },
+    ];
+    assert(
+      near(convergenceRate(right[0], right[1]), 0, 1e-15),
+      "perpendicular normals have a decay rate of zero, meaning one pass is exact",
+    );
+    for (let deg = 0; deg < 360; deg += 1) {
+      const v = {
+        x: Math.cos(toRadians(deg)) * 2,
+        y: Math.sin(toRadians(deg)) * 2,
+      };
+      const settled = settleVelocity(v, right, 0, 8, 1e-12);
+      assert(
+        settled.settled && settled.passes <= 1,
+        `a right-angled corner should settle in one pass, took ${settled.passes} at ${deg} degrees`,
+      );
+    }
+    const blocked = settleVelocity({ x: -1, y: -1 }, right, 0, 8, 1e-12);
+    assert(
+      sameVector(blocked.velocity, { x: 0, y: 0 }, 1e-15),
+      "and a velocity into both walls has to come out exactly zero",
+    );
+  }
+
+  /* Beyond a right angle the two projections fight, and the residual falls by cos squared of the angle
+     between the normals - measured against the prediction, which is what caught the missing square. */
+  for (const between of [120, 150, 170]) {
+    const n1 = { x: 1, y: 0 };
+    const n2 = {
+      x: Math.cos(toRadians(between)),
+      y: Math.sin(toRadians(between)),
+    };
+    const predicted = convergenceRate(n1, n2);
+    // A velocity along the bisector of the blocked cone, so the true answer is zero and the decay is clean.
+    const bisector = toRadians(between / 2) + Math.PI;
+    const v = { x: Math.cos(bisector) * 2, y: Math.sin(bisector) * 2 };
+    const residuals = Array.from(
+      { length: 8 },
+      (_, i) => settleVelocity(v, [n1, n2], 0, i + 1, 0).residual,
+    );
+    for (let i = 1; i < residuals.length; i += 1) {
+      assert(
+        near(residuals[i] / residuals[i - 1], predicted, 1e-6),
+        `the residual should fall by cos squared = ${predicted} per pass at ${between} degrees, fell by ${residuals[i] / residuals[i - 1]}`,
+      );
+    }
+    /* It converges, and **how many passes that takes is predictable from the rate** - which is a far
+       stronger claim than "it settles eventually". An earlier version asserted it settled within 400
+       passes and was simply wrong at 170 degrees, where the rate of 0.96985 needs about 866 of them.
+       
+       From a residual of $r_1$ after the first pass, reaching a tolerance $\tau$ takes
+       $\ln(\tau/r_1)/\ln(\text{rate})$ further passes. */
+    const tolerance = 1e-12;
+    const predictedPasses =
+      1 + Math.ceil(Math.log(tolerance / residuals[0]) / Math.log(predicted));
+    assert(
+      settleVelocity(v, [n1, n2], 0, predictedPasses + 1, tolerance).settled,
+      `${between} degrees apart should settle in the predicted ${predictedPasses} passes`,
+    );
+    assert(
+      !settleVelocity(v, [n1, n2], 0, predictedPasses - 2, tolerance).settled,
+      `and not in ${predictedPasses - 2}, or the prediction is not tight`,
+    );
+    assert(
+      predictedPasses > 1,
+      "and it must take more than the single pass a right angle needs",
+    );
+  }
+  // Normals a right angle or less apart never fight at all, which is the other half of the claim.
+  for (const between of [15, 45, 60, 89, 90]) {
+    const n1 = { x: 1, y: 0 };
+    const n2 = {
+      x: Math.cos(toRadians(between)),
+      y: Math.sin(toRadians(between)),
+    };
+    for (let deg = 0; deg < 360; deg += 5) {
+      const v = {
+        x: Math.cos(toRadians(deg)) * 2,
+        y: Math.sin(toRadians(deg)) * 2,
+      };
+      const settled = settleVelocity(v, [n1, n2], 0, 8, 1e-9);
+      assert(
+        settled.settled,
+        `normals ${between} degrees apart should always settle, did not at ${deg} degrees`,
+      );
+      assert(
+        settled.passes <= 1,
+        `and in a single pass, took ${settled.passes} at ${between}/${deg}`,
+      );
+    }
+  }
+
+  // ---- Tunnelling: closed form against measurement ------------------------------------------
+
+  assert(
+    near(tunnellingSpeed(WALL_THICKNESS, FRAME), 15, 1e-9),
+    `the scene's wall should have an escape speed of 15, has ${tunnellingSpeed(WALL_THICKNESS, FRAME)}`,
+  );
+  assert(
+    near(tunnellingSpeed(0.1, 1 / 60), 6, 1e-9),
+    "and a wall a tenth thick at 60 fps only 6",
+  );
+  assert(
+    near(tunnellingSpeed(0.1, 1 / 30), 3, 1e-9),
+    "which halves again at 30 fps",
+  );
+  // Below the escape speed no alignment can slip past, which is the one guarantee available.
+  for (const speed of [2, 8, 14.9, 15]) {
+    assert(
+      tunnellingChance(speed, FRAME, WALL_THICKNESS) === 0,
+      `nothing should tunnel at ${speed}, chance was ${tunnellingChance(speed, FRAME, WALL_THICKNESS)}`,
+    );
+    assert(
+      measuredTunnelChance(speed, 1, 200) === 0,
+      `and measuring should agree at ${speed}`,
+    );
+  }
+  /* Above it, the closed form has to match a sweep over start offsets. Two unrelated computations - one an
+     expression, one a count of simulated frames - so agreement means both are right. */
+  for (const speed of [16, 20, 30, 45, 60]) {
+    const predicted = tunnellingChance(speed, FRAME, WALL_THICKNESS);
+    const measured = measuredTunnelChance(speed, 1, 2000);
+    assert(
+      near(measured, predicted, 2e-3),
+      `at speed ${speed} the closed form says ${predicted} and the sweep found ${measured}`,
+    );
+  }
+  // The headline pair: twice the escape speed tunnels half the time, four times it three quarters.
+  assert(
+    near(tunnellingChance(30, FRAME, WALL_THICKNESS), 0.5, 1e-12),
+    "twice the escape speed should tunnel half the time",
+  );
+  assert(
+    near(tunnellingChance(60, FRAME, WALL_THICKNESS), 0.75, 1e-12),
+    "and four times it, three quarters",
+  );
+
+  /* And `substepsNeeded` has to be exactly enough - not approximately. At each speed, the recommended count
+     drives the measured chance to zero and one fewer does not. That is the assertion that makes the fix
+     trustworthy rather than plausible. */
+  for (const speed of [20, 30, 45, 60]) {
+    const needed = substepsNeeded(speed, FRAME, WALL_THICKNESS);
+    assert(
+      measuredTunnelChance(speed, needed, 400) === 0,
+      `${needed} substeps should eliminate tunnelling at speed ${speed}`,
+    );
+    if (needed > 1) {
+      assert(
+        measuredTunnelChance(speed, needed - 1, 400) > 0,
+        `and ${needed - 1} should not be enough at speed ${speed}, so the count is tight`,
+      );
+    }
+    // Each substep is then shorter than the wall is thick, which is the reason it works.
+    assert(
+      stepDistance(speed, FRAME) / needed <= WALL_THICKNESS + 1e-12,
+      "each substep has to be no longer than the wall is thick",
+    );
+  }
+  // Capping the speed also works, and the cost is stated rather than hidden.
+  {
+    const v = { x: 40, y: 0 };
+    const capped = cappedSpeed(v, FRAME, WALL_THICKNESS);
+    assert(
+      near(length(capped), tunnellingSpeed(WALL_THICKNESS, FRAME), 1e-12),
+      "capping brings the speed down to exactly the escape speed",
+    );
+    assert(
+      near(length(capped) / length(v), 0.375, 1e-12),
+      `which for a speed of 40 is 37.5% of what was asked for, not ${length(capped) / length(v)}`,
+    );
+    assert(
+      Math.abs(cross(capped, v)) < 1e-12,
+      "and it keeps the direction, only shortening it",
+    );
+    // A velocity already slow enough is untouched.
+    assert(
+      sameVector(
+        cappedSpeed({ x: 3, y: 0 }, FRAME, WALL_THICKNESS),
+        { x: 3, y: 0 },
+        1e-15,
+      ),
+      "a slow velocity passes through the cap unchanged",
+    );
+  }
+
+  // ---- The scenes' own arithmetic ----------------------------------------------------------
+
+  for (const p of [CONTACT, { x: 0, y: 0 }, { x: 3.2, y: -1.4 }]) {
+    const screen = deflectScreenOf(p);
+    assert(
+      sameVector(deflectWorldOf(screen.x, screen.y), p, 1e-12),
+      `the screen round trip failed for (${p.x}, ${p.y})`,
+    );
+  }
+  assert(
+    deflectScreenOf({ x: 0, y: 1 }).y < deflectScreenOf({ x: 0, y: 0 }).y,
+    "a higher world point should be drawn nearer the top",
+  );
+  /* Every arrow the deflect scene draws, at every slider position. All five start at the contact point, so
+     a tip off the canvas is the failure mode - and with a bounce the result arrow is the longest of them. */
+  for (let wall = WALL_RANGE.min; wall <= WALL_RANGE.max; wall += 2) {
+    for (let vel = VELOCITY_RANGE.min; vel <= VELOCITY_RANGE.max; vel += 3) {
+      const r = deflectReport(wall, vel, 1);
+      for (const v of [
+        r.velocity,
+        reversed(r.velocity),
+        r.slid,
+        r.bounced,
+        r.responded,
+        r.normalComponent,
+        r.tangentComponent,
+        r.normal,
+      ]) {
+        const q = deflectScreenOf(tipOf(v));
+        assert(
+          q.x >= 0 &&
+            q.x <= DEFLECT_VIEW.width &&
+            q.y >= 0 &&
+            q.y <= DEFLECT_VIEW.height,
+          `an arrow tip leaves the canvas at wall ${wall}, velocity ${vel}: (${q.x.toFixed(1)}, ${q.y.toFixed(1)})`,
+        );
+      }
+    }
+  }
+  /* The wall is a **surface**, so both drawn ends have to be *outside* the canvas at every angle - otherwise
+     it appears to stop short and reads as a segment. This is the inverse of every other fit assertion in
+     this file, and getting it the usual way round would have accepted a horizontal wall ending 34 pixels
+     shy of the right edge. */
+  for (let wall = WALL_RANGE.min; wall <= WALL_RANGE.max; wall += 1) {
+    const { along } = wallFrom(wall);
+    for (const sign of [-1, 1]) {
+      const q = deflectScreenOf({
+        x: CONTACT.x + along.x * WALL_DRAW_LENGTH * sign,
+        y: CONTACT.y + along.y * WALL_DRAW_LENGTH * sign,
+      });
+      assert(
+        q.x < 0 ||
+          q.x > DEFLECT_VIEW.width ||
+          q.y < 0 ||
+          q.y > DEFLECT_VIEW.height,
+        `the wall at ${wall} degrees ends inside the canvas at (${q.x.toFixed(1)}, ${q.y.toFixed(1)}), so it looks like a stub`,
+      );
+    }
+  }
+  // The substep scene's wall, and its mover, at every slider combination the reader can reach.
+  for (const corner of [THIN_WALL.min, THIN_WALL.max]) {
+    const q = deflectScreenOf(corner);
+    assert(
+      q.x >= 0 &&
+        q.x <= DEFLECT_VIEW.width &&
+        q.y >= 0 &&
+        q.y <= DEFLECT_VIEW.height,
+      "the thin wall has to be on the canvas",
+    );
+  }
+  for (let speed = MOVER_SPEED.min; speed <= MOVER_SPEED.max; speed += 2) {
+    for (const phase of [0, 0.5, 1]) {
+      const r = substepReport(speed, 4, phase);
+      assert(
+        r.frames.length > 2,
+        `the mover should take several frames at speed ${speed}`,
+      );
+      assert(
+        r.before.x < THIN_WALL.min.x,
+        "the deciding frame has to begin short of the wall",
+      );
+      assert(
+        r.substepsAt.length === 4,
+        "and there should be one drawn position per substep",
+      );
+      assert(
+        r.frames.every((p) => Number.isFinite(p.x) && Number.isFinite(p.y)),
+        "with no non-finite positions anywhere",
+      );
+      // The scene claims a hit exactly when the sweep found one.
+      assert(
+        r.tunnelled === (r.hit === null),
+        "tunnelled has to mean no substep landed inside",
+      );
+      if (r.hit !== null) {
+        assert(
+          insideWall(r.hit),
+          "and a reported hit really is inside the wall",
+        );
+      }
+    }
+  }
+  /* The scene has to be able to show both outcomes, and the phase slider has to be what changes it - or the
+     control that carries the Section's point does nothing. */
+  {
+    let phasesThatTunnel = 0;
+    let phasesThatCatch = 0;
+    for (let i = 0; i <= 50; i += 1) {
+      if (substepReport(30, 1, i / 50).tunnelled) phasesThatTunnel += 1;
+      else phasesThatCatch += 1;
+    }
+    assert(
+      phasesThatTunnel > 5 && phasesThatCatch > 5,
+      `sliding the phase at speed 30 should show both outcomes, showed ${phasesThatTunnel} and ${phasesThatCatch}`,
+    );
+    // And at a safe speed no phase tunnels, so the slider correctly shows nothing to worry about.
+    for (let i = 0; i <= 50; i += 1) {
+      assert(
+        !substepReport(10, 1, i / 50).tunnelled,
+        "below the escape speed no phase should tunnel",
+      );
+    }
+  }
+  // The deflect scene's opening state: moving into the wall, so the response visibly does something.
+  {
+    const opening = deflectReport(-18, -125, 0);
+    assert(
+      opening.intoWall,
+      "the deflect scene should open on a velocity heading into the wall",
+    );
+    assert(
+      opening.kept > 0.1 && opening.kept < 0.95,
+      `and at an angle where the slide neither keeps everything nor nothing, keeps ${opening.kept}`,
     );
   }
 };
