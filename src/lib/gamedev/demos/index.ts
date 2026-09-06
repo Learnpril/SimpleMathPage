@@ -41,6 +41,8 @@ import hittest2d from "./2d/hittest.ts";
 import param2d from "./2d/param.ts";
 import normals2d from "./2d/normals.ts";
 import pushout2d from "./2d/pushout.ts";
+import airtime2d from "./2d/airtime.ts";
+import pieces2d from "./2d/pieces.ts";
 import {
   angleCheck2d,
   cameraCheck2d,
@@ -51,6 +53,8 @@ import {
   easeCheck2d,
   lengthCheck2d,
   matrixCheck2d,
+  physicsCheck2d,
+  platformerCheck2d,
   rotateCheck2d,
   responseCheck2d,
   satCheck2d,
@@ -700,6 +704,53 @@ export const DEMOS: Record<string, DemoEntry> = {
     title: "The position fix, the guard, and what a corner costs",
     demo: pushout2d,
     file: "lib/gamedev/demos/2d/pushout.ts",
+  },
+  "2d-leap": {
+    title:
+      "A jump asked for by height and time, and the arc a loop actually produces",
+    visual: () => import("./2d/leap.scene.ts"),
+    visualFile: "lib/gamedev/demos/2d/leap.scene.ts",
+    hint: "Drop the frame rate to see the gap open up, then switch to the midpoint step.",
+    check: physicsCheck2d,
+  },
+  "2d-stepper": {
+    title:
+      "Three ways to step one throw, and the exact parabola between two of them",
+    visual: () => import("./2d/stepper.scene.ts"),
+    visualFile: "lib/gamedev/demos/2d/stepper.scene.ts",
+    hint: "The crosses are the average of the orange and blue traces; they sit on the grey curve.",
+  },
+  "2d-airtime": {
+    title: "A jump you can describe, turned into the numbers a loop needs",
+    demo: airtime2d,
+    file: "lib/gamedev/demos/2d/airtime.ts",
+  },
+  "2d-platformer": {
+    title: "One scripted run, with the two forgiving windows on switches",
+    visual: () => import("./2d/platformer.scene.ts"),
+    visualFile: "lib/gamedev/demos/2d/platformer.scene.ts",
+    hint: "Scrub to about 0.95 s and watch the ledge, then switch coyote time off and scrub the same moment again.",
+    check: platformerCheck2d,
+  },
+  "2d-peraxis": {
+    title:
+      "The same charge at the same step, resolved one axis at a time and both at once",
+    visual: () => import("./2d/peraxis.scene.ts"),
+    visualFile: "lib/gamedev/demos/2d/peraxis.scene.ts",
+    hint: "Below 45 units per second both land in the same place, so only the ticks move - each one is a 60 fps frame. At 45 the red one leaves the level.",
+  },
+  "2d-jitter": {
+    title:
+      "Where the character appears to sit, under each of the four things you could round",
+    visual: () => import("./2d/jitter.scene.ts"),
+    visualFile: "lib/gamedev/demos/2d/jitter.scene.ts",
+    hint: "Land the slider on 1.875, 3.75 or 5.625 and every row goes still - those are whole-pixel advances.",
+  },
+  "2d-pieces": {
+    title:
+      "The six constants this character is made of, and where each came from",
+    demo: pieces2d,
+    file: "lib/gamedev/demos/2d/pieces.ts",
   },
   "nan-guard": {
     title: "A NaN walks past the check meant to stop it",

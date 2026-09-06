@@ -461,6 +461,102 @@ import {
   wallFrom,
   worldOf as deflectWorldOf,
 } from "./deflect-shared.ts";
+import {
+  INTEGRATORS,
+  apexOf,
+  asymmetricJump,
+  clampFallSpeed,
+  clampSpeed,
+  cutJump,
+  dragExactAt,
+  driftAfter,
+  exactAt,
+  jumpFromHeightAndAirtime,
+  jumpFromHeightAndTime,
+  remainingHeight,
+  step as physicsStep,
+  stepExplicit,
+  stepMidpoint,
+  stepSemiImplicit,
+  stepWithDrag,
+  terminalVelocity,
+  type Body as PhysicsBody,
+} from "../../../gamedev2d/physics2d.ts";
+/* Aliased throughout, for the seventh Section running. `step`, `GROUND`, `VIEW`, `screenOf` and `worldOf` are
+   all taken by now, and quietly testing an earlier Section's arithmetic is a failure mode that passes. */
+import {
+  APEX_TIME_RANGE as LEAP_APEX,
+  FPS_RANGE as LEAP_FPS,
+  GROUND as LEAP_GROUND,
+  HEIGHT_RANGE as LEAP_HEIGHT,
+  LAUNCH_X as LEAP_LAUNCH_X,
+  THROW_TIME as LEAP_THROW_TIME,
+  VIEW as LEAP_VIEW,
+  allTraces as leapAllTraces,
+  apexOnFrame as leapApexOnFrame,
+  arcFor as leapArcFor,
+  bracketAt as leapBracketAt,
+  exactArc as leapExactArc,
+  predictedDrift as leapPredictedDrift,
+  samplingDeficit as leapSamplingDeficit,
+  screenOf as leapScreenOf,
+  worldOf as leapWorldOf,
+} from "./leap-shared.ts";
+/* The capstone, aliased without exception. By this point in the file `step`, `START`, `VIEW`, `BOUNDS`,
+   `screenOf`, `worldOf`, `clampToBounds`, `GROUND`, `project`, `fixedAt` and `RADIUS_RANGE` are each bound by
+   several earlier Sections, and a capstone check that silently exercised Section 4.3's geometry would pass
+   while proving nothing about the thing it is named after. Prefixing every one of them is cheaper than
+   discovering that later. */
+import {
+  ART_PIXELS_PER_UNIT as CAP_ART_PIXELS,
+  CONTACT_SKIN as CAP_CONTACT_SKIN,
+  COYOTE_TIME as CAP_COYOTE,
+  FIXED_DT as CAP_FIXED_DT,
+  TUNING as CAP_TUNING,
+  boxOf as capBoxOf,
+  bufferRemaining as capBufferRemaining,
+  canJump as capCanJump,
+  coyoteRemaining as capCoyoteRemaining,
+  derived as capDerived,
+  followCamera as capFollowCamera,
+  renderAlpha as capRenderAlpha,
+  stepsFor as capStepsFor,
+} from "../../../gamedev2d/platformer2d.ts";
+import {
+  CHARGE_FACE as capChargeFace,
+  CHARGE_FROM as CAP_CHARGE_FROM,
+  CHARGE_SECONDS as CAP_CHARGE_SECONDS,
+  CHARGE_VIEW as CAP_CHARGE_VIEW,
+  JITTER_FPS as CAP_JITTER_FPS,
+  JITTER_FRAMES as CAP_JITTER_FRAMES,
+  LANDMARKS as CAP_LANDMARKS,
+  RUN_STEPS as capRunSteps,
+  SNAPS as CAP_SNAPS,
+  SOLID_CELLS as CAP_SOLID_CELLS,
+  TIME_RANGE as CAP_TIME_RANGE,
+  VIEW as CAP_VIEW,
+  advancesWholePixels as capAdvancesWholePixels,
+  frameSignature as capFrameSignature,
+  jitterSignature as capJitterSignature,
+  jitterSpeeds as capJitterSpeeds,
+  jitterTrace as capJitterTrace,
+  chargeAtStep as capChargeAtStep,
+  chargeRectOf as capChargeRectOf,
+  chargeScreenOf as capChargeScreenOf,
+  chargeSignature as capChargeSignature,
+  chargeSpeeds as capChargeSpeeds,
+  chargeSummary as capChargeSummary,
+  chargeWorldOf as capChargeWorldOf,
+  clampCamera as capClampCamera,
+  divergence as capDivergence,
+  endedAt as capEndedAt,
+  jitterFor as capJitterFor,
+  jumpSteps as capJumpSteps,
+  rectOf as capRectOf,
+  runScript as capRunScript,
+  screenOf as capScreenOf,
+  worldOf as capWorldOf,
+} from "./platformer-shared.ts";
 
 const near = (a: number, b: number, tol = 1e-9) => Math.abs(a - b) < tol;
 
@@ -7458,5 +7554,1202 @@ export const responseCheck2d: Demo = () => {
       opening.kept > 0.1 && opening.kept < 0.95,
       `and at an angle where the slide neither keeps everything nor nothing, keeps ${opening.kept}`,
     );
+  }
+};
+
+/**
+ * Velocity, gravity and jump arcs: the integrator identity, and the jump that quietly comes out short.
+ *
+ * The load-bearing result is an **exact identity** rather than a tolerance, which is unusual for this file
+ * and is what makes the Section worth writing. Explicit and semi-implicit Euler are wrong by
+ * $\tfrac{1}{2}a\,\Delta t^2 n$ in opposite directions, so their average is the closed form exactly, and the
+ * midpoint step *is* that average computed directly. All three claims are checked to floating-point dust
+ * across several accelerations and step sizes.
+ *
+ * The consequence is the part that matters to a game: at 60 fps, a jump asked to be two units high comes out
+ * $1.9167$ - four percent short - and the drift formula predicts that number before it is measured.
+ */
+export const physicsCheck2d: Demo = () => {
+  const bodyAt = (vy: number): PhysicsBody => ({
+    position: { x: 0, y: 0 },
+    velocity: { x: 2, y: vy },
+  });
+
+  // ---- The midpoint step is exact, not merely better ----------------------------------------
+
+  for (const a of [-25, -9.81, 3.5, 0]) {
+    for (const dt of [1 / 10, 1 / 30, 1 / 60, 0.2]) {
+      const start = bodyAt(7);
+      let body = start;
+      for (let i = 1; i <= 60; i += 1) {
+        body = stepMidpoint(body, { x: 0, y: a }, dt);
+        const truth = exactAt(start, { x: 0, y: a }, i * dt);
+        assert(
+          Math.abs(body.position.y - truth.y) < 1e-11 &&
+            Math.abs(body.position.x - truth.x) < 1e-11,
+          `the midpoint step should be exact, drifted ${body.position.y - truth.y} at a ${a}, dt ${dt}`,
+        );
+      }
+    }
+  }
+
+  /* Both Euler forms are wrong, and **equally** wrong in opposite directions - so their average is the truth.
+     This is the identity the Section is built on, so it is asserted three ways: the sum of the two errors is
+     zero, the average matches the closed form, and the midpoint step matches the average. */
+  for (const a of [-25, -9.81, 4]) {
+    for (const dt of [1 / 10, 1 / 30, 1 / 60]) {
+      const start = bodyAt(7);
+      let explicitBody = start;
+      let semiBody = start;
+      let midBody = start;
+      for (let i = 1; i <= 40; i += 1) {
+        explicitBody = stepExplicit(explicitBody, { x: 0, y: a }, dt);
+        semiBody = stepSemiImplicit(semiBody, { x: 0, y: a }, dt);
+        midBody = stepMidpoint(midBody, { x: 0, y: a }, dt);
+        const truth = exactAt(start, { x: 0, y: a }, i * dt).y;
+        const explicitError = explicitBody.position.y - truth;
+        const semiError = semiBody.position.y - truth;
+        assert(
+          Math.abs(explicitError + semiError) < 1e-11,
+          `the two Euler errors should cancel, summed to ${explicitError + semiError}`,
+        );
+        assert(
+          Math.abs(
+            (explicitBody.position.y + semiBody.position.y) / 2 - truth,
+          ) < 1e-11,
+          "so their average should be the closed form exactly",
+        );
+        assert(
+          Math.abs(
+            midBody.position.y -
+              (explicitBody.position.y + semiBody.position.y) / 2,
+          ) < 1e-11,
+          "and the midpoint step should be that average, computed directly",
+        );
+        // The bracket, in the direction gravity makes it: explicit high, semi-implicit low.
+        if (a < 0 && i > 1) {
+          assert(
+            explicitBody.position.y > truth && truth > semiBody.position.y,
+            `explicit should sit above the truth and semi-implicit below it at step ${i}`,
+          );
+        }
+      }
+    }
+  }
+
+  /* And the drift has a closed form of its own, which predicts each integrator's error exactly. Two useful
+     things follow: the error grows linearly in time rather than quadratically, and halving the step halves
+     it - both asserted below rather than left as remarks. */
+  for (const a of [-25, -9.81, 4]) {
+    for (const dt of [1 / 10, 1 / 30, 1 / 60]) {
+      for (const which of INTEGRATORS) {
+        const start = bodyAt(7);
+        let body = start;
+        for (let i = 1; i <= 30; i += 1) {
+          body = physicsStep(body, { x: 0, y: a }, dt, which);
+          const truth = exactAt(start, { x: 0, y: a }, i * dt).y;
+          assert(
+            Math.abs(body.position.y - truth - driftAfter(a, dt, i, which)) <
+              1e-11,
+            `the drift formula should predict ${which}'s error exactly, off by ${body.position.y - truth - driftAfter(a, dt, i, which)}`,
+          );
+        }
+      }
+    }
+  }
+  for (const which of ["explicit", "semi-implicit"] as const) {
+    // Linear in the step count, at a fixed step size.
+    assert(
+      near(
+        driftAfter(-25, 1 / 60, 20, which) / driftAfter(-25, 1 / 60, 10, which),
+        2,
+        1e-12,
+      ),
+      "twice as many steps should mean twice the drift",
+    );
+    // And proportional to the step size, over a fixed span of time.
+    const overSameTime = (fps: number) =>
+      Math.abs(driftAfter(-25, 1 / fps, Math.round(0.4 * fps), which));
+    assert(
+      near(overSameTime(10) / overSameTime(20), 2, 1e-12) &&
+        near(overSameTime(20) / overSameTime(40), 2, 1e-12),
+      "and halving the timestep should halve the drift over the same span",
+    );
+  }
+  assert(
+    driftAfter(-25, 1 / 60, 100, "midpoint") === 0,
+    "while the midpoint form drifts by nothing at all",
+  );
+
+  // ---- Solving a jump backwards --------------------------------------------------------------
+
+  for (const [h, t] of [
+    [2, 0.4],
+    [2.5, 0.5],
+    [1, 0.25],
+    [3.4, 0.7],
+    [0.8, 0.2],
+  ] as const) {
+    const { launch, gravity } = jumpFromHeightAndTime(h, t);
+    const back = apexOf(launch, gravity);
+    assert(
+      near(back.height, h, 1e-12) && near(back.timeToApex, t, 1e-12),
+      `the jump round trip should be exact, gave height ${back.height} and time ${back.timeToApex}`,
+    );
+    assert(
+      launch > 0 && gravity < 0,
+      "a jump launches upward against downward gravity",
+    );
+    // And the closed form really does reach that height at that time.
+    const peak = exactAt(
+      { position: { x: 0, y: 0 }, velocity: { x: 0, y: launch } },
+      { x: 0, y: gravity },
+      t,
+    );
+    assert(
+      near(peak.y, h, 1e-12),
+      `the exact arc should peak at ${h}, peaked at ${peak.y}`,
+    );
+    // The apex is where the velocity crosses zero, which is the definition the algebra came from.
+    assert(
+      near(launch + gravity * t, 0, 1e-12),
+      "and the vertical velocity should be exactly zero there",
+    );
+    // Airtime and time-to-apex are the same jump described twice.
+    assert(
+      near(jumpFromHeightAndAirtime(h, 2 * t).launch, launch, 1e-12),
+      "airtime and time-to-apex should give the same jump",
+    );
+  }
+  // The headline pair the page quotes.
+  assert(
+    near(jumpFromHeightAndTime(2, 0.4).launch, 10, 1e-12) &&
+      near(jumpFromHeightAndTime(2, 0.4).gravity, -25, 1e-12),
+    "two units in four tenths of a second is a launch of 10 against a gravity of -25",
+  );
+
+  // ---- The jump that comes out short --------------------------------------------------------
+
+  /* The consequence of the drift, in the units a designer cares about. At 60 fps semi-implicit Euler reaches
+     1.9167 of a requested 2 - and the drift formula predicted exactly that before the arc was stepped. */
+  {
+    const arc = leapArcFor(2, 0.4, 60, "semi-implicit");
+    assert(
+      near(arc.peak - LEAP_GROUND, 1.916667, 1e-5),
+      `a 2-unit jump at 60 fps should reach 1.9167, reached ${arc.peak - LEAP_GROUND}`,
+    );
+    assert(
+      near(arc.heightError, -0.083333, 1e-5),
+      `so it is short by 0.0833, not ${arc.heightError}`,
+    );
+    assert(
+      near((-arc.heightError / 2) * 100, 4.1667, 1e-3),
+      "which is 4.17% of the jump",
+    );
+    assert(
+      near(
+        arc.heightError,
+        leapPredictedDrift(2, 0.4, 60, "semi-implicit"),
+        1e-9,
+      ),
+      "and the drift formula should have predicted it",
+    );
+    // Explicit Euler misses by the same amount the other way, and midpoint hits it.
+    assert(
+      near(leapArcFor(2, 0.4, 60, "explicit").heightError, 0.083333, 1e-5),
+      "explicit Euler should overshoot by the same amount",
+    );
+    assert(
+      Math.abs(leapArcFor(2, 0.4, 60, "midpoint").heightError) < 1e-12,
+      "and the midpoint step should land on the requested height exactly",
+    );
+  }
+  /* **Two separate effects, and separating them turned out to be the point of this Section.** An assertion
+     that the midpoint step always reaches the requested height failed at ten frames a second on a 0.25 s
+     rise - and the code was right. The apex falls halfway between frames 2 and 3, so nothing ever evaluates
+     the position at the top. That is sampling, not drift; no integrator can fix it, and it is exactly
+     $\tfrac{1}{2}|a|\delta^2$ where $\delta$ is the gap to the nearest frame.
+     
+     So the sweep asserts the two independently. Where the apex lands on a frame the midpoint step hits the
+     height exactly; where it does not, it misses by the sampling deficit and by nothing else. */
+  for (let h = LEAP_HEIGHT.min; h <= LEAP_HEIGHT.max + 1e-9; h += 0.2) {
+    for (let t = LEAP_APEX.min; t <= LEAP_APEX.max + 1e-9; t += 0.05) {
+      for (let fps = LEAP_FPS.min; fps <= LEAP_FPS.max; fps += 5) {
+        const midpoint = leapArcFor(h, t, fps, "midpoint");
+        if (leapApexOnFrame(t, fps)) {
+          assert(
+            Math.abs(midpoint.heightError) < 1e-9,
+            `with the apex on a frame, midpoint should be exact at h ${h}, t ${t}, ${fps} fps, off by ${midpoint.heightError}`,
+          );
+          for (const which of ["explicit", "semi-implicit"] as const) {
+            assert(
+              near(
+                leapArcFor(h, t, fps, which).heightError,
+                leapPredictedDrift(h, t, fps, which),
+                1e-9,
+              ),
+              `${which} should match its predicted drift at h ${h}, t ${t}, ${fps} fps`,
+            );
+          }
+        } else {
+          assert(
+            near(midpoint.heightError, -leapSamplingDeficit(h, t, fps), 1e-9),
+            `midpoint should miss only by the sampling deficit at h ${h}, t ${t}, ${fps} fps: ` +
+              `${midpoint.heightError} against ${-leapSamplingDeficit(h, t, fps)}`,
+          );
+        }
+        for (const which of INTEGRATORS) {
+          const arc = leapArcFor(h, t, fps, which);
+          assert(arc.peak > LEAP_GROUND, "an arc has to leave the ground");
+          assert(arc.airtime > 0, "and land again within the step budget");
+        }
+      }
+    }
+  }
+  /* The two have different signatures, which is how they are told apart in practice: drift is **linear** in
+     the step size and sampling is **quadratic** in it. That is the checkable form of "these are different
+     problems", so it is checked. */
+  {
+    const driftAt = (fps: number) =>
+      Math.abs(leapPredictedDrift(2, 0.4, fps, "semi-implicit"));
+    // 0.4 s lands on a frame at both rates, so this isolates drift.
+    assert(
+      leapApexOnFrame(0.4, 10) && leapApexOnFrame(0.4, 20),
+      "0.4 s lands on a frame at both 10 and 20 fps, which is what isolates drift here",
+    );
+    assert(
+      near(driftAt(10) / driftAt(20), 2, 1e-9),
+      "drift halves when the step halves - linear",
+    );
+    // A 0.25 s rise misses the frame at 10 fps and lands on it at 20, which isolates sampling.
+    assert(
+      leapSamplingDeficit(2, 0.25, 10) > 0 &&
+        leapSamplingDeficit(2, 0.25, 20) === 0,
+      "a 0.25 s rise misses the frame at 10 fps and lands on it at 20",
+    );
+    /* Quadratic: three times the gap is nine times the deficit. Both rates have to actually miss the frame for
+       this to say anything - my first attempt compared against 4 fps, where a 0.25 s rise lands exactly on a
+       frame and the deficit is zero, so the ratio was a division by nothing. */
+    assert(
+      !leapApexOnFrame(0.25, 10) && !leapApexOnFrame(0.25, 30),
+      "both rates have to miss the apex for the ratio to mean anything",
+    );
+    assert(
+      near(
+        leapSamplingDeficit(2, 0.25, 10) / leapSamplingDeficit(2, 0.25, 30),
+        9,
+        1e-9,
+      ),
+      `three times the gap should be nine times the deficit, was ${leapSamplingDeficit(2, 0.25, 10) / leapSamplingDeficit(2, 0.25, 30)}`,
+    );
+  }
+
+  // ---- Terminal velocity is Section 4.1's decay -----------------------------------------------
+
+  assert(
+    near(terminalVelocity(-25, 4), -6.25, 1e-12),
+    `gravity over drag should be -6.25, was ${terminalVelocity(-25, 4)}`,
+  );
+  assert(
+    terminalVelocity(-25, 0) === -Infinity ||
+      terminalVelocity(-25, 0) === Infinity,
+    "and with no drag there is no terminal velocity",
+  );
+  /* The stepped version has to converge on the closed form, which is `decay` from Section 4.1 with different
+     labels. Checked as a limit rather than at one instant, since that is the claim. */
+  for (const [gravity, drag] of [
+    [-25, 4],
+    [-9.81, 1.5],
+  ] as const) {
+    const terminal = terminalVelocity(gravity, drag);
+    for (const fps of [120, 480, 2000]) {
+      const dt = 1 / fps;
+      let v = 0;
+      const steps = Math.round(1 / dt);
+      for (let i = 0; i < steps; i += 1) v = stepWithDrag(v, gravity, drag, dt);
+      // Finer steps converge on the exact answer, which is the whole point of naming both.
+      assert(
+        Math.abs(v - dragExactAt(0, gravity, drag, 1)) < 30 / fps,
+        `the stepped fall should approach the closed form, off by ${Math.abs(v - dragExactAt(0, gravity, drag, 1))} at ${fps} fps`,
+      );
+    }
+    // It approaches the terminal speed and never passes it.
+    for (const t of [0.1, 0.5, 1, 5, 50]) {
+      const exact = dragExactAt(0, gravity, drag, t);
+      assert(
+        Math.abs(exact) <= Math.abs(terminal) + 1e-12,
+        `a falling body should never exceed terminal velocity, reached ${exact} against ${terminal}`,
+      );
+      assert(
+        Math.abs(exact) > 0,
+        "and should be falling at all after any positive time",
+      );
+    }
+    assert(
+      near(dragExactAt(0, gravity, drag, 1e6), terminal, 1e-9),
+      "and it should converge on it given long enough",
+    );
+  }
+  // The blunt alternative: a clamp, which never touches a rise.
+  assert(clampFallSpeed(-40, 12) === -12, "a clamp limits the fall");
+  assert(clampFallSpeed(-5, 12) === -5, "and leaves a slower fall alone");
+  /* A rise **above** the limit, which is the case that distinguishes a fall clamp from a speed clamp. My first
+     version tested a rise of 9 against a limit of 12 - under it either way - so a sabotage that clamped rises
+     as well passed. The whole point of this function over `clampSpeed` is that a jump keeps its launch speed,
+     so the test has to use a launch speed worth keeping. */
+  assert(
+    clampFallSpeed(20, 12) === 20,
+    "and never touches a rise, however fast - which is exactly what drag would get wrong",
+  );
+  assert(
+    near(clampSpeed({ x: 0, y: 20 }, 12).y, 12, 1e-12),
+    "while a speed clamp does limit it, which is the other function and the other intent",
+  );
+
+  // ---- Cutting a jump short ------------------------------------------------------------------
+
+  {
+    const { launch, gravity } = jumpFromHeightAndTime(2.5, 0.5);
+    assert(
+      near(remainingHeight(launch, gravity), 2.5, 1e-12),
+      "the full launch should have the full height left in it",
+    );
+    /* Height goes as the **square** of the velocity, so keeping half the speed keeps a quarter of the height.
+       Worth pinning because it is the reason a released jump feels so much shorter than expected. */
+    for (const keep of [0.5, 0.4, 0.25]) {
+      const cut = cutJump(launch, keep);
+      assert(near(cut, launch * keep, 1e-12), "cutting scales the velocity");
+      assert(
+        near(remainingHeight(cut, gravity), 2.5 * keep * keep, 1e-12),
+        `keeping ${keep} of the speed should keep ${keep * keep} of the height, kept ${remainingHeight(cut, gravity) / 2.5}`,
+      );
+    }
+    assert(
+      near(remainingHeight(cutJump(launch, 0.5), gravity), 0.625, 1e-12),
+      "so half the speed is a quarter of a 2.5 unit jump, which is 0.625",
+    );
+    // And the guard: cutting while already falling would slow the fall, which feels like snagging.
+    assert(cutJump(-3, 0.5) === -3, "a falling velocity is left alone");
+    assert(remainingHeight(-3, gravity) === 0, "and has no height left in it");
+  }
+
+  // ---- The asymmetric jump most platformers use ----------------------------------------------
+
+  {
+    const a = asymmetricJump(2.5, 0.4, 0.28);
+    // Each half is its own parabola through the same apex, so each gets the same formula.
+    assert(
+      near(a.riseGravity, jumpFromHeightAndTime(2.5, 0.4).gravity, 1e-12),
+      "the rise should match the symmetric formula at its own time",
+    );
+    assert(
+      near(a.fallGravity, jumpFromHeightAndTime(2.5, 0.28).gravity, 1e-12),
+      "and so should the fall",
+    );
+    assert(
+      near(a.launch, jumpFromHeightAndTime(2.5, 0.4).launch, 1e-12),
+      "with the launch speed coming from the rise, since that is the half it happens in",
+    );
+    /* The ratio of the two gravities is the inverse square of the ratio of the two times, which is the
+       relationship worth knowing when tuning by feel. */
+    assert(
+      near(a.fallGravity / a.riseGravity, (0.4 / 0.28) ** 2, 1e-12),
+      `the gravities should differ by the square of the times, ${a.fallGravity / a.riseGravity} against ${(0.4 / 0.28) ** 2}`,
+    );
+    assert(
+      near(a.fallGravity / a.riseGravity, 2.040816, 1e-5),
+      "which here is 2.0408",
+    );
+  }
+
+  // ---- The scenes' own arithmetic ------------------------------------------------------------
+
+  for (const p of [
+    { x: 0, y: 0 },
+    { x: LEAP_LAUNCH_X, y: LEAP_GROUND },
+    { x: 3.1, y: 1.4 },
+  ]) {
+    const screen = leapScreenOf(p);
+    assert(
+      Math.hypot(
+        leapWorldOf(screen.x, screen.y).x - p.x,
+        leapWorldOf(screen.x, screen.y).y - p.y,
+      ) < 1e-12,
+      `the screen round trip failed for (${p.x}, ${p.y})`,
+    );
+  }
+  assert(
+    leapScreenOf({ x: 0, y: 1 }).y < leapScreenOf({ x: 0, y: 0 }).y,
+    "a higher world point should be drawn nearer the top",
+  );
+  /* Every point of every arc the sliders can produce, for all three integrators. The first version let a tall
+     jump's final step land a whole unit underground and off the bottom of the canvas, because a naive loop
+     records where the step finished rather than where the ground is. */
+  for (let h = LEAP_HEIGHT.min; h <= LEAP_HEIGHT.max + 1e-9; h += 0.1) {
+    for (let t = LEAP_APEX.min; t <= LEAP_APEX.max + 1e-9; t += 0.02) {
+      for (let fps = LEAP_FPS.min; fps <= LEAP_FPS.max; fps += 5) {
+        for (const which of INTEGRATORS) {
+          const arc = leapArcFor(h, t, fps, which);
+          for (const p of arc.points) {
+            const q = leapScreenOf(p);
+            assert(
+              q.x >= 0 &&
+                q.x <= LEAP_VIEW.width &&
+                q.y >= 0 &&
+                q.y <= LEAP_VIEW.height,
+              `an arc point leaves the canvas at h ${h.toFixed(1)}, t ${t.toFixed(2)}, ${fps} fps, ${which}: (${q.x.toFixed(1)}, ${q.y.toFixed(1)})`,
+            );
+          }
+          // And no arc is ever drawn below the floor it landed on.
+          assert(
+            arc.points.every((p) => p.y >= LEAP_GROUND - 1e-12),
+            "no part of an arc should be drawn under the ground",
+          );
+        }
+      }
+    }
+  }
+  for (let h = LEAP_HEIGHT.min; h <= LEAP_HEIGHT.max + 1e-9; h += 0.1) {
+    for (let t = LEAP_APEX.min; t <= LEAP_APEX.max + 1e-9; t += 0.02) {
+      for (const p of leapExactArc(h, t)) {
+        const q = leapScreenOf(p);
+        assert(
+          q.x >= 0 &&
+            q.x <= LEAP_VIEW.width &&
+            q.y >= 0 &&
+            q.y <= LEAP_VIEW.height,
+          `the true parabola leaves the canvas at h ${h.toFixed(1)}, t ${t.toFixed(2)}`,
+        );
+      }
+    }
+  }
+  /* The stepper scene's bracket, at every frame rate its slider offers. This is the assertion that keeps the
+     scene's central claim true no matter where the reader drags it. */
+  for (let fps = LEAP_FPS.min; fps <= LEAP_FPS.max; fps += 1) {
+    const traces = leapAllTraces(fps);
+    assert(traces.length === 3, "three integrators, three traces");
+    assert(
+      traces.every((t) => t.heights.length === traces[0].heights.length),
+      "all sampled at the same instants, or the plot compares different times",
+    );
+    const apexStep = Math.min(
+      traces[0].heights.length - 1,
+      Math.max(1, Math.round(LEAP_THROW_TIME * fps)),
+    );
+    const b = leapBracketAt(fps, apexStep);
+    assert(
+      b.explicit > b.exact && b.exact > b.semi,
+      `the truth should be bracketed at ${fps} fps, got ${b.explicit}, ${b.exact}, ${b.semi}`,
+    );
+    assert(
+      Math.abs(b.averageError) < 1e-11,
+      `and the average should land on it, off by ${b.averageError} at ${fps} fps`,
+    );
+    assert(
+      Math.abs(b.midpoint - b.exact) < 1e-11,
+      "as should the midpoint step",
+    );
+    // Nothing plotted is non-finite, at any frame rate.
+    assert(
+      traces.every(
+        (t) =>
+          t.heights.every(Number.isFinite) && t.exact.every(Number.isFinite),
+      ),
+      `a trace went non-finite at ${fps} fps`,
+    );
+  }
+  // The leap scene's opening state: short, visibly so, and by the amount the page quotes.
+  {
+    const opening = leapArcFor(2, 0.4, 60, "semi-implicit");
+    assert(
+      opening.heightError < -0.05,
+      "the leap scene should open on a jump that is visibly short",
+    );
+    assert(
+      opening.peak - LEAP_GROUND > 1.8,
+      "but not so short that the arc looks broken",
+    );
+  }
+};
+
+/**
+ * The capstone: the assembled character, and the four bugs that assembling it exposed.
+ *
+ * This is the longest check in the file and the one that earned its length. Every individual piece was
+ * already verified by the Section it came from; what this sweeps is the **composition** - the order of the
+ * step, the interaction between two forgiveness windows, and the resolution of a move against a grid. Three
+ * genuine bugs in this Module's own code were found by these assertions rather than by looking at a picture.
+ */
+export const platformerCheck2d: Demo = () => {
+  // ---- The fixed timestep and its accumulator ------------------------------------------------
+
+  {
+    /* The invariant: whatever the frame times, the carry is always a fraction of one step. It is not true of
+       the first version of `stepsFor`, which reported dropped time and then carried it anyway - so one slow
+       frame left a backlog that capped every frame after it and the game crawled until the debt was paid. */
+    let worst = 0;
+    for (let i = 0; i < 40000; i += 1) {
+      const carry = ((i * 7919) % 1000) * (CAP_FIXED_DT / 1000);
+      const frameTime = (i % 197) * 0.001;
+      const r = capStepsFor(carry, frameTime);
+      assert(
+        r.leftover >= 0 && r.leftover < CAP_FIXED_DT,
+        `the carry left the step at frame time ${frameTime}: ${r.leftover}`,
+      );
+      assert(
+        Number.isInteger(r.steps) && r.steps >= 0 && r.steps <= 8,
+        `steps should be a whole number inside the cap, got ${r.steps}`,
+      );
+      // Nothing is invented and nothing vanishes unaccounted for.
+      assert(
+        near(
+          carry + frameTime,
+          r.steps * CAP_FIXED_DT + r.dropped + r.leftover,
+          1e-12,
+        ),
+        "the frame time should be exactly spent, dropped, or carried",
+      );
+      const alpha = capRenderAlpha(r.leftover);
+      assert(alpha >= 0 && alpha <= 1, `renderAlpha left 0..1: ${alpha}`);
+      worst = Math.max(worst, r.leftover);
+    }
+    // And the sweep actually reached near the top of the range, or the bound above proves nothing.
+    assert(
+      worst > CAP_FIXED_DT * 0.9,
+      `the carry never came close to a full step, so its bound is vacuous: worst was ${worst}`,
+    );
+  }
+  {
+    // The cap, and the spiral it prevents, in the one case the page quotes.
+    const hitch = capStepsFor(0, 0.5);
+    assert(
+      hitch.steps === 8,
+      `a half-second hitch should run 8 steps, ran ${hitch.steps}`,
+    );
+    assert(
+      near(hitch.dropped, 0.5 - 8 * CAP_FIXED_DT, 1e-12),
+      `and drop the rest, dropped ${hitch.dropped}`,
+    );
+    assert(
+      hitch.leftover === 0,
+      `carrying nothing forward, carried ${hitch.leftover}`,
+    );
+    const uncapped = capStepsFor(0, 0.5, CAP_FIXED_DT, Infinity);
+    assert(
+      uncapped.steps === 60 && uncapped.dropped === 0,
+      "without a cap the same frame asks for sixty steps, which is the spiral",
+    );
+  }
+
+  // ---- The two forgiveness windows, and the off switch that inverted -------------------------
+
+  {
+    assert(
+      capCoyoteRemaining(0) === 1,
+      "the coyote window is full at the instant of leaving",
+    );
+    assert(capCoyoteRemaining(CAP_COYOTE) === 0, "and empty when it expires");
+    assert(
+      near(capCoyoteRemaining(CAP_COYOTE / 2), 0.5, 1e-12),
+      "and half full halfway, because it is a clamped inverseLerp and nothing more",
+    );
+    assert(
+      capCoyoteRemaining(CAP_COYOTE * 2) === 0,
+      "clamped past the end rather than going negative",
+    );
+    /* The zero-window guard. `inverseLerp` returns 0 for an empty range - correct there, and exactly wrong
+       here, because 1 - 0 reads as "completely full". Without the branch, switching coyote time off by
+       setting its window to zero switches it on permanently. */
+    assert(
+      capCoyoteRemaining(0.5, 0) === 0,
+      "a zero window must be closed, not permanently open",
+    );
+    assert(
+      capBufferRemaining(0.5, 0) === 0,
+      "and the same for the buffer, which shares the trap",
+    );
+    assert(
+      capCoyoteRemaining(0, 0) === 1 && capBufferRemaining(0, 0) === 1,
+      "though a zero window still admits the very instant itself, or a grounded jump would be impossible",
+    );
+    // The two have to be considered together, which is the case both features exist to catch.
+    assert(
+      capCanJump(0.05, 0.05),
+      "recently grounded and recently pressed is a jump",
+    );
+    assert(
+      !capCanJump(0.5, 0.05),
+      "long since grounded is not, however recent the press",
+    );
+    assert(
+      !capCanJump(0.05, 0.5),
+      "and a stale press is not, however recently grounded",
+    );
+    assert(
+      !capCanJump(0.05, 0.05, 0, 0),
+      "with both windows off, neither of those is a jump either",
+    );
+  }
+
+  // ---- Resolving a move against the grid ------------------------------------------------------
+
+  {
+    /* The centrepiece, and the one that found three bugs. A character charging at a one-tile step must stop
+       at its face - at every speed, and whatever shape it is.
+     
+       Version one snapped to each overlapping tile in turn, so the answer depended on `nearbyTiles`'
+       iteration order and a tall character was teleported to the top of the wall beside it. Version two took
+       the nearest face over the destination box, which left a fast mover placed *inside* a tile it had
+       stepped over. Only sweeping the region between the two positions is correct, and it removes tunnelling
+       at the same time. */
+    const distance = capChargeFace - CAP_CHARGE_FROM;
+    let arrived = 0;
+    for (let v = 1; v <= 200; v += 1) {
+      const charge = capChargeAtStep(v, true);
+      // Never past the face, never above the floor, never out of the level - at any speed at all.
+      assert(
+        charge.end.position.x <= capChargeFace + 1e-9,
+        `one axis at a time should never get past the step's face, but at ${v} units per second it reached x ${charge.end.position.x}`,
+      );
+      assert(
+        !charge.climbed,
+        `and never get above the floor it started on, but it did at ${v}`,
+      );
+      assert(!charge.escaped, `and never leave the level, but it did at ${v}`);
+      /* And where it had time to arrive, it is *exactly* at the face. Below about 1.6 units per second the
+         charge simply has not crossed the 1.8125 units to the step inside its window, so demanding contact
+         would be asserting against the clock rather than the collision. */
+      if (v * CAP_CHARGE_SECONDS > distance + 1) {
+        assert(
+          charge.stoppedAtFace,
+          `and stop exactly at the face once it can reach it, but at ${v} it ended at x ${charge.end.position.x}`,
+        );
+        arrived += 1;
+      }
+    }
+    assert(
+      arrived > 190,
+      `nearly every speed should have reached the step, only ${arrived} did`,
+    );
+    // The resting place is exact, not approximate: the face minus a half width, on a binary fraction.
+    assert(
+      capChargeFace === 14.8125,
+      `the only correct resting x is 14.8125, not ${capChargeFace}`,
+    );
+
+    /* And the naive version really does fail, or the comparison the Section is built on is empty. This is the
+       assertion that stops the page overclaiming: it is also correct at ordinary speeds, which is why it
+       ships. */
+    const summary = capChargeSummary();
+    assert(
+      summary.perAxisFailures === 0,
+      `one axis at a time should never fail on the slider, failed ${summary.perAxisFailures} times`,
+    );
+    assert(
+      summary.combinedFailures > 20,
+      `both axes at once should fail across a wide band, failed only ${summary.combinedFailures} times`,
+    );
+    assert(
+      summary.firstCombinedFailure !== null &&
+        summary.firstCombinedFailure === 45,
+      `and first fail at 45 units per second, not ${summary.firstCombinedFailure}`,
+    );
+    /* The failure is not tunnelling. One step at 45 units per second covers 0.375 units against a wall a
+       whole unit thick, so nothing is being stepped over - the axis choice is simply wrong. Worth pinning,
+       because attributing it to tunnelling would point a reader at the wrong fix. */
+    assert(
+      45 / 120 < summary.tunnelSpeed / 120,
+      "the first failure is well inside the tunnelling limit",
+    );
+    assert(
+      near(summary.tunnelSpeed, 120, 1e-12),
+      `one step exceeds the wall's thickness above 120 units per second, not ${summary.tunnelSpeed}`,
+    );
+    assert(
+      capChargeAtStep(6, false).stoppedAtFace,
+      "at the character's own run speed the naive version is correct, which is why it survives review",
+    );
+  }
+  {
+    // The contact skin, and the float that made it necessary.
+    assert(
+      1.0 + 0.9 - 0.9 !== 1.0,
+      "the premise of the contact skin: a foot at 0.9 on a floor at 1.0 does not land on 1.0",
+    );
+    assert(
+      1.0 + 0.9 - 0.9 < 1.0,
+      "and specifically it lands *below* the floor, which is the direction that causes the bug",
+    );
+    /* The skin has to beat the float noise and lose to one step's fall, or a resting character would either
+       collide with the floor sideways or never notice it was on the ground. */
+    const { gravity } = capDerived();
+    const oneStepFall = Math.abs(gravity) * CAP_FIXED_DT * CAP_FIXED_DT;
+    assert(
+      CAP_CONTACT_SKIN > 1e-12,
+      "the skin must be larger than double-precision noise",
+    );
+    assert(
+      CAP_CONTACT_SKIN < oneStepFall / 100,
+      `and much smaller than one step's fall of ${oneStepFall}, or landing would be missed`,
+    );
+  }
+
+  // ---- The scripted run, which is what the scene draws ---------------------------------------
+
+  {
+    const frames = capRunScript();
+    assert(
+      frames.length === capRunSteps,
+      `the run is ${capRunSteps} steps, got ${frames.length}`,
+    );
+    assert(
+      frames.every(
+        (f) =>
+          Number.isFinite(f.state.character.position.x) &&
+          Number.isFinite(f.state.character.position.y),
+      ),
+      "no step of the run may go non-finite",
+    );
+    // It stays inside the level for the whole run, under every combination of switches.
+    for (const opts of [
+      {},
+      { coyote: 0 },
+      { buffer: 0 },
+      { coyote: 0, buffer: 0 },
+      { perAxis: false },
+    ]) {
+      for (const f of capRunScript(opts)) {
+        const p = f.state.character.position;
+        assert(
+          p.x > 0 && p.x < 24 && p.y > 0 && p.y < 8,
+          `the character left the level at step ${f.step} with ${JSON.stringify(opts)}: (${p.x}, ${p.y})`,
+        );
+      }
+    }
+
+    /* The two jumps are the whole point of the run, and both are deliberately mistimed. Asserting *which*
+       step each fires on is what keeps the scene's story true: the first press lands after the character has
+       left the ledge, the second before it has landed. */
+    assert(
+      JSON.stringify(capJumpSteps()) === "[118,199]",
+      `the run should jump on steps 118 and 199, jumped on ${JSON.stringify(capJumpSteps())}`,
+    );
+    const airborne = frames.findIndex((f) => !f.state.character.grounded);
+    assert(
+      airborne === 113,
+      `it should walk off the ledge on step 113, did so on ${airborne}`,
+    );
+    assert(
+      airborne < 118,
+      "so the first jump is pressed after the ledge, which only coyote time allows",
+    );
+    /* The presses are located rather than hard-coded. Writing the step numbers in by hand went wrong
+       immediately: `Math.floor(1.6 / (1 / 120))` is not the step a reader would guess, and an assertion that
+       names the wrong index tests the wrong frame while looking authoritative. */
+    const presses = frames
+      .filter((f) => f.input.jumpPressed)
+      .map((f) => f.step);
+    assert(
+      presses.length === 2,
+      `the script presses jump twice, found ${presses.length} at ${JSON.stringify(presses)}`,
+    );
+    assert(
+      !frames[presses[0]].state.character.grounded,
+      "the first press happens in mid-air, after the ledge, which is coyote time's case",
+    );
+    assert(
+      !frames[presses[1]].state.character.grounded,
+      "and the second also happens in mid-air, before landing, which is the buffer's case",
+    );
+    assert(
+      capJumpSteps()[0] === presses[0],
+      "the first jump fires on the press itself, because the coyote window was still open",
+    );
+    assert(
+      capJumpSteps()[1] > presses[1],
+      "the second fires later than its press, because it had to wait for the ground",
+    );
+    assert(
+      frames[capJumpSteps()[1]].state.jumped &&
+        frames[capJumpSteps()[1] - 1].state.character.grounded,
+      "and specifically on the first step after landing, which is what buffering means",
+    );
+
+    // Switching each window off breaks its own jump, and the build says how.
+    assert(
+      JSON.stringify(capJumpSteps({ coyote: 0 })) !==
+        JSON.stringify(capJumpSteps()),
+      "turning coyote time off must change the run",
+    );
+    const foot = (opts: Parameters<typeof capRunScript>[0]) =>
+      Math.min(
+        ...capRunScript(opts).map((f) => capBoxOf(f.state.character).min.y),
+      );
+    assert(
+      foot({}) > 0.9,
+      `with both windows on it never drops into the trench, but its foot reached ${foot({})}`,
+    );
+    assert(
+      near(foot({ coyote: 0 }), 0.5, 1e-9),
+      `with coyote time off it lands on the trench floor at 0.5, reached ${foot({ coyote: 0 })}`,
+    );
+    assert(
+      capJumpSteps({ buffer: 0 }).length === 1,
+      "with buffering off only the first jump happens",
+    );
+    assert(
+      capEndedAt({ buffer: 0 }).x < capEndedAt({}).x - 5,
+      `so it finishes more than five units short, finished at ${capEndedAt({ buffer: 0 }).x} against ${capEndedAt({}).x}`,
+    );
+    // It is stopped by the wall, exactly at the wall's face less its own half width.
+    assert(
+      near(
+        Math.max(...frames.map((f) => f.state.character.position.x)),
+        20.3125,
+        1e-9,
+      ),
+      "the furthest it gets is the wall's face minus a half width",
+    );
+
+    /* **The scrub bar has to change the picture too.** Same lesson as the charge scene's slider, learned the
+       same way. The run originally held the stick right until 2.95 s, so the character stood pressed against
+       the wall through 33 consecutive notches with nothing moving, and then released and stood still for the
+       last quarter second. Nothing numeric noticed, because the simulation was perfectly correct.
+     
+       Some repetition is legitimate - a notch of 0.01 s against a step of 1/120 s means two notches
+       occasionally land on the same frame, and a character genuinely stuck against a wall genuinely does not
+       move. The bound is on how *long* a stretch may draw the same thing. */
+    for (const opts of [
+      {},
+      { coyote: 0 },
+      { buffer: 0 },
+      { coyote: 0, buffer: 0 },
+    ]) {
+      const notches: number[] = [];
+      for (
+        let t = CAP_TIME_RANGE.min;
+        t <= CAP_TIME_RANGE.max + 1e-9;
+        t += CAP_TIME_RANGE.step
+      ) {
+        notches.push(Number(t.toFixed(4)));
+      }
+      let longest = 1;
+      let current = 1;
+      let endedAtNotch = 0;
+      let previous = capFrameSignature(notches[0], opts);
+      for (let i = 1; i < notches.length; i += 1) {
+        const signature = capFrameSignature(notches[i], opts);
+        if (signature === previous) {
+          current += 1;
+          if (current > longest) {
+            longest = current;
+            endedAtNotch = notches[i];
+          }
+        } else current = 1;
+        previous = signature;
+      }
+      assert(
+        longest <= 16,
+        `the scrub bar draws the same frame for ${longest} notches in a row up to t ${endedAtNotch} with ${JSON.stringify(opts)}, which reads as a broken control`,
+      );
+    }
+    // And each switch has to visibly change the run, or its checkbox is decorative.
+    for (const opts of [
+      { coyote: 0 },
+      { buffer: 0 },
+      { coyote: 0, buffer: 0 },
+    ]) {
+      let differing = 0;
+      for (
+        let t = CAP_TIME_RANGE.min;
+        t <= CAP_TIME_RANGE.max + 1e-9;
+        t += CAP_TIME_RANGE.step
+      ) {
+        const at = Number(t.toFixed(4));
+        if (capFrameSignature(at, {}) !== capFrameSignature(at, opts))
+          differing += 1;
+      }
+      assert(
+        differing > 60,
+        `turning off ${JSON.stringify(opts)} changes the picture at only ${differing} notches, which is too few to notice`,
+      );
+    }
+
+    /* At the character's own run speed the two resolutions agree completely, which is worth asserting rather
+       than hiding: the naive version's bugs need speed, and a demo that pretended otherwise would be lying. */
+    const gap = capDivergence();
+    assert(
+      gap.firstStep === null && gap.worstGap === 0,
+      `the two resolutions should agree over this run, but parted at step ${gap.firstStep}`,
+    );
+  }
+
+  // ---- The camera --------------------------------------------------------------------------
+
+  {
+    /* Four things you can round, and exactly one holds still. Measured in steady state, because a camera
+       catching up legitimately closes the gap - an earlier version of this measurement counted that as
+       jitter and declared the correct choice the worst one. */
+    const neither = capJitterFor("neither");
+    const cameraOnly = capJitterFor("camera only");
+    const both = capJitterFor("both");
+    const offset = capJitterFor("the offset");
+    assert(
+      neither.wobble < 1e-4,
+      `rounding nothing cannot wobble, wobbled ${neither.wobble}`,
+    );
+    assert(
+      !neither.wholePixels,
+      "but it never lands on a whole pixel, which is what resamples a sprite",
+    );
+    assert(
+      cameraOnly.wobble > 0.5 && cameraOnly.reversals > 10,
+      `rounding the camera alone must visibly wobble, wobbled ${cameraOnly.wobble} over ${cameraOnly.reversals} reversals`,
+    );
+    assert(
+      both.wobble > 0.5,
+      `rounding both separately still wobbles - the surprise of this Section - but wobbled ${both.wobble}`,
+    );
+    assert(both.wholePixels, "even though it does land on whole pixels");
+    assert(
+      offset.wobble === 0 && offset.reversals === 0,
+      `rounding the offset must hold perfectly still, wobbled ${offset.wobble}`,
+    );
+    assert(
+      offset.wholePixels,
+      "and land on whole pixels, which is why it is the answer",
+    );
+    /* The mechanism the jitter figure is really about: **a fractional advance being rounded.** At a whole
+       number of art pixels per frame there is nothing to round and every choice is clean, which is worth
+       pinning because it shows the wobble is not a camera problem at all. */
+    for (const n of [1, 2, 3, 4, 5, 6]) {
+      const speed = (n * CAP_JITTER_FPS) / CAP_ART_PIXELS;
+      assert(
+        capAdvancesWholePixels(speed),
+        `${speed} units per second should advance exactly ${n} pixels a frame`,
+      );
+      for (const snap of CAP_SNAPS) {
+        assert(
+          capJitterFor(snap, speed).wobble < 1e-4,
+          `nothing should shimmer at a whole-pixel advance, but "${snap}" wobbled at ${speed}`,
+        );
+      }
+    }
+    // And at a fractional advance, three of the four do shimmer while the offset never does.
+    for (const v of capJitterSpeeds()) {
+      const offsetWobble = capJitterFor("the offset", v).wobble;
+      assert(
+        offsetWobble === 0,
+        `rounding the offset must hold still at every speed, wobbled ${offsetWobble} at ${v}`,
+      );
+      if (capAdvancesWholePixels(v)) continue;
+      assert(
+        capJitterFor("camera only", v).wobble > 0.4,
+        `rounding the camera alone should visibly slide at ${v}, wobbled ${capJitterFor("camera only", v).wobble}`,
+      );
+    }
+    /* "neither" never wobbles either, so wobble alone does not separate it from the answer - it is separated
+       by never landing on a whole pixel, which is what resamples a sprite. Both halves are needed. */
+    assert(
+      capJitterFor("neither").wobble < 1e-4 &&
+        !capJitterFor("neither").wholePixels,
+      "rounding nothing is steady but permanently between pixels",
+    );
+    /* And the jitter slider has to change its picture, for the third time in this file. The traces are the
+       whole figure, so they are what gets compared. */
+    {
+      const speeds = capJitterSpeeds();
+      const signatures = speeds.map((v) => capJitterSignature(v));
+      for (let i = 1; i < signatures.length; i += 1) {
+        assert(
+          signatures[i] !== signatures[i - 1],
+          `the jitter scene draws the same traces at ${speeds[i - 1]} and ${speeds[i]} units per second`,
+        );
+      }
+      // The plotted traces have to stay inside the strip the scene reserves for them, which is one pixel either side.
+      for (const v of speeds) {
+        for (const snap of CAP_SNAPS) {
+          const values = capJitterTrace(snap, v, CAP_JITTER_FRAMES);
+          const mean = values.reduce((a, b) => a + b, 0) / values.length;
+          for (const value of values) {
+            assert(
+              Math.abs(value - Math.round(mean)) <= 1.6,
+              `a jitter trace leaves its strip at ${v} for "${snap}": ${value} against a baseline of ${Math.round(mean)}`,
+            );
+          }
+        }
+      }
+    }
+
+    // The camera is frame-rate independent, because it is Section 4.1's decay and nothing else.
+    const halfLife = 0.14;
+    assert(
+      near(capFollowCamera(0, 1, halfLife, halfLife), 0.5, 1e-12),
+      "one half-life closes exactly half the gap, whatever the frame rate",
+    );
+    for (const fps of [30, 60, 144, 240]) {
+      let at = 0;
+      for (let i = 0; i < fps; i += 1)
+        at = capFollowCamera(at, 1, 1 / fps, halfLife);
+      assert(
+        near(at, 1 - Math.pow(0.5, 1 / halfLife), 1e-9),
+        `a second of following should leave the same gap at every frame rate, ${fps} gave ${at}`,
+      );
+    }
+  }
+
+  // ---- The scenes' own arithmetic ------------------------------------------------------------
+
+  {
+    for (const cameraX of [7.75, 12, 16.25]) {
+      for (const p of [
+        { x: 4.5, y: 1.375 },
+        { x: 10, y: 0.5 },
+        { x: 20.3125, y: 3.5 },
+      ]) {
+        const s = capScreenOf(p, cameraX);
+        const back = capWorldOf(s.x, s.y, cameraX);
+        assert(
+          Math.hypot(back.x - p.x, back.y - p.y) < 1e-12,
+          `the run scene's round trip failed for (${p.x}, ${p.y}) at camera ${cameraX}`,
+        );
+      }
+    }
+    assert(
+      capScreenOf({ x: 0, y: 1 }, 8).y < capScreenOf({ x: 0, y: 0 }, 8).y,
+      "a higher world point is drawn nearer the top of the canvas",
+    );
+    // The camera clamp keeps the level's ends off the canvas edges, which is what it is for.
+    assert(
+      capClampCamera(0) === 7.75 && capClampCamera(100) === 16.25,
+      "the camera stops at both ends of the level",
+    );
+    assert(
+      near(capScreenOf({ x: 0, y: 0 }, capClampCamera(0)).x, 0, 1e-9),
+      "and at the left stop the level's edge is exactly the canvas edge",
+    );
+
+    // Nothing the run scene draws leaves the canvas, under any combination of switches.
+    for (const opts of [
+      {},
+      { coyote: 0 },
+      { buffer: 0 },
+      { coyote: 0, buffer: 0 },
+      { perAxis: false },
+    ]) {
+      for (const f of capRunScript(opts)) {
+        const r = capRectOf(
+          capBoxOf(f.state.character),
+          capClampCamera(f.state.cameraX),
+        );
+        assert(
+          r.x >= 0 &&
+            r.x + r.w <= CAP_VIEW.width &&
+            r.y >= 0 &&
+            r.y + r.h <= CAP_VIEW.height,
+          `the character is drawn off the canvas at step ${f.step} with ${JSON.stringify(opts)}`,
+        );
+      }
+    }
+  }
+  {
+    // The charge scene's own mapping, and that its subject is actually inside its frame.
+    for (const p of [
+      { x: 13, y: 1.375 },
+      { x: 15, y: 1.5 },
+      { x: 20.5, y: 3.5 },
+    ]) {
+      const s = capChargeScreenOf(p);
+      const back = capChargeWorldOf(s.x, s.y);
+      assert(
+        Math.hypot(back.x - p.x, back.y - p.y) < 1e-12,
+        `the charge scene's round trip failed for (${p.x}, ${p.y})`,
+      );
+    }
+    const resting = capChargeRectOf(capBoxOf(capChargeAtStep(6, true).end));
+    assert(
+      resting.x >= 0 &&
+        resting.x + resting.w <= CAP_CHARGE_VIEW.width &&
+        resting.y >= 0 &&
+        resting.y + resting.h <= CAP_CHARGE_VIEW.height,
+      "the resting character must be inside the charge scene's canvas",
+    );
+    // The step's face and the level's right edge both have to be visible, or the figure explains nothing.
+    for (const x of [15, 24]) {
+      const q = capChargeScreenOf({ x, y: 1.5 });
+      assert(
+        q.x > 20 && q.x < CAP_CHARGE_VIEW.width - 20,
+        `the charge scene must show x = ${x}, but it lands at ${q.x}`,
+      );
+    }
+    /* **The slider has to change the picture.** This is the assertion that was missing when the figure
+       shipped pixel-identical at every speed from 4 to 44: both resolutions stop in the same place, so the
+       only thing that differed was a number in the readout. Everything numeric passed and the control was
+       dead. Comparing the drawn geometry between adjacent slider positions is the only test for that. */
+    const speeds = capChargeSpeeds();
+    const signatures = speeds.map((v) => capChargeSignature(v));
+    for (let i = 1; i < signatures.length; i += 1) {
+      assert(
+        signatures[i] !== signatures[i - 1],
+        `the charge scene draws the same thing at ${speeds[i - 1]} and ${speeds[i]} units per second, so its slider does nothing there`,
+      );
+    }
+    assert(
+      new Set(signatures).size === signatures.length,
+      "and no two speeds anywhere on the slider may draw the same picture",
+    );
+
+    // Both paths have something on screen at every speed the slider offers.
+    for (const v of capChargeSpeeds()) {
+      for (const perAxis of [true, false]) {
+        const visible = capChargeAtStep(v, perAxis).points.filter((p) => {
+          const q = capChargeScreenOf(p);
+          return (
+            q.x >= 0 &&
+            q.x <= CAP_CHARGE_VIEW.width &&
+            q.y >= 0 &&
+            q.y <= CAP_CHARGE_VIEW.height
+          );
+        });
+        assert(
+          visible.length > 2,
+          `nothing to look at for ${perAxis ? "per-axis" : "combined"} at ${v} units per second`,
+        );
+      }
+    }
+  }
+  {
+    // The level itself, since every number above is measured against its geometry.
+    // 48 of bedrock, 44 of floor either side of the trench, 6 for the step and the wall's foot, 8 of wall.
+    assert(
+      CAP_SOLID_CELLS.length === 48 + 44 + 6 + 8,
+      `the level should have 106 solid cells, has ${CAP_SOLID_CELLS.length}`,
+    );
+    assert(
+      CAP_LANDMARKS.step.top - CAP_LANDMARKS.floorTop === 0.5,
+      "the step rises exactly one tile above the floor",
+    );
+    assert(
+      CAP_LANDMARKS.wall.top - CAP_LANDMARKS.floorTop === 2.5,
+      "and the wall is 2.5 units tall, which is above the jump's 2.4 and so cannot be cleared",
+    );
+    assert(
+      CAP_LANDMARKS.wall.top - CAP_LANDMARKS.floorTop > CAP_TUNING.jumpHeight,
+      "asserted against the tuning rather than the number, so retuning the jump cannot silently break it",
+    );
+    // Every coordinate the scenes assert against is a binary fraction, so nothing prints float dust.
+    for (const v of [
+      CAP_LANDMARKS.floorTop,
+      CAP_LANDMARKS.trench.from,
+      CAP_LANDMARKS.step.from,
+      CAP_LANDMARKS.step.top,
+      CAP_LANDMARKS.wall.from,
+      capChargeFace,
+    ]) {
+      assert(
+        Number.isInteger(v * 16),
+        `${v} is not a sixteenth, so it will print as float dust somewhere`,
+      );
+    }
   }
 };

@@ -1,0 +1,214 @@
+---
+title: Velocity, Gravity and Jump Arcs
+description: Position, velocity and acceleration with no calculus - two lines of arithmetic whose order changes the answer, and a jump specified by the height and time you actually want
+sidebar:
+  order: 18
+  label: "6.1  Velocity, Gravity and Jump Arcs"
+---
+
+import DemoPanel from "../../../../components/DemoPanel.astro";
+import CodePanel from "../../../../components/CodePanel.astro";
+import physicsSource from "../../../../lib/gamedev2d/physics2d.ts?raw";
+
+## What You'll Learn
+
+A physics step is two lines:
+
+```js
+v += a * dt;
+p += v * dt;
+```
+
+No calculus, and no need for any. But the **order of those two lines changes the answer**, both orders are
+wrong, and they are wrong by exactly the same amount in opposite directions — so their average is exact.
+That last fact is free, and it is the difference between a jump that lands on the height you asked for and
+one that lands near it.
+
+The second half of the Section is the parameterisation. Nobody wants to choose a gravity constant. They want
+a jump two units high that takes four tenths of a second to reach the top. Those are the same thing, and
+inverting the relationship is the move Section 4.1 made when it exposed a half-life instead of a decay rate.
+
+## Two Orders, Both Wrong
+
+**Explicit Euler** moves by the old velocity, then updates it. It crosses the whole step at the velocity from
+the _start_, so under gravity it travels too far upward.
+
+**Semi-implicit Euler** updates the velocity first, then moves by the new one. It crosses the whole step at
+the velocity from the _end_, so it comes out short. This is what nearly every engine does, chosen for its
+stability with springs and damping rather than its accuracy here.
+
+Each is off by
+
+$$
+\tfrac{1}{2}\,a\,\Delta t^2\,n \;=\; \tfrac{1}{2}\,a\,\Delta t\,t
+$$
+
+in opposite directions. Two things worth reading off that: the error grows **linearly** in time, not
+quadratically, and it is proportional to the step size — halve the timestep and you halve the drift.
+
+<DemoPanel name="2d-stepper" />
+
+The purple crosses are the average of the orange and blue traces, and they land on the grey curve. That is
+not approximately true; the build asserts three separate forms of it to floating-point dust across several
+accelerations and step sizes:
+
+- the two errors sum to zero
+- their average equals the closed form $p_0 + v_0t + \tfrac{1}{2}at^2$
+- **the midpoint step is that average, computed directly**
+
+## The Fix Costs One Multiply
+
+$$
+p \mathrel{+}= \left(v + \tfrac{1}{2}a\,\Delta t\right)\Delta t
+$$
+
+Use the _average_ of the start and end velocities to cross the step, which is what the velocity actually
+averages when acceleration is constant. For constant acceleration this is **not an approximation** — it
+reproduces the closed form exactly at every step, at every step size. Also called velocity Verlet.
+
+One multiply and one add. There is no accuracy-versus-speed trade here to agonise over.
+
+:::note[Why engines still ship semi-implicit Euler]
+Because acceleration is usually _not_ constant. A spring's force depends on position, so the "average
+velocity over the step" is no longer known in advance and the midpoint trick stops being exact. Semi-implicit
+Euler is chosen for being **stable** under those forces — it does not blow up — and stability matters more
+than accuracy when a simulation might otherwise explode.
+
+Gravity, though, is constant. If the only acceleration on your projectile is gravity, the exact version is
+available and free.
+:::
+
+## A Jump You Can Describe
+
+Solve the closed form twice — the apex is where $v_0 + at = 0$, and the height there is $-v_0^2/2a$ — and you
+get the two numbers a loop needs from the two a person can picture:
+
+$$
+v_0 = \frac{2h}{t_{\text{up}}}
+\qquad
+a = -\frac{2h}{t_{\text{up}}^2}
+$$
+
+So "two units high, four tenths of a second to the top" is a launch speed of $10$ and a gravity of $-25$.
+The round trip is exact, and the build checks it both ways on five different jumps.
+
+<DemoPanel name="2d-airtime" />
+
+This is the whole reason to do the algebra. `gravity = -25` is a number nobody can picture; a jump height and
+a rise time can be tuned by someone who has never opened the physics code.
+
+## The Jump That Comes Out Short
+
+<DemoPanel name="2d-leap" />
+
+Ask for two units at 60 fps with semi-implicit Euler and you get **1.9167** — short by $0.0833$, which is
+**4.17%** of the jump. The drift formula predicts that number before the arc is stepped. Explicit Euler
+overshoots by exactly the same amount. The midpoint step lands on $2$.
+
+Drop the frame rate in the scene and watch the gap widen: at 10 fps that same jump reaches $1.5$, a quarter
+short.
+
+:::caution[There are two different reasons a jump comes out short, and only one is fixable]
+I wrote an assertion that the midpoint step always reaches the requested height. It failed at 10 fps on a
+$0.25$ s rise — and the code was right.
+
+The apex falls **halfway between frames 2 and 3**. The integrator is exact at every step it takes; it simply
+never takes one at the top. That is a sampling problem, not a drift problem, and it costs
+
+$$
+\tfrac{1}{2}|a|\,\delta^2
+$$
+
+where $\delta$ is the gap to the nearest frame. **No integrator can fix it**, because nothing is being
+computed incorrectly.
+
+The two have different signatures, which is how you tell them apart: drift is **linear** in the step size and
+sampling is **quadratic** in it. Both are asserted. It is the same distinction Section 4.1 drew between
+frame-rate dependence and sampling coarseness, and it took a failing test to notice it here.
+:::
+
+## Terminal Velocity Is Section 4.1 Again
+
+Gravity with linear drag:
+
+$$
+\frac{dv}{dt} = a - kv
+\qquad
+v_\infty = \frac{a}{k}
+$$
+
+The speed at which drag exactly cancels gravity. With a gravity of $-25$ and a drag of $4$, terminal velocity
+is $-6.25$, and the approach to it is
+
+$$
+v(t) = v_\infty + (v_0 - v_\infty)e^{-kt}
+$$
+
+which is **`decay` from Section 4.1 with different labels on the variables**. Same equation, same
+frame-rate independence, same exponential approach that never quite arrives. Noticing that the two are the
+same thing is worth more than either alone.
+
+:::tip[Or just clamp the fall speed]
+`Math.max(v, -limit)` is one comparison. Not physical, and often the better choice: it gives an exact maximum
+fall speed you can design a level around, and it **never touches a rise**.
+
+Drag does. Drag slows the ascent as well, so a jump tuned before adding it comes out short afterwards — which
+is the Section's own theme arriving from a third direction.
+:::
+
+## Two Things Platformers Do That Physics Does Not
+
+**Different gravity going up and coming down.** Each half is its own parabola through the same apex, so each
+half gets the same formula with its own time. Rising in $0.4$ s and falling in $0.28$ s makes the fall
+$2.0408$ times stronger — which is $(0.4/0.28)^2$, and knowing that the ratio is a _square_ is what makes
+tuning it by feel less mysterious. Completely unphysical, and it is what makes a jump feel controllable.
+
+**Cutting the jump short on release.** Scale the upward velocity down. The thing to know is that height goes
+as the **square** of the velocity, so keeping half the speed keeps a **quarter** of the height — which is why
+a tapped jump feels so much shorter than expected. And guard it: applied while falling, it would slow the
+fall, which reads as the character snagging on something.
+
+<CodePanel
+  code={physicsSource}
+  lang="ts"
+  file="src/lib/gamedev2d/physics2d.ts"
+  label="Three integrators, the drift formula, and a jump solved backwards"
+/>
+
+:::note[In an engine]
+Godot: `CharacterBody2D` gives you `velocity` and expects you to integrate it yourself, so all of the above
+applies directly — `velocity.y += gravity * delta` is semi-implicit Euler and comes out short. The project
+setting is `physics/2d/default_gravity`. `RigidBody2D` integrates for you and
+`linear_damp` is the drag above. Godot's own docs use the semi-implicit form in every example, which is worth
+knowing rather than copying blindly.
+
+Unity: `Rigidbody2D.gravityScale` scales `Physics2D.gravity` per body, and `linearDamping` is the drag term.
+Unity's integrator is semi-implicit, and `Rigidbody2D.velocity` is read after the step. For a character
+controller you are integrating by hand again, in `FixedUpdate` where `Time.fixedDeltaTime` is constant —
+which is Section 6.1's arithmetic with a guaranteed `dt`.
+
+Both engines run physics on a **fixed** timestep, which is what makes the drift a constant offset you can
+tune around rather than something that varies with the frame rate. That is why it usually goes unnoticed:
+it is consistently wrong, and consistency is most of what feels right.
+:::
+
+## Where This Shows Up
+
+- **The capstone**, where the character's jump is tuned by height and airtime and integrated on a fixed step.
+- **Section 5.4's tunnelling**, which is this Section's velocity meeting that Section's thin wall.
+- **Section 4.1's delta time and decay**, which terminal velocity turns out to be.
+- **Section 4.3's arc**, which was a Bezier where this one is a parabola — and a parabola _is_ a quadratic
+  Bezier, which is worth noticing.
+- **Anything thrown, dropped, or launched.**
+
+:::note[The one thing to take away]
+Two lines of arithmetic, and their order matters: explicit Euler overshoots, semi-implicit undershoots, and
+both are off by $\tfrac{1}{2}a\,\Delta t\,t$ — linear in time, proportional to the step. Their average is the
+closed form **exactly**, and the midpoint step $p \mathrel{+}= (v + \tfrac{1}{2}a\Delta t)\Delta t$ is that
+average for one extra multiply. Specify jumps as a height and a rise time, not as a gravity constant:
+$v_0 = 2h/t$ and $a = -2h/t^2$. Expect the stepped result to be short — $4.17\%$ at 60 fps for a two-unit
+jump — and know that part of any remaining shortfall is **sampling**, not drift, because the apex may fall
+between frames where nothing can observe it. Terminal velocity is $a/k$ and its approach is Section 4.1's
+decay; a fall-speed clamp is the blunt alternative that never slows a rise. And cutting a jump short scales
+the height by the **square** of what you scale the velocity by.
+:::

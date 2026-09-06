@@ -195,6 +195,24 @@ export default defineConfig({
                     },
                   ],
                 },
+                {
+                  label: "Part 6: Physics",
+                  collapsed: false,
+                  items: [
+                    {
+                      slug: "applied/2d-game-development/velocity-gravity-and-jump-arcs",
+                    },
+                  ],
+                },
+                {
+                  label: "Capstone",
+                  collapsed: false,
+                  items: [
+                    {
+                      slug: "applied/2d-game-development/capstone-2d-platformer-character",
+                    },
+                  ],
+                },
               ],
             },
             {
@@ -396,7 +414,10 @@ export default defineConfig({
                   'circles-and-boxes':                         [5, 'Collision'],
                   'rays-segments-and-closest-points':          [5, 'Collision'],
                   'polygons-and-the-separating-axis':          [5, 'Collision'],
-                  'collision-response-and-sliding':            [5, 'Collision']
+                  'collision-response-and-sliding':            [5, 'Collision'],
+                  'velocity-gravity-and-jump-arcs':            [6, 'Physics']
+                  /* The capstone is deliberately absent here too, for the same reason as the 3D one:
+                     it belongs to no Part, so the badge should not invent a Part number for it. */
                 },
                 'applied/3d-game-development': {
                   'points-vectors-and-coordinate-conventions': [1, 'Vectors and Spatial Reasoning'],

@@ -1,0 +1,254 @@
+---
+title: "Capstone: 2D Platformer Character"
+description: Every piece of this Module assembled into one character - input, a fixed timestep, semi-implicit velocity, move-and-slide against tiles, coyote time, jump buffering, and a camera that follows without jitter
+sidebar:
+  order: 19
+  label: "Capstone  2D Platformer Character"
+---
+
+import DemoPanel from "../../../../components/DemoPanel.astro";
+import CodePanel from "../../../../components/CodePanel.astro";
+import platformerSource from "../../../../lib/gamedev2d/platformer2d.ts?raw";
+
+## What You'll Learn
+
+Nothing. There is no new mathematics on this page.
+
+That is the point of it. A platformer character is made entirely out of the eighteen Sections behind it, and
+every piece arrives already understood. What is new is the **order things happen in** — and it turns out that
+once each individual piece is correct, the order is where all the remaining bugs live.
+
+| Piece                                                           | From                 |
+| :-------------------------------------------------------------- | :------------------- |
+| input turned into a direction, without the diagonal bug         | Section 1.3          |
+| a fixed timestep, an accumulator, and a cap                     | Section 4.1          |
+| coyote time and jump buffering, as clamped remaps               | Section 4.2          |
+| an axis-aligned box and its overlap test                        | Section 5.1          |
+| the first solid face in a swept path                            | Sections 5.2 and 5.4 |
+| killing the velocity into a surface, and a contact skin         | Section 5.4          |
+| semi-implicit velocity, and a jump asked for by height and time | Section 6.1          |
+| a camera that follows by exponential decay                      | Sections 3.3 and 4.1 |
+
+## One Step, In Order
+
+```js
+// timers, then velocity, then the move, then the camera
+timeSincePressed = pressed ? 0 : timeSincePressed + dt;
+velocity.x = stick * runSpeed;
+if (canJump(...)) velocity.y = launch;
+velocity.y += gravity * dt; // semi-implicit: velocity first
+moveOneAxis("x", velocity.x * dt);
+moveOneAxis("y", velocity.y * dt);
+camera = follow(camera, position.x, dt);
+```
+
+The camera moves **last**, after the character has settled. A camera that chases a position which is about to
+be corrected by a collision produces jitter that looks exactly like a camera problem and is not one.
+
+<DemoPanel name="2d-platformer" />
+
+Both jumps in that run are **deliberately mistimed**. The first is pressed after the character has already
+walked off the ledge; the second before it has landed. Switch either window off and watch its own jump stop
+happening — with coyote time off the character drops into the trench, and with buffering off it finishes
+$5.5$ units short of where it should.
+
+## Coyote Time and Jump Buffering Are Section 4.2
+
+Both are the same shape: _how long ago did the thing happen, as a fraction of a window, clamped_. Which is
+`inverseLerp` and `clamp01` doing a job that does not look like interpolation at all.
+
+$$
+\text{left} = \text{clamp}_{01}\!\left(1 - \frac{t_{\text{since}}}{\text{window}}\right)
+$$
+
+**Coyote time** lets a jump work for a moment _after_ walking off a ledge. **Jump buffering** lets a jump
+pressed slightly _before_ landing fire on touchdown. Six frames of grace at 60 fps, and they are the cheapest
+thing that makes a platformer feel fair.
+
+They have to be tested **together**, in one function. A buffered press landing inside the coyote window is
+exactly the case both features exist to catch, and testing them separately is how that case gets missed.
+
+:::caution[Switching the feature off switched it on forever]
+The obvious way to disable coyote time is to set its window to zero. That inverts it.
+
+Section 4.2's `inverseLerp` returns `0` for an empty range rather than dividing by zero. That is the right
+answer there, and exactly the wrong one here: $1 - 0 = 1$, so a window of zero reports the coyote time as
+**permanently full**. The character gains an unlimited mid-air jump.
+
+Found by writing the off switch, not by reasoning about it. Both windows now carry an explicit zero branch,
+and the build asserts that a zero window is closed.
+:::
+
+## Why You Resolve One Axis At A Time
+
+This is the technique the whole capstone turns on, and it is not obvious.
+
+Move diagonally and then ask "which way do I push out" and you need Section 5.3's minimum translation vector.
+Against a grid of tiles that answer is **ambiguous at every corner**, because the shallower axis is not
+always the right one.
+
+Split the move and the ambiguity disappears. Move horizontally: any overlap must be resolved horizontally,
+because vertically nothing changed. Then move vertically and resolve vertically. **The axis to push along is
+known before the test is run.**
+
+<DemoPanel name="2d-peraxis" />
+
+The naive version is correct up to $44$ units per second, which is why it ships. At $45$ it loses the
+character out of the level, and it fails at $46$ of the $87$ speeds on that slider. Resolving one axis at a
+time fails at none of them, and stops at exactly $14.8125$ — the step's face less a half width — at every
+speed from $1$ to $200$.
+
+:::note[That failure is not tunnelling, and the distinction matters]
+One step at $45$ units per second covers $0.375$ units. The wall is a whole unit thick, so nothing is being
+stepped over. The axis choice is simply wrong.
+
+Tunnelling starts at $120$ units per second, where one step first exceeds the wall's thickness. Attributing
+the earlier failure to tunnelling would point you at substepping, which is Section 5.4's fix for a different
+problem and would not help here.
+:::
+
+## Resolve Against The Swept Path, Not The Destination
+
+It took three attempts to get the per-axis move right, and the two wrong versions are more instructive than
+the correct one.
+
+**Snapping to each overlapping tile in turn** makes the answer depend on the iteration order of the tile
+scan. A character taller than one tile, moving beside a column of them, was snapped to the top of the
+**highest** tile it touched — teleported up the wall, then walked off the end of the level.
+
+**Taking the nearest face over the destination box** fixes that and still leaves a fast mover placed
+_inside_ a tile it stepped over: a move of $0.875$ units onto a $0.5$ unit grid lands past the first column,
+so the nearest face found belongs to the _second_ one. Over 784 configurations of body size, speed and step
+size, that happened 154 times.
+
+**Sweeping the region between the two positions** is correct, and it removes tunnelling with it — a move of
+any length is stopped by the first solid face in its path, because that face lies inside the swept region
+however long the step was. Which is Section 5.2's first-blocker over Section 5.4's swept motion, on one axis
+where both are exact.
+
+## The Least Glamorous Bug In The Module
+
+$$
+1.0 + 0.9 - 0.9 = 0.9999999999999999
+$$
+
+A character $0.9$ units from centre to foot, standing on a floor whose top is at $1.0$, has its centre at
+$1.9$ — and its foot one bit **below** the floor.
+
+So its next **horizontal** move finds itself overlapping the floor tile it is standing on, resolves against
+that tile sideways, and snaps the character back to the tile's left edge. It walks backwards, off the level,
+and out of the world. Measured across 504 configurations: 109 of them, and every one had a body half-height
+whose sum with the floor height was not exactly representable.
+
+The fix is Section 5.4's skin, moved onto the **test** instead of the position: resolve exactly to the face,
+and treat a contact thinner than $10^{-6}$ as no contact at all. Keeping the resolution exact is worth the
+swap, because it leaves the character on round numbers the build can assert.
+
+The skin has to beat floating-point noise and lose to one step's fall of $0.00288$ units, or a resting
+character either collides with the ground sideways or never notices it is standing on it. Both bounds are
+checked.
+
+## The Fixed Timestep Needs A Cap
+
+Section 4.1 made every formula frame-rate _independent_. An accumulator makes the whole simulation
+frame-rate **identical**, which is stronger: the same inputs give the same result on any machine, which is
+what makes the run above a recording rather than a performance.
+
+**The cap is not optional.** Without it, one slow frame asks for many steps, those steps take longer than a
+frame, and that asks for more steps next time. A half-second hitch asks for $60$ steps at 120 Hz. That is a
+hang, not a slowdown.
+
+:::caution[Report the dropped time and then carry it anyway, and the spiral comes back quietly]
+The first version of the accumulator capped the steps, reported the time it had dropped, and left that time
+in the carry. So the backlog survived: every frame after the hitch was capped too, and the game crawled at
+eight steps a frame until it had worked the debt off.
+
+Subtracting the dropped time is what makes recovery immediate — and what makes "the carry is always less
+than one step" unconditionally true. The build sweeps 40,000 frame times against that invariant, and against
+the stronger one that every millisecond is either spent, dropped, or carried, with nothing invented.
+:::
+
+## The Camera Shivers For A Reason You Would Not Guess
+
+Pixel-snapping a camera is standard practice for pixel art. There are four things you could round, and only
+one of them holds still.
+
+<DemoPanel name="2d-jitter" />
+
+Each row is the character's apparent distance from the camera, frame by frame, against a grid of whole art
+pixels. Rounding both positions separately looks like it should work and does not: two independently rounded
+numbers whose true difference is constant have a difference that alternates between the two integers either
+side of it, so the character still slides a **full pixel** back and forth against a rock-steady background.
+Rounding the camera alone is worse — it slides _backwards_ while the character walks forwards.
+
+Round the character's **distance from the camera** instead and it holds perfectly still, on a whole pixel, at
+every one of the 89 speeds the slider offers. Rounding nothing is equally steady but sits permanently between
+two pixels, which is what resamples a sprite — so both halves of the test matter.
+
+:::note[The wobble is not really about the camera]
+Land the slider on $1.875$, $3.75$ or $5.625$ units per second and **every row goes still**, including the two
+broken ones. Those are the speeds where the character advances a whole number of art pixels per frame: at $32$
+pixels to the unit and 60 frames a second, $v = 1.875n$.
+
+So this is not a camera bug. It is a **fraction being rounded**, and the camera is only where the fraction
+shows up. That reframing is worth more than the fix, because it says the same artifact waits in anything whose
+motion is not a whole number of pixels per frame.
+:::
+
+The camera itself is Section 4.1's exponential decay, so a half-life of $0.14$ s leaves $92.08\%$ of the gap
+after one frame at 60 fps and the same fraction per second at any frame rate.
+
+<DemoPanel name="2d-pieces" />
+
+## At Ordinary Speeds, Everything Naive Works
+
+Worth saying plainly, because it is why these bugs ship. Over the whole scripted run above, at the
+character's own run speed of $6$ units per second, per-axis and combined resolution agree **exactly** —
+`firstStep: null`, zero divergence at every one of the 348 steps. The build asserts that too.
+
+The naive version is not obviously wrong. It is wrong at the speeds you add later: a dash, a knockback, a
+falling platform, a frame that took 30 ms. That is the shape of most of the bugs on this page.
+
+<CodePanel
+  code={platformerSource}
+  lang="ts"
+  file="src/lib/gamedev2d/platformer2d.ts"
+  label="The whole character, composed from the eighteen Sections before it"
+/>
+
+:::note[In an engine]
+Godot: `CharacterBody2D.move_and_slide()` is the per-axis move plus the velocity kill, and
+`move_and_collide()` is the single swept step underneath it. `floor_snap_length` and `safe_margin` are the
+contact skin above. Coyote time and buffering are yours to write; there is no built-in.
+
+Unity: `Rigidbody2D` with a kinematic body, or a `CharacterController` in 3D, gives you `Move()` with the
+same swept semantics. `Physics2D.defaultContactOffset` is the skin, `Time.fixedDeltaTime` is the fixed step,
+and `FixedUpdate` is the accumulator already written for you.
+
+Both engines cap their step count — Unity's is `Time.maximumDeltaTime`, and it exists for exactly the spiral
+above.
+:::
+
+## Where This Came From
+
+Every Section, which is the point:
+
+- **Section 1.3** — the direction, normalized, so a diagonal is not faster.
+- **Sections 3.3 and 4.1** — the camera's decay, and the fixed step that makes the run reproducible.
+- **Section 4.2** — `clamp01` and `inverseLerp`, doing the two forgiveness windows.
+- **Section 5.1** — the box, the overlap test, and the clamp that has now done four jobs.
+- **Section 5.2** — the first blocker along a path.
+- **Section 5.3** — the minimum translation vector, and the reason this page does not use it.
+- **Section 5.4** — the velocity kill, the skin, and tunnelling.
+- **Section 6.1** — semi-implicit velocity, and a jump specified as a height and a rise time.
+
+:::note[The one thing to take away]
+Assembling correct pieces is its own problem. Every function on this page was already verified by the Section
+that introduced it, and composing them still produced four real bugs: an off switch that inverted because
+`inverseLerp` guards an empty range; an accumulator that reported dropping time and carried it anyway; a
+per-axis move that resolved against the destination instead of the swept path; and a character whose foot
+sat one floating-point bit below the floor it was standing on.
+
+None of those are visible in a picture, and none of them are wrong mathematics. They are wrong **order** and
+wrong **edge cases** — which is why the build checks the composition and not just the parts.
+:::
