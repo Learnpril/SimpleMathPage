@@ -73,14 +73,30 @@ export const ADS_ENABLED =
   import.meta.env.PUBLIC_ADS_ENABLED === "true" ||
   import.meta.env.PUBLIC_ADS_ENABLED === true;
 
-/** The AdSense publisher ID, e.g. `ca-pub-0000000000000000`. Empty until approval. */
+/** The AdSense publisher ID, e.g. `ca-pub-0000000000000000`. Set in `netlify.toml`. */
 export const ADSENSE_CLIENT = import.meta.env.PUBLIC_ADSENSE_CLIENT ?? "";
 
 /**
- * Ads only render when the flag is on **and** a publisher ID exists.
+ * **Two switches, deliberately separate.** This one puts the AdSense loader script in the
+ * head of every page, and it needs only a publisher ID.
  *
- * Both halves matter: flipping the flag without an ID would emit an `ins` element with no
- * client attribute, which renders as a blank reserved box and fails the "no empty giant
- * boxes" rule for nothing.
+ * Google requires the script site-wide to review the site, and it has to be there before
+ * any ad exists - so it cannot be tied to `PUBLIC_ADS_ENABLED`, which governs whether
+ * visible ad units render. Setting only the ID gives the reviewer what it needs and changes
+ * nothing a reader sees.
+ *
+ * **The script alone does not place ads, but it is the same script Auto ads uses.** Whether
+ * ads appear automatically is a toggle in the AdSense dashboard, not something this codebase
+ * controls. Keeping Auto ads off there is the only thing standing between this script and an
+ * ad landing on top of a quiz button, so leave it off.
+ */
+export const ADSENSE_SCRIPT_ENABLED = ADSENSE_CLIENT.length > 0;
+
+/**
+ * And this one governs **visible ad units**: reserved slots, `ins.adsbygoogle` elements.
+ *
+ * Needs the flag *and* an ID. Both halves matter: flipping the flag without an ID would emit
+ * an `ins` element with no client attribute, which renders as a blank reserved box and fails
+ * the "no empty giant boxes" rule for nothing.
  */
 export const ADS_LIVE = ADS_ENABLED && ADSENSE_CLIENT.length > 0;

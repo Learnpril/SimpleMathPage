@@ -1,38 +1,52 @@
 # Advertising
 
-Advertising on this site is **off**, and off is the committed state. With the flag unset
-the site makes no third-party advertising request, loads no Google script, and renders no
-reserved boxes. Nothing about the page changes.
+**No ad unit renders on this site.** The AdSense loader script is present in the head of
+every page, because a Google review needs it there. Nothing a reader sees has changed: no
+reserved boxes, no `ins` elements, no visible advertising anywhere.
 
-This document is how to turn it on, and what not to do afterwards.
+This document is how the two switches work, and what not to do afterwards.
 
-## Flipping the flag
+## Two switches, doing different jobs
 
-Two environment variables, both required. Setting one without the other does nothing,
-which is deliberate — a flag with no publisher ID would emit an ad element with no account
-attached and render as a blank frame.
+| Variable                | Current                   | What it does                                                     |
+| :---------------------- | :------------------------ | :--------------------------------------------------------------- |
+| `PUBLIC_ADSENSE_CLIENT` | `ca-pub-4826012304343164` | Puts the AdSense **loader script** in the head of every page     |
+| `PUBLIC_ADS_ENABLED`    | unset, so `false`         | Renders **visible ad units** — reserved slots and `ins` elements |
 
-| Variable                | Off (committed) | On                        |
-| :---------------------- | :-------------- | :------------------------ |
-| `PUBLIC_ADS_ENABLED`    | `false`         | `true`                    |
-| `PUBLIC_ADSENSE_CLIENT` | empty           | `ca-pub-0000000000000000` |
-
-Locally, put them in `.env`. On Netlify, set them under **Site configuration →
-Environment variables** and redeploy — Astro inlines `PUBLIC_` variables at build time, so
-changing them requires a rebuild, not just a restart.
-
-The logic is in `src/lib/site.ts`:
+They are separate on purpose. A review needs the script site-wide before any ad exists, so
+the script cannot depend on the flag that decides whether ads show. Right now the script
+ships and no ad unit does.
 
 ```ts
+export const ADSENSE_SCRIPT_ENABLED = ADSENSE_CLIENT.length > 0;
 export const ADS_LIVE = ADS_ENABLED && ADSENSE_CLIENT.length > 0;
 ```
+
+The publisher ID is set in **`netlify.toml`** under `[build.environment]` rather than in the
+Netlify dashboard, so it is version-controlled and shows up in a diff. Astro inlines
+`PUBLIC_` variables at build time, so either way a change needs a rebuild, not a restart. The
+ID is not a secret — it ships in the page source by design.
+
+## Auto ads: the code cannot protect you here
+
+**The loader script is the same script Auto ads uses.** There is no separate Auto ads tag to
+withhold. Whether Google places ads automatically is a toggle in the AdSense dashboard, and
+nothing in this repository can override it.
+
+So: **leave Auto ads off in the dashboard.** That toggle is the only thing standing between
+this script and an ad landing on top of a quiz button or between a question and its answer
+key. Every protection this codebase has — `NO_AD_ROUTES`, the slot placed above the
+pagination, the reserved heights — Auto ads bypasses completely.
 
 ## Where the publisher ID goes
 
 **Three places, and one of them is spelled differently.**
 
-1. `PUBLIC_ADSENSE_CLIENT` — **with** the `ca-` prefix: `ca-pub-0000000000000000`.
-2. `public/ads.txt` — **without** it: `google.com, pub-0000000000000000, DIRECT, f08c47fec0942fa0`.
+1. `PUBLIC_ADSENSE_CLIENT` in `netlify.toml` — **with** the `ca-` prefix:
+   `ca-pub-4826012304343164`.
+2. `public/ads.txt` — **without** it:
+   `google.com, pub-4826012304343164, DIRECT, f08c47fec0942fa0`. Still commented out; uncomment
+   after approval.
 3. Each ad unit's slot ID goes on the `AdSlot` component's `slot` prop. Those are created
    per-unit in the AdSense dashboard and are not the same thing as the publisher ID.
 

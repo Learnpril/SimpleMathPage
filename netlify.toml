@@ -4,6 +4,18 @@
 [build.environment]
   NODE_VERSION = "20"
 
+  # AdSense publisher ID. Lives here rather than in the Netlify dashboard so it is
+  # version-controlled and reviewable, and rather than in the pages so it appears
+  # in exactly one place. It is not a secret: it ships in the page source by design.
+  #
+  # Astro inlines PUBLIC_ variables at build time, so this must be set for the build
+  # that produces the deploy - an unset variable means no script in the head.
+  #
+  # This alone puts the AdSense loader script on every page, which is what a review
+  # needs. It does NOT place any ad unit: that is PUBLIC_ADS_ENABLED, which stays
+  # unset and therefore false. See ADS.md.
+  PUBLIC_ADSENSE_CLIENT = "ca-pub-4826012304343164"
+
 [[headers]]
   for = "/*"
   [headers.values]
