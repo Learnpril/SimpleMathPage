@@ -1,0 +1,91 @@
+---
+/**
+ * One reserved advertising slot, feature-flagged off by default.
+ *
+ * Three things this deliberately does:
+ *
+ * 1. **Renders absolutely nothing when ads are off.** Not a hidden box, not a placeholder
+ *    with a border - no element at all. A reserved empty frame on a site with no ads is
+ *    just a hole in the page.
+ * 2. **Reserves its height when ads are on**, so the content below does not jump when the
+ *    ad fills. That shift is the single biggest layout-stability cost of display ads and
+ *    it is avoidable with one CSS property.
+ * 3. **Refuses to render on routes that must stay clean** - the legal pages, contact, and
+ *    anything account-related. That list lives in `src/lib/site.ts`, not here, so the
+ *    Footer and any future slot cannot disagree about it.
+ *
+ * Manual slots only. There is no Auto Ads tag anywhere in this codebase: automatic
+ * placement is what drops an ad on top of a quiz button or between a question and its
+ * answer key, and this site has a lot of both.
+ */
+import { ADS_LIVE, ADSENSE_CLIENT, routeAllowsAds } from "../lib/site.ts";
+
+interface Props {
+  /** The AdSense ad unit ID for this position. Created in the AdSense dashboard after approval. */
+  slot?: string;
+  /** Where on the page this sits, used only for the reserved height. */
+  placement?: "in-article" | "after-content";
+}
+
+const { slot, placement = "in-article" } = Astro.props;
+
+/* Left undefined rather than empty so Astro omits the attribute entirely. An empty
+   `data-ad-slot=""` is not a valid ad unit and would be easy to mistake for a configured
+   one; a missing attribute is visibly unconfigured. Real IDs come from the AdSense
+   dashboard after approval - see ADS.md. */
+const adSlot = slot && slot.length > 0 ? slot : undefined;
+
+/* Reserved heights are deliberately modest. A 250px block in the middle of a lesson is a
+   wall; these are big enough for a standard responsive unit and small enough that a reader
+   scrolling a worked example does not lose their place. */
+const MIN_HEIGHT = placement === "after-content" ? 120 : 100;
+
+const show = ADS_LIVE && routeAllowsAds(Astro.url.pathname);
+---
+
+{
+  show && (
+    <aside class="ad-slot" data-placement={placement} aria-label="Advertisement">
+      <span class="ad-slot-label">Advertisement</span>
+      <ins
+        class="adsbygoogle"
+        style={`display:block;min-height:${MIN_HEIGHT}px`}
+        data-ad-client={ADSENSE_CLIENT}
+        data-ad-slot={adSlot}
+        data-ad-format="auto"
+        data-full-width-responsive="true"
+      />
+      <script is:inline>
+        (window.adsbygoogle = window.adsbygoogle || []).push({});
+      </script>
+    </aside>
+  )
+}
+
+<style define:vars={{ minHeight: `${MIN_HEIGHT}px` }}>
+  .ad-slot {
+    display: block;
+    margin: 2rem 0;
+    /* Reserved before the ad arrives, so nothing below it moves when it does. */
+    min-height: var(--minHeight);
+    border-top: 1px solid var(--sl-color-gray-6, #30363d);
+    border-bottom: 1px solid var(--sl-color-gray-6, #30363d);
+    padding: 0.5rem 0;
+  }
+
+  /* Labelled, because an unlabelled ad next to a worked example reads as part of the lesson. */
+  .ad-slot-label {
+    display: block;
+    font-size: 0.7rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--sl-color-gray-3, #8b949e);
+    margin-bottom: 0.4rem;
+  }
+
+  @media print {
+    .ad-slot {
+      display: none;
+    }
+  }
+</style>

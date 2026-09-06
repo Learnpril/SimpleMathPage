@@ -1,0 +1,31 @@
+# ads.txt for momsbasementuniversity.com
+# https://iabtechlab.com/ads-txt/
+#
+# This file declares who is authorised to sell advertising on this domain. It is
+# served at https://momsbasementuniversity.com/ads.txt because everything in
+# public/ is copied to the site root at build time.
+#
+# ---------------------------------------------------------------------------
+# TODO: this file is a stub and authorises nobody yet.
+#
+# After AdSense approval, replace the placeholder below with the real line from
+# the AdSense dashboard (Account -> Settings -> Account information gives the
+# publisher ID). It looks exactly like this, with your own ID:
+#
+#   google.com, pub-0000000000000000, DIRECT, f08c47fec0942fa0
+#
+# Notes worth knowing before editing:
+#   - The publisher ID here is written WITHOUT the "ca-" prefix. The environment
+#     variable PUBLIC_ADSENSE_CLIENT does include it, as "ca-pub-...". They are
+#     the same account, spelled two different ways, and mixing them up is the
+#     usual reason ads.txt reads as invalid.
+#   - f08c47fec0942fa0 is Google's own certification authority ID. It is the same
+#     for every publisher; it is not a secret and not specific to you.
+#   - Leaving this file as a stub is safe. An ads.txt that authorises nobody is
+#     treated the same as no ads.txt at all, so it cannot cause a problem while
+#     advertising is switched off.
+#   - Do not delete the file to "start clean" later. Google caches ads.txt, and a
+#     file that appears and disappears is worse than one that is empty.
+# ---------------------------------------------------------------------------
+
+# placeholder - no authorised sellers yet

@@ -39,6 +39,9 @@ export default defineConfig({
       components: {
         Head: "./src/components/Head.astro",
         Header: "./src/components/Header.astro",
+        // Carries the About/Contact/Privacy/Terms links and the copyright on every route,
+        // which is what makes them genuinely site-wide rather than added page by page.
+        Footer: "./src/components/Footer.astro",
       },
       // Two top-level tracks. Core keeps its original URLs (/arithmetic/... rather
       // than /core/arithmetic/...) because every section-detection script below reads
@@ -562,13 +565,17 @@ export default defineConfig({
               title.textContent = 'Jump to Subject';
               panel.appendChild(title);
 
-              /* The desktop nav is hidden on mobile, so the two top-level hubs and
-                 About need a home. This panel is the only always-reachable menu. */
+              /* The desktop nav is hidden on mobile, so the two top-level hubs, Progress and
+                 About need a home. This panel is the only always-reachable menu, which means
+                 anything a reader must be able to find on a phone has to be in here - the
+                 legal pages included, since they were previously reachable on mobile only by
+                 typing the URL. */
               var hubs = document.createElement('div');
               hubs.className = 'msw-hub-links';
               [
                 {href: '/core-mathematics/', label: 'Core Mathematics'},
                 {href: '/applied-mathematics/', label: 'Applied Mathematics'},
+                {href: '/progress/', label: 'Progress'},
                 {href: '/about/', label: 'About'}
               ].forEach(function(h) {
                 var a = document.createElement('a');
@@ -688,6 +695,32 @@ export default defineConfig({
                  collapsed, so reaching the next chapter of the subject you are standing in meant
                  finding that subject in a list of twenty and expanding it again, every time. */
               if (activeRow) expandRow(activeRow.s, activeRow.btn, activeRow.list, false);
+
+              /* The publisher pages, at the foot of the drawer. They sit below the subjects
+                 because a reader looking for Contact is not in a hurry, and a reader looking
+                 for the next lesson is - but they have to be reachable by thumb, because this
+                 drawer is the whole of mobile navigation. */
+              var legalHeading = document.createElement('div');
+              legalHeading.className = 'msw-group-heading';
+              legalHeading.textContent = 'This Site';
+              panel.appendChild(legalHeading);
+
+              var legal = document.createElement('div');
+              legal.className = 'msw-legal-links';
+              [
+                {href: '/about/', label: 'About'},
+                {href: '/contact/', label: 'Contact'},
+                {href: '/privacy/', label: 'Privacy'},
+                {href: '/terms/', label: 'Terms'}
+              ].forEach(function(l) {
+                var a = document.createElement('a');
+                a.href = l.href;
+                a.className = 'msw-legal-link';
+                a.textContent = l.label;
+                if (path === l.href.replace(/^\\//, '').replace(/\\/$/, '')) a.classList.add('current');
+                legal.appendChild(a);
+              });
+              panel.appendChild(legal);
 
               document.body.appendChild(panel);
 

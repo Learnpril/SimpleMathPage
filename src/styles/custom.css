@@ -1932,3 +1932,89 @@ starlight-menu-button + nav,
     max-width: none;
   }
 }
+
+/* ===========================================================================
+   Publisher chrome and tap targets
+   ---------------------------------------------------------------------------
+   Added for advertising readiness. Three jobs: the disclosure lines that keep the
+   homepage and About honest about what this site is, the legal links inside the
+   mobile drawer, and raising the quiz controls to a real thumb target.
+   =========================================================================== */
+
+/* The homepage's "not an accredited school" line. Deliberately quieter than the
+   tagline above it - it is a disclosure, not a pitch, and it should not compete
+   with the mascot. */
+.hero-disclaimer {
+  max-width: 34rem;
+  margin: 0.75rem auto 0;
+  font-size: 0.85rem;
+  line-height: 1.55;
+  font-style: normal;
+  color: var(--sl-color-gray-3, #8b949e);
+}
+
+/* The one address on the Contact page. Large because it is the entire point of
+   the page, and selectable rather than hidden behind a form. */
+.contact-email {
+  margin: 1.25rem 0 1.5rem;
+  font-size: 1.15rem;
+  font-weight: 600;
+  word-break: break-word;
+}
+
+/* Legal links at the foot of the mobile subject drawer. Laid out as a row of
+   pills rather than a list, so four short links cost one line instead of four. */
+.msw-legal-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem 1.25rem;
+}
+
+.msw-legal-link {
+  display: inline-flex;
+  align-items: center;
+  /* 44px, same as every other control in this drawer. These are the links an
+     advertising review follows on mobile. */
+  min-height: 44px;
+  padding: 0 0.85rem;
+  border: 1px solid var(--sl-color-gray-5, #30363d);
+  border-radius: 999px;
+  font-size: 0.85rem;
+  text-decoration: none;
+  color: var(--sl-color-gray-2, #c9d1d9);
+}
+
+.msw-legal-link:hover,
+.msw-legal-link:focus-visible {
+  border-color: var(--sl-color-accent);
+  color: var(--sl-color-text-accent);
+}
+
+.msw-legal-link.current {
+  border-color: var(--sl-color-accent);
+  color: var(--sl-color-text-accent);
+  font-weight: 600;
+}
+
+/* ---------------------------------------------------------------------------
+   Quiz tap targets.
+
+   Measured before changing: the answer options came to about 43px tall and the
+   submit button about 38px, both under the 44px that a thumb can hit reliably.
+   Set as a minimum rather than a fixed height so a two-line answer still grows.
+   --------------------------------------------------------------------------- */
+.quiz-option {
+  min-height: 44px;
+}
+
+.quiz-btn {
+  min-height: 44px;
+}
+
+/* Previous/next lesson links. These sit directly under an ad slot once ads are
+   on, so they need to be unmistakably separate from it and easy to hit. */
+.sl-markdown-content + * .pagination-links a,
+.pagination-links a {
+  min-height: 44px;
+}

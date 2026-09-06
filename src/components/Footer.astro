@@ -1,0 +1,92 @@
+---
+/**
+ * Starlight's footer, plus the publisher chrome every page needs.
+ *
+ * Overriding `Footer` rather than editing 440 pages is what makes the legal links
+ * genuinely site-wide: every route Starlight renders gets this, including the ones added
+ * next year by someone who has not read this file.
+ *
+ * Order matters here. The ad slot goes **above** `Default`, because `Default` is what
+ * renders the previous/next lesson pagination - so an ad placed here lands after the
+ * lesson body and before the navigation, never on top of it. Putting it after `Default`
+ * would drop it between the prev/next buttons and the footer links, which is exactly the
+ * position that produces accidental clicks.
+ */
+import type { Props } from "@astrojs/starlight/props";
+import Default from "@astrojs/starlight/components/Footer.astro";
+import AdSlot from "./AdSlot.astro";
+import { COPYRIGHT_YEAR, DISCLAIMER, SITE_NAME } from "../lib/site.ts";
+
+const links = [
+  { href: "/about/", label: "About" },
+  { href: "/contact/", label: "Contact" },
+  { href: "/privacy/", label: "Privacy" },
+  { href: "/terms/", label: "Terms" },
+];
+---
+
+{/* After the lesson, before prev/next. Renders nothing at all while ads are switched off. */}
+<AdSlot placement="after-content" />
+
+<Default {...Astro.props}><slot /></Default>
+
+<footer class="mbu-footer">
+  <nav class="mbu-footer-links" aria-label="Site information">
+    {
+      links.map((link) => (
+        <a href={link.href}>{link.label}</a>
+      ))
+    }
+  </nav>
+  <p class="mbu-footer-legal">
+    &copy; {COPYRIGHT_YEAR} {SITE_NAME}. {DISCLAIMER}
+  </p>
+</footer>
+
+<style>
+  .mbu-footer {
+    margin-top: 2.5rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--sl-color-gray-6, #30363d);
+    text-align: center;
+  }
+
+  .mbu-footer-links {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    /* Gap rather than separator characters, so the links stack cleanly on a narrow phone. */
+    gap: 0.35rem 1.25rem;
+  }
+
+  .mbu-footer-links a {
+    /* 44px of tappable height, because these are the links an advertising review follows
+       and a reader on a phone should not have to aim. */
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0 0.25rem;
+    font-size: 0.875rem;
+    color: var(--sl-color-gray-2, #c9d1d9);
+    text-decoration: none;
+  }
+
+  .mbu-footer-links a:hover,
+  .mbu-footer-links a:focus-visible {
+    color: var(--sl-color-text-accent);
+    text-decoration: underline;
+  }
+
+  .mbu-footer-legal {
+    margin: 0.25rem 0 0;
+    font-size: 0.78rem;
+    line-height: 1.5;
+    color: var(--sl-color-gray-3, #8b949e);
+  }
+
+  @media print {
+    .mbu-footer {
+      display: none;
+    }
+  }
+</style>

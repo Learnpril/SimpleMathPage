@@ -1,12 +1,29 @@
 ---
 import type { Props } from '@astrojs/starlight/props';
 import Default from '@astrojs/starlight/components/Head.astro';
+import { ADS_LIVE, ADSENSE_CLIENT, routeAllowsAds } from '../lib/site.ts';
 
 /* Absolute URL for the social sharing card image. Astro.site comes from the
    `site` option in astro.config.mjs. */
 const ogImage = new URL('/og-image.png', Astro.site).href;
+
+/* The AdSense loader is per-page rather than global, so the legal and account
+   routes do not even fetch it. With the flag off it is never emitted at all -
+   there is no third-party request on this site until someone sets two
+   environment variables on purpose. */
+const loadAdScript = ADS_LIVE && routeAllowsAds(Astro.url.pathname);
 ---
 <Default {...Astro.props}><slot /></Default>
+
+{
+  loadAdScript && (
+    <script
+      async
+      src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ADSENSE_CLIENT}`}
+      crossorigin="anonymous"
+    />
+  )
+}
 
 {/* Social sharing card image - Starlight sets twitter:card=summary_large_image
     but does not provide an image, which renders an empty card. */}
