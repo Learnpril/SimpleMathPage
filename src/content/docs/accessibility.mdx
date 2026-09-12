@@ -1,0 +1,92 @@
+---
+title: Accessibility
+description: What this site aims for, what is actually in place today, what is honestly not done yet, and how to report something that blocks you.
+tableOfContents: false
+---
+
+import { CONTACT_EMAIL } from "../../lib/site.ts";
+
+This is a statement of intent and a list of known gaps. It is **not** a
+conformance claim. Nobody has audited this site with real assistive technology,
+so anything below that sounds like a promise is only a description of what the
+code currently does.
+
+## What this site is aiming for
+
+Usable with a keyboard alone. Readable without fighting the contrast. Math and
+figures that a screen reader can reach, rather than pictures of equations that
+are invisible to anything but an eye.
+
+The last one is the reason for most of the technical decisions here. A math site
+that ships equations as images is unusable to a screen reader and unreadable when
+zoomed, and that is a very easy mistake to make.
+
+## What is in place today
+
+Verifiable by reading the built pages:
+
+- **Equations are markup, not pictures.** Math is rendered by KaTeX, which emits
+  MathML alongside the visual layout and hides the visual copy from assistive
+  technology. The original TeX travels with it. Zooming enlarges real text.
+- **Figures are SVG drawn from computed values.** Labels inside them are real
+  text that scales and can be selected, not baked-in pixels.
+- **Every figure has a text description.** All 379 figure components carry an
+  accessible name, so a screen reader announces what the diagram shows rather
+  than skipping it. Purely decorative icons are hidden from assistive technology
+  instead, so they are not read out as meaningless graphics.
+- **Quizzes work from the keyboard.** Each question is a labelled radio group:
+  arrow keys move between options, Enter or Space selects, and the result is
+  announced through a live region rather than by colour alone.
+- **A skip-to-content link** is the first thing in the tab order on every page.
+- **Tap targets are 44px** in the mobile navigation drawer and the footer links.
+- **Dark theme by default, light theme available**, and the choice is remembered.
+- **Nothing plays sound on its own.** The alma mater is a button in the header,
+  off on every page load, and never resumes by itself.
+- Pages declare their language, and headings run in order rather than being
+  chosen for their size.
+
+## What is not done
+
+The honest list, and it is the more useful half of this page:
+
+- **Some figures share one description between several panels.** Where a figure
+  is a row of two or three small graphs, each panel now carries its own label,
+  but a handful of grouped figures elsewhere still describe the whole group in
+  one sentence rather than each part.
+- **The descriptions vary in quality.** Every figure has one. Some are a full
+  sentence explaining what the diagram shows and why; others are a short phrase
+  that names the picture without teaching what it demonstrates. The short ones
+  need rewriting, and that is a slow job done by hand.
+- **No reduced-motion handling.** Nothing in the stylesheet responds to
+  `prefers-reduced-motion` yet, so animated and interactive figures ignore that
+  preference.
+- **Contrast has not been measured.** The palette was chosen by eye. It has not
+  been checked against a contrast ratio for every combination, particularly
+  inside figures.
+- **No screen reader testing.** Not with NVDA, JAWS, VoiceOver or anything else.
+  The markup was written to be reachable; that is not the same as confirming it
+  reads well.
+- **Interactive 3D figures have no non-visual equivalent.** Where a lesson leans
+  on one to make its point, that point is currently harder to get at.
+
+## No conformance claim
+
+This site does not claim to conform to WCAG at any level. Making that claim
+properly needs testing with real assistive technology and expert review, and
+neither has happened here. Claiming it without that would be a nicer sentence
+and a worse one.
+
+If that matters for your institution, take this page as the honest input to your
+own evaluation rather than as a substitute for it.
+
+## If something blocks you
+
+Email <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>. Tell me the page
+and what happened - "the quiz on this lesson will not take my keyboard" is
+plenty, and your browser and assistive software help if you know them.
+
+Accessibility bugs go in front of new lessons. This is one person working around
+a job, so the queue is real, but a barrier is not the same as a feature request
+and it does not sit in the same line.
+
+See also the [Privacy Policy](/privacy/) and the [Terms of Use](/terms/).

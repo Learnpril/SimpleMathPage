@@ -36,3 +36,13 @@ export const COPYRIGHT_YEAR = new Date().getFullYear();
 /** One line, used under the footer links. */
 export const DISCLAIMER =
   "Unofficial free resource. Not an accredited university.";
+
+/**
+ * The footer's license line, split so the license names can be links.
+ *
+ * Two licenses because they cover two different things: the lessons are CC BY 4.0 and the
+ * code samples inside them are MIT. `/license` carries the detail, the attribution line
+ * teachers can copy, and the pointers to the canonical texts.
+ */
+export const LICENSE_LESSONS = "CC BY 4.0";
+export const LICENSE_CODE = "MIT";

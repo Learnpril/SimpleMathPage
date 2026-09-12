@@ -49,10 +49,14 @@ const ticks = [1, 2, 3, 4, 5, 6, 7];
 const yTicks = [0.5, 1, 1.5, 2];
 ---
 
-<figure class="imp" role="img" aria-label="Two graphs comparing convergent and divergent improper integrals">
+{/* A labelled group rather than a single role="img", so each graph below is announced with
+    its own description instead of the pair sharing one sentence. */}
+<figure class="imp" role="group" aria-label="Two graphs comparing convergent and divergent improper integrals">
 
   {/* Graph 1: 1/x² converges */}
-  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg" class="imp-svg">
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg" class="imp-svg"
+       role="img"
+       aria-label="A convergent improper integral. The curve one over x squared drops steeply and hugs the horizontal axis, and the shaded region under it from x equals 1 out to infinity has a finite total area of 1. The tail thins fast enough for the area to settle on a number.">
     <text class="imp-title" x={w/2} y={16} font-size="13" text-anchor="middle" font-weight="600">Converges: area under 1/x² from 1 to infinity = 1</text>
 
     {/* Grid */}
@@ -86,7 +90,9 @@ const yTicks = [0.5, 1, 1.5, 2];
   </svg>
 
   {/* Graph 2: 1/x diverges */}
-  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg" class="imp-svg">
+  <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} xmlns="http://www.w3.org/2000/svg" class="imp-svg"
+       role="img"
+       aria-label="A divergent improper integral. The curve one over x falls more slowly and its tail stays thicker, so the shaded region under it from x equals 1 out to infinity has no finite area. The same picture, a slower decay, and the opposite answer.">
     <text class="imp-title" x={w/2} y={16} font-size="13" text-anchor="middle" font-weight="600">Diverges: area under 1/x from 1 to infinity = infinity</text>
 
     {/* Grid */}

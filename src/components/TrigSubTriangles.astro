@@ -31,13 +31,17 @@ const makeRow = (row: number) => {
 const sq = 10;
 ---
 
-<figure class="tst" role="img" aria-label="Three reference triangles for trigonometric substitution, one for each case, stacked vertically">
+{/* A labelled group rather than a single role="img", so each of the three reference triangles
+    below is announced with its own description instead of the set sharing one sentence. */}
+<figure class="tst" role="group" aria-label="Three reference triangles for trigonometric substitution, one for each case, stacked vertically">
 
   {/* Case 1 */}
   {(() => {
     const { topY, ax, ay, cx, cy, dx, dy } = makeRow(0);
     return (
-      <svg viewBox={`0 0 ${w} ${rowH}`} width={w} height={rowH} xmlns="http://www.w3.org/2000/svg" class="tst-svg">
+      <svg viewBox={`0 0 ${w} ${rowH}`} width={w} height={rowH} xmlns="http://www.w3.org/2000/svg" class="tst-svg"
+           role="img"
+           aria-label="Case 1, the substitution x equals a sine theta. A right triangle with hypotenuse a and opposite side x, so the remaining side is the square root of a squared minus x squared. This is the triangle to reach for when that difference appears under the radical.">
         <text class="tst-title" x={w/2} y={18} font-size="14" text-anchor="middle" font-weight="600">Case 1: x = a sin θ</text>
 
         {/* Triangle */}
@@ -60,7 +64,9 @@ const sq = 10;
   {(() => {
     const { topY, ax, ay, cx, cy, dx, dy } = makeRow(0);
     return (
-      <svg viewBox={`0 0 ${w} ${rowH}`} width={w} height={rowH} xmlns="http://www.w3.org/2000/svg" class="tst-svg">
+      <svg viewBox={`0 0 ${w} ${rowH}`} width={w} height={rowH} xmlns="http://www.w3.org/2000/svg" class="tst-svg"
+           role="img"
+           aria-label="Case 2, the substitution x equals a tangent theta. A right triangle with legs a and x, so the hypotenuse is the square root of a squared plus x squared. This is the triangle for a sum under the radical.">
         <text class="tst-title" x={w/2} y={18} font-size="14" text-anchor="middle" font-weight="600">Case 2: x = a tan θ</text>
 
         <polygon points={`${ax},${ay} ${cx},${cy} ${dx},${dy}`} fill="none" class="tst-line" stroke-width="2.5" />
@@ -81,7 +87,9 @@ const sq = 10;
   {(() => {
     const { topY, ax, ay, cx, cy, dx, dy } = makeRow(0);
     return (
-      <svg viewBox={`0 0 ${w} ${rowH}`} width={w} height={rowH} xmlns="http://www.w3.org/2000/svg" class="tst-svg">
+      <svg viewBox={`0 0 ${w} ${rowH}`} width={w} height={rowH} xmlns="http://www.w3.org/2000/svg" class="tst-svg"
+           role="img"
+           aria-label="Case 3, the substitution x equals a secant theta. A right triangle with hypotenuse x and one leg a, so the remaining side is the square root of x squared minus a squared. This is the triangle when the variable term is the larger one under the radical.">
         <text class="tst-title" x={w/2} y={18} font-size="14" text-anchor="middle" font-weight="600">Case 3: x = a sec θ</text>
 
         <polygon points={`${ax},${ay} ${cx},${cy} ${dx},${dy}`} fill="none" class="tst-line" stroke-width="2.5" />

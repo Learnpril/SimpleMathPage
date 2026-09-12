@@ -47,11 +47,15 @@ for (let i = 0; i <= 40; i++) {
 }
 ---
 
-<figure class="dtypes" role="img" aria-label="Three types of discontinuity: removable, jump, and infinite">
+{/* A labelled group rather than a single role="img", so each of the three panels below is
+    announced with its own description instead of the set sharing one sentence. */}
+<figure class="dtypes" role="group" aria-label="Three types of discontinuity: removable, jump, and infinite">
   <div class="dtypes-row">
     {/* Panel 1: Removable */}
     <div class="dtypes-panel">
-      <svg viewBox={`0 0 ${pw} ${ph}`} width={pw} height={ph} xmlns="http://www.w3.org/2000/svg">
+      <svg viewBox={`0 0 ${pw} ${ph}`} width={pw} height={ph} xmlns="http://www.w3.org/2000/svg"
+           role="img"
+           aria-label="A removable discontinuity. A straight line runs unbroken except for a single open hole at one point. The two sides approach the same height, so filling in that one point would make the function continuous.">
         {/* Grid */}
         {[1,2,3].map(v => (
           <line x1={rsx(v)} y1={rsy(r1.yMin)} x2={rsx(v)} y2={rsy(r1.yMax)} class="dt-grid" stroke-width="0.5" />
@@ -74,7 +78,9 @@ for (let i = 0; i <= 40; i++) {
 
     {/* Panel 2: Jump */}
     <div class="dtypes-panel">
-      <svg viewBox={`0 0 ${pw} ${ph}`} width={pw} height={ph} xmlns="http://www.w3.org/2000/svg">
+      <svg viewBox={`0 0 ${pw} ${ph}`} width={pw} height={ph} xmlns="http://www.w3.org/2000/svg"
+           role="img"
+           aria-label="A jump discontinuity. Two straight pieces of the graph stop and restart at the same x value but at different heights, an open circle marking where the left piece ends and a filled circle where the right piece begins. The two one-sided limits disagree, so no single value can close the gap.">
         {/* Grid */}
         {[1,2,3].map(v => (
           <line x1={jsx(v)} y1={jsy(j1.yMin)} x2={jsx(v)} y2={jsy(j1.yMax)} class="dt-grid" stroke-width="0.5" />
@@ -100,7 +106,9 @@ for (let i = 0; i <= 40; i++) {
 
     {/* Panel 3: Infinite */}
     <div class="dtypes-panel">
-      <svg viewBox={`0 0 ${pw} ${ph}`} width={pw} height={ph} xmlns="http://www.w3.org/2000/svg">
+      <svg viewBox={`0 0 ${pw} ${ph}`} width={pw} height={ph} xmlns="http://www.w3.org/2000/svg"
+           role="img"
+           aria-label="An infinite discontinuity. Two branches of the curve run away from a vertical asymptote, climbing without bound on one side and falling without bound on the other, so neither one-sided limit is a finite number.">
         {/* Grid */}
         {[1,2,3].map(v => (
           <line x1={isx(v)} y1={isyF(i1.yMin)} x2={isx(v)} y2={isyF(i1.yMax)} class="dt-grid" stroke-width="0.5" />

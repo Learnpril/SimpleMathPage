@@ -11,13 +11,24 @@
  */
 import type { Props } from "@astrojs/starlight/props";
 import Default from "@astrojs/starlight/components/Footer.astro";
-import { COPYRIGHT_YEAR, DISCLAIMER, SITE_NAME } from "../lib/site.ts";
+import {
+  COPYRIGHT_YEAR,
+  DISCLAIMER,
+  LICENSE_CODE,
+  LICENSE_LESSONS,
+  SITE_NAME,
+} from "../lib/site.ts";
 
+/* Kept in sync by hand with the drawer list in astro.config.mjs, which is the mobile
+   half of this navigation. A link added here and not there is reachable on desktop and
+   invisible on a phone. */
 const links = [
   { href: "/about/", label: "About" },
   { href: "/contact/", label: "Contact" },
   { href: "/privacy/", label: "Privacy" },
   { href: "/terms/", label: "Terms" },
+  { href: "/license/", label: "License" },
+  { href: "/accessibility/", label: "Accessibility" },
 ];
 ---
 
@@ -33,6 +44,10 @@ const links = [
   </nav>
   <p class="mbu-footer-legal">
     &copy; {COPYRIGHT_YEAR} {SITE_NAME}. {DISCLAIMER}
+  </p>
+  <p class="mbu-footer-legal">
+    Lessons <a href="/license/">{LICENSE_LESSONS}</a>, code samples{" "}
+    <a href="/license/">{LICENSE_CODE}</a>. Use them in class, free.
   </p>
 </footer>
 
@@ -74,6 +89,18 @@ const links = [
     font-size: 0.78rem;
     line-height: 1.5;
     color: var(--sl-color-gray-3, #8b949e);
+  }
+
+  /* Underlined rather than colour-only, so the license line still reads as a link to
+     someone who cannot pick the accent colour out of the grey. */
+  .mbu-footer-legal a {
+    color: var(--sl-color-gray-2, #c9d1d9);
+    text-decoration: underline;
+  }
+
+  .mbu-footer-legal a:hover,
+  .mbu-footer-legal a:focus-visible {
+    color: var(--sl-color-text-accent);
   }
 
   @media print {

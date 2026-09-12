@@ -707,11 +707,17 @@ export default defineConfig({
 
               var legal = document.createElement('div');
               legal.className = 'msw-legal-links';
+              /* Kept in sync by hand with the links array in src/components/Footer.astro,
+                 which is the desktop half of this navigation. A page added there and not
+                 here is unreachable on a phone. Note this block lives inside a template
+                 literal, so backticks and dollar-braces cannot appear in these comments. */
               [
                 {href: '/about/', label: 'About'},
                 {href: '/contact/', label: 'Contact'},
                 {href: '/privacy/', label: 'Privacy'},
-                {href: '/terms/', label: 'Terms'}
+                {href: '/terms/', label: 'Terms'},
+                {href: '/license/', label: 'License'},
+                {href: '/accessibility/', label: 'Accessibility'}
               ].forEach(function(l) {
                 var a = document.createElement('a');
                 a.href = l.href;

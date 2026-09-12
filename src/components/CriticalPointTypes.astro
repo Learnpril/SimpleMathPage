@@ -33,11 +33,16 @@ const minValX = pad + gw / 2;
 const minValY = pad + gh - (1 / 6) * gh;
 ---
 
-<figure class="cpt" role="img" aria-label="Two diagrams showing local maximum (hill) and local minimum (valley) at critical points">
+{/* A labelled group rather than a single role="img": role="img" would hide the two panels
+    from assistive technology and describe them in one sentence. As a group, each panel below
+    is announced with its own description. */}
+<figure class="cpt" role="group" aria-label="Two diagrams showing local maximum (hill) and local minimum (valley) at critical points">
   <div class="cpt-row">
     {/* Panel 1: Local Maximum */}
     <div class="cpt-panel">
-      <svg viewBox={`0 0 ${pw} ${ph}`} width={pw} height={ph} xmlns="http://www.w3.org/2000/svg">
+      <svg viewBox={`0 0 ${pw} ${ph}`} width={pw} height={ph} xmlns="http://www.w3.org/2000/svg"
+           role="img"
+           aria-label="A local maximum. The curve rises to a peak and falls again, with a dashed horizontal tangent at the top where the derivative is zero. The slope is positive on the way up and negative on the way down.">
         <defs>
           <marker id="cpt-arr" markerWidth="7" markerHeight="5" refX="6" refY="2.5" orient="auto">
             <path d="M0,0 L7,2.5 L0,5" fill="none" class="cpt-arr-s" stroke-width="1.2" />
@@ -63,7 +68,9 @@ const minValY = pad + gh - (1 / 6) * gh;
 
     {/* Panel 2: Local Minimum */}
     <div class="cpt-panel">
-      <svg viewBox={`0 0 ${pw} ${ph}`} width={pw} height={ph} xmlns="http://www.w3.org/2000/svg">
+      <svg viewBox={`0 0 ${pw} ${ph}`} width={pw} height={ph} xmlns="http://www.w3.org/2000/svg"
+           role="img"
+           aria-label="A local minimum. The curve falls to a lowest point and rises again, with a dashed horizontal tangent at the bottom where the derivative is zero. The slope is negative on the way down and positive on the way up.">
         {/* Curve */}
         <polyline points={minPts.join(' ')} fill="none" class="cpt-curve" stroke-width="3" />
         {/* Horizontal tangent at valley */}
