@@ -6,15 +6,11 @@
  * genuinely site-wide: every route Starlight renders gets this, including the ones added
  * next year by someone who has not read this file.
  *
- * Order matters here. The ad slot goes **above** `Default`, because `Default` is what
- * renders the previous/next lesson pagination - so an ad placed here lands after the
- * lesson body and before the navigation, never on top of it. Putting it after `Default`
- * would drop it between the prev/next buttons and the footer links, which is exactly the
- * position that produces accidental clicks.
+ * `Default` is what renders the previous/next lesson pagination, so anything added below
+ * it lands between that navigation and the footer links.
  */
 import type { Props } from "@astrojs/starlight/props";
 import Default from "@astrojs/starlight/components/Footer.astro";
-import AdSlot from "./AdSlot.astro";
 import { COPYRIGHT_YEAR, DISCLAIMER, SITE_NAME } from "../lib/site.ts";
 
 const links = [
@@ -24,9 +20,6 @@ const links = [
   { href: "/terms/", label: "Terms" },
 ];
 ---
-
-{/* After the lesson, before prev/next. Renders nothing at all while ads are switched off. */}
-<AdSlot placement="after-content" />
 
 <Default {...Astro.props}><slot /></Default>
 
@@ -60,8 +53,7 @@ const links = [
   }
 
   .mbu-footer-links a {
-    /* 44px of tappable height, because these are the links an advertising review follows
-       and a reader on a phone should not have to aim. */
+    /* 44px of tappable height, so a reader on a phone should not have to aim. */
     display: inline-flex;
     align-items: center;
     min-height: 44px;

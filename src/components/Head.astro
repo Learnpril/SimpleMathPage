@@ -1,35 +1,12 @@
 ---
 import type { Props } from '@astrojs/starlight/props';
 import Default from '@astrojs/starlight/components/Head.astro';
-import { ADSENSE_CLIENT, ADSENSE_SCRIPT_ENABLED } from '../lib/site.ts';
 
 /* Absolute URL for the social sharing card image. Astro.site comes from the
    `site` option in astro.config.mjs. */
 const ogImage = new URL('/og-image.png', Astro.site).href;
 ---
 <Default {...Astro.props}><slot /></Default>
-
-{/* The AdSense loader, on every page.
-
-    Site-wide and deliberately not filtered by route: Google reviews the whole
-    site, so the legal and account pages need it too. That is a change from the
-    first version, which skipped those routes - the review needs the script
-    everywhere, and `AdSlot` still refuses to place a visible unit on them.
-
-    Emitted only when a publisher ID exists, and independent of
-    PUBLIC_ADS_ENABLED, so the reviewer gets what it needs while nothing a
-    reader sees changes. `is:inline` keeps Astro from touching the tag, so the
-    markup is byte-for-byte what AdSense asked for. */}
-{
-  ADSENSE_SCRIPT_ENABLED && (
-    <script
-      is:inline
-      async
-      src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ADSENSE_CLIENT}`}
-      crossorigin="anonymous"
-    />
-  )
-}
 
 {/* Social sharing card image - Starlight sets twitter:card=summary_large_image
     but does not provide an image, which renders an empty card. */}
